@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Caching;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
@@ -40,7 +42,8 @@ namespace Cognifide.PowerShell.Console.Services
     public class RemoteScriptCall : IHttpHandler, IRequiresSessionState
     {
         private static readonly object LoginLock = new object();
-        private SortedDictionary<string, SortedDictionary<string, ApiScript>> _apiScripts;
+        private const string ApiScriptsKey = "Cognifide.PowerShell.ApiScriptsKey";
+        private const string expirationSetting = "Cognifide.PowerShell.WebApiCacheExpirationSecs";
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
@@ -146,7 +149,7 @@ namespace Cognifide.PowerShell.Console.Services
             PowerShellLog.Info($"'{serviceMappingKey}' called by user: '{username}'");
             PowerShellLog.Debug($"'{request.Url}'");
 
-            Item scriptItem;
+            Item scriptItem = null;
 
             switch (apiVersion)
             {
@@ -164,22 +167,22 @@ namespace Cognifide.PowerShell.Console.Services
                     ProcessHandle(context, originParam);
                     return;
                 case "2":
-                    UpdateCache(dbName);
-                    if (!_apiScripts.ContainsKey(dbName))
+                    var apiScripts = GetApiScripts(dbName);
+                    if (apiScripts.ContainsKey(dbName))
+                    {
+                        var dbScripts = apiScripts[dbName];
+                        if (dbScripts.ContainsKey(itemParam))
+                        {
+                            scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
+                        }
+                    }
+
+                    if (scriptItem == null)
                     {
                         context.Response.StatusCode = 404;
                         context.Response.StatusDescription = "The specified script is invalid.";
                         return;
                     }
-                    var dbScripts = _apiScripts[dbName];
-                    if (!dbScripts.ContainsKey(itemParam))
-                    {
-                        context.Response.StatusCode = 404;
-                        context.Response.StatusDescription = "The specified script is invalid.";
-                        return;
-                    }
-                    scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
-                    _apiScripts = null;
                     break;
                 case "script":
                     ProcessScript(context, request, rawOutput, sessionId, persistentSession);
@@ -787,30 +790,34 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private void UpdateCache(string dbName)
+        private ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
-            if (_apiScripts == null)
-            {
-                _apiScripts = new SortedDictionary<string, SortedDictionary<string, ApiScript>>(StringComparer.OrdinalIgnoreCase);
-            }
+            if(HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
+            
+            apiScripts = new ApiScriptCollection();
 
             if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
             {
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
-                BuildCache(roots);
-                return;
+                GetAvailableScripts(roots, apiScripts);
+            } 
+            else if (!apiScripts.ContainsKey(dbName))
+            {
+                var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
+                apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
+                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
+                GetAvailableScripts(roots, apiScripts);
             }
 
-            if (!_apiScripts.ContainsKey(dbName))
-            {
-                _apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
-                BuildCache(roots);
-            }
+            var expiration = Settings.GetIntSetting(expirationSetting, 30);
+            HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, DateTime.UtcNow.AddSeconds(expiration),
+                Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+
+            return apiScripts;
         }
 
-        private void BuildCache(IEnumerable<Item> roots)
+        private void GetAvailableScripts(IEnumerable<Item> roots, ApiScriptCollection apiScripts)
         {
             foreach (var root in roots)
             {
@@ -824,11 +831,12 @@ namespace Cognifide.PowerShell.Console.Services
                     {
                         var scriptPath = result.Paths.Path.Substring(rootPath.Length);
                         var dbName = result.Database.Name;
-                        if (!_apiScripts.ContainsKey(dbName))
+                        if (!apiScripts.ContainsKey(dbName))
                         {
-                            _apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
+                            var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
+                            apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
                         }
-                        _apiScripts[dbName].Add(scriptPath, new ApiScript
+                        apiScripts[dbName].Add(scriptPath, new ApiScript
                         {
                             Database = result.Database.Name,
                             Id = result.ID,
@@ -860,5 +868,10 @@ namespace Cognifide.PowerShell.Console.Services
         public string Path { get; set; }
         public string Database { get; set; }
         public ID Id { get; set; }
+    }
+
+    internal class ApiScriptCollection : ConcurrentDictionary<string, SortedDictionary<string, ApiScript>>
+    {
+
     }
 }
