@@ -24,17 +24,15 @@ namespace Cognifide.PowerShell.Commandlets.Diagnostics
 
         private void LogObject(object o)
         {
-            if (o == null) return;
-            var str1 = o as string;
-            if (str1 != null)
+            switch (o)
             {
-                if (str1.Length <= 0) return;
-                LogString(str1);
-            }
-            else
-            {
-                IEnumerable enumerable;
-                if ((enumerable = o as IEnumerable) != null)
+                case null:
+                case string str1 when str1.Length <= 0:
+                    return;
+                case string str1:
+                    LogString(str1);
+                    break;
+                case IEnumerable enumerable:
                 {
                     var flag = false;
                     foreach (var o1 in enumerable)
@@ -46,12 +44,15 @@ namespace Cognifide.PowerShell.Commandlets.Diagnostics
                         LogObject(o1);
                         flag = true;
                     }
+
+                    break;
                 }
-                else
+                default:
                 {
                     var str2 = o.ToString();
                     if (str2.Length <= 0) return;
                     LogString(str2);
+                    break;
                 }
             }
         }

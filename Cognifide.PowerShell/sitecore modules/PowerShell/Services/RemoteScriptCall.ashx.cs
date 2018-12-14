@@ -196,7 +196,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static bool CheckServiceEnabled(HttpContext context, string apiVersion, string httpMethod)
         {
-            var isEnabled = true;
+            bool isEnabled;
 
             switch (apiVersion)
             {
@@ -417,13 +417,14 @@ namespace Cognifide.PowerShell.Console.Services
                         }
                     }
                 }
-                else if (request.Files?.AllKeys?.Length > 0)
+                else if (request.Files.AllKeys.Length > 0)
                 {
                     foreach (string fileName in request.Files.Keys)
                     {
                         var file = request.Files[fileName];
-                        ProcessMediaUpload(file.InputStream, scriptDb, $"{itemParam}/{file.FileName}",
-                            skipExisting);
+                        if (file != null)
+                            ProcessMediaUpload(file.InputStream, scriptDb, $"{itemParam}/{file.FileName}",
+                                skipExisting);
                     }
                 }
                 else
@@ -549,7 +550,7 @@ namespace Cognifide.PowerShell.Console.Services
                 var buffer = new byte[size];
                 using (var memory = new MemoryStream())
                 {
-                    var count = 0;
+                    int count;
                     do
                     {
                         count = stream.Read(buffer, 0, size);
@@ -603,14 +604,14 @@ namespace Cognifide.PowerShell.Console.Services
 
             var streams = new Dictionary<string, Stream>();
             var request = context.Request;
-            if (request.Files?.AllKeys?.Length > 0)
+            if (request.Files.AllKeys.Length > 0)
             {
                 foreach (var fileName in request.Files.AllKeys)
                 {
-                    streams.Add(fileName, request.Files[fileName].InputStream);
+                    streams.Add(fileName, request.Files[fileName]?.InputStream);
                 }
             }
-            else if (request.InputStream != null)
+            else
             {
                 streams.Add("stream", request.InputStream);
             }

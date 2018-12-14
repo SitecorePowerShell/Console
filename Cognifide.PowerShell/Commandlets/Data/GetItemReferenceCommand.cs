@@ -54,23 +54,22 @@ namespace Cognifide.PowerShell.Commandlets.Data
         protected override void ProcessItem(Item linkedItem)
         {
             var linkDb = Globals.LinkDatabase;
-            if (linkDb.GetReferenceCount(linkedItem) > 0)
+            if (linkDb.GetReferenceCount(linkedItem) <= 0) return;
+
+            if (ItemLink)
             {
-                if (ItemLink)
-                {
-                    linkDb
-                        .GetReferences(linkedItem)
-                        .ToList()
-                        .ForEach(WriteObject);
-                }
-                else
-                {
-                    linkDb.GetReferences(linkedItem)
-                        .Select(link => link.GetTargetItem())
-                        .Distinct(ItemEqualityComparer.Instance)
-                        .ToList()
-                        .ForEach(WriteItem);
-                }
+                linkDb
+                    .GetReferences(linkedItem)
+                    .ToList()
+                    .ForEach(WriteObject);
+            }
+            else
+            {
+                linkDb.GetReferences(linkedItem)
+                    .Select(link => link.GetTargetItem())
+                    .Distinct(ItemEqualityComparer.Instance)
+                    .ToList()
+                    .ForEach(WriteItem);
             }
         }
     }

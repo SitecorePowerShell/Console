@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Management.Automation;
-using Cognifide.PowerShell.Core.Extensions;
+﻿using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Links;
+using System.Linq;
+using System.Management.Automation;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
@@ -55,23 +55,22 @@ namespace Cognifide.PowerShell.Commandlets.Data
         protected override void ProcessItem(Item linkedItem)
         {
             var linkDb = Globals.LinkDatabase;
-            if (linkDb.GetReferrerCount(linkedItem) > 0)
+            if (linkDb.GetReferrerCount(linkedItem) <= 0) return;
+
+            if (ItemLink)
             {
-                if (ItemLink)
-                {
-                    linkDb
-                        .GetReferrers(linkedItem)
-                        .ToList()
-                        .ForEach(WriteObject);
-                }
-                else
-                {
-                    linkDb.GetReferrers(linkedItem)
-                        .Select(link => link.GetSourceItem())
-                        .Distinct(ItemEqualityComparer.Instance)
-                        .ToList()
-                        .ForEach(WriteItem);
-                }
+                linkDb
+                    .GetReferrers(linkedItem)
+                    .ToList()
+                    .ForEach(WriteObject);
+            }
+            else
+            {
+                linkDb.GetReferrers(linkedItem)
+                    .Select(link => link.GetSourceItem())
+                    .Distinct(ItemEqualityComparer.Instance)
+                    .ToList()
+                    .ForEach(WriteItem);
             }
         }
     }
