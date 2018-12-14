@@ -9,12 +9,13 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
     [OutputType(typeof(Hashtable))]
     public class GetRenderingParameterCommand : BaseRenderingParameterCommand
     {
-        [Parameter(Mandatory = true, Position = 0)]
-        public RenderingDefinition Rendering { get; set; }
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Alias("Rendering")]
+        public RenderingDefinition Instance { get; set; }
 
         protected override void ProcessRecord()
         {
-            var parameters = GetParameters(Rendering);
+            var parameters = GetParameters(Instance);
             WriteObject(new Hashtable(parameters.AllKeys.ToDictionary(k => k, k => parameters[k])));
         }
     }

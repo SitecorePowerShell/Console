@@ -6,12 +6,13 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Set, "RenderingParameter")]
+    [Cmdlet(VerbsCommon.Set, "RenderingParameter", SupportsShouldProcess = true)]
     [OutputType(typeof(RenderingDefinition))]
     public class SetRenderingParameterCommand : BaseRenderingParameterCommand
     {
-        [Parameter(Mandatory = true, Position = 0)]
-        public RenderingDefinition Rendering { get; set; }
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Alias("Rendering")]
+        public RenderingDefinition Instance { get; set; }
 
         [Parameter(Mandatory = true, Position = 1)]
         public Hashtable Parameter { get; set; }
@@ -21,7 +22,12 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
         protected override void ProcessRecord()
         {
-            var parameters = Overwrite.IsPresent ? new NameValueCollection() : GetParameters(Rendering);
+            if (!ShouldProcess(Instance.ItemID, "Set parameters for rendering"))
+            {
+                return;
+            }
+
+            var parameters = Overwrite.IsPresent ? new NameValueCollection() : GetParameters(Instance);
 
             foreach (string key in Parameter.Keys)
             {
@@ -38,8 +44,8 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 }
             }
 
-            Rendering.Parameters = new UrlString(parameters).ToString();
-            WriteObject(Rendering);
+            Instance.Parameters = new UrlString(parameters).ToString();
+            WriteObject(Instance);
         }
     }
 }
