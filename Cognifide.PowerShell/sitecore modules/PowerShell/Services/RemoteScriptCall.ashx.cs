@@ -58,9 +58,11 @@ namespace Cognifide.PowerShell.Console.Services
 
         public void ProcessRequest(HttpContext context)
         {
-            var request = HttpContext.Current.Request;
-            var username = request.Params.Get("user");
-            var password = request.Params.Get("password");
+            var request = context.Request;
+            var requestParameters = request.Params;
+
+            var username = requestParameters.Get("user");
+            var password = requestParameters.Get("password");
             var authHeader = request.Headers["Authorization"];
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
@@ -76,27 +78,26 @@ namespace Cognifide.PowerShell.Console.Services
                 }
             }
 
-            var itemParam = request.Params.Get("script");
-            var pathParam = request.Params.Get("path");
-            var originParam = request.Params.Get("scriptDb");
-            var sessionId = request.Params.Get("sessionId");
-            var persistentSession = request.Params.Get("persistentSession").Is("true");
-            var rawOutput = request.Params.Get("rawOutput").Is("true");
-            var apiVersion = request.Params.Get("apiVersion");
+            var itemParam = requestParameters.Get("script");
+            var pathParam = requestParameters.Get("path");
+            var originParam = requestParameters.Get("scriptDb");
+            var sessionId = requestParameters.Get("sessionId");
+            var persistentSession = requestParameters.Get("persistentSession").Is("true");
+            var rawOutput = requestParameters.Get("rawOutput").Is("true");
+            var apiVersion = requestParameters.Get("apiVersion");
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
-            var unpackZip = request.Params.Get("skipunpack").IsNot("true");
-            var skipExisting = request.Params.Get("skipexisting").Is("true");
-            var scDb = request.Params.Get("sc_database");
+            var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
+            var skipExisting = requestParameters.Get("skipexisting").Is("true");
+            var scDb = requestParameters.Get("sc_database");
 
             var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
                 ? ApiVersionToServiceMapping[serviceMappingKey]
                 : string.Empty;
 
             // verify that the service is enabled
-            if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
+            if (!CheckServiceEnabled(context, apiVersion, request.HttpMethod))
             {
-                PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as it is not enabled.");
                 return;
             }
 
@@ -104,13 +105,8 @@ namespace Cognifide.PowerShell.Console.Services
             var authUserName = string.IsNullOrEmpty(username) ? Context.User.Name : username;
             var identity = new AccountIdentity(authUserName);
 
-            if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, identity.Name))
+            if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
             {
-                HttpContext.Current.Response.StatusCode = 401;
-                HttpContext.Current.Response.StatusDescription = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
-                HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-                PowerShellLog.Error(
-                    $"Attempt to call the '{serviceMappingKey}' service failed as user '{authUserName}' was not authorized.");
                 return;
             }
 
@@ -125,6 +121,11 @@ namespace Cognifide.PowerShell.Console.Services
 
             var isAuthenticated = Context.IsLoggedIn;
 
+            if (!CheckServiceAuthentication(context, apiVersion, serviceName, isAuthenticated))
+            {
+                return;
+            }
+
             // in some cases we need to set the database as it's still set to web after authentication
             if (!scDb.IsNullOrEmpty())
             {
@@ -136,19 +137,9 @@ namespace Cognifide.PowerShell.Console.Services
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb?.Name;
 
-            if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
-            {
-                HttpContext.Current.Response.StatusCode = 401;
-                HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
-                PowerShellLog.Error(
-                    $"Attempt to call the {serviceMappingKey} service failed as - user not logged in, authentication failed, or no credentials provided.");
-                return;
-            }
-
             if (scriptDb == null && !apiVersion.Is("file") && !apiVersion.Is("handle"))
             {
-                PowerShellLog.Error(
-                    $"The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
+                PowerShellLog.Error($"The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
                 return;
             }
 
@@ -164,27 +155,27 @@ namespace Cognifide.PowerShell.Console.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    ProcessMedia(request, isUpload, scriptDb, itemParam, unpackZip, skipExisting);
+                    ProcessMedia(context, isUpload, scriptDb, itemParam, unpackZip, skipExisting);
                     return;
                 case "file":
-                    ProcessFile(request, isUpload, originParam, pathParam);
+                    ProcessFile(context, isUpload, originParam, pathParam);
                     return;
                 case "handle":
-                    ProcessHandle(originParam);
+                    ProcessHandle(context, originParam);
                     return;
                 case "2":
                     UpdateCache(dbName);
                     if (!_apiScripts.ContainsKey(dbName))
                     {
-                        HttpContext.Current.Response.StatusCode = 404;
-                        HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
+                        context.Response.StatusCode = 404;
+                        context.Response.StatusDescription = "The specified script is invalid.";
                         return;
                     }
                     var dbScripts = _apiScripts[dbName];
                     if (!dbScripts.ContainsKey(itemParam))
                     {
-                        HttpContext.Current.Response.StatusCode = 404;
-                        HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
+                        context.Response.StatusCode = 404;
+                        context.Response.StatusDescription = "The specified script is invalid.";
                         return;
                     }
                     scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
@@ -198,15 +189,14 @@ namespace Cognifide.PowerShell.Console.Services
                     return;
             }
 
-            ProcessScript(context, request, scriptItem);
+            ProcessScript(context, scriptItem);
         }
 
         public bool IsReusable => true;
 
-        private static bool CheckServiceEnabled(string apiVersion, string httpMethod)
+        private static bool CheckServiceEnabled(HttpContext context, string apiVersion, string httpMethod)
         {
             var isEnabled = true;
-            const string disabledMessage = "The request could not be completed because the service is disabled.";
 
             switch (apiVersion)
             {
@@ -241,16 +231,18 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (isEnabled) return true;
 
-            HttpContext.Current.Response.StatusCode = 403;
-            HttpContext.Current.Response.StatusDescription = disabledMessage;
+            const string disabledMessage = "The request could not be completed because the service is disabled.";
+
+            context.Response.StatusCode = 403;
+            context.Response.StatusDescription = disabledMessage;
+            PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as it is not enabled.");
 
             return false;
         }
 
-        private static bool CheckServiceAuthentication(string apiVersion, bool isAuthenticated)
+        private static bool CheckServiceAuthentication(HttpContext context, string apiVersion, string serviceName, bool isAuthenticated)
         {
             var skipAuthentication = false;
-            const string disabledMessage = "The request could not be completed because the service requires authentication.";
 
             switch (apiVersion)
             {
@@ -261,13 +253,32 @@ namespace Cognifide.PowerShell.Console.Services
                 default:
                     if (!isAuthenticated)
                     {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        const string disabledMessage =
+                            "The request could not be completed because the service requires authentication.";
+
+                        context.Response.StatusCode = 401;
+                        context.Response.StatusDescription = disabledMessage;
+                        context.Response.SuppressFormsAuthenticationRedirect = true;
+                        PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
                     }
+
                     break;
             }
 
             return skipAuthentication || isAuthenticated;
+        }
+
+        private static bool CheckIsUserAuthorized(HttpContext context, string authUserName, string serviceName)
+        {
+            var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName);
+            if (isAuthorized) return true;
+
+            context.Response.StatusCode = 401;
+            context.Response.StatusDescription = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
+            context.Response.SuppressFormsAuthenticationRedirect = true;
+            PowerShellLog.Error($"Attempt to call the '{serviceName}' service failed as user '{authUserName}' was not authorized.");
+
+            return false;
         }
 
         private static string GetPathFromParameters(string originParam, string pathParam)
@@ -322,15 +333,15 @@ namespace Cognifide.PowerShell.Console.Services
             return folder;
         }
 
-        private static void ProcessFile(HttpRequest request, bool isUpload, string originParam, string pathParam)
+        private static void ProcessFile(HttpContext context, bool isUpload, string originParam, string pathParam)
         {
             if (isUpload)
             {
-                ProcessFileUpload(request.InputStream, originParam, pathParam);
+                ProcessFileUpload(context.Request.InputStream, originParam, pathParam);
             }
             else
             {
-                ProcessFileDownload(originParam, pathParam);
+                ProcessFileDownload(context, originParam, pathParam);
             }
         }
 
@@ -352,41 +363,42 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void ProcessFileDownload(string originParam, string pathParam)
+        private static void ProcessFileDownload(HttpContext context, string originParam, string pathParam)
         {
             var file = GetPathFromParameters(originParam, pathParam);
 
             if (string.IsNullOrEmpty(file))
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                HttpContext.Current.Response.StatusDescription = "The specified path is invalid.";
+                context.Response.StatusCode = 404;
+                context.Response.StatusDescription = "The specified path is invalid.";
             }
             else
             {
                 file = FileUtil.MapPath(file);
                 if (!File.Exists(file))
                 {
-                    HttpContext.Current.Response.StatusCode = 404;
-                    HttpContext.Current.Response.StatusDescription = "The specified path is invalid.";
+                    context.Response.StatusCode = 404;
+                    context.Response.StatusDescription = "The specified path is invalid.";
                     return;
                 }
 
                 var fileInfo = new FileInfo(file);
-                WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
+                WriteCacheHeaders(context, fileInfo.Name, fileInfo.Length);
                 try
                 {
-                    HttpContext.Current.Response.TransmitFile(file);
+                    context.Response.TransmitFile(file);
                 }
                 catch (IOException _)
                 {
-                    HttpContext.Current.Response.StatusCode = 500;
-                    HttpContext.Current.Response.StatusDescription = _.Message;
+                    context.Response.StatusCode = 500;
+                    context.Response.StatusDescription = _.Message;
                 }
             }
         }
 
-        private static void ProcessMedia(HttpRequest request, bool isUpload, Database scriptDb, string itemParam, bool unpackZip, bool skipExisting)
+        private static void ProcessMedia(HttpContext context, bool isUpload, Database scriptDb, string itemParam, bool unpackZip, bool skipExisting)
         {
+            var request = context.Request;
             if (isUpload)
             {
                 if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
@@ -421,7 +433,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             else
             {
-                ProcessMediaDownload(scriptDb, itemParam);
+                ProcessMediaDownload(context, scriptDb, itemParam);
             }
         }
 
@@ -498,7 +510,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void ProcessMediaDownload(Database db, string itemParam)
+        private static void ProcessMediaDownload(HttpContext context, Database db, string itemParam)
         {
             var indexOfDot = itemParam.IndexOf(".", StringComparison.Ordinal);
             itemParam = indexOfDot == -1 ? itemParam : itemParam.Substring(0, indexOfDot);
@@ -509,24 +521,24 @@ namespace Cognifide.PowerShell.Console.Services
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                HttpContext.Current.Response.StatusDescription = "The specified media is invalid.";
+                context.Response.StatusCode = 404;
+                context.Response.StatusDescription = "The specified media is invalid.";
                 return;
             }
 
             var mediaStream = mediaItem.GetMediaStream();
             if (mediaStream == null)
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                HttpContext.Current.Response.StatusDescription = "The specified media is invalid.";
+                context.Response.StatusCode = 404;
+                context.Response.StatusDescription = "The specified media is invalid.";
                 return;
             }
 
             var str = mediaItem.Extension;
             if (!str.StartsWith(".", StringComparison.InvariantCulture))
                 str = "." + str;
-            WriteCacheHeaders(mediaItem.Name + str, mediaItem.Size);
-            WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
+            WriteCacheHeaders(context, mediaItem.Name + str, mediaItem.Size);
+            WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
         private static byte[] Decompress(byte[] gzip)
@@ -578,19 +590,19 @@ namespace Cognifide.PowerShell.Console.Services
             ProcessScript(context, script, null, cliXmlArgs, rawOutput, sessionId, persistentSession);
         }
 
-        private static void ProcessScript(HttpContext context, HttpRequest request, Item scriptItem)
+        private static void ProcessScript(HttpContext context, Item scriptItem)
         {
             if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
+                context.Response.StatusCode = 404;
+                context.Response.StatusDescription = "The specified script is invalid.";
                 return;
             }
 
             var script = scriptItem[Templates.Script.Fields.ScriptBody];
 
             var streams = new Dictionary<string, Stream>();
-
+            var request = context.Request;
             if (request.Files?.AllKeys?.Length > 0)
             {
                 foreach (var fileName in request.Files.AllKeys)
@@ -610,8 +622,8 @@ namespace Cognifide.PowerShell.Console.Services
         {
             if (string.IsNullOrEmpty(script))
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
+                context.Response.StatusCode = 404;
+                context.Response.StatusDescription = "The specified script is invalid.";
                 return;
             }
 
@@ -629,7 +641,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (streams != null)
             {
                 var scriptArguments = new Hashtable();
-                foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
+                foreach (var param in context.Request.QueryString.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.QueryString[param];
                     if (string.IsNullOrEmpty(param)) continue;
@@ -638,9 +650,9 @@ namespace Cognifide.PowerShell.Console.Services
                     scriptArguments[param] = paramValue;
                 }
 
-                foreach (var param in HttpContext.Current.Request.Params.AllKeys)
+                foreach (var param in context.Request.Params.AllKeys)
                 {
-                    var paramValue = HttpContext.Current.Request.Params[param];
+                    var paramValue = context.Request.Params[param];
                     if (string.IsNullOrEmpty(param)) continue;
                     if (string.IsNullOrEmpty(paramValue)) continue;
 
@@ -733,22 +745,22 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void ProcessHandle(string originParam)
+        private static void ProcessHandle(HttpContext context, string originParam)
         {
             if (originParam.IsNullOrEmpty())
             {
-                HttpContext.Current.Response.StatusCode = 404;
+                context.Response.StatusCode = 404;
             }
             else
             {
                 // download handle
                 if (!(WebUtil.GetSessionValue(originParam) is OutDownloadMessage message))
                 {
-                    HttpContext.Current.Response.StatusCode = 404;
+                    context.Response.StatusCode = 404;
                     return;
                 }
                 WebUtil.RemoveSessionValue(originParam);
-                var response = HttpContext.Current.Response;
+                var response = context.Response;
                 response.Clear();
                 response.AddHeader("Content-Disposition", "attachment; filename=" + message.Name);
                 response.ContentType = message.ContentType;
@@ -830,10 +842,10 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void WriteCacheHeaders(string filename, long length)
+        private static void WriteCacheHeaders(HttpContext context, string filename, long length)
         {
             Assert.ArgumentNotNull(filename, "filename");
-            var response = HttpContext.Current.Response;
+            var response = context.Response;
             response.ClearHeaders();
             response.AddHeader("Content-Type", MimeMapping.GetMimeMapping(filename));
             response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
