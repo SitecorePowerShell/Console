@@ -134,8 +134,6 @@ SharedFields:
             $error = "Error at line:$($_.InvocationInfo.ScriptLineNumber), char:$($_.InvocationInfo.OffsetInLine). " + $_.Exception.Message
         }
     
-        $watch.Stop()
-        
         if($fields -gt 0) {
             $items = $items | Select-Object -Property $fields
         }
@@ -151,6 +149,8 @@ SharedFields:
         if($depth -lt 1) {
             $depth = 2
         }
+    
+        $watch.Stop()
         
         [ordered]@{
             Status = $status
