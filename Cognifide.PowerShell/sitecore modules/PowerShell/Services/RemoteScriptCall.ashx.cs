@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Console.Services
     {
         private static readonly object LoginLock = new object();
         private const string ApiScriptsKey = "Cognifide.PowerShell.ApiScriptsKey";
-        private const string expirationSetting = "Cognifide.PowerShell.WebApiCacheExpirationSecs";
+        private const string ExpirationSetting = "Cognifide.PowerShell.WebApiCacheExpirationSecs";
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
@@ -386,7 +386,7 @@ namespace Cognifide.PowerShell.Console.Services
                 }
 
                 var fileInfo = new FileInfo(file);
-                WriteCacheHeaders(context, fileInfo.Name, fileInfo.Length);
+                AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
                 try
                 {
                     context.Response.TransmitFile(file);
@@ -541,11 +541,11 @@ namespace Cognifide.PowerShell.Console.Services
             var str = mediaItem.Extension;
             if (!str.StartsWith(".", StringComparison.InvariantCulture))
                 str = "." + str;
-            WriteCacheHeaders(context, mediaItem.Name + str, mediaItem.Size);
+            AddContentHeaders(context, mediaItem.Name + str, mediaItem.Size);
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
-        private static byte[] Decompress(byte[] gzip)
+        private static byte[] ConvertFromGzipBytes(byte[] gzip)
         {
             using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
             {
@@ -578,7 +578,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 request.InputStream.CopyTo(ms);
                 var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false ;
-                var bytes = shouldDecompress ? Decompress(ms.ToArray()) : ms.ToArray();
+                var bytes = shouldDecompress ? ConvertFromGzipBytes(ms.ToArray()) : ms.ToArray();
                 var requestBody = Encoding.UTF8.GetString(bytes);
                 var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
                 if (splitBody.Length > 0)
@@ -790,7 +790,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private ApiScriptCollection GetApiScripts(string dbName)
+        private static ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
             if(HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
@@ -810,14 +810,14 @@ namespace Cognifide.PowerShell.Console.Services
                 GetAvailableScripts(roots, apiScripts);
             }
 
-            var expiration = Settings.GetIntSetting(expirationSetting, 30);
-            HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, DateTime.UtcNow.AddSeconds(expiration),
-                Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+            var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
+            HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
+                new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
 
             return apiScripts;
         }
 
-        private void GetAvailableScripts(IEnumerable<Item> roots, ApiScriptCollection apiScripts)
+        private static void GetAvailableScripts(IEnumerable<Item> roots, ApiScriptCollection apiScripts)
         {
             foreach (var root in roots)
             {
@@ -851,7 +851,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void WriteCacheHeaders(HttpContext context, string filename, long length)
+        private static void AddContentHeaders(HttpContext context, string filename, long length)
         {
             Assert.ArgumentNotNull(filename, "filename");
             var response = context.Response;
@@ -870,8 +870,5 @@ namespace Cognifide.PowerShell.Console.Services
         public ID Id { get; set; }
     }
 
-    internal class ApiScriptCollection : ConcurrentDictionary<string, SortedDictionary<string, ApiScript>>
-    {
-
-    }
+    internal class ApiScriptCollection : ConcurrentDictionary<string, SortedDictionary<string, ApiScript>> {}
 }
