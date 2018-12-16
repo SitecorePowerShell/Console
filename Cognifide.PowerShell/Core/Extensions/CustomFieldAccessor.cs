@@ -7,7 +7,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
-    public class CustomFieldAccessor : DynamicObject
+    public class CustomFieldAccessor : DynamicObject, IEnumerable<CustomField>
     {
         private readonly Item _item;
 
@@ -16,11 +16,25 @@ namespace Cognifide.PowerShell.Core.Extensions
             _item = item;
         }
 
+        public IEnumerator<CustomField> GetEnumerator()
+        {
+            foreach (Field itemField in _item.Fields)
+            {
+                if (itemField == null) continue;
+
+                var field = FieldTypeManager.GetField(itemField);
+                if (field != null)
+                {
+                    yield return field;
+                }
+            }
+        }
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var name = binder.Name.ToLower();
             var field = _item.Fields[name];
-            result = field != null ? FieldTypeManager.GetField(_item.Fields[name]) : null;
+            result = field != null ? FieldTypeManager.GetField(field) : null;
             return field != null;
         }
 
@@ -28,6 +42,11 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             ItemShellExtensions.ModifyProperty(_item, binder.Name, value);
             return true;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

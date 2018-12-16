@@ -72,11 +72,9 @@ namespace Cognifide.PowerShell.Core.Extensions
                 var getter = $"$this[\"{fieldId}\"]";
                 if (item.Fields[fieldId] != null)
                 {
-                    switch (item.Fields[fieldId].TypeKey)
+                    if (item.Fields[fieldId].TypeKey == "datetime")
                     {
-                        case ("datetime"):
-                            getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
-                            break;
+                        getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
                     }
                 }
                 var setter =
