@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         public RenderingDefinition Instance { get; set; }
 
         [Parameter(Mandatory = true, Position = 1)]
-        public Hashtable Parameter { get; set; }
+        public IDictionary Parameter { get; set; }
 
         [Parameter]
         public SwitchParameter Overwrite { get; set; }

@@ -12,8 +12,9 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Alias("Rendering")]
         public RenderingDefinition Instance { get; set; }
 
-        [Parameter(Mandatory = true, Position = 1)]
-        public string[] Parameter { get; set; }
+        [Parameter(Mandatory = true)]
+        [Alias("Key")]
+        public string[] Name { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -22,9 +23,9 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 return;
             }
 
-            var parameters = this.GetParameters(Instance);
+            var parameters = GetParameters(Instance);
 
-            foreach (var key in Parameter)
+            foreach (var key in Name)
             {
                 WriteVerbose($"Removing the rendering parameter with key {key}.");
                 parameters.Remove(key);
