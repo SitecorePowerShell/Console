@@ -11,6 +11,7 @@
     var tabCompletions = null;
     var lastUpdate = 0;
     var attempts = 0;
+    var pausedCommand = null;
 
     cognifide.powershell.setOptions = function (options) {
         $.extend(settings, options);
@@ -147,6 +148,8 @@
                         }, wait);
                     })(initialWait);
                 } else if (data["status"] === "unauthorized") {
+                    // Store command to be executed once session has been evaluated
+                    pausedCommand = function () { callPowerShellHost(term, guid, command); };
                     cognifide.powershell.elevateSession();
                 } else {
                     displayResult(term, data);
@@ -326,7 +329,11 @@
 
     cognifide.powershell.bootstrap = function(elevationBlocked) {
 	if(!elevationBlocked){
-          if (!isBlank(getUrlParameter("item") && getUrlParameter("item") != "null")) {
+          if (pausedCommand) {
+              var unpausedCommand = pausedCommand;
+              pausedCommand = null;
+              unpausedCommand();
+          } else if (!isBlank(getUrlParameter("item") && getUrlParameter("item") != "null")) {
               callPowerShellHost(terminal, guid, "cd \"" + getUrlParameter("db") + ":\\" + myUnescape(getUrlParameter("item")) + "\"");
           } else if (!isBlank(getUrlParameter("debug") && getUrlParameter("debug") === "true")) {
               callPowerShellHost(terminal, guid, "Get-PSCallStack");
