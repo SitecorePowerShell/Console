@@ -201,6 +201,9 @@
     <Compile Include="Commandlets\Presentation\GetRenderingParameterCommand.cs" />
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
     <Compile Include="Commandlets\Presentation\SetRenderingParameterCommand.cs" />
+    <Compile Include="Commandlets\Presentation\AddPlaceholderSettingCommand.cs" />
+    <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
+    <Compile Include="Commandlets\Presentation\NewPlaceHolderSettingCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
     <Compile Include="Core\Extensions\ExpressionExtensions.cs" />
