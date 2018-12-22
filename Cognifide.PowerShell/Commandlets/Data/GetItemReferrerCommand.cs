@@ -9,14 +9,8 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemReferrer")]
-    [OutputType(typeof (Item),
-        ParameterSetName =
-            new[] {"Item from Pipeline, return Item", "Item from Path, return Item", "Item from ID, return Item"})]
-    [OutputType(typeof (ItemLink),
-        ParameterSetName =
-            new[]
-            {"Item from Pipeline, return ItemLink", "Item from Path, return ItemLink", "Item from ID, return ItemLink"})
-    ]
+    [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline, return Item", "Item from Path, return Item", "Item from ID, return Item"})]
+    [OutputType(typeof (ItemLink), ParameterSetName = new[] {"Item from Pipeline, return ItemLink", "Item from Path, return ItemLink", "Item from ID, return ItemLink"})]
     public class GetItemReferrerCommand : BaseItemCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,

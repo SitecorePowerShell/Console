@@ -5,15 +5,13 @@ namespace Cognifide.PowerShell.Core.Extensions
 {
     public class ItemEqualityComparer : IEqualityComparer<Item>
     {
-        private static readonly ItemEqualityComparer instance = new ItemEqualityComparer();
-
-        public static ItemEqualityComparer Instance
-        {
-            get { return instance; }
-        }
+        public static ItemEqualityComparer Instance { get; } = new ItemEqualityComparer();
 
         public bool Equals(Item left, Item right)
         {
+            if (left == null && right == null) return true;
+            if (left == null || right == null) return false;
+
             return left.ID == right.ID && left.Version.Number == right.Version.Number &&
                    left.Language.Name == right.Language.Name;
         }
