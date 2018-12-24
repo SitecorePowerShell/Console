@@ -29,7 +29,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessRecord()
         {
-            const int pageSize = 25;
             var entryCount = 0;
             if (Identity != null)
             {
@@ -37,11 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 if (user == null) return;
 
                 entryCount = Archive.GetEntryCountForUser(user);
-                var totalPages = (int)Math.Ceiling(entryCount / (double)pageSize);
-                for (var i = 0; i < totalPages; i++)
-                {
-                    WriteObject(Archive.GetEntriesForUser(user, i, pageSize), true);
-                }
+                WriteObject(Archive.GetEntriesForUser(user, 0, entryCount), true);
             }
             else
             {
@@ -53,12 +48,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     entryCount = Archive.GetEntryCount();
-                    var totalPages = (int) Math.Ceiling(entryCount / (double) pageSize);
-
-                    for (var i = 0; i < totalPages; i++)
-                    {
-                        WriteObject(Archive.GetEntries(i, pageSize), true);
-                    }
+                    WriteObject(Archive.GetEntries(0, entryCount), true);
                 }
             }
         }
