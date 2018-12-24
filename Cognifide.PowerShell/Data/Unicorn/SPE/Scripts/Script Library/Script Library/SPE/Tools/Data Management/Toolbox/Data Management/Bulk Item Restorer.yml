@@ -59,7 +59,7 @@ SharedFields:
         Write-Host "- Found $($archive.GetEntryCount()) entries in the $($database.Name) database"
         $entries = Get-ArchiveItem -Archive $archive | Where-Object { $_.ArchiveLocatlDate -ge $selectedDate }
         if(!$entries) {
-           Write-Host "- [S] No matching entires found" -ForegroundColor Yellow 
+           Write-Host "- [S] No matching entries found" -ForegroundColor Yellow 
         }
         
         foreach($entry in $entries) {
