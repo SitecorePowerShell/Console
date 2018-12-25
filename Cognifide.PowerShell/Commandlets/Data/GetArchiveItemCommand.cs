@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Web;
-using Cognifide.PowerShell.Commandlets.Security;
+﻿using Cognifide.PowerShell.Commandlets.Security;
 using Sitecore.Data;
 using Sitecore.Data.Archiving;
 using Sitecore.Security.Accounts;
+using System.Management.Automation;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
@@ -14,10 +10,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (ArchiveEntry))]
     public class GetArchiveItemCommand : BaseCommand
     {
-        [Parameter(Mandatory = true)]
-        [Parameter(ParameterSetName = "Everything")]
-        [Parameter(ParameterSetName = "Find by ID")]
-        [Parameter(ParameterSetName = "Find by User")]
+        [Parameter(Mandatory = true, ParameterSetName = "Everything")]
+        [Parameter(Mandatory = true, ParameterSetName = "Find by ID")]
+        [Parameter(Mandatory = true, ParameterSetName = "Find by User")]
         public Archive Archive { get; set; }
 
         [Parameter(ParameterSetName = "Find by ID")]
