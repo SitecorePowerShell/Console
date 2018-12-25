@@ -184,6 +184,8 @@
     <Compile Include="Commandlets\Data\Clones\NotificationType.cs" />
     <Compile Include="Commandlets\Data\Clones\ReceiveItemCloneNotificationCommand.cs" />
     <Compile Include="Commandlets\Data\GetArchiveItemCommand.cs" />
+    <Compile Include="Commandlets\Data\RemoveArchiveItemCommand.cs" />
+    <Compile Include="Commandlets\Data\RestoreArchiveItemCommand.cs" />
     <Compile Include="Commandlets\Data\Search\FilterType.cs" />
     <Compile Include="Commandlets\Data\Search\NewSearchPredicateCommand.cs" />
     <Compile Include="Commandlets\Data\Search\SearchCriteria.cs" />

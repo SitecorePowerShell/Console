@@ -14,7 +14,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (ArchiveEntry))]
     public class GetArchiveItemCommand : BaseCommand
     {
-
         [Parameter(Mandatory = true)]
         [Parameter(ParameterSetName = "Everything")]
         [Parameter(ParameterSetName = "Find by ID")]
@@ -29,13 +28,12 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessRecord()
         {
-            var entryCount = 0;
             if (Identity != null)
             {
                 var user = User.FromName(Identity.Name, false);
                 if (user == null) return;
 
-                entryCount = Archive.GetEntryCountForUser(user);
+                var entryCount = Archive.GetEntryCountForUser(user);
                 WriteObject(Archive.GetEntriesForUser(user, 0, entryCount), true);
             }
             else
@@ -47,7 +45,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 }
                 else
                 {
-                    entryCount = Archive.GetEntryCount();
+                    var entryCount = Archive.GetEntryCount();
                     WriteObject(Archive.GetEntries(0, entryCount), true);
                 }
             }
