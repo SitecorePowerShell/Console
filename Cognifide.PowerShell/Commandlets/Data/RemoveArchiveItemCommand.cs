@@ -30,6 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 var archivalId = Archive.GetArchivalId(ItemId);
                 if (!ShouldProcess(ItemId.ToString(), "Remove items by Item Id")) return;
 
+                WriteVerbose($"Removing item {ItemId} from the archive {Archive.Name}");
                 Archive.RemoveEntries(new ID(archivalId));
             }
             else if (Identity != null)
@@ -38,16 +39,18 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 if (user == null) return;
                 if (!ShouldProcess(Identity.ToString(), "Remove items by User")) return;
 
+                WriteVerbose($"Removing items for user {Identity} from the archive {Archive.Name}");
                 Archive.RemoveEntries(user);
             }
             else if (ArchiveItem != null)
             {
-                foreach (var item in ArchiveItem)
+                foreach (var entry in ArchiveItem)
                 {
-                    var archivalId = item.ArchivalId;
-                    if (!ShouldProcess(item.ItemId.ToString(), "Remove items by ArchiveItem")) return;
+                    var archivalId = entry.ArchivalId;
+                    if (!ShouldProcess(entry.ItemId.ToString(), "Remove items by ArchiveItem")) return;
 
-                    var archive = ArchiveManager.GetArchive(item.ArchiveName, item.Database);
+                    WriteVerbose($"Removing item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
+                    var archive = ArchiveManager.GetArchive(entry.ArchiveName, entry.Database);
                     archive.RemoveEntries(new ID(archivalId));
                 }
             }

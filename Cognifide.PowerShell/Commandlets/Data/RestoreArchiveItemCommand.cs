@@ -31,6 +31,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 var archivalId = Archive.GetArchivalId(ItemId);
                 if (!ShouldProcess(ItemId.ToString(), "Restore items by Item Id")) return;
 
+                WriteVerbose($"Restoring item {ItemId} from the archive {Archive.Name}");
                 Archive.RestoreItem(archivalId);
             }
             else if (Identity != null)
@@ -41,16 +42,22 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 var entryCount = Archive.GetEntryCountForUser(user);
                 var entries = Archive.GetEntriesForUser(user, 0, entryCount);
-                entries.ForEach(item => Archive.RestoreItem(item.ArchivalId));
+                foreach (var entry in entries)
+                {
+                    WriteVerbose($"Restoring item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
+                    Archive.RestoreItem(entry.ArchivalId);
+                }
             }
             else if (ArchiveItem != null)
             {
-                foreach (var item in ArchiveItem)
+                foreach (var entry in ArchiveItem)
                 {
-                    var archivalId = item.ArchivalId;
-                    if (!ShouldProcess(item.ItemId.ToString(), "Restore items by ArchiveItem")) return;
+                    var archivalId = entry.ArchivalId;
+                    if (!ShouldProcess(entry.ItemId.ToString(), "Restore items by ArchiveItem")) return;
 
-                    var archive = ArchiveManager.GetArchive(item.ArchiveName, item.Database);
+                    var archive = ArchiveManager.GetArchive(entry.ArchiveName, entry.Database);
+
+                    WriteVerbose($"Restoring item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
                     archive.RestoreItem(archivalId);
                 }
             }
