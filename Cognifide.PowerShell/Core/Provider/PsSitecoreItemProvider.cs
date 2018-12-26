@@ -21,6 +21,7 @@ using Sitecore.Globalization;
 using Sitecore.StringExtensions;
 using Version = Sitecore.Data.Version;
 using System.Threading.Tasks;
+using Sitecore.Data.Archiving;
 using Sitecore.Data.Fields;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -57,6 +58,11 @@ namespace Cognifide.PowerShell.Core.Provider
                 if (IsDynamicParamSet(PermanentlyParam))
                 {
                     item.Delete();
+                }
+                else if (IsDynamicParamSet(ArchiveParam))
+                {
+                    var archive = ArchiveManager.GetArchive("archive", item.Database);
+                    archive.ArchiveItem(item);
                 }
                 else
                 {
