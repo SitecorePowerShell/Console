@@ -164,10 +164,12 @@ namespace Cognifide.PowerShell.Commandlets.Data
             if (IsParameterSpecified(nameof(Archive)))
             {
                 var archive = ArchiveManager.GetArchive("archive", item.Database);
+                WriteVerbose($"Removing item {itemSig} and moving to the archive {archive.Name} in database {item.Database}");
                 archive.ArchiveVersion(item);
             }
             else
             {
+                WriteVerbose($"Removing item {itemSig}");
                 item.Versions.RemoveVersion();
             }
         }

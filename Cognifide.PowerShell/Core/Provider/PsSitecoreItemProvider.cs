@@ -57,15 +57,18 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (IsDynamicParamSet(PermanentlyParam))
                 {
+                    WriteVerbose($"Removing item {item.ID} permanently");
                     item.Delete();
                 }
                 else if (IsDynamicParamSet(ArchiveParam))
                 {
                     var archive = ArchiveManager.GetArchive("archive", item.Database);
+                    WriteVerbose($"Removing item {item.ID} and moving to the archive {archive.Name} in database {item.Database}");
                     archive.ArchiveItem(item);
                 }
                 else
                 {
+                    WriteVerbose($"Removing item {item.ID} and moving to the recycle bin in database {item.Database}");
                     item.Recycle();
                 }
             }

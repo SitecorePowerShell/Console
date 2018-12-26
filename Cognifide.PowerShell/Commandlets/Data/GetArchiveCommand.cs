@@ -39,7 +39,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 {
                     WildcardWrite(Name, extendedArchives, archive => ((Archive)archive.BaseObject).Name);
                 }
-                
             }
         }
     }
