@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             try
             {
-                LogInfo("Executing ConvertPath(string path='{0}', string recurse='{1}')", path, recurse);
+                LogInfo("Executing RemoveItem(string path='{0}', string recurse='{1}')", path, recurse);
                 if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
                     item = GetItemForPath(path);
@@ -72,7 +72,7 @@ namespace Cognifide.PowerShell.Core.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing ConvertPath(string path='{0}', string recurse='{1}')",
+                    "Error while executing RemoveItem(string path='{0}', string recurse='{1}')",
                     path, recurse);
                 throw;
             }
