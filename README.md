@@ -63,10 +63,7 @@ Enjoy!
 
 ### Resources
 
-Download the module from the [Sitecore Marketplace](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx).
-
-Read the [SPE user guide](https://doc.sitecorepowershell.com/).
-
-See a whole [variety of links to SPE material](http://blog.najmanowicz.com/sitecore-powershell-console/).
-
-Watch some quick start [training videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b).
+* Download the module from the [Sitecore Marketplace](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx).
+* Read the [SPE user guide](https://doc.sitecorepowershell.com/).
+* See a whole [variety of links to SPE material](http://blog.najmanowicz.com/sitecore-powershell-console/).
+* Watch some quick start [training videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b).
