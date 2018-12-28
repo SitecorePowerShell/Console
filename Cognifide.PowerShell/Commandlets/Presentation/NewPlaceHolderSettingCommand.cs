@@ -6,27 +6,28 @@ using Sitecore.Layouts;
 using Sitecore.Text;
 using System.Xml;
 using System;
+using Sitecore.Data;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.New, "PlaceHolderSetting")]
+    [Cmdlet(VerbsCommon.New, "PlaceholderSetting")]
     [OutputType(typeof (PlaceholderDefinition),
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class NewPlaceHolderSettingCommand : BaseItemCommand
+    public class NewPlaceholderSettingCommand : BaseItemCommand
     {       
         [Parameter]
         public string Key { get; set; }
 
         [Parameter]
-        public string UniqueId { get; set; }
+        public ID UniqueId { get; set; }
 
         protected override void ProcessItem(Item item)
         {
             var phs = new PlaceholderDefinition
             {                
-                MetaDataItemId = item.ID.ToString(),
+                MetaDataItemId = item.Paths.FullPath,
                 Key = Key,
-                UniqueId = UniqueId ?? Guid.NewGuid().ToString()
+                UniqueId = (UniqueId ?? ID.NewID).ToString()
             };
 
             var psobj = ItemShellExtensions.WrapInItemOwner(SessionState, item, phs);

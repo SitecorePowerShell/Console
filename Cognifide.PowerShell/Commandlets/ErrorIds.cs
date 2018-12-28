@@ -17,11 +17,14 @@ namespace Cognifide.PowerShell.Commandlets
         MethodNotFound,
         NewItemIOError,
         OriginatingScriptSessionNotInteractive,
+        PlaceholderSettingAlreadyExists,
+        PlaceholderSettingNotFound,
         RenderingNotFound,
         ScriptSessionBusy,
         ScriptSessionCannotBeStopped,
         ScriptSessionIsNotInteractive,
         ScriptSessionNotFound,
         TemplateNotFound,
+        ValueNotFound
     }
 }
