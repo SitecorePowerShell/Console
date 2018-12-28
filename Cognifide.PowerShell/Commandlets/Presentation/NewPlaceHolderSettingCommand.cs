@@ -18,16 +18,13 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Parameter]
         public string Key { get; set; }
 
-        [Parameter]
-        public ID UniqueId { get; set; }
-
         protected override void ProcessItem(Item item)
         {
             var phs = new PlaceholderDefinition
             {                
                 MetaDataItemId = item.Paths.FullPath,
                 Key = Key,
-                UniqueId = (UniqueId ?? ID.NewID).ToString()
+                UniqueId = ID.NewID.ToString()
             };
 
             var psobj = ItemShellExtensions.WrapInItemOwner(SessionState, item, phs);

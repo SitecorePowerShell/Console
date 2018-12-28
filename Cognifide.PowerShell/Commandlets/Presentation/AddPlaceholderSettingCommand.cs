@@ -22,9 +22,6 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         public string MetaDataItemId { get; set; }
 
         [Parameter]
-        public ID UniqueId { get; set; }
-
-        [Parameter]
         public string Key { get; set; }
 
 
@@ -59,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             {                
                 Key = key,
                 MetaDataItemId = metadataItemId,
-                UniqueId = UniqueId?.ToString() ?? Instance.UniqueId
+                UniqueId = ID.NewID.ToString()
             };
 
             if (!PlaceholderSettingExists(device, placeholder))
