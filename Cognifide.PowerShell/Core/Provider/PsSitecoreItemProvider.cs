@@ -21,6 +21,7 @@ using Sitecore.Globalization;
 using Sitecore.StringExtensions;
 using Version = Sitecore.Data.Version;
 using System.Threading.Tasks;
+using Sitecore.Data.Archiving;
 using Sitecore.Data.Fields;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -43,7 +44,7 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             try
             {
-                LogInfo("Executing ConvertPath(string path='{0}', string recurse='{1}')", path, recurse);
+                LogInfo("Executing RemoveItem(string path='{0}', string recurse='{1}')", path, recurse);
                 if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
                     item = GetItemForPath(path);
@@ -56,17 +57,25 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (IsDynamicParamSet(PermanentlyParam))
                 {
+                    WriteVerbose($"Removing item {item.ID} permanently");
                     item.Delete();
+                }
+                else if (IsDynamicParamSet(ArchiveParam))
+                {
+                    var archive = ArchiveManager.GetArchive("archive", item.Database);
+                    WriteVerbose($"Removing item {item.ID} and moving to the archive {archive.Name} in database {item.Database}");
+                    archive.ArchiveItem(item);
                 }
                 else
                 {
+                    WriteVerbose($"Removing item {item.ID} and moving to the recycle bin in database {item.Database}");
                     item.Recycle();
                 }
             }
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing ConvertPath(string path='{0}', string recurse='{1}')",
+                    "Error while executing RemoveItem(string path='{0}', string recurse='{1}')",
                     path, recurse);
                 throw;
             }

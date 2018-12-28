@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string VersionParam = "Version";
         private const string StartWorkflowParam = "StartWorkflow";
         private const string PermanentlyParam = "Permanently";
+        private const string ArchiveParam = "Archive";
         private const string ItemParam = "Item";
         private const string DestinationItemParam = "DestinationItem";
         private const string IdParam = "ID";
@@ -192,6 +193,7 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing RemoveItemDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             var paramAdded = FailSilentlyDynamicParameters(ref dic);
+            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), ArchiveParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), PermanentlyParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             return paramAdded ? dic : null;

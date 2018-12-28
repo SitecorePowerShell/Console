@@ -4,6 +4,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data.Archiving;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
@@ -43,6 +44,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public int MaxRecentVersions { get; set; } = 0;
 
+        [Parameter]
+        public SwitchParameter Archive { get; set; }
+
         protected override void BeginProcessing()
         {
             if (ExcludeLanguage == null || !ExcludeLanguage.Any())
@@ -59,7 +63,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 if (Language == null || !Language.Any())
                 {
-                    Language = new[] {"*"};
+                    Language = new[] { "*" };
                 }
             }
 
@@ -134,7 +138,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     }
                 }
                 else
-                {   
+                {
                     //just remove the piped version
                     RemoveVersion(langItem);
                 }
@@ -152,16 +156,21 @@ namespace Cognifide.PowerShell.Commandlets.Data
         private void RemoveVersion(Item item)
         {
             var itemSig = $"{item.Database}:{item.ID}/{item.Language}#{item.Version}";
-            if (!ProcessedList.Contains(itemSig))
+            if (ProcessedList.Contains(itemSig)) return;
+
+            ProcessedList.Add(itemSig);
+            if (!ShouldProcess(item.GetProviderPath() + ", Lang:" + item.Language.Name + ", Ver:" + item.Version.Number, confirmMessage)) { return; }
+
+            if (IsParameterSpecified(nameof(Archive)))
             {
-                ProcessedList.Add(itemSig);
-                if (
-                    ShouldProcess(
-                        item.GetProviderPath() + ", Lang:" + item.Language.Name + ", Ver:" + item.Version.Number,
-                        confirmMessage))
-                {
-                    item.Versions.RemoveVersion();
-                }
+                var archive = ArchiveManager.GetArchive("archive", item.Database);
+                WriteVerbose($"Removing item {itemSig} and moving to the archive {archive.Name} in database {item.Database}");
+                archive.ArchiveVersion(item);
+            }
+            else
+            {
+                WriteVerbose($"Removing item {itemSig}");
+                item.Versions.RemoveVersion();
             }
         }
 

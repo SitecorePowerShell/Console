@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 {
                     var extendedArchive = new PSObject(archive);
                     extendedArchive.Properties.Add(new PSNoteProperty("Database", database));
+                    extendedArchive.Properties.Add(new PSNoteProperty("Items", archive.GetEntryCount()));
                     extendedArchives.Add(extendedArchive);
                 }
 
@@ -38,7 +39,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 {
                     WildcardWrite(Name, extendedArchives, archive => ((Archive)archive.BaseObject).Name);
                 }
-                
             }
         }
     }

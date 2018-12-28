@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
+using System.Management.Automation;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
-    public class CustomFieldAccessor : DynamicObject, IEnumerable<CustomField>
+    public class CustomFieldAccessor : DynamicObject, IEnumerable<PSObject>
     {
         private readonly Item _item;
 
@@ -16,17 +16,19 @@ namespace Cognifide.PowerShell.Core.Extensions
             _item = item;
         }
 
-        public IEnumerator<CustomField> GetEnumerator()
+        public IEnumerator<PSObject> GetEnumerator()
         {
             foreach (Field itemField in _item.Fields)
             {
                 if (itemField == null) continue;
 
                 var field = FieldTypeManager.GetField(itemField);
-                if (field != null)
-                {
-                    yield return field;
-                }
+                if (field == null) continue;
+
+                var extendedField = new PSObject(field);
+                extendedField.Properties.Add(new PSNoteProperty("Name", itemField.Name));
+
+                yield return extendedField;
             }
         }
 
