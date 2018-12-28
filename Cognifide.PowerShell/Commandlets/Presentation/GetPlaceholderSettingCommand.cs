@@ -7,7 +7,7 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "PlaceholderSetting")]
-    [OutputType(typeof (RenderingDefinition))]
+    [OutputType(typeof (PlaceholderDefinition))]
     public class GetPlaceholderSettingCommand : BasePlaceholderSettingCommand
     {
         protected override void ProcessPlaceholderSettings(Item item, LayoutDefinition layout, DeviceDefinition device, List<PlaceholderDefinition> placeholders)
