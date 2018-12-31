@@ -1,0 +1,39 @@
+﻿---
+ID: "74744022-353c-43f1-b8e4-5bc569ca9348"
+Parent: "11fee71b-c63e-42c8-9319-8883a9a9dd20"
+Template: "d4c7f5f9-8977-4e0c-b6ce-28ae8e0753e2"
+Path: /sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports
+DB: core
+SharedFields:
+- ID: "044e3fdb-22ae-4e6c-b50e-2abdfbabd338"
+  Hint: Link
+  Value: "/sitecore/shell/Applications/PowerShell/PowerShellReports?sc_bw=1"
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+- ID: "d25b56d4-23b6-4462-be25-b6a6d7f38e13"
+  Hint: Icon
+  Value: Office/32x32/chart_donut.png
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\Sitecore Client Authoring|pe|+item:read|pd|+item:read|
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "012a2076-c940-435e-82f3-910e7af891e2"
+      Hint: OpenIframe
+      Type: Checkbox
+      Value: 0
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180410T031231Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
+      Hint: Text
+      Value: PowerShell Reports
