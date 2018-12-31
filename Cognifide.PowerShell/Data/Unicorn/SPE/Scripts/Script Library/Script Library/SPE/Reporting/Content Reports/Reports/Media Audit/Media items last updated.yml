@@ -55,8 +55,11 @@ SharedFields:
             [switch]$IsBefore
         )
         
+        $ignoredPaths = "/sitecore/media library/Default website|/sitecore/media library/Experience Explorer|/sitecore/media library/Images/Social|/sitecore/media library/System"
         $mediaItemContainer = Get-Item -Path "master:\media library"
-        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
+        $items = $mediaItemContainer.Axes.GetDescendants() | 
+            Where-Object { $_.Paths.Path -notmatch $ignoredPaths } |
+            Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
         
         foreach($item in $items) {
             if($IsBefore.IsPresent) {
