@@ -56,12 +56,14 @@ SharedFields:
             [int]$Size
         )
         
+        $ignoredPaths = "/sitecore/media library/Default website|/sitecore/media library/Experience Explorer|/sitecore/media library/Images/Social|/sitecore/media library/System"
         $mediaItemContainer = Get-Item "master:/media library"
         $olderThan = [datetime]::UtcNow.AddDays(-$Age)
         $excludedTemplates = @([Sitecore.TemplateIDs]::MediaFolder, [Sitecore.TemplateIDs]::Node)
         $items = $mediaItemContainer.Axes.GetDescendants() | 
-            Where-Object { $excludedTemplates -notcontains $_.TemplateID } | Initialize-Item | 
-            Where-Object { ($Age -eq 0 -or $_.__Updated -lt $olderThan) -and ($Size -eq 0 -or [int]$_.Size -gt $Size) }
+            Where-Object { $_.Paths.Path -notmatch $ignoredPaths -and $excludedTemplates -notcontains $_.TemplateID } | 
+            Where-Object { ($Age -eq 0 -or $_.Fields["__Updated"].Value -lt $olderThan) -and ($Size -eq 0 -or [int]$_.Fields["Size"].Value -gt $Size) } | 
+            Initialize-Item
         
         foreach($item in $items) {
             if(!(HasReference($item))) {
