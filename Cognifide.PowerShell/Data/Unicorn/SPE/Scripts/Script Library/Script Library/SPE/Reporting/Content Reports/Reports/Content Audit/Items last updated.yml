@@ -26,7 +26,7 @@ SharedFields:
         Title = "Report Filter"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
-        Description = "Filter the results for items updated on or after the specified date"
+        Description = "Filter the results for items updated before or after the specified date"
         Parameters = @(
             @{
                 Name="root"; 
