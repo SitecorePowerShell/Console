@@ -4,6 +4,7 @@ namespace Cognifide.PowerShell.Commandlets
     {
         AccountAlreadyExists,
         AccountNotFound,
+        AmbiguousParameterSet,
         DatabaseNotFound,
         DomainAlreadyExists,
         DomainNotFound,

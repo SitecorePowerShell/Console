@@ -55,16 +55,26 @@ namespace Cognifide.PowerShell.Core.Provider
                 CheckOperationAllowed("remove", item.Access.CanDelete(), item.Uri.ToString());
                 if (!ShouldProcess(item.Paths.Path)) return;
 
-                if (IsDynamicParamSet(PermanentlyParam))
+                var hasArchive = IsDynamicParamSet(ArchiveParam);
+                var hasPermanently = IsDynamicParamSet(PermanentlyParam);
+
+                if (hasArchive && hasPermanently)
                 {
-                    WriteVerbose($"Removing item {item.ID} permanently");
-                    item.Delete();
+                    var error = new ErrorRecord(new ParameterBindingException("Parameter set cannot be resolved using the specified named parameters. Detected Archive and Permanently parameters provided."), ErrorIds.AmbiguousParameterSet.ToString(), ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return;
                 }
-                else if (IsDynamicParamSet(ArchiveParam))
+
+                if (hasArchive)
                 {
                     var archive = ArchiveManager.GetArchive("archive", item.Database);
                     WriteVerbose($"Removing item {item.ID} and moving to the archive {archive.Name} in database {item.Database}");
                     archive.ArchiveItem(item);
+                }
+                else if (hasPermanently)
+                {
+                    WriteVerbose($"Removing item {item.ID} permanently");
+                    item.Delete();
                 }
                 else
                 {
