@@ -1,0 +1,50 @@
+﻿---
+ID: "d7a1fed5-d7f3-4fb2-b1d0-1c08f94eaabb"
+Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
+Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules/Media item is jpeg
+DB: master
+SharedFields:
+- ID: "072645b6-c332-446f-9f2c-255467af5bc9"
+  Hint: RootItem
+  Value: 
+- ID: "37d9ed28-c31b-4686-8564-a0f181721640"
+  Hint: FilterRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{91AD1EDC-9850-48C3-8D4D-B1AC4C9018D2}">
+        <conditions>
+          <or
+            uid="6C0CF379E4024FD6A95E28EB388F27BF">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="D37213D3774F446B85B1E104FCE1D27F"
+              templateid="{DAF085E8-602E-43A6-8299-038FF171349F}" />
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="5FAF33A796B54CCE867BA61452258F84"
+              templateid="{EB3FB96C-D56B-4AC9-97F8-F07B24BB9BF7}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
+  Hint: DefaultFields
+  Value: DisplayName|TemplateName|Dimensions|Size
+- ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+  Hint: Query
+  Value: "location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};+custom:_templatename|jpeg"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160704T021745
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
