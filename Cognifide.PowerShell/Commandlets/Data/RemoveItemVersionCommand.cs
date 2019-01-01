@@ -45,6 +45,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public int MaxRecentVersions { get; set; } = 0;
 
         [Parameter]
+        public SwitchParameter Permanently { get; set; }
+
+        [Parameter]
         public SwitchParameter Archive { get; set; }
 
         protected override void BeginProcessing()
@@ -161,16 +164,33 @@ namespace Cognifide.PowerShell.Commandlets.Data
             ProcessedList.Add(itemSig);
             if (!ShouldProcess(item.GetProviderPath() + ", Lang:" + item.Language.Name + ", Ver:" + item.Version.Number, confirmMessage)) { return; }
 
-            if (IsParameterSpecified(nameof(Archive)))
+            var hasArchive = IsParameterSpecified(nameof(Archive));
+            var hasPermanently = IsParameterSpecified(nameof(Permanently));
+
+            if (hasArchive && hasPermanently)
+            {
+                WriteError(typeof(ParameterBindingException), "Parameter set cannot be resolved using the specified named parameters. Detected Archive and Permanently parameters provided.", ErrorIds.AmbiguousParameterSet, ErrorCategory.InvalidOperation, null);
+                return;
+            }
+
+            if (IsParameterSpecified("Archive"))
             {
                 var archive = ArchiveManager.GetArchive("archive", item.Database);
+                if (archive == null) return;
                 WriteVerbose($"Removing item {itemSig} and moving to the archive {archive.Name} in database {item.Database}");
                 archive.ArchiveVersion(item);
             }
+            else if (IsParameterSpecified("Permanently"))
+            {
+                WriteVerbose($"Removing item {itemSig} permanently.");
+                item.Versions.RemoveVersion();
+            }
             else
             {
-                WriteVerbose($"Removing item {itemSig}");
-                item.Versions.RemoveVersion();
+                var archive = ArchiveManager.GetArchive("recyclebin", item.Database);
+                if (archive == null) return;
+                WriteVerbose($"Removing item {itemSig} and moving to the archive {archive.Name} in database {item.Database}");
+                archive.ArchiveVersion(item);
             }
         }
 
