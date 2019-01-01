@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     if (!ShouldProcess(entry.ItemId.ToString(), "Restore items by ArchiveItem")) return;
 
                     var archive = ArchiveManager.GetArchive(entry.ArchiveName, entry.Database);
-
+                    if (archive == null) return;
                     WriteVerbose($"Restoring item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
                     archive.RestoreItem(archivalId);
                 }

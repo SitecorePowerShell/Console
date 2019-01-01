@@ -49,8 +49,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     var archivalId = entry.ArchivalId;
                     if (!ShouldProcess(entry.ItemId.ToString(), "Remove items by ArchiveItem")) return;
 
-                    WriteVerbose($"Removing item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
                     var archive = ArchiveManager.GetArchive(entry.ArchiveName, entry.Database);
+                    if (archive == null) return;
+                    WriteVerbose($"Removing item {entry.ItemId} from the archive {entry.ArchiveName} in database {entry.Database.Name}");
                     archive.RemoveEntries(new ID(archivalId));
                 }
             }
