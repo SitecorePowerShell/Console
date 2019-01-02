@@ -139,6 +139,10 @@ SharedFields:
     Get-Audit | Show-ListView @tableProps
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Find all audit entries in the default log file.
   Versions:
   - Version: 1
     Fields:

@@ -30,11 +30,10 @@ SharedFields:
     $settings = @{
         Title = "Report Filter"
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
-        Width = "350"
-        Height = "250"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         Description = "Filter the results based on the media size and type"
+        ShowHint = $true
         Parameters = @{ 
             Name = "selectedSize"
             Value = 250000
@@ -75,9 +74,9 @@ SharedFields:
         Initialize-Item | Sort-Object -Property Size
     
     $reportProps = @{
-        Title = "Media by size"
-        InfoTitle = "Media filtered by size"
-        InfoDescription = "Media found larger than $($selectedSize) bytes."
+        Title = "Media by size and type"
+        InfoTitle = "Media filtered by file size and extension"
+        InfoDescription = "Media found larger than $($selectedSize) bytes. Some paths included with a default installation were ignored."
         Property = @("Name","TemplateName","Size", "Extension","ItemPath")
     }
     $items | Show-ListView @reportProps

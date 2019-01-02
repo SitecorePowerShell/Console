@@ -84,9 +84,13 @@ SharedFields:
     Close-Window 
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Identify possible host name conflicts between sites.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20131217T134740
+      Value: 20131217T194740Z
