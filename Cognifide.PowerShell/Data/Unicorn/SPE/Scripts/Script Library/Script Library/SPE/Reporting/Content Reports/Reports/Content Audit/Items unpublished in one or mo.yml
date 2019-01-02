@@ -100,8 +100,9 @@ SharedFields:
     }
     
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
-    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | 
+    $items = @($root) + @(($root.Axes.GetDescendants())) | 
         Filter-UnpublishedItem -TargetDatabase $targets |
+        Initialize-Item |
         Sort-Object -Property Name
     $watch.Stop()
     Write-Verbose "$($items.Count) items found in $($watch.ElapsedMilliseconds) ms"

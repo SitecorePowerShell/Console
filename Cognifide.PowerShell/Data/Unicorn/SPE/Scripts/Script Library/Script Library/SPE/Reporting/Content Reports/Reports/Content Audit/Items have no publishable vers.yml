@@ -58,7 +58,7 @@ SharedFields:
         exit
     }
     
-    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | NoPublishableVersions
+    $items = @($root) + @(($root.Axes.GetDescendants())) | NoPublishableVersions | Initialize-Item
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which are non-publishable."

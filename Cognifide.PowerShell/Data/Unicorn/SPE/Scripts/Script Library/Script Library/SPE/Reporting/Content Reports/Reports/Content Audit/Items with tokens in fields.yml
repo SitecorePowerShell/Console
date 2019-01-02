@@ -59,8 +59,6 @@ SharedFields:
         )
         Title = "Report Filter"
         Description = "Choose the criteria for the report."
-        Width = 550
-        Height = 300
         ShowHints = $true
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }

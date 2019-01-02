@@ -22,6 +22,7 @@ SharedFields:
     $database = "master"
     $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
     $periodOptions = [ordered]@{Before=1;After=2;}
+    $maxDaysOptions = [ordered]@{"-- Skip --"=[int]::MaxValue;30=30;90=90;120=120;365=365;}
     $settings = @{
         Title = "Report Filter"
         OkButtonName = "Proceed"
@@ -47,9 +48,18 @@ SharedFields:
                 Options = $periodOptions
                 Tooltip = "Pick whether the items should have been last updated before or after the specified date"
                 Editor = "radio"
+            },
+            @{
+                Name = "selectedMaxDays"
+                Title = "Max Days"
+                Value = [int]::MaxValue
+                Options = $maxDaysOptions
+                Tooltip = "Pick the maximum number of days to include starting with the specified date"
+                Editor = "combo"
             }
         )
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        ShowHint = $true
     }
     
     $result = Read-Variable @settings
@@ -63,21 +73,35 @@ SharedFields:
             [Sitecore.Data.Items.Item]$Item,
             
             [datetime]$Date=([datetime]::Today),
-            [switch]$IsBefore
+            [switch]$IsBefore,
+            
+            [int]$MaxDays
         )
         
+        $convertedDate = [Sitecore.DateUtil]::IsoDateToDateTime($item.Fields[[Sitecore.FieldIDs]::Updated].Value)
+        $isWithinDate = $false
         if($IsBefore.IsPresent) {
-            if($item."__Updated" -le $Date) {
-                $item
+            if($convertedDate -le $Date) {
+                $isWithinDate = $true
             }
         } else {
-            if($item."__Updated" -ge $Date) {
+            if($convertedDate -ge $Date) {
+                $isWithinDate = $true
+            }
+        }
+        
+        if($isWithinDate) {
+            if($MaxDays -lt [int]::MaxValue) {
+                if([math]::Abs(($convertedDate - $Date).Days) -le $MaxDays) {
+                    $item
+                }
+            } else {
                 $item
             }
         }
     }
     
-    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-LastUpdated -Date $selectedDate -IsBefore:($selectedPeriod -eq 1)
+    $items = @($root) + @(($root.Axes.GetDescendants())) | Where-LastUpdated -Date $selectedDate -IsBefore:($selectedPeriod -eq 1) -MaxDays $selectedMaxDays | Initialize-Item
     
     $message = "before"
     if($selectedPeriod -ne 1) {

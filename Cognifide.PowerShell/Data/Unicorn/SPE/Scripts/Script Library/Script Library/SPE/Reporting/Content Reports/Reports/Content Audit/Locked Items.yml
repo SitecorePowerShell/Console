@@ -25,17 +25,17 @@ SharedFields:
     
     $props = @{
         Title = "Items Locked"
-        Description = "This report will analyse the branch and will tell you which items havehave beenn locked. If user is selected only items locked by the user will be shown."
-        Width = 600
-        Height = 300
+        Description = "Lists all the items locked by the specified user."
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         Parameters = @(
+            @{ Name = "info"; Title="Details"; Tooltip="Analyse the branch and report which items are currently locked. Optionally filter by user."; Editor="info";},
             @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."},
-            @{ Name = "user"; Title="Locking User"; Tooltip="Tooltip for user"; Editor="user"},
-            @{ Name = "since"; Title="Locked Since (leave empty is to ignore)"; Tooltip="Locked since"; Editor="date time"}
+            @{ Name = "user"; Title="Locking User"; Tooltip="Specify the user associated with the locked items."; Editor="user"},
+            @{ Name = "since"; Title="Locked Since"; Tooltip="Specify when the items were placed in a lock state. Leave empty to skip this step."; Editor="date time"}
         )
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        ShowHints = $true
     }
     
     $result = Read-Variable @props
@@ -69,6 +69,7 @@ SharedFields:
     
         $items |
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Version"; Expression={$_.Version } },
                 @{Label="Owner"; Expression={ $_.__Owner} },
                 @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} },
                 @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
