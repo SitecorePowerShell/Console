@@ -93,7 +93,7 @@ SharedFields:
     
     $ignoredPaths = "/sitecore/media library/Default website|/sitecore/media library/Experience Explorer|/sitecore/media library/Images/Social|/sitecore/media library/System"
     $root = Get-Item -Path "master:\media library"
-    $items = @($root) + @(($root.Axes.GetDescendants())) | 
+    $items = @(($root.Axes.GetDescendants())) | 
             Where-Object { $_.Paths.Path -notmatch $ignoredPaths } |
             Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | 
             Where-LastUpdated -Date $selectedDate -IsBefore:($selectedPeriod -eq 1) -MaxDays $selectedMaxDays | Initialize-Item
@@ -126,9 +126,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on media items without an update within a certain number of days.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20140408T090203
+      Value: 20140408T140203Z
