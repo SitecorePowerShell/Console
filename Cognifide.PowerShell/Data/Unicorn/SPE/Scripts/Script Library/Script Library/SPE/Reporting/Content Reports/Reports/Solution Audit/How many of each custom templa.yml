@@ -52,6 +52,9 @@ SharedFields:
 Languages:
 - Language: en
   Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on how many times a custom template is used.
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
     Value: "How many of each custom template is used?"
@@ -60,4 +63,4 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20121203T180757
+      Value: 20121204T000757Z

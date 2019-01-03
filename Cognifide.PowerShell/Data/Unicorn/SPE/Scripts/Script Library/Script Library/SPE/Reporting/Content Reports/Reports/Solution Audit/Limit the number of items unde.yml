@@ -38,7 +38,8 @@ SharedFields:
         Exit
     }
     
-    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.Children.Count -gt $maxCount } | 
+    @($item) + @(($item.Axes.GetDescendants())) | Where-Object { $_.Children.Count -gt $maxCount } | 
+        Initialize-Item |
         Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} |
         Show-ListView -Property Name, `
             @{Name="Children"; Expression={$_.Children.Count}}, `
@@ -51,9 +52,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on items where the children count exceeds the recommended limit. Filter by a root item.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130206T171604
+      Value: 20130206T231604Z
