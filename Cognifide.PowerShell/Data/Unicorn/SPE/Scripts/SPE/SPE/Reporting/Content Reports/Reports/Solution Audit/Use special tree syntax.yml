@@ -27,13 +27,14 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name="item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"}, `
         @{ Name="showAll"; Value=$false; Title="Include items even if they define their source"; Tooltip="Include items with Source defined.";} `
         -Title "Sitecore recommendation:" `
         -Description "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx 
                 to make sure users can only select the appropriate items, or Sitecore query in the other selection fields." -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window
@@ -56,6 +57,9 @@ SharedFields:
 Languages:
 - Language: en
   Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on templates which make use of a Link template field with no Source value configured. Filter by a root item.
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
     Value: Use source query to restrict the results on Treelists, DropTrees, and TreelistEx
@@ -64,4 +68,4 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130207T142030
+      Value: 20130207T202030Z

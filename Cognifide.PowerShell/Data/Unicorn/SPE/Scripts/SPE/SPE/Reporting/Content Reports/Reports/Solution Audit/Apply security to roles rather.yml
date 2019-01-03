@@ -31,11 +31,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\"
+    $icon ="OfficeWhite/32x32/shield.png"
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
         -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
         -Title "Find items with security set for a user instead of role" -Width 600 -Height 200 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window
@@ -52,9 +53,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on items where security is explicitly set for a user rather than a role. Filter by a root item.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130207T151257
+      Value: 20130207T211257Z

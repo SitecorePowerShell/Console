@@ -27,8 +27,6 @@ SharedFields:
     $domainOptions = Get-Domain | ForEach-Object { $options = [ordered]@{} } { $options[$_.Name]=$_.Name } { $options }
     $settings = @{
         Title = "Report Filter"
-        Width = "350"
-        Height = "250"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         Description = "Filter items explicitly referencing the specified domain."
@@ -41,6 +39,7 @@ SharedFields:
             }
         )
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        ShowHints = $true
     }
     
     $result = Read-Variable @settings
@@ -74,6 +73,10 @@ SharedFields:
     Close-Window    
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on items where security is configured with users or roles from a specified domain.
   Versions:
   - Version: 1
     Fields:

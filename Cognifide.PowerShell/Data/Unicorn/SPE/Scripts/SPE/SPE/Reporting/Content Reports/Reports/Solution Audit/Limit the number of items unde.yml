@@ -26,19 +26,21 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\content"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
         @{ Name = "maxCount"; Value=50; Title="Children number threshhold"; Tooltip="List items with more than this number of children.";} `
         -Description "Which of my items have most children? Are there too many? The report will show you all the nodes that have more than your selected number of direct descendants to allow you to address any potential issues arising. " `
         -Title "Report Filter" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window
         Exit
     }
     
-    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.Children.Count -gt $maxCount } | 
+    @($item) + @(($item.Axes.GetDescendants())) | Where-Object { $_.Children.Count -gt $maxCount } | 
+        Initialize-Item |
         Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} |
         Show-ListView -Property Name, `
             @{Name="Children"; Expression={$_.Children.Count}}, `
@@ -51,9 +53,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on items where the children count exceeds the recommended limit. Filter by a root item.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130206T171604
+      Value: 20130206T231604Z

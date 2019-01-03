@@ -29,11 +29,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\layout\Sublayouts"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Layouts branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/layout"} `
         -Description "The report will show you the numer of all sublayouts and list all sublayouts that do not define rendering parameters." `
         -Title "Leverage the Presentation component parameters" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window
@@ -61,9 +62,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on renderings where no rendering parameters are used. Filter by a root item.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130207T152327
+      Value: 20130207T212327Z
