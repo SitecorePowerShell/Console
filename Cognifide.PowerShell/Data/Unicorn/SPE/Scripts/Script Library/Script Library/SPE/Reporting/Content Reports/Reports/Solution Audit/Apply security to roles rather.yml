@@ -31,11 +31,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\"
+    $icon ="OfficeWhite/32x32/shield.png"
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
         -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
         -Title "Find items with security set for a user instead of role" -Width 600 -Height 200 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

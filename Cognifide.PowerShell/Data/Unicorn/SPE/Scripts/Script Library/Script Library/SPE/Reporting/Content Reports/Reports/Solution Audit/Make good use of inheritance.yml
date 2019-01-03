@@ -24,11 +24,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
         -Description "This script analyses which of your templates inherit directly from <i>Standard Item</i> template?." `
         -Title "Sitecore recommendation: Make good use of inheritance" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

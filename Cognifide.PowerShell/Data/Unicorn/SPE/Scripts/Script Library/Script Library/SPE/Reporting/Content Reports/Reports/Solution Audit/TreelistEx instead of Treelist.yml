@@ -23,11 +23,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
         -Description "Sitecore recommendation: Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants" `
         -Title "Which of my templates use TreeList fields?" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

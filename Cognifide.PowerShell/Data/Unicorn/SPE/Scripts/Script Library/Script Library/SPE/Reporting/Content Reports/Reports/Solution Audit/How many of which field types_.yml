@@ -19,11 +19,12 @@ SharedFields:
     Import-Function Render-ReportField
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
         -Description "This report will analyse the template branch and will tell you which field types are used in which quantities." `
         -Title "Count field types used by templates. " -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

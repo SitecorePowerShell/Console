@@ -41,6 +41,7 @@ SharedFields:
         Width = 500
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $item = Get-Item master:\templates

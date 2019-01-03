@@ -27,13 +27,14 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name="item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"}, `
         @{ Name="showAll"; Value=$false; Title="Include items even if they define their source"; Tooltip="Include items with Source defined.";} `
         -Title "Sitecore recommendation:" `
         -Description "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx 
                 to make sure users can only select the appropriate items, or Sitecore query in the other selection fields." -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

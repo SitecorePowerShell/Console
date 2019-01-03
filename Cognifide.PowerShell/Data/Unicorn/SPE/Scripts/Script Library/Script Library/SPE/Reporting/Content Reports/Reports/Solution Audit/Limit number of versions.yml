@@ -41,6 +41,7 @@ SharedFields:
         Height = 280
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @dialogProps 

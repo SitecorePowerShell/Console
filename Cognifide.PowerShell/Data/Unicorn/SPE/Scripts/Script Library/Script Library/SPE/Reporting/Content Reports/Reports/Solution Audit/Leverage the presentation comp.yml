@@ -29,11 +29,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\layout\Sublayouts"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Layouts branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/layout"} `
         -Description "The report will show you the numer of all sublayouts and list all sublayouts that do not define rendering parameters." `
         -Title "Leverage the Presentation component parameters" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

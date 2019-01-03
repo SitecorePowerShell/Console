@@ -27,11 +27,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\templates"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
         -Description "What Image fields do I have and in which template? Do they have Source defined? The report will show all fields of type 'Image' and a path to a template it's defined in." `
         -Title "Report Filter" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window

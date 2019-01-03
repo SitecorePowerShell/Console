@@ -32,11 +32,12 @@ SharedFields:
     #>
     
     $item = Get-Item -Path "master:\"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
         -Description "This report will analyse the branch and will tell you which items restrict rights to fields or themselves." `
         -Title "Find items with security set for a user instead of role" -Width 525 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
     if($result -ne "ok") {
         Close-Window
