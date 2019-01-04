@@ -988,6 +988,10 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                     edit.Attributes["type"] = "password";
                 }
+                else if (isEditorSpecified && editor.HasWord("tristate"))
+                {
+                    edit = new Sitecore.Shell.Applications.ContentEditor.Tristate();
+                }
                 else
                 {
                     edit = new EditExtended();
