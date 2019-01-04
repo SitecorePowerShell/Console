@@ -1247,9 +1247,9 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
             }
-            else if (control is Combobox)
+            else if (control is Combobox combobox)
             {
-                var boolValue = ((Combobox)control).Value;
+                var boolValue = combobox.Value;
                 result.Add("Value", boolValue);
             }
             else if (control is TreeList treeList)
