@@ -46,7 +46,8 @@ SharedFields:
     )
     
     $itemsTab = @(
-        @{ Name = "item"; Title="Start Item - item"; Root="/sitecore/content/"; Tab="Items"; }, 
+        @{ Name = "item"; Title="Start Item - item"; Root="/sitecore/content/"; Tab="Items"; },
+        @{ Variable = Get-Variable "Parent"; Title="Parent - variable"; Tab="Items"; },
         @{ Name = "items"; Title="Bunch of Templates - treelist"; 
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="treelist"; Tab="Items"; }
@@ -67,8 +68,7 @@ SharedFields:
             editor="groupeddroplink"; Tab="More Items"; },
         @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist"; 
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="groupeddroplist"; Tab="More Items"; },
-        @{ Variable = Get-Variable "Parent"; Tab="More Items"; }
+            editor="groupeddroplist"; Tab="More Items"; }
     )
     
     $rightsTab = @(
@@ -138,8 +138,11 @@ SharedFields:
     Write-Host 'Editor text: returns a string value' -ForegroundColor Green
     $someText | Out-Default
     
-    Write-Host 'Editor text: returns a string value' -ForegroundColor Green
+    Write-Host 'Editor multitext: returns a string value' -ForegroundColor Green
     $multiText | Out-Default
+    
+    Write-Host 'Editor password: returns a string value' -ForegroundColor Green
+    $password | Out-Default
     
     Write-Host 'Editor combo: returns a string value' -ForegroundColor Green
     $anOption | Out-Default

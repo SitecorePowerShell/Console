@@ -895,10 +895,12 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             Sitecore.Web.UI.HtmlControls.Control edit;
-            if (variable["lines"] != null && ((int)variable["lines"] > 1))
+            if ((isEditorSpecified && editor.HasWord("multitext")) || 
+                (variable["lines"] != null && (int)variable["lines"] > 1))
             {
+                var lines = MainUtil.GetInt(variable["lines"], 4);
                 edit = new Memo();
-                edit.Attributes.Add("rows", variable["lines"].ToString());
+                edit.Attributes.Add("rows", lines.ToString());
                 var placeholder = variable["Placeholder"];
                 if (placeholder is string)
                 {
