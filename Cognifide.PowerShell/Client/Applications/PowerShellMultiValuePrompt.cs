@@ -271,6 +271,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (!string.IsNullOrEmpty(height))
                 {
                     variableWrapper.Height = new Unit(height);
+                    variableWrapper.Style.Add("float", "none");
                     variableWrapper.Class = "variableWrapper variableWrapperFixedHeight";
                 }
                 else
@@ -492,7 +493,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 return multiList;
             }
 
-            if (editor.HasWord("droplist"))
+            if (editor.HasWord("droplist", "groupeddroplink", "groupeddroplist"))
             {
                 if (Sitecore.Context.ContentDatabase?.Name != dbName)
                 {
@@ -508,6 +509,37 @@ namespace Cognifide.PowerShell.Client.Applications
                     };
 
                 }
+
+                if (editor.HasWord("groupeddroplist"))
+                {
+                    var groupedDroplist = new GroupedDroplist
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Database = dbName,
+                        ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
+                        Source = variable["Source"] as string ?? "/sitecore",
+                        ItemLanguage = Sitecore.Context.Language.Name,
+                        Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
+                    };
+
+                    return groupedDroplist;
+                }
+                
+                if (editor.HasWord("groupeddroplink"))
+                {
+                    var groupedDroplink = new GroupedDroplink
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Database = dbName,
+                        ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
+                        Source = variable["Source"] as string ?? "/sitecore",
+                        ItemLanguage = Sitecore.Context.Language.Name,
+                        Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
+                    };
+
+                    return groupedDroplink;
+                }
+
                 var lookup = new LookupEx
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -832,7 +864,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 return GetRuleControl(variable, name, value, editor);
             }
 
-            if (isEditorSpecified && editor.HasWord("treelist", "multilist", "droplist", "droptree"))
+            if (isEditorSpecified && editor.HasWord("treelist", "multilist", "droplist", "droptree", "groupeddroplink", "groupeddroplist"))
             {
                 return GetListControl(variable, name, value, editor);
             }
@@ -1228,6 +1260,20 @@ namespace Cognifide.PowerShell.Client.Applications
                 var ids = strIds.Split('|');
                 var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
                 result.Add("Value", items);
+            }
+            else if (control is GroupedDroplist groupedDroplist)
+            {
+                result.Add("Value",
+                    !string.IsNullOrEmpty(groupedDroplist.Value)
+                        ? groupedDroplist.Value
+                        : null);
+            }
+            else if (control is GroupedDroplink groupedDroplink)
+            {
+                result.Add("Value",
+                    !string.IsNullOrEmpty(groupedDroplink.Value)
+                        ? Sitecore.Context.ContentDatabase.GetItem(groupedDroplink.Value)
+                        : null);
             }
             else if (control is LookupEx lookup)
             {

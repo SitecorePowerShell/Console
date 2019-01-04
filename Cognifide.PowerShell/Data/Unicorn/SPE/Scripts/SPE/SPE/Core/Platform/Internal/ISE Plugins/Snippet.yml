@@ -14,21 +14,11 @@ SharedFields:
     Close-Window
     $snippetTemplateId = [Sitecore.Data.ID]::Parse("{B8BC40A8-1560-42C6-AA05-911C9C140AFE}")
     $snippetFieldId = [Sitecore.Data.ID]::Parse("{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}")
-    $snippets = Get-ChildItem -Path "master:{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" -Recurse | 
-        Where-Object { $_.TemplateID -eq $snippetTemplateId } |
-        Sort-Object -Property Name
     
-    $snippetOptions = [ordered]@{}
-    $snippetLookup = @{}
-    foreach($snippet in $snippets) {
-        $snippetLookup[$snippet.ID.ToString()] = $snippet
-        $snippetOptions[$snippet.Name] = $snippet.ID
-    }
-    
-    
+    $snippetRootItem = Get-Item -Path "master:{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}"
     $props = @{
         Parameters = @(
-            @{Name="selectedSnippetId"; Title="Choose the snippet to insert"; Tooltip="The selected snippet will be inserted into the editor."; Options=$snippetOptions; }
+            @{Name="selectedSnippet"; Title="Choose the snippet to insert"; Tooltip="The selected snippet will be inserted into the editor."; Source="Datasource=$($snippetRootItem.ItemPath)&DatabaseName=master"; Editor="groupeddroplink" }
         )
         Title = "Snippet Selector"
         Icon = "OfficeWhite/32x32/piece2.png"
@@ -43,8 +33,6 @@ SharedFields:
     if($result -eq "cancel"){
         exit
     }
-    
-    $selectedSnippet = $snippetLookup[$selectedSnippetId]
     $content = $selectedSnippet.Fields[$snippetFieldId].Value
     
     Send-SheerMessage -Name "ise:plugininsert" -Parameters @{ "script" = $content }

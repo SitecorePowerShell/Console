@@ -23,10 +23,9 @@ SharedFields:
     $selectionTooltips = [ordered]@{1="No options hidden from the user."}
     
     $simpleTab = @(
-        @{ Name = "toggleVisible"; Value=$true; Title="Show Controls"; Tooltip="Checking or unchecking will change hidden state"; Tab="Simple"; Columns = 4; GroupId=1; },
-        @{ Name = "marquee"; Title=""; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"; Columns = 4; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "toggleVisible"; Value=$true; Title="Show Controls - checkbox"; Tooltip="Checking or unchecking will change hidden state"; Editor="checkbox"; Tab="Simple"; Columns = 4; GroupId=1; },
+        @{ Name = "marquee"; Title="Fascinating Message - marquee"; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "Info"; Title="Information - info"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
         @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
         @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
         @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
@@ -36,9 +35,9 @@ SharedFields:
     )
     
     $optionsTab = @(
-        @{ Name = "anOption"; Value="1"; Title="An Option"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Tab="Options"; GroupId = 2; }, 
-        @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
-        @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }
+        @{ Name = "anOption"; Value="1"; Title="An Option - combo"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Editor="combo"; Tab="Options"; GroupId = 2; }, 
+        @{ Name = "checklistItems"; Title="Multiple options - checklist"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
+        @{ Name = "radioListItems"; Title="Radio selection - radio"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }
     )
     
     $timeTab = @(
@@ -47,22 +46,28 @@ SharedFields:
     )
     
     $itemsTab = @(
-        @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tab="Items"; }, 
-        @{ Name = "items"; Title="Bunch of Templates"; 
+        @{ Name = "item"; Title="Start Item - item"; Root="/sitecore/content/"; Tab="Items"; }, 
+        @{ Name = "items"; Title="Bunch of Templates - treelist"; 
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="treelist"; Tab="Items"; }
     )
     
     $moreItemsTab = @(
-        @{ Name = "items2"; Title="Bunch of Templates"; 
+        @{ Name = "items2"; Title="Bunch of Templates - multilist"; 
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="multilist"; Tab="More Items"; Height="300px"; },
-        @{ Name = "items4"; Title="Bunch of Templates with Search"; 
+        @{ Name = "items4"; Title="Bunch of Templates with Search - multilist search"; 
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="multilist search"; Tab="More Items"; Height="300px"; },
-        @{ Name = "items3"; Title="Pick One Template"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        @{ Name = "items3"; Title="Pick One Template - droplist"; 
+            Source="DataSource=/sitecore/templates/user defined&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="droplist"; Tab="More Items"; }, 
+        @{ Name = "selectedGroupedDroplink"; Title="Pick One Template - groupeddroplink"; 
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+            editor="groupeddroplink"; Tab="More Items"; },
+        @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist"; 
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+            editor="groupeddroplist"; Tab="More Items"; },
         @{ Variable = Get-Variable "Parent"; Tab="More Items"; }
     )
     
@@ -115,36 +120,74 @@ SharedFields:
     $result = Read-Variable @dialog2Props
     
     "Variables from dialog:"
-    '$from:      ' + $from
-    '$fromDate:  ' + $fromDate
-    '$item:      ' + $item.Paths.Path
-    '$parent:    ' + $parent.Paths.Path
-    '$silent:    ' + $silent
-    '$someText:  ' + $someText
-    '$multiText: ' + $multiText
-    '$anOption:  ' + $anOption
-    '$checklistItems:' + $checklistItems
-    '$radioListItems:' + $radioListItems
-    '$number:    ' + $number
-    '$user:      ' + $user
-    '$role:      ' + $role
-    '$userOrRole:' + $userOrRole
-    '$fraction:  ' + $fraction
-    '$rule:  '
-    $rule
-    '$rulewithaction:  '
-    $rulewithaction
-    '$items: '
-    $items
-    '$items2: '
-    $items2
-    '$items3: '
-    $items3
-    '$items4: '
-    $items4
-    '$checklistItems:'
-    $checklistItems
+    Write-Host 'Editor date time: returns a DateTime value' -ForegroundColor Green
+    $from | Out-Default
     
+    Write-Host 'Editor date: returns a DateTime value' -ForegroundColor Green
+    $fromDate | Out-Default
+    
+    Write-Host 'Editor item: returns an Item' -ForegroundColor Green
+    $item | Out-Default
+    
+    Write-Host 'Variable: returns an Item' -ForegroundColor Green
+    $parent | Out-Default
+    
+    Write-Host 'Editor checkbox: returns a bool value' -ForegroundColor Green
+    $toggleVisible | Out-Default
+    
+    Write-Host 'Editor text: returns a string value' -ForegroundColor Green
+    $someText | Out-Default
+    
+    Write-Host 'Editor text: returns a string value' -ForegroundColor Green
+    $multiText | Out-Default
+    
+    Write-Host 'Editor combo: returns a string value' -ForegroundColor Green
+    $anOption | Out-Default
+    
+    Write-Host 'Editor checklist: returns an array of string values' -ForegroundColor Green
+    $checklistItems | Out-Default
+    
+    Write-Host 'Editor radio: returns a string value' -ForegroundColor Green
+    $radioListItems | Out-Default
+    
+    Write-Host 'Editor number: returns an of string field value' -ForegroundColor Green
+    $number | Out-Default
+    
+    Write-Host 'Editor user: returns an of string value' -ForegroundColor Green
+    $user | Out-Default
+    
+    Write-Host 'Editor role: returns an of string value' -ForegroundColor Green
+    $role | Out-Default
+    
+    Write-Host 'Editor user role: returns an array of string values' -ForegroundColor Green
+    $userOrRole | Out-Default
+    
+    Write-Host 'Editor rule: returns a double value' -ForegroundColor Green
+    $fraction | Out-Default
+    
+    Write-Host 'Editor rule: returns a string value' -ForegroundColor Green
+    $rule | Out-Default
+    
+    Write-Host 'Editor rule action: returns a string field value' -ForegroundColor Green
+    $rulewithaction | Out-Default
+    
+    Write-Host 'Editor treelist: returns an array of Item' -ForegroundColor Green
+    $items | Out-Default
+    
+    Write-Host 'Editor multilist: returns an array of Item' -ForegroundColor Green
+    $items2 | Out-Default
+    
+    Write-Host 'Editor droplist: returns an Item' -ForegroundColor Green
+    $items3 | Out-Default
+    
+    Write-Host 'Editor multilist search: returns an array of Item' -ForegroundColor Green
+    $items4 | Out-Default
+    
+    Write-Host 'Editor GroupedDroplist: returns the string value' -ForegroundColor Green
+    $selectedGroupedDroplist | Out-Default
+    
+    Write-Host 'Editor GroupedDroplink: returns an Item' -ForegroundColor Green
+    $selectedGroupedDroplink | Out-Default
 Languages:
 - Language: en
   Versions:

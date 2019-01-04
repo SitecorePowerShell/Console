@@ -25,6 +25,9 @@ SharedFields:
     }
     
     $result = Read-Variable @props
+    if($result -eq "cancel"){
+        exit
+    }
 Languages:
 - Language: en
   Versions:
