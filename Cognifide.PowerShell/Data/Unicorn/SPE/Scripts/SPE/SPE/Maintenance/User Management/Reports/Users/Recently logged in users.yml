@@ -23,15 +23,10 @@ SharedFields:
     
     $props = @{
         Title = "Recently logged in users"
+        InfoTitle = "Recently logged in users"
+        InfoDescription = "Details about users that have logged in recently."
         PageSize = 25
-    }
-    
-    $users = [System.Web.Security.Membership]::GetAllUsers()
-    foreach($user in $users) {
-        Add-Member -InputObject $user -MemberType NoteProperty -Name "IsAdministrator" -Value (Get-User -Id $user.UserName).IsAdministrator
-    }
-    $users | Sort-Object -Property LastActivityDate -Descending |
-        Show-ListView @props -Property `
+        Property = @(
             @{Label="Icon"; Expression={ 
                 if ($_.IsLockedOut){ "Office/32x32/lock.png"} 
                 elseif (-not ($_.IsApproved)){ "Office/32x32/dude5.png"}
@@ -43,9 +38,17 @@ SharedFields:
             @{Label="Is Locked Out"; Expression={ $_.IsLockedOut} },
             @{Label="Is Disabled"; Expression={ -not $_.IsApproved} },
             @{Label="Is Administrator"; Expression={ $_.IsAdministrator } },
-            @{Label="Creation Date"; Expression={ $_.CreationDate} },
+            @{Label="Last Activity Date"; Expression={ $_.LastActivityDate } },
             @{Label="Last Login Date"; Expression={ $_.LastLoginDate} },
-            @{Label="Last Activity Date"; Expression={ $_.LastActivityDate } }
+            @{Label="Creation Date"; Expression={ $_.CreationDate} }
+        )
+    }
+    
+    $users = [System.Web.Security.Membership]::GetAllUsers()
+    foreach($user in $users) {
+        Add-Member -InputObject $user -MemberType NoteProperty -Name "IsAdministrator" -Value (Get-User -Id $user.UserName).IsAdministrator
+    }
+    $users | Sort-Object -Property LastActivityDate -Descending | Show-ListView @props
             
     Close-Window
     
