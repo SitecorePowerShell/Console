@@ -43,20 +43,20 @@ SharedFields:
                 Name = "from"
                 Value = [System.DateTime]::Now.AddDays(-7)
                 Title = "Changes from"
-                Description = "Since when you want the activity to be reported?"
+                Tooltip = "Since when you want the activity to be reported?"
                 ShowTime=$true
             },
             @{
                 Name = "to"
                 Value = [System.DateTime]::Now
                 Title = "Changes to"
-                Description="Until when you want the activity to be reported?"
+                Tooltip = "Until when you want the activity to be reported?"
                 ShowTime =$true
             },
             @{
                 Name = "item"
                 Title="Branch to Analyse"
-                Description="Branch you want to analyse."
+                Tooltip="Narrow the results down to this item and its children."
             }
         )
         Title = "Analyse author activilty"
@@ -65,6 +65,8 @@ SharedFields:
         CancelButtonName = "Abort"
         Width = 500
         Height = 300
+        ShowHints = $true
+        Icon = "OfficeWhite/32x32/user.png"
     }
     
     $result = Read-Variable @props
@@ -76,7 +78,7 @@ SharedFields:
     $root = Get-Item -Path "."
     @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) |
         Where-Object { $from.CompareTo($_.__Updated.ToLocalTime()) -lt 0 -and $to.CompareTo($_.__Updated.ToLocalTime()) -gt 0 } |
-        Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated.ToLocalTime() } } -Title "Recent Author Activity"
+        Show-ListView -Property Name, ItemPath, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated.ToLocalTime() } } -Title "Recent Author Activity"
     
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
