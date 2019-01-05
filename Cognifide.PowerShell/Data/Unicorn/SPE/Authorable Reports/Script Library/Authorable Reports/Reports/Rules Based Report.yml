@@ -43,7 +43,8 @@ SharedFields:
     $reportDialogProps = @{
         Parameters = @(
             @{Name="ruleIndex"; Title="Rule Report"; Options=$ruleOptions; Tooltip="Select the preconfigured report rule."},
-            @{Name="showFieldSelector"; Title="Show field selector"; Value=$false; }
+            @{Name="showFieldSelector"; Title="Show field selector"; Value=$false; Columns=6; },
+            @{Name="showLatestVersionOnly"; Title="Show latest version only"; Value=$true; Columns=6; }
         )
         Title = $dialogTitle
         Description = "Authorable reports driven by queries and rules."
@@ -70,7 +71,7 @@ SharedFields:
     $useScopeQuery = $false
     if($scopeQuery) {
         $indexedItems = Find-Item -Index sitecore_master_index -ScopeQuery $scopeQuery | 
-            Initialize-Item | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
+             Initialize-Item | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
         $useScopeQuery = $true
     } else {
         $indexedItems = Find-Item -Criteria @{
@@ -98,11 +99,12 @@ SharedFields:
     } 
     
     $stdOptions = [ordered]@{
-        "Name" = "Name"
         "Display Name" = "DisplayName"
+        "ItemPath" = "ItemPath"
+        "Name" = "Name"
         "PowerShell Path" = "ProviderPath"
         "Template" = "TemplateName"
-        "ItemPath" = "ItemPath"
+        "Version" = "Version"
     }
     
     $customOptions = [ordered]@{}
@@ -151,7 +153,7 @@ SharedFields:
         }
     }
     
-    $properties = @()
+    $properties = [System.Collections.ArrayList]@()
     $fields = $defaultFields + $customFields | Select-Object -Unique
     
     foreach($field in $fields){
@@ -160,17 +162,29 @@ SharedFields:
         if([string]::IsNullOrEmpty($label)) {
             $label = $field
         }
-        $properties += @{Label=$label; Expression=$expressionScript}
+        $properties.Add(@{Label=$label; Expression=$expressionScript}) > $null
     }
     
     $items = @()
     if($useScopeQuery) {
         $items = $indexedItems
     } else {
-        $items = @($root) + ($root.Axes.GetDescendants() | Initialize-Item) | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
+        $items = @($root) + ($root.Axes.GetDescendants()) | 
+            Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master } | Initialize-Item
     }
     
-    $items | Show-ListView -Property $properties -ViewName AuthorableReport -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Output based on the $($reportName) report."
+    if($showLatestVersionOnly) {
+        $items = $items | Where-Object { $_.Versions.IsLatestVersion() }
+    }
+    $reportProps = @{
+        Title = $dialogTitle
+        InfoTitle = "Report Details"
+        InfoDescription = "Output based on the <b>$($reportName)</b> report."
+        ViewName = "AuthorableReport"
+        Property = $properties
+    }
+    
+    $items | Show-ListView @reportProps
     
     if($saveSettings) {
         $ruleItem = Get-Item -Path "master:" -ID ($ruleItems[$ruleIndex].ID)
