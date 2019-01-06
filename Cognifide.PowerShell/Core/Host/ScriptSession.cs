@@ -828,17 +828,18 @@ namespace Cognifide.PowerShell.Core.Host
             if (item == null) return;
 
             SetVariable("SitecoreContextItem", item);
-            host.Runspace.SessionStateProxy.Path.SetLocation(item.GetProviderPath());
+
+            Engine.SessionState.Path.SetLocation(item.GetProviderPath());
         }
 
         public void SetItemContextFromLocation()
         {
-            var provider = host.Runspace.SessionStateProxy.Path.CurrentLocation.Provider;
+            var provider = Engine.SessionState.Path.CurrentLocation.Provider;
 
             if (provider.ImplementingType == typeof(PsSitecoreItemProvider) ||
                 provider.ImplementingType.IsSubclassOf(typeof(PsSitecoreItemProvider)))
             {
-                var path = host.Runspace.SessionStateProxy.Path.CurrentLocation.ProviderPath;
+                var path = Engine.SessionState.Path.CurrentLocation.ProviderPath;
 
                 var colonIndex = path.IndexOf(':');
                 var relativePath = path.Substring(colonIndex + 1).Replace('\\', '/');
