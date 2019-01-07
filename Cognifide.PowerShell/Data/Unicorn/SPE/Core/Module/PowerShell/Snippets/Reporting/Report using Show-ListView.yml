@@ -1,0 +1,43 @@
+﻿---
+ID: "7246d6d7-2713-4482-b9ca-31c0402a5881"
+Parent: "1b905164-81ce-4ee2-b500-4156b96bb191"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Reporting/Report using Show-ListView"
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    $database = "master"
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    # Here would be a good place to use Read-Variable
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item))
+    if($items.Count -eq 0) {
+        Show-Alert "There are no items matching the specified criteria."
+    } else {
+        $props = @{
+            Title = "Custom Report"
+            InfoTitle = "Details about this report"
+            InfoDescription = "This report provides some interesting details about the items."
+            PageSize = 25
+            Property = @(
+                @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+            )
+        }
+        
+        $items | Show-ListView @props
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190107T164834Z
