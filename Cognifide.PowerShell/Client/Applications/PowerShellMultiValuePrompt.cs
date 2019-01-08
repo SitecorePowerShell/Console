@@ -843,7 +843,14 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!variable.Contains("ParentGroupId")) return;
 
             variableEditor.Attributes.Add("data-parent-group-id", variable["ParentGroupId"]?.ToString());
-            variableEditor.Attributes.Add("data-hide-on-value", variable["HideOnValue"]?.ToString());
+            if (variable["HideOnValue"] != null)
+            {
+                variableEditor.Attributes.Add("data-hide-on-value", variable["HideOnValue"]?.ToString());
+            } 
+            else if (variable["ShowOnValue"] != null)
+            {
+                variableEditor.Attributes.Add("data-show-on-value", variable["ShowOnValue"]?.ToString());
+            }
         }
 
         private Control GetVariableEditor(IDictionary variable)

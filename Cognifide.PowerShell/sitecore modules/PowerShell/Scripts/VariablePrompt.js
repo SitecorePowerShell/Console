@@ -45,12 +45,23 @@
                 const e = stateControlElements[i];
                 if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
                     const hideOnValue = e.getAttribute("data-hide-on-value");
-                    if (controlValue === hideOnValue) {
-                        $(e).hide();
+                    if (hideOnValue) {
+                        if (controlValue === hideOnValue) {
+                            $(e).hide();
+                        } else {
+                            $(e).show();
+                        }
                     } else {
-                        $(e).show();
+                        const showOnValue = e.getAttribute("data-show-on-value");
+                        if (showOnValue) {
+                            if (controlValue === showOnValue) {
+                                $(e).show();
+                            } else {
+                                $(e).hide();
+                            }
+                        }
                     }
-                    //$(e).prop("disabled", function(j, v) { return !v; });
+                    
                 }
             }
         });
