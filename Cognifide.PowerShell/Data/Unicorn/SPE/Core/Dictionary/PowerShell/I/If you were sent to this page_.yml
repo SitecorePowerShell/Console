@@ -1,0 +1,22 @@
+﻿---
+ID: "3d896592-9321-4478-a92b-fde215282b48"
+Parent: "2de15896-b60c-4a05-a90d-6f558b536cdf"
+Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
+Path: /sitecore/system/Dictionary/PowerShell/I/If you were sent to this page from a link obtained from an untrusted source please proceed with ca
+DB: core
+SharedFields:
+- ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
+  Hint: Key
+  Value: If you were sent to this page from a link obtained from an untrusted source please proceed with caution or validate the link source before continuing.
+Languages:
+- Language: en
+  Fields:
+  - ID: "2ba3454a-9a9c-4cdf-a9f8-107fd484eb6e"
+    Hint: Phrase
+    Value: If you were sent to this page from a link obtained from an untrusted source please proceed with caution or validate the link source before continuing.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160826T090959

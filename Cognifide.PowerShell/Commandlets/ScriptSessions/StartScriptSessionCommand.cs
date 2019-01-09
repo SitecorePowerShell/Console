@@ -136,7 +136,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             {
                 RecoverHttpContext();
                 WriteError(typeof(CmdletInvocationException),
-                    "An interactive script session cannot be started from non interactive script session.",
+                    "An interactive script session cannot be started from non-interactive script session.",
                     ErrorIds.OriginatingScriptSessionNotInteractive, ErrorCategory.InvalidOperation, HostData.ScriptingHost.SessionId);
                 return;
             }

@@ -37,7 +37,7 @@ Languages:
       Value: 400
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20060412T103554
+      Value: 20060412T093554Z
     - ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
       Hint: Gallery
       Value: Gallery.SessionIDGallery
@@ -53,7 +53,7 @@ Languages:
         sitecore\Admin
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
-      Value: "One-time session"
+      Value: Session
 - Language: "ja-JP"
   Versions:
   - Version: 1

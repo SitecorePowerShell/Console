@@ -115,8 +115,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (!selectedItem.IsPowerShellScript())
                 {
-                    SheerResponse.Alert(
-                        "Select a script you want to open.");
+                    SheerResponse.Alert(Texts.PowerShellScriptBrowser_Select_a_script);
                 }
                 else
                 {
@@ -129,18 +128,17 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (selectedItem == null)
                 {
-                    SheerResponse.Alert(
-                        "Select a library where you want your script saved and specify a name for your script.");
+                    SheerResponse.Alert(Texts.PowerShellScriptBrowser_Select_a_library);
                 }
                 else if (selectedItem.IsPowerShellLibrary() && scriptName.Length == 0)
                 {
-                    SheerResponse.Alert("Specify a name for your script.");
+                    SheerResponse.Alert(Texts.PowerShellScriptBrowser_Specify_a_name);
                 }
                 else if (selectedItem.IsPowerShellScript()) // selected existing script.
                 {
                     var parameters = new NameValueCollection();
-                    parameters["fullPath"] = String.Format("{0}:{1}", selectedItem.Database.Name, selectedItem.Paths.Path);
-                    parameters["message"] = "Are you sure you want to overwrite the selected script?";
+                    parameters["fullPath"] = $"{selectedItem.Database.Name}:{selectedItem.Paths.Path}";
+                    parameters["message"] = Texts.PowerShellScriptBrowser_Are_you_sure_you_want_to_overwrite;
                     Context.ClientPage.Start(this, "OverwriteScript", parameters);
                 }
                 else
@@ -150,8 +148,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     {
                         var parameters = new NameValueCollection();
                         parameters["fullPath"] = fullPath;
-                        parameters["message"] =
-                            "Script with that name already exists, are you sure you want to overwrite the script?";
+                        parameters["message"] = Texts.PowerShellScriptBrowser_Script_with_name_already_exists;
                         Context.ClientPage.Start(this, "OverwriteScript", parameters);
                     }
                     else

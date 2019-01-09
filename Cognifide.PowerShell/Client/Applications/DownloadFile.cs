@@ -103,7 +103,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    SheerResponse.Alert("There is no file attached.");
+                    SheerResponse.Alert(Texts.DownloadFile_No_file_attached);
                 }
             }
             else if (!string.IsNullOrEmpty(FileName))
@@ -116,9 +116,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (!filePath.StartsWith(webSitePath, StringComparison.InvariantCultureIgnoreCase) &&
                     !filePath.StartsWith(dataPath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    FileNameLabel.Text =
-                        "Files from outside of the Sitecore Data and Website folders cannot be downloaded.\n\n" +
-                        "Copy the file to the Sitecore Data folder and try again.";
+                    FileNameLabel.Text = Texts.DownloadFile_Files_outside_Sitecore_cannot_be_downloaded;
                     SizeLabel.Visible = false;
                     PathPrefix.Visible = false;
                     SizePrefix.Visible = false;
@@ -195,7 +193,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    SheerResponse.Alert("There is no file attached.");
+                    SheerResponse.Alert(Texts.DownloadFile_No_file_attached);
                 }
             }
             else if (!string.IsNullOrEmpty(FileName))

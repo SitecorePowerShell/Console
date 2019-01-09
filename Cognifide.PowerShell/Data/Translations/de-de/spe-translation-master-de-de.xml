@@ -1,0 +1,377 @@
+<sitecore>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{DADC7C07-2606-4F1C-98C6-FB8162E55257}" key="PowerShell" path="/sitecore/system/Modules/PowerShell">
+    <de-de>** Welcome to the Sitecore PowerShell Extensions module. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{DADC7C07-2606-4F1C-98C6-FB8162E55257}" key="PowerShell" path="/sitecore/system/Modules/PowerShell">
+    <de-de>** Sitecore PowerShell Extensions module root. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225541Z" fieldid="__Short description" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <de-de>** This command is used with scheduled tasks configured for executing PowerShell scripts. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225541Z" fieldid="__Long description" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <de-de>** This command is used with scheduled tasks configured for executing PowerShell scripts. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225541Z" fieldid="__Display name" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <de-de>** PowerShell Script Command **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <de-de>** Colors used to customize the PowerShell Console and ISE. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <de-de>** Colors used to customize the PowerShell Console and ISE. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <de-de>** Console Colors **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <de-de>** Fonts used to customize the PowerShell Console and ISE. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <de-de>** Fonts used to customize the PowerShell Console and ISE. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <de-de>** Fonts **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <de-de>** Interface settings to the module. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <de-de>** Settings stored for each user. Includes most recently used scripts and interface customization such as font type and color. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <de-de>** Settings **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+    <de-de>** Predefined code snippets used to assist in the authoring of scripts. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+    <de-de>** Predefined code snippets used to assist in the authoring of scripts. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Display name" itemid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" key="PowerShell Script Module" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module">
+    <de-de>** PowerShell Script Module **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Display name" itemid="{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}" key="PowerShell Script Workflow Action" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action">
+    <de-de>** PowerShell Script Workflow Action **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{81184848-ECF9-4448-8515-DFDBC83AC41B}" key="Black" path="/sitecore/system/Modules/PowerShell/Console Colors/Black">
+    <de-de>** Black **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{BD085463-EEB5-4BB8-8473-078943D7EFD8}" key="Blue" path="/sitecore/system/Modules/PowerShell/Console Colors/Blue">
+    <de-de>** Blue **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E2E5425E-3524-472F-9F50-1EE7B383F315}" key="Cyan" path="/sitecore/system/Modules/PowerShell/Console Colors/Cyan">
+    <de-de>** Cyan **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{AB222740-C3B4-46CD-AF84-8B3BB4B9BA37}" key="DarkBlue" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkBlue">
+    <de-de>** DarkBlue **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{23E6E1F1-66BF-4A4C-A1EB-B61A0EF2F6B4}" key="DarkCyan" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkCyan">
+    <de-de>** DarkCyan **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{B1893C54-8D20-4A6C-8A37-5B2887CFB6D7}" key="DarkGray" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGray">
+    <de-de>** DarkGray **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E517A968-CC59-425B-8BAA-6D26EBC1564D}" key="DarkGreen" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGreen">
+    <de-de>** DarkGreen **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{1454C6B5-BD50-4745-A569-644F4AD2622D}" key="DarkMagenta" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkMagenta">
+    <de-de>** DarkMagenta **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{C9F7DFDB-A714-4B14-9F1C-5C31961D493E}" key="DarkRed" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkRed">
+    <de-de>** DarkRed **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{10752CF2-8D56-4DC6-9FFC-6F51DB195422}" key="DarkYellow" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkYellow">
+    <de-de>** DarkYellow **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{2146E874-FA2E-419F-8E29-29A72E0FCB4A}" key="Gray" path="/sitecore/system/Modules/PowerShell/Console Colors/Gray">
+    <de-de>** Gray **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4BDA1126-D3D3-4831-8CA2-A913E01C6208}" key="Green" path="/sitecore/system/Modules/PowerShell/Console Colors/Green">
+    <de-de>** Green **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{31509572-F2A3-455B-887A-D67EE25151AB}" key="Magenta" path="/sitecore/system/Modules/PowerShell/Console Colors/Magenta">
+    <de-de>** Magenta **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5}" key="Red" path="/sitecore/system/Modules/PowerShell/Console Colors/Red">
+    <de-de>** Red **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{711AFE32-3147-41F4-81B7-821CFCF45079}" key="White" path="/sitecore/system/Modules/PowerShell/Console Colors/White">
+    <de-de>** White **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{EAF596B9-BCF7-48AA-939C-A15604D6D98F}" key="Yellow" path="/sitecore/system/Modules/PowerShell/Console Colors/Yellow">
+    <de-de>** Yellow **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{A6F7AE21-E569-492B-9122-578F0E696DCB}" key="Console" path="/sitecore/system/Modules/PowerShell/Settings/Console">
+    <de-de>** Console **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{BCE6F88B-4128-4292-BD13-0402358BFE7C}" key="Context" path="/sitecore/system/Modules/PowerShell/Settings/Context">
+    <de-de>** Context **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{6B3434F0-4398-4BE8-9C14-73EFC3367FC4}" key="Default" path="/sitecore/system/Modules/PowerShell/Settings/Default">
+    <de-de>** Default **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{0D691C42-71E5-44C3-8CDE-6A05FA88DFF8}" key="ISE" path="/sitecore/system/Modules/PowerShell/Settings/ISE">
+    <de-de>** ISE **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}" key="RemoteAutomation" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation">
+    <de-de>** RemoteAutomation **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Display name" itemid="{616C618F-8631-4199-8CDE-34FBEB398C6C}" key="Data" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data">
+    <de-de>** Data **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{6CB327FA-4783-4DF6-B3C2-F396073D7962}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Console/All Users">
+    <de-de>** All Users **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{D237B896-675E-4D63-B86E-6BA898BBBFF8}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Context/All Users">
+    <de-de>** All Users **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{910D33B7-AB6E-429A-9E56-8923346BED66}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Default/All Users">
+    <de-de>** All Users **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{DB19F00D-05F0-4589-8807-189CE2807224}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/ISE/All Users">
+    <de-de>** All Users **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{C02D13EE-8F7C-426D-8623-EEA082B59A79}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation/All Users">
+    <de-de>** All Users **</de-de>
+  </phrase>
+  <phrase updated="20170121T175823" fieldid="Title" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
+    <de-de>Schlüssel:</de-de>
+  </phrase>
+  <phrase updated="20170121T175823" fieldid="Title" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
+    <de-de>Phrase</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{F59378A5-F21D-4E07-B7DE-7986DDA3A510}" key="HostWidth" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/HostWidth">
+    <de-de>** Host Width (in number of text columns) **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{F810EEC7-9A73-43E6-84C1-36E4951D2B3E}" key="ForegroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/ForegroundColor">
+    <de-de>** Text Color **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{AEEB1BB0-87B9-4E16-B5DE-D4CC544A992F}" key="BackgroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/BackgroundColor">
+    <de-de>** Text Background Color **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <de-de>** Temporarily saves scripts executed in the PowerShell ISE **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <de-de>** Indicates that the script will be saved to the user settings item after execution. If the PowerShell ISE is closed, the script will be restored to the editor once reopened. This is helpful when the PowerShell ISE is closed by mistake, however is not a substitute for saving scripts to the script library. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="Title" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <de-de>** Save script last executed? **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <de-de>** Script restored to the PowerShell ISE when reopened **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <de-de>** Last script executed in the PowerShell ISE. This is helpful when the script has not been saved in the script library and the Content Editor is refreshed or the PowerShell ISE is closed. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="Title" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <de-de>** Last executed script **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <de-de>** Typing the character "\" or "-"  will trigger auto-complete (may temporarily delay response from the editor) **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Long description" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <de-de>** Typing the character "\" or "-"  will trigger auto-complete; a web service is called to query new auto-complete data which may result in a temporary delay in response from the editor. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <de-de>** Live Auto-complete **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">
+    <de-de>** Source code written in PowerShell **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">
+    <de-de>** Script body **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <de-de>** Determines visibility when rule is met or not defined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Long description" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <de-de>** Visibility is evaluated for integration points such as those seen in the Context Menu and Ribbon. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <de-de>** Show Rule **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <de-de>** Determines enabled status when rule is met or not defined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Long description" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <de-de>** Enabled status is evaluated for integration points such as those seen in the Context Menu and Ribbon. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <de-de>** Enable Rule **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <de-de>** Scripts with this ID will execute using a single shared session **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Long description" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <de-de>** Scripts with the specified ID will use a single shared session; after which those sessions will remain in memory. When left empty, sessions will close after each use. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <de-de>** Persistent Session ID **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <de-de>** Determines visibility when rule is met or not defined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <de-de>** Visibility is evaluated for integration points such as those seen in the Context Menu and Ribbon. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="Title" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <de-de>** Show Rule **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <de-de>** Determines enabled status when rule is met or not defined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <de-de>** Enabled status is evaluated for integration points such as those seen in the Context Menu and Ribbon. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="Title" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <de-de>** Enable Rule **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{218CA464-CB77-4C97-B141-34871ECAE00B}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation/Enabled">
+    <de-de>** Enables the module for all integration points. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{218CA464-CB77-4C97-B141-34871ECAE00B}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation/Enabled">
+    <de-de>** Disabling will result in integration points ignoring the module such as Functions and Reports. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{BDC2FCBC-91EE-4135-BB04-196E3AE683E5}" key="Type" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data/Type">
+    <de-de>** Type string **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{CD8DA5E2-3B65-4A14-B7A6-9F41181CE172}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/Script">
+    <de-de>** Source code written in PowerShell **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{CD8DA5E2-3B65-4A14-B7A6-9F41181CE172}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/Script">
+    <de-de>** Script body **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Short description" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/EnableRule">
+    <de-de>** Determines enabled status when rule is met or not defined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="__Long description" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/EnableRule">
+    <de-de>** Enabled status is evaluated to determine when the action should be run. **</de-de>
+  </phrase>
+  <phrase updated="20190108T225538Z" fieldid="Title" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/EnableRule">
+    <de-de>** Execute only if rules are met or undefined **</de-de>
+  </phrase>
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/Snippet Definition/Scripting/Script">
+    <de-de>** Source code written in PowerShell **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{C84F4255-CF8A-455D-9C11-94A774773ABA}" key="PowerShell" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell">
+    <de-de>** PowerShell **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{077B0435-77D4-46FF-89D0-AA78190DB8BD}" key="PowerShell Experience Buttons" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons">
+    <de-de>** PowerShell Experience Buttons **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{95323F20-ADAA-4354-B8BD-2D6FD847F205}" key="PowerShell ISE" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE">
+    <de-de>** PowerShell ISE **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <de-de>** where [persistentsessionid,,,specific] persistent PowerShell session was already initiated **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <de-de>** Persistent Session Initiated **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <de-de>** where [persistentsessionid,,,specific] persistent PowerShell session was already initiated and has the [VariableName,,,specific] variable defined and not null **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <de-de>** Persistent Session Variable Defined **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <de-de>** where exposed in a [ValidViewName,,,specific] view **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <de-de>** ListView name matching **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{3F56D6C5-24E0-48DD-8A0C-79FE5AC96A45}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags">
+    <de-de>** Tags **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{DF828AF3-8F0C-406D-AE87-61B2340A4833}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Visibility">
+    <de-de>** Visibility **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <de-de>** when the chrome element is of [ChromeName,,,specific] name  **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <de-de>** Chrome Name **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <de-de>** when chrome is of [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&amp;setRootAsSearchRoot=true,unspecified] type **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <de-de>** Chrome Type **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{2AECAD56-18F1-43DF-93FF-35D9C5865E7A}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags">
+    <de-de>** Tags **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{02F717CF-3EA0-4C60-9D35-5EEF83ED1476}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Visibility">
+    <de-de>** Visibility **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <de-de>** when [MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&amp;setRootAsSearchRoot=true,length] script length is [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] characters long **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <de-de>** Selection Length **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="Text" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <de-de>** when the edited script is [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&amp;setRootAsSearchRoot=true,in a state] **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <de-de>** Session State **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{4A1A2169-951F-4098-95BA-271506DADF42}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags">
+    <de-de>** Tags **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{3CCE52E5-0FB0-463E-B751-8A586DA58549}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Visibility">
+    <de-de>** Visibility **</de-de>
+  </phrase>
+  <phrase updated="20181211T222110Z" fieldid="Text" itemid="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}" key="User Role with inheritance" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security/User Role with inheritance">
+    <de-de>Wo der aktuelle Benutzer ein Mitglied der [value,,,spezifischen] Rolle ist</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{E9622DF0-ED90-47A5-97F8-EBE1E4E5B7DE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags/Default">
+    <de-de>** Default **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{4741FCEE-24E1-460B-A126-2736A5F57871}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State">
+    <de-de>** State **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{F5D1B95B-30D3-4738-B41E-6884517CB485}" key="of Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type">
+    <de-de>** of Type **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{F92D8CC3-B46B-475D-BFBA-E8A04BE64A8F}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags/Default">
+    <de-de>** Default **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}" key="Length of" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of">
+    <de-de>** Length of **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{0C6821F1-3977-4427-9CAF-F963BB8E172D}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State">
+    <de-de>** State **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{CAB0E012-D2DB-42EB-9D8A-3FCF981431AE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags/Default">
+    <de-de>** Default **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{C04EB772-961B-425C-8057-04D3D5D76954}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/saved">
+    <de-de>** saved **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{AFC4CFC7-D9AF-49AC-9F9E-8AB823897CB0}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/modified">
+    <de-de>** modified **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{4C6068C8-E969-4DFD-B22C-33E820D20651}" key="placeholder" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/placeholder">
+    <de-de>** placeholder **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{F4E27AEB-AA6C-4B36-B8B5-72648F47BC98}" key="field" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/field">
+    <de-de>** field **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{041A8A44-DD56-42AB-B4E3-579845669252}" key="rendering" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/rendering">
+    <de-de>** rendering **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{83DD228B-D7BD-4DE2-B858-DEC59CC06ADF}" key="selected" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/selected">
+    <de-de>** selected **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{22BE997D-B182-4C9B-888B-FB543D79E7BE}" key="total" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/total">
+    <de-de>** total **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{9B141D4F-BCC7-4579-A108-192B955C3539}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/saved">
+    <de-de>** saved **</de-de>
+  </phrase>
+  <phrase updated="20190103T141841Z" fieldid="__Display name" itemid="{CA052047-96B6-4802-A58E-AA353757B585}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/modified">
+    <de-de>** modified **</de-de>
+  </phrase>
+</sitecore>

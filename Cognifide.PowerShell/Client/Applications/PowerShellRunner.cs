@@ -211,9 +211,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
                     if (!scriptItem.IsPowerShellScript())
                     {
-                        Title.Text = SessionElevationErrors.MessageOperationFailedWrongDataTemplate;
-                        DialogHeader.Text = "Execution prevented!";
-                        AbortButton.Header = "OK";
+                        Title.Text = Texts.General_Operation_failed_wrong_data_template;
+                        DialogHeader.Text = Texts.PowerShellSessionElevation_Execution_prevented;
+                        AbortButton.Header = Sitecore.Texts.OK;
                         return;
                     }
                     scriptItem.Fields.ReadAll();

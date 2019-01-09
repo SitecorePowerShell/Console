@@ -99,7 +99,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
             var str = Context.ClientPage.ClientRequest.Form["File"];
             if ((str == null) || (str.Trim().Length == 0))
             {
-                SheerResponse.Alert("Specify a file to upload.");
+                SheerResponse.Alert(Sitecore.Texts.PLEASE_SPECIFY_A_FILE_TO_UPLOAD);
             }
             else
             {
@@ -116,8 +116,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
 
         protected void ShowError()
         {
-            SheerResponse.Alert(
-                "An error occured while uploading a file .\n\nThe reason may be that the file does not exist or the path is wrong.");
+            SheerResponse.Alert(Sitecore.Texts.AN_ERROR_OCCURED_WHILE_UPLOADING_THE_REASON_MAY_BE_THAT_THE_FILE_DOES_NOT_EXIST);
             OKButton.Disabled = true;
             CancelButton.Disabled = true;
             OKButton.Disabled = false;
@@ -127,9 +126,8 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         protected void ShowFileTooBig()
         {
             SheerResponse.Alert(
-                Translate.Text(
-                    "The file is too big to be uploaded.\n\nThe maximum size of a file that can be uploaded is {0}.",
-                    MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
+                Translate.Text(Sitecore.Texts.THE_FILE_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_0, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize))
+            );
             OKButton.Disabled = true;
             CancelButton.Disabled = true;
             OKButton.Disabled = false;
@@ -140,9 +138,8 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         {
             Assert.ArgumentNotNullOrEmpty(filename, "filename");
             SheerResponse.Alert(
-                Translate.Text(
-                    "The file \"{0}\" is too big to be uploaded.\n\nThe maximum size of a file that can be uploaded is {1}.",
-                    filename, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
+                Translate.Text(Sitecore.Texts.THE_FILE_0_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_1, filename, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize))
+            );
             OKButton.Disabled = true;
             CancelButton.Disabled = true;
             OKButton.Disabled = false;

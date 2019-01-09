@@ -1,0 +1,27 @@
+﻿---
+ID: "6c5022fa-015b-4640-ac1d-6e440bf352de"
+Parent: "f05ebc0c-dd6f-41fe-85f1-3fea98828335"
+Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
+Path: /sitecore/system/Dictionary/PowerShell/F/Files from outside of the Sitecore Data and Website folders cannot be downloadedCopy the file to t
+DB: core
+SharedFields:
+- ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
+  Hint: Key
+  Value: |
+    Files from outside of the Sitecore Data and Website folders cannot be downloaded.
+    
+    Copy the file to the Sitecore Data folder and try again.
+Languages:
+- Language: en
+  Fields:
+  - ID: "2ba3454a-9a9c-4cdf-a9f8-107fd484eb6e"
+    Hint: Phrase
+    Value: |
+      Files from outside of the Sitecore Data and Website folders cannot be downloaded.
+      
+      Copy the file to the Sitecore Data folder and try again.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Value: "20190105T233932:636823283728412569Z"

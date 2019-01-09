@@ -293,7 +293,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 return;
             }
             var control = ControlFactory.GetControl("MruGallery.SearchItem") as XmlControl;
-            Assert.IsNotNull(control, typeof (XmlControl), Translate.Text(Texts.MruGallery_RenderRecent_Xml_Control___0___not_found),
+            Assert.IsNotNull(control, typeof (XmlControl), Translate.Text(Sitecore.Texts.XML_CONTROL_0_NOT_FOUND),
                 "MruGallery.SearchItem");
 
             Context.ClientPage.AddControl(Scripts, control);

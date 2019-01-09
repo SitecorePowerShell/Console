@@ -5,20 +5,14 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 {
     public static class SessionElevationErrors
     {
-        public const string MessageOperationRequiresElevation =
-            "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again.";
-
-        public const string MessageOperationFailedWrongDataTemplate =
-            "Script cannot be executed as it is of a wrong data template!";
-
         public static ClientCommand OperationRequiresElevation()
         {
-            return SheerResponse.Alert(MessageOperationRequiresElevation);
+            return SheerResponse.Alert(Texts.PowerShellSessionElevation_Operation_requires_elevation);
         }
 
         public static ClientCommand OperationFailedWrongDataTemplate()
         {
-            return SheerResponse.Alert(MessageOperationFailedWrongDataTemplate);
+            return SheerResponse.Alert(Texts.General_Operation_failed_wrong_data_template);
         }
 
     }

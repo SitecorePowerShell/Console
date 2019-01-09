@@ -73,7 +73,7 @@ namespace Cognifide.PowerShell.Client.Controls
             control["Class"] = (user.Name == CurrentUser) ? "selected" : string.Empty;
             control["UserIcon"] = $"<div class=\"versionNum\">{builder}</div>";
             control["Name"] = Translate.Text("<b>{0}</b>", user.Name);
-            control["FullName"] = Translate.Text("<b>{0}</b>.",
+            control["FullName"] = Translate.Text("<b>{0}</b>",
                 string.IsNullOrEmpty(user.Profile.FullName) ? user.LocalName : user.Profile.FullName);
             control["Click"] = $"ise:setuser(user={WebUtil.UrlEncode(user.Name).Replace(@"\", @"\\")})";
         }

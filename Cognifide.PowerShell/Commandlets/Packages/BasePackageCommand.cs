@@ -53,8 +53,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                 WriteError(new ErrorRecord(
                     new ClientAlertException(
                         string.Format(
-                            Translate.Text(
-                                "Cannot access path '{0}'. Please check PackagePath setting in the web.config file."),
+                            Translate.Text("Cannot access path '{0}'. Please check PackagePath setting in the web.config file."),
                             PackagePath)), "sitecore_package_folder_does_not_exist", ErrorCategory.ObjectNotFound, null));
                 return;
             }

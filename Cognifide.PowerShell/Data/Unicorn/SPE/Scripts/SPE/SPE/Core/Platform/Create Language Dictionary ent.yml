@@ -8,19 +8,64 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $texts = [Cognifide.PowerShell.Texts] | Get-Member -static -MemberType Properties | % { [Cognifide.PowerShell.Texts]::($_.Name) }
-    $ScDictionaryPath = "core:\system\Dictionary\PowerShell"
     $translationTest = $false
-    $allEntries = @{}
     
+    # Get current PowerShell dictionary items
+    $ScDictionaryPath = "core:\system\Dictionary\PowerShell"
+    $allEntries = @{}
     Get-ChildItem $ScDictionaryPath -Recurse | ? { $_.TemplateName -eq "Dictionary entry" } | %{ $allEntries[$_.ProviderPath] = $_ }
+    
+    # Get Sitecore default dictionary items by key, for confirming if dictionary entries exist already
+    $allSitecoreEntries = @{}
+    Get-ChildItem "core:\system\Dictionary" -Recurse | ? { $_.TemplateName -eq "Dictionary entry" -and -not $_.ProviderPath.StartsWith($ScDictionaryPath) } | %{ $allSitecoreEntries[$_._Key] = $_ }
+    
+    # Add static strings
+    $texts = @()
+    $texts += [Cognifide.PowerShell.Texts] | Get-Member -static -MemberType Properties | % { [Cognifide.PowerShell.Texts]::($_.Name) }
+    
+    # Add XML Page Literals
+    $ignoredLiteralText = @(
+        "<span class='status'></span><br/>",
+        "<div id='progressbar'></div>"
+    )
+    
+    $nodeTypes = @(
+        @{ Type="Literal"; Property="Text" },
+        @{ Type="MenuHeader"; Property="Header" }
+    )
+    
+    $xmlFiles = Get-ChildItem -Path "$AppPath\sitecore modules\Shell\PowerShell\" -filter "*.xml" -File -Recurse
+    
+    foreach ( $file in $xmlFiles )
+    {
+        foreach ( $type in $nodeTypes ) 
+        {
+            $xml = [xml](Get-Content $file.FullName)
+            $ns = New-Object Xml.XmlNamespaceManager $xml.NameTable
+            $ns.AddNamespace("ns", "http://schemas.sitecore.net/Visual-Studio-Intellisense")
+    
+            foreach ( $node in $xml.SelectNodes("//ns:" + $type.Type, $ns) )
+            {        
+                $value = $node.$($type.Property)
+                
+                # Only take text that don't appear to be a variable name or are being explicitly ignored
+                if ($value -and 
+                    $value -notmatch "^\$[a-zA-Z]+$" -and
+                    $ignoredLiteralText -notcontains $value) {
+                        $texts += $value
+                }
+            }
+        }
+    }
+    
     foreach($text in $texts){
         $itemName = $text.
                         Replace(".","").Replace("[","").Replace("]","").
                         Replace("(","").Replace(")","").Replace(":","").
                         Replace("'","").Replace('"',"").Replace(',',"").
                         Replace('{',"").Replace('}',"").Replace('?',"").
-                        Replace('*',"").
+                        Replace('*',"").Replace('<',"").Replace('>',"").
+                        Replace('\\',"").Replace('/',"").
                         Trim()
         $itemName = $itemName.Substring(0,[Math]::Min(98,$itemName.Length));
         $letter = $itemName.ToUpper()[0]
@@ -28,34 +73,39 @@ SharedFields:
         $letterPath = "$ScDictionaryPath\$letter"
         $path = "$ScDictionaryPath\$pathpart"
         $phrase = $text
+        
         if($translationTest){
             $phrase = "$text (translated)"
         }
-        if(Test-Path $path ){
-            $dictionatyEntry = Get-Item $path -Language "en"
-            if($dictionatyEntry.TemplateName -eq "Dictionary folder"){
+        
+        if ($allSitecoreEntries.ContainsKey($text)) {
+            Write-Host "Sitecore contains own dictionary entry:" -ForegroundColor Magenta -NoNewline
+        }
+        elseif(Test-Path $path ){
+            $dictionaryEntry = Get-Item $path -Language "en"
+            if($dictionaryEntry.TemplateName -eq "Dictionary folder"){
                 Write-Host "Item found but has wrong template (deleting) " -ForegroundColor Blue -NoNewline
-                $dictionatyEntry.Delete();
+                $dictionaryEntry.Delete();
             }
             else 
             {
-                if($dictionatyEntry["Key"] -ne $text)
+                if($dictionaryEntry["Key"] -ne $text)
                 {
                     Write-Host "Item found but Key differs (updating)" -ForegroundColor Blue -NoNewline
-                    $dictionatyEntry.Editing.BeginEdit()
-                    $dictionatyEntry["Key"] = $text
-                    $dictionatyEntry["Phrase"] = $phrase
-                    $dictionatyEntry.Editing.EndEdit() | Out-Null
+                    $dictionaryEntry.Editing.BeginEdit()
+                    $dictionaryEntry["Key"] = $text
+                    $dictionaryEntry["Phrase"] = $phrase
+                    $dictionaryEntry.Editing.EndEdit() | Out-Null
                 }
                 else 
                 {
-                    if($dictionatyEntry["Phrase"] -ne $phrase)
+                    if($dictionaryEntry["Phrase"] -ne $phrase)
                     {
                         Write-Host "Item found but Phrase differs (updating)" -ForegroundColor Blue -NoNewline
-                        $dictionatyEntry.Editing.BeginEdit()
-                        $dictionatyEntry["Key"] = $text
-                        $dictionatyEntry["Phrase"] = $phrase
-                        $dictionatyEntry.Editing.EndEdit() | Out-Null
+                        $dictionaryEntry.Editing.BeginEdit()
+                        $dictionaryEntry["Key"] = $text
+                        $dictionaryEntry["Phrase"] = $phrase
+                        $dictionaryEntry.Editing.EndEdit() | Out-Null
                     }
                     else
                     {
@@ -71,20 +121,31 @@ SharedFields:
             {
                 New-Item $ScDictionaryPath -Name $Letter -ItemType "System/Dictionary/Dictionary folder"  -Language "en" | Out-Null
             }
-            $dictionatyEntry = New-Item $letterPath -Name $itemName -ItemType "System/Dictionary/Dictionary entry" -Language "en"
-            $dictionatyEntry.Editing.BeginEdit()
-            $dictionatyEntry["Key"] = $text
-            $dictionatyEntry["Phrase"] = $phrase
-            $dictionatyEntry.Editing.EndEdit() | Out-Null
+            $dictionaryEntry = New-Item $letterPath -Name $itemName -ItemType "System/Dictionary/Dictionary entry" -Language "en"
+            $dictionaryEntry.Editing.BeginEdit()
+            $dictionaryEntry["Key"] = $text
+            $dictionaryEntry["Phrase"] = $phrase
+            $dictionaryEntry.Editing.EndEdit() | Out-Null
         }
         Write-Host " $pathpart"
-        $allEntries.Remove($dictionatyEntry.Providerpath);
+        $allEntries.Remove($dictionaryEntry.Providerpath);
     }
     
     Write-Host "`n`nFollowing items are not associated with constants and should be reviewed for removal (Be careful as some of them may used by scripts) " -ForegroundColor Yellow
     
-    $allEntries.Values | ft Name, Key, Phrase -AutoSize
+    $allEntries.Values | ft Name, _Key, Phrase -AutoSize
 Languages:
+- Language: "de-DE"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190107T235520Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Versions:
   - Version: 1

@@ -1,0 +1,32 @@
+<sitecore>
+  <phrase updated="20180919T013741Z" fieldid="__Short description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
+    <ja-jp>** Run custom reports built using queries and the rules engine. **</ja-jp>
+  </phrase>
+  <phrase updated="20180919T013741Z" fieldid="__Long description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
+    <ja-jp>** Run custom reports built using queries and the rules engine. **</ja-jp>
+  </phrase>
+  <phrase updated="20180709T033412Z" fieldid="__Short description" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer">
+    <ja-jp>** Peek into the search index; useful in troubleshooting indexing issues. **</ja-jp>
+  </phrase>
+  <phrase updated="20180925T020023Z" fieldid="Title" itemid="{743B8C3C-BA19-4E24-B324-C01DCD20F465}" key="Query" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search/Query">
+    <ja-jp>** Search scope - primary query used for returning results **</ja-jp>
+  </phrase>
+  <phrase updated="20180925T020024Z" fieldid="Title" itemid="{072645B6-C332-446F-9F2C-255467AF5BC9}" key="RootItem" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search/RootItem">
+    <ja-jp>** Root node - fallback when not using the search index **</ja-jp>
+  </phrase>
+  <phrase updated="20180925T020024Z" fieldid="Title" itemid="{37D9ED28-C31B-4686-8564-A0F181721640}" key="FilterRule" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Filter/FilterRule">
+    <ja-jp>** Filter rules - applied after the search completes **</ja-jp>
+  </phrase>
+  <phrase updated="20180925T020024Z" fieldid="Title" itemid="{52C8F3B7-3110-41D1-ABCA-979ED691135C}" key="DefaultFields" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Report/DefaultFields">
+    <ja-jp>** Pipe delimited list of fields returned by the report **</ja-jp>
+  </phrase>
+  <phrase updated="20180526T230735Z" fieldid="__Short description" itemid="{542EED7B-4464-418E-AA70-F7342BF3D046}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open">
+    <ja-jp>** Open the related content item. **</ja-jp>
+  </phrase>
+  <phrase updated="20180526T230727Z" fieldid="__Short description" itemid="{E9CDD2D4-0FAA-4FE2-802D-F686749CA236}" key="Rebuild" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild">
+    <ja-jp>** Rebuild the item in the search index. **</ja-jp>
+  </phrase>
+  <phrase updated="20180526T230747Z" fieldid="__Short description" itemid="{50EE334B-C2B0-47DC-9D7A-CE9D6A8149CE}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh">
+    <ja-jp>** Refresh the results. **</ja-jp>
+  </phrase>
+</sitecore>

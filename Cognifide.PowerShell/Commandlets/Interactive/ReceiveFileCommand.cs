@@ -67,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 AssertDefaultSize(500, AdvancedDialog ? 650 : 300);
 
                 var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description, Icon,
-                    OkButtonName ?? "OK", CancelButtonName ?? "Cancel",
+                    OkButtonName ?? Sitecore.Texts.OK, CancelButtonName ?? Sitecore.Texts.CANCEL,
                     ParentItem?.ID.ToString() ?? Path,
                     Versioned, Language, Overwrite, Unpack, AdvancedDialog);
 

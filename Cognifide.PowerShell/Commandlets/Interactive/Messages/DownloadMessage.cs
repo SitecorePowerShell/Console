@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 }
                 else
                 {
-                    SheerResponse.Alert("There is no file attached.");
+                    SheerResponse.Alert(Texts.DownloadFile_No_file_attached);
                 }
             }
             else

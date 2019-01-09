@@ -731,11 +731,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 new Literal(
                     @"<div class='checkListActions'>" +
                     @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id=" +
-                    editorId + @")')"">" + Translate.Text("Select all") + "</a> &nbsp;|&nbsp; " +
+                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Select_all) + "</a> &nbsp;|&nbsp; " +
                     @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" +
-                    editorId + @")')"">" + Translate.Text("Unselect all") + "</a> &nbsp;|&nbsp;" +
+                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Unselect_all) + "</a> &nbsp;|&nbsp;" +
                     @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" +
-                    editorId + @")')"">" + Translate.Text("Invert selection") + "</a>" +
+                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Invert_selection) + "</a>" +
                     @"</div>");
             checkBorder.Controls.Add(link);
             var checkList = new PSCheckList
@@ -1363,7 +1363,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var id = args.Parameters["id"];
             if (string.IsNullOrEmpty(id))
             {
-                SheerResponse.Alert("Please select a rule");
+                SheerResponse.Alert(Texts.PowerShellMultiValuePrompt_EditCondition_Please_select_a_rule);
             }
             else
             {

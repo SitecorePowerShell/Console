@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             if (!scriptItem.IsPowerShellScript())
             {
                 WriteError(typeof(CmdletInvocationException),
-                    SessionElevationErrors.MessageOperationFailedWrongDataTemplate,
+                    Texts.General_Operation_failed_wrong_data_template,
                     ErrorIds.InvalidItemType, ErrorCategory.InvalidArgument, HostData.ScriptingHost.SessionId);
                 return false;
             }

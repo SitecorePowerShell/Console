@@ -5,6 +5,7 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Sitecore;
 using Sitecore.Controls;
+using Sitecore.Globalization;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -46,8 +47,8 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             UserName.Text = Sitecore.Context.User?.Name ?? string.Empty;
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
-            DialogDescription.Text = String.Format(DialogDescription.Text, actionName);
-            DialogMessage.Text = String.Format(DialogMessage.Text, actionName);
+            DialogDescription.Text = Translate.Text(DialogDescription.Text, actionName);
+            DialogMessage.Text = Translate.Text(DialogMessage.Text, actionName);
         }
 
         protected void CancelClick()

@@ -5,6 +5,8 @@ namespace Cognifide.PowerShell
     [LocalizationTexts(ModuleName = "Sitecore.PowerShell.Extensions")]
     public class Texts
     {
+        public const string General_Operation_failed_wrong_data_template = "Script cannot be executed as it is of a wrong data template!";
+
         public const string PowerShellRunner_OnLoad_Show_copyright__ = "Show copyright..";
         public const string PowerShellRunner_OnLoad_View_script_results = "View script results";
         public const string PowerShellRunner_OnLoad_View_script_results_and_errors = "View script results and errors";
@@ -36,11 +38,7 @@ namespace Cognifide.PowerShell
         public const string PowerShellIse_UpdateProgress_remaining = "remaining";
         public const string PowerShellIse_UpdateRibbon_Script_defined___0_ = "Script defined: {0}";
         public const string PowerShellIse_UpdateRibbon_Single_execution = "Single execution";
-        public const string IseContextPanel_Render_Context = "Context";
-        public const string IseContextPanel_Render_none = "none";
-        public const string IseContextPanel_Render_Session = "Session";
-        public const string IseContextPanelEx_Render_Language = "Language";
-        public const string IseContextPanelEx_Render_User = "User";
+
         public const string MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_ =
             "Most Recently opened scripts:";
         public const string MruGallery_ChangeSearchPhrase_No_scripts_found____Do_you_need_to_re_index_your_databases_ =
@@ -49,7 +47,6 @@ namespace Cognifide.PowerShell
             "Scripts matching: '{0}' in '{1}*' database";
         public const string MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases =
             "Scripts matching: '{0}' in all databases";
-        public const string MruGallery_RenderRecent_Xml_Control___0___not_found = "Xml Control \"{0}\" not found";
 
         public const string
             MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database =
@@ -63,7 +60,31 @@ namespace Cognifide.PowerShell
                 "DropList control cannot render items from the database '{0}' because it its not the same as '{1}' which is the current content database .";
 
         public const string PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule = "Edit rule";
+        public const string PowerShellMultiValuePrompt_EditCondition_Please_select_a_rule = "Please select a rule";
+        public const string PowerShellMultiValuePrompt_GetCheckboxControl_Select_all = "Select all";
+        public const string PowerShellMultiValuePrompt_GetCheckboxControl_Unselect_all = "Unselect all";
+        public const string PowerShellMultiValuePrompt_GetCheckboxControl_Invert_selection = "Invert selection";
 
+        public const string PowerShellSessionElevation_Execution_prevented = "Execution prevented!";
+
+        public const string PowerShellSessionElevation_Operation_requires_elevation =
+            "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again.";
         public const string PowerShellSessionElevation_Could_not_validate = "Could not validate access using the provided credentials.";
+
+        public const string DownloadFile_No_file_attached = "There is no file attached.";
+        public const string DownloadFile_Files_outside_Sitecore_cannot_be_downloaded = "Files from outside of the Sitecore Data and Website folders cannot be downloaded.\n\n" +
+                                                                                       "Copy the file to the Sitecore Data folder and try again.";
+
+        public const string PowerShellScriptBrowser_Select_a_script = "Select a script you want to open.";
+        public const string PowerShellScriptBrowser_Select_a_library = "Select a library where you want your script saved and specify a name for your script.";
+        public const string PowerShellScriptBrowser_Specify_a_name = "Specify a name for your script.";
+        public const string PowerShellScriptBrowser_Are_you_sure_you_want_to_overwrite = "Are you sure you want to overwrite the selected script?";
+        public const string PowerShellScriptBrowser_Script_with_name_already_exists = "Script with that name already exists, are you sure you want to overwrite the script?";
+
+        public const string SessionIDGallery_ID = "ID: <b>{0}</b>";
+        public const string SessionIDGallery_Location = "Location: <b>{0}</b>";
+        public const string SessionIDGallery_User = "User: <b>{0}</b>";
+
+
     }
 }

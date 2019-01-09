@@ -66,9 +66,9 @@ namespace Cognifide.PowerShell.Client.Controls
                     }
 
                     control["Number"] = type;
-                    control["SessionId"] = Translate.Text("ID: <b>{0}</b>", session.ID);
-                    control["Location"] = Translate.Text("Location: <b>{0}</b>.", session.CurrentLocation);
-                    control["UserName"] = Translate.Text("User: <b>{0}</b>.", session.UserName);
+                    control["SessionId"] = Translate.Text(Texts.SessionIDGallery_ID, session.ID);
+                    control["Location"] = Translate.Text(Texts.SessionIDGallery_Location, session.CurrentLocation);
+                    control["UserName"] = Translate.Text(Texts.SessionIDGallery_User, session.UserName);
                     control["Click"] = string.Format("ise:setsessionid(id={0})", session.ID);
                 }
                 var item =

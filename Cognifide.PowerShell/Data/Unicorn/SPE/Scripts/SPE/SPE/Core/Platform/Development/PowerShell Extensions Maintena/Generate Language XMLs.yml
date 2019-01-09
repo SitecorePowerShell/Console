@@ -8,16 +8,22 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    <#
+        .SYNOPSIS
+            Creates Sitecore XML language exports for Sitecore PowerShell items. Items are sourced via the Unicorn serialization configurations.
+        
+        .NOTES
+    		Adam Najmanowicz, Alex Washtell
+    #>
+    
     $srcLanguage = "en"
-    $targetLanguage = "ja-JP"
-    [xml]$xmlCore = New-Object System.Xml.XmlDocument
-    $sitecoreCore = $xmlCore.CreateElement("sitecore")
-    $xmlCore.AppendChild($sitecoreCore) | Out-null
+    $targetLanguage = "de-de"
     
-    [xml]$xmlMaster = New-Object System.Xml.XmlDocument
-    $sitecoreMaster = $xmlMaster.CreateElement("sitecore")
-    $xmlMaster.AppendChild($sitecoreMaster) | Out-null
-    
+    # Some fields are not marked as Shared, but we don't want them translated.
+    $untranslatedFieldIds = @(
+        "{212B99DF-C246-46CE-9E51-86DB77E3BC97}",
+        "{29D3164D-DE97-4ACE-BCB4-83CB6954BEE3}"
+    )
     
     function Append-Attribute{
     	[CmdletBinding()]
@@ -34,7 +40,6 @@ SharedFields:
         $Attribute = $xml.CreateAttribute($Name)
         $Attribute.Value = $Value
         $element.Attributes.Append($Attribute) | Out-null
-        
     }
     
     function Process-Field {
@@ -54,7 +59,10 @@ SharedFields:
     		[xml]$xml,
     
     		[Parameter()]
-    		[System.Xml.XmlElement]$sitecore
+    		[System.Xml.XmlElement]$sitecore,
+    		
+    		[Parameter()]
+    		[bool]$NotTranslated
     	)
     
         $phrase = $xml.CreateElement("phrase")
@@ -71,7 +79,16 @@ SharedFields:
         $phrase.AppendChild($langValue) | Out-null
         if(!$TargetItem)
         {
-            $langValue.InnerText = "** $($SourceItem.$fieldName) **"
+            if ($NotTranslated) {
+                Write-Host Adding non-translatable for $($SourceItem.Paths.FullPath) -ForegroundColor Magenta
+                
+                $langValue.InnerText = $($SourceItem.$fieldName)
+            } else {
+                Write-Host Translation missing for $($SourceItem.Paths.FullPath) -ForegroundColor Yellow
+                
+                $langValue.InnerText = "** $($SourceItem.$fieldName) **"
+                
+            }
         }
         else
         {
@@ -87,110 +104,164 @@ SharedFields:
     		[item]$Item,
     
     		[Parameter()]
-    		[string]$Activity = "undefined",
+    		[switch]$Recurse = $false,
+    		
+    		[Parameter()]
+    		[xml]$MasterXml,
     
     		[Parameter()]
-    		[int]$PercentComplete = 50,
+    		[System.Xml.XmlElement]$MasterSitecore,
+    		
+    		[Parameter()]
+    		[xml]$CoreXml,
     
     		[Parameter()]
-    		[switch]$Recurse = $false
+    		[System.Xml.XmlElement]$CoreSitecore
     	)
-    
-        $sourceItem = Get-Item $Item.ProviderPath -Language $srcLanguage
-        $targetItem = Get-Item $Item.ProviderPath -Language $targetLanguage
-        if($item.Database.Name -eq "master"){
-            $xml = $xmlMaster
-            $sitecore = $sitecoreMaster
-        } 
-        else
-        {
-            $xml = $xmlCore
-            $sitecore = $sitecoreCore
-    
-        }
-        
-        if($Recurse){
-            $children = Get-ChildItem $Item.ProviderPath
-            foreach($child in $children){
-                Process-Item -Item $child -Activity $Activity -PercentComplete $PercentComplete -Recurse 
-            }
-        }
-        
-        foreach ($field in $sourceItem.Fields)
-        {
-            if ($field.ShouldBeTranslated -and -not [string]::IsNullOrEmpty($field.Value))
+    	
+    	process
+    	{
+            $db = $item.Database
+            $sourceItem = Get-Item $Item.ProviderPath -Language $srcLanguage
+            $targetItem = Get-Item $Item.ProviderPath -Language $targetLanguage
+            
+            if($item.Database.Name -eq "master"){
+                $xml = $MasterXml
+                $sitecore = $MasterSitecore
+            } 
+            else
             {
-    	        Process-Field -SourceItem $sourceItem -TargetItem $targetItem -FieldName $field.Name -xml $xml -sitecore $sitecore
+                $xml = $CoreXml
+                $sitecore = $CoreSitecore
+            }
+            
+            if($Recurse){
+                $children = Get-ChildItem $Item.ProviderPath
+                foreach($child in $children){
+                    Process-Item -Item $child -Recurse -MasterXml $MasterXml -MasterSitecore $MasterSitecore -CoreXml $CoreXml -CoreSitecore $CoreSitecore
+                }
+            }
+            
+            foreach ($field in $sourceItem.Fields)
+            {
+                if ($field.ShouldBeTranslated -and -not [string]::IsNullOrEmpty($field.Value))
+                {
+        	        Process-Field -SourceItem $sourceItem -TargetItem $targetItem -FieldName $field.Name -xml $xml -sitecore $sitecore -NotTranslated:($untranslatedFieldIds -contains $field.Id)
+                }
+            }
+    	}
+    }
+    
+    function Write-TranslationFile
+    {
+        [CmdletBinding()]
+    	param(
+    	    [Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+    		[ValidateNotNullOrEmpty()]
+    		[item]$Item,
+    		
+    	    [Parameter(Mandatory=$true)]
+            [string]$Path,
+            
+            [Parameter(Mandatory=$true)]
+            [string]$Prefix
+        )
+        
+        begin {
+            [xml]$xmlCore = New-Object System.Xml.XmlDocument
+            $sitecoreCore = $xmlCore.CreateElement("sitecore")
+            $xmlCore.AppendChild($sitecoreCore) | Out-null
+            
+            [xml]$xmlMaster = New-Object System.Xml.XmlDocument
+            $sitecoreMaster = $xmlMaster.CreateElement("sitecore")
+            $xmlMaster.AppendChild($sitecoreMaster) | Out-null
+        }
+        
+        process {
+            $Item | Process-Item -MasterXml $xmlMaster -MasterSitecore $sitecoreMaster -CoreXml $xmlCore -CoreSitecore $sitecoreCore
+        }
+        
+        end {
+            $xmlFilePrefix = Join-Path $Path $Prefix
+            $suffix = "$targetLanguage-beta.xml"
+            
+            $masterXmlFle = $xmlFilePrefix + "-master-" + $suffix
+            $coreXmlFle = $xmlFilePrefix + "-core-" + $suffix
+            
+            if ($sitecoreMaster.HasChildNodes) {
+                $xmlMaster.Save($masterXmlFle)
+                Write-Host Wrote $sitecoreMaster.ChildNodes.Count phrases to $masterXmlFle -ForegroundColor Green
+            }
+            
+            if ($sitecoreCore.HasChildNodes) {
+                $xmlCore.Save($coreXmlFle)
+                Write-Host Wrote $sitecoreCore.ChildNodes.Count phrases to $coreXmlFle -ForegroundColor Green
             }
         }
     }
     
+    function Get-ItemsFromUnicornConfiguration {
+        [CmdletBinding()]
+    	param(
+    	    [Parameter(Mandatory = $true, Position=0)]
+    		[ValidateNotNullOrEmpty()]
+            [string]$ConfigurationName
+        )
     
-    #Item templates
-    Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates " -PercentComplete 5
-    Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
+        $source = Get-UnicornConfiguration $ConfigurationName | New-UnicornItemSource
+        
+        return $source.Entries | % { [Sitecore.Install.Items.ItemKeyUtils]::Resolve($_) | Wrap-Item }
+    }
     
-    # Module Root
-    Get-Item 'master:\system\Modules\PowerShell' | Process-Item -Activity "Module Root" -PercentComplete 35
+    #
+    # Base translation file
+    #
     
-    # Colors
-    Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Activity "Console Colors" -PercentComplete 40 -Recurse
+    $configurations = @(
+        "Cognifide.PowerShell.Core",
+        "Cognifide.PowerShell.Rules"
+    )
     
-    # Fonts
-    Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
+    $allItems = @()
+    foreach ( $configName in $configurations )
+    {
+        $items = Get-ItemsFromUnicornConfiguration $configName
+        $allItems += $items
+        
+        Write-Host Added $configName with $($items.Count) items
+    }
     
-    # Rules Engine Rules
-    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
-    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 46
-    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
-    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
-    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
-    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 50
-    Get-Item "master:\system\Settings\Rules\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 51
+    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation"
     
-    # Script Library
-    #Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 55
-    #$libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
-    #$i = 0;
-    #$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (55 + 25 / $libraries.Count * $i) }
+    #
+    # Scripts translation file
+    #
     
-    # Settings
-    Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
-    Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
-    Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
+    $allItems = Get-ItemsFromUnicornConfiguration "Cognifide.PowerShell.Scripts"
+    Write-Host Added "Cognifide.PowerShell.Scripts" with $($allItems.Count) items
+    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation-scripts"
     
-    # PowerShell Applications
-    Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 82
+    #
+    # Authorable Reports translation file
+    #
     
-    # PowerShell Dictionary - translation strings
-    Get-Item core:\system\Dictionary\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
+    $allItems = Get-ItemsFromUnicornConfiguration "Cognifide.PowerShell.AuthorableReports"
+    Write-Host Added "Cognifide.PowerShell.AuthorableReports" with $($allItems.Count) items
+    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation-authorable-reports"
     
-    
-    # PowerShell Application Layouts
-    Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse -Activity "PowerShell Application Layouts" -PercentComplete 87
-    Get-Item 'master:\layout\Layouts\PowerShell' | Process-Item -Recurse
-    
-    # Start Menu icons
-    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Process-Item -Activity "Start Menu icons" -PercentComplete 90
-    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Process-Item
-    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Process-Item
-    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
-    Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
-    
-    # Content Editor Context Menu integration
-    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Process-Item -Activity "Content Editor Context Menu integration" -PercentComplete 92
-    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Process-Item
-    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
-    
-    # LaunchPad
-    Get-Item 'core:\client\Applications\Launchpad\PageSettings\Buttons\ContentEditing\PowerShell ISE' | Process-Item -Activity "Launchpad Integration" -PercentComplete 95
-    
-    # Tasks integration
-    Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
-    
-    $xmlMaster.Save("$SitecoreDataFolder\Translations\spe-translation-master-$targetLanguage.xml")
-    $xmlCore.Save("$SitecoreDataFolder\Translations\spe-translation-core-$targetLanguage.xml")
+    Write-Host "Done."
 Languages:
+- Language: "de-DE"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190108T221016Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Versions:
   - Version: 1

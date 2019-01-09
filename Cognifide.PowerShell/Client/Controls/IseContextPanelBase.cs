@@ -59,10 +59,10 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",
                 DateTime.Now.ToString("O"));
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(button1.Name);
+            output.Write(GetFieldValue(button1, "Header"));
             output.Write("</div>");
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(button2.Name);
+            output.Write(GetFieldValue(button2, "Header"));
             output.Write("</div>");
             output.Write("</div>");
             RenderSmallGalleryButton(output, button1, context, ribbon, Label1, Icon1, parameters);
