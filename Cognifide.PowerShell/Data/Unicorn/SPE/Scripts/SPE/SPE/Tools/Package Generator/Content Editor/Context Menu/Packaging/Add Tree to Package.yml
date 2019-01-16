@@ -23,7 +23,7 @@ SharedFields:
     
     $parameters = @(
         @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. `n`nItem Root : '$($selectedItem.ProviderPath)'"; Editor="combo" },
-        @{ Name = "Mode"; Title="Installation Options";  Value= "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"}
+        @{ Name = "Mode"; Title="Installation Options";  Value= "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"}
     )
     
     if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {

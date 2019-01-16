@@ -31,7 +31,7 @@ SharedFields:
         @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
         @{ Name = "AsXml"; Title="Download Package as XML"; Value=[bool]$False; Editor="bool"; Tab="Package Metadata" },
         @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Root : '$($selectedItem.ProviderPath)'"; Editor="combo"; Tab="Installation Options" },
-        @{ Name = "Mode"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"}
+        @{ Name = "Mode"; Title="Installation Options"; Value = "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"}
     )
     
     if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
@@ -107,7 +107,6 @@ SharedFields:
         $packageName = $examplePackageName
     }
     
-    $package.Name = $packageName
     $package.Metadata.Author = $Author
     $package.Metadata.Publisher = $Publisher
     $package.Metadata.Version = $Version

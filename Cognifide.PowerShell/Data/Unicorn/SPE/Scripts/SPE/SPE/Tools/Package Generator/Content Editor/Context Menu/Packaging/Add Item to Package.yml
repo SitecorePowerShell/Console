@@ -22,7 +22,7 @@ SharedFields:
     $includeLinkedItems = 0
     
     $parameters = @(
-        @{ Name = "Mode"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?<br/><br/>Item : $($selectedItem.ProviderPath)"; Editor="combo"})
+        @{ Name = "Mode"; Title="Installation Options"; Value = "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?<br/><br/>Item : $($selectedItem.ProviderPath)"; Editor="combo"})
     
     if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
         $parameters += @{ Name = "IncludeLinkedItems"; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox" }
