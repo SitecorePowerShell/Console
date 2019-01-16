@@ -51,7 +51,7 @@ SharedFields:
         Parameters = @(
             @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"; Validator = $nameValidator; },
             @{ Name = "items"; Title="Scripts to Run"; 
-                Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script"; 
+                Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script,PowerShell Script Library"; 
                 editor="treelist"; Height="300px"; Validator = $itemValidator; }
         )
     }
