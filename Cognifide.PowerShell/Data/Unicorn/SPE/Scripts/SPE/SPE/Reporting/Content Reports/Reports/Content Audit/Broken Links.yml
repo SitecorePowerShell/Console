@@ -59,77 +59,77 @@ SharedFields:
             [bool]$IncludeAllVersions
         )
         
-        if($Item) {
-            if($linksToCheck.Contains("internal")){
-    
-                $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
-                if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
-                    
-                    foreach($brokenLink in $brokenLinks) {
-                        $fieldItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenLink.SourceFieldID
-                        $brokenItem = [pscustomobject]@{
-                            "ID"=$Item.ID
-                            "Icon"=$Item.__Icon
-                            "DisplayName"=$Item.DisplayName
-                            "ItemPath"=$Item.ItemPath
-                            "Version"=$Item.Version
-                            "Language"=$Item.Language
-                            "__Updated"=$Item.__Updated
-                            "__Updated by"=$Item."__Updated by"
-                            "Broken Link Field"=$fieldItem.Name
-                            "Target Url"=$brokenLink.TargetPath
-                            "Status Code"="Missing Target Item"
-                            "BrokenLink"=$brokenLink
-                            "Link Type" = "Internal"
-                        }
-    
-                        $brokenItem
-                        
+        if(!$Item) { return }
+        if($linksToCheck.Contains("internal")) {
+            $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
+            if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
+                
+                foreach($brokenLink in $brokenLinks) {
+                    if([ID]::IsNullOrEmpty($brokenLink.SourceFieldID)) { continue }
+                    $fieldItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenLink.SourceFieldID
+                    if(!$fieldItem) { continue }
+                    $brokenItem = [pscustomobject]@{
+                        "ID"=$Item.ID
+                        "Icon"=$Item.__Icon
+                        "DisplayName"=$Item.DisplayName
+                        "ItemPath"=$Item.ItemPath
+                        "Version"=$Item.Version
+                        "Language"=$Item.Language
+                        "__Updated"=$Item.__Updated
+                        "__Updated by"=$Item."__Updated by"
+                        "Broken Link Field"=$fieldItem.Name
+                        "Target Url"=$brokenLink.TargetPath
+                        "Status Code"="Missing Target Item"
+                        "BrokenLink"=$brokenLink
+                        "Link Type" = "Internal"
                     }
+    
+                    $brokenItem
+                    
                 }
             }
-            
-            if($linksToCheck.Contains("external")){
-                if($IncludeAllVersions){
-                    $allItems = Get-Item "$($item.Database.Name):" -Version * -Language * -Id $item.Id
-                } else {
-                    $allItems = @(Get-Item "$($item.Database.Name):" -Language * -Id $item.Id)
-                }
-                foreach($checkedItem in $allItems){
-                    foreach($field in $checkedItem.Fields) {
-                        if ($field.Type -eq 'General Link' -and $field.Value -like '*linktype="external"*') { 
-                            $found = $field.Value -match '.*url="(.*?)".*'
-                            if($found) {
-                                $url = $matches[1]
+        }
+        
+        if($linksToCheck.Contains("external")){
+            if($IncludeAllVersions){
+                $allItems = Get-Item "$($item.Database.Name):" -Version * -Language * -Id $item.Id
+            } else {
+                $allItems = @(Get-Item "$($item.Database.Name):" -Language * -Id $item.Id)
+            }
+            foreach($checkedItem in $allItems){
+                foreach($field in $checkedItem.Fields) {
+                    if ($field.Type -eq 'General Link' -and $field.Value -like '*linktype="external"*') { 
+                        $found = $field.Value -match '.*url="(.*?)".*'
+                        if($found) {
+                            $url = $matches[1]
+                        }
+                        
+                        try{ 
+                            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method head
+                        } 
+                        catch {
+                            $statuscode = $_.Exception.Response.StatusCode.Value__
+                            
+                            if(!$statuscode) {
+                                $statuscode = "Not reachable"
                             }
                             
-                            try{ 
-                                $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method head
-                            } 
-                            catch {
-                                $statuscode = $_.Exception.Response.StatusCode.Value__
-                                
-                                if(!$statuscode) {
-                                    $statuscode = "Not reachable"
-                                }
-                                
-                                $brokenItem = [pscustomobject]@{
-                                    "ID"=$checkedItem.ID
-                                    "Icon"=$checkedItem.__Icon
-                                    "DisplayName"=$checkedItem.DisplayName
-                                    "ItemPath"=$checkedItem.ItemPath
-                                    "Version"=$checkedItem.Version
-                                    "Language"=$checkedItem.Language
-                                    "__Updated"=$checkedItem.__Updated
-                                    "__Updated by"=$checkedItem."__Updated by"
-                                    "Broken Link Field"=$field.Name
-                                    "Target Url"=$url
-                                    "Status Code"=$statuscode
-                                    "Link Type"="External"
-                                }
-            
-                                $brokenItem
+                            $brokenItem = [pscustomobject]@{
+                                "ID"=$checkedItem.ID
+                                "Icon"=$checkedItem.__Icon
+                                "DisplayName"=$checkedItem.DisplayName
+                                "ItemPath"=$checkedItem.ItemPath
+                                "Version"=$checkedItem.Version
+                                "Language"=$checkedItem.Language
+                                "__Updated"=$checkedItem.__Updated
+                                "__Updated by"=$checkedItem."__Updated by"
+                                "Broken Link Field"=$field.Name
+                                "Target Url"=$url
+                                "Status Code"=$statuscode
+                                "Link Type"="External"
                             }
+        
+                            $brokenItem
                         }
                     }
                 }
@@ -149,16 +149,18 @@ SharedFields:
             MissingDataMessage = "There are no items found which have broken links in the current language."
             PageSize = 25
             ViewName = "BrokenLinks"
-        }
-        
-        $items |
-            Show-ListView @props -Property "Icon","Status Code", "Broken Link Field","Target Url", "Link Type",
+            Property = @(
+                "Icon","Status Code", "Broken Link Field","Target Url", "Link Type",
                 @{Label="Name"; Expression={$_.DisplayName} },
                 @{Label="Path"; Expression={$_.ItemPath} },
                 "Version",
                 "Language",
                 @{Label="Updated"; Expression={$_.__Updated} },
                 @{Label="Updated by"; Expression={$_."__Updated by"} }
+            )
+        }
+        
+        $items | Show-ListView @props
     }
     Close-Window
 Languages:

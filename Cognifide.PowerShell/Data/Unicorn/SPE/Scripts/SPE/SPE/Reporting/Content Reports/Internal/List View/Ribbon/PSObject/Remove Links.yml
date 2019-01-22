@@ -29,37 +29,31 @@ SharedFields:
   Value: |
     $remainingItems = $allData
     foreach($brokenItem in $selectedData) {
+        if([ID]::IsNullOrEmpty($brokenItem.ID)) { continue }
+        
         $item = Get-Item -Path "master:" -ID $brokenItem.ID
         Write-Host "Removing broken links from $($item.ItemPath)"
         $brokenLink = $brokenItem.BrokenLink
         
-        if($brokenLink) {
-            $fieldItem = $item.Fields[$brokenLink.SourceFieldID]
-            $field = [Sitecore.Data.Fields.FieldTypeManager]::GetField($fieldItem)
-            Write-Host "- Field $($fieldItem.Name)"
+        if(!$brokenLink) { continue }
+        $fieldItem = $item.Fields[$brokenLink.SourceFieldID]
+        $field = [Sitecore.Data.Fields.FieldTypeManager]::GetField($fieldItem)
+        Write-Host "- Field $($fieldItem.Name)"
     
-            $item.Editing.BeginEdit() > $null
-            # TODO: Log removal of broken link
-            $field.RemoveLink($brokenLink)
-            $item.Editing.EndEdit() > $null
-            
-            $remainingItems.Remove($brokenItem) > $null
+        $item.Editing.BeginEdit() > $null
+        $field.RemoveLink($brokenLink)
+        Write-Log "Removed broken link - Source Database: $($brokenLink.SourceDatabaseName), Item: $($item.Paths.FullPath), Field: $($fieldItem.Name); Target database: $($brokenLink.TargetDatabaseName), Target path: $($brokenLink.TargetPath)"
+        if([ID]::IsID($field.Value) -and -not (Test-Path -Path "$($brokenLink.TargetDatabase):$($field.Value)")) {
+            $field.Value = ""
+            Write-Host " - Removed ID from field value"
         }
+        
+        $item.Editing.EndEdit() > $null
+        
+        $remainingItems.Remove($brokenItem) > $null
     }
     
     $remainingItems | Update-ListView
-    
-    <#
-        private void LogLinkRemove(ItemLink brokenLink)
-        {
-          Item sourceItem = brokenLink.GetSourceItem();
-          Assert.IsNotNull((object) sourceItem, "sourceItem");
-          Field field = sourceItem.Fields[brokenLink.SourceFieldID];
-          string message = "Removing broken link- Database: {0}, Item: {1}, Field: {2}, Target item database: {3}, Target item path: {4}".FormatWith((object) brokenLink.SourceDatabaseName, (object) sourceItem.Paths.FullPath, (object) field.Name, (object) brokenLink.TargetDatabaseName, (object) brokenLink.TargetPath);
-          Log.Info(message, (object) this);
-          this.Results.Controls.Add((System.Web.UI.Control) new LiteralControl("<div>{0}</div>".FormatWith((object) message)));
-        }
-    #>
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
