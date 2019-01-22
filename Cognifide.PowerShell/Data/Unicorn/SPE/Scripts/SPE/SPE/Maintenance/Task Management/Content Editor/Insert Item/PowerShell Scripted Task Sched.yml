@@ -50,8 +50,8 @@ SharedFields:
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Parameters = @(
             @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"; Validator = $nameValidator; },
-            @{ Name = "items"; Title="Scripts to Run"; 
-                Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script,PowerShell Script Library"; 
+            @{ Name = "items"; Title="Scripts to Run"; Tooltip = "Choose from one of the existing scripts."; 
+                Source="DataSource={A3572733-5062-43E9-A447-54698BC1C637}&DatabaseName=master&IncludeTemplatesForSelection={DD22F1B3-BD87-4DB2-9E7D-F7A496888D43},{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}"; 
                 editor="treelist"; Height="300px"; Validator = $itemValidator; }
         )
     }

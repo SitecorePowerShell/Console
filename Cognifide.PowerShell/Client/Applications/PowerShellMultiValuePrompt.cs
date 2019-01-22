@@ -570,7 +570,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 return tree;
             }
 
-            var treeList = new TreeList
+            var treeList = new TreelistExtended
             {
                 ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                 Value = strValue,
