@@ -145,6 +145,9 @@ SharedFields:
         Show-ListView -Property Name, Language, Version, Url, Path,  
             @{Label="Fields"; Expression={ Render-ScriptInvoker $script @{index=$index; itemId="$($_.Fields['_uniqueid'])"} "Show Full Info" } } `
             -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
 Languages:
 - Language: en
   Fields:
