@@ -37,10 +37,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 }
                 else
                 {
-                    if (!HasIncludeTemplateForSelection(selectionItem))
-                        return;
-                    SheerResponse.Eval("scForm.browser.getControl('" + viewStateString +
-                                       "_selected').selectedIndex=-1");
+                    if (!HasIncludeTemplateForSelection(selectionItem)) { return; }
+                    SheerResponse.Eval($"scForm.browser.getControl('{viewStateString}_selected').selectedIndex=-1");
                     var listItem = new ListItem {ID = GetUniqueID("L")};
                     Sitecore.Context.ClientPage.AddControl(control2, listItem);
                     listItem.Header = GetHeaderValue(selectionItem);
