@@ -40,10 +40,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 foreach (string key in HandleParams.Keys)
                 {
                     var value = HandleParams[key];
-                    if ((value is string) &&
-                        ((string) value).StartsWith("packPath:", StringComparison.OrdinalIgnoreCase))
+                    if (value is string strValue &&
+                        strValue.StartsWith("packPath:", StringComparison.OrdinalIgnoreCase))
                     {
-                        string strValue = (string) value;
                         strValue = strValue.Substring(9);
                         handle[key] = ApplicationContext.StoreObject(strValue);
                     }
@@ -56,7 +55,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             }
 
             Context.ClientPage.ClientResponse.ShowModalDialog(urlString.ToString(), Width, Height, string.Empty, ReceiveResults);
-
         }
 
         protected override object ProcessResult(bool hasResult, string result)

@@ -65,6 +65,7 @@
             </Border>
 
             <input id="File" name="File" type="file" style="width:100%" />
+            <Literal Text="" ID="UploadWarning" />
           </Scrollbox>
         </Scrollbox>
         <div Class="scFormDialogFooter">

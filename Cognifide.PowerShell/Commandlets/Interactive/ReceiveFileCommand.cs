@@ -74,10 +74,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 PutMessage(message);
                 var result = (string) message.GetResult();
 
-                ID itemId;
-                if (ID.TryParse(result, out itemId))
+                if (ID.TryParse(result, out var itemId))
                 {
-                    var item = ParentItem.Database.GetItem(itemId);
+                    var item = ParentItem?.Database.GetItem(itemId);
                     WriteItem(item);
                 }
                 else

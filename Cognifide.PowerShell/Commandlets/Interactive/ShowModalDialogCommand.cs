@@ -41,8 +41,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 else if (!string.IsNullOrEmpty(Control))
                 {
-                    UrlString url = new UrlString(UIUtil.GetUri("control:" + Control));
-                    url["te"] = Title ?? "Sitecore";
+                    var url = new UrlString(UIUtil.GetUri("control:" + Control))
+                    {
+                        ["te"] = Title ?? "Sitecore"
+                    };
 
                     if (Parameters != null)
                     {

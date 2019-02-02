@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Web;
-using Cognifide.PowerShell.Core.Diagnostics;
+﻿using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Configuration;
@@ -12,6 +7,11 @@ using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Cognifide.PowerShell.Core.Settings
 {
@@ -224,27 +224,26 @@ namespace Cognifide.PowerShell.Core.Settings
         public void Save()
         {
             var configuration = GetSettingsDtoForSave();
-            if (configuration != null)
+            if (configuration == null) return;
+
+            using (new SecurityDisabler())
             {
-                using (new SecurityDisabler())
-                {
-                    configuration.Edit(
-                        p =>
+                configuration.Edit(
+                    p =>
+                    {
+                        configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
+                        ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
+                        ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;                            
+                        configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
+                        configuration[ForegroundColorSettingFieldName] = ForegroundColor.ToString();
+                        configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
+                        configuration[FontSizeSettingFieldName] = FontSize.ToString();
+                        configuration[FontFamilySettingFieldName] = FontFamily;
+                        if (IsPersonalized)
                         {
-                            configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
-                            ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
-                            ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;                            
-                            configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
-                            configuration[ForegroundColorSettingFieldName] = ForegroundColor.ToString();
-                            configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
-                            configuration[FontSizeSettingFieldName] = FontSize.ToString();
-                            configuration[FontFamilySettingFieldName] = FontFamily;
-                            if (IsPersonalized)
-                            {
-                                configuration.Fields[Sitecore.FieldIDs.DisplayName].Reset();
-                            }
-                        });
-                }
+                            configuration.Fields[FieldIDs.DisplayName].Reset();
+                        }
+                    });
             }
         }
 
@@ -264,11 +263,7 @@ namespace Cognifide.PowerShell.Core.Settings
                             () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
                     HostWidth =
                         TryGetSettingValue(HostWidthSettingFieldName,150,
-                            () =>
-                            {
-                                int hostWidth;
-                                return int.TryParse(configuration[HostWidthSettingFieldName], out hostWidth) ? hostWidth : 150;
-                            });
+                            () => int.TryParse(configuration[HostWidthSettingFieldName], out var hostWidth) ? hostWidth : 150);
                     ForegroundColor =
                         TryGetSettingValue(ForegroundColorSettingFieldName, ConsoleColor.White,
                             () =>
@@ -279,13 +274,9 @@ namespace Cognifide.PowerShell.Core.Settings
                             () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration[BackgroundColorSettingFieldName]));
                     FontSize =
                         TryGetSettingValue(FontSizeSettingFieldName, 12,
-                            () =>
-                            {
-                                int fontSize;
-                                return int.TryParse(configuration[FontSizeSettingFieldName], out fontSize)
-                                    ? Math.Max(fontSize, 8)
-                                    : 12;
-                            });
+                            () => int.TryParse(configuration[FontSizeSettingFieldName], out var fontSize)
+                                ? Math.Max(fontSize, 8)
+                                : 12);
                     FontFamily = TryGetSettingValue(FontFamilySettingFieldName, "Monaco",
                         () =>
                             string.IsNullOrWhiteSpace(configuration[FontFamilySettingFieldName])

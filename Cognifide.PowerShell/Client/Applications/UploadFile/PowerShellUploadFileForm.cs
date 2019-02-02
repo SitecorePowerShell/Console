@@ -20,6 +20,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         protected XmlControl Dialog;
         protected Literal DialogDescription;
         protected Literal DialogHeader;
+        protected Literal UploadWarning;
         protected Image DialogIcon;
         protected GenericControl ItemUri;
         protected GenericControl LanguageName;
@@ -30,79 +31,78 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
 
         protected void EndUploading(string id)
         {
-            ID realId;
-            SheerResponse.SetDialogValue(ID.TryParse(id, out realId) ? id : HttpUtility.UrlDecode(id));
+            SheerResponse.SetDialogValue(ID.TryParse(id, out _) ? id : HttpUtility.UrlDecode(id));
             SheerResponse.CloseWindow();
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            if (!Context.ClientPage.IsEvent && !Context.ClientPage.IsPostBack)
+            if (Context.ClientPage.IsEvent || Context.ClientPage.IsPostBack) return;
+
+            var handle = UrlHandle.Get();
+            var path = handle["path"];
+            if (path == null)
             {
-                var handle = UrlHandle.Get();
-                var path = handle["path"];
-                if (path == null)
+                var uri = Sitecore.Data.ItemUri.ParseQueryString(Context.ContentDatabase);
+                var item = Database.GetItem(uri);
+                if (item != null)
                 {
-                    var uri = Sitecore.Data.ItemUri.ParseQueryString(Context.ContentDatabase);
-                    var item = Database.GetItem(uri);
-                    if (item != null)
-                    {
-                        ItemUri.Attributes["value"] = item.Uri.ToString();
-                    }
+                    ItemUri.Attributes["value"] = item.Uri.ToString();
                 }
-                else
-                {
-                    ItemUri.Attributes["value"] = path;
-                }
-
-                Versioned.Attributes["value"] = handle["versioned"];
-                LanguageName.Attributes["value"] = handle["language"];
-                Overwrite.Attributes["value"] = handle["overwrite"];
-                Unpack.Attributes["value"] = handle["unpack"];
-                var title = handle["te"];
-                if (!string.IsNullOrEmpty(title))
-                {
-                    DialogHeader.Text = WebUtil.SafeEncode(title);
-                }
-
-                var icon = handle["ic"];
-                if (!string.IsNullOrEmpty(icon))
-                {
-                    DialogIcon.Src = WebUtil.SafeEncode(icon);
-                    DialogIcon.Visible = true;
-                }
-
-                var message = handle["ds"];
-                if (!string.IsNullOrEmpty(message))
-                {
-                    DialogDescription.Text = WebUtil.SafeEncode(message);
-                }
-
-                var ok = handle["ok"];
-                if (!string.IsNullOrEmpty(ok))
-                {
-                    OKButton.Header = WebUtil.SafeEncode(ok);
-                }
-
-                var cancel = handle["cancel"];
-                if (!string.IsNullOrEmpty(cancel))
-                {
-                    CancelButton.Header = WebUtil.SafeEncode(cancel);
-                }
-                TypeResolver.Resolve<IUrlHandleWrapper>().DisposeHandle(handle);
             }
+            else
+            {
+                ItemUri.Attributes["value"] = path;
+            }
+
+            Versioned.Attributes["value"] = handle["versioned"];
+            LanguageName.Attributes["value"] = handle["language"];
+            Overwrite.Attributes["value"] = handle["overwrite"];
+            Unpack.Attributes["value"] = handle["unpack"];
+            var title = handle["te"];
+            if (!string.IsNullOrEmpty(title))
+            {
+                DialogHeader.Text = WebUtil.SafeEncode(title);
+            }
+
+            var icon = handle["ic"];
+            if (!string.IsNullOrEmpty(icon))
+            {
+                DialogIcon.Src = WebUtil.SafeEncode(icon);
+                DialogIcon.Visible = true;
+            }
+
+            var message = handle["ds"];
+            if (!string.IsNullOrEmpty(message))
+            {
+                DialogDescription.Text = WebUtil.SafeEncode(message);
+            }
+
+            var ok = handle["ok"];
+            if (!string.IsNullOrEmpty(ok))
+            {
+                OKButton.Header = WebUtil.SafeEncode(ok);
+            }
+
+            var cancel = handle["cancel"];
+            if (!string.IsNullOrEmpty(cancel))
+            {
+                CancelButton.Header = WebUtil.SafeEncode(cancel);
+            }
+            TypeResolver.Resolve<IUrlHandleWrapper>().DisposeHandle(handle);
         }
 
         protected void OKClick()
         {
             var str = Context.ClientPage.ClientRequest.Form["File"];
-            if ((str == null) || (str.Trim().Length == 0))
+            if (str == null || str.Trim().Length == 0)
             {
-                SheerResponse.Alert(Sitecore.Texts.PLEASE_SPECIFY_A_FILE_TO_UPLOAD);
+                UploadWarning.Text = Sitecore.Texts.PLEASE_SPECIFY_A_FILE_TO_UPLOAD;
             }
             else
             {
+                UploadWarning.Text = string.Empty;
                 OKButton.Disabled = true;
                 CancelButton.Disabled = true;
                 Context.ClientPage.ClientResponse.Timer("StartUploading", 10);
