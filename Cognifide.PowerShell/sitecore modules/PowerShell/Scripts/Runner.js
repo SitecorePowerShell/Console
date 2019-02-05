@@ -16,8 +16,11 @@
         if (progressBar.length > 0) {
             progressBar.progressbar({ value: 1 });
             setTimeout(function() {
+                if (!animate) {
+                    clearInterval(interval);
+                }
                 progressBar.progressbar("option", "value", false);
-               progressBar.addClass("ui-progressbar-indeterminate");
+                progressBar.addClass("ui-progressbar-indeterminate");
             }, 2000);
         }
         $("#Copyright").each(function () { // Notice the .each() loop, discussed below
