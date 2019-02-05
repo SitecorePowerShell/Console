@@ -16,20 +16,9 @@
         if (progressBar.length > 0) {
             progressBar.progressbar({ value: 1 });
             setTimeout(function() {
-                var p = 1;
-                var interval = setInterval(function() {
-                    if (p > 100) {
-                        p = 1;
-                    }
-                    if (!animate) {
-                        clearInterval(interval);
-                    } else {
-                        progressBar.progressbar({ value: p });
-                        p++;
-                    }
-                }, 100);
+                progressBar.progressbar("option", "value", false);
+               progressBar.addClass("ui-progressbar-indeterminate");
             }, 2000);
-
         }
         $("#Copyright").each(function () { // Notice the .each() loop, discussed below
             var currentYear = (new Date()).getFullYear();
