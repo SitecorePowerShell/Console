@@ -23,30 +23,36 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             PerformInstallAction(() =>
             {
                 PackageProject packageProject = null;
-                if (Path != null)
+                var fileName = Path;
+                if (string.IsNullOrEmpty(fileName)) return;
+
+                if (!System.IO.Path.IsPathRooted(fileName))
                 {
-                    var fileName = Path;
+                    fileName = FullPackageProjectPath(fileName);
+                }
 
-                    if (!System.IO.Path.IsPathRooted(Path))
+                if (File.Exists(fileName))
+                {
+                    var isZip = false;
+                    using (var stream = FileUtil.OpenRead(fileName))
                     {
-                        fileName = FullPackageProjectPath(Path);
-                    }
-
-                    if (File.Exists(fileName))
-                    {
-                        var isZip = false;
-                        using (var stream = FileUtil.OpenRead(fileName))
+                        if (ZipUtils.IsZipContent(stream))
                         {
-                            if (ZipUtils.IsZipContent(stream))
-                            {
-                                isZip = true;
-                            }
+                            isZip = true;
                         }
-
-                        packageProject = !isZip ? IOUtils.LoadSolution(FileUtil.ReadFromFile(fileName)) : ExtractPackageProject(fileName);
                     }
 
-                    WriteObject(packageProject, false);
+                    packageProject = !isZip ? IOUtils.LoadSolution(FileUtil.ReadFromFile(fileName)) : ExtractPackageProject(fileName);
+                }
+
+                if (packageProject == null)
+                {
+                    WriteError(typeof(FileNotFoundException), "Cannot find the package.zip contained within the provided file.",
+                        ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, null);
+                }
+                else
+                {
+                    WriteObject(packageProject, false);    
                 }
             });
         }
@@ -58,6 +64,11 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             using (var packageReader = new ZipReader(fileName))
             {
                 var packageEntry = packageReader.GetEntry("package.zip");
+                if (packageEntry == null)
+                {
+                    return null;
+                }
+
                 using (var memoryStream = new MemoryStream())
                 {
                     StreamUtils.CopyStream(packageEntry.GetStream(), memoryStream, 0x4000);
