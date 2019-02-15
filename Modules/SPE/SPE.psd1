@@ -11,7 +11,7 @@
     RootModule = '.\SPE.psm1'
 
     # Version number of this module.
-    ModuleVersion = '5.1'
+    ModuleVersion = '5.1.0'
 
     # ID used to uniquely identify this module
     GUID = 'cf8d3b69-b293-4d8b-9974-e1ab80509724'
@@ -26,7 +26,7 @@
     Copyright = '(c) 2010-2019 Adam Najmanowicz, Michael West. All rights Reserved.'
 
     # Description of the functionality provided by this module
-    # Description = ''
+    Description = 'The SPE Remoting module provides remote connectivity to a Sitecore instance. The Sitecore PowerShell Extensions (SPE) module must be installed and configured to accept remoting connections.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '3.0'
