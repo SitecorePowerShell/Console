@@ -17,8 +17,9 @@ SharedFields:
   Value: |
     $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
     
-    $roots = Get-SpeModuleFeatureRoot "ContentEditorRibbon"
+    $ribbonPath = 'core:\content\Applications\Content Editor\Ribbons\Ribbons\Default'
     
+    $roots = Get-SpeModuleFeatureRoot "ContentEditorRibbon"
     
     #Remove non existing scripts from Control Panel
     Write-Host "- Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
@@ -28,7 +29,9 @@ SharedFields:
     	Get-ChildItem $strip.ProviderPath | ForEach-Object {
     		$chunk = $_;
     		$chunkName = $_.Name;
+    		$chunkReference = $null;
     		if ($chunk.TemplateName -eq "Reference") {
+    		    $chunkReference = $chunk;
     			$chunk = Get-Item "core:/" -Id $chunk.Reference
     		}
     		Get-ChildItem $chunk.ProviderPath | ForEach-Object {
@@ -42,12 +45,24 @@ SharedFields:
     		{
     			Write-Host " - Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
     			$chunk | Remove-Item
+    			
+    			if ($chunkReference)
+    			{
+    			    $chunkReference | Remove-Item
+    			}
     		}
     	}
     	if ($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
     	{
+            $stripId = $strip.ID;
     		Write-Host " - Removing Strip '$($strip.Name)'" -f y
     		$strip | Remove-Item
+    
+    		Get-ChildItem $ribbonPath | ? { $_.Reference -eq $stripId } | ForEach-Object {
+    		    $stripReference = $_;
+    			Write-Host " - Removing Strip Reference '$($stripReference.Name)'" -f y
+    			$stripReference | Remove-Item
+    		}
     	}
     }
     
@@ -66,6 +81,12 @@ SharedFields:
     			Write-Host " - Adding Strip '$($scriptLibrary.Name)'." -f Green
     			$strip = New-Item -Path $stripsPath -Name $scriptLibrary.Name -ItemType "System/Ribbon/Strip"
     			$strip.Header = $scriptLibrary.Name
+    			
+    			Write-Host " - Adding Strip Reference '$($scriptLibrary.Name)'." -f Green
+    			$stripReference = New-Item -Path $ribbonPath -Name $scriptLibrary.Name -ItemType "System/Reference"
+    			$stripReference.Reference = $strip.ID;
+    			# Place the new tab at the end
+    			$stripReference.__Sortorder = 1001
     		}
     
     		# Adding missing chunks
