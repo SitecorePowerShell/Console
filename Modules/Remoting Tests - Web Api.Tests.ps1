@@ -65,11 +65,15 @@ Describe "Web API Responses" {
         }
         It "Wrong password should throw exception" {
             $execution = { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=admin&password=invalid" }
-            $execution | Should Throw "(404) Not Found"
+            $execution | Should Throw "(401) Unauthorized"
         }
         It "Non existing user should throw exception" {
             $execution = { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=non_existing&password=invalid" }
             $execution | Should Throw "(401) Unauthorized"
+        }
+        It "Not found script should throw exception" {
+            $execution = { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NotFound" }
+            $execution | Should Throw "(404) Not Found"
         }
     }
 }

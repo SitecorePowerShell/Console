@@ -124,10 +124,13 @@ namespace Cognifide.PowerShell.Console.Services
 
             var isAuthenticated = Context.IsLoggedIn;
 
-            if (!CheckServiceAuthentication(context, apiVersion, serviceName, isAuthenticated))
+            if (!CheckServiceAuthentication(context, serviceName, identity, isAuthenticated))
             {
                 return;
             }
+            
+            var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
+                                     string.IsNullOrEmpty(originParam) || originParam.Is("current");
 
             // in some cases we need to set the database as it's still set to web after authentication
             if (!scDb.IsNullOrEmpty())
@@ -135,8 +138,6 @@ namespace Cognifide.PowerShell.Console.Services
                 Context.Database = Database.GetDatabase(scDb);
             }
 
-            var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
-                                     string.IsNullOrEmpty(originParam) || originParam.Is("current");
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb?.Name;
 
@@ -243,32 +244,21 @@ namespace Cognifide.PowerShell.Console.Services
             return false;
         }
 
-        private static bool CheckServiceAuthentication(HttpContext context, string apiVersion, string serviceName, bool isAuthenticated)
+        private static bool CheckServiceAuthentication(HttpContext context, string serviceName, AccountIdentity identity, bool isAuthenticated)
         {
-            var skipAuthentication = false;
+            if (identity.Name == Context.User.Name) return true;
 
-            switch (apiVersion)
-            {
-                case "1":
-                case "2":
-                    skipAuthentication = true;
-                    break;
-                default:
-                    if (!isAuthenticated)
-                    {
-                        const string disabledMessage =
-                            "The request could not be completed because the service requires authentication.";
+            if (isAuthenticated) return true;
 
-                        context.Response.StatusCode = 401;
-                        context.Response.StatusDescription = disabledMessage;
-                        context.Response.SuppressFormsAuthenticationRedirect = true;
-                        PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
-                    }
+            const string disabledMessage =
+                "The request could not be completed because the service requires authentication.";
 
-                    break;
-            }
+            context.Response.StatusCode = 401;
+            context.Response.StatusDescription = disabledMessage;
+            context.Response.SuppressFormsAuthenticationRedirect = true;
+            PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
 
-            return skipAuthentication || isAuthenticated;
+            return false;
         }
 
         private static bool CheckIsUserAuthorized(HttpContext context, string authUserName, string serviceName)
