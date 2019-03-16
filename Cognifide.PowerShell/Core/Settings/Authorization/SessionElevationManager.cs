@@ -10,7 +10,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
     public static class SessionElevationManager
     {
         private const string SessionCacheToken = "SPE_Session_Elevation_{0}";
-        private static Dictionary<string, TokenDefinition> tokens;
+        private static readonly Dictionary<string, TokenDefinition> Tokens;
 
         public const string SaveAction = "Save";
         public const string ExecuteAction = "Execute";
@@ -31,35 +31,33 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     throw new ArgumentException($"A duplicate token was detected in the configuration. The token '{token.Name}' already exists.");
                 }
 
-                TimeSpan expiration;
-                if (TimeSpan.TryParse(xmlDefinition.Attributes["expiration"].Value, out expiration))
+                if (TimeSpan.TryParse(xmlDefinition.Attributes["expiration"].Value, out var expiration))
                 {
                     token.Expiration = expiration;
                 }
 
-                TokenDefinition.ElevationAction action;
-                token.Action = Enum.TryParse(xmlDefinition.Attributes["elevationAction"].Value, out action)
+                token.Action = Enum.TryParse(xmlDefinition.Attributes["elevationAction"].Value, out TokenDefinition.ElevationAction action)
                     ? action
                     : TokenDefinition.ElevationAction.Block;
                 tokenDefinitions.Add(token.Name, token);
             }
-            tokens = new Dictionary<string, TokenDefinition>();
+            Tokens = new Dictionary<string, TokenDefinition>();
             var xmlApps = Factory.GetConfigNodes("powershell/userAccountControl/gates/gate");
             foreach (XmlElement xmlApp in xmlApps)
             {
                 var name = xmlApp.Attributes["name"].Value;
-                if (tokens.ContainsKey(name))
+                if (Tokens.ContainsKey(name))
                 {
                     throw new ArgumentException($"A duplicate gate was detected in the configuration. The gate '{name}' already exists.");
                 }
 
-                tokens.Add(name, tokenDefinitions[xmlApp.Attributes["token"].Value]);
+                Tokens.Add(name, tokenDefinitions[xmlApp.Attributes["token"].Value]);
             }
         }
 
         internal static TokenDefinition GetToken(string appName)
         {
-            return tokens.ContainsKey(appName) ? tokens[appName] : tokens["Default"];
+            return Tokens.ContainsKey(appName) ? Tokens[appName] : Tokens["Default"];
         }
 
         public static bool IsSessionTokenElevated(string appName)
@@ -70,14 +68,11 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 case TokenDefinition.ElevationAction.Allow:
                     return true;
                 case TokenDefinition.ElevationAction.Password:
-                    var sessionvar = HttpContext.Current?.Session[string.Format(SessionCacheToken, token.Name)];
-                    if (sessionvar != null && ((DateTime)sessionvar < DateTime.Now))
-                    {
-                        PowerShellLog.Warn($"Session state elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
-                        HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token.Name));
-                        sessionvar = null;
-                    }
-                    return sessionvar != null;
+                    var cachedSession = HttpContext.Current?.Session[string.Format(SessionCacheToken, token.Name)];
+                    if (cachedSession == null || ((DateTime) cachedSession >= DateTime.Now)) return cachedSession != null;
+                    PowerShellLog.Warn($"Session state elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
+                    HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token.Name));
+                    return false;
                 default:
                     return false;
             }
