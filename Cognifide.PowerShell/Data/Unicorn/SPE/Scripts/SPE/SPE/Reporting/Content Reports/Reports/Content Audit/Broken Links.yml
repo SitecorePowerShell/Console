@@ -63,11 +63,27 @@ SharedFields:
         if($linksToCheck.Contains("internal")) {
             $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
             if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
-                
+                $finalRenderings = Get-Rendering -Item $Item -FinalLayout
+                $sharedRenderings = Get-Rendering -Item $Item
+                $uniqueIdLookup = New-Object System.Collections.Generic.HashSet[string]
                 foreach($brokenLink in $brokenLinks) {
                     if([ID]::IsNullOrEmpty($brokenLink.SourceFieldID)) { continue }
                     $fieldItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenLink.SourceFieldID
                     if(!$fieldItem) { continue }
+                    $renderings = & {
+                        switch($fieldItem.ID) {
+                            "{04BF00DB-F5FB-41F7-8AB7-22408372A981}" {
+                                $finalRenderings
+                            }
+                            default {
+                                $sharedRenderings
+                            }
+                        }
+                    }
+                    $brokenRendering = $renderings | Where-Object { $_.Datasource -eq $brokenLink.TargetPath -and !$uniqueIdLookup.Contains($_.UniqueId) } | Select-Object -First 1
+                    if(!$brokenRendering) { continue }
+                    $uniqueIdLookup.Add($brokenRendering.UniqueId) > $null
+                    $brokenRenderingItem = Get-Item -Path "master:" -ID $brokenRendering.ItemId
                     $brokenItem = [pscustomobject]@{
                         "ID"=$Item.ID
                         "Icon"=$Item.__Icon
@@ -77,8 +93,9 @@ SharedFields:
                         "Language"=$Item.Language
                         "__Updated"=$Item.__Updated
                         "__Updated by"=$Item."__Updated by"
-                        "Broken Link Field"=$fieldItem.Name
-                        "Target Url"=$brokenLink.TargetPath
+                        "Link Field"=$fieldItem.Name
+                        "Rendering" = $brokenRenderingItem.Name
+                        "Target Path"=$brokenLink.TargetPath
                         "Status Code"="Missing Target Item"
                         "BrokenLink"=$brokenLink
                         "Link Type" = "Internal"
@@ -123,8 +140,8 @@ SharedFields:
                                 "Language"=$checkedItem.Language
                                 "__Updated"=$checkedItem.__Updated
                                 "__Updated by"=$checkedItem."__Updated by"
-                                "Broken Link Field"=$field.Name
-                                "Target Url"=$url
+                                "Link Field"=$field.Name
+                                "Target Path"=$url
                                 "Status Code"=$statuscode
                                 "Link Type"="External"
                             }
@@ -150,9 +167,10 @@ SharedFields:
             PageSize = 25
             ViewName = "BrokenLinks"
             Property = @(
-                "Icon","Status Code", "Broken Link Field","Target Url", "Link Type",
-                @{Label="Name"; Expression={$_.DisplayName} },
-                @{Label="Path"; Expression={$_.ItemPath} },
+                "Icon","Status Code", 
+                @{Label="Name"; Expression={$_.DisplayName} }, 
+                @{Label="Item Path"; Expression={$_.ItemPath} },"Link Field", "Rendering","Target Path",
+                "Link Type",
                 "Version",
                 "Language",
                 @{Label="Updated"; Expression={$_.__Updated} },
