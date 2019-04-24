@@ -162,7 +162,7 @@ SharedFields:
     } else {
         $props = @{
             Title = "Broken Links Report"
-            InfoTitle = "$($items.Count) items with broken links found!"
+            InfoTitle = "Found $($items.Count) items with broken links!"
             InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
             MissingDataMessage = "There are no items found which have broken links in the current language."
             PageSize = 25
