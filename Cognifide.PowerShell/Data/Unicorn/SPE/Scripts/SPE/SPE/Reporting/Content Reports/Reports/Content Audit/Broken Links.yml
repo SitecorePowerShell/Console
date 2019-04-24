@@ -95,6 +95,7 @@ SharedFields:
                         "__Updated by"=$Item."__Updated by"
                         "Link Field"=$fieldItem.Name
                         "Rendering" = $brokenRenderingItem.Name
+                        "Placeholder" = $brokenRendering.Placeholder
                         "Target Path"=$brokenLink.TargetPath
                         "Status Code"="Missing Target Item"
                         "BrokenLink"=$brokenLink
@@ -169,7 +170,7 @@ SharedFields:
             Property = @(
                 "Icon","Status Code", 
                 @{Label="Name"; Expression={$_.DisplayName} }, 
-                @{Label="Item Path"; Expression={$_.ItemPath} },"Link Field", "Rendering","Target Path",
+                @{Label="Item Path"; Expression={$_.ItemPath} },"Link Field", "Rendering","Placeholder","Target Path",
                 "Link Type",
                 "Version",
                 "Language",
