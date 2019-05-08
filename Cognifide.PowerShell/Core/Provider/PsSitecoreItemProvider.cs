@@ -517,7 +517,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 Force ? PasteMode.Overwrite : PasteMode.Undefined);
             if (sourceItem.Paths.IsMediaItem)
             {
-                if (sourceItem.TemplateID != TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
+                if (sourceItem.TemplateID != TemplateIDs.MediaFolder && sourceItem.IsVersioned())
                 {
                     TransferVersionedMediaItemBlob(sourceItem, destinationItem, recurse);
                 }
@@ -592,7 +592,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 if (child != null)
                 {
-                    if (child.TemplateID != TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(child))
+                    if (child.TemplateID != TemplateIDs.MediaFolder && child.IsVersioned())
                     {
                         TransferVersionedMediaItemBlob(child, destination, true);
                     }

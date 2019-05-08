@@ -3,15 +3,16 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Data.Templates;
+using Sitecore.Resources.Media;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
     public static class ItemExtensions
     {
-        public static bool InheritsFrom(this Item item, ID templateID)
+        public static bool InheritsFrom(this Item item, ID templateId)
         {
             return item != null && TemplateManager.GetTemplate(item) is Template template &&
-                   template.InheritsFrom(templateID);
+                   template.InheritsFrom(templateId);
         }
 
         public static bool IsPowerShellScript(this Item item)
@@ -96,6 +97,18 @@ namespace Cognifide.PowerShell.Core.Extensions
             ///     default: false
             /// </summary>
             public bool SaveOnError { get; set; }
+        }
+
+        public static bool IsVersioned(this Item item)
+        {
+            var mediaData = new MediaData(new MediaItem(item));
+            var field = item.Fields[mediaData.DataFieldName];
+            if (!field.Shared)
+            {
+                return !field.Unversioned;
+            }
+
+            return false;
         }
     }
 }
