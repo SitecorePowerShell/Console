@@ -177,11 +177,11 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     break;
                 case DateTime[] _:
                     var pairDateTime = (DateTime[])value;
-                    var leftDateTime = pairDateTime[0].ToString("yyyyMMdd");
-                    var rightDateTime = pairDateTime[1].ToString("yyyyMMdd");
+                    var leftDateTime = pairDateTime[0];
+                    var rightDateTime = pairDateTime[1];
                     predicate = criteria.Invert
-                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation)
-                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation);
+                        ? predicate.AddPredicate(i => !((DateTime)i[(ObjectIndexerKey)criteria.Field]).Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((DateTime)i[(ObjectIndexerKey)criteria.Field]).Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation);
                     break;
                 case double[] _:
                     var pairDouble = (double[])value;
