@@ -537,6 +537,8 @@
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
+    <Compile Include="Services\IJobManager.cs" />
+    <Compile Include="Services\IJobOptions.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>

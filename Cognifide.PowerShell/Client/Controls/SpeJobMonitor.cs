@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Cognifide.PowerShell.Client.Applications;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
@@ -124,20 +126,21 @@ namespace Cognifide.PowerShell.Client.Controls
         }
 
         public void Start(string name, string category, ThreadStart task, Language language = null, User user = null,
-            JobOptions options = null)
+            IJobOptions options = null)
         {
             Assert.ArgumentNotNullOrEmpty(name, "name");
             Assert.ArgumentNotNullOrEmpty(category, "category");
             Assert.ArgumentNotNull(task, "task");
             var siteName = Sitecore.Context.Site?.Name ?? string.Empty;
-            JobHandle = JobManager.Start(new JobOptions($"{name} - {Sitecore.Context.User?.Name}", category, siteName, new TaskRunner(task), "Run")
-            {
-                ContextUser = user ?? options?.ContextUser ?? Sitecore.Context.User,
-                AtomicExecution = false,
-                EnableSecurity = options?.EnableSecurity ?? true,
-                ClientLanguage = language ?? options?.ClientLanguage ?? Sitecore.Context.Language,
-                AfterLife = new TimeSpan(0, 0, 0, 10),
-            }).Handle;
+            var jobOptions = TypeResolver.Resolve<IJobOptions>(new object[]{$"{name} - {Sitecore.Context.User?.Name}", category, siteName, new TaskRunner(task), "Run"});
+            jobOptions.ContextUser = user ?? options?.ContextUser ?? Sitecore.Context.User;
+            jobOptions.AtomicExecution = false;
+            jobOptions.EnableSecurity = options?.EnableSecurity ?? true;
+            jobOptions.ClientLanguage = language ?? options?.ClientLanguage ?? Sitecore.Context.Language;
+            jobOptions.AfterLife = new TimeSpan(0, 0, 0, 10);
+
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            JobHandle = jobManager.StartJob(jobOptions);
             ScheduleCallback();
         }
 

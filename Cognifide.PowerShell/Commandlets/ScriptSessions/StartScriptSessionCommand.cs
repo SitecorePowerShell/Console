@@ -9,6 +9,8 @@ using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -93,14 +95,12 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
 
             var handle = string.IsNullOrEmpty(JobName) ? ID.NewID.ToString() : JobName;
-            var jobOptions = new JobOptions(GetJobId(session.ID, handle), "PowerShell", "shell", this, nameof(RunJob),
-                new object[] { session, scriptBlock.ToString() })
-            {
-                AfterLife = new TimeSpan(0, 0, 1),
-                ContextUser = Identity ?? Context.User,
-                EnableSecurity = !DisableSecurity,
-                ClientLanguage = Context.ContentLanguage
-            };
+            var jobOptions = TypeResolver.Resolve<IJobOptions>(new object[]{GetJobId(session.ID, handle), "PowerShell", "shell", this, nameof(RunJob),
+                new object[] { session, scriptBlock.ToString() }});
+            jobOptions.ContextUser = Identity ?? Context.User;
+            jobOptions.EnableSecurity = !DisableSecurity;
+            jobOptions.ClientLanguage = Context.ContentLanguage;
+            jobOptions.AfterLife = new TimeSpan(0, 0, 1);
 
             if (Interactive)
             {
@@ -125,7 +125,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             else
             {
-                Sitecore.Jobs.JobManager.Start(jobOptions);
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                jobManager.StartJob(jobOptions);
             }
             WriteObject(session);
         }

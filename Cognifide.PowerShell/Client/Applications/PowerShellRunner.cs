@@ -280,7 +280,7 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetVariable("RenderingId", RenderingId);
             scriptSession.SetVariable("SitecoreFullScreen", CallerFullScreen);
             scriptSession.Interactive = true;
-
+            
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
             Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, Context.User,

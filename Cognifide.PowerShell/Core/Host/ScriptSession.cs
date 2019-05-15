@@ -15,6 +15,7 @@ using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Jobs;
@@ -65,7 +66,7 @@ namespace Cognifide.PowerShell.Core.Host
         private ScriptingHostPrivateData privateData;
 
         internal string JobScript { get; set; }
-        internal JobOptions JobOptions { get; set; }
+        internal IJobOptions JobOptions { get; set; }
         public List<object> JobResultsStore { get; set; }
         internal ScriptingHost Host => host;
 
