@@ -115,6 +115,9 @@
       <HintPath>..\packages\Sitecore.ContentSearch.Linq.NoReferences.8.2.170728\lib\NET452\Sitecore.ContentSearch.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sitecore.ExperienceEditor, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ExperienceEditor.NoReferences.8.2.170728\lib\NET452\Sitecore.ExperienceEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.170728\lib\NET452\Sitecore.Kernel.dll</HintPath>
       <Private>False</Private>
@@ -165,11 +168,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Applications\FieldEditor.cs" />
+    <Compile Include="Client\Applications\ImmediateDebugWindowLauncher.cs" />
     <Compile Include="Client\Applications\PowerShellReports.cs" />
     <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
+    <Compile Include="Client\Applications\SessionElevationWindowLauncher.cs" />
+    <Compile Include="Client\Commands\EditIseSettings.cs" />
+    <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
     <Compile Include="Client\Commands\MenuItems\AddMaster.cs" />
     <Compile Include="Client\Commands\SelectUser.cs" />
     <Compile Include="Client\Commands\Selectlanguage.cs" />
+    <Compile Include="Client\Commands\WebEditScriptCommand.cs" />
     <Compile Include="Client\Controls\LanguageHistory.cs" />
     <Compile Include="Client\Controls\BucketlistExtended.cs" />
     <Compile Include="Client\Controls\Marquee.cs" />
@@ -527,6 +536,7 @@
     <Compile Include="Integrations\Pipelines\LoggedInScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggingInScript.cs" />
     <Compile Include="Integrations\Pipelines\LogoutScript.cs" />
+    <Compile Include="Integrations\Pipelines\PageEditorNotificationScript.cs" />
     <Compile Include="Integrations\Pipelines\PipelineProcessor.cs" />
     <Compile Include="Integrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="Integrations\Processors\ScriptedDataSource.cs" />
@@ -554,6 +564,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Texts.cs" />
+    <Compile Include="Utility\DateConverter.cs" />
+    <Compile Include="Utility\UrlHandleWrapper.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -655,6 +667,22 @@
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
     <Content Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx" />
+    <Content Include="sitecore modules\PowerShell\Styles\c3.min.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Gallery.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.all.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.autocomplete.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.base.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.core.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.theme.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\reports.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
     <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
   </ItemGroup>
   <ItemGroup>

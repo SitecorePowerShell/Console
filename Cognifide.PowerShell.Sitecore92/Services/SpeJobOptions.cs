@@ -21,6 +21,10 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
         public string SiteName { get; set; }
         public object[] Parameters { get; set; }
 
+        public SpeJobOptions(string jobName, string category, string siteName, object obj, string methodName) : this(jobName, category, siteName, obj, methodName, null)
+        {
+        }
+
         public SpeJobOptions(string jobName, string category, string siteName, object obj, string methodName, object[] parameters)
         {
             this.JobName = jobName;

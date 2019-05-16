@@ -16,7 +16,7 @@ using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
+namespace Cognifide.PowerShell.Client.Commands
 {
     [Serializable]
     public class ExecuteFieldEditor : Command

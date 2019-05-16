@@ -5,11 +5,12 @@
     "deployProjects" : [
         { 
             "project": "Cognifide.PowerShell", 
-            "version": 0,             
+            "version": 0,            
             "junctionPoints": [ 
                 "sitecore modules\\PowerShell\\Assets", 
                 "sitecore modules\\PowerShell\\Scripts",
                 "sitecore modules\\PowerShell\\Services",
+		"sitecore modules\\PowerShell\\Styles",
                 "sitecore modules\\Shell\\PowerShell"
             ]
         },
@@ -18,22 +19,16 @@
             "version": 0            
         },
         { 
-            "project": "Cognifide.PowerShell.Sitecore7",
-            "version": 7,             
-            "junctionPoints": [ 
-                "sitecore modules\\PowerShell\\Styles"
-            ]
+            "project": "Cognifide.PowerShell.Sitecore8",
+            "version": 8            
         },
         { 
-            "project": "Cognifide.PowerShell.Sitecore8",
-            "version": 8, 
-            "junctionPoints": [ 
-                "sitecore modules\\PowerShell\\Styles"
-            ]
+            "project": "Cognifide.PowerShell.Sitecore92",
+            "version": 92            
         }
     ],
     "sitesDefault": {
         "version": 8,
-        "junction": false
+        "junction": true
     }
 }

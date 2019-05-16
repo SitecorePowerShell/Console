@@ -2,7 +2,7 @@
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 
-namespace Cognifide.PowerShell.VersionSpecific.Utility
+namespace Cognifide.PowerShell.Utility
 {
     class DateConverter : IDateConverter
     {

@@ -6,21 +6,21 @@ using System.Management.Automation;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs;
 using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using JobManager = Sitecore.Jobs.JobManager;
 using Page = Sitecore.Web.UI.HtmlControls.Page;
-using Sitecore.Collections;
 
-namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
+namespace Cognifide.PowerShell.Client.Applications
 {
     [Serializable]
     public class FieldEditor : Command

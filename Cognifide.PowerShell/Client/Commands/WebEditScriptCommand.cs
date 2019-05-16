@@ -1,11 +1,11 @@
-﻿using Sitecore;
+﻿using System.Globalization;
+using Sitecore;
 using Sitecore.Shell.Applications.WebEdit.Commands;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
-using System.Globalization;
 
-namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
+namespace Cognifide.PowerShell.Client.Commands
 {
 #pragma warning disable 612
     public class WebEditScriptCommand : WebEditCommand

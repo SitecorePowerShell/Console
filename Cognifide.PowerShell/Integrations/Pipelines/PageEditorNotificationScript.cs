@@ -10,7 +10,7 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetPageEditorNotifications;
 
-namespace Cognifide.PowerShell.VersionSpecific.Integrations.Pipelines
+namespace Cognifide.PowerShell.Integrations.Pipelines
 {
     public class PageEditorNotificationScript
     {

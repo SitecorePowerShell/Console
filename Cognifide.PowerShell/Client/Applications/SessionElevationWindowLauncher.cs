@@ -2,7 +2,7 @@
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
+namespace Cognifide.PowerShell.Client.Applications
 {
     public class SessionElevationWindowLauncher : ISessionElevationWindowLauncher
     {

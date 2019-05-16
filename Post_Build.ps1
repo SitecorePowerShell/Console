@@ -3,6 +3,7 @@
 #
 Param([string]$projectfilter)
 
+Write-Host "Project Filter: $($projectfilter)"
 # Load dependents scripts
 . "$PSScriptRoot\Deploy_Functions.ps1"
 
@@ -62,9 +63,9 @@ foreach ( $site in $userConfig.sites )
 
     # Get folders to deploy to from configuration and based on the destination site's version
     $deployProjects = $deployConfig.deployProjects | Filter-ProjectsForSite -version $site.version -projectFilter $projectFilter 
-
+  
     Write-Host
-    Write-Host -ForegroundColor Cyan "Deploying to $($site.path)"   
+    Write-Host -ForegroundColor Cyan "Deploying $(@($deployProjects).Count) projects to $($site.path)"   
     Write-Host
 
     foreach ($deployProject in $deployProjects)

@@ -76,42 +76,15 @@
     <Compile Include="..\Cognifide.PowerShell\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="Client\Applications\FieldEditor.cs" />
-    <Compile Include="Client\Applications\SessionElevationWindowLauncher.cs" />
-    <Compile Include="Client\Applications\ImmediateDebugWindowLauncher.cs" />
-    <Compile Include="Client\Commands\EditIseSettings.cs" />
-    <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
-    <Compile Include="Client\Commands\WebEditScriptCommand.cs" />
-    <Compile Include="Integrations\Pipelines\PageEditorNotificationScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SpeJobManager.cs" />
     <Compile Include="Services\SpeJobOptions.cs" />
-    <Compile Include="Utility\DateConverter.cs" />
-    <Compile Include="Utility\UrlHandleWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognifide.PowerShell\Cognifide.PowerShell.csproj">
       <Project>{fac57610-989c-4d7e-8d58-ccc914688096}</Project>
       <Name>Cognifide.PowerShell</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="sitecore modules\PowerShell\Styles\c3.min.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\Gallery.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.all.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.autocomplete.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.base.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.core.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.theme.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\reports.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
-    <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -132,6 +105,7 @@
       <Visible>false</Visible>
     </SitecoreModuleFiles>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
   </PropertyGroup>

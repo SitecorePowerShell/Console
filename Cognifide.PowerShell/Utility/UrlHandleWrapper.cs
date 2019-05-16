@@ -1,7 +1,7 @@
 ﻿using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Web;
 
-namespace Cognifide.PowerShell.VersionSpecific.Utility
+namespace Cognifide.PowerShell.Utility
 {
     class UrlHandleWrapper : IUrlHandleWrapper
     {
