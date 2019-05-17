@@ -1,4 +1,6 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
@@ -16,7 +18,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
-                var response = JobContext.Confirm(Title);
+                var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                var response = jobUiManager.Confirm(Title);
                 WriteObject(response);
             });
         }

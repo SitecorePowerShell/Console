@@ -250,22 +250,23 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             catch (Exception ex)
             {
-                var job = Sitecore.Context.Job;
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetContextJob();
                 if (job != null)
                 {
-                    job.Status.Failed = true;
+                    job.StatusFailed = true;
 
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
                         PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
                     }
-                    job.Status.Messages.Add(exceptionMessage);
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(exceptionMessage);
+                    job.AddStatusMessage(
                         "Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(
                         "We also have a user guide here http://doc.sitecorepowershell.com/.");
                 }
                 else

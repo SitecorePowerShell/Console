@@ -3,6 +3,8 @@ using System.Threading;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -31,11 +33,14 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void Run()
         {
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+
             try
             {
-                Context.Language = Context.Job?.Options?.ClientLanguage ?? Context.Language;
+                Context.Language = job?.Options?.ClientLanguage ?? Context.Language;
                 Method(Session, Script);
-                if (Context.Job == null) return;
+                if (job == null) return;
 
                 var output = new RunnerOutput
                 {
@@ -45,10 +50,10 @@ namespace Cognifide.PowerShell.Client.Applications
                     CloseRunner = Session.CloseRunner,
                     CloseMessages = Session.CloseMessages
                 };
-
-                Context.Job.Status.Result = output;
+                
+                job.StatusResult = output;
                 var message = new CompleteMessage {RunnerOutput = output};
-                JobContext.MessageQueue.PutMessage(message);
+                job.MessageQueue.PutMessage(message);
             }
             catch (ThreadAbortException taex)
             {
@@ -62,7 +67,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 PowerShellLog.Error("Error while executing PowerShell script.", exc);
 
-                if (Context.Job != null)
+                if (job != null)
                 {
                     var output =  new RunnerOutput
                     {
@@ -73,9 +78,9 @@ namespace Cognifide.PowerShell.Client.Applications
                         CloseMessages = Session.CloseMessages
                     };
 
-                    Context.Job.Status.Result = output;
+                    job.StatusResult = output;
                     var message = new CompleteMessage { RunnerOutput = output };
-                    JobContext.MessageQueue.PutMessage(message);
+                    job.MessageQueue.PutMessage(message);
                 }
             }
             finally

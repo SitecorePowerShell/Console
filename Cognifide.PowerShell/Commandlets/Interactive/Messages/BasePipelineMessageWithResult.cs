@@ -1,5 +1,7 @@
 ﻿using System;
 using Cognifide.PowerShell.Client.Applications;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
@@ -19,7 +21,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
         public virtual object GetResult()
         {
-            return JobContext.IsJob ? JobContext.MessageQueue.GetResult() : MessageQueue.GetResult();
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            return job != null ? job.MessageQueue.GetResult() : MessageQueue.GetResult();
         }
 
         private MessageQueue MessageQueue => messageQueue;
@@ -27,9 +31,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         protected BasePipelineMessageWithResult()
         {
             messageQueue = new MessageQueue();
-            if (JobContext.IsJob)
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job != null)
             {
-                jobHandle = JobContext.JobHandle;
+                jobHandle = job.Handle;
             }
         }
 

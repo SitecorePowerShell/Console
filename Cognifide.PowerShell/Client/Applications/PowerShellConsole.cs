@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
@@ -132,13 +133,12 @@ namespace Cognifide.PowerShell.Client.Applications
             if (message.Name != "pstaskmonitor:check")
                 return;
 
-            var job =
-                JobManager.GetJob(PowerShellWebService.GetJobId(message.Arguments["guid"], message.Arguments["handle"]));
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetJob(PowerShellWebService.GetJobId(message.Arguments["guid"], message.Arguments["handle"]));
 
             if (job != null)
             {
-                IMessage iMessage;
-                while (job.MessageQueue.GetMessage(out iMessage))
+                while (job.MessageQueue.GetMessage(out var iMessage))
                 {
                     iMessage.Execute();
                 }

@@ -15,6 +15,8 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
@@ -107,15 +109,17 @@ namespace Cognifide.PowerShell.Console.Services
             try
             {
                 var handle = ID.NewID.ToString();
-                var jobOptions = new JobOptions(GetJobId(guid, handle), "PowerShell", "shell", this, nameof(RunJob),
-                    new object[] {session, command})
-                {
-                    AfterLife = new TimeSpan(0, 0, 20),
-                    ContextUser = Sitecore.Context.User,
-                    EnableSecurity = true,
-                    ClientLanguage = Sitecore.Context.ContentLanguage
-                };
-                JobManager.Start(jobOptions);
+                var jobOptions = TypeResolver.Resolve<IJobOptions>(new object[]{GetJobId(guid, handle), "PowerShell", "shell", this, nameof(RunJob),
+                    new object[] {session, command}});
+                jobOptions.ContextUser = Sitecore.Context.User;
+                jobOptions.EnableSecurity = true;
+                jobOptions.ClientLanguage = Sitecore.Context.ContentLanguage;
+                jobOptions.AfterLife = new TimeSpan(0, 0, 20);
+
+
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                jobManager.StartJob(jobOptions);
+
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
                 return PollCommandOutput(guid, handle, stringFormat);
             }
@@ -294,27 +298,28 @@ namespace Cognifide.PowerShell.Console.Services
             }
             catch (Exception ex)
             {
-                var job = Sitecore.Context.Job;
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetContextJob();
                 if (job != null)
                 {
-                    job.Status.Failed = true;
+                    job.StatusFailed = true;
 
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
                         PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
                     }
-                    job.Status.Messages.Add(exceptionMessage);
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(exceptionMessage);
+                    job.AddStatusMessage(
                         "Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
-                    job.Status.Messages.Add(
+                    job.AddStatusMessage(
                         "We also have a user guide here http://doc.sitecorepowershell.com/.");
                 }
                 else
                 {
-                    PowerShellLog.Error("Script execution failed. Job not found.", ex);
+                    PowerShellLog.Error("Script execution failed. Could not find command job.", ex);
                 }
             }
         }

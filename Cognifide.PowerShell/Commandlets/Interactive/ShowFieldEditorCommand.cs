@@ -2,6 +2,8 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Validation;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Data.Items;
 
@@ -90,28 +92,29 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
-                if (Context.Job != null)
-                {
-                    var fields = "*";
-                    if (Name != null && Name.Length > 0)
-                        fields = Name.Aggregate((current, next) => current + "|" + next);
-                    var icon = string.IsNullOrEmpty(SectionIcon) ? item.Appearance.Icon : SectionIcon;
-                    var sectionTitle = string.IsNullOrEmpty(SectionTitle) ? item.Name : SectionTitle;
-                    var message = new ShellCommandInItemContextMessage(item,
-                        "powershell:fieldeditor(title=" + (string.IsNullOrEmpty(Title) ? item.Name : Title) +
-                        ",preservesections=" + (PreserveSections ? "1" : "0") +
-                        ",fields=" + fields +
-                        ",icon=" + icon +
-                        ",section=" + sectionTitle +
-                        ",width=" + Width +
-                        ",height=" + Height +
-                        ",isf=" + (IncludeStandardFields ? "1" : "0") +
-                        ")");
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetContextJob();
+                if (job == null) return;
 
-                    PutMessage(message);
-                    var result = message.GetResult().ToString();
-                    WriteObject(result);
-                }
+                var fields = "*";
+                if (Name != null && Name.Length > 0)
+                    fields = Name.Aggregate((current, next) => current + "|" + next);
+                var icon = string.IsNullOrEmpty(SectionIcon) ? item.Appearance.Icon : SectionIcon;
+                var sectionTitle = string.IsNullOrEmpty(SectionTitle) ? item.Name : SectionTitle;
+                var message = new ShellCommandInItemContextMessage(item,
+                    "powershell:fieldeditor(title=" + (string.IsNullOrEmpty(Title) ? item.Name : Title) +
+                    ",preservesections=" + (PreserveSections ? "1" : "0") +
+                    ",fields=" + fields +
+                    ",icon=" + icon +
+                    ",section=" + sectionTitle +
+                    ",width=" + Width +
+                    ",height=" + Height +
+                    ",isf=" + (IncludeStandardFields ? "1" : "0") +
+                    ")");
+
+                PutMessage(message);
+                var result = message.GetResult().ToString();
+                WriteObject(result);
             });
         }
     }

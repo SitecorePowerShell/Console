@@ -88,7 +88,8 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else
             {
-                var job = JobManager.GetJob(jobHandle);
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetJob(jobHandle);
                 if (job == null)
                 {
                     OnJobDisappeared();

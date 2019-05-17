@@ -13,6 +13,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
         public Language ClientLanguage { get; set; }
         public bool AtomicExecution { get; set; }
         public TimeSpan AfterLife { get; set; }
+        public bool WriteToLog { get; set; }
 
         public string JobName { get; set; }
         public string Category { get; set; }
@@ -20,6 +21,11 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
         public string MethodName { get; set; }
         public string SiteName { get; set; }
         public object[] Parameters { get; set; }
+
+        public SpeJobOptions()
+        {
+
+        }
 
         public SpeJobOptions(string jobName, string category, string siteName, object obj, string methodName) : this(jobName, category, siteName, obj, methodName, null)
         {
@@ -44,6 +50,14 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
                 ClientLanguage = customOptions.ClientLanguage,
                 AtomicExecution = customOptions.AtomicExecution,
                 AfterLife = customOptions.AfterLife
+            };
+        }
+
+        public static implicit operator SpeJobOptions(DefaultJobOptions options)
+        {
+            return new SpeJobOptions
+            {
+                WriteToLog = options.WriteToLog
             };
         }
     }

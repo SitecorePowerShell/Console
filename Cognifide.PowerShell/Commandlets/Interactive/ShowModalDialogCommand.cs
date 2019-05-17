@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
@@ -37,7 +39,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 string response = null;
                 if (!string.IsNullOrEmpty(Url))
                 {
-                    response = JobContext.ShowModalDialog(Url, WidthString, HeightString);
+                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    response = jobUiManager.ShowModalDialog(Url, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Control))
                 {

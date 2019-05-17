@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 
@@ -32,11 +34,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             }
             var msgHandler = new SendMessageMessage(message, GetResult.IsPresent);
             LogErrors(() => PutMessage(msgHandler));
-            if (JobContext.IsJob && GetResult.IsPresent)
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job != null && GetResult.IsPresent)
             {
-                WriteObject(JobContext.MessageQueue.GetResult());
+                WriteObject(job.MessageQueue.GetResult());
             }
-            //return message.MessageQueue.GetResult();
         }
     }
 }

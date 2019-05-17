@@ -77,8 +77,10 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SpeJob.cs" />
     <Compile Include="Services\SpeJobManager.cs" />
     <Compile Include="Services\SpeJobOptions.cs" />
+    <Compile Include="Services\SpeJobUIManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognifide.PowerShell\Cognifide.PowerShell.csproj">

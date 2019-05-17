@@ -9,6 +9,8 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -54,9 +56,11 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected void RecoverHttpContext()
         {
-            var job = Context.Job;
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+
             HttpContext.Current = SessionState.PSVariable.Get("HttpContext").Value as HttpContext;
-            Context.Job = job;
+            jobManager.SetContextJob(job);
         }
 
         protected void WildcardWrite<T>(string filter, IEnumerable<T> items, Func<T, string> propertyName)

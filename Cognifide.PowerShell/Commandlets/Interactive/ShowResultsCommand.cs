@@ -3,6 +3,8 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Host;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 
@@ -54,15 +56,18 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     var hashParams =
                         new Hashtable(Parameters.ToDictionary(p => p.ToString().Split('|')[0],
                             p => WebUtil.SafeEncode(p.ToString().Split('|')[1])));
-                    response = JobContext.ShowModalDialog(hashParams, Control, WidthString, HeightString);
+                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    response = jobUiManager.ShowModalDialog(hashParams, Control, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Url))
                 {
-                    response = JobContext.ShowModalDialog(Url, WidthString, HeightString);
+                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    response = jobUiManager.ShowModalDialog(Url, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Control))
                 {
-                    response = JobContext.ShowModalDialog(Title ?? "Sitecore", Control, WidthString, HeightString);
+                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    response = jobUiManager.ShowModalDialog(Title ?? "Sitecore", Control, WidthString, HeightString);
                 }
                 WriteObject(response);
             });

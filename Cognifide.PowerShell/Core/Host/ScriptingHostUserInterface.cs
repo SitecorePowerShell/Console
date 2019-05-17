@@ -10,6 +10,8 @@ using System.Security;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Jobs.AsyncUI;
@@ -51,45 +53,46 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override string ReadLine()
         {
-            
-            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(ReadLine)))
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job == null || !CheckSessionCanDoInteractiveAction(nameof(ReadLine)))
+                throw new NotImplementedException();
+
+            var options = new object[1];
+            options[0] = new Hashtable()
             {
-                object[] options = new object[1];
-                options[0] = new Hashtable()
-                {
-                    ["Title"] = " ",
-                    ["Name"] = "varString",
-                    ["Value"] = string.Empty
-                };
-                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, string.Empty, false, null, null,
-                    host.SessionKey));
-                var values = (object[])JobContext.MessageQueue.GetResult() ?? new object[] { string.Empty };
-                return ((Hashtable)values[0])["Value"] as string;
-            }
-            throw new NotImplementedException();
+                ["Title"] = " ",
+                ["Name"] = "varString",
+                ["Value"] = string.Empty
+            };
+            job.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, string.Empty, false, null, null,
+                host.SessionKey));
+            var values = (object[])job.MessageQueue.GetResult() ?? new object[] { string.Empty };
+            return ((Hashtable)values[0])["Value"] as string;
         }
 
         public override SecureString ReadLineAsSecureString()
         {
-            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(ReadLineAsSecureString)))
-            {
-                object[] options = new object[1];
-                options[0] = new Hashtable()
-                {
-                    ["Title"] = " ",
-                    ["Name"] = "varSecure",
-                    ["Value"] = string.Empty,
-                    ["Editor"] = "password"
-                };
-                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, string.Empty, false, null, null,
-                    host.SessionKey));
-                var values = (object[]) JobContext.MessageQueue.GetResult() ?? new object[] {string.Empty};
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job == null || !CheckSessionCanDoInteractiveAction(nameof(ReadLineAsSecureString)))
+                throw new NotImplementedException();
 
-                return ToSecureString(((Hashtable)values[0])["Value"] as string);
-            }
-            throw new NotImplementedException();
+            var options = new object[1];
+            options[0] = new Hashtable()
+            {
+                ["Title"] = " ",
+                ["Name"] = "varSecure",
+                ["Value"] = string.Empty,
+                ["Editor"] = "password"
+            };
+            job.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, string.Empty, false, null, null,
+                host.SessionKey));
+            var values = (object[]) job.MessageQueue.GetResult() ?? new object[] {string.Empty};
+
+            return ToSecureString(((Hashtable)values[0])["Value"] as string);
         }
 
         public override void Write(string value)
@@ -155,10 +158,13 @@ namespace Cognifide.PowerShell.Core.Host
             message.Arguments.Add("RecordType", record.RecordType.ToString());
             message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString(CultureInfo.InvariantCulture));
             var sheerMessage = new SendMessageMessage(message, false);
-            if (JobContext.IsJob)
+            
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job != null)
             {
-                message.Arguments.Add("JobId", JobContext.Job.Name);
-                JobContext.MessageQueue.PutMessage(sheerMessage);
+                message.Arguments.Add("JobId", job.Name);
+                job.MessageQueue.PutMessage(sheerMessage);
             }
             else
             {
@@ -183,36 +189,36 @@ namespace Cognifide.PowerShell.Core.Host
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
             Collection<FieldDescription> descriptions)
         {
-            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(Prompt)))
-            {
-                object[] options = new object[descriptions.Count];
-                for (var i=0 ; i < descriptions.Count; i++)
-                {
-                    var description = descriptions[i];
-                    string editor = description.ParameterTypeName.Contains("SecureString") ? "password" : "string";
-                    options[i] = new Hashtable()
-                    {
-                        ["Title"] = description.Name,
-                        ["Name"] = $"var{i}{editor}",
-                        ["Value"] = description.DefaultValue?.ToString()??string.Empty,
-                        ["Editor"] = description.ParameterTypeName.Contains("SecureString") ? "password" : "string"
-                    };
-                    
-                }
-                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    string.IsNullOrEmpty(caption) ? "Sitecore PowerShell Extensions" : caption,
-                    string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, string.Empty, false,
-                    null, null, host.SessionKey));
-                var values = (object[]) JobContext.MessageQueue.GetResult();
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
 
-                return values?.Cast<Hashtable>()
-                    .ToDictionary(value => value["Name"].ToString(),
-                        value =>
-                            ((string) value["Name"]).Contains("password")
-                                ? PSObject.AsPSObject(ToSecureString((string) value["Value"]))
-                                : PSObject.AsPSObject(value["Value"]));
+            if (job == null || !CheckSessionCanDoInteractiveAction(nameof(Prompt))) throw new NotImplementedException();
+            var options = new object[descriptions.Count];
+            for (var i=0 ; i < descriptions.Count; i++)
+            {
+                var description = descriptions[i];
+                string editor = description.ParameterTypeName.Contains("SecureString") ? "password" : "string";
+                options[i] = new Hashtable()
+                {
+                    ["Title"] = description.Name,
+                    ["Name"] = $"var{i}{editor}",
+                    ["Value"] = description.DefaultValue?.ToString()??string.Empty,
+                    ["Editor"] = description.ParameterTypeName.Contains("SecureString") ? "password" : "string"
+                };
+                    
             }
-            throw new NotImplementedException();
+            job.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                string.IsNullOrEmpty(caption) ? "Sitecore PowerShell Extensions" : caption,
+                string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, string.Empty, false,
+                null, null, host.SessionKey));
+            var values = (object[]) job.MessageQueue.GetResult();
+
+            return values?.Cast<Hashtable>()
+                .ToDictionary(value => value["Name"].ToString(),
+                    value =>
+                        ((string) value["Name"]).Contains("password")
+                            ? PSObject.AsPSObject(ToSecureString((string) value["Value"]))
+                            : PSObject.AsPSObject(value["Value"]));
         }
 
 
@@ -256,7 +262,11 @@ namespace Cognifide.PowerShell.Core.Host
                     {"cp", caption},
                     {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
                 };
-            Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
+
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+
+            Context.Site = Factory.GetSite(job.Options.SiteName);
             var lineWidth = choices.Count*80 + 140;
             var strLineWidth = lineWidth/8;
             var lineHeight = 0;
@@ -265,7 +275,8 @@ namespace Cognifide.PowerShell.Core.Host
                 lineHeight += 1 + line.Length/strLineWidth;
             }
             lineHeight = Math.Max(lineHeight*21 + 130,150);
-            var dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
+            var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+            var dialogResult = jobUiManager.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 
             if (!string.IsNullOrEmpty(dialogResult))

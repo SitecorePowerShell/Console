@@ -1,4 +1,6 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
@@ -17,7 +19,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     return;
                 }
 
-                var yesnoresult = JobContext.ShowModalDialog(Title, "YesNoCancel", WidthString, HeightString);
+                var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                var yesnoresult = jobUiManager.ShowModalDialog(Title, "YesNoCancel", WidthString, HeightString);
                 WriteObject(yesnoresult);
             });
         }

@@ -339,11 +339,13 @@ namespace Cognifide.PowerShell.Core.Host
 
         private void SendUiMessage(Message message)
         {
-            if (!JobContext.IsJob) return;
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            if (job == null) return;
 
             var sheerMessage = new SendMessageMessage(message, false);
             message.Arguments.Add("JobId", Key);
-            JobContext.MessageQueue.PutMessage(sheerMessage);
+            job.MessageQueue.PutMessage(sheerMessage);
         }
 
         private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs args)
@@ -719,7 +721,9 @@ namespace Cognifide.PowerShell.Core.Host
 
         private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
         {
-            JobName = Context.Job?.Name;
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var job = jobManager.GetContextJob();
+            JobName = job?.Name;
 
             if (stringOutput)
             {

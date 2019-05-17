@@ -11,5 +11,28 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
             var options = jobOptions as SpeJobOptions;
             return JobManager.Start(options).Handle;
         }
+
+        public IJob GetJob(Handle handle)
+        {
+            var job = JobManager.GetJob(handle);
+            return job == null ? null : new SpeJob(job);
+        }
+
+        public IJob GetJob(string jobName)
+        {
+            var job = JobManager.GetJob(jobName);
+            return job == null ? null : new SpeJob(job);
+        }
+
+        public IJob GetContextJob()
+        {
+            var job = Context.Job;
+            return job == null ? null : new SpeJob(job);
+        }
+
+        public void SetContextJob(IJob job)
+        {
+            Context.Job = (job as SpeJob).Job;
+        }
     }
 }

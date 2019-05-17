@@ -1,4 +1,6 @@
 ﻿using System.Collections.Specialized;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Install.Framework;
 using Sitecore.Jobs.AsyncUI;
@@ -20,7 +22,8 @@ namespace Cognifide.PowerShell.Integrations.Install
             var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
             str.Append("scriptId", scriptId);
             str.Append("scriptDb", scriptDb);
-            JobContext.ShowModalDialog(str.ToString(), width, height);
+            var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+            jobUiManager.ShowModalDialog(str.ToString(), width, height);
         }
     }
 }

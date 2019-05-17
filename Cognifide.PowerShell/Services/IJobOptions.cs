@@ -11,5 +11,7 @@ namespace Cognifide.PowerShell.Services
         Language ClientLanguage { get; set; }
         bool AtomicExecution { get; set; }
         TimeSpan AfterLife { get; set; }
+        bool WriteToLog { get; set; }
+        string SiteName { get; set; }
     }
 }

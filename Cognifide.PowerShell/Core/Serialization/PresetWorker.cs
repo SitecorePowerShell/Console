@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;
@@ -21,11 +23,10 @@ namespace Cognifide.PowerShell.Core.Serialization
         {
             get
             {
-                if (Context.Job == null)
-                {
-                    return 0;
-                }
-                return Context.Job.Status.Messages.Cast<string>().Count(m => !m.StartsWith("#"));
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetContextJob();
+
+                return job?.StatusMessages.Cast<string>().Count(m => !m.StartsWith("#")) ?? 0;
             }
         }
 
