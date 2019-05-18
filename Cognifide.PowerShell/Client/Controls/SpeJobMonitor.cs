@@ -6,7 +6,6 @@ using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
-using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.HtmlControls;

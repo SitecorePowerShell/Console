@@ -33,6 +33,8 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
 
         public IJobOptions Options => (SpeJobOptions)Job.Options;
 
+        public bool IsDone => Job.IsDone;
+
         public SpeJob(Handle handle)
         {
             Handle = handle;

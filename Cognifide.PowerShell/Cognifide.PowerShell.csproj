@@ -590,6 +590,9 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
+    <Content Include="App_Config\Include\Cognifide.PowerShell.IdentityServer.config.disabled">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />

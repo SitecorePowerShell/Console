@@ -3,7 +3,6 @@ using Cognifide.PowerShell.Client.Applications;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Services;
 using Sitecore;
-using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 
@@ -99,7 +98,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 if (!String.IsNullOrEmpty(strJobId))
                 {
                     jobHandle = Handle.Parse(strJobId);
-                    var job = JobManager.GetJob(jobHandle);
+                    var jobManager = TypeResolver.Resolve<IJobManager>();
+                    var job = jobManager.GetJob(jobHandle);
                     job?.MessageQueue.PutResult(processedResult);
                 }
                 else

@@ -15,7 +15,6 @@ using Sitecore;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Jobs;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {

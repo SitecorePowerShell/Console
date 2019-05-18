@@ -20,7 +20,6 @@ using Cognifide.PowerShell.Services;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
-using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
 using Sitecore.StringExtensions;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
@@ -337,7 +336,8 @@ namespace Cognifide.PowerShell.Console.Services
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             var result = new Result();
-            var scriptJob = JobManager.GetJob(GetJobId(guid, handle));
+            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var scriptJob = jobManager.GetJob(GetJobId(guid, handle));
             if (scriptJob == null)
             {
                 result.status = StatusError;
@@ -356,11 +356,11 @@ namespace Cognifide.PowerShell.Console.Services
                 result.handle = handle;
             }
 
-            if (scriptJob != null && scriptJob.Status.Failed)
+            if (scriptJob != null && scriptJob.StatusFailed)
             {
                 result.status = StatusError;
                 var message =
-                    string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray())
+                    string.Join(Environment.NewLine, scriptJob.StatusMessages.Cast<string>().ToArray())
                         .Replace("[", "&#91;")
                         .Replace("]", "&#93;");
                 result.result = "[[;#f00;#000]" +

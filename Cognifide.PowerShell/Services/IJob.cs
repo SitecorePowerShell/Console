@@ -19,5 +19,7 @@ namespace Cognifide.PowerShell.Services
         StringCollection StatusMessages { get; }
 
         IJobOptions Options { get; }
+
+        bool IsDone { get; }
     }
 }

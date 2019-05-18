@@ -12,8 +12,6 @@ using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security;
 using Sitecore.Text;
 using Sitecore.Web;
@@ -157,7 +155,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
             if (showProgress && args.Parameters.AllKeys.Contains("JobId"))
             {
-                var job = JobManager.GetJob(args.Parameters["JobId"]);
+                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var job = jobManager.GetJob(args.Parameters["JobId"]);
                 showProgress = !job.IsDone;
             }
             ProgressOverlay.Visible = showProgress;
