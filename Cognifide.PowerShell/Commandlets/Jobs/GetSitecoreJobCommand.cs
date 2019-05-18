@@ -1,10 +1,12 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Services;
 using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Jobs
 {
     [Cmdlet(VerbsCommon.Get, "SitecoreJob")]
-    [OutputType(typeof (Sitecore.Jobs.Job))]
+    [OutputType(typeof (PSObject))]
     public class GetSitecoreJobCommand : BaseCommand
     {
         [Parameter]
@@ -12,14 +14,15 @@ namespace Cognifide.PowerShell.Commandlets.Jobs
 
         protected override void ProcessRecord()
         {
+            var jobManager = TypeResolver.Resolve<IJobManager>();
             if (Name.IsNullOrEmpty())
             {
-                var jobs = Sitecore.Jobs.JobManager.GetJobs();
+                var jobs = jobManager.GetBaseJobs();
                 WriteObject(jobs, true);
             }
             else
             {
-                var job = Sitecore.Jobs.JobManager.GetJob(Name);
+                var job = jobManager.GetJob(Name);
                 WriteObject(job);
             }
         }

@@ -1,4 +1,5 @@
-﻿using Cognifide.PowerShell.Services;
+﻿using System.Collections.Generic;
+using Cognifide.PowerShell.Services;
 using Sitecore;
 using Sitecore.Jobs;
 
@@ -22,6 +23,15 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
         {
             var job = JobManager.GetJob(jobName);
             return job == null ? null : new SpeJob(job);
+        }
+
+        public IEnumerable<object> GetBaseJobs()
+        {
+            var jobs = JobManager.GetJobs();
+            foreach (var job in jobs)
+            {
+                yield return job;
+            }
         }
 
         public IJob GetContextJob()
