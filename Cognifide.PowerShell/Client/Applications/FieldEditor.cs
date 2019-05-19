@@ -6,7 +6,7 @@ using System.Management.Automation;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
@@ -205,10 +205,10 @@ namespace Cognifide.PowerShell.Client.Applications
                     PageEditFieldEditorOptions.Parse(args.Result).SetPageEditorFieldValues();
                 }
                 var strJobId = args.Parameters["jobHandle"];
-                if (!String.IsNullOrEmpty(strJobId))
+                if (!string.IsNullOrEmpty(strJobId))
                 {
                     var jobHandle = Handle.Parse(strJobId);
-                    var jobManager = TypeResolver.Resolve<IJobManager>();
+                    var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                     var job = jobManager.GetJob(jobHandle);
                     job?.MessageQueue.PutResult(args.HasResult ? "ok" : "cancel");
                 }

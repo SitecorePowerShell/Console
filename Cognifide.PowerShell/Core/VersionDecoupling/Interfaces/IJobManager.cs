@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sitecore;
 
-namespace Cognifide.PowerShell.Services
+namespace Cognifide.PowerShell.Core.VersionDecoupling.Interfaces
 {
     public interface IJobManager
     {

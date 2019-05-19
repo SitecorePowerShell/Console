@@ -16,7 +16,7 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
@@ -116,7 +116,7 @@ namespace Cognifide.PowerShell.Console.Services
                 jobOptions.AfterLife = new TimeSpan(0, 0, 20);
 
 
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 jobManager.StartJob(jobOptions);
 
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
@@ -297,7 +297,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             catch (Exception ex)
             {
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetContextJob();
                 if (job != null)
                 {
@@ -336,7 +336,7 @@ namespace Cognifide.PowerShell.Console.Services
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             var result = new Result();
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var scriptJob = jobManager.GetJob(GetJobId(guid, handle));
             if (scriptJob == null)
             {

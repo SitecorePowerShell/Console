@@ -3,7 +3,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Data.Items;
 
@@ -92,7 +92,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetContextJob();
                 if (job == null) return;
 

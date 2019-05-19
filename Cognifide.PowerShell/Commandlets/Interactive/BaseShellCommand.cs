@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         public static void EnsureSiteContext()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
 
             if (job == null) return;
@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         public static void PutMessage(IMessage message)
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job != null)
             {

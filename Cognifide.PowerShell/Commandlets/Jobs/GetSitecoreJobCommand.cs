@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Jobs
@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.Commandlets.Jobs
 
         protected override void ProcessRecord()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             if (Name.IsNullOrEmpty())
             {
                 var jobs = jobManager.GetBaseJobs();

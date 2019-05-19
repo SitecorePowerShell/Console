@@ -10,7 +10,7 @@ using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Core.Host
             str.Add("suspend", "true");
 
             var currentNesting = NestedLevel;
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             job.MessageQueue.PutMessage(
                 new ShowSuspendDialogMessage(SessionKey, str.ToString(), "900", "600", new Hashtable())

@@ -1,10 +1,16 @@
-﻿using Cognifide.PowerShell.Core.VersionDecoupling;
+﻿using System;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.Buckets.FieldTypes;
 
 namespace Cognifide.PowerShell.Client.Controls
 {
     internal class BucketListExtended : BucketList
     {
+        public BucketListExtended()
+        {
+            this.FieldID = Guid.Empty.ToString();
+        }
+
         public virtual void SetLanguage(string language)
         {
             if (CurrentVersion.IsAtLeast(SitecoreVersion.V71))
@@ -17,6 +23,5 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             ItemLanguage = language;
         }
-
     }
 }

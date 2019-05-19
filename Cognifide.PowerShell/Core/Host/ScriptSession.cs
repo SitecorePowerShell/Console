@@ -15,7 +15,7 @@ using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
@@ -337,7 +337,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         private void SendUiMessage(Message message)
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job == null) return;
 
@@ -719,7 +719,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             JobName = job?.Name;
 

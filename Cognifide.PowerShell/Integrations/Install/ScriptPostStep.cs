@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Install.Framework;
 using Sitecore.Jobs.AsyncUI;

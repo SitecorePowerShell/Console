@@ -1,5 +1,5 @@
 ﻿using System;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Globalization;
 using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
@@ -55,7 +55,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
 
         public static implicit operator SpeJobOptions(DefaultJobOptions options)
         {
-            return new SpeJobOptions
+            return new SpeJobOptions(options.JobName, options.Category, options.SiteName, options.Method.Object, options.Method.Method.Name)
             {
                 WriteToLog = options.WriteToLog
             };

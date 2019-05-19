@@ -11,7 +11,7 @@ using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Jobs.AsyncUI;
@@ -53,7 +53,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override string ReadLine()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job == null || !CheckSessionCanDoInteractiveAction(nameof(ReadLine)))
                 throw new NotImplementedException();
@@ -74,7 +74,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override SecureString ReadLineAsSecureString()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job == null || !CheckSessionCanDoInteractiveAction(nameof(ReadLineAsSecureString)))
                 throw new NotImplementedException();
@@ -159,7 +159,7 @@ namespace Cognifide.PowerShell.Core.Host
             message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString(CultureInfo.InvariantCulture));
             var sheerMessage = new SendMessageMessage(message, false);
             
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job != null)
             {
@@ -189,7 +189,7 @@ namespace Cognifide.PowerShell.Core.Host
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
             Collection<FieldDescription> descriptions)
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
 
             if (job == null || !CheckSessionCanDoInteractiveAction(nameof(Prompt))) throw new NotImplementedException();
@@ -263,7 +263,7 @@ namespace Cognifide.PowerShell.Core.Host
                     {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
                 };
 
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
 
             Context.Site = Factory.GetSite(job.Options.SiteName);

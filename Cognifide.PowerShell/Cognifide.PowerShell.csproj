@@ -547,10 +547,10 @@
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
-    <Compile Include="Services\IJob.cs" />
-    <Compile Include="Services\IJobManager.cs" />
-    <Compile Include="Services\IJobOptions.cs" />
-    <Compile Include="Services\IJobUIManager.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\IJob.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\IJobManager.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\IJobOptions.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\IJobUIManager.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>

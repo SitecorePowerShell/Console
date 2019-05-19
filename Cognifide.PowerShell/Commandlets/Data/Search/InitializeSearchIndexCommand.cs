@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 
@@ -50,7 +50,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             if (IndexCustodian.IsRebuilding(index))
             {
                 WriteVerbose($"Skipping full index rebuild for {index.Name} because it's already running.");
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetJob($"{"Index_Update"}_IndexName={index.Name}");
 
                 if (job == null || !AsJob) return;

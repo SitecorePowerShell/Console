@@ -4,7 +4,7 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void Run()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
 
             try

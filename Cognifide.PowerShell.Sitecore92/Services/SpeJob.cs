@@ -1,5 +1,5 @@
 ﻿using System.Collections.Specialized;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Abstractions;
 using Sitecore.Jobs;
@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
 {
     public class SpeJob : IJob
     {
-        public Handle Handle { get; }
+        public Handle Handle => Job.Handle;
 
         internal BaseJob Job { get; set; }
 
@@ -37,7 +37,6 @@ namespace Cognifide.PowerShell.VersionSpecific.Services
 
         public SpeJob(Handle handle)
         {
-            Handle = handle;
             Job = JobManager.GetJob(handle);
         }
 

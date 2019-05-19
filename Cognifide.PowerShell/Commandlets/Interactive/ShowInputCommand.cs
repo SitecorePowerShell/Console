@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     PutMessage(new PromptMessage(Prompt, DefaultValue ?? ""));
                 }
 
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetContextJob();
                 var alertresult = job.MessageQueue.GetResult() as string;
                 WriteObject(alertresult);

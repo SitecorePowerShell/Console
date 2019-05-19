@@ -10,7 +10,7 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected void RecoverHttpContext()
         {
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
 
             HttpContext.Current = SessionState.PSVariable.Get("HttpContext").Value as HttpContext;

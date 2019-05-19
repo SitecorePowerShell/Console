@@ -10,13 +10,10 @@
 <configuration xmlns:patch="http://www.sitecore.net/xmlconfig/" xmlns:role="http://www.sitecore.net/xmlconfig/role/" xmlns:security="http://www.sitecore.net/xmlconfig/security/">
   <sitecore role:require="Standalone or ContentManagement" security:require="Sitecore">
     <pipelines>
-      <!--
-				The Unicorn control panel path must be added to the list of site neutral paths for the Unicorn control panel to work with authentication in 9.1.
-				This must match the activationUrl defined in the UnicornControlPanelPipelineProcessor defined in Unicorn.UI.config.
-			-->
       <owin.cookieAuthentication.validateIdentity>
         <processor type="Sitecore.Owin.Authentication.Pipelines.CookieAuthentication.ValidateIdentity.ValidateSiteNeutralPaths, Sitecore.Owin.Authentication">
           <siteNeutralPaths hint="list">
+            <!-- This entry corrects the infinite loop of ExecuteCommand in the SPE Console -->
             <path hint="spe">/sitecore%20modules/PowerShell</path>
           </siteNeutralPaths>
         </processor>

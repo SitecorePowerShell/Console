@@ -2,7 +2,7 @@
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 
-namespace Cognifide.PowerShell.Services
+namespace Cognifide.PowerShell.Core.VersionDecoupling.Interfaces
 {
     public interface IJob
     {

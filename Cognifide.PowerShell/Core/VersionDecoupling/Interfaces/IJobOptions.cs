@@ -1,7 +1,7 @@
 ﻿using System;
 using Sitecore.Globalization;
 
-namespace Cognifide.PowerShell.Services
+namespace Cognifide.PowerShell.Core.VersionDecoupling.Interfaces
 {
     public interface IJobOptions
     {

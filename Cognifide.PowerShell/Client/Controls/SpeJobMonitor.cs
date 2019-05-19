@@ -2,7 +2,7 @@
 using System.Threading;
 using Cognifide.PowerShell.Client.Applications;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
@@ -87,7 +87,7 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else
             {
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetJob(jobHandle);
                 if (job == null)
                 {
@@ -139,7 +139,7 @@ namespace Cognifide.PowerShell.Client.Controls
             jobOptions.ClientLanguage = language ?? options?.ClientLanguage ?? Sitecore.Context.Language;
             jobOptions.AfterLife = new TimeSpan(0, 0, 0, 10);
 
-            var jobManager = TypeResolver.Resolve<IJobManager>();
+            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             JobHandle = jobManager.StartJob(jobOptions);
             ScheduleCallback();
         }

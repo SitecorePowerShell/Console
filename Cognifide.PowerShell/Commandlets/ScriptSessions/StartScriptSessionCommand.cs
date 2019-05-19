@@ -10,7 +10,7 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Services;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -124,7 +124,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             else
             {
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 jobManager.StartJob(jobOptions);
             }
             WriteObject(session);
@@ -249,7 +249,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             catch (Exception ex)
             {
-                var jobManager = TypeResolver.Resolve<IJobManager>();
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
                 var job = jobManager.GetContextJob();
                 if (job != null)
                 {
