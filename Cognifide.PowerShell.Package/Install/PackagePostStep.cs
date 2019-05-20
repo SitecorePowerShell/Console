@@ -16,18 +16,18 @@ namespace Cognifide.PowerShell.Package.Install
         public void Run(ITaskOutput output, NameValueCollection metaData)
         {
             var text = metaData["Comment"] ?? string.Empty;
-            if (String.IsNullOrEmpty(text)) { return; }
+            if (string.IsNullOrEmpty(text)) { return; }
 
-            var xelement = ToXElement(text);
-            if (xelement == null) { return; }
+            var contentXml = ToXElement(text);
+            if (contentXml == null) { return; }
 
-            var items = xelement.Element(Constants.ItemsPrefix);
+            var items = contentXml.Element(Constants.ItemsPrefix);
             if (items != null)
             {
                 DeleteItems(items);
             }
 
-            var files = xelement.Element(Constants.FilesPrefix);
+            var files = contentXml.Element(Constants.FilesPrefix);
             if (files == null) { return; }
 
             DeleteFiles(files);
@@ -65,17 +65,17 @@ namespace Cognifide.PowerShell.Package.Install
         private static XElement ToXElement(string text)
         {
             Assert.ArgumentNotNull(text, "text");
-            XDocument xdocument;
+            XDocument document;
             try
             {
-                xdocument = XDocument.Parse(text);
+                document = XDocument.Parse(text);
             }
             catch
             {
                 return null;
             }
 
-            return xdocument.Root;
+            return document.Root;
         }
     }
 }
