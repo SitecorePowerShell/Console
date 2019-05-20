@@ -68,7 +68,7 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
         private static object CreateObject(string typeName, object[] parameters)
         {
             if (string.IsNullOrEmpty(typeName))
-                return (object) null;
+                return null;
             var length = typeName.IndexOf(',');
             if (length >= 0)
             {

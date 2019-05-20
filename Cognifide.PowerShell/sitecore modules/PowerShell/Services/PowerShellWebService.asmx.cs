@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Console.Services
                                 "\r\n" +
                                 "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
                                 "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
-                                "[[;#f00;#000]We also have a user guide here http://doc.sitecorepowershell.com/.]\r\n\r\n",
+                                "[[;#f00;#000]We also have a user guide here https://doc.sitecorepowershell.com/.]\r\n\r\n",
                             prompt = $"PS {session.CurrentLocation}>",
                             background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
                             color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
@@ -314,7 +314,7 @@ namespace Cognifide.PowerShell.Console.Services
                     job.AddStatusMessage(
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.AddStatusMessage(
-                        "We also have a user guide here http://doc.sitecorepowershell.com/.");
+                        "We also have a user guide here https://doc.sitecorepowershell.com/.");
                 }
                 else
                 {

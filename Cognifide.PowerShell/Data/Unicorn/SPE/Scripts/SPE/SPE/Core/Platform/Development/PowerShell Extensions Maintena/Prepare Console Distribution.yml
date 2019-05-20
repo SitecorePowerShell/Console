@@ -11,22 +11,45 @@ SharedFields:
     # Clear test items:
     # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
     
+    function New-PackagePostStep {
+        param(
+            $PackageItems,
+            $PackageFiles
+        )
+        
+        $writer = New-Object System.IO.StringWriter
+        $output = New-Object System.Xml.XmlTextWriter([System.IO.TextWriter]$writer)
+        $output.Formatting = [System.Xml.Formatting]::Indented
+        $output.WriteStartElement("uninstall")
+        
+        if($PackageItems) {
+            $output.WriteStartElement("items")
+            foreach($packageItem in $PackageItems) {
+                $output.WriteStartElement("item")
+                $output.WriteAttributeString("database", $packageItem.Database)
+                $output.WriteAttributeString("id", $packageItem.ID.ToString())
+                $output.WriteEndElement()
+            }
+            $output.WriteEndElement()
+        }
+        if($PackageFiles) {
+            $output.WriteStartElement("files")
+            foreach($packageFile in $PackageFiles) {
+                $output.WriteStartElement("file")
+                $output.WriteAttributeString("filename", $packageFile.FileName)
+                $output.WriteEndElement()
+            }
+            $output.WriteEndElement()            
+        }
+    
+        $output.WriteEndElement()
+        $writer.ToString()
+    }
+    
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
-      $sitecore7Warning = "" 
-    } else {
-      $sitecore7Warning = @"
-      
-    ******************************************************
-    This version of Sitecore PowerShell Extensions is not supported for this version of Sitecore.
-    ******************************************************
-    
-    "@;
-    }
-    
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta4"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta6"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -50,7 +73,6 @@ SharedFields:
     * Test all of your custom scripts!
     * Rebuild the integration points
     --------------------------------------------------------
-    $($sitecore7Warning)
     This module includes ready-to-use tools and a
     variety of samples for you to explore.
     
@@ -68,6 +90,10 @@ SharedFields:
     https://blog.najmanowicz.com/
     https://michaellwest.blogspot.com/
     "@
+    $newPackageFiles = @([PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.VersionSpecific.dll"})
+    $package.Metadata.PostStep = "Cognifide.PowerShell.Package.Install.PackagePostStep, Cognifide.PowerShell.Package"
+    $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
+    
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
@@ -202,7 +228,7 @@ SharedFields:
     $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version).zip"
     
     Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled" > $null
-    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update > $null
+    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll" -Update > $null
     Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath $minimalPackageName -Include "web.config", "RemoteAutomation.asmx", "RemoteScriptCall.ashx" -Update > $null
     
     # Build Remoting Package
