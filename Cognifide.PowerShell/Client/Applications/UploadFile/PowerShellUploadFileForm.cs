@@ -1,7 +1,7 @@
 using System;
 using System.Web;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;

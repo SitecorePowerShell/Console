@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Management.Automation;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;

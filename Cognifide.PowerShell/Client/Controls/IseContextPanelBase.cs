@@ -5,6 +5,7 @@ using System.Web.UI;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
@@ -145,7 +146,8 @@ namespace Cognifide.PowerShell.Client.Controls
             Assert.ArgumentNotNull(item, "item");
             Assert.ArgumentNotNull(fieldName, "fieldName");
             var id = TemplateManager.GetFieldId(fieldName, item.TemplateID, item.Database);
-            if (ItemUtil.IsNull(id))
+            
+            if (ID.IsNullOrEmpty(id))
             {
                 return string.Empty;
             }

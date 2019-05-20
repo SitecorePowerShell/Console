@@ -83,12 +83,6 @@
     <Compile Include="Services\SpeJobUIManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cognifide.PowerShell\Cognifide.PowerShell.csproj">
-      <Project>{fac57610-989c-4d7e-8d58-ccc914688096}</Project>
-      <Name>Cognifide.PowerShell</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -107,7 +101,12 @@
       <Visible>false</Visible>
     </SitecoreModuleFiles>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Cognifide.PowerShell.Abstractions\Cognifide.PowerShell.Abstractions.csproj">
+      <Project>{9aadd1d5-5cd7-4b41-9a79-29d69e4cff0a}</Project>
+      <Name>Cognifide.PowerShell.Abstractions</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
   </PropertyGroup>

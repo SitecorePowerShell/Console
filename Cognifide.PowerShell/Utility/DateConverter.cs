@@ -1,5 +1,5 @@
 ﻿using System;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Sitecore;
 
 namespace Cognifide.PowerShell.Utility

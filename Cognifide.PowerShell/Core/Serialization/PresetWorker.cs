@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;

@@ -1,6 +1,6 @@
 ﻿using System;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;

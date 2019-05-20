@@ -4,6 +4,10 @@
     "userConfigurationFolder" : "UserConfiguration",
     "deployProjects" : [
         { 
+            "project": "Cognifide.PowerShell.Abstractions",
+            "version": 0            
+        },
+        { 
             "project": "Cognifide.PowerShell", 
             "version": 0,            
             "junctionPoints": [ 
@@ -21,10 +25,6 @@
         { 
             "project": "Cognifide.PowerShell.Sitecore8",
             "version": 8            
-        },
-        { 
-            "project": "Cognifide.PowerShell.Sitecore92",
-            "version": 92            
         }
     ],
     "sitesDefault": {

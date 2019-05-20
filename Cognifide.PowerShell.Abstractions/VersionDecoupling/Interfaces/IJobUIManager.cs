@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Cognifide.PowerShell.Core.VersionDecoupling.Interfaces
+namespace Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces
 {
     public interface IJobUiManager
     {

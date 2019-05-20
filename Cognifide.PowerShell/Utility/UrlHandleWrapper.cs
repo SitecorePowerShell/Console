@@ -1,4 +1,4 @@
-﻿using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+﻿using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Utility

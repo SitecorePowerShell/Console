@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 

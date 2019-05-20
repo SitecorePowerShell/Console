@@ -1,7 +1,7 @@
 ﻿using System;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Client.Applications;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;

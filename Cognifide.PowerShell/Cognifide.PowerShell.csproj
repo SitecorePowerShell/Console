@@ -505,7 +505,6 @@
     <Compile Include="Core\Serialization\SingleEntry.cs" />
     <Compile Include="Core\Settings\ApplicationNames.cs" />
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
     <Compile Include="Core\Settings\FieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Integrations\Install\AttributesContainer.cs" />
@@ -523,13 +522,11 @@
     <Compile Include="Core\Utility\ZipUtils.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
     <Compile Include="Core\Validation\MiscAutocompleteSets.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IImmediateDebugWindowLauncher.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IDateConverter.cs" />
     <Compile Include="Core\VersionDecoupling\CurrentVersion.cs" />
     <Compile Include="Core\VersionDecoupling\TypeResolver.cs" />
     <Compile Include="Core\VersionDecoupling\SitecoreVersion.cs" />
     <Compile Include="Integrations\Gutters\GutterStatusRenderer.cs" />
+    <Compile Include="Integrations\Pipelines\AssemblyResolver.cs" />
     <Compile Include="Integrations\Pipelines\GetItemMasters.cs" />
     <Compile Include="Integrations\Pipelines\PageEditorExperienceButtonScript.cs" />
     <Compile Include="Integrations\Pipelines\ContentEditorWarningScript.cs" />
@@ -547,10 +544,6 @@
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IJob.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IJobManager.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IJobOptions.cs" />
-    <Compile Include="Core\VersionDecoupling\Interfaces\IJobUIManager.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -618,6 +611,8 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <Content Include="App_Config\Include\z.Cognifide.PowerShell.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
+    <EmbeddedResource Include="Resources\Version8\Cognifide.PowerShell.VersionSpecific.dll" />
+    <EmbeddedResource Include="Resources\Version92\Cognifide.PowerShell.VersionSpecific.dll" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
@@ -744,6 +739,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Config\Include\Cognifide.PowerShell.Events.config.disabled" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cognifide.PowerShell.Abstractions\Cognifide.PowerShell.Abstractions.csproj">
+      <Project>{9aadd1d5-5cd7-4b41-9a79-29d69e4cff0a}</Project>
+      <Name>Cognifide.PowerShell.Abstractions</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Cognifide.PowerShell.Sitecore8\Cognifide.PowerShell.Sitecore8.csproj">
+      <Project>{ea6039ee-ca90-44de-bd64-ca5dcf101ef5}</Project>
+      <Name>Cognifide.PowerShell.Sitecore8</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Cognifide.PowerShell.Sitecore92\Cognifide.PowerShell.Sitecore92.csproj">
+      <Project>{e033ffd9-6e61-44a3-8882-61458728fd0c}</Project>
+      <Name>Cognifide.PowerShell.Sitecore92</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="DeployToWeb">

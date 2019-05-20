@@ -1,5 +1,5 @@
 ﻿using System.Collections.Specialized;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;

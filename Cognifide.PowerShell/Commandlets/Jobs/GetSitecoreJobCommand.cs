@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Abstractions.VersionDecoupling.Interfaces;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Jobs
