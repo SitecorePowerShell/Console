@@ -11,6 +11,12 @@ SharedFields:
 - ID: "1ba953ee-84ad-4753-870e-abe82af900c4"
   Hint: Command
   Value: "ise:pickcontext"
+- ID: "212b99df-c246-46ce-9e51-86db77e3bc97"
+  Hint: Gallery Height
+  Value: 500
+- ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
+  Hint: Gallery
+  Value: Gallery.ContextGallery
 - ID: "47ab3889-0da4-418c-b4a0-ca58f0ae4c1f"
   Hint: Gallery Width
   Value: 600
@@ -32,15 +38,9 @@ Languages:
   Versions:
   - Version: 1
     Fields:
-    - ID: "212b99df-c246-46ce-9e51-86db77e3bc97"
-      Hint: Gallery Height
-      Value: 500
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20060412T103554
-    - ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
-      Hint: Gallery
-      Value: Gallery.ContextGallery
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
       Value: Select the context item to use when running the script.
@@ -58,15 +58,9 @@ Languages:
   Versions:
   - Version: 1
     Fields:
-    - ID: "212b99df-c246-46ce-9e51-86db77e3bc97"
-      Hint: Gallery Height
-      Value: 500
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20160825T104818
-    - ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
-      Hint: Gallery
-      Value: Gallery.ContextGallery
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
       Value: スクリプト実行中のインメモリセッションの選択

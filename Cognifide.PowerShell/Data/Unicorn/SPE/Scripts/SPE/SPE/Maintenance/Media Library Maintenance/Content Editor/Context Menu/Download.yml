@@ -75,6 +75,9 @@ SharedFields:
 Languages:
 - Language: en
   Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: 
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Download a compressed archive of the selected media.
