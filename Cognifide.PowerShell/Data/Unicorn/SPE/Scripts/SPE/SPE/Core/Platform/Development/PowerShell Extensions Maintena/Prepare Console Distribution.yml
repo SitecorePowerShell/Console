@@ -228,7 +228,7 @@ SharedFields:
     $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version).zip"
     
     Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled" > $null
-    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll" -Update > $null
+    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll","Cognifide.PowerShell.Abstractions.dll" -Update > $null
     Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath $minimalPackageName -Include "web.config", "RemoteAutomation.asmx", "RemoteScriptCall.ashx" -Update > $null
     
     # Build Remoting Package
