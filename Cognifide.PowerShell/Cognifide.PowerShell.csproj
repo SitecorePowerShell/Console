@@ -611,8 +611,12 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <Content Include="App_Config\Include\z.Cognifide.PowerShell.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
-    <EmbeddedResource Include="Resources\Version8\Cognifide.PowerShell.VersionSpecific.dll" />
-    <EmbeddedResource Include="Resources\Version92\Cognifide.PowerShell.VersionSpecific.dll" />
+    <EmbeddedResource Include="..\Cognifide.PowerShell.Sitecore8\bin\$(Configuration)\Cognifide.PowerShell.VersionSpecific.dll">
+      <Link>Resources\Version8\Cognifide.PowerShell.VersionSpecific.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Cognifide.PowerShell.Sitecore92\bin\$(Configuration)\Cognifide.PowerShell.VersionSpecific.dll">
+      <Link>Resources\Version92\Cognifide.PowerShell.VersionSpecific.dll</Link>
+    </EmbeddedResource>
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
@@ -744,16 +748,6 @@
     <ProjectReference Include="..\Cognifide.PowerShell.Abstractions\Cognifide.PowerShell.Abstractions.csproj">
       <Project>{9aadd1d5-5cd7-4b41-9a79-29d69e4cff0a}</Project>
       <Name>Cognifide.PowerShell.Abstractions</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Cognifide.PowerShell.Sitecore8\Cognifide.PowerShell.Sitecore8.csproj">
-      <Project>{ea6039ee-ca90-44de-bd64-ca5dcf101ef5}</Project>
-      <Name>Cognifide.PowerShell.Sitecore8</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Cognifide.PowerShell.Sitecore92\Cognifide.PowerShell.Sitecore92.csproj">
-      <Project>{e033ffd9-6e61-44a3-8882-61458728fd0c}</Project>
-      <Name>Cognifide.PowerShell.Sitecore92</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

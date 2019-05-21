@@ -24,35 +24,30 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
         protected override void ProcessRecord()
         {
-            SitecoreVersion.V72.OrNewer(
-                () =>
+            if (Item != null)
+            {
+                var itemDatabase = Item.Database.Name;
+                var itemPath = Item.Paths.Path;
+                var indexableId = new SitecoreIndexableItem(Item).Id;
+
+                foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
                 {
-                    if (Item != null)
-                    {
-                        var itemDatabase = Item.Database.Name;
-                        var itemPath = Item.Paths.Path;
-                        var indexableId = new SitecoreIndexableItem(Item).Id;
+                    if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
 
-                        foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
-                        {
-                            if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
+                    DeleteItem(index, indexableId, itemPath);
+                }
+            }
+            else if (SearchResultItem != null)
+            {
+                var itemPath = SearchResultItem.Path;
+                var indexableId = (SitecoreItemId)SearchResultItem.ItemId;
+                var indexname = SearchResultItem.Fields["_indexname"].ToString();
 
-                            DeleteItem(index, indexableId, itemPath);
-                        }
-                    }
-                    else if (SearchResultItem != null)
-                    {
-                        var itemPath = SearchResultItem.Path;
-                        var indexableId = (SitecoreItemId)SearchResultItem.ItemId;
-                        var indexname = SearchResultItem.Fields["_indexname"].ToString();
-
-                        foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
-                        {
-                            DeleteItem(index, indexableId, itemPath);
-                        }
-                    }
-
-                }).ElseWriteWarning(this,"Remove-SearchIndexItem", false);
+                foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
+                {
+                    DeleteItem(index, indexableId, itemPath);
+                }
+            }
         }
 
 

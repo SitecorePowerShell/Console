@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
-using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
@@ -63,11 +62,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 if (!string.IsNullOrEmpty(Where))
                 {
-                    SitecoreVersion.V75.OrNewer(() =>
-                    {
-                        // ReSharper disable once AccessToModifiedClosure
-                        query = query.Where(Where, WhereValues.BaseArray());
-                    }).ElseWriteWarning(this, nameof(Where), true);
+                    // ReSharper disable once AccessToModifiedClosure
+                    query = query.Where(Where, WhereValues.BaseArray());
                 }
 
                 if (Criteria != null)
@@ -89,10 +85,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    SitecoreVersion.V75.OrNewer(() =>
-                    {
-                        query = OrderIfSupported(query);
-                    }).ElseWriteWarning(this, nameof(OrderBy), true);
+                    query = OrderIfSupported(query);
                 }
 
                 WriteObject(FilterByPosition(query), true);

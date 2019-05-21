@@ -499,18 +499,11 @@ namespace Cognifide.PowerShell.Core.Provider
                 transferOptions = (TransferOptions)dic[TransferOptionsParam].Value;
             }
 
-            var outerXml = string.Empty;
-            SitecoreVersion.V72.OrNewer(() =>
-            {
-                var options = ItemSerializerOptions.GetDefaultOptions();
-                options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
-                options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
-                options.ProcessChildren = recurse;
-                outerXml = sourceItem.GetOuterXml(options);
-            }).Else(() =>
-            {
-                outerXml = sourceItem.GetOuterXml(recurse);
-            });
+            var options = ItemSerializerOptions.GetDefaultOptions();
+            options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
+            options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
+            options.ProcessChildren = recurse;
+            var outerXml = sourceItem.GetOuterXml(options);
 
             var transferredItem = destinationItem.PasteItem(outerXml,
                 transferOptions.HasFlag(TransferOptions.ChangeId),

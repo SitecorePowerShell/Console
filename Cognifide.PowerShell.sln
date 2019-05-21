@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell", "Cognifide.PowerShell\Cognifide.PowerShell.csproj", "{FAC57610-989C-4D7E-8D58-CCC914688096}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E033FFD9-6E61-44A3-8882-61458728FD0C} = {E033FFD9-6E61-44A3-8882-61458728FD0C}
+		{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5} = {EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell.Sitecore8", "Cognifide.PowerShell.Sitecore8\Cognifide.PowerShell.Sitecore8.csproj", "{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}"
 EndProject

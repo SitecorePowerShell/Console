@@ -564,7 +564,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Source = variable["Source"] as string ?? "",
                     Value = item?.ID.ToString() ?? ""
                 };
-                SitecoreVersion.V71.OrNewer(() => tree.ItemLanguage = Sitecore.Context.Language.Name);
+                tree.ItemLanguage = Sitecore.Context.Language.Name;
                 tree.Class += " textEdit";
 
                 return tree;

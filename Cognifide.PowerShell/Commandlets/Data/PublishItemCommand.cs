@@ -114,18 +114,14 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 if (PublishRelatedItems)
                 {
-                    SitecoreVersion.V72
-                        .OrNewer(() =>
-                        {
-                            options.PublishRelatedItems = PublishRelatedItems;
-                            // Below blog explains why we're forcing Single Item 
-                            // http://www.sitecore.net/learn/blogs/technical-blogs/reinnovations/posts/2014/03/related-item-publishing.aspx
-                            if (PublishRelatedItems && IsParameterSpecified(nameof(PublishMode)) && (PublishMode != PublishMode.SingleItem))
-                            {
-                                WriteWarning($"The -{nameof(PublishRelatedItems)} parameter is used which requires -{nameof(PublishMode)} to be set to set to {PublishMode.SingleItem}, forcing {PublishMode.SingleItem} PublishMode.");
-                            }
-                            options.Mode = PublishMode.SingleItem;
-                        }).ElseWriteWarning(this, nameof(PublishRelatedItems), true);
+                    options.PublishRelatedItems = PublishRelatedItems;
+                    // Below blog explains why we're forcing Single Item 
+                    // http://www.sitecore.net/learn/blogs/technical-blogs/reinnovations/posts/2014/03/related-item-publishing.aspx
+                    if (PublishRelatedItems && IsParameterSpecified(nameof(PublishMode)) && (PublishMode != PublishMode.SingleItem))
+                    {
+                        WriteWarning($"The -{nameof(PublishRelatedItems)} parameter is used which requires -{nameof(PublishMode)} to be set to set to {PublishMode.SingleItem}, forcing {PublishMode.SingleItem} PublishMode.");
+                    }
+                    options.Mode = PublishMode.SingleItem;
                 }
 
                 if (AsJob)
@@ -139,19 +135,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     var publishContext = PublishManager.CreatePublishContext(options);
-                    SitecoreVersion.V72.OrNewer(() => 
-                        {
-                            publishContext.Languages = new[] { language };
-                            var stats = PublishPipeline.Run(publishContext)?.Statistics;
-                            if (stats != null)
-                            {
-                                WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
-                            }
-                        }).Else(
-                            () =>
-                            {
-                                PublishPipeline.Run(publishContext);
-                            });
+                    publishContext.Languages = new[] { language };
+                    var stats = PublishPipeline.Run(publishContext)?.Statistics;
+                    if (stats != null)
+                    {
+                        WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+                    }
+
                     WriteVerbose("Publish Finished.");
                 }
             }
