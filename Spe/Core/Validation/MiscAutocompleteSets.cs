@@ -18,11 +18,11 @@ namespace Spe.Core.Validation
 
         public static Dictionary<string, string> completers { get; } = new Dictionary<string, string>
         {
-            ["Get-Item:Database"] = "[Spe.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
-            ["Get-ChildItem:Database"] = "[Spe.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
-            ["Get-Item:Language"] = "[Spe.Commandlets.BaseItemCommand]::Cultures",
-            ["Get-ChildItem:Language"] = "[Spe.Commandlets.BaseItemCommand]::Cultures",
-            ["New-Item:Language"] = "[Spe.Commandlets.BaseItemCommand]::Cultures",
+            ["Get-Item:Database"] = "[Spe.Commands.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-ChildItem:Database"] = "[Spe.Commands.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-Item:Language"] = "[Spe.Commands.BaseItemCommand]::Cultures",
+            ["Get-ChildItem:Language"] = "[Spe.Commands.BaseItemCommand]::Cultures",
+            ["New-Item:Language"] = "[Spe.Commands.BaseItemCommand]::Cultures",
             ["New-Item:ItemType"] = "[Spe.Core.Validation.MiscAutocompleteSets]::Templates",
         };
 
