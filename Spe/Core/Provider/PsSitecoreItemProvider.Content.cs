@@ -4,7 +4,7 @@ using System.Management.Automation;
 using System.Management.Automation.Provider;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Data.Items;
-using Spe.Commandlets;
+using Spe.Commands;
 using Spe.Core.Utility;
 
 namespace Spe.Core.Provider

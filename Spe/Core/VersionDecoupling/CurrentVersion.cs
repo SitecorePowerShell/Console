@@ -1,5 +1,5 @@
 ﻿using System;
-using Spe.Commandlets;
+using Spe.Commands;
 
 namespace Spe.Core.VersionDecoupling
 {

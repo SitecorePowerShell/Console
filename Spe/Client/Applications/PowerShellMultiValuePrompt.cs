@@ -26,7 +26,7 @@ using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Client.Controls;
-using Spe.Commandlets.Interactive.Messages;
+using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;

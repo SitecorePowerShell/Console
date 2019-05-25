@@ -3,7 +3,7 @@ using System.Management.Automation;
 using System.Xml;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
-using Spe.Commandlets.Security;
+using Spe.Commands.Security;
 using Spe.Core.Diagnostics;
 using Spe.Core.Utility;
 

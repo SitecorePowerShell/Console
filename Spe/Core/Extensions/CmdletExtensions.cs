@@ -5,8 +5,8 @@ using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
-using Spe.Commandlets;
-using Spe.Commandlets.Security;
+using Spe.Commands;
+using Spe.Commands.Security;
 
 namespace Spe.Core.Extensions
 {

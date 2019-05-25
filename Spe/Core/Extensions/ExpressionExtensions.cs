@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
-using Spe.Commandlets.Data.Search;
+using Spe.Commands.Data.Search;
 
 namespace Spe.Core.Extensions
 {

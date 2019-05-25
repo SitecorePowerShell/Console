@@ -8,8 +8,8 @@ using Sitecore.Data.Items;
 using Sitecore.StringExtensions;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Spe.Commandlets.Interactive;
-using Spe.Commandlets.Interactive.Messages;
+using Spe.Commands.Interactive;
+using Spe.Commands.Interactive.Messages;
 
 namespace Spe.Client.Controls
 {

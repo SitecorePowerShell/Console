@@ -17,7 +17,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Client.Controls;
-using Spe.Commandlets.Interactive;
+using Spe.Commands.Interactive;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;

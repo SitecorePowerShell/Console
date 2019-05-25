@@ -13,7 +13,7 @@ using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
-using Spe.Commandlets.Interactive.Messages;
+using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
 using Spe.Core.Settings;
 using Spe.Core.VersionDecoupling;

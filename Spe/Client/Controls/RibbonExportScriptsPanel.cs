@@ -7,7 +7,7 @@ using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using Spe.Commandlets.Interactive;
+using Spe.Commands.Interactive;
 using Spe.Core.Modules;
 using Spe.Core.Settings;
 using Spe.Core.Utility;

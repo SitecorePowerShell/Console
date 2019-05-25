@@ -1,0 +1,31 @@
+namespace Spe.Commands
+{
+    public enum ErrorIds
+    {
+        AccountAlreadyExists,
+        AccountNotFound,
+        AmbiguousParameterSet,
+        DatabaseNotFound,
+        DomainAlreadyExists,
+        DomainNotFound,
+        FieldNotFound,
+        FileAlreadyExists,
+        InsufficientSecurityRights,
+        InvalidOperation,
+        InvalidItemType,
+        ItemNotFound,
+        LanguageNotFound,
+        MethodNotFound,
+        NewItemIOError,
+        OriginatingScriptSessionNotInteractive,
+        PlaceholderSettingAlreadyExists,
+        PlaceholderSettingNotFound,
+        RenderingNotFound,
+        ScriptSessionBusy,
+        ScriptSessionCannotBeStopped,
+        ScriptSessionIsNotInteractive,
+        ScriptSessionNotFound,
+        TemplateNotFound,
+        ValueNotFound
+    }
+}

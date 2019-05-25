@@ -7,7 +7,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
-using Spe.Commandlets.Security;
+using Spe.Commands.Security;
 
 namespace Spe.Core.Settings
 {

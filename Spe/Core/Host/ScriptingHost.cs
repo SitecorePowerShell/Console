@@ -9,7 +9,7 @@ using System.Threading;
 using Sitecore;
 using Sitecore.Text;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
-using Spe.Commandlets.Interactive.Messages;
+using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
 using Spe.Core.Settings;
 using Spe.Core.VersionDecoupling;

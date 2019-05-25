@@ -17,7 +17,7 @@ using Sitecore.Events;
 using Sitecore.Exceptions;
 using Sitecore.Globalization;
 using Sitecore.StringExtensions;
-using Spe.Commandlets;
+using Spe.Commands;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
