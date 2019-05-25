@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
+  <sitecore>
+    <sc.variable name="speSourceFolder" value="%%sourceFolder%%\Spe" />  
+
+    <powershell>
+      <services>
+        <restfulv2>
+          <patch:attribute name="enabled">true</patch:attribute>
+        </restfulv2>
+        <mediaUpload>
+          <patch:attribute name="enabled">true</patch:attribute>
+        </mediaUpload>
+        <mediaDownload>
+          <patch:attribute name="enabled">true</patch:attribute>
+        </mediaDownload>
+	      <fileDownload>
+          <patch:attribute name="enabled">true</patch:attribute>
+        </fileDownload>
+        <fileUpload>
+          <patch:attribute name="enabled">true</patch:attribute>
+        </fileUpload>
+        <remoting>
+          <patch:attribute name="requireSecureConnection">true</patch:attribute>
+          <patch:attribute name="enabled">true</patch:attribute>
+          <authorization>
+            <add Permission="Allow" IdentityType="Role" Identity="sitecore\IsAdministrator"/>
+          </authorization>
+        </remoting>
+      </services>
+     <userAccountControl>
+        <!-- In development, remove default elevationActions -->
+        <tokens>
+          <token patch:instead="*[@name='Default']" name="Default" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='Console']" name="Console" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='ISE']" name="ISE" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='ItemSave']" name="ItemSave" elevationAction="Allow" expiration="00:00:00"/>          
+        </tokens>
+      </userAccountControl>
+    </powershell>
+  </sitecore>
+</configuration>

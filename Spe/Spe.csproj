@@ -582,14 +582,14 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
-    <Content Include="App_Config\Include\Spe.Minimal.config.disabled" />
-    <Content Include="App_Config\Include\Spe.IdentityServer.config.disabled">
+    <Content Include="App_Config\Include\Spe\Spe.Minimal.config.disabled" />
+    <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config.disabled">
       <SubType>Designer</SubType>
     </Content>
     <None Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />
-    <Content Include="App_Config\Include\Spe.Serialization.config">
+    <Content Include="App_Config\Include\Spe\Spe.Serialization.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_Config\Include\Rainbow.config" />
@@ -609,7 +609,7 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.DataProvider.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
-    <Content Include="App_Config\Include\z.Spe.config" />
+    <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />
     <EmbeddedResource Include="..\Spe.Sitecore8\bin\$(Configuration)\Spe.VersionSpecific.dll">
       <Link>Resources\Version8\Spe.VersionSpecific.dll</Link>
@@ -690,10 +690,9 @@
     <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Config\Include\Spe.config">
+    <Content Include="App_Config\Include\Spe\Spe.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Properties\Spe.psd1" />
     <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml" />
     <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx" />
@@ -742,7 +741,7 @@
     <Folder Include="sitecore modules\Shell\PowerShell\debug\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Config\Include\Spe.Events.config.disabled" />
+    <Content Include="App_Config\Include\Spe\Spe.Events.config.disabled" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spe.Abstractions\Spe.Abstractions.csproj">
