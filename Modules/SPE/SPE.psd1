@@ -50,7 +50,7 @@
     # RequiredModules = @()
 
     # Assemblies that must be loaded prior to importing this module
-    # RequiredAssemblies = @(".\Libraries\Sitecore.Kernel.dll",".\Libraries\Cognifide.PowerShell.dll",".\Libraries\Cognifide.PowerShell.VersionSpecific.dll")
+    # RequiredAssemblies = @(".\Libraries\Sitecore.Kernel.dll",".\Libraries\Spe.dll",".\Libraries\Spe.VersionSpecific.dll")
 
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     # ScriptsToProcess = @()

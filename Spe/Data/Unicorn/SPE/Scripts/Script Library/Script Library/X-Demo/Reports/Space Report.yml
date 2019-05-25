@@ -1,0 +1,82 @@
+﻿---
+ID: "de34bf52-231e-4000-b33e-29cfa8784923"
+Parent: "8c800378-ff20-47d1-83bb-5f09efb3ec2e"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Reports/Space Report"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $sql = @"
+    USE [{0}]
+    
+    SELECT 
+        t.NAME AS TableName,
+        i.name AS indexName,
+        SUM(p.rows) AS RowCounts,
+        SUM(a.total_pages) AS TotalPages, 
+        SUM(a.used_pages) AS UsedPages, 
+        SUM(a.data_pages) AS DataPages,
+        (SUM(a.total_pages) * 8) / 1024 AS TotalSpaceMB, 
+        (SUM(a.used_pages) * 8) / 1024 AS UsedSpaceMB, 
+        (SUM(a.data_pages) * 8) / 1024 AS DataSpaceMB
+    FROM 
+        sys.tables t
+    INNER JOIN  
+        sys.indexes i ON t.OBJECT_ID = i.object_id
+    INNER JOIN 
+        sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id
+    INNER JOIN 
+        sys.allocation_units a ON p.partition_id = a.container_id
+    WHERE 
+        t.NAME NOT LIKE 'dt%' AND
+        i.OBJECT_ID > 255 AND  
+        i.index_id <= 1
+    GROUP BY 
+        t.NAME, i.object_id, i.index_id, i.name 
+    ORDER BY 
+        OBJECT_NAME(i.object_id) 
+    "@
+    
+    Import-Function Invoke-SqlCommand
+    
+    $databases = Get-Database | Where-Object {"filesystem" -notcontains $_ }
+    
+    $options = $databases | ForEach-Object { $o = [ordered]@{} } { $o[$_.Name] = $_.Name } { $o }
+    
+    $props = @{
+        Parameters = @(
+            @{Name="selectedOption"; Title="Choose an option"; Tooltip="Additional details about the option"; Options=$options; }
+        )
+        Title = "Option Selector"
+        Icon = "OfficeWhite/32x32/question.png"
+        Description = "Choose an option."
+        Width = 450
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    if($result -ne "ok") {
+        exit
+    }
+    
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString($selectedOption)
+    $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $connection
+    $dbName = $builder.InitialCatalog
+    $query = [string]::Format($sql, $dbName)
+    
+    Invoke-SqlCommand -Connection $connection -Query $query | Show-ListView
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180925T014522Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

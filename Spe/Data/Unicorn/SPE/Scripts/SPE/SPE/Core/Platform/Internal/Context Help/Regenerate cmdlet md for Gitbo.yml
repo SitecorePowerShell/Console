@@ -1,0 +1,67 @@
+﻿---
+ID: "02a07c1a-2089-4539-bbb9-7b2979769458"
+Parent: "2bfaeeca-8bdf-45f3-aa79-ac85d8dfb7a4"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Context Help/Regenerate cmdlet md for Gitbook
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $path = "C:\Projects\sitecorepowershell\Trunk\Documentation\Markdown\"
+    if(-not(Test-Path -Path $path)) {
+        $path = "C:\Projects\Spe\Documentation\Markdown\"
+        
+        if(-not(Test-Path -Path $path)) {
+            Write-Host "The markdown path does not exist on this machine."
+            return
+        }
+    }
+    
+    $book = "C:\Users\micha\GitBook\Library\sitecorepowershell\sitecore-powershell-extensions\"
+    $bookcommandlist = "$($book)appendix\commands-list.md"
+    $buildBookFiles = $false
+    if(Test-Path -Path $book) {
+        $buildBookFiles = $true
+        Clear-Content -Path $bookcommandlist
+    }
+    
+    $commandNames = Get-Command -CommandType Cmdlet | ? { $_.DLL -match "Spe"} | % {$_.Name}
+    $hideOutput = $true
+    $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
+    
+    foreach($commandName in $commandNames)
+    {
+        $helpFor = "$commandName"
+        $filename = "$($commandName).md"
+        $output = Join-Path "$($path)" "appendix\commands\$($filename)"
+        Invoke-Script "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Context Help\Command Help - md"
+        $commandMarkdown = $builder.ToString()
+        [System.IO.File]::WriteAllLines($output, $commandMarkdown, $Utf8NoBomEncoding)
+        
+        Write-Host "$helpFor -> $output"
+    
+        # Output the Markdown files for Gitbook
+        if($buildBookFiles) {
+            # Print out list for the gitbook commands-list.md
+            [System.IO.File]::AppendAllText($bookcommandlist, "* [$commandName](appendix/commands/$filename)`r", $Utf8NoBomEncoding)
+            
+            # Write out the Markdown for the command
+            $bookreference = "$($book)appendix\commands\$($filename)"
+            [System.IO.File]::WriteAllLines($bookreference, $commandMarkdown, $Utf8NoBomEncoding)
+            
+            Write-Host "$helpFor -> $bookreference"
+        }
+        
+    }
+    
+    Write-Host "Done."
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150615T090930

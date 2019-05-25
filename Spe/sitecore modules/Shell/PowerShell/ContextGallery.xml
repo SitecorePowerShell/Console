@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
+  <Gallery.ContextGallery>
+    <Gallery>
+      <CodeBeside Type="Spe.Client.Controls.ContextGallery, Spe" />
+      <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+
+      <div class="scStretch">
+        <div class="scGalleryContent13">
+          <GalleryMenu ID="Options" Class="scStretch">
+
+            <MenuPanel Height="100%">
+              <Tabstrip ID="Tabs">
+                <Tab ID="RecentTab" Header="Recent" Height="100%">
+                  <GalleryMenu ID="RecentMenu" Fill="true" />
+                </Tab>
+
+                <Tab ID="ContentTab" Header="Content Tree">
+                  <DataContext ID="ContentDataContext" />
+                  <Combobox ID="Databases" Change="ChangeDatabase" />
+                  <TreeviewEx ID="ContentTreeview" Style="width: 0px" DataContext="ContentDataContext"
+                              Click="ContentTreeview_Click" />
+                </Tab>
+              </Tabstrip>
+            </MenuPanel>
+            <MenuHeader Header="Other" />
+          </GalleryMenu>
+        </div>
+        <div class="scGalleryBottom13">
+          <GalleryMenuLine />
+          <Gallery.Grip />
+        </div>
+      </div>
+    </Gallery>
+  </Gallery.ContextGallery>
+</control>

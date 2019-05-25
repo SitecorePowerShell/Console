@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:x="http://www.sitecore.net/xaml">
+  <PowerShellMultiValuePrompt>
+    <FormPage>
+      <CodeBeside Type="Spe.Client.Applications.PowerShellMultiValuePrompt,Spe" />
+
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
+              x:placeholder="Scripts">
+      </Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+
+      <script>
+        function OnTabSelect() {
+        if (window.Flexie) Flexie.updateInstance();
+        }
+        document.observe("keydown", function(event) {
+        if (event.keyCode == 13) {
+        var ctl = event.target;
+        if (ctl != null) {
+        if (ctl.tagName == "INPUT")  {
+        if (ctl.onsubmit){
+        if(ctl.onsubmit.toString().indexOf("return false;") >= 0) {
+        return;
+        }
+        }
+        }
+        }
+
+        var ok = $("OKButton");
+
+        if (ok != null) {
+        ok.click();
+        }
+        }
+        if (event.keyCode == 27) {
+        var ok = $("CancelButton");
+
+        if (ok != null) {
+        ok.click();
+        }
+        }
+        });
+      </script>
+
+      <Literal ID="CustomStyles" />
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
+          <Border>
+            <Border Class="DialogHeader">
+              <ThemedImage ID="DialogIcon" Src="powershell/32x32/powershell8.png" style="vertical-align: middle; margin-right: 2px;" Visible="false" />
+              <Literal Text="Script parameters" ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal
+                Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below."
+                ID="DialogDescription" />
+            </Border>
+          </Border>
+        </Border>
+
+        <Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+            <Border class="scWizardWarning" def:content="Notifications" ID="NoDataWarning">
+              <ThemedImage src="/sitecore/shell/themes/standard/Images/warning.png" />
+              <Border style="display:flex;">
+                <Literal class="scEditorWarningText" Text="The data for the dialog is not available. Either your server was restarted or the server cache was flushed. If this is a recurring problem, contact your system administrator." ID="Warning" />
+              </Border>
+            </Border>
+            <!--GridPanel ID="ValuePanel" GridPanel.Class="EntryGrid" GridPanel.ID="EntryGrid" Columns="1" Cellpadding="2px"-->
+            <Tabstrip ID="Tabstrip" Visible="false"></Tabstrip>
+            <!--/GridPanel-->
+          </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
+                 Title="Show copyright..." />
+          <div class="footerOkCancel">
+            <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK" />
+            <Button ID="CancelButton" Class="scButton" KeyCode="27" Click="CancelClick" Header="Cancel" />&#160;&#160;&#160;
+          </div>
+        </div>
+        <Literal ID="TabOffsetValue" />
+        <Border ID="DataContextPanel" Style="display:none;">
+          <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+        </Border>
+      </Border>
+    </FormPage>
+  </PowerShellMultiValuePrompt>
+</control>

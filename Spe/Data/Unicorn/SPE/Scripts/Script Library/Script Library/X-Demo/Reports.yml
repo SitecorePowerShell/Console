@@ -1,0 +1,18 @@
+﻿---
+ID: "8c800378-ff20-47d1-83bb-5f09efb3ec2e"
+Parent: "3c68e35a-78f6-48aa-84be-7e2da7ab8f02"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Reports"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180506T035821Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

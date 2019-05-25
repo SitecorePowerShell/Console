@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellConsole>
+    <FormPage>
+      <CodeBeside Type="Spe.Client.Applications.PowerShellConsole,Spe" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.terminal.css" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" runat="server" />
+
+      <Script type="text/javascript" src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"> </Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.terminal.js"> </Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/split.js"> </Script>
+      <Script>if (!window.$sc) $sc = jQuery.noConflict();</Script>
+      <Script src="/sitecore/shell/controls/SitecoreObjects.js"></Script>
+      <Script src="/sitecore/shell/controls/SitecoreKeyboard.js"></Script>
+      <Script src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/console.js"> </Script>
+
+      <Literal ID="Options" />
+      <a href="#" class="tip_no_hints">No hints found</a>
+      <Border Id="ProgressOverlay" Visible="false">
+        <Border>
+          <p>
+            <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top"
+                     GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px" />
+          </p>
+        </Border>
+      </Border>
+      <Border class="spe-secured-app">
+        <Border ID="InfoPanel" class="scEditorWarning" />
+        <Border ID="Warnings" style="display:none">
+          <GridPanel ID="ElevationRequiredPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%" ID="ElevationRequiredBorder" >
+              <Border class="scEditorWarningTitle">
+                <Literal ID="InfoTitle" Text="Elevated session state is required to run the script." />
+              </Border>
+              <Border class="scEditorWarningHelp">
+                <Literal ID="Description" Text="A security dialog will prompt you for your credentials upon first execution. For more information, refer to " />
+                <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
+                  <Literal Text="Documentation."/>
+                </a>
+              </Border>
+            </Border>
+          </GridPanel>
+          <GridPanel ID="ElevatedPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%">
+              <Border class="scEditorWarningHelp">
+                <Literal ID="InfoTitle2" Text="You have temporarily enabled script execution. " />
+                <a href="#" class="scEditorWarningOption" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
+                  <Literal Text="Drop elevated session state"/>
+                </a>
+                <Literal ID="InfoTitle3" Text=" if you no longer require it. For more information, refer to " />
+                <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
+                  <Literal Text="Documentation."/>
+                </a>
+                <Border class="scEditorWarningHelp">
+                </Border>
+              </Border>
+            </Border>
+          </GridPanel>
+          <GridPanel ID="ElevationBlockedPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%" ID="ElevationBlockedBorder" >
+              <Border class="scEditorWarningTitle">
+                <Literal ID="InfoTitle4" Text="Session privilege elevation is blocked and you cannot run scripts in Console." />
+              </Border>
+            </Border>
+          </GridPanel>
+        </Border>
+      </Border>
+      <div id="terminal"></div>
+      <div id="working">
+        <img src="/sitecore modules/PowerShell/Assets/working.gif" alt="Working" />
+      </div>
+    </FormPage>
+  </PowerShellConsole>
+</control>

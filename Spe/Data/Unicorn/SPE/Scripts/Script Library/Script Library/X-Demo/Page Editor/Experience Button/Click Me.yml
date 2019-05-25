@@ -1,0 +1,56 @@
+﻿---
+ID: "15a8882c-d3af-4fd4-ad3b-20084f6599b5"
+Parent: "c77e44c1-69b5-4284-9d56-8f9b17b120af"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Page Editor/Experience Button/Click Me"
+DB: master
+SharedFields:
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{4AFBEDF9-14D3-47D8-AC3E-1D772C9FC0A0}">
+        <conditions>
+          <condition
+            id="{4B889F07-94D4-4371-B522-9FFE8AF0BE12}"
+            uid="BE23FAB68EEB443CB46C6808B2B68F75"
+            operatorid="{FDD7C6B1-622A-4362-9CFF-DDE9866C68EA}"
+            value="/sitecore/content/Home" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Show-Alert -Title "Hello"
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{FDC96005-013B-4137-B5B7-E29EA8607DB1}">
+        <conditions>
+          <condition
+            id="{61C016A2-5210-4F1D-A663-BDA18BE487F6}"
+            uid="ABDBE5007A01431F8CDBA8A80FFC9FC7"
+            fieldname="Title"
+            operatorid="{2E67477C-440C-4BCA-A358-3D29AED89F47}"
+            value="1" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180810T021230Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:x="http://www.sitecore.net/xaml">
+  <ConfirmChoice>
+    <FormPage>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
+              x:placeholder="Scripts">
+      </Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <CodeBeside Type="Spe.Client.Applications.ConfirmChoice,Spe" />
+
+      <Stylesheet>
+        .scConfirmationContainer td:first-child{
+        width: 1px;
+        }
+
+        .scConfirmationContainer td:last-child{
+        padding-left: 15px;
+        }
+      </Stylesheet>
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader scConfirmChoiceHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
+          <Border>
+            <Border Class="DialogHeader">
+              <Literal Text="PowerShell Message" ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal Text="" ID="DialogDescription" />
+            </Border>
+          </Border>
+        </Border>
+
+        <Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+            <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
+              <Image class="scConfirmationIcon" src="/sitecore/shell/themes/standard/Images/warning.png" Alt="Warning icon"/>
+              <Literal id="Text" class="scDialogMessage"></Literal>
+            </GridPanel>
+          </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
+                 Title="Show copyright..." />
+          <div class="footerOkCancel">
+            <Border Align="Center" ID="Buttons">
+            </Border>
+          </div>
+        </div>
+      </Border>
+    </FormPage>
+  </ConfirmChoice>
+</control>

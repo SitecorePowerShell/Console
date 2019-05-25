@@ -4,11 +4,11 @@
     "userConfigurationFolder" : "UserConfiguration",
     "deployProjects" : [
         { 
-            "project": "Cognifide.PowerShell.Abstractions",
+            "project": "Spe.Abstractions",
             "version": 0            
         },
         { 
-            "project": "Cognifide.PowerShell", 
+            "project": "Spe", 
             "version": 0,            
             "junctionPoints": [ 
                 "sitecore modules\\PowerShell\\Assets", 
@@ -19,11 +19,11 @@
             ]
         },
         { 
-            "project": "Cognifide.PowerShell.Package",
+            "project": "Spe.Package",
             "version": 0            
         },
         { 
-            "project": "Cognifide.PowerShell.Sitecore8",
+            "project": "Spe.Sitecore8",
             "version": 8            
         }
     ],

@@ -172,12 +172,11 @@ web.Release.config
 Tests/
 
 # Project Split
-Cognifide.PowerShell/bin/
-Cognifide.PowerShell.Sitecore7/bin/
-Cognifide.PowerShell.Sitecore8/bin/
-Cognifide.PowerShell/obj/
-Cognifide.PowerShell.Sitecore7/obj/
-Cognifide.PowerShell.Sitecore8/obj/
+Spe/bin/
+Spe.Sitecore8/bin/
+Spe/obj/
+Spe.Sitecore8/obj/
+Spe.Sitecore92/obj/
 Data/serialization/
 .vs/config/applicationhost.config
 
@@ -193,5 +192,5 @@ deploy.user.json
 !deploy.user.json.sample
 UserConfiguration/**/*.config
 .vs/
-Cognifide\.PowerShell/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo/
-Cognifide\.PowerShell/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo\.yml
+Spe/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo/
+Spe/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo\.yml

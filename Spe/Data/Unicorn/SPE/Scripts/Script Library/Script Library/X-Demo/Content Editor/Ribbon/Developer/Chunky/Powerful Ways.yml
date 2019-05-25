@@ -1,0 +1,48 @@
+﻿---
+ID: "a0fea43e-e21c-4acc-9d58-cd71992969bf"
+Parent: "e73983c0-e741-4961-90f5-24d0a7d0d934"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Content Editor/Ribbon/Developer/Chunky/Powerful Ways"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: "https://emoji.slack-edge.com/T09SHRBNU/powerful-ways/d1800c41bf9400f8.gif"
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $database = "master"
+    $root = Get-Item -Path "$($database):\sitecore\content\Home"
+    $items =  @(Get-Item -Path $root.ProviderPath)
+    if($items.Count -eq 0) {
+        Show-Alert "There are no items to show"
+    } else {
+        $props = @{
+            Title = "Test report"
+            InfoTitle = "Test report"
+            InfoDescription = "A test report"
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={[Sitecore.Security.Accounts.User]::FromName($_."__Updated by", $false).Profile.FullName}},
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={[Sitecore.Security.Accounts.User]::FromName($_."__Created by", $false).Profile.FullName}},
+                @{Label="Path"; Expression={$_.ItemPath} },
+                @{Label="Item ID"; Expression={$_.ID} }
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20171231T024817Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

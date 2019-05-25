@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellRunner>
+    <FormPage Application="PowerShell/PowerShell Runner">
+      <CodeBeside Type="Spe.Client.Applications.PowerShellRunner,Spe" />
+
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery-ui.min.js"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js"></Script>
+
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
+      <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css" />
+
+      <Literal ID="PreviousProgressValue" Visible="false" runat="server" />
+      <Literal ID="CurrentProgressValue" Visible="false" runat="server" />
+      <Literal ID="Closed" Visible="false" runat="server" />
+      <Literal ID="Result" runat="server" />
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <div id="HeaderIconContainer" Visible="false">
+            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/powershell.png" Alt="" runat="server" />
+          </div>
+          <Border>
+            <Border Class="DialogHeader">
+              <Literal Text="In Progress" ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;" />
+            </Border>
+          </Border>
+        </Border>
+
+        <Scrollbox ID="ValuePanelContainer" Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+
+            <ThemedImage ID="TitleIcon" Src="powershell/32x32/powershell.png" Visible="false" />
+            <Border ID="LogContainer" style="display:none">
+              <Literal ID="Log"/>
+            </Border>
+            <Literal Style="white-space:nowrap;" ID="Title" Text="Running script..." />
+            <Literal ID="Subtitle" Visible="false" />
+
+            <Border ID="Progress">
+
+              <Literal ID="ProgressBar" Text="&lt;div id='progressbar'&gt;&lt;/div&gt;" />
+              <Literal ID="PsProgress" />
+            </Border>
+
+          </Scrollbox>
+        </Scrollbox>
+
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
+                 Title="Show copyright..." />
+          <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
+             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
+            <Literal ID="ResultsOK" Text="View Script Results" />
+          </a>
+          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
+             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
+            <Literal ID="ResultsError" Text="View Script Results and errors"/>
+          </a>
+          <div class="footerOkCancel">
+            <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close" />
+            <Button ID="AbortButton" Class="scButton scButtonPrimary" Click="AbortClick" Header="Abort" />
+          </div>
+        </div>
+        <Style ID="ConsoleStyle">
+          .console {
+          color: <Literal ID="ForegroundColor" />;
+          background-color: <Literal ID="BackgroundColor" />;
+          }
+        </Style>
+      </Border>
+    </FormPage>
+  </PowerShellRunner>
+</control>

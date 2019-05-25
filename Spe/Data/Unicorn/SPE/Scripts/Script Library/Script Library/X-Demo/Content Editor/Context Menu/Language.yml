@@ -1,0 +1,38 @@
+﻿---
+ID: "17996268-a1ad-4c12-8e7f-38e1d55f0151"
+Parent: "dbd254b8-cdc2-4edd-9ade-7baaa6294401"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Content Editor/Context Menu/Language"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/keyboard_wireless.png
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{0439C91D-10C9-4B36-B52C-31EDDD052BE8}"
+        name="Only show for content">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="221AA35838AC4C35A72B4CF62D276927"
+            itemid="{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181017T012413Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

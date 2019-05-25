@@ -1,3 +1,3 @@
 Copy the following libraries to this folder:
-Cognifide.PowerShell.dll
+Spe.dll
 Sitecore.Kernel.dll

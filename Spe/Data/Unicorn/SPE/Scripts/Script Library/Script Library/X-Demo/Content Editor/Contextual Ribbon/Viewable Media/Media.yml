@@ -1,0 +1,18 @@
+﻿---
+ID: "12cf1a7f-9ad0-41ee-b2bb-c8bd4d50d88a"
+Parent: "8b08b9fa-e205-4541-85d0-dfa6092cb2a0"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Content Editor/Contextual Ribbon/Viewable Media/Media"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180524T015623Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

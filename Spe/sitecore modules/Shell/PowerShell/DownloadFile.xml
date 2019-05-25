@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <DownloadFile>
+    <FormDialog Header="Download" OKButton="Download" CancelButton="false">
+      <Edit ID="Hidden" ReadOnly="true" Style="display: none" />
+      <CodeBeside Type="Spe.Client.Applications.DownloadFile,Spe" />
+
+      <Stylesheet>
+        .scConfirmationContainer td:first-child{
+        width: 1px;
+        }
+
+        .scConfirmationContainer td:last-child{
+        padding-left: 15px;
+        }
+        form > table > tbody > tr:nth-child(1) > td > div {  display: none; }
+      </Stylesheet>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
+
+      <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
+        <ThemedImage Id="DownloadImage" class="scConfirmationIcon" Src="/~/icon/office/48x48/cloud_download.png" Width="48"
+                     Height="48" Margin="8px 0px 8px 16px" />
+        <ThemedImage Id="ErrorImage" class="scConfirmationIcon" Src="/~/icon/office/48x48/close.png" Width="48"
+                     Height="48" Margin="8px 0px 8px 16px" Visible="false" />
+        <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
+          <Literal ID="Text" />
+          <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
+            <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
+              <Border Padding="8px 8px 0px 8px">
+                <Literal ID="PathPrefix" Text="Path:" style="font-weight:bold; word-break: inherit;" class="scDialogMessage"/>
+              </Border>
+              <Border Padding="8px 8px 0px 0px">
+                <Literal ID="FileNameLabel"  class="scDialogMessage"/>
+              </Border>
+              <Border Padding="2px 8px 0px 8px">
+                <Literal ID="SizePrefix" Text="Size:" style="font-weight:bold; word-break: inherit;"  class="scDialogMessage"/>
+              </Border>
+              <Border Padding="2px 8px 0px 0px">
+                <Literal ID="SizeLabel"  class="scDialogMessage"/>
+              </Border>
+              <Border Padding="2px 8px 0px 8px">
+                <Literal ID="DownloadLabel"  class="scDialogMessage"/>
+              </Border>
+              <Border Padding="2px 8px 0px 0px" Align="Right">
+              </Border>
+            </GridPanel>
+          </GridPanel>
+        </Border>
+      </GridPanel>
+      <Border def:placeholder="Buttons" Class="footerOkCancel">
+        <Button ID="CancelButton" Header="Close" Click="Close" KeyCode="27" />
+      </Border>
+    </FormDialog>
+  </DownloadFile>
+</control>

@@ -1,0 +1,96 @@
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
+  <sitecore>
+    <events>
+      <event name="item:added">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:added:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:copied">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:copied:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:copying">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:created">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:created:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:creating">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:deleted">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:deleted:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:deleting">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:locked">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:moved">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:moved:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:moving">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:renamed">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:renamed:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:saved">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:saved:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:saving">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:sortorderchanged">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:sortorderchanged:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:templateChanged">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:unlocked">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionAdded">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionAdded:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionAdding">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionRemoved">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionRemoved:remote">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+      <event name="item:versionRemoving">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
+    </events>
+  </sitecore>
+</configuration>

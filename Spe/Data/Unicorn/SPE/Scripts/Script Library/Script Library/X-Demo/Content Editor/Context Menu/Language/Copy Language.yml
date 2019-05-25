@@ -1,0 +1,246 @@
+﻿---
+ID: "c5d3cdf7-705e-4dea-a061-4e6d8acf30d6"
+Parent: "17996268-a1ad-4c12-8e7f-38e1d55f0151"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-Demo/Content Editor/Context Menu/Language/Copy Language"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/dictionary.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
+    $standardTemplate = Get-Item -Path "master:" -ID "$([Sitecore.TemplateIDs]::StandardTemplate)"
+    $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
+    $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+    $standardFieldsLookup = New-Object "System.Collections.Generic.HashSet[string]"
+    $standardFields | ForEach-Object { $standardFieldsLookup.Add($_) > $null }
+    
+    function GetItemDatasources {
+    	[CmdletBinding()]
+    	param(
+    	    [Item]$Item
+    	)
+    	
+    	$datasource = Get-Rendering -Item $item -FinalLayout -Device (Get-LayoutDevice -Default) |
+    	    Where-Object { -not [string]::IsNullOrEmpty($_.Datasource) } |
+    	    Select-Object -ExpandProperty "Datasource"
+    	
+    	if(![string]::IsNullOrEmpty($datasource)) {    
+        	if([Sitecore.Data.ID]::IsID($datasource)) {
+        	    Get-Item -Path "$($item.Database):" -Id $datasource
+        	} elseif($datasource.StartsWith("local:")) {
+        	    $partialPath = $datasource -replace "local:",""
+        	    Get-Item -Path "$($item.PSPath)$($partialPath)"
+        	}
+    	}
+    	    
+    	# TODO: Should we support local:, guid, or path?
+    }
+    filter ItemHasLayout {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$Item
+        )
+        
+        if($item.Fields[[Sitecore.FieldIDs]::LayoutField] -ne $null -and ![string]::IsNullOrEmpty($item.Fields[[Sitecore.FieldIDs]::LayoutField].Value)) {
+            $item
+        }
+    }
+    
+    $location = Get-Location
+    $selectedItem = Get-Item -Path $location
+    $languages = Get-ChildItem "master:" -ID "$([Sitecore.ItemIDs]::LanguageRoot)"
+    $currentLanguage = [Sitecore.Context]::Language.Name
+    $langOptions = [ordered]@{}
+    foreach ($lang in $languages) {
+        $languageName = [Sitecore.Data.Managers.LanguageManager]::GetLanguage($lang.Name).Title
+        if([string]::IsNullOrEmpty($languageName)) {
+            $languageName = $lang.Name
+        }
+    	$langOptions[$languageName] = $lang.Name
+    }
+    
+    $ifExists = [ordered]@{
+        "Append : Create new language version with copied content" = "Append"
+        "Skip : Do nothing if destination has language version" = "Skip"
+        "Overwrite Latest : Overwrite latest language version with copied content" = "OverwriteLatest"
+    }
+    
+    $fieldCopyOptions = [ordered]@{
+        "Copy fields" = 1
+        "Do not copy fields" = 2
+        "Ignore specific fields" = 3
+    }
+    
+    $dialogProps = @{
+        Description = "Select an origin and destination language, with options on how to perform the copy"
+     	Title = "Copy Language"
+     	Width = 650
+     	Height = 720
+     	OkButtonName = "Proceed"
+     	CancelButtonName = "Cancel"
+     	ShowHints = $true
+        Parameters = @(
+            @{ Name = "info"; Title = "Selected Item"; Value = "$($selectedItem.ItemPath)"; Editor = "info"; Tab = "Main"; },
+            @{ Name = "includeSubitems"; Value = $false; Title = "Include Subitems"; Columns = 4; Tab = "Main"; },
+            @{ Name = "includeDatasources"; Value = $false; Title = "Include Datasources"; Columns = 4; Tab = "Main"; },
+            @{ Name = "originLanguage"; Value = $currentLanguage; Title = "Origin Language"; Options = $langOptions; Tab = "Main"; },
+            @{ Name = "destinationLanguages"; Title = "Destination Language(s)"; Tooltip="Select one or more languages. The language matching the origin selection will be ignored."; Validator = {
+                    if([string]::IsNullOrEmpty($variable.Value)){
+                        $variable.Error = "Please select one or more destination languages."
+                    }
+                }; Options = $langOptions; Editor = "checklist"; Tab = "Main";
+            },
+            @{ Name = "dryRun"; Value = $true; Title = "Dry Run"; Tab = "Main"; },
+            @{ Name = "ifExists"; Value = "Skip"; Title = "If Exists"; Options = $ifExists; Editor = "radio"; Tab = "Behavior"; },
+            @{ Name = "fieldCopyOption"; Value = 1; Title = "Field Copy Options"; Options = $fieldCopyOptions; Editor = "radio"; Tab = "Behavior"; }
+        )
+        Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    }
+    $result = Read-Variable @dialogProps
+    
+    if ($result -ne "ok") {
+    	exit
+    }
+    
+    $items = [System.Collections.ArrayList]@()
+    $items.Add((Get-Item $location)) > $null
+    
+    if ($includeSubitems) {
+        $subitems = Get-ChildItem $location -Recurse | ItemHasLayout
+        if($subitems) {
+    	    $items.AddRange($subitems) > $null
+        }
+    }
+    
+    if ($includeDatasources) {
+        $copiedItems = [System.Collections.ArrayList]@()
+        $copiedItems.AddRange($items)
+    	foreach ($copiedItem in $copiedItems) {
+    	    $datasources = GetItemDatasources -Item $copiedItem
+    	    if($datasources) {
+    		    $items.AddRange((,$datasources)) > $null
+    	    }
+    	}
+    }
+    
+    $commandProps = @{
+        Language = $originLanguage
+        TargetLanguage = $destinationLanguages
+        IfExist = $ifExists
+    }
+    switch($fieldCopyOption) {
+        2 {
+            $commandProps["DoNotCopyFields"] = $true
+        }
+        3 {
+            #TODO: Find a way to present the user with a dialog for fields before proceeding.
+            $templateIds = $items | Select-Object -ExpandProperty TemplateID -Unique
+            $templateFields = $templateIds | ForEach-Object { New-Object Sitecore.Data.Items.TemplateItem (Get-Item -Path "master:" -ID "$_") } | 
+                ForEach-Object { $_.Fields } | 
+                Where-Object { $ignoredFields -notcontains $_.Name } | 
+                Select-Object Name, Title, Type -Unique | Sort-Object Name
+                
+            $stdOptions = [ordered]@{}
+            
+            $customOptions = [ordered]@{}
+            
+            foreach($field in $templateFields){
+                $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
+                $title = "$title [$($field.Type)]"
+                if($standardFields -contains $field.Name){
+                    $stdOptions[$title] = $field.Name
+                } else {
+                    $customOptions[$title] = $field.Name
+                }
+            }
+            
+            $titles = [ordered]@{}
+            
+            foreach($field in $stdOptions.Keys){
+                $titles[$stdOptions[$field]] = $stdOptions[$field]
+            }
+            foreach($field in $customOptions.Keys){
+                $titles[$customOptions[$field]] = $customOptions[$field]
+            }
+            
+            $defaultFields = $null
+            $customFields = $null
+    
+            $fieldDialogProps = @{
+                Title = $dialogTitle
+                Description  = "Choose the fields to exclude when copying."
+                Width = 600 
+                Height = 740
+                OkButton = "Proceed"
+                CancelButton = "Skip"
+                Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+                ShowHints = $true
+                Parameters = @(
+                    @{ Name="customFields"; Title="Fields to exclude"; Options=$customOptions; Tooltip="Select fields to exclude fields that are part of the custom template."; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
+                    @{ Name="defaultFields"; Title="Fields to exclude"; Options=$stdOptions; Tooltip="Select fields to exclude fields that are part of the Standard Template."; Editor="checklist"; Height="480px"; Tab="Standard Fields"}
+                )
+            }
+            $result = Read-Variable @fieldDialogProps
+            
+            if($result -eq "ok"){
+                $commandProps["IgnoredFields"] = $customFields + $defaultFields
+            }
+        }
+    }
+    if($dryRun) {
+        Write-Host "Running in dry run mode" -ForegroundColor Yellow
+    }
+    
+    Write-Host "Adding new item languages"
+    Write-Host "- Origin Language : $($originLanguage)"
+    Write-Host "- Destination Languages : $($destinationLanguages)"
+    Write-Host "- Include Subitems : $($includeSubitems)"
+    Write-Host "- Include Datasources : $($includeDatasources)"
+    Write-Host "- Copy Method : $($ifExists)"
+    $addedItemVersions = [System.Collections.ArrayList]@()
+    $processedIds = New-Object "System.Collections.Generic.HashSet[Sitecore.Data.ID]"
+    $itemCount = $items.Count
+    $processedIndex = 0
+    foreach($item in $items) {
+        $processedIndex += 1
+        Write-Progress -Activity "Working on $($item.ItemPath)" -Status "Adding new item language versions" -PercentComplete ($processedIndex / $itemCount * 100);
+        if($processedIds.Contains($item.ID)) { continue }
+        $processedIds.Add($item.ID) > $null
+        Write-Host "[A] $($item.ItemPath) from $($originLanguage) to $(($destinationLanguages -join ","))"
+        if(!$dryRun) {
+            $commandProps["Item"] = $item
+            $addedItemVersion = Add-ItemVersion @commandProps
+            $addedItemVersions.Add($addedItemVersion) > $null
+        }
+    }
+    
+    Write-Progress -Activity "Finished processing new item language versions" -Completed
+    
+    if($dryRun) {
+        Show-Result -Text
+    } else {
+        $props = @{
+            Title = "Copy Language Report"
+            InfoTitle = "Items copied from the $($originLanguage) language"
+            InfoDescription = "Items copied from the $($originLanguage) language into $(($destinationLanguages -join ",")) languages."
+            PageSize = 50
+        }
+        $addedItemVersions | Show-ListView @props
+        Close-Window
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181017T012806Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
