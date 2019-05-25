@@ -90,7 +90,16 @@ SharedFields:
     https://blog.najmanowicz.com/
     https://michaellwest.blogspot.com/
     "@
-    $newPackageFiles = @([PSCustomObject]@{"FileName"="/bin/Spe.VersionSpecific.dll"})
+    $newPackageFiles = @(
+        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.config"},
+        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.Events.config.disabled"},
+        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.IdentityServer.config.disabled"},
+        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.Minimal.config.disabled"},
+        [PSCustomObject]@{"FileName"="/App_Config/Include/z.Cognifide.PowerShell.config"},
+        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.dll"},
+        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.Package.dll"}
+        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.VersionSpecific.dll"}
+    )
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
