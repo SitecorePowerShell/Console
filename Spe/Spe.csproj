@@ -213,6 +213,7 @@
     <Compile Include="Commands\Presentation\BaseRenderingParameterCommand.cs" />
     <Compile Include="Commands\Presentation\GetPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\RemovePlaceholderSettingCommand.cs" />
+    <Compile Include="Commands\Presentation\SwitchRenderingCommand.cs" />
     <Compile Include="Commands\Presentation\RemoveRenderingParameterCommand.cs" />
     <Compile Include="Commands\Presentation\GetRenderingParameterCommand.cs" />
     <Compile Include="Commands\Presentation\MergeLayoutCommand.cs" />
