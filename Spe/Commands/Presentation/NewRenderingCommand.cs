@@ -25,6 +25,9 @@ namespace Spe.Commands.Presentation
         public SwitchParameter Cacheable { get; set; }
 
         [Parameter]
+        public SwitchParameter ClearOnIndexUpdate { get; set; }
+
+        [Parameter]
         public SwitchParameter VaryByData { get; set; }
 
         [Parameter]
@@ -48,8 +51,9 @@ namespace Spe.Commands.Presentation
             {
                 ItemID = item.ID.ToString(),
                 Placeholder = PlaceHolder,
-                Datasource = DataSource != null ? DataSource.ID.ToString() : null,
+                Datasource = DataSource?.ID.ToString(),
                 Cachable = Cacheable ? "1" : null,
+                ClearOnIndexUpdate = ClearOnIndexUpdate ? "1" : null,
                 VaryByData = VaryByData ? "1" : null,
                 VaryByDevice = VaryByDevice ? "1" : null,
                 VaryByLogin = VaryByLogin ? "1" : null,

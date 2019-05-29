@@ -13,8 +13,6 @@ namespace Spe.Commands.Presentation
     [Cmdlet(VerbsCommon.Add, "Rendering", SupportsShouldProcess = true)]
     public class AddRenderingCommand : BaseLayoutPerDeviceCommand
     {
-        private int index = -1;
-
         [Parameter(Mandatory = true)]
         [Alias("Rendering")]
         public RenderingDefinition Instance { get; set; }
@@ -29,11 +27,7 @@ namespace Spe.Commands.Presentation
         public string DataSource { get; set; }
 
         [Parameter]
-        public int Index
-        {
-            get { return index; }
-            set { index = value; }
-        }
+        public int Index { get; set; } = -1;
 
         protected override void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device)
         {
@@ -47,6 +41,7 @@ namespace Spe.Commands.Presentation
                 Placeholder = PlaceHolder ?? Instance.Placeholder,
                 Datasource = DataSource ?? Instance.Datasource,
                 Cachable = Instance.Cachable,
+                ClearOnIndexUpdate = Instance.ClearOnIndexUpdate,
                 VaryByData = Instance.VaryByData,
                 VaryByDevice = Instance.VaryByDevice,
                 VaryByLogin = Instance.VaryByLogin,
@@ -77,7 +72,7 @@ namespace Spe.Commands.Presentation
 
             if (Index > -1)
             {
-                device.Insert(index, rendering);
+                device.Insert(Index, rendering);
             }
             else
             {

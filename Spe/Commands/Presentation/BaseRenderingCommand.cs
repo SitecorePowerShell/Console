@@ -13,7 +13,6 @@ namespace Spe.Commands.Presentation
 {
     public abstract class BaseRenderingCommand : BaseLayoutPerDeviceCommand
     {
-        private int index = -1;
         private Dictionary<string, WildcardPattern> paramPatterns;
 
         [Parameter(Mandatory = true, ParameterSetName = "Rendering by filter, Item from Pipeline",
@@ -54,11 +53,7 @@ namespace Spe.Commands.Presentation
         [Parameter(ParameterSetName = "Rendering by filter, Item from Pipeline")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from Path")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
-        public int Index
-        {
-            get { return index; }
-            set { index = value; }
-        }
+        public int Index { get; set; } = -1;
 
         [Parameter(ParameterSetName = "Rendering by filter, Item from Pipeline")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from Path")]
@@ -83,14 +78,13 @@ namespace Spe.Commands.Presentation
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (Parameter != null)
+            if (Parameter == null) return;
+
+            paramPatterns = new Dictionary<string, WildcardPattern>();
+            foreach (var key in Parameter.Keys)
             {
-                paramPatterns = new Dictionary<string, WildcardPattern>();
-                foreach (var key in Parameter.Keys)
-                {
-                    var wildcardPattern = WildcardUtils.GetWildcardPattern(Parameter[key].ToString());
-                    paramPatterns.Add(key.ToString(), wildcardPattern);
-                }
+                var wildcardPattern = WildcardUtils.GetWildcardPattern(Parameter[key].ToString());
+                paramPatterns.Add(key.ToString(), wildcardPattern);
             }
         }
 
@@ -131,7 +125,7 @@ namespace Spe.Commands.Presentation
 
                 if (Index > -1)
                 {
-                    renderings = renderings.Skip(index).Take(1);
+                    renderings = renderings.Skip(Index).Take(1);
                 }
             }
 

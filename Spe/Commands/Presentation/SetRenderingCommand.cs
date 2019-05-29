@@ -72,11 +72,9 @@ namespace Spe.Commands.Presentation
             selectedRendering.Placeholder = MyInvocation.BoundParameters.ContainsKey("PlaceHolder")
                 ? PlaceHolder
                 : Instance.Placeholder ?? selectedRendering.Placeholder;
-            selectedRendering.Datasource =
-                !string.IsNullOrEmpty(DataSource)
-                    ? DataSource
-                    : Instance.Datasource;
+            selectedRendering.Datasource = !string.IsNullOrEmpty(DataSource) ? DataSource : Instance.Datasource;
             selectedRendering.Cachable = Instance.Cachable;
+            selectedRendering.ClearOnIndexUpdate = Instance.ClearOnIndexUpdate;
             selectedRendering.VaryByData = Instance.VaryByData;
             selectedRendering.VaryByDevice = Instance.VaryByDevice;
             selectedRendering.VaryByLogin = Instance.VaryByLogin;
