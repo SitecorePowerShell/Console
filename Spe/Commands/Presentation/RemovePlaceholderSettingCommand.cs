@@ -37,7 +37,7 @@ namespace Spe.Commands.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    LayoutField.SetFieldValue(Item.Fields[LayoutFieldId], outputXml);
+                    LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
                 });
             }
             else
