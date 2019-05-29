@@ -4,13 +4,14 @@ using System.Management.Automation;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
+using Sitecore.Mvc.Devices;
 using Spe.Core.Extensions;
 
 namespace Spe.Commands.Presentation
 {
-    [Cmdlet(VerbsCommon.Get, "Layout")]
+    [Cmdlet(VerbsCommon.Remove, "Layout")]
     [OutputType(typeof (Item))]
-    public class GetLayoutCommand : BaseLayoutCommand
+    public class RemoveLayoutCommand : BaseLayoutCommand
     {
         [Parameter]
         public DeviceItem Device { get; set; }
@@ -30,21 +31,17 @@ namespace Spe.Commands.Presentation
                 return;
             }
 
-            foreach (DeviceDefinition device in layout.Devices)
+            var allDevices = layout.Devices;
+            foreach (DeviceDefinition device in allDevices)
             {
-                if (Device == null || string.Equals(device.ID, Device.ID.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (Device != null && !string.Equals(device.ID, Device.ID.ToString(), StringComparison.OrdinalIgnoreCase)) continue;
+                layout.Devices.Remove(device);
+                item.Edit(p =>
                 {
-                    var layoutItem = item.Database.GetItem(device.Layout);
-                    var psobj = ItemShellExtensions.GetPsObject(SessionState, layoutItem);
-                    psobj.Properties.Add(new PSNoteProperty("DeviceID", device.ID));
-                    var deviceItem = Device ?? item.Database.GetItem(device.ID);
-                    psobj.Properties.Add(new PSNoteProperty("Device", deviceItem.Name));
-                    WriteObject(psobj);
-                    if (Device != null)
-                    {
-                        return;
-                    }
-                }
+                    var outputXml = layout.ToXml();
+                    LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
+                });
+                return;
             }
             if (Device != null)
             {

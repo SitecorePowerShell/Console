@@ -211,6 +211,7 @@
     <Compile Include="Commands\Packages\GetPackageItemCommand.cs" />
     <Compile Include="Commands\Presentation\BasePlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\BaseRenderingParameterCommand.cs" />
+    <Compile Include="Commands\Presentation\RemoveLayoutCommand.cs" />
     <Compile Include="Commands\Presentation\GetPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\RemovePlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\SwitchRenderingCommand.cs" />
