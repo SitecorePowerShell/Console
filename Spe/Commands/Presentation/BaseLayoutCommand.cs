@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using Sitecore.Data;
-using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Presentation
 {
@@ -16,13 +15,9 @@ namespace Spe.Commands.Presentation
             base.BeginProcessing();
 
             LayoutFieldId = Sitecore.FieldIDs.LayoutField;
-            if (FinalLayout)
-            {
-                SitecoreVersion.V80.OrNewer(
-                    () => LayoutFieldId = Sitecore.FieldIDs.FinalLayoutField)
-                    .ElseWriteWarning(this, nameof(FinalLayout), true);
-            }
-        }
+            if (!FinalLayout) return;
 
+            LayoutFieldId = Sitecore.FieldIDs.FinalLayoutField;
+        }
     }
 }
