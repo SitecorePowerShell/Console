@@ -4,7 +4,7 @@ using Spe.Abstractions.VersionDecoupling.Interfaces;
 
 namespace Spe.VersionSpecific.Services
 {
-    public class SpeJobUIManager : IJobUiManager
+    public class SpeJobMessageManager : IJobMessageManager
     {
         public string Confirm(string message)
         {

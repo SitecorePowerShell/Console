@@ -55,17 +55,17 @@ namespace Spe.Commands.Interactive
                     var hashParams =
                         new Hashtable(Parameters.ToDictionary(p => p.ToString().Split('|')[0],
                             p => WebUtil.SafeEncode(p.ToString().Split('|')[1])));
-                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                     response = jobUiManager.ShowModalDialog(hashParams, Control, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Url))
                 {
-                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                     response = jobUiManager.ShowModalDialog(Url, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Control))
                 {
-                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                     response = jobUiManager.ShowModalDialog(Title ?? "Sitecore", Control, WidthString, HeightString);
                 }
                 WriteObject(response);

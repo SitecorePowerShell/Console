@@ -38,7 +38,7 @@ namespace Spe.Commands.Interactive
                 string response = null;
                 if (!string.IsNullOrEmpty(Url))
                 {
-                    var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                    var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                     response = jobUiManager.ShowModalDialog(Url, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Control))

@@ -21,7 +21,7 @@ namespace Spe.Integrations.Install
             var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
             str.Append("scriptId", scriptId);
             str.Append("scriptDb", scriptDb);
-            var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+            var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
             jobUiManager.ShowModalDialog(str.ToString(), width, height);
         }
     }

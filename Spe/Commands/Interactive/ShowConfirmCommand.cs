@@ -17,7 +17,7 @@ namespace Spe.Commands.Interactive
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
-                var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                 var response = jobUiManager.Confirm(Title);
                 WriteObject(response);
             });

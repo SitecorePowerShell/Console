@@ -2,7 +2,7 @@
 
 namespace Spe.Abstractions.VersionDecoupling.Interfaces
 {
-    public interface IJobUiManager
+    public interface IJobMessageManager
     {
         string Confirm(string message);
         string ShowModalDialog(string url, string width, string height);

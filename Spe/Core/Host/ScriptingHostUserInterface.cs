@@ -275,7 +275,7 @@ namespace Spe.Core.Host
                 lineHeight += 1 + line.Length/strLineWidth;
             }
             lineHeight = Math.Max(lineHeight*21 + 130,150);
-            var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+            var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
             var dialogResult = jobUiManager.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 

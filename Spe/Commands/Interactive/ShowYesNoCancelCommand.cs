@@ -18,7 +18,7 @@ namespace Spe.Commands.Interactive
                     return;
                 }
 
-                var jobUiManager = TypeResolver.Resolve<IJobUiManager>();
+                var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
                 var yesnoresult = jobUiManager.ShowModalDialog(Title, "YesNoCancel", WidthString, HeightString);
                 WriteObject(yesnoresult);
             });

@@ -52,7 +52,7 @@
     <Compile Include="VersionDecoupling\Interfaces\IJob.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobOptions.cs" />
-    <Compile Include="VersionDecoupling\Interfaces\IJobUIManager.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\IJobMessageManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
   </ItemGroup>

@@ -58,7 +58,7 @@
     <Compile Include="Services\SpeJob.cs" />
     <Compile Include="Services\SpeJobManager.cs" />
     <Compile Include="Services\SpeJobOptions.cs" />
-    <Compile Include="Services\SpeJobUIManager.cs" />
+    <Compile Include="Services\SpeJobMessageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
