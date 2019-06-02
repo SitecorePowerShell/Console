@@ -46,6 +46,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\IAuthenticationManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IDateConverter.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IImmediateDebugWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJob.cs" />

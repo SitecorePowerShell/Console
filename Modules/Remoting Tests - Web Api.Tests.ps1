@@ -7,6 +7,8 @@ if(!$protocolHost){
     $protocolHost = "https://spe.dev.local"
 }
 
+Import-Module -Name SPE
+
 Describe "Web API Responses" {
     BeforeAll {
         $session = New-ScriptSession -Username "admin" -Password "b" -ConnectionUri $protocolHost

@@ -22,6 +22,7 @@ using Sitecore.SecurityModel;
 using Sitecore.Sites;
 using Sitecore.StringExtensions;
 using Sitecore.Web;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Interactive.Messages;
 using Spe.Commands.Security;
 using Spe.Core.Diagnostics;
@@ -31,7 +32,7 @@ using Spe.Core.Modules;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
 using Spe.Core.Utility;
-using AuthenticationManager = Sitecore.Security.Authentication.AuthenticationManager;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.sitecore_modules.PowerShell.Services
 {
@@ -104,8 +105,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
+            var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
+
             // verify that the user is authorized to access the end point
-            var authUserName = string.IsNullOrEmpty(username) ? Context.User.Name : username;
+            var authUserName = string.IsNullOrEmpty(username) ? authenticationManager.CurrentUsername : username;
             var identity = new AccountIdentity(authUserName);
 
             if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
@@ -113,18 +116,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
+            
+
             lock (LoginLock)
             {
                 // login user if specified explicitly
                 if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
-                    AuthenticationManager.Login(identity.Name, password, false);
+                    authenticationManager.Login(identity.Name, password);
                 }
             }
 
-            var isAuthenticated = Context.IsLoggedIn;
+            var isAuthenticated = authenticationManager.IsAuthenticated;
 
-            if (!CheckServiceAuthentication(context, serviceName, identity, isAuthenticated))
+            if (identity.Name != authenticationManager.CurrentUsername && !CheckServiceAuthentication(context, serviceName, isAuthenticated))
             {
                 return;
             }
@@ -244,10 +249,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return false;
         }
 
-        private static bool CheckServiceAuthentication(HttpContext context, string serviceName, AccountIdentity identity, bool isAuthenticated)
+        private static bool CheckServiceAuthentication(HttpContext context, string serviceName, bool isAuthenticated)
         {
-            if (identity.Name == Context.User.Name) return true;
-
             if (isAuthenticated) return true;
 
             const string disabledMessage =

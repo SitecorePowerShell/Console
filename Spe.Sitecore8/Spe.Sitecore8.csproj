@@ -54,6 +54,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SpeAuthenticationManager.cs" />
     <Compile Include="Services\SpeJob.cs" />
     <Compile Include="Services\SpeJobManager.cs" />
     <Compile Include="Services\SpeJobOptions.cs" />
