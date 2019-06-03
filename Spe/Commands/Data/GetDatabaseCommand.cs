@@ -2,6 +2,7 @@
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Spe.Core.Validation;
 
 namespace Spe.Commands.Data
 {
@@ -9,6 +10,7 @@ namespace Spe.Commands.Data
     [OutputType(typeof (Database))]
     public class GetDatabaseCommand : BaseCommand
     {
+        [AutocompleteSet(nameof(Databases))]
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
         [Parameter(ValueFromPipeline = true, Position = 0)]
         public string Name { get; set; }
