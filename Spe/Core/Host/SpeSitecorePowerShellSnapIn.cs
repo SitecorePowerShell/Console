@@ -29,27 +29,29 @@ namespace Spe.Core.Host
 
         static SpeSitecorePowerShellSnapIn()
         {
-            var cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
-            foreach (XmlElement cmdltToInclude in cmdltsToIncludes)
+            var commandsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
+            foreach (XmlElement commandToInclude in commandsToIncludes)
             {
-                var cmdltTypeDef = cmdltToInclude.Attributes["type"].Value.Split(',');
-                var cmdletType = cmdltTypeDef[0];
-                var cmdletAssembly = cmdltTypeDef[1];
+                var commandTypeDef = commandToInclude.Attributes["type"].Value.Split(',');
+                var cmdletType = commandTypeDef[0];
+                var cmdletAssembly = commandTypeDef[1];
                 var wildcard = GetWildcardPattern(cmdletType);
                 try
                 {
                     var assembly = Assembly.Load(cmdletAssembly);
                     GetCommandletsFromAssembly(assembly, wildcard);
                 }
+                catch (ReflectionTypeLoadException typeLoadException)
+                {
+                    var loaderExceptions = typeLoadException.LoaderExceptions;
+                    var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
+                    PowerShellLog.Error($"Error while loading commands from assembly {cmdletAssembly} list: {message}",
+                        typeLoadException);
+                }
                 catch (Exception ex)
                 {
-                    var typeLoadException = ex as ReflectionTypeLoadException;
-                    if (typeLoadException != null)
-                    {
-                        var loaderExceptions = typeLoadException.LoaderExceptions;
-                        var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
-                        PowerShellLog.Error($"Error while loading commandlets list: {message}", typeLoadException);
-                    }
+                    PowerShellLog.Error($"Error while loading commands from assembly {cmdletAssembly} list: {ex.Message}",
+                        ex);
                 }
             }
         }

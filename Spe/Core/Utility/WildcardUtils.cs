@@ -9,7 +9,7 @@ namespace Spe.Core.Utility
     {
         public static WildcardPattern GetWildcardPattern(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 name = "*";
             }
@@ -17,6 +17,7 @@ namespace Spe.Core.Utility
             var wildcard = new WildcardPattern(name, options);
             return wildcard;
         }
+
         public static IEnumerable<T> WildcardFilter<T>(string filter, IEnumerable<T> items,
             Func<T, string> propertyName)
         {
@@ -35,8 +36,5 @@ namespace Spe.Core.Utility
             }
             return matchingItems.Values;
         }
-
-
-
     }
 }
