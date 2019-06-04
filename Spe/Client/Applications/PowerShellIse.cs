@@ -510,22 +510,16 @@ namespace Spe.Client.Applications
                     }
                     scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
-
+                    PrintSessionUpdate("");
                     if (scriptSession.Output != null)
                     {
-                        Context.ClientPage.ClientResponse.SetInnerHtml("Result", scriptSession.Output.ToHtml());
+                        PrintSessionUpdate(scriptSession.Output.GetHtmlUpdate());
                     }
                 }
                 catch (Exception exc)
                 {
-                    var result = string.Empty;
-                    if (scriptSession.Output != null)
-                    {
-                        result += scriptSession.Output.ToHtml();
-                    }
-                    result += string.Format("<pre style='background:red;'>{0}</pre>",
-                        ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
-                    Context.ClientPage.ClientResponse.SetInnerHtml("Result", result);
+                    var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html);
+                    PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
                 }
                 if (settings.SaveLastScript)
                 {
@@ -704,7 +698,11 @@ namespace Spe.Client.Applications
 
         private void PrintSessionUpdate(string result)
         {
-            if (!string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
+            {
+                SheerResponse.Eval($"spe.clearOutput();");
+            }
+            else
             {
                 result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
                 SheerResponse.Eval($"spe.appendOutput(\"{result}\");");

@@ -343,6 +343,12 @@
             });
         };
 
+        spe.clearOutput = function() {
+            $("#ScriptResultCode").text("");
+            $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            clearVariablesCache();
+        };
+
         spe.appendOutput = function(outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
@@ -402,7 +408,7 @@
                 codeeditor.session.clearBreakpoint(row);
             }
             scForm.postRequest("", "", "", "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
-        }
+        };
 
         spe.breakpointSet = function(row, action) {
             if (action === "toggle") {
@@ -438,7 +444,7 @@
                 codeeditor.session.removeMarker(debugMarkers.shift());
             }
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
-        }
+        };
 
         scForm.postRequest("", "", "", "ise:updatesettings");
 
@@ -466,7 +472,7 @@
             for (var i = 0; i < bpCount; i++) {
                 codeeditor.session.clearBreakpoint(breakPoints[i]);
             }
-        }
+        };
 
         function escapeRegExp(string) {
             return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -510,13 +516,13 @@
             }
             spe.resizeEditor();
             if (!isEmpty(updateFromMessage)) {
-                scForm.invoke(updateFromMessage+"(elevationResult=1)");
+                scForm.invoke(updateFromMessage + "(elevationResult=1)");
             }
-        }
+        };
 
         spe.requestElevation = function() {
-                scForm.postRequest("", "", "", "ise:requestelevation");
-        }
+            scForm.postRequest("", "", "", "ise:requestelevation");
+        };
 
         spe.restoreResults = function() {
             $("#ResultsSplitter").show();
