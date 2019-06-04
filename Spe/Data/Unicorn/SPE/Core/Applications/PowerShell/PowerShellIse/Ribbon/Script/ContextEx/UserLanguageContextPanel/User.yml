@@ -16,7 +16,7 @@ SharedFields:
   Value: 400
 - ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
   Hint: Gallery
-  Value: Gallery.SessionIDGallery
+  Value: Gallery.UserGallery
 - ID: "47ab3889-0da4-418c-b4a0-ca58f0ae4c1f"
   Hint: Gallery Width
   Value: 300
