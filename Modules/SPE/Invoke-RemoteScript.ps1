@@ -81,7 +81,7 @@ function Parse-Response {
         Write-Verbose "Login with the specified account failed."
         break            
     } else {
-        Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the account has access."
+        Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the account has access. A common cause for this is an application pool recycling."
     }
 }
 
