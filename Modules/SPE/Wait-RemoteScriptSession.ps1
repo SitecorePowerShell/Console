@@ -51,20 +51,25 @@ function Wait-RemoteScriptSession {
         [ValidateNotNullOrEmpty()]
         [string]$Id,
 
-        [int]$Delay = 1
+        [int]$Delay = 1,
+
+        [Parameter()]
+        [switch]$Raw
     )
     
     $doneScript = {
-        $backgroundScriptSession = Get-ScriptSession -Id $using:id
+        $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
         $isDone = $backgroundScriptSession -eq $null -or $backgroundScriptSession.State -ne "Busy"
+        $status = "$($backgroundScriptSession.State)"
+        if([string]::IsNullOrEmpty($status)) { $status = "Unknown" }
         [PSCustomObject]@{
-            "Name" = $backgroundScriptSession.Id
+            "Name" = $using:id
             "IsDone" = $isDone
-            "Status" = "$($backgroundScriptSession.State)"
+            "Status" = $status
         }
     }
     $finishScript = {
-        $backgroundScriptSession = Get-ScriptSession -Id $using:id
+        $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
         $backgroundScriptSession | Receive-ScriptSession
     }
 
@@ -83,7 +88,7 @@ function Wait-RemoteScriptSession {
             $keepRunning = $false
             Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
             Write-Verbose "Finished polling job $($id)."
-            Invoke-RemoteScript -Session $session -ScriptBlock $finishScript
+            Invoke-RemoteScript -Session $session -ScriptBlock $finishScript -Raw:$Raw.IsPresent
         } else {
             Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
             Start-Sleep -Seconds $Delay
