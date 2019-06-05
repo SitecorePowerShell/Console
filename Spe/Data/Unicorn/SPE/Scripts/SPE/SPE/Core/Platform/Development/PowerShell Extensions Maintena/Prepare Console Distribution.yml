@@ -106,8 +106,9 @@ SharedFields:
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
+    $package.Sources.Add($source)
     $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
-    $package.Sources.Add($source);
+    $package.Sources.Add($source)
     
     # Module Root
     $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
