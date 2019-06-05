@@ -105,10 +105,10 @@ SharedFields:
     
     
     # Item templates
-    $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
-    $package.Sources.Add($source)
+    $source = Get-Item 'master:\templates\Modules' | New-ExplicitItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
+    $package.Sources.Add($source);
     $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
-    $package.Sources.Add($source)
+    $package.Sources.Add($source);
     
     # Module Root
     $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
@@ -157,11 +157,7 @@ SharedFields:
     # Script Library
     $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
-    $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | 
-        Where-Object { -not ($_.Name.StartsWith("__")) } | # Skip test libraries
-        Where-Object { -not ($_.Name.StartsWith("X-")) } | # Skip test libraries
-        ForEach-Object { Get-ChildItem "$($_.ProviderPath)" -Recurse -WithParent | Where-Object { <#Skip Authorable Reports#> $_.Paths.LongID -notlike "*/{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}*" } } | 
-        New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
+    $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library\SPE' | New-ItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
     $package.Sources.Add($source);
     
     # Settings
