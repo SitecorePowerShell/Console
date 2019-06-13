@@ -11,7 +11,7 @@
             "<strong>Script Library</strong> comes with a wealth of samples and useful scripts that you can base your scripts upon.",
             "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
             "You can abort a script running in ISE with the <strong>Ctrl+Shift+E</strong> hotkey.",
-            "You can download files from the Website and Data folders using the <strong>Get-File</strong> cmdlet.",
+            "You can download files from the Website and Data folders using the <strong>Send-File</strong> command.",
             "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> cmdlets.",
             "You can increase the font size using the <strong>Ctrl+Alt+Shift++</strong> (plus) or <strong>Ctrl+Alt+Shift+=</strong> (equals) hotkey.",
             "You can decrease the font size using the <strong>Ctrl+Alt+Shift+-</strong> (minus) hotkey.",
