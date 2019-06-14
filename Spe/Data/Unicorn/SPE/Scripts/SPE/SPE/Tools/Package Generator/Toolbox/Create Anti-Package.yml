@@ -11,6 +11,8 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    Import-Function -Name New-PackagePostStep
+    
     $response = Show-ModalDialog -HandleParameters @{
         "h"="Create an Anti-Package"; 
         "t" = "Select a package that needs an anti-package"; 
@@ -61,41 +63,6 @@ SharedFields:
         $pf["FileName"] = $filename
         
         [pscustomobject]$pf
-    }
-    
-    function New-PackagePostStep {
-        param(
-            $PackageItems,
-            $PackageFiles
-        )
-        
-        $writer = New-Object System.IO.StringWriter
-        $output = New-Object System.Xml.XmlTextWriter([System.IO.TextWriter]$writer)
-        $output.Formatting = [System.Xml.Formatting]::Indented
-        $output.WriteStartElement("uninstall")
-        
-        if($PackageItems) {
-            $output.WriteStartElement("items")
-            foreach($packageItem in $PackageItems) {
-                $output.WriteStartElement("item")
-                $output.WriteAttributeString("database", $packageItem.Database)
-                $output.WriteAttributeString("id", $packageItem.ID.ToString())
-                $output.WriteEndElement()
-            }
-            $output.WriteEndElement()
-        }
-        if($PackageFiles) {
-            $output.WriteStartElement("files")
-            foreach($packageFile in $PackageFiles) {
-                $output.WriteStartElement("file")
-                $output.WriteAttributeString("filename", $packageFile.FileName)
-                $output.WriteEndElement()
-            }
-            $output.WriteEndElement()            
-        }
-    
-        $output.WriteEndElement()
-        $writer.ToString()
     }
     
     $packageItems = @()

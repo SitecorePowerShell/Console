@@ -8,43 +8,10 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    Import-Function -Name New-PackagePostStep
+    
     # Clear test items:
     # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
-    
-    function New-PackagePostStep {
-        param(
-            $PackageItems,
-            $PackageFiles
-        )
-        
-        $writer = New-Object System.IO.StringWriter
-        $output = New-Object System.Xml.XmlTextWriter([System.IO.TextWriter]$writer)
-        $output.Formatting = [System.Xml.Formatting]::Indented
-        $output.WriteStartElement("uninstall")
-        
-        if($PackageItems) {
-            $output.WriteStartElement("items")
-            foreach($packageItem in $PackageItems) {
-                $output.WriteStartElement("item")
-                $output.WriteAttributeString("database", $packageItem.Database)
-                $output.WriteAttributeString("id", $packageItem.ID.ToString())
-                $output.WriteEndElement()
-            }
-            $output.WriteEndElement()
-        }
-        if($PackageFiles) {
-            $output.WriteStartElement("files")
-            foreach($packageFile in $PackageFiles) {
-                $output.WriteStartElement("file")
-                $output.WriteAttributeString("filename", $packageFile.FileName)
-                $output.WriteEndElement()
-            }
-            $output.WriteEndElement()            
-        }
-    
-        $output.WriteEndElement()
-        $writer.ToString()
-    }
     
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
