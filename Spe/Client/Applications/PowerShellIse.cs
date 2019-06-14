@@ -649,20 +649,18 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:runplugin", true)]
         protected void RunPlugin(ClientPipelineArgs args)
         {
-            ScriptSession scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
-            string scriptDb = args.Parameters["scriptDb"];
-            string scriptItem = args.Parameters["scriptId"];
-            Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
-            if (script.IsPowerShellScript())
-            {
-                scriptSession.SetVariable("scriptText", Editor.Value);
-                scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
-                scriptSession.SetVariable("scriptItem", ScriptItem);
-                scriptSession.Interactive = true;
-                JobExecuteScript(args, script[Templates.Script.Fields.ScriptBody], scriptSession, true, false);
-            }
-        }
+            var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
+            var scriptDb = args.Parameters["scriptDb"];
+            var scriptItem = args.Parameters["scriptId"];
+            var script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
+            if (!script.IsPowerShellScript()) return;
 
+            scriptSession.SetVariable("scriptText", Editor.Value);
+            scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
+            scriptSession.SetVariable("scriptItem", ScriptItem);
+            scriptSession.Interactive = true;
+            JobExecuteScript(args, script[Templates.Script.Fields.ScriptBody], scriptSession, true, false);
+        }
 
         [HandleMessage("ise:pluginupdate", true)]
         protected void ConsumePluginResult(ClientPipelineArgs args)
@@ -689,14 +687,13 @@ namespace Spe.Client.Applications
         [HandleMessage("pstaskmonitor:check", true)]
         protected void PrintOutput(ClientPipelineArgs args)
         {
-            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
-            {
-                var result = session.Output.GetHtmlUpdate();
-                PrintSessionUpdate(result);
-            }
+            if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
+
+            var result = session.Output.GetHtmlUpdate();
+            PrintSessionUpdate(result);
         }
 
-        private void PrintSessionUpdate(string result)
+        private static void PrintSessionUpdate(string result)
         {
             if (string.IsNullOrEmpty(result))
             {
@@ -792,14 +789,14 @@ namespace Spe.Client.Applications
 
                 if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
                 {
-                    var percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                    var percentComplete = int.Parse(args.Parameters["PercentComplete"]);
                     if (percentComplete > -1)
                         sb.AppendFormat("<div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
                 {
-                    var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                    var secondsRemaining = int.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
                         sb.AppendFormat("<p><strong>{0:c} </strong> "+
                             Texts.PowerShellIse_UpdateProgress_remaining+
@@ -819,7 +816,7 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:scriptchanged")]
         protected void NotifyScriptModified(Message message)
         {
-            Boolean.TryParse(message.Arguments["modified"], out bool modified);
+            bool.TryParse(message.Arguments["modified"], out var modified);
             ScriptModified = modified;
             UpdateRibbon();
         }
@@ -924,7 +921,7 @@ namespace Spe.Client.Applications
                         }
                     }
                     break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Block):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Block:
                     controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
                     break;
             }
@@ -1014,17 +1011,16 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:togglebreakpoint", true)]
         protected virtual void ToggleRuntimeBreakpoint(ClientPipelineArgs args)
         {
-            var line = Int32.Parse(args.Parameters["Line"]) + 1;
+            var line = int.Parse(args.Parameters["Line"]) + 1;
             var state = args.Parameters["State"] == "true";
-            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
-            {
-                var bPointScript = state
-                    ? $"Set-PSBreakpoint -Script {session.DebugFile} -Line {line}"
-                    : $"Get-PSBreakpoint -Script {session.DebugFile} | ? {{ $_.Line -eq {line}}} | Remove-PSBreakpoint";
-                bPointScript += " | Out-Null";
-                session.TryInvokeInRunningSession(bPointScript);
-                InBreakpoint = false;
-            }
+            if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
+
+            var bPointScript = state
+                ? $"Set-PSBreakpoint -Script {session.DebugFile} -Line {line}"
+                : $"Get-PSBreakpoint -Script {session.DebugFile} | ? {{ $_.Line -eq {line}}} | Remove-PSBreakpoint";
+            bPointScript += " | Out-Null";
+            session.TryInvokeInRunningSession(bPointScript);
+            InBreakpoint = false;
         }
 
         [HandleMessage("ise:breakpointhit", true)]
@@ -1057,12 +1053,11 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:debugaction", true)]
         protected virtual void BreakpointAction(ClientPipelineArgs args)
         {
-            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
-            {
-                session.TryInvokeInRunningSession(args.Parameters["action"]);
-                SheerResponse.Eval("$ise(function() { spe.breakpointHandled(); });");
-                InBreakpoint = false;
-            }
+            if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
+
+            session.TryInvokeInRunningSession(args.Parameters["action"]);
+            SheerResponse.Eval("$ise(function() { spe.breakpointHandled(); });");
+            InBreakpoint = false;
         }
 
         [HandleMessage("ise:immediatewindow", true)]
@@ -1080,7 +1075,7 @@ namespace Spe.Client.Applications
             {
                 Monitor.Active = false;
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
+                var url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
                 url.Parameters["id"] = session.Key;
                 url.Parameters["debug"] = "true";
                 TypeResolver.Resolve<IImmediateDebugWindowLauncher>().ShowImmediateWindow(url);
@@ -1090,7 +1085,6 @@ namespace Spe.Client.Applications
             {
                 Monitor.Active = true;
             }
-
         }
 
         public void SessionElevationPipeline(ClientPipelineArgs args)
@@ -1123,22 +1117,19 @@ namespace Spe.Client.Applications
 
         private bool RequestSessionElevationEx(ClientPipelineArgs args, string appName, string action)
         {
-            if (!SessionElevationManager.IsSessionTokenElevated(appName))
+            if (SessionElevationManager.IsSessionTokenElevated(appName)) return true;
+
+            if (args.Parameters.AllKeys.Contains("elevationResult"))
             {
-                if (args.Parameters.AllKeys.Contains("elevationResult"))
-                {
-                    SessionElevationErrors.OperationRequiresElevation();
-                    return false;
-                }
-                var pipelineArgs = new ClientPipelineArgs();
-                pipelineArgs.Parameters["message"] = args.Parameters["message"];
-                pipelineArgs.Parameters["app"] = appName;
-                pipelineArgs.Parameters["action"] = action;
-                Context.ClientPage.Start(this, nameof(SessionElevationPipeline), pipelineArgs);
+                SessionElevationErrors.OperationRequiresElevation();
                 return false;
             }
-            return true;
-
+            var pipelineArgs = new ClientPipelineArgs();
+            pipelineArgs.Parameters["message"] = args.Parameters["message"];
+            pipelineArgs.Parameters["app"] = appName;
+            pipelineArgs.Parameters["action"] = action;
+            Context.ClientPage.Start(this, nameof(SessionElevationPipeline), pipelineArgs);
+            return false;
         }
 
         public void DropElevationButtonClick()
