@@ -1,0 +1,18 @@
+﻿---
+ID: "8e9e165d-6dbc-4e08-aee7-03e6fc258363"
+Parent: "1717e9d1-b21a-476b-b0d3-f8ac80a6f9f4"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Building Tools/Content Editor Gutter/Content Editor/Gutters
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190616T021337Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

@@ -1,0 +1,18 @@
+﻿---
+ID: "1aa7bbef-a12d-4da2-8aaa-968c5d54809e"
+Parent: "c94beb9f-f1fb-4c15-855e-904f2b3bb5ea"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Building Tools/Content Editor Ribbon/Content Editor/Ribbon/Home
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190614T033021Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
