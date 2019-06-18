@@ -15,12 +15,10 @@ namespace Spe.Core.Settings.Authorization
     [Serializable]
     public class ScriptItemSecurityEventHandler
     {
-
         public void OnEvent(object sender, EventArgs args)
         {
             Item item = null;
-            var scArgs = args as SitecoreEventArgs;
-            if (scArgs == null || HttpContext.Current?.Session == null || scArgs.Parameters.Length < 1 ||
+            if (!(args is SitecoreEventArgs scArgs) || HttpContext.Current?.Session == null || scArgs.Parameters.Length < 1 ||
                 SecurityDisabler.CurrentValue == SecurityState.Disabled)
             {
                 // allow jobs to modify scripts as otherwise all kind of things break
