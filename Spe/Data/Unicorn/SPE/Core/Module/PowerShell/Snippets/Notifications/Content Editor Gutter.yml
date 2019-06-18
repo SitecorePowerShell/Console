@@ -1,0 +1,43 @@
+﻿---
+ID: "97ecc9fc-3762-460f-a906-babe429da55e"
+Parent: "ad50828b-c328-4cb0-8fb8-cbd17203e992"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: /sitecore/system/Modules/PowerShell/Snippets/Notifications/Content Editor Gutter
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    <#
+        This script will run for every item that appears in the content tree.
+        To improve performance you can use the rules field on the script item to
+        evaluate if/when this script should run.
+    #>
+    
+    $item = Get-Item -Path .
+    if(-not $item) {
+        Write-Log "The item is null."
+        return $null
+    }
+    
+    $tooltip = [Sitecore.Globalization.Translate]::Text("This is an interesting tooltip for the user.")
+    $icon = "Office/16x16/information.png"
+     
+    $gutter = New-Object Sitecore.Shell.Applications.ContentEditor.Gutters.GutterIconDescriptor
+    $gutter.Icon = $icon
+    $gutter.Tooltip = $tooltip
+    
+    # Be sure to update this ID to whichever script you want to execute when the link is clicked.
+    $scriptId = "{GUID_TO_SCRIPT}"
+    $script = Get-Item -Path "master:" -ID $scriptId
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $gutter.Click = $command
+    $gutter
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190617T132653Z

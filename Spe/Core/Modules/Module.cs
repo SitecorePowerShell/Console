@@ -83,27 +83,24 @@ namespace Spe.Core.Modules
 
         public string GetFeaturePath(string integrationPoint)
         {
-            if (!string.IsNullOrEmpty(integrationPoint))
+            if (string.IsNullOrEmpty(integrationPoint)) return string.Empty;
+
+            if (IntegrationPoints.Libraries.Keys.ToList()
+                .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
             {
-                if (IntegrationPoints.Libraries.Keys.ToList()
-                    .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
-                {
-                    return Path + "/" + IntegrationPoints.Libraries[integrationPoint].Path;
-                }
+                return Path + "/" + IntegrationPoints.Libraries[integrationPoint].Path;
             }
             return string.Empty;
         }
 
         public string GetProviderFeaturePath(string integrationPoint)
         {
-            if (!string.IsNullOrEmpty(integrationPoint))
+            if (string.IsNullOrEmpty(integrationPoint)) return string.Empty;
+
+            if (IntegrationPoints.Libraries.Keys.ToList()
+                .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
             {
-                if (IntegrationPoints.Libraries.Keys.ToList()
-                    .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
-                {
-                    return string.Format("{0}:{1}/{2}", Database, Path,
-                        IntegrationPoints.Libraries[integrationPoint].Path);
-                }
+                return $"{Database}:{Path}/{IntegrationPoints.Libraries[integrationPoint].Path}";
             }
             return string.Empty;
         }

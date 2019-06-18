@@ -32,7 +32,7 @@ namespace Spe.Client.Controls
 
             foreach (
                 Item scriptItem in
-                    ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature)
+                    ModuleManager.GetFeatureRoots(IntegrationPoints.ReportExportFeature)
                         .SelectMany(parent => parent.Children)
                         .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem[FieldNames.ShowRule], ruleContext, !showShared)))
             {

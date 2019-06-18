@@ -34,7 +34,7 @@ SharedFields:
   Value: 
 - ID: "6ba1018f-9794-4798-963e-601d413b9ca3"
   Hint: Message
-  Value: "powershell:startmenuaction(integrationPoint=startMenuReports)"
+  Value: "powershell:startmenuaction(integrationPoint=reportStartMenu)"
 - ID: "6fd695e7-7f6d-4ca5-8b49-a829e5950ae9"
   Hint: __Subitems Sorting
   Value: 

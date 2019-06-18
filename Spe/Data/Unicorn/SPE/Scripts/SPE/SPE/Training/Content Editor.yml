@@ -1,8 +1,8 @@
 ﻿---
-ID: "ebe5fcb3-a06a-4fc7-9583-32e7f6815424"
+ID: "8804cde8-e7c8-4c88-935d-984464fab564"
 Parent: "08b4ba05-759b-456a-8ca1-a00a8db99fad"
 Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Web API and Remoting
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor
 DB: master
 SharedFields:
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
@@ -15,7 +15,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20190614T023413Z
+      Value: 20190614T025838Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

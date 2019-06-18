@@ -35,7 +35,7 @@ namespace Spe.Client.Controls
             {
                 foreach (
                     Item scriptItem in
-                        ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewRibbonFeature)
+                        ModuleManager.GetFeatureRoots(IntegrationPoints.ReportActionFeature)
                             .Select(parent => parent.Paths.GetSubItem(typeName))
                             .Where(scriptLibrary => scriptLibrary != null)
                             .SelectMany(scriptLibrary => scriptLibrary.Children)
