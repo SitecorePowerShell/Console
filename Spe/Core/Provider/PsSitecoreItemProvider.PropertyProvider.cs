@@ -37,8 +37,7 @@ namespace Spe.Core.Provider
                         }
                         else
                         {
-                            WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’", name,
-                                path));
+                            WriteWarning($"Property name '{name}' doesn't exist for item at path '{path}'");
                         }
                         result.Properties.Add(new PSNoteProperty(name, value));
                     }

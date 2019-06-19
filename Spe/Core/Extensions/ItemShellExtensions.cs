@@ -193,7 +193,7 @@ namespace Spe.Core.Extensions
                             item[propertyName] = b ? "1" : "";
                             break;
                         default:
-                            item[propertyName] = newValue.ToString();
+                            item[propertyName] = newValue?.ToString();
                             break;
                     }
                 });
