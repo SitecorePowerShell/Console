@@ -1,0 +1,18 @@
+﻿---
+ID: "7d27d851-86a4-4160-9ff3-1aeb61204909"
+Parent: "cca0341b-6570-431a-9856-e7e54a68e806"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Reporting/Advanced/Internal/List View/Export
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190618T023703Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

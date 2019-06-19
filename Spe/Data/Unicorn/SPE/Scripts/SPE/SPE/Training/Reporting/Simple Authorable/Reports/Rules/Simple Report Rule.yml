@@ -1,0 +1,25 @@
+﻿---
+ID: "789df768-9b1b-4390-8595-8b1c5cfb8c4b"
+Parent: "e31f8013-bda1-45a1-a66e-530a67e83dcd"
+Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Reporting/Simple Authorable/Reports/Rules/Simple Report Rule
+DB: master
+SharedFields:
+- ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
+  Hint: DefaultFields
+  Value: ID|Name|ItemPath
+- ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+  Hint: Query
+  Value: "+location:{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190614T025211Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
