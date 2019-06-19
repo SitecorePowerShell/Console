@@ -8,7 +8,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $integrationPoint = [Spe.Core.Modules.IntegrationPoints]::ListViewRibbonFeature;
+    $integrationPoint = [Spe.Core.Modules.IntegrationPoints]::ReportActionFeature
     Import-Function -Name Create-IntegrationPoint
     CreateIntegrationPoint($integrationPoint)
 Languages:

@@ -124,7 +124,7 @@ SharedFields:
     # Script Library
     $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
-    $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library\SPE' | New-ItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
+    $source = Get-Item 'master:\system\Modules\PowerShell\Script Library\SPE' | New-ItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
     $package.Sources.Add($source);
     
     # Settings
@@ -170,9 +170,13 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Files
-    $source = Get-Item "$AppPath\App_Config\Include\*Spe*.*" | 
+    $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
         Where-Object { -not $_.Name.Contains("Serialization") -and -not $_.Name.Contains("User") } | New-ExplicitFileSource -Name "Configuration Files"
     $package.Sources.Add($source);
+    $source = Get-Item "$AppPath\App_Config\Include\z.Spe\*.*" | 
+        Where-Object { -not $_.Name.Contains("Serialization") -and -not $_.Name.Contains("User") } | New-ExplicitFileSource -Name "Configuration Files"
+    $package.Sources.Add($source);
+    
     $source = Get-Item "$AppPath\bin\Spe*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
     $package.Sources.Add($source);
     $source = Get-Item "$AppPath/sitecore/shell/Themes/Standard/PowerShell.zip" | New-ExplicitFileSource -Name "Icons"
@@ -189,7 +193,7 @@ SharedFields:
     $package.Sources.Add($source);
     
     
-    $packageName = "$($package.Name)-$Version";
+    $packageName = "$($package.Name)-$Version" -replace " ",".";
     Export-Package -Project $package -Path "$packageName.xml"
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     Download-File "$SitecorePackageFolder\$packageName.zip"
@@ -198,7 +202,7 @@ SharedFields:
     
     # Build Minimal Package
     
-    $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version).zip"
+    $minimalPackageName = "$($SitecorePackageFolder)\SPE.Minimal-$($Version).zip"
     
     Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Spe.config", "Spe.Minimal.config.disabled" > $null
     Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Spe.dll","Spe.Abstractions.dll" -Update > $null
@@ -260,7 +264,7 @@ SharedFields:
     $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
     $package.Sources.Add($source);
     
-    $packageName = "$($package.Name)-$Version";
+    $packageName = "$($package.Name)-$Version" -replace " - ","-" -replace " ",".";
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     Download-File "$SitecorePackageFolder\$packageName.zip"
 Languages:
