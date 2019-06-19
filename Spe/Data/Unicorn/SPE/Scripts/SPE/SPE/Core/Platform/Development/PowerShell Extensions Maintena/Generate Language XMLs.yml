@@ -17,13 +17,19 @@ SharedFields:
     #>
     
     $srcLanguage = "en"
-    $targetLanguage = "de-de"
+    $targetLanguage = "da"
     
     # Some fields are not marked as Shared, but we don't want them translated.
     $untranslatedFieldIds = @(
         "{212B99DF-C246-46CE-9E51-86DB77E3BC97}",
         "{29D3164D-DE97-4ACE-BCB4-83CB6954BEE3}"
     )
+    
+    $config = [Sitecore.Configuration.Factory]::GetConfiguration()
+    $speSourceFolder = $config.sitecore."sc.variable" | 
+        Where-Object { $_.Name -eq "speSourceFolder" } | 
+        Select-Object -First 1 -Expand value
+    $translationsFolder = "$($speSourceFolder)\Data\Translations\$($targetLanguage)"
     
     function Append-Attribute{
     	[CmdletBinding()]
@@ -183,7 +189,7 @@ SharedFields:
         
         end {
             $xmlFilePrefix = Join-Path $Path $Prefix
-            $suffix = "$targetLanguage-beta.xml"
+            $suffix = "$targetLanguage.xml"
             
             $masterXmlFle = $xmlFilePrefix + "-master-" + $suffix
             $coreXmlFle = $xmlFilePrefix + "-core-" + $suffix
@@ -231,7 +237,7 @@ SharedFields:
         Write-Host Added $configName with $($items.Count) items
     }
     
-    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation"
+    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"
     
     #
     # Scripts translation file
@@ -239,7 +245,7 @@ SharedFields:
     
     $allItems = Get-ItemsFromUnicornConfiguration "Spe.Scripts"
     Write-Host Added "Spe.Scripts" with $($allItems.Count) items
-    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation-scripts"
+    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation-scripts"
     
     #
     # Authorable Reports translation file
@@ -247,7 +253,7 @@ SharedFields:
     
     $allItems = Get-ItemsFromUnicornConfiguration "Spe.AuthorableReports"
     Write-Host Added "Spe.AuthorableReports" with $($allItems.Count) items
-    $allItems | Write-TranslationFile -Path "$SitecoreDataFolder\Translations" -Prefix "spe-translation-authorable-reports"
+    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation-authorable-reports"
     
     Write-Host "Done."
 Languages:
