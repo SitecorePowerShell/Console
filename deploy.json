@@ -21,10 +21,6 @@
         { 
             "project": "Spe.Package",
             "version": 0            
-        },
-        { 
-            "project": "Spe.Sitecore8",
-            "version": 8            
         }
     ],
     "sitesDefault": {
