@@ -30,7 +30,7 @@ SharedFields:
         return $result
     }
     
-    function Render-ItemField{
+    function Render-ItemField {
         [CmdletBinding()]
         param(
             [Parameter(Mandatory=$true, Position=0)]

@@ -24,7 +24,7 @@ SharedFields:
     $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
     
     $dialogTitle = "Rules Based Report"
-    $reportRoots = [Spe.Core.Modules.ModuleManager]::GetFeatureRoots([Spe.Core.Modules.IntegrationPoints]::StartMenuReportsFeature)
+    $reportRoots = [Spe.Core.Modules.ModuleManager]::GetFeatureRoots([Spe.Core.Modules.IntegrationPoints]::ReportStartMenuFeature)
     $ruleItems = @()
     $powershellRuleLibaryTemplateId = "{BC29CC43-FC82-4A6C-B325-FB261DA5931B}"
     foreach($reportRoot in $reportRoots) {
@@ -43,12 +43,14 @@ SharedFields:
     $reportDialogProps = @{
         Parameters = @(
             @{Name="ruleIndex"; Title="Rule Report"; Options=$ruleOptions; Tooltip="Select the preconfigured report rule."},
-            @{Name="showFieldSelector"; Title="Show field selector"; Value=$false; Columns=6; },
-            @{Name="showLatestVersionOnly"; Title="Show latest version only"; Value=$true; Columns=6; }
+            @{Name="showFieldSelector"; Title="Show field selector"; Value=$false; Columns=4; },
+            @{Name="showLatestVersionOnly"; Title="Show latest version only"; Value=$true; Columns=4; },
+            @{Name="showImageAsItemPath"; Title="Show image item path"; Value=$false; Columns=4; }
         )
         Title = $dialogTitle
         Description = "Authorable reports driven by queries and rules."
         ShowHints = $true
+        Width = 550
         Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     }
     
@@ -108,7 +110,7 @@ SharedFields:
     }
     
     $customOptions = [ordered]@{}
-    
+    $fieldLookup = @{}
     foreach($field in $templateFields){
         $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
         $title = "$title [$($field.Type)]"
@@ -117,15 +119,16 @@ SharedFields:
         } else {
             $customOptions[$title] = $field.Name
         }
+        $fieldLookup[$field.Name] = $field
     }
     
     $titles = [ordered]@{}
     
-    foreach($field in $stdOptions.Keys){
-        $titles[$stdOptions[$field]] = $stdOptions[$field]
+    foreach($fieldName in $stdOptions.Keys){
+        $titles[$stdOptions[$fieldName]] = $stdOptions[$fieldName]
     }
-    foreach($field in $customOptions.Keys){
-        $titles[$customOptions[$field]] = $customOptions[$field]
+    foreach($fieldName in $customOptions.Keys){
+        $titles[$customOptions[$fieldName]] = $customOptions[$fieldName]
     }
     
     $defaultFields = $ruleItems[$ruleIndex].DefaultFields.Split("|")
@@ -154,13 +157,46 @@ SharedFields:
     }
     
     $properties = [System.Collections.ArrayList]@()
-    $fields = $defaultFields + $customFields | Select-Object -Unique
+    $fieldNames = $defaultFields + $customFields | Select-Object -Unique
     
-    foreach($field in $fields){
-        $expressionScript = [scriptblock]::Create('Render-ItemField $_ "' + $field + '"')
-        $label = $titles[$field]
+    function Render-ImageItemPath {
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory=$true, Position=0)]
+            [Sitecore.Data.Items.Item]$item,
+            
+            [Parameter(Mandatory=$true, Position=1)]
+            [string]$fieldName
+        )
+        
+        $field = $item.Fields[$fieldName]
+        if($field -eq $null) {
+            return $item.$fieldName
+        }
+        $typedField = [Sitecore.Data.Fields.FieldTypeManager]::GetField($field)
+        if ($typedField -is [Sitecore.Data.Fields.ImageField]) {
+            $imageField = [Sitecore.Data.Fields.ImageField]$typedField
+            if($imageField) {
+                $mediaID = $imageField.MediaID
+                if((Test-Path -Path "master:$($mediaID)")) {
+                    $mediaItem = Get-Item -Path "master:" -ID $mediaID
+                    return $mediaItem.ItemPath
+                } else {
+                    return $imageField.MediaID
+                }
+            }
+        }
+    }
+    
+    foreach($fieldName in $fieldNames){
+        $expressionScript = [scriptblock]::Create('Render-ItemField $_ "' + $fieldName + '"')
+        if($showImageAsItemPath -and ($fieldLookup[$fieldName].Type -eq "Image")) {
+            $expressionScript = [scriptblock]::Create('Render-ImageItemPath $_ "' + $fieldName + '"')
+        }
+        
+        $label = $titles[$fieldName]
         if([string]::IsNullOrEmpty($label)) {
-            $label = $field
+            $label = $fieldName
         }
         $properties.Add(@{Label=$label; Expression=$expressionScript}) > $null
     }
@@ -188,7 +224,7 @@ SharedFields:
     
     if($saveSettings) {
         $ruleItem = Get-Item -Path "master:" -ID ($ruleItems[$ruleIndex].ID)
-        $ruleItem.DefaultFields = $fields -join "|"
+        $ruleItem.DefaultFields = $fieldNames -join "|"
     }
     Close-Window
 Languages:
