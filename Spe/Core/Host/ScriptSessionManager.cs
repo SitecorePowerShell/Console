@@ -82,10 +82,7 @@ namespace Spe.Core.Host
                 if (HttpRuntime.Cache[key] == null) return;
 
                 var session = HttpRuntime.Cache.Remove(key) as ScriptSession;
-                if (session != null)
-                {
-                    session.Dispose();
-                }
+                session?.Dispose();
                 PowerShellLog.Debug($"Script Session '{key}' disposed.");
             }
         }

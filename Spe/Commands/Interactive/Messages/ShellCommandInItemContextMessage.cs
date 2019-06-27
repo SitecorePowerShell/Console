@@ -47,9 +47,7 @@ namespace Spe.Commands.Interactive.Messages
                 context.Parameters.Add("jobHandle", JobHandle.ToString());
             }
             var shellCommand = CommandManager.GetCommand(command);
-            if (shellCommand == null)
-                return;
-            shellCommand.Execute(context);
+            shellCommand?.Execute(context);
         }
 
         protected override object ProcessResult(bool hasResult, string result)

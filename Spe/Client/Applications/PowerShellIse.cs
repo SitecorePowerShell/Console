@@ -1124,10 +1124,11 @@ namespace Spe.Client.Applications
                 SessionElevationErrors.OperationRequiresElevation();
                 return false;
             }
-            var pipelineArgs = new ClientPipelineArgs();
-            pipelineArgs.Parameters["message"] = args.Parameters["message"];
-            pipelineArgs.Parameters["app"] = appName;
-            pipelineArgs.Parameters["action"] = action;
+
+            var pipelineArgs = new ClientPipelineArgs
+            {
+                Parameters = {["message"] = args.Parameters["message"], ["app"] = appName, ["action"] = action}
+            };
             Context.ClientPage.Start(this, nameof(SessionElevationPipeline), pipelineArgs);
             return false;
         }

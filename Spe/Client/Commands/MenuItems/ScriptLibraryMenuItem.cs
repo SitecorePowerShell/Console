@@ -128,7 +128,7 @@ namespace Spe.Client.Commands.MenuItems
                 }
 
                 return MainUtil.GetInt(rawSortOrderX, 0).CompareTo(MainUtil.GetInt(rawSortOrderY, 0));
-            };
+            }
 
             menuItems.Sort((x, y) => GetSortOrder((MenuItem)x, (MenuItem)y));
         }

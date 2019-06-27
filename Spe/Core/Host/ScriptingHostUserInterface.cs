@@ -26,17 +26,7 @@ namespace Spe.Core.Host
         private readonly ScriptingHost host;
         private ScriptingHostPrivateData privateData;
 
-        private ScriptingHostPrivateData PrivateData
-        {
-            get
-            {
-                if (privateData == null)
-                {
-                    privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData;
-                }
-                return privateData;
-            }
-        }
+        private ScriptingHostPrivateData PrivateData => privateData ?? (privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData);
 
         public ScriptingHostUserInterface(ApplicationSettings settings, ScriptingHost host)
         {

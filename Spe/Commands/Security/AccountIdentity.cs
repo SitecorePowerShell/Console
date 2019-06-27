@@ -26,7 +26,7 @@ namespace Spe.Commands.Security
                 (allowWildcard && !Regex.IsMatch(account, @"^[\w?*][\w\s@.\\_\\?*-]*$", RegexOptions.Compiled)))
             {
                 throw new ArgumentException(
-                    $"The name '{name}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", "name");
+                    $"The name '{name}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", nameof(name));
             }
 
             Domain = domain;

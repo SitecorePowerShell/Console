@@ -48,7 +48,7 @@ namespace Spe.Commands.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !MethodExtensions.Boost<bool>(i["_path"].Contains(root), boost), operation)
+                                ? predicate.AddPredicate(i => !i["_path"].Contains(root).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i["_path"].Contains(root).Boost(boost), operation);
                             break;
                         case FilterType.StartsWith:

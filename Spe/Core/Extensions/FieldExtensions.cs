@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Xml;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Fields;
@@ -19,15 +18,7 @@ namespace Spe.Core.Extensions
                 return string.Empty;
             }
 
-            if (!ShouldRender(field))
-            {
-                return field.Value;
-            }
-
-            return FieldRenderer.Render(
-              field.Item,
-              field.ID.ToString(),
-              parameters);
+            return !ShouldRender(field) ? field.Value : FieldRenderer.Render(field.Item, field.ID.ToString(), parameters);
         }
 
         public static string Render(this Field field)
@@ -39,28 +30,27 @@ namespace Spe.Core.Extensions
         public static string Render(this Field field, IDictionary<string, string> parameters)
         {
             Assert.ArgumentNotNull(field, "field");
-            string pass = string.Empty;
+            var pass = string.Empty;
 
-            if (parameters != null && parameters.Count > 0)
+            if (parameters == null || parameters.Count <= 0) return Render(field, pass);
+
+            foreach (var key in parameters.Keys)
             {
-                foreach (string key in parameters.Keys)
+                if (pass != string.Empty)
                 {
-                    if (pass != string.Empty)
-                    {
-                        pass += "&";
-                    }
-
-                    string value = parameters[key];
-
-                    // TODO: special characters may requuire encoding
-                    pass += key + "=" + value;
+                    pass += "&";
                 }
+
+                var value = parameters[key];
+
+                // TODO: special characters may require encoding
+                pass += key + "=" + value;
             }
 
             return Render(field, pass);
         }
 
-        static Dictionary<string,bool> canRenderType = new Dictionary<string, bool>();
+        private static readonly Dictionary<string,bool> CanRenderType = new Dictionary<string, bool>();
 
         public static bool ShouldRender(Field field)
         {
@@ -71,17 +61,12 @@ namespace Spe.Core.Extensions
                 return false;
             }
 
-            if (!canRenderType.ContainsKey(field.Type))
-            {
-                XmlNode node = Factory.GetConfigNode(
-                    "fieldTypes/fieldType[@name='" + field.Type + "']");
-                canRenderType[field.Type] =
-                    node == null
-                    || node.Attributes == null
-                    || node.Attributes["render"] == null
-                    || MainUtil.GetBool(node.Attributes["render"].Value, true);
-            }
-            return canRenderType[field.Type];
+            if (CanRenderType.ContainsKey(field.Type)) return CanRenderType[field.Type];
+
+            var node = Factory.GetConfigNode("fieldTypes/fieldType[@name='" + field.Type + "']");
+            CanRenderType[field.Type] =
+                node?.Attributes?["render"] == null || MainUtil.GetBool(node.Attributes["render"].Value, true);
+            return CanRenderType[field.Type];
         }
     }
 }

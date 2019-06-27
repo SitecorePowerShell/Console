@@ -102,7 +102,7 @@ namespace Spe.Client.Controls
             }
             var itemArray = (commandContext == null) ? new Item[0] : commandContext.Items;
             var item = (itemArray.Length > 0) ? itemArray[0] : null;
-            var itemUrl = GetItemUrl(item, (commandContext != null) ? commandContext.Parameters : null);
+            var itemUrl = GetItemUrl(item, commandContext?.Parameters);
             var smallButton = new SmallGalleryButton
             {
                 ID = "B" + button.ID.ToShortID()

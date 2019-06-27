@@ -111,10 +111,9 @@ namespace Spe.Core.Host
                     var expression = matches[0].Groups["expression"].Value;
                     var methodName = matches[0].Groups["method"].Value;
                     Type objectType = null;
-                    List<object> objectValue;
                     try
                     {
-                        if (session.TryInvokeInRunningSession(expression, out objectValue, false))
+                        if (session.TryInvokeInRunningSession(expression, out var objectValue, false))
                         {
                             if (objectValue != null && objectValue.Count > 0)
                             {
@@ -218,14 +217,7 @@ namespace Spe.Core.Host
             {
                 var namespaceToken = completeToken.Substring(0, lastDotPosition);
                 var nameToken = completeToken.Substring(lastDotPosition + 1);
-                if (endsWithDot)
-                {
-                    nameWildcard = WildcardUtils.GetWildcardPattern("*");
-                }
-                else
-                {
-                    nameWildcard = WildcardUtils.GetWildcardPattern($"{nameToken}*");
-                }
+                nameWildcard = WildcardUtils.GetWildcardPattern(endsWithDot ? "*" : $"{nameToken}*");
                 namespaceToken = namespaceToken.Replace(".", "*.");
                 fullWildcard = WildcardUtils.GetWildcardPattern($"{namespaceToken}*");
             }

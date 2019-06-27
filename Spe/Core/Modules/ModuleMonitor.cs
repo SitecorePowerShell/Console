@@ -83,15 +83,13 @@ namespace Spe.Core.Modules
         {
             Assert.ArgumentNotNull(args, "args");
             var sargs = args as SitecoreEventArgs;
-            if (sargs != null && sargs.Parameters != null)
+            if (sargs?.Parameters == null) return;
+
+            if (sargs.Parameters[0] is Item item && item.TemplateID == ModuleTemplateId)
             {
-                var item = sargs.Parameters[0] as Item;
-                if (item.TemplateID == ModuleTemplateId)
-                {
-                    item[Sitecore.FieldIDs.Icon] = item["Enabled"] == "1"
-                        ? "Office/32x32/jar_coffee_bean.png"
-                        : "Office/32x32/jar.png";
-                }
+                item[Sitecore.FieldIDs.Icon] = item["Enabled"] == "1"
+                    ? "Office/32x32/jar_coffee_bean.png"
+                    : "Office/32x32/jar.png";
             }
         }
     }

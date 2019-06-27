@@ -61,12 +61,12 @@ namespace Spe.Client.Applications
             var options = new PageEditFieldEditorOptions(form, BuildListWithFieldsToShow(args.Parameters["fields"]))
             {
                 Title = args.Parameters["section"],
-                Icon = args.Parameters["icon"]
+                Icon = args.Parameters["icon"],
+                Parameters = {["contentitem"] = CurrentItem.Uri.ToString()},
+                PreserveSections = args.Parameters[PreserveSectionsParameter] == "1",
+                DialogTitle = args.Parameters["title"],
+                SaveItem = true
             };
-            options.Parameters["contentitem"] = CurrentItem.Uri.ToString();
-            options.PreserveSections = args.Parameters[PreserveSectionsParameter] == "1";
-            options.DialogTitle = args.Parameters["title"];
-            options.SaveItem = true;
             return options;
         }
 

@@ -51,7 +51,7 @@ namespace Spe.Commands.Data.Search
             {
                 WriteVerbose($"Skipping full index rebuild for {index.Name} because it's already running.");
                 var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-                var job = jobManager.GetJob($"{"Index_Update"}_IndexName={index.Name}");
+                var job = jobManager.GetJob($"Index_Update_IndexName={index.Name}");
 
                 if (job == null || !AsJob) return;
 

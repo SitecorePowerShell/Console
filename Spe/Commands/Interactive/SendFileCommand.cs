@@ -54,7 +54,7 @@ namespace Spe.Commands.Interactive
                         return;
                     }
 
-                   message = new DownloadMessage(Item);
+                    message = new DownloadMessage(Item);
                 }               
                 else if (!string.IsNullOrEmpty(Path))
                 {

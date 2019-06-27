@@ -37,21 +37,14 @@ namespace Spe.Core.Rules
 
             var measuredLength = MeasuredLengths[MeasuredLength];
             string lengthStr;
-            if (measuredLength == Measured.Script)
-            {
-                lengthStr = ruleContext.Parameters["scriptLength"].ToString();
-            } else
-            {
-                lengthStr = ruleContext.Parameters["selectionLength"].ToString();
-            }
+            lengthStr = measuredLength == Measured.Script ? ruleContext.Parameters["scriptLength"].ToString() : ruleContext.Parameters["selectionLength"].ToString();
 
             if (string.IsNullOrEmpty(lengthStr))
             {
                 return false;
             }
 
-            int length;
-            if (!int.TryParse(lengthStr, out length))
+            if (!int.TryParse(lengthStr, out var length))
             {
                 PowerShellLog.Debug("Invalid script length: " + MeasuredLength);
                 return false;

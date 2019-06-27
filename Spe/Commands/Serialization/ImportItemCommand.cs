@@ -129,10 +129,9 @@ namespace Spe.Commands.Serialization
             {
                 UseNewID = UseNewId,
                 DisableEvents = DisableEvents,
-                ForceUpdate = ForceUpdate
+                ForceUpdate = ForceUpdate,
+                Root = Root ?? PathUtils.Root
             };
-
-            options.Root = Root ?? PathUtils.Root;
 
             return options;
         }

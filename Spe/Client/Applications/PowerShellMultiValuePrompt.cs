@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -561,9 +561,9 @@ namespace Spe.Client.Applications
                     Database = dbName,
                     ItemID = item?.ID.ToString() ?? ItemIDs.Null.ToString(),
                     Source = variable["Source"] as string ?? "",
-                    Value = item?.ID.ToString() ?? ""
+                    Value = item?.ID.ToString() ?? "",
+                    ItemLanguage = Sitecore.Context.Language.Name
                 };
-                tree.ItemLanguage = Sitecore.Context.Language.Name;
                 tree.Class += " textEdit";
 
                 return tree;

@@ -123,16 +123,12 @@ namespace Spe.Core.Debugging
             }
 
             // If a PSObject, unwrap it
-            var psobject = valueObject as PSObject;
-            if (psobject != null)
+            if (valueObject is PSObject psobject)
             {
                 valueObject = psobject.BaseObject;
             }
 
-            Type valueType = 
-                valueObject != null ? 
-                    valueObject.GetType() : 
-                    null;
+            var valueType = valueObject?.GetType();
 
             return
                 valueObject != null &&
@@ -385,7 +381,7 @@ namespace Spe.Core.Debugging
                 Message = message;
             }
 
-            public string Message { get; }
+            private string Message { get; }
 
             public override string ToString()
             {

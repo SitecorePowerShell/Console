@@ -136,9 +136,11 @@ namespace Spe.Client.Applications
                 }
                 else if (selectedItem.IsPowerShellScript()) // selected existing script.
                 {
-                    var parameters = new NameValueCollection();
-                    parameters["fullPath"] = $"{selectedItem.Database.Name}:{selectedItem.Paths.Path}";
-                    parameters["message"] = Texts.PowerShellScriptBrowser_Are_you_sure_you_want_to_overwrite;
+                    var parameters = new NameValueCollection
+                    {
+                        ["fullPath"] = $"{selectedItem.Database.Name}:{selectedItem.Paths.Path}",
+                        ["message"] = Texts.PowerShellScriptBrowser_Are_you_sure_you_want_to_overwrite
+                    };
                     Context.ClientPage.Start(this, "OverwriteScript", parameters);
                 }
                 else

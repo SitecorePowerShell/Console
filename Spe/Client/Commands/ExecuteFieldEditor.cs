@@ -78,12 +78,12 @@ namespace Spe.Client.Commands
             var options = new PageEditFieldEditorOptions(form, BuildListWithFieldsToShow())
             {
                 Title = settingsItem[Header],
-                Icon = settingsItem[Icon]
+                Icon = settingsItem[Icon],
+                Parameters = {["contentitem"] = CurrentItemUri.ToString()},
+                PreserveSections = args.Parameters[PreserveSectionsParameter] == "1",
+                DialogTitle = settingsItem[Header],
+                SaveItem = true
             };
-            options.Parameters["contentitem"] = CurrentItemUri.ToString();
-            options.PreserveSections = args.Parameters[PreserveSectionsParameter] == "1";
-            options.DialogTitle = settingsItem[Header];
-            options.SaveItem = true;
             return options;
         }
 
@@ -185,10 +185,7 @@ namespace Spe.Client.Commands
         protected virtual void StartFieldEditor(ClientPipelineArgs args)
         {
             var current = HttpContext.Current;
-            if (current == null)
-                return;
-            var page = current.Handler as Page;
-            if (page == null)
+            if (!(current?.Handler is Page page))
                 return;
             var form = page.Request.Form;
 

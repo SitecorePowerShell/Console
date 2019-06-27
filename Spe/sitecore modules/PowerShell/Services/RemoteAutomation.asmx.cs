@@ -221,11 +221,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
                 }
 
-                var mco = new MediaCreatorOptions();
-                mco.Database = Factory.GetDatabase(database);
-                mco.Language = Language.Parse(language);
-                mco.Versioned = Settings.Media.UploadAsVersionableByDefault;
-                mco.Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filePath)}";
+                var mco = new MediaCreatorOptions
+                {
+                    Database = Factory.GetDatabase(database),
+                    Language = Language.Parse(language),
+                    Versioned = Settings.Media.UploadAsVersionableByDefault,
+                    Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filePath)}"
+                };
 
                 var mc = new MediaCreator();
                 using (var stream = new MemoryStream(fileContent))
