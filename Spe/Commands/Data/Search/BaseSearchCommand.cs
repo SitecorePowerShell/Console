@@ -307,7 +307,6 @@ namespace Spe.Commands.Data.Search
             return query;
         }
 
-
         private static IQueryable<SearchResultItem> AddSorting(IQueryable<SearchResultItem> query, IEnumerable<SearchStringModel> model)
         {
             foreach (var searchStringModel in model.Where(m => m.Type == "sort"))

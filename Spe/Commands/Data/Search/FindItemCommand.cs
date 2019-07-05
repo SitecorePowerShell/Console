@@ -6,6 +6,7 @@ using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data;
 using Spe.Core.Extensions;
 using Spe.Core.Validation;
 
@@ -33,6 +34,9 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Dynamic")]
         public object[] WhereValues { get; set; }
 
+        [Parameter(ParameterSetName = "Dynamic")]
+        public Type QueryType { get; set; }
+
         [Parameter(ParameterSetName = "Predicate")]
         public Expression<Func<SearchResultItem, bool>> Predicate { get; set; }
 
@@ -53,17 +57,22 @@ namespace Spe.Commands.Data.Search
 
         protected override void EndProcessing()
         {
-            string index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
+            var index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
 
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
-                // get all items in medialibrary
-                var query = context.GetQueryable<SearchResultItem>();
+                var queryableType = typeof(SearchResultItem);
+                if (QueryType != null && QueryType != queryableType && QueryType.IsSubclassOf(queryableType))
+                {
+                    queryableType = QueryType;
+                }
+
+                var objType = (dynamic)Activator.CreateInstance(queryableType);
+                var query = GetQueryable(objType, context);
 
                 if (!string.IsNullOrEmpty(Where))
                 {
-                    // ReSharper disable once AccessToModifiedClosure
-                    query = query.Where(Where, WhereValues.BaseArray());
+                    query = WhereAndValues(query, Where, WhereValues);
                 }
 
                 if (Criteria != null)
@@ -85,20 +94,29 @@ namespace Spe.Commands.Data.Search
 
                 if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    query = OrderIfSupported(query);
+                    query = OrderIfSupported(query, OrderBy);
                 }
 
                 WriteObject(FilterByPosition(query), true);
             }
         }
 
-        private IQueryable<SearchResultItem> OrderIfSupported(IQueryable<SearchResultItem> query)
+        private static IQueryable<T> GetQueryable<T>(T queryableType, IProviderSearchContext searchContext)
         {
-            query = query.OrderBy(OrderBy);
-            return query;
+            return searchContext.GetQueryable<T>();
         }
 
-        private List<SearchResultItem> FilterByPosition(IQueryable<SearchResultItem> query)
+        private static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string where, object[] whereValues)
+        {
+            return query.Where(where, whereValues.BaseArray());
+        }
+
+        private static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy)
+        {
+            return query.OrderBy(orderBy);
+        }
+
+        private List<T> FilterByPosition<T>(IQueryable<T> query)
         {
             var count = query.Count();
             var skipEnd = (Last != 0 && First == 0);
