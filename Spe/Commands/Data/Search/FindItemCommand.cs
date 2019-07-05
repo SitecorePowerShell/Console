@@ -35,6 +35,7 @@ namespace Spe.Commands.Data.Search
         public object[] WhereValues { get; set; }
 
         [Parameter(ParameterSetName = "Dynamic")]
+        [Parameter(ParameterSetName = "ScopeQuery")]
         public Type QueryType { get; set; }
 
         [Parameter(ParameterSetName = "Predicate")]
@@ -89,7 +90,7 @@ namespace Spe.Commands.Data.Search
 
                 if (ScopeQuery != null)
                 {
-                    query = ProcessScopeQuery(context, ScopeQuery);
+                    query = ProcessScopeQuery(query, context, ScopeQuery);
                 }
 
                 if (!string.IsNullOrEmpty(OrderBy))
@@ -97,53 +98,8 @@ namespace Spe.Commands.Data.Search
                     query = OrderIfSupported(query, OrderBy);
                 }
 
-                WriteObject(FilterByPosition(query), true);
+                WriteObject(FilterByPosition(query, First, Last, Skip), true);
             }
-        }
-
-        private static IQueryable<T> GetQueryable<T>(T queryableType, IProviderSearchContext searchContext)
-        {
-            return searchContext.GetQueryable<T>();
-        }
-
-        private static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string where, object[] whereValues)
-        {
-            return query.Where(where, whereValues.BaseArray());
-        }
-
-        private static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy)
-        {
-            return query.OrderBy(orderBy);
-        }
-
-        private List<T> FilterByPosition<T>(IQueryable<T> query)
-        {
-            var count = query.Count();
-            var skipEnd = (Last != 0 && First == 0);
-            var skipFirst = skipEnd ? 0 : Skip;
-            var takeFirst = First;
-            if (Last == 0 && First == 0)
-            {
-                takeFirst = count - skipFirst;
-            }
-            var firstObjects = query.Skip(skipFirst).Take(takeFirst);
-            var takenAndSkipped = (skipFirst + takeFirst);
-            if (takenAndSkipped >= count || Last == 0 || (skipEnd && Skip >= (count - takenAndSkipped)))
-            {
-                return firstObjects.ToList();
-            }
-            var takeAndSkipAtEnd = Last + (skipEnd ? Skip : 0);
-            var skipBeforeEnd = count - takenAndSkipped - takeAndSkipAtEnd;
-            var takeLast = Last;
-            if (skipBeforeEnd >= 0)
-            {
-                // Concat not support by Sitecore.
-                return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
-            }
-            takeLast += skipBeforeEnd;
-            skipBeforeEnd = 0;
-            // Concat not support by Sitecore.
-            return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
         }
     }
 }

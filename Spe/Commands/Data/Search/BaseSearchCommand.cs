@@ -8,6 +8,7 @@ using Sitecore.Configuration;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
+using Sitecore.ContentSearch.Rules;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -25,113 +26,112 @@ namespace Spe.Commands.Data.Search
                 ? PredicateBuilder.False<SearchResultItem>()
                 : PredicateBuilder.True<SearchResultItem>();
 
-            if (criterias != null)
+            if (criterias == null) return predicate;
+
+            foreach (var criteria in criterias)
             {
-                foreach (var criteria in criterias)
+                if (criteria.Value == null) continue;
+                var boost = criteria.Boost;
+                var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
+                    ? StringComparison.Ordinal
+                    : StringComparison.OrdinalIgnoreCase;
+                switch (criteria.Filter)
                 {
-                    if (criteria.Value == null) continue;
-                    var boost = criteria.Boost;
-                    var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
-                        ? StringComparison.Ordinal
-                        : StringComparison.OrdinalIgnoreCase;
-                    switch (criteria.Filter)
-                    {
-                        case FilterType.DescendantOf:
-                            var root = ObjectToString(criteria.Value);
+                    case FilterType.DescendantOf:
+                        var root = ObjectToString(criteria.Value);
 
-                            if (string.IsNullOrEmpty(root) || !ShortID.IsShortID(root))
-                            {
-                                WriteError(typeof(ArgumentException),
-                                    "The value for DescendantOf criteria must be an Item or ID.",
-                                    ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
-                                return null;
-                            }
+                        if (String.IsNullOrEmpty(root) || !ShortID.IsShortID(root))
+                        {
+                            WriteError(typeof(ArgumentException),
+                                "The value for DescendantOf criteria must be an Item or ID.",
+                                ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
+                            return null;
+                        }
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i["_path"].Contains(root).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i["_path"].Contains(root).Boost(boost), operation);
-                            break;
-                        case FilterType.StartsWith:
-                            var startsWith = ObjectToString(criteria.Value);
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i["_path"].Contains(root).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i["_path"].Contains(root).Boost(boost), operation);
+                        break;
+                    case FilterType.StartsWith:
+                        var startsWith = ObjectToString(criteria.Value);
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation);
-                            break;
-                        case FilterType.Contains:
-                            if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
-                            {
-                                WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
-                            }
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation);
+                        break;
+                    case FilterType.Contains:
+                        if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                        {
+                            WriteWarning("Case insensitive is not supported on Contains criteria due to platform limitations.");
+                        }
 
-                            var contains = ObjectToString(criteria.Value);
+                        var contains = ObjectToString(criteria.Value);
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].Contains(contains).Boost(boost), operation);
-                            break;
-                        case FilterType.ContainsAny:
-                            if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
-                            {
-                                WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
-                            }
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].Contains(contains).Boost(boost), operation);
+                        break;
+                    case FilterType.ContainsAny:
+                        if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                        {
+                            WriteWarning("Case insensitive is not supported on Contains criteria due to platform limitations.");
+                        }
 
-                            var valuesAny = ObjectToStringArray(criteria.Value);
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
-                                : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
-                            break;
-                        case FilterType.ContainsAll:
-                            if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
-                            {
-                                WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
-                            }
+                        var valuesAny = ObjectToStringArray(criteria.Value);
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                            : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                        break;
+                    case FilterType.ContainsAll:
+                        if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                        {
+                            WriteWarning("Case insensitive is not supported on Contains criteria due to platform limitations.");
+                        }
 
-                            var valuesAll = ObjectToStringArray(criteria.Value);
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
-                                : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
-                            break;
-                        case FilterType.EndsWith:
-                            var endsWith = ObjectToString(criteria.Value);
+                        var valuesAll = ObjectToStringArray(criteria.Value);
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                            : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                        break;
+                    case FilterType.EndsWith:
+                        var endsWith = ObjectToString(criteria.Value);
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation);
-                            break;
-                        case FilterType.Equals:
-                            var equals = ObjectToString(criteria.Value);
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation);
+                        break;
+                    case FilterType.Equals:
+                        var equals = ObjectToString(criteria.Value);
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Equals(equals, comparer).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].Equals(equals, comparer).Boost(boost), operation);
-                            break;
-                        case FilterType.Fuzzy:
-                            var fuzzy = ObjectToString(criteria.Value);
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].Equals(@equals, comparer).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].Equals(@equals, comparer).Boost(boost), operation);
+                        break;
+                    case FilterType.Fuzzy:
+                        var fuzzy = ObjectToString(criteria.Value);
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Like(fuzzy).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].Like(fuzzy).Boost(boost), operation);
-                            break;
-                        case FilterType.InclusiveRange:
-                        case FilterType.ExclusiveRange:
-                            predicate = GetRangeExpression(predicate, criteria, operation);
-                            break;
-                        case FilterType.MatchesRegex:
-                            var regex = criteria.StringValue;
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].Like(fuzzy).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].Like(fuzzy).Boost(boost), operation);
+                        break;
+                    case FilterType.InclusiveRange:
+                    case FilterType.ExclusiveRange:
+                        predicate = GetRangeExpression(predicate, criteria, operation);
+                        break;
+                    case FilterType.MatchesRegex:
+                        var regex = criteria.StringValue;
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Matches(regex).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].Matches(regex).Boost(boost), operation);
-                            break;
-                        case FilterType.MatchesWildcard:
-                            var wildcard = criteria.StringValue;
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].Matches(regex).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].Matches(regex).Boost(boost), operation);
+                        break;
+                    case FilterType.MatchesWildcard:
+                        var wildcard = criteria.StringValue;
 
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation);
-                            break;
-                    }
+                        predicate = criteria.Invert
+                            ? predicate.AddPredicate(i => !i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation)
+                            : predicate.AddPredicate(i => i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation);
+                        break;
                 }
             }
 
@@ -203,7 +203,7 @@ namespace Spe.Commands.Data.Search
 
             return predicate;
         }
-
+        
         private static string ObjectToString(object value)
         {
             string convertedValue;
@@ -278,15 +278,15 @@ namespace Spe.Commands.Data.Search
             if (crawler == null) return predicate;
 
             var database = ((SitecoreItemCrawler)crawler).Database;
-            if (string.IsNullOrEmpty(database)) return predicate;
+            if (String.IsNullOrEmpty(database)) return predicate;
 
-            var ruleFactory = new Sitecore.ContentSearch.Rules.QueryableRuleFactory();
-            var rules = ruleFactory.ParseRules<Sitecore.ContentSearch.Rules.QueryableRuleContext<SearchResultItem>>(Factory.GetDatabase(database), queryFilter);
+            var ruleFactory = new QueryableRuleFactory();
+            var rules = ruleFactory.ParseRules<QueryableRuleContext<SearchResultItem>>(Factory.GetDatabase(database), queryFilter);
             foreach (var rule in rules.Rules)
             {
                 if (rule.Condition == null) continue;
 
-                var ruleContext = new Sitecore.ContentSearch.Rules.QueryableRuleContext<SearchResultItem>(context);
+                var ruleContext = new QueryableRuleContext<SearchResultItem>(context);
                 var stack = new RuleStack();
                 rule.Condition.Evaluate(ruleContext, stack);
                 rule.Execute(ruleContext);
@@ -299,15 +299,15 @@ namespace Spe.Commands.Data.Search
             return predicate;
         }
 
-        public static IQueryable<SearchResultItem> ProcessScopeQuery(IProviderSearchContext context, string scope)
+        public static IQueryable<T> ProcessScopeQuery<T>(IQueryable<T> query, IProviderSearchContext context, string scope) where T : ISearchResult
         {
             var searchStringModel = SearchStringModel.ParseDatasourceString(scope).ToList();
-            var query = LinqHelper.CreateQuery<SearchResultItem>(context, searchStringModel);
+            query = LinqHelper.CreateQuery<T>(context, searchStringModel);
             query = AddSorting(query, searchStringModel);
             return query;
         }
 
-        private static IQueryable<SearchResultItem> AddSorting(IQueryable<SearchResultItem> query, IEnumerable<SearchStringModel> model)
+        private static IQueryable<T> AddSorting<T>(IQueryable<T> query, IEnumerable<SearchStringModel> model) where T : ISearchResult
         {
             foreach (var searchStringModel in model.Where(m => m.Type == "sort"))
             {
@@ -316,6 +316,51 @@ namespace Spe.Commands.Data.Search
                 query = query.OrderBy(key);
             }
             return query;
+        }
+
+        internal static IQueryable<T> GetQueryable<T>(T queryableType, IProviderSearchContext searchContext) where T : ISearchResult
+        {
+            return searchContext.GetQueryable<T>();
+        }
+
+        internal static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string where, object[] whereValues) where T : ISearchResult
+        {
+            return query.Where(@where, whereValues.BaseArray());
+        }
+
+        internal static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
+        {
+            return query.OrderBy(orderBy);
+        }
+
+        internal static List<T> FilterByPosition<T>(IQueryable<T> query, int first, int last, int skip) where T : ISearchResult
+        {
+            var count = query.Count();
+            var skipEnd = (last != 0 && first == 0);
+            var skipFirst = skipEnd ? 0 : skip;
+            var takeFirst = first;
+            if (last == 0 && first == 0)
+            {
+                takeFirst = count - skipFirst;
+            }
+            var firstObjects = query.Skip(skipFirst).Take(takeFirst);
+            var takenAndSkipped = (skipFirst + takeFirst);
+            if (takenAndSkipped >= count || last == 0 || (skipEnd && skip >= (count - takenAndSkipped)))
+            {
+                return firstObjects.ToList();
+            }
+            var takeAndSkipAtEnd = last + (skipEnd ? skip : 0);
+            var skipBeforeEnd = count - takenAndSkipped - takeAndSkipAtEnd;
+            var takeLast = last;
+            if (skipBeforeEnd >= 0)
+            {
+                // Concat not support by Sitecore.
+                return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
+            }
+            takeLast += skipBeforeEnd;
+            skipBeforeEnd = 0;
+            // Concat not support by Sitecore.
+            return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
         }
     }
 }
