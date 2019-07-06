@@ -74,8 +74,8 @@ namespace Spe.Commands.Data.Search
 
                 if (Criteria != null)
                 {
-                    var predicate = ProcessCriteria(Criteria, SearchOperation.And);
-                    query = query.Where(predicate);
+                    var criteriaPredicate = ProcessCriteria(Criteria, SearchOperation.And);
+                    query = WherePredicate(query, criteriaPredicate);
                 }
 
                 if (Predicate != null)
