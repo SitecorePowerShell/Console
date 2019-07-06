@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
-using Sitecore.ContentSearch.Utilities;
-using Sitecore.Data;
-using Spe.Core.Extensions;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -79,7 +75,6 @@ namespace Spe.Commands.Data.Search
                 if (Criteria != null)
                 {
                     var predicate = ProcessCriteria(Criteria, SearchOperation.And);
-
                     query = query.Where(predicate);
                 }
 

@@ -325,7 +325,7 @@ namespace Spe.Commands.Data.Search
 
         internal static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string where, object[] whereValues) where T : ISearchResult
         {
-            return query.Where(@where, whereValues.BaseArray());
+            return query.Where(where, whereValues.BaseArray());
         }
 
         internal static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
