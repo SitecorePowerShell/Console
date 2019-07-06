@@ -32,6 +32,7 @@ namespace Spe.Commands.Data.Search
 
         [Parameter(ParameterSetName = "Dynamic")]
         [Parameter(ParameterSetName = "ScopeQuery")]
+        [Parameter(ParameterSetName = "Criteria")]
         public Type QueryType { get; set; }
 
         [Parameter(ParameterSetName = "Predicate")]
@@ -74,7 +75,7 @@ namespace Spe.Commands.Data.Search
 
                 if (Criteria != null)
                 {
-                    var criteriaPredicate = ProcessCriteria(Criteria, SearchOperation.And);
+                    var criteriaPredicate = ProcessCriteria(objType, Criteria, SearchOperation.And);
                     query = WherePredicate(query, criteriaPredicate);
                 }
 

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq.Utilities;
-using Sitecore.ContentSearch.SearchTypes;
 using Spe.Commands.Data.Search;
 
 namespace Spe.Core.Extensions
 {
     public static class ExpressionExtensions
     {
-        public static Expression<Func<SearchResultItem, bool>> AddPredicate(this Expression<Func<SearchResultItem, bool>> first, Expression<Func<SearchResultItem, bool>> second, SearchOperation operation = SearchOperation.And)
+        public static Expression<Func<T, bool>> AddPredicate<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second, SearchOperation operation = SearchOperation.And) where T : ISearchResult
         {
             switch (operation)
             {

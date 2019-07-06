@@ -20,11 +20,11 @@ namespace Spe.Commands.Data.Search
 {
     public class BaseSearchCommand : BaseCommand
     {
-        public Expression<Func<SearchResultItem, bool>> ProcessCriteria(SearchCriteria[] criterias, SearchOperation operation)
+        public Expression<Func<T, bool>> ProcessCriteria<T>(T queryableType, SearchCriteria[] criterias, SearchOperation operation) where T : ISearchResult
         {
             var predicate = operation == SearchOperation.Or
-                ? PredicateBuilder.False<SearchResultItem>()
-                : PredicateBuilder.True<SearchResultItem>();
+                ? PredicateBuilder.False<T>()
+                : PredicateBuilder.True<T>();
 
             if (criterias == null) return predicate;
 
@@ -79,8 +79,8 @@ namespace Spe.Commands.Data.Search
 
                         var valuesAny = ObjectToStringArray(criteria.Value);
                         predicate = criteria.Invert
-                            ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
-                            : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                            ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<T>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                            : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<T>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
                         break;
                     case FilterType.ContainsAll:
                         if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
@@ -90,8 +90,8 @@ namespace Spe.Commands.Data.Search
 
                         var valuesAll = ObjectToStringArray(criteria.Value);
                         predicate = criteria.Invert
-                            ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
-                            : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                            ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<T>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                            : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<T>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
                         break;
                     case FilterType.EndsWith:
                         var endsWith = ObjectToString(criteria.Value);
@@ -138,7 +138,7 @@ namespace Spe.Commands.Data.Search
             return predicate;
         }
 
-        private static Expression<Func<SearchResultItem, bool>> GetRangeExpression(Expression<Func<SearchResultItem, bool>> predicate, SearchCriteria criteria, SearchOperation operation)
+        private static Expression<Func<T, bool>> GetRangeExpression<T>(Expression<Func<T, bool>> predicate, SearchCriteria criteria, SearchOperation operation) where T : ISearchResult
         {
             var inclusion = (criteria.Filter == FilterType.InclusiveRange)
                 ? Inclusion.Both
@@ -318,7 +318,7 @@ namespace Spe.Commands.Data.Search
             return query;
         }
 
-        internal static IQueryable<T> GetQueryable<T>(T queryableType, IProviderSearchContext searchContext) where T : ISearchResult
+        internal static IQueryable<T> GetQueryable<T>(T queryableObject, IProviderSearchContext searchContext) where T : ISearchResult
         {
             return searchContext.GetQueryable<T>();
         }
@@ -331,6 +331,20 @@ namespace Spe.Commands.Data.Search
         internal static IQueryable<T> WherePredicate<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
         {
             return query.Where(predicate);
+        }
+
+        internal static Expression<Func<T, bool>> GetPredicateBuilder<T>(T queryableObject, bool shouldOr) where T : ISearchResult
+        {
+            return shouldOr
+                ? PredicateBuilder.False<T>()
+                : PredicateBuilder.True<T>();
+        }
+
+        internal static Expression<Func<T, bool>> GetPredicateAndOr<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, bool>> joinedPredicate, bool shouldOr) where T : ISearchResult
+        {
+            return shouldOr
+                ? predicate.Or(joinedPredicate)
+                : predicate.And(joinedPredicate);
         }
 
         internal static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy) where T : ISearchResult

@@ -22,31 +22,32 @@ namespace Spe.Commands.Data.Search
         [Parameter] public SearchOperation Operation { get; set; } = SearchOperation.And;
 
         protected override void EndProcessing()
-        {           
+        {         
+            var queryableType = typeof(SearchResultItem);
+            var objType = (dynamic)Activator.CreateInstance(queryableType);
+
             if (First != null && Second != null)
             {
                 var shouldOr = Operation == SearchOperation.Or;
-                var predicate = shouldOr
-                    ? PredicateBuilder.False<SearchResultItem>()
-                    : PredicateBuilder.True<SearchResultItem>();
+                var predicate = GetPredicateBuilder(objType, shouldOr);
 
                 if (shouldOr)
                 {
                     var joinedPredicate = First.Or(Second);
-                    predicate = predicate.Or(joinedPredicate);
+                    predicate = GetPredicateAndOr(predicate, joinedPredicate, true);
                     WriteObject(predicate, true);
                 }
                 else
                 {
                     var joinedPredicate = First.And(Second);
-                    predicate = predicate.And(joinedPredicate);
+                    predicate = GetPredicateAndOr(predicate, joinedPredicate, false);
                     WriteObject(predicate, true);
                 }
             }
 
             if (Criteria != null)
             {
-                var predicate = ProcessCriteria(Criteria, Operation);
+                var predicate = ProcessCriteria(objType, Criteria, Operation);
                 if (predicate != null)
                 {
                     WriteObject(predicate, true);
