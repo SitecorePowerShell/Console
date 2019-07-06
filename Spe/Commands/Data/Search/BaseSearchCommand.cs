@@ -328,6 +328,11 @@ namespace Spe.Commands.Data.Search
             return query.Where(where, whereValues.BaseArray());
         }
 
+        internal static IQueryable<T> WherePredicate<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
+        {
+            return query.Where(predicate);
+        }
+
         internal static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
         {
             return query.OrderBy(orderBy);

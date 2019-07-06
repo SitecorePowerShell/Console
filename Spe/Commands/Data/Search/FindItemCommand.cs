@@ -80,7 +80,7 @@ namespace Spe.Commands.Data.Search
 
                 if (Predicate != null)
                 {
-                    query = query.Where(Predicate);
+                    query = WherePredicate(query, Predicate);
                 }
 
                 if (ScopeQuery != null)
