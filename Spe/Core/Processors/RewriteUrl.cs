@@ -3,8 +3,10 @@ using Sitecore.Diagnostics;
 using Sitecore.Pipelines.PreprocessRequest;
 using Sitecore.Text;
 using Sitecore.Web;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Core.Processors
 {
@@ -16,23 +18,9 @@ namespace Spe.Core.Processors
             try
             {
                 Assert.ArgumentNotNull(arguments.Context, "context");
-                var url = arguments.Context.Request.Url;
+                var url = TypeResolver.Resolve<IObsoleter>().GetRequestUrl(arguments);
                 var localPath = url.LocalPath;
 
-                //Compatibility with 2.x services location now removed - uncomment the following to restore
-                // Issue #511
-                /*  
-                if (localPath.StartsWith("/Console/", StringComparison.OrdinalIgnoreCase))
-                  {
-                      // this bit is for compatibility of solutions integrating with SPE 2.x services in mind
-                      WebUtil.RewriteUrl(
-                          new UrlString
-                          {
-                              Path = localPath.ToLowerInvariant().Replace("/console/", "/sitecore modules/PowerShell/"),
-                              Query = url.Query
-                          }.ToString());
-                  }
-                */
                 if (localPath.StartsWith("/-/script/v1", StringComparison.OrdinalIgnoreCase))
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split('/');
@@ -43,10 +31,9 @@ namespace Spe.Core.Processors
                     var length = sourceArray.Length - 3;
                     var destinationArray = new string[length];
                     Array.Copy(sourceArray, 3, destinationArray, 0, length);
-                    var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
+                    var scriptPath = $"/{string.Join("/", destinationArray)}";
                     var query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&apiVersion=1", string.IsNullOrEmpty(query) ? "?" : "&",
-                        scriptPath);
+                    query += $"{(string.IsNullOrEmpty(query) ? "?" : "&")}script={scriptPath}&apiVersion=1";
                     WebUtil.RewriteUrl(
                         new UrlString
                         {
