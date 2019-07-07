@@ -10,5 +10,11 @@ namespace Spe.VersionSpecific.Services
         {
             return args.HttpContext.Request.Url;
         }
+
+        public bool IndexingEnabled
+        {
+            get => true;
+            set { }
+        }
     }
 }

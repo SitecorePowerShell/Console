@@ -7,6 +7,8 @@ using Sitecore.Install.Metadata;
 using Sitecore.Install.Utils;
 using Sitecore.Install.Zip;
 using Sitecore.IO;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Packages
 {
@@ -55,10 +57,11 @@ namespace Spe.Commands.Packages
 
                     if (ShouldProcess(fileName, "Install package"))
                     {
-                        var indexSetting = Sitecore.Configuration.Settings.Indexing.Enabled;
+                        var obsoleter = TypeResolver.Resolve<IObsoleter>();
+                        var indexSetting = obsoleter.IndexingEnabled;
                         if (DisableIndexing.IsPresent)
                         {
-                            Sitecore.Configuration.Settings.Indexing.Enabled = false;
+                            obsoleter.IndexingEnabled = false;
                         }
 
                         try
@@ -82,7 +85,7 @@ namespace Spe.Commands.Packages
                         {
                             if (DisableIndexing.IsPresent)
                             {
-                                Sitecore.Configuration.Settings.Indexing.Enabled = indexSetting;
+                                obsoleter.IndexingEnabled = indexSetting;
                             }
                         }
                     }

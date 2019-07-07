@@ -10,5 +10,11 @@ namespace Spe.VersionSpecific.Services
         {
             return args.Context.Request.Url;
         }
+
+        public bool IndexingEnabled
+        {
+            get => Sitecore.Configuration.Settings.Indexing.Enabled;
+            set => Sitecore.Configuration.Settings.Indexing.Enabled = value;
+        }
     }
 }
