@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
+using Sitecore;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
 using Spe.Commands;
 using Spe.Commands.Security;
+using AuthorizationManager = Sitecore.Security.AccessControl.AuthorizationManager;
 
 namespace Spe.Core.Extensions
 {
@@ -22,7 +25,7 @@ namespace Spe.Core.Extensions
                 return false;
             }
 
-            if (!item.Fields[Sitecore.FieldIDs.ReadOnly].CanWrite)
+            if (!CanUserWrite(item, item.Fields[Sitecore.FieldIDs.ReadOnly], Context.User))
             {
                 var error = $"Cannot modify item '{item.Name}' because the ReadOnly field cannot be written.";
                 command.WriteError(new ErrorRecord(new SecurityException(error), 
@@ -32,6 +35,15 @@ namespace Spe.Core.Extensions
             }
 
             return true;
+        }
+
+        private static bool CanUserWrite(Item item, Field field, User user)
+        {
+            if (AuthorizationManager.GetAccess(field, user, AccessRight.FieldWrite).Permission == AccessPermission.Deny)
+                return false;
+            if (field.ID == FieldIDs.Security || field.ID == FieldIDs.InheritSecurity)
+                return item.Access.CanAdmin();
+            return item.Access.CanWrite();
         }
 
         public static bool CanWrite(this Cmdlet command, Item item)

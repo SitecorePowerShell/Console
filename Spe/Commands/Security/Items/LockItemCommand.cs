@@ -34,7 +34,7 @@ namespace Spe.Commands.Security.Items
                 }
                 else
                 {
-                    WriteError(typeof(SecurityException), $"Cannot modify item '{item.Name}' because it is locked by '{item.Locking.GetOwner()}' - Use the -Force parameter to transfet lock to the new user.", 
+                    WriteError(typeof(SecurityException), $"Cannot modify item '{item.Name}' because it is locked by '{item.Locking.GetOwner()}' - Use the -Force parameter to transfer lock to the new user.", 
                         ErrorIds.InsufficientSecurityRights, ErrorCategory.InvalidData,item);
                     return;
                 }
