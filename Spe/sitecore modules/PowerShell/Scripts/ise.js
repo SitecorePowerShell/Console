@@ -502,6 +502,7 @@
             $("#Result").width($(window).width() - $("#Result").offset().left * 2);
             $("#ProgressOverlay").css("top",($("#Result").offset().top+4)+"px");
             $("#ResultsClose").css("top", ($("#Result").offset().top + 4) + "px");
+            $("#ResultsClose").css("right", 15 + "px");
         };
 
         function isEmpty(val) {
