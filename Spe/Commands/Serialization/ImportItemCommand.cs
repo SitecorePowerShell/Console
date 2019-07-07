@@ -86,7 +86,7 @@ namespace Spe.Commands.Serialization
 
         public void Deserialize(Item item)
         {
-            var reference = new ItemReference(item);
+            var reference = item.Database.Name + item.Paths.Path;
             if (Recurse.IsPresent)
             {
                 var path = PathUtils.GetDirectoryPath(reference.ToString());

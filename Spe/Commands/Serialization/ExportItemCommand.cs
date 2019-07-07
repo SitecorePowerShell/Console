@@ -62,17 +62,17 @@ namespace Spe.Commands.Serialization
                     : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
             }
 
-            var message = string.Format("Serializing item '{0}' to target '{1}'", item.Name, target);
+            var message = $"Serializing item '{item.Name}' to target '{target}'";
             WriteVerbose(message);
             WriteDebug(message);
 
             var fileName = target;
             if (string.IsNullOrEmpty(fileName))
             {
-                var itemReference = new ItemReference(item);
-                fileName = PathUtils.GetFilePath(itemReference.ToString());
+                var itemReference = item.Database.Name + item.Paths.Path;
+                fileName = PathUtils.GetFilePath(itemReference);
             }
-            if (!ShouldProcess(item.GetProviderPath(), string.Format("Serializing item to '{0}'", fileName)))
+            if (!ShouldProcess(item.GetProviderPath(), $"Serializing item to '{fileName}'"))
             {
                 return;
             }
