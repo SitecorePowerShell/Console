@@ -69,7 +69,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (Sitecore.Context.User.Name.Equals(userName, StringComparison.OrdinalIgnoreCase))
                     return true;
-                Sitecore.Context.Logout();
+                var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
+                authenticationManager.Logout();
             }
             
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)

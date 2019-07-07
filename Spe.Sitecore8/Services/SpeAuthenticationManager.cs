@@ -11,6 +11,11 @@ namespace Spe.VersionSpecific.Services
             return AuthenticationManager.Login(username, password, false);
         }
 
+        public void Logout()
+        {
+            Context.Logout();
+        }
+
         public bool IsAuthenticated => Context.IsLoggedIn;
         public string CurrentUsername => Context.User.Name;
     }

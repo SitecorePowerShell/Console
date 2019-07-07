@@ -7,6 +7,8 @@ using System.Web.Security;
 using Sitecore;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel.License;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Security.Session
 {
@@ -44,7 +46,8 @@ namespace Spe.Commands.Security.Session
                 if (Context.IsLoggedIn)
                 {
                     if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;
-                    Context.Logout();
+                    var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
+                    authenticationManager.Logout();
                 }
                 if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
                 {
