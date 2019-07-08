@@ -1,5 +1,4 @@
 ﻿using Sitecore.Configuration;
-using Sitecore.Data.Items;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.Sheer;
 using Spe.Core.Extensions;
@@ -13,7 +12,7 @@ namespace Spe.Client.Commands.MenuItems
         {
             if (context.Items.Length != 1 || !context.Items[0].Access.CanCreate())
                 return;
-            Item item = context.Items[0];
+            var item = context.Items[0];
             var scriptLibDatabase = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
             var master = context.Parameters["master"];
             var scriptItem = scriptLibDatabase.GetItem(master);

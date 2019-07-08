@@ -25,9 +25,6 @@ namespace Spe.Integrations.Pipelines
                     return;
                 }
 
-
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.ContentEditorInsertItemFeature);
-
                 foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.ContentEditorInsertItemFeature))
                 {
                     GetMasters(root, args);
@@ -40,7 +37,7 @@ namespace Spe.Integrations.Pipelines
             }
         }
 
-        private void GetMasters(Item parent, GetMastersArgs args)
+        private static void GetMasters(Item parent, GetMastersArgs args)
         {
             foreach (var scriptItem in parent.Children.Where(p => p.IsPowerShellScript() || p.IsPowerShellLibrary()))
             {

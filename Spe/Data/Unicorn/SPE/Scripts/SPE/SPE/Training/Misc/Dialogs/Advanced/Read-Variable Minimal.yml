@@ -1,0 +1,42 @@
+﻿---
+ID: "1d3e0915-78ac-4553-b911-ba757fbabfd6"
+Parent: "66199abc-6c59-4cdf-9a38-ca62bd524e11"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Dialogs/Advanced/Read-Variable Minimal"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $options = @{
+        "A"="a"
+        "B"="b"
+    }
+    
+    $props = @{
+        Parameters = @(
+            @{Name="selectedOption"; Title="Choose an option"; Options=$options; Tooltip="Choose one."}
+        )
+        Title = "Option selector"
+        Description = "Choose the right option."
+        Width = 300
+        Height = 300
+        ShowHints = $true
+    }
+    
+    Read-Variable @props
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190708T023025Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
