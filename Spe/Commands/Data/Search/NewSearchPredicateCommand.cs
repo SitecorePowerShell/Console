@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Management.Automation;
+using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 
@@ -13,17 +14,26 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Criteria", Mandatory = true)]
         public SearchCriteria[] Criteria { get; set; }
 
+        [Parameter(ParameterSetName = "Criteria")]
         [Parameter(ParameterSetName = "Predicate")]
-        public Expression<Func<SearchResultItem, bool>> First { get; set; }
+        public Type QueryType { get; set; }
+
+        [Parameter(ParameterSetName = "Predicate")]
+        public dynamic First { get; set; }
 
         [Parameter(ParameterSetName = "Predicate", Mandatory = true)]
-        public Expression<Func<SearchResultItem, bool>> Second { get; set; }
+        public dynamic Second { get; set; }
 
         [Parameter] public SearchOperation Operation { get; set; } = SearchOperation.And;
 
         protected override void EndProcessing()
         {         
             var queryableType = typeof(SearchResultItem);
+            if (QueryType != null && QueryType != queryableType && QueryType.IsSubclassOf(queryableType))
+            {
+                queryableType = QueryType;
+            }
+
             var objType = (dynamic)Activator.CreateInstance(queryableType);
 
             if (First != null && Second != null)
@@ -31,15 +41,27 @@ namespace Spe.Commands.Data.Search
                 var shouldOr = Operation == SearchOperation.Or;
                 var predicate = GetPredicateBuilder(objType, shouldOr);
 
+                var firstPredicate = First;
+                if (firstPredicate is PSObject)
+                {
+                    firstPredicate = (firstPredicate as PSObject)?.BaseObject;
+                }
+
+                var secondPredicate = Second;
+                if (secondPredicate is PSObject)
+                {
+                    secondPredicate = (secondPredicate as PSObject)?.BaseObject;
+                }
+
                 if (shouldOr)
                 {
-                    var joinedPredicate = First.Or(Second);
+                    var joinedPredicate = GetPredicateAndOr(firstPredicate, secondPredicate, true);
                     predicate = GetPredicateAndOr(predicate, joinedPredicate, true);
                     WriteObject(predicate, true);
                 }
                 else
                 {
-                    var joinedPredicate = First.And(Second);
+                    var joinedPredicate = GetPredicateAndOr(firstPredicate, secondPredicate, false);
                     predicate = GetPredicateAndOr(predicate, joinedPredicate, false);
                     WriteObject(predicate, true);
                 }

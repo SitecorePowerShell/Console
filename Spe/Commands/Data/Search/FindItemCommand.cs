@@ -33,10 +33,11 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Dynamic")]
         [Parameter(ParameterSetName = "ScopeQuery")]
         [Parameter(ParameterSetName = "Criteria")]
+        [Parameter(ParameterSetName = "Predicate")]
         public Type QueryType { get; set; }
 
         [Parameter(ParameterSetName = "Predicate")]
-        public Expression<Func<SearchResultItem, bool>> Predicate { get; set; }
+        public dynamic Predicate { get; set; }
 
         [Parameter(ParameterSetName = "ScopeQuery")]
         public string ScopeQuery { get; set; }
@@ -81,7 +82,12 @@ namespace Spe.Commands.Data.Search
 
                 if (Predicate != null)
                 {
-                    query = WherePredicate(query, Predicate);
+                    var boxedPredicate = Predicate;
+                    if (boxedPredicate is PSObject)
+                    {
+                        boxedPredicate = (Predicate as PSObject)?.BaseObject;
+                    }
+                    query = WherePredicate(query, boxedPredicate);
                 }
 
                 if (ScopeQuery != null)
