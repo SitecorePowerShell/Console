@@ -8,6 +8,21 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: office/32x32/motor_scooter.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{A49D0232-15BB-4FBC-8C46-700CB0A8EA34}"
+        name="Current user is an admin">
+        <conditions>
+          <condition
+            id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+            uid="4B804EB3B36743C08B7A3D96EB76116B" />
+        </conditions>
+      </rule>
+    </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
