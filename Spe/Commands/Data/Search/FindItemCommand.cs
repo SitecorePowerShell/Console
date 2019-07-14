@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
+using Spe.Core.Extensions;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -51,6 +52,9 @@ namespace Spe.Commands.Data.Search
         [Parameter]
         public int Skip { get; set; }
 
+        [Parameter]
+        public string[] Property { get; set; }
+
         protected override void EndProcessing()
         {
             var index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
@@ -97,7 +101,22 @@ namespace Spe.Commands.Data.Search
                     query = OrderIfSupported(query, OrderBy);
                 }
 
-                WriteObject(FilterByPosition(query, First, Last, Skip), true);
+                if (Property != null)
+                {
+                    // The use of Last is not supported because it requires Concat. Concat is not supported by Sitecore.
+                    query = FilterQuery(query, First, Skip);
+                    if (Last > 0)
+                    {
+                        WriteWarning($"The use of {nameof(Last)} is not supported when selecting with {nameof(Property)}.");
+                    }
+
+                    var queryableSelectProperties = SelectProperties(query, Property);
+                    WriteObject(queryableSelectProperties, true);
+                }
+                else
+                {
+                    WriteObject(FilterByPosition(query, First, Last, Skip), true);
+                }
             }
         }
     }

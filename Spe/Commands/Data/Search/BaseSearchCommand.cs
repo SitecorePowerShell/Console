@@ -352,6 +352,29 @@ namespace Spe.Commands.Data.Search
             return query.OrderBy(orderBy);
         }
 
+        internal static List<object> SelectProperties<T>(IQueryable<T> query, string[] properties)
+            where T : ISearchResult
+        {
+            return query.SelectProperties(properties).Cast<object>().ToList();
+        }
+
+        internal static IQueryable<T> FilterQuery<T>(IQueryable<T> query, int first, int skip)
+            where T : ISearchResult
+
+        {
+            if (skip > 0)
+            {
+                query = query.Skip(skip);
+            }
+
+            if (first > 0)
+            {
+                query = query.Take(first);
+            }
+
+            return query;
+        }
+
         internal static List<T> FilterByPosition<T>(IQueryable<T> query, int first, int last, int skip) where T : ISearchResult
         {
             var count = query.Count();
