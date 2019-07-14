@@ -30,10 +30,7 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Dynamic")]
         public object[] WhereValues { get; set; }
 
-        [Parameter(ParameterSetName = "Dynamic")]
-        [Parameter(ParameterSetName = "ScopeQuery")]
-        [Parameter(ParameterSetName = "Criteria")]
-        [Parameter(ParameterSetName = "Predicate")]
+        [Parameter]
         public Type QueryType { get; set; }
 
         [Parameter(ParameterSetName = "Predicate")]
