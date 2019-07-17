@@ -61,6 +61,7 @@ SharedFields:
         [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.Minimal.config.disabled"},
         [PSCustomObject]@{"FileName"="/App_Config/Include/z.Cognifide.PowerShell.config"},
         [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.dll"},
+        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.Abstractions.dll"},
         [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.Package.dll"}
         [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.VersionSpecific.dll"}
     )
