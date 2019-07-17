@@ -2,7 +2,7 @@
 ID: "289ad370-f9e3-48c6-b8e2-314aad6e6048"
 Parent: "f77ca396-7463-4b75-aa2c-2df61a3d6ec5"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Example Event Handlers/Event Handlers/Item/Renamed
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers/Item/Renamed
 DB: master
 Languages:
 - Language: en

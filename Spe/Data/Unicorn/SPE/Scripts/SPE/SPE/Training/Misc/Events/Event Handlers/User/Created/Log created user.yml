@@ -1,0 +1,42 @@
+﻿---
+ID: "384c71f3-9bea-44df-be87-ea867d9645c3"
+Parent: "f2b17ff0-9f67-4442-8c44-614cb71cee11"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers/User/Created/Log created user
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/add_user.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Most of the events are not enabled by default. If you wish for the user:created event to be support, patch in the following:
+        
+        <configuration xmlns:patch="http://www.sitecore.net/xmlconfig/" xmlns:role="http://www.sitecore.net/xmlconfig/role/" xmlns:security="http://www.sitecore.net/xmlconfig/security/">
+          <sitecore role:require="Standalone or ContentManagement" security:require="Sitecore">
+            <events>
+              <event name="user:created">
+                <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+              </event>
+            </events>
+          </sitecore>
+        </configuration>
+    #>
+    
+    # The item stored in the user:created event is of type [System.Web.Security.MembershipUser]
+    $createdUser = $eventArgs.Parameters[0]
+    Write-Log "Created new user $($createdUser.Username)"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190712T194529Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

@@ -1,8 +1,8 @@
 ﻿---
 ID: "f77ca396-7463-4b75-aa2c-2df61a3d6ec5"
-Parent: "3662ff32-82ab-488d-a73e-463e71f914a2"
+Parent: "de1654d9-c841-4bf0-90de-0c88dea51384"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Example Event Handlers/Event Handlers/Item
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers/Item
 DB: master
 Languages:
 - Language: en
