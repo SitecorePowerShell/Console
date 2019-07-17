@@ -91,6 +91,9 @@
       <event name="item:versionRemoving">
         <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
       </event>
+      <event name="user:created">
+        <handler type="Spe.Integrations.Tasks.ScriptedItemEventHandler, Spe" method="OnEvent" />
+      </event>
     </events>
   </sitecore>
 </configuration>
