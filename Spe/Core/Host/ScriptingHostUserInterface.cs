@@ -184,19 +184,25 @@ namespace Spe.Core.Host
 
             if (job == null || !CheckSessionCanDoInteractiveAction(nameof(Prompt))) throw new NotImplementedException();
             var options = new object[descriptions.Count];
+
+            var secureOptions = new Dictionary<string, bool>();
+
             for (var i=0 ; i < descriptions.Count; i++)
             {
                 var description = descriptions[i];
-                string editor = description.ParameterTypeName.Contains("SecureString") ? "password" : "string";
+                var isSecure = description.ParameterTypeName.Contains("SecureString");
+                var editor = isSecure ? "password" : "string";
+                var parameterName = description.Name ?? $"var{i}{editor}";
                 options[i] = new Hashtable()
                 {
                     ["Title"] = description.Name,
-                    ["Name"] = $"var{i}{editor}",
-                    ["Value"] = description.DefaultValue?.ToString()??string.Empty,
-                    ["Editor"] = description.ParameterTypeName.Contains("SecureString") ? "password" : "string"
+                    ["Name"] = parameterName,
+                    ["Value"] = description.DefaultValue?.ToString() ?? string.Empty,
+                    ["Editor"] = editor
                 };
-                    
+                secureOptions[parameterName] = isSecure;
             }
+
             job.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
                 string.IsNullOrEmpty(caption) ? "Sitecore PowerShell Extensions" : caption,
                 string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, string.Empty, false,
@@ -206,7 +212,7 @@ namespace Spe.Core.Host
             return values?.Cast<Hashtable>()
                 .ToDictionary(value => value["Name"].ToString(),
                     value =>
-                        ((string) value["Name"]).Contains("password")
+                        secureOptions[value["Name"].ToString()]
                             ? PSObject.AsPSObject(ToSecureString((string) value["Value"]))
                             : PSObject.AsPSObject(value["Value"]));
         }
@@ -214,14 +220,12 @@ namespace Spe.Core.Host
 
         private static SecureString ToSecureString(string aString)
         {
-            SecureString secure = null;
-            if (!string.IsNullOrEmpty(aString))
+            if (string.IsNullOrEmpty(aString)) return null;
+
+            var secure = new SecureString();
+            foreach (var c in aString)
             {
-                secure = new SecureString();
-                foreach (var c in aString)
-                {
-                    secure.AppendChar(c);
-                }
+                secure.AppendChar(c);
             }
             return secure;
         }
@@ -278,7 +282,7 @@ namespace Spe.Core.Host
 
         public Collection<int> PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices)
         {
-            Collection<int> results = new Collection<int>();
+            var results = new Collection<int>();
             int choice;
             do
             {
@@ -293,20 +297,18 @@ namespace Spe.Core.Host
 
         public virtual bool CheckSessionCanDoInteractiveAction(string operation, bool throwException = true)
         {
-            if (!host.Interactive)
-            {
-                string message = string.IsNullOrEmpty(operation)
-                    ? "Non interactive session cannot perform an interactive operation."
-                    : $"Non interactive session cannot perform an interactive '{operation}' operation.";
+            if (host.Interactive) return true;
 
-                if (throwException)
-                {
-                    throw new InvalidOperationException(message);
-                }
-                PowerShellLog.Info(message);
+            var message = string.IsNullOrEmpty(operation)
+                ? "Non interactive session cannot perform an interactive operation."
+                : $"Non interactive session cannot perform an interactive '{operation}' operation.";
+
+            if (throwException)
+            {
+                throw new InvalidOperationException(message);
             }
+            PowerShellLog.Info(message);
             return true;
         }
-
     }
 }
