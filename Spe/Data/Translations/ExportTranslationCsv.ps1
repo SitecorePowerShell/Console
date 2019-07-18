@@ -37,4 +37,3 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
     $csvFileName = $file.FullName -replace ".xml", ".csv"
     $rows | Export-Csv $csvFileName -NoTypeInformation
 }
-

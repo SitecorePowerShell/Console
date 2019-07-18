@@ -135,16 +135,16 @@
     <da>Alle brugerer</da>
   </phrase>
   <phrase updated="20190604T014125Z" fieldid="__Short description" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
-    <da>** Value used when selecting the font **</da>
+    <da>Værdi anvendt ved valg af skrifttype</da>
   </phrase>
   <phrase updated="20190604T014125Z" fieldid="Title" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
-    <da>NÃ¸gle</da>
+    <da>Nøgle</da>
   </phrase>
   <phrase updated="20190604T014124Z" fieldid="__Short description" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
-    <da>** Value used by the browser to render the font **</da>
+    <da> Værdi brugt af browseren til at gøre skrifttypen</da>
   </phrase>
   <phrase updated="20190604T014124Z" fieldid="Title" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
-    <da>SÃ¦tning</da>
+    <da>Sætning</da>
   </phrase>
   <phrase updated="20190604T014128Z" fieldid="Title" itemid="{F59378A5-F21D-4E07-B7DE-7986DDA3A510}" key="HostWidth" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/HostWidth">
     <da>Host bredde (i antal tekstkolonner)</da>
