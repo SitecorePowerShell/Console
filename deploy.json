@@ -1,26 +1,25 @@
 { 
     "deployFolder": "_Deploy",
-    "sitecoreWebsiteFolder" : "Website",
     "userConfigurationFolder" : "UserConfiguration",
     "deployProjects" : [
         { 
             "project": "Spe.Abstractions",
-            "version": 0            
+            "minVersion": 0            
         },
         { 
             "project": "Spe", 
-            "version": 0,            
+            "minVersion": 0,            
             "junctionPoints": [ 
                 "sitecore modules\\PowerShell\\Assets", 
                 "sitecore modules\\PowerShell\\Scripts",
                 "sitecore modules\\PowerShell\\Services",
-		"sitecore modules\\PowerShell\\Styles",
+                "sitecore modules\\PowerShell\\Styles",
                 "sitecore modules\\Shell\\PowerShell"
             ]
         },
         { 
             "project": "Spe.Package",
-            "version": 0            
+            "minVersion": 0            
         }
     ],
     "sitesDefault": {

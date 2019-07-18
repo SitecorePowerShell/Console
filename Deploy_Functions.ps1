@@ -58,14 +58,14 @@ function Filter-ProjectsForSite {
     Param (
         [Parameter(ValueFromPipeline=$True)]
         [Object]$deployProject,
-        [int]$version,
+        [decimal]$version,
         [string]$projectFilter
     )
 
     process {
-        # Include project only if version number matches or it is 0
-        if (($version -eq $deployProject.version) -or ($deployProject.version -eq 0) )  {    
-
+        # Include project only if version is >= minVersion, and <= maxVersion (if a maxVersion is specified)
+        if ( ($version -ge $deployProject.minVersion) -and (!$deployProject.maxVersion -or ($version -le $deployProject.maxVersion)) )  {    
+            
             # If a projectFilter is set, include it only if it matches
             if (!$projectFilter -or $projectFilter -eq $deployProject.project ) {
                 $deployProject

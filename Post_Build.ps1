@@ -3,7 +3,6 @@
 #
 Param([string]$projectfilter)
 
-Write-Host "Project Filter: $($projectfilter)"
 # Load dependents scripts
 . "$PSScriptRoot\Deploy_Functions.ps1"
 
@@ -15,7 +14,9 @@ $userConfig = Get-Content "$PSScriptRoot\deploy.user.json" | ConvertFrom-Json
 $sourceFolder = $PSScriptRoot
 
 # Convert the variables into a hashtable for replacement
-$variables = @{ "%%sourceFolder%%" = $sourceFolder }
+$variables = @{ 
+    "%%sourceFolder%%" = $sourceFolder 
+}
 
 Write-Host -ForegroundColor Cyan "*******************************************"
 Write-Host -ForegroundColor Cyan " Sitecore PowerShell Extensions Deployment"
@@ -55,6 +56,11 @@ Get-ChildItem $deployUserConfigPath -Recurse -Include *.config | % {
     Set-Content -Path $_ -Value $file
 }
 
+Write-Host
+Write-Host -ForegroundColor Blue "User configuration build complete"
+Write-Host -ForegroundColor Blue "Processing sites"
+Write-Host  
+
 
 # Loop over the sites to deploy
 foreach ( $site in $userConfig.sites )
@@ -64,45 +70,59 @@ foreach ( $site in $userConfig.sites )
     # Get folders to deploy to from configuration and based on the destination site's version
     $deployProjects = $deployConfig.deployProjects | Filter-ProjectsForSite -version $site.version -projectFilter $projectFilter 
   
-    Write-Host
-    Write-Host -ForegroundColor Cyan "Deploying $(@($deployProjects).Count) projects to $($site.path)"   
-    Write-Host
-
-    foreach ($deployProject in $deployProjects)
-    {           
-        $deployFolder = Get-DeployFolder $sourceFolder $deployConfig $deployProject.project
-        $projectFolder = Get-ProjectFolder $sourceFolder $deployProject.project
-       
+    if ($deployProjects)
+    {
         Write-Host
-        Write-Host -ForegroundColor Green "Copying from $deployFolder to $($site.path)"
+        Write-Host -ForegroundColor Cyan "Deploying $(@($deployProjects).Count) projects to $($site.path)"   
         Write-Host
 
-        $siteWebsiteFolder = Join-Path $site.path $deployConfig.sitecoreWebsiteFolder
+        foreach ($deployProject in $deployProjects)
+        {           
+            $deployFolder = Get-DeployFolder $sourceFolder $deployConfig $deployProject.project
 
-        $filesToCopy = Get-ChildItem $deployFolder -Recurse | ? { $_.PSIsContainer -eq $False }
+            if (!(Test-Path $deployFolder))
+            {
+                Write-Error "Cannot find deploy folder for project: $deployFolder"
+                continue
+            }
 
-        if ($site.junction -and $deployProject.junctionPoints -ne $null) {
-            # Deploy any files that are not included in junction-folders
-            $filesToCopy = $filesToCopy | Filter-JunctionPoints $deployProject
-            
-            # Create the junction points
-            $deployProject.junctionPoints | % { 
-                $sourcePath = Join-Path $projectFolder $_
-                $sitePath = Join-Path $siteWebsiteFolder $_ 
-               
-                Create-Junction $sitePath $sourcePath
+            $projectFolder = Get-ProjectFolder $sourceFolder $deployProject.project
+        
+            Write-Host
+            Write-Host -ForegroundColor Green "Copying from $deployFolder to $($site.path)"
+            Write-Host
 
-                Write-Host "--- Created junction at $sitePath"                
+            $filesToCopy = Get-ChildItem $deployFolder -Recurse | ? { $_.PSIsContainer -eq $False }
+
+            if ($site.junction -and $deployProject.junctionPoints -ne $null) {
+                # Deploy any files that are not included in junction-folders
+                $filesToCopy = $filesToCopy | Filter-JunctionPoints $deployProject
+                
+                # Create the junction points
+                $deployProject.junctionPoints | % { 
+                    $sourcePath = Join-Path $projectFolder $_
+                    $sitePath = Join-Path $site.path $_ 
+                
+                    Create-Junction $sitePath $sourcePath
+
+                    Write-Host "--- Created junction at $sitePath"                
+                }
+            }
+
+            $filesToCopy | % {
+                $targetFile = Join-Path $site.path $_.FullName.SubString($deployFolder.Length);
+                
+                Copy-ItemWithStructure $_.FullName $targetFile
+
+                Write-Host "--- Copied $targetFile"
             }
         }
-
-        $filesToCopy | % {
-            $targetFile = $siteWebsiteFolder + $_.FullName.SubString($deployFolder.Length);
-            
-            Copy-ItemWithStructure $_.FullName $targetFile
-
-            Write-Host "--- Copied $targetFile"
-        }
+    }
+    else 
+    {
+        Write-Host
+        Write-Host -ForegroundColor Cyan "No valid deployment sites for this project"
+        Write-Host       
     }
 
     # Deploy UserConfiguration
@@ -112,7 +132,7 @@ foreach ( $site in $userConfig.sites )
     Write-Host   
     
     Get-ChildItem $deployUserConfigPath -Recurse | ? { $_.Extension -eq ".config" } | % {
-        $targetFile = $siteWebsiteFolder + $_.FullName.SubString($deployUserConfigPath.Length);
+        $targetFile = Join-Path $site.path $_.FullName.SubString($deployUserConfigPath.Length);
         
         Copy-ItemWithStructure $_.FullName $targetFile
 

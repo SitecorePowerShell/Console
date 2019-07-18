@@ -74,9 +74,6 @@
     <AssemblyFiles Include="$(TargetDir)Spe*.*">
       <Visible>false</Visible>
     </AssemblyFiles>
-    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*">
-      <Visible>false</Visible>
-    </SitecoreModuleFiles>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spe.Abstractions\Spe.Abstractions.csproj">
