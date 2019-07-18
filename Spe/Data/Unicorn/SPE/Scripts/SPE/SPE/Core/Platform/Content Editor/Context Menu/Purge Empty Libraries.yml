@@ -51,6 +51,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Fjern alle tomme script biblioteker.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Fjern tomme biblioteker
   Versions:
   - Version: 1
     Fields:
@@ -66,6 +69,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Remove all empty script libraries.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Purge Empty Libraries
   Versions:
   - Version: 1
     Fields:

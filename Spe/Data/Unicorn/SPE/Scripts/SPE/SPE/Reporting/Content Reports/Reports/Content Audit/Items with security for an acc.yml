@@ -61,6 +61,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "Rapporter på elementer hvor sikkerheden er sat med en bruger og med udgangspunkt i et rod-element."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Elementer med sikkerhed sat for en konto
   Versions:
   - Version: 1
     Fields:
@@ -76,6 +79,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Report on items where security is configured with a user and scoped by a root item.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Items with security for an account
   Versions:
   - Version: 1
     Fields:

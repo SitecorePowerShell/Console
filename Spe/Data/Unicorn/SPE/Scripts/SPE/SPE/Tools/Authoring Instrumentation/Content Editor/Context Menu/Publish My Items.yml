@@ -45,6 +45,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Publiser alle elementer opdateret af mig selv, startende med det valgte element.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Publiser mine elementer
   Versions:
   - Version: 1
     Fields:
@@ -60,6 +63,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Publish all items last updated by me, starting first with the selected item.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Publish My Items
   Versions:
   - Version: 1
     Fields:

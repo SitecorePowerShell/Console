@@ -140,6 +140,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "Har du travlt? Download det valgte træ og underliggende elementer til en pakke."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Download hurtigt træstrukturen som en pakke
   Versions:
   - Version: 1
     Fields:
@@ -155,6 +158,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "In a hurry? Download the selected tree and descendants to a package."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Quick Download Tree as Package
   Versions:
   - Version: 1
     Fields:

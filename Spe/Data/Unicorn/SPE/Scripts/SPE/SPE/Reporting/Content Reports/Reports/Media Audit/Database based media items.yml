@@ -66,6 +66,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Rapporter på media elementer med binær data gemt i databasen.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Database baserede medie elementer
   Versions:
   - Version: 1
     Fields:
@@ -81,6 +84,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Report on media items with binary data stored in the database.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Database based media items
   Versions:
   - Version: 1
     Fields:

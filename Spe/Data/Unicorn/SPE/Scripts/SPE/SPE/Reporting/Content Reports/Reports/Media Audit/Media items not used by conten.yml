@@ -83,6 +83,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Rapporter på media elementer som ikke indgår i noget indholdselement. Kræver at linkdatabsen er opdateret.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Medieelementer der ikke bliver brugt af et indholdselement
   Versions:
   - Version: 1
     Fields:
@@ -98,6 +101,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "Report on media items not referenced by any content items. Requires the Link Database to be up-to-date."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Media items not used by content items
   Versions:
   - Version: 1
     Fields:

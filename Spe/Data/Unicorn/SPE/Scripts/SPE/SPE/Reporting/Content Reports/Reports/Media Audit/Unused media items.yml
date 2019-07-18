@@ -106,6 +106,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Rapporter på media elementer der ikke bliver refereret til fra et andet element. Kræver at linkdatabasen er opdateret.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Ubrugte medieelementer
   Versions:
   - Version: 1
     Fields:
@@ -121,6 +124,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "Report on media items that are not referenced by any other item. Requires the Link Database to be up-to-date."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Unused media items
   Versions:
   - Version: 1
     Fields:

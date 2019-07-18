@@ -61,6 +61,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Overfør det låste element fra en bruger til en anden.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Overfør låse
   Versions:
   - Version: 1
     Fields:
@@ -76,6 +79,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Transfer the locked item from one user to another.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Transfer Lock
   Versions:
   - Version: 1
     Fields:

@@ -236,6 +236,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: ** Rules Based Report **
   Versions:
   - Version: 1
     Fields:
@@ -254,6 +257,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Run custom reports built using queries and the rules engine.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Rules Based Report
   Versions:
   - Version: 1
     Fields:

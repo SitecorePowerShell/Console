@@ -36,6 +36,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Gennemse generelle detaljer om Sitecore løsningen.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Konfigurationsrevision
   Versions:
   - Version: 1
     Fields:
@@ -51,6 +54,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Review general details about the Sitecore solution.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Configuration Audit
   Versions:
   - Version: 1
     Fields:

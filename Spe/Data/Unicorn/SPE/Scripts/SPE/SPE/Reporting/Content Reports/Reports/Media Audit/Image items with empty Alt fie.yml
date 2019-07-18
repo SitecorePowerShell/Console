@@ -60,6 +60,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "Rapporter på media elementer hvor Alt-tekst feltet er tomt."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: "Billedeelementer med et tomt Alt-felt"
   Versions:
   - Version: 1
     Fields:
@@ -75,6 +78,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Report on media items where the Alt field is empty.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Image items with empty Alt field
   Versions:
   - Version: 1
     Fields:

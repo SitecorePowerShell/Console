@@ -90,6 +90,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Gennemse elementer som er blevet ændret af redaktørerne indenfor et givet tidsrum.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Nylig redaktør aktivitet
   Versions:
   - Version: 1
     Fields:
@@ -105,6 +108,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Review items that have been modified by authors with a given time range.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Recent Author Activity
   Versions:
   - Version: 1
     Fields:

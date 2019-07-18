@@ -41,6 +41,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Integrationspunktsbiblioteker
   Versions:
   - Version: 1
     Fields:
@@ -59,6 +62,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Launch a wizard to add more Integration Point Libraries to the module.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Integration Point Libraries
   Versions:
   - Version: 1
     Fields:

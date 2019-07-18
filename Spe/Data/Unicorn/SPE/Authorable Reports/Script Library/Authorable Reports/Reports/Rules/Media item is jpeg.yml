@@ -37,7 +37,26 @@ SharedFields:
   Hint: Query
   Value: "location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};+custom:_templatename|jpeg"
 Languages:
+- Language: da
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: ** Media item is jpeg **
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T202240Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Media item is jpeg
   Versions:
   - Version: 1
     Fields:
