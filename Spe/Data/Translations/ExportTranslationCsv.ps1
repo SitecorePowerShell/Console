@@ -3,7 +3,7 @@
 #
 
 $language = "da"
-$untranslatedOnly = $false
+$untranslatedOnly = $true
 
 foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
     $rows = @()
@@ -36,4 +36,6 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
 
     $csvFileName = $file.FullName -replace ".xml", ".csv"
     $rows | Export-Csv $csvFileName -NoTypeInformation -Encoding UTF8
+    $content = Get-Content -Path $csvFileName
+    $content | Set-Content -Path $csvFileName
 }
