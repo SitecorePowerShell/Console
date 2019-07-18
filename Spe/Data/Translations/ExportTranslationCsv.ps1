@@ -3,14 +3,14 @@
 #
 
 $language = "da"
-$untranslatedOnly = $true
+$untranslatedOnly = $false
 
 foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
     $rows = @()
 
     Write-Host Processing $file.Name
 
-    $xml = [xml](Get-Content $file.FullName)
+    $xml = [xml](Get-Content $file.FullName -Encoding UTF8)
 
     foreach( $phrase in $xml.SelectNodes("//phrase") )
     {
@@ -35,5 +35,5 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
     }
 
     $csvFileName = $file.FullName -replace ".xml", ".csv"
-    $rows | Export-Csv $csvFileName -NoTypeInformation
+    $rows | Export-Csv $csvFileName -NoTypeInformation -Encoding UTF8
 }

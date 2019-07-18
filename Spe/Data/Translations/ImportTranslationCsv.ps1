@@ -16,7 +16,7 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" )
         continue
     }
 
-    $xml = [xml](Get-Content $file.FullName)
+    $xml = [xml](Get-Content $file.FullName -Encoding UTF8)
     $csv = Import-Csv $csvFileName
 
     foreach ( $row in $csv )
@@ -40,4 +40,3 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" )
 
     $xml.Save($file.FullName)
 }
-
