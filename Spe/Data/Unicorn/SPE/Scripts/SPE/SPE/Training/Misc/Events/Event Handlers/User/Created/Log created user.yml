@@ -28,6 +28,9 @@ SharedFields:
     # The item stored in the user:created event is of type [System.Web.Security.MembershipUser]
     $createdUser = $eventArgs.Parameters[0]
     Write-Log "Created new user $($createdUser.Username)"
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
 Languages:
 - Language: en
   Versions:

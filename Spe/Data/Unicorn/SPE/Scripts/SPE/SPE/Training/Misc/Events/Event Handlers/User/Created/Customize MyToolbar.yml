@@ -1,0 +1,36 @@
+﻿---
+ID: "01245186-8948-4deb-a7bb-a52cb4b3e6d1"
+Parent: "f2b17ff0-9f67-4442-8c44-614cb71cee11"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers/User/Created/Customize MyToolbar
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/tools.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    if($host.PrivateData.Interactive) {
+        $username = Show-Input -Prompt "Please enter the username..."
+    } else {
+        $createdUser = $eventArgs.Parameters[0]
+        $username  = $createdUser.Username    
+    }
+    
+    Write-Log "Adding commands to MyToolbar for $($username)"
+    $ribbonCommands = "{D33A0641-9F1C-4984-8342-0655C3D0F123}|{EDA2F1DC-0412-45B2-9FDD-0700B03F28CB}|{652CAD6D-B61E-4C71-BAAC-0C88FFA8B393}"
+    $registryKey = "/$($username)/Ribbon/My Strip"
+    [Sitecore.Web.UI.HtmlControls.Registry]::SetValue($registryKey, $ribbonCommands)
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T011632Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
