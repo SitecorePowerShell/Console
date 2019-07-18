@@ -23,6 +23,7 @@ namespace Spe.Core.Modules
         public const string ReportExportFeature = "reportExport";
         public const string ReportActionFeature = "reportAction";
         public const string ToolboxFeature = "toolbox";
+        public const string TasksFeature = "tasks";
         public const string EventHandlersFeature = "eventHandlers";
         public const string WebApi = "webAPI";
         public const string PageEditorNotificationFeature = "pageEditorNotification";
