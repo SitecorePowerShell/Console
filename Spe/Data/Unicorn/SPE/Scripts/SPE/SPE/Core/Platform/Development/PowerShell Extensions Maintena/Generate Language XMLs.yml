@@ -16,36 +16,44 @@ SharedFields:
     		Adam Najmanowicz, Alex Washtell
     #>
     
-    $srcLanguage = "en"
-    $targetLanguage = "da"
-    
-    # Some fields are not marked as Shared, but we don't want them translated.
-    $untranslatedFieldIds = @(
-        "{212B99DF-C246-46CE-9E51-86DB77E3BC97}",
-        "{29D3164D-DE97-4ACE-BCB4-83CB6954BEE3}"
-    )
-    
     $config = [Sitecore.Configuration.Factory]::GetConfiguration()
     $speSourceFolder = $config.sitecore."sc.variable" | 
         Where-Object { $_.Name -eq "speSourceFolder" } | 
         Select-Object -First 1 -Expand value
     $translationsFolder = "$($speSourceFolder)\Data\Translations\$($targetLanguage)"
     
-    function Append-Attribute{
+    $srcLanguage = "en"
+    $targetLanguage = "da"
+    
+    # Some fields are not marked as Shared, but we don't want them translated.
+    $untranslatedFieldIds = @(
+    	"{212B99DF-C246-46CE-9E51-86DB77E3BC97}",
+    	"{29D3164D-DE97-4ACE-BCB4-83CB6954BEE3}"
+    )
+    
+    # Some paths are of items we don't need to translate, such as those for internal use only
+    $ignoredPaths = @(
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/X-UnitTests",
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development",
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Functions",
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Context Help"
+    )
+    
+    function Append-Attribute {
     	[CmdletBinding()]
     	param(
-    		[Parameter(Position=0)]
+    		[Parameter(Position = 0)]
     		[System.Xml.XmlElement]$element,
     
-    		[Parameter(Position=1)]
+    		[Parameter(Position = 1)]
     		[string]$Name,
     
-    		[Parameter(Position=2)]
+    		[Parameter(Position = 2)]
     		[string]$Value
-        )
-        $Attribute = $xml.CreateAttribute($Name)
-        $Attribute.Value = $Value
-        $element.Attributes.Append($Attribute) | Out-null
+    	)
+    	$Attribute = $xml.CreateAttribute($Name)
+    	$Attribute.Value = $Value
+    	$element.Attributes.Append($Attribute) | Out-Null
     }
     
     function Process-Field {
@@ -54,7 +62,7 @@ SharedFields:
     		[ValidateNotNullOrEmpty()]
     		[Parameter()]
     		[item]$SourceItem,
-    		
+    
     		[Parameter()]
     		[item]$TargetItem,
     
@@ -66,40 +74,40 @@ SharedFields:
     
     		[Parameter()]
     		[System.Xml.XmlElement]$sitecore,
-    		
+    
     		[Parameter()]
     		[bool]$NotTranslated
     	)
     
-        $phrase = $xml.CreateElement("phrase")
-        $sitecore.AppendChild($phrase) | Out-null
+    	$phrase = $xml.CreateElement("phrase")
+    	$sitecore.AppendChild($phrase) | Out-Null
     
-        Append-Attribute $phrase "updated" $SourceItem.Fields["__Updated"]
-        Append-Attribute $phrase "fieldid" $fieldName
-        #Append-Attribute $phrase "fieldguid" $item.Fields[$fieldName].ID
-        Append-Attribute $phrase "itemid" $item.ID
-        Append-Attribute $phrase "key" $SourceItem.Name
-        Append-Attribute $phrase "path" $SourceItem.Paths.FullPath
-     
-        $langValue = $xml.CreateElement($targetLanguage)
-        $phrase.AppendChild($langValue) | Out-null
-        if(!$TargetItem)
-        {
-            if ($NotTranslated) {
-                Write-Host Adding non-translatable for $($SourceItem.Paths.FullPath) -ForegroundColor Magenta
-                
-                $langValue.InnerText = $($SourceItem.$fieldName)
-            } else {
-                Write-Host Translation missing for $($SourceItem.Paths.FullPath) -ForegroundColor Yellow
-                
-                $langValue.InnerText = "** $($SourceItem.$fieldName) **"
-                
-            }
-        }
-        else
-        {
-            $langValue.InnerText = $TargetItem.$fieldName
-        }
+    	Append-Attribute $phrase "updated" $SourceItem.Fields["__Updated"]
+    	Append-Attribute $phrase "fieldid" $fieldName
+    	#Append-Attribute $phrase "fieldguid" $item.Fields[$fieldName].ID
+    	Append-Attribute $phrase "itemid" $item.ID
+    	Append-Attribute $phrase "key" $SourceItem.Name
+    	Append-Attribute $phrase "path" $SourceItem.Paths.FullPath
+    
+    	$langValue = $xml.CreateElement($targetLanguage)
+    	$phrase.AppendChild($langValue) | Out-Null
+    	if (!$TargetItem -or !($TargetItem.$fieldName))
+    	{
+    		if ($NotTranslated) {
+    			Write-Host Adding non-translatable for $($SourceItem.Paths.FullPath) -ForegroundColor Magenta
+    
+    			$langValue.InnerText = $($SourceItem.$fieldName)
+    		} else {
+    			Write-Host Translation missing for $($SourceItem.Paths.FullPath) -ForegroundColor Yellow
+    
+    			$langValue.InnerText = "** $($SourceItem.$fieldName) **"
+    
+    		}
+    	}
+    	else
+    	{
+    		$langValue.InnerText = $TargetItem.$fieldName
+    	}
     }
     
     function Process-Item {
@@ -111,112 +119,121 @@ SharedFields:
     
     		[Parameter()]
     		[switch]$Recurse = $false,
-    		
+    
     		[Parameter()]
     		[xml]$MasterXml,
     
     		[Parameter()]
     		[System.Xml.XmlElement]$MasterSitecore,
-    		
+    
     		[Parameter()]
     		[xml]$CoreXml,
     
     		[Parameter()]
     		[System.Xml.XmlElement]$CoreSitecore
     	)
-    	
+    
     	process
     	{
-            $db = $item.Database
-            $sourceItem = Get-Item $Item.ProviderPath -Language $srcLanguage
-            $targetItem = Get-Item $Item.ProviderPath -Language $targetLanguage
-            
-            if($item.Database.Name -eq "master"){
-                $xml = $MasterXml
-                $sitecore = $MasterSitecore
-            } 
-            else
-            {
-                $xml = $CoreXml
-                $sitecore = $CoreSitecore
-            }
-            
-            if($Recurse){
-                $children = Get-ChildItem $Item.ProviderPath
-                foreach($child in $children){
-                    Process-Item -Item $child -Recurse -MasterXml $MasterXml -MasterSitecore $MasterSitecore -CoreXml $CoreXml -CoreSitecore $CoreSitecore
-                }
-            }
-            
-            foreach ($field in $sourceItem.Fields)
-            {
-                if ($field.ShouldBeTranslated -and -not [string]::IsNullOrEmpty($field.Value))
-                {
-        	        Process-Field -SourceItem $sourceItem -TargetItem $targetItem -FieldName $field.Name -xml $xml -sitecore $sitecore -NotTranslated:($untranslatedFieldIds -contains $field.Id)
-                }
-            }
+    	    foreach ( $ignoredPath in $ignoredPaths )
+    	    {
+    	        if ($item.Paths.FullPath.StartsWith($ignoredPath))
+    	        {
+    	            Write-Host Skipping ignored path $($item.Paths.FullPath) -ForegroundColor Gray
+    	            return
+    	        }
+    	    }
+    
+    		$db = $item.Database
+    		$sourceItem = Get-Item $Item.ProviderPath -Language $srcLanguage
+    		$targetItem = Get-Item $Item.ProviderPath -Language $targetLanguage
+    
+    		if ($item.Database.Name -eq "master") {
+    			$xml = $MasterXml
+    			$sitecore = $MasterSitecore
+    		}
+    		else
+    		{
+    			$xml = $CoreXml
+    			$sitecore = $CoreSitecore
+    		}
+    
+    		if ($Recurse) {
+    			$children = Get-ChildItem $Item.ProviderPath
+    			foreach ($child in $children) {
+    				Process-Item -Item $child -Recurse -MasterXml $MasterXml -MasterSitecore $MasterSitecore -CoreXml $CoreXml -CoreSitecore $CoreSitecore
+    			}
+    		}
+    
+    		foreach ($field in $sourceItem.Fields)
+    		{
+    			if ($field.ShouldBeTranslated -and -not [string]::IsNullOrEmpty($field.Value))
+    			{
+    				Process-Field -SourceItem $sourceItem -TargetItem $targetItem -FieldName $field.Name -Xml $xml -sitecore $sitecore -NotTranslated:($untranslatedFieldIds -contains $field.ID)
+    			}
+    		}
     	}
     }
     
     function Write-TranslationFile
     {
-        [CmdletBinding()]
+    	[CmdletBinding()]
     	param(
-    	    [Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+    		[Parameter(Mandatory = $true,ValueFromPipeline = $true)]
     		[ValidateNotNullOrEmpty()]
     		[item]$Item,
-    		
-    	    [Parameter(Mandatory=$true)]
-            [string]$Path,
-            
-            [Parameter(Mandatory=$true)]
-            [string]$Prefix
-        )
-        
-        begin {
-            [xml]$xmlCore = New-Object System.Xml.XmlDocument
-            $sitecoreCore = $xmlCore.CreateElement("sitecore")
-            $xmlCore.AppendChild($sitecoreCore) | Out-null
-            
-            [xml]$xmlMaster = New-Object System.Xml.XmlDocument
-            $sitecoreMaster = $xmlMaster.CreateElement("sitecore")
-            $xmlMaster.AppendChild($sitecoreMaster) | Out-null
-        }
-        
-        process {
-            $Item | Process-Item -MasterXml $xmlMaster -MasterSitecore $sitecoreMaster -CoreXml $xmlCore -CoreSitecore $sitecoreCore
-        }
-        
-        end {
-            $xmlFilePrefix = Join-Path $Path $Prefix
-            $suffix = "$targetLanguage.xml"
-            
-            $masterXmlFle = $xmlFilePrefix + "-master-" + $suffix
-            $coreXmlFle = $xmlFilePrefix + "-core-" + $suffix
-            
-            if ($sitecoreMaster.HasChildNodes) {
-                $xmlMaster.Save($masterXmlFle)
-                Write-Host Wrote $sitecoreMaster.ChildNodes.Count phrases to $masterXmlFle -ForegroundColor Green
-            }
-            
-            if ($sitecoreCore.HasChildNodes) {
-                $xmlCore.Save($coreXmlFle)
-                Write-Host Wrote $sitecoreCore.ChildNodes.Count phrases to $coreXmlFle -ForegroundColor Green
-            }
-        }
+    
+    		[Parameter(Mandatory = $true)]
+    		[string]$Path,
+    
+    		[Parameter(Mandatory = $true)]
+    		[string]$Prefix
+    	)
+    
+    	begin {
+    		[xml]$xmlCore = New-Object System.Xml.XmlDocument
+    		$sitecoreCore = $xmlCore.CreateElement("sitecore")
+    		$xmlCore.AppendChild($sitecoreCore) | Out-Null
+    
+    		[xml]$xmlMaster = New-Object System.Xml.XmlDocument
+    		$sitecoreMaster = $xmlMaster.CreateElement("sitecore")
+    		$xmlMaster.AppendChild($sitecoreMaster) | Out-Null
+    	}
+    
+    	process {
+    		$Item | Process-Item -MasterXml $xmlMaster -MasterSitecore $sitecoreMaster -CoreXml $xmlCore -CoreSitecore $sitecoreCore
+    	}
+    
+    	end {
+    		$xmlFilePrefix = Join-Path $Path $Prefix
+    		$suffix = "$targetLanguage-beta.xml"
+    
+    		$masterXmlFle = $xmlFilePrefix + "-master-" + $suffix
+    		$coreXmlFle = $xmlFilePrefix + "-core-" + $suffix
+    
+    		if ($sitecoreMaster.HasChildNodes) {
+    			$xmlMaster.Save($masterXmlFle)
+    			Write-Host Wrote $sitecoreMaster.ChildNodes.Count phrases to $masterXmlFle -ForegroundColor Green
+    		}
+    
+    		if ($sitecoreCore.HasChildNodes) {
+    			$xmlCore.Save($coreXmlFle)
+    			Write-Host Wrote $sitecoreCore.ChildNodes.Count phrases to $coreXmlFle -ForegroundColor Green
+    		}
+    	}
     }
     
     function Get-ItemsFromUnicornConfiguration {
-        [CmdletBinding()]
+    	[CmdletBinding()]
     	param(
-    	    [Parameter(Mandatory = $true, Position=0)]
+    		[Parameter(Mandatory = $true,Position = 0)]
     		[ValidateNotNullOrEmpty()]
-            [string]$ConfigurationName
-        )
+    		[string]$ConfigurationName
+    	)
     
-        $source = Get-UnicornConfiguration $ConfigurationName | New-UnicornItemSource
-        
-        return $source.Entries | % { [Sitecore.Install.Items.ItemKeyUtils]::Resolve($_) | Wrap-Item }
+    	$source = Get-UnicornConfiguration $ConfigurationName | New-UnicornItemSource
+    
+    	return $source.Entries | % { [Sitecore.Install.Items.ItemKeyUtils]::Resolve($_) | Wrap-Item }
     }
     
     #
@@ -224,20 +241,20 @@ SharedFields:
     #
     
     $configurations = @(
-        "Spe.Core",
-        "Spe.Rules"
+    	"Spe.Core",
+    	"Spe.Rules"
     )
     
     $allItems = @()
-    foreach ( $configName in $configurations )
+    foreach ($configName in $configurations)
     {
-        $items = Get-ItemsFromUnicornConfiguration $configName
-        $allItems += $items
-        
-        Write-Host Added $configName with $($items.Count) items
+    	$items = Get-ItemsFromUnicornConfiguration $configName
+    	$allItems += $items
+    
+    	Write-Host Added $configName with $($items.Count) items
     }
     
-    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"
+    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"lationsFolder
     
     #
     # Scripts translation file
