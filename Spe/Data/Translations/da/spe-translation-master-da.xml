@@ -41,10 +41,10 @@
   <phrase updated="20190520T191256Z" fieldid="__Display name" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
     <da>Opsætning</da>
   </phrase>
-  <phrase updated="20180724T014713Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+  <phrase updated="20190619T190809Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
     <da>Foruddefinerede kodestumper til hjælp i forbindelse med udarbejdelse af scripts.</da>
   </phrase>
-  <phrase updated="20180724T014713Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+  <phrase updated="20190619T190809Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
     <da>Foruddefinerede kodestumper til hjælp i forbindelse med udarbejdelse af scripts.</da>
   </phrase>
   <phrase updated="20190520T191254Z" fieldid="__Display name" itemid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" key="PowerShell Script Module" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module">
@@ -119,7 +119,7 @@
   <phrase updated="20190604T014124Z" fieldid="__Display name" itemid="{616C618F-8631-4199-8CDE-34FBEB398C6C}" key="Data" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data">
     <da>Data</da>
   </phrase>
-  <phrase updated="20190520T191256Z" fieldid="__Display name" itemid="{6CB327FA-4783-4DF6-B3C2-F396073D7962}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Console/All Users">
+  <phrase updated="20190712T115303Z" fieldid="__Display name" itemid="{6CB327FA-4783-4DF6-B3C2-F396073D7962}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Console/All Users">
     <da>Alle brugerer</da>
   </phrase>
   <phrase updated="20190520T191256Z" fieldid="__Display name" itemid="{D237B896-675E-4D63-B86E-6BA898BBBFF8}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Context/All Users">
@@ -135,15 +135,13 @@
     <da>Alle brugerer</da>
   </phrase>
   <phrase updated="20190604T014125Z" fieldid="__Short description" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
-    <da>
-    </da>
+    <da>** Value used when selecting the font **</da>
   </phrase>
   <phrase updated="20190604T014125Z" fieldid="Title" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
     <da>NÃ¸gle</da>
   </phrase>
   <phrase updated="20190604T014124Z" fieldid="__Short description" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
-    <da>
-    </da>
+    <da>** Value used by the browser to render the font **</da>
   </phrase>
   <phrase updated="20190604T014124Z" fieldid="Title" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
     <da>SÃ¦tning</da>

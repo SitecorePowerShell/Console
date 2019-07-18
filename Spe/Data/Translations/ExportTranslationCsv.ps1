@@ -2,12 +2,11 @@
 # Takes translation files and turns them into a CSV equivalent, which may be easier for editing.
 #
 
-$language = "de-de"
+$language = "da"
 $untranslatedOnly = $true
 
-foreach ( $file in Get-ChildItem $language -Filter "*.xml" )
-{
-    $rows = @();
+foreach ( $file in Get-ChildItem $language -Filter "*.xml" ) {
+    $rows = @()
 
     Write-Host Processing $file.Name
 

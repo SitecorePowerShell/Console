@@ -206,7 +206,7 @@ SharedFields:
     
     	end {
     		$xmlFilePrefix = Join-Path $Path $Prefix
-    		$suffix = "$targetLanguage-beta.xml"
+    		$suffix = "$targetLanguage.xml"
     
     		$masterXmlFle = $xmlFilePrefix + "-master-" + $suffix
     		$coreXmlFle = $xmlFilePrefix + "-core-" + $suffix

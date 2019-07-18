@@ -68,6 +68,12 @@
   <phrase updated="20190525T015749Z" fieldid="__Long description" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
     <da>Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.</da>
   </phrase>
+  <phrase updated="20190708T010200Z" fieldid="__Short description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
+    <da>** Launch a new module wizard. **</da>
+  </phrase>
+  <phrase updated="20190708T010200Z" fieldid="__Long description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
+    <da>** Launch a new module wizard. **</da>
+  </phrase>
   <phrase updated="20180527T022917Z" fieldid="__Short description" itemid="{F52A5B18-6E32-42C3-9B6F-61B6BD113F13}" key="Format" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format">
     <da>Formater scriptteksten.</da>
   </phrase>

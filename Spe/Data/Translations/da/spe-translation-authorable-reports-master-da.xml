@@ -1,8 +1,8 @@
 <sitecore>
-  <phrase updated="20190525T015749Z" fieldid="__Short description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
+  <phrase updated="20190621T014038Z" fieldid="__Short description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
     <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
   </phrase>
-  <phrase updated="20190525T015749Z" fieldid="__Long description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
+  <phrase updated="20190621T014038Z" fieldid="__Long description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
     <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
   </phrase>
   <phrase updated="20190122T043822Z" fieldid="__Short description" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer">
