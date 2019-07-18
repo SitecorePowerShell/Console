@@ -100,6 +100,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Find elementer som matcher teksten og erstat.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Find og erstat
   Versions:
   - Version: 1
     Fields:
@@ -115,6 +118,9 @@ Languages:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Find items matching text and replace.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Find and Replace
   Versions:
   - Version: 1
     Fields:

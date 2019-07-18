@@ -1,12 +1,18 @@
 <sitecore>
+  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{B85E2336-26AB-47A7-B2BF-91CDE1A7E3BA}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox">
+    <da>** Toolbox **</da>
+  </phrase>
   <phrase updated="20190621T014038Z" fieldid="__Short description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
     <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
   </phrase>
   <phrase updated="20190621T014038Z" fieldid="__Long description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report">
     <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
   </phrase>
-  <phrase updated="20190122T043822Z" fieldid="__Short description" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer">
+  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer">
     <da>Smugkig ind i søgeindekset; brugbart ved fejlsøgning af indeksfejl.</da>
+  </phrase>
+  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer">
+    <da>** Index Viewer **</da>
   </phrase>
   <phrase updated="20180925T020023Z" fieldid="Title" itemid="{743B8C3C-BA19-4E24-B324-C01DCD20F465}" key="Query" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search/Query">
     <da>Rækkevide for søgningen - primær forespørgsel anvendt til at returnere resultater</da>

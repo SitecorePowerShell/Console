@@ -33,7 +33,7 @@ foreach ( $file in Get-ChildItem $language -Filter "*.xml" )
                     $phraseText.InnerText = $row.TranslatedPhrase
                 }
             } else {
-                Write-Host Could not find matching node for row: $row -ForegroundColor Yellow
+                Write-Host "Could not find matching node for row: $($row)" -ForegroundColor Yellow
             }
         }
     }
