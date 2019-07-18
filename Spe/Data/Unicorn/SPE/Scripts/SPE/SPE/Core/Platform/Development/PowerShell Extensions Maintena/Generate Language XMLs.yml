@@ -36,7 +36,8 @@ SharedFields:
         "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/X-UnitTests",
         "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development",
         "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Functions",
-        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Context Help"
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Context Help",
+        "/sitecore/system/Modules/PowerShell/Script Library/SPE/Training"
     )
     
     function Append-Attribute {

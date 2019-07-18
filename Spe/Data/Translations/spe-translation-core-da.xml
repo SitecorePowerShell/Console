@@ -35,11 +35,11 @@
   <phrase updated="20180114T223613Z" fieldid="Display name" itemid="{6857D035-AB70-4DAC-8E7F-C6534BB8141F}" key="PowerShellIse" path="/sitecore/content/Applications/PowerShell/PowerShellIse">
     <da>PowerShell ISE</da>
   </phrase>
-  <phrase updated="20180720T033532Z" fieldid="Tool tip" itemid="{EC050E47-CB0E-481C-B299-ABD275258FC6}" key="PowerShellListView" path="/sitecore/content/Applications/PowerShell/PowerShellListView">
-    <da>Vis resultater fra PowerShell</da>
-  </phrase>
   <phrase updated="20180720T033532Z" fieldid="Display name" itemid="{EC050E47-CB0E-481C-B299-ABD275258FC6}" key="PowerShellListView" path="/sitecore/content/Applications/PowerShell/PowerShellListView">
     <da>Listevisning</da>
+  </phrase>
+  <phrase updated="20180720T033532Z" fieldid="Tool tip" itemid="{EC050E47-CB0E-481C-B299-ABD275258FC6}" key="PowerShellListView" path="/sitecore/content/Applications/PowerShell/PowerShellListView">
+    <da>Vis resultater fra PowerShell</da>
   </phrase>
   <phrase updated="20180410T041220Z" fieldid="Tool tip" itemid="{26FB797C-ED1F-4C34-8EA2-E339686855BC}" key="PowerShellReports" path="/sitecore/content/Applications/PowerShell/PowerShellReports">
     <da>Vis resultater fra PowerShell</da>
@@ -53,11 +53,11 @@
   <phrase updated="20180117T054019Z" fieldid="Display name" itemid="{C6771AF0-903F-432C-8595-E84FE79D8B6C}" key="PowerShell Console" path="/sitecore/content/Applications/PowerShell/PowerShell Console">
     <da>PowerShell konsol</da>
   </phrase>
-  <phrase updated="20170623T013632Z" fieldid="Tool tip" itemid="{EE8B0A19-8710-4AA2-9C21-710BC4AE8265}" key="PowerShell Runner" path="/sitecore/content/Applications/PowerShell/PowerShell Runner">
-    <da>Kørsel af PowerShell scripts</da>
-  </phrase>
   <phrase updated="20170623T013632Z" fieldid="Display name" itemid="{EE8B0A19-8710-4AA2-9C21-710BC4AE8265}" key="PowerShell Runner" path="/sitecore/content/Applications/PowerShell/PowerShell Runner">
     <da>PowerShell scripts</da>
+  </phrase>
+  <phrase updated="20170623T013632Z" fieldid="Tool tip" itemid="{EE8B0A19-8710-4AA2-9C21-710BC4AE8265}" key="PowerShell Runner" path="/sitecore/content/Applications/PowerShell/PowerShell Runner">
+    <da>Kørsel af PowerShell scripts</da>
   </phrase>
   <phrase updated="20190617T183446Z" fieldid="Tool tip" itemid="{AE3F218A-2ED4-40AA-A5A0-60BF385AEBDB}" key="PowerShell Fake Report" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports/PowerShell Fake Report">
     <da>Rapporter skrevet med Sitecore PowerShell udvidelsen</da>
@@ -472,11 +472,11 @@ Copy the file to the Sitecore Data folder and try again. **</da>
   <phrase updated="20180803T033917Z" fieldid="Tooltip" itemid="{EB294A95-86B6-4664-9175-548446AF746E}" key="Runtime" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script/Runtime">
     <da>Editer scriptets runtime egenskaber.</da>
   </phrase>
-  <phrase updated="20190604T015127Z" fieldid="Tooltip" itemid="{6B151C2E-9017-4BC7-84C5-692EE671BECA}" key="fake" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins/Plugin/fake">
-    <da>Falsk</da>
-  </phrase>
   <phrase updated="20190604T015127Z" fieldid="Header" itemid="{6B151C2E-9017-4BC7-84C5-692EE671BECA}" key="fake" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins/Plugin/fake">
     <da>falsk</da>
+  </phrase>
+  <phrase updated="20190604T015127Z" fieldid="Tooltip" itemid="{6B151C2E-9017-4BC7-84C5-692EE671BECA}" key="fake" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins/Plugin/fake">
+    <da>Falsk</da>
   </phrase>
   <phrase updated="20180803T033926Z" fieldid="Header" itemid="{9989ECE2-E790-4CCC-83B8-F4675E9BF22E}" key="Continue" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Continue">
     <da>Fortsæt</da>
@@ -508,11 +508,11 @@ Copy the file to the Sitecore Data folder and try again. **</da>
   <phrase updated="20180803T033937Z" fieldid="Tooltip" itemid="{E4BCB959-8C3A-4218-81E2-FE7FF7593611}" key="Stop" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Stop">
     <da>Afbryd det kørende script.</da>
   </phrase>
-  <phrase updated="20180803T033940Z" fieldid="Header" itemid="{6D174099-70D6-4246-8E39-298BBF832186}" key="Immediate Window" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Immediate Window">
-    <da>Immediate vindue</da>
-  </phrase>
   <phrase updated="20180803T033940Z" fieldid="Tooltip" itemid="{6D174099-70D6-4246-8E39-298BBF832186}" key="Immediate Window" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Immediate Window">
     <da>Viser en dialogboks til at afvikle kommandoer, mens udførelsen af scriptet er sat på pause i sessionen.</da>
+  </phrase>
+  <phrase updated="20180803T033940Z" fieldid="Header" itemid="{6D174099-70D6-4246-8E39-298BBF832186}" key="Immediate Window" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Immediate Window">
+    <da>Immediate vindue</da>
   </phrase>
   <phrase updated="20180803T034002Z" fieldid="Header" itemid="{633D0055-5E83-495C-8D07-D882C062E5EB}" key="Filter" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter/Filter">
     <da>Filtre</da>
