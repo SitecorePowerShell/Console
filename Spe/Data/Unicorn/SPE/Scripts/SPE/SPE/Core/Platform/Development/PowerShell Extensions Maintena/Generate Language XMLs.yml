@@ -254,7 +254,7 @@ SharedFields:
     	Write-Host Added $configName with $($items.Count) items
     }
     
-    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"lationsFolder
+    $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"
     
     #
     # Scripts translation file
