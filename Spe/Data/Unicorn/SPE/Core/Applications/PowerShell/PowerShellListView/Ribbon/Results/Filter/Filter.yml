@@ -21,6 +21,23 @@ SharedFields:
   Hint: Click
   Value: "pslv:filter"
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151827Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
+      Hint: Header
+      Value: Filtre
+    - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
+      Hint: Tooltip
+      Value: Filtre rapporten ved hjælp af et nøgleord.
 - Language: en
   Versions:
   - Version: 1

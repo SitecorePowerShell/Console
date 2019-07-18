@@ -19,6 +19,20 @@ SharedFields:
   Value: |
     ar|sitecore\Sitecore Client Authoring|pe|+item:read|pd|+item:read|
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151716Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
+      Hint: Text
+      Value: PowerShell rapporter
 - Language: en
   Versions:
   - Version: 1

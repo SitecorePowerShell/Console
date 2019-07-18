@@ -59,6 +59,23 @@ SharedFields:
   Hint: Icon
   Value: powershell/32x32/ise8.png
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "14dca483-aac7-4d87-ae27-3163d21798b7"
+      Hint: Tool tip
+      Value: Brugergrænseflade til at skrive PowerShell scripts.
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151813Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
+      Hint: Display name
+      Value: PowerShell ISE
 - Language: en
   Versions:
   - Version: 1

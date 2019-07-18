@@ -24,6 +24,23 @@ SharedFields:
   Hint: __Sortorder
   Value: 400
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151824Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
+      Hint: Tooltip
+      Value: Gem som et nyt script.
+    - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
+      Hint: Header
+      Value: Gem som...
 - Language: en
   Versions:
   - Version: 1

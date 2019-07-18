@@ -2,7 +2,7 @@
 # Takes translation CSV files and updates the XML files with them.
 #
 
-$language = "de-de"
+$language = "da"
 $includeEmptyPhrases = $false
 
 foreach ( $file in Get-ChildItem $language -Filter "*.xml" )

@@ -15,6 +15,27 @@ SharedFields:
   Hint: Type
   Value: Spe.Integrations.Tasks.ExecuteScriptTask, Spe
 Languages:
+- Language: da
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Denne kommando er brugt sammen med programsatte opgaver, konfigureret til at udføre PowerShell scripts.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Denne kommando bliver brugt til programsatte opgaver til udførelse af PowerShell scripts.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: PowerShell scriptkommando
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151930Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Fields:
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"

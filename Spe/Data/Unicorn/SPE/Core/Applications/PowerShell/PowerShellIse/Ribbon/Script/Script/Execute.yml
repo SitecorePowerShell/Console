@@ -27,6 +27,24 @@ SharedFields:
   Hint: Click
   Value: "ise:execute"
 Languages:
+- Language: da
+  Fields:
+  - ID: "b11f9f5f-88fc-48c5-9501-2e827ef40ead"
+    Hint: Header
+    Value: Udfør
+  - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
+    Hint: Tooltip
+    Value: Udfør scriptet som et job i baggrunden.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151825Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Fields:
   - ID: "b11f9f5f-88fc-48c5-9501-2e827ef40ead"

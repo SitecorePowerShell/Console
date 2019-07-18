@@ -9,6 +9,24 @@ SharedFields:
   Hint: Type
   Value: Spe.Core.Rules.PowerShellIseSessionState,Spe
 Languages:
+- Language: da
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Sessionsstatus
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151936Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "af321234-4eb9-4ef5-9197-65903351939c"
+      Hint: Text
+      Value: "når det redigerede scriptet er [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&setRootAsSearchRoot=true,in a state]"
 - Language: en
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

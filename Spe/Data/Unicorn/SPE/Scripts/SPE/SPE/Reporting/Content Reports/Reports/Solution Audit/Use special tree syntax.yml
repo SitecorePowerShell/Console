@@ -55,6 +55,24 @@ SharedFields:
                               The report will show you all link template fields in your solution and whether or not they define the Source query.Just because a field does not define source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience."
     
 Languages:
+- Language: da
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: "Rapporter på templates som gør brug af et Link template felt, som ikke er nogen kilde-værdi konfigureret. Filtreret på et rod element."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Brug kildeforespørgsel til at begrænse resultaterne på Treelists, DropTrees og TreelistEX
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152234Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"

@@ -26,7 +26,7 @@ Languages:
         sitecore\admin
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
-      Value: "Når den aktuelle bruger er medlem af [value,,,specific] role"
+      Value: "NÃ¥r den aktuelle bruger er medlem af [value,,,specific] role"
 - Language: "de-DE"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

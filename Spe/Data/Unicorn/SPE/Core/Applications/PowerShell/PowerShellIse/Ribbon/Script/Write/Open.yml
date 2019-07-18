@@ -27,6 +27,23 @@ SharedFields:
   Hint: __Sortorder
   Value: 300
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151824Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "e9f2581a-fbfc-4ac6-90cb-04ca5c02b70d"
+      Hint: Tooltip
+      Value: Åbn et eksisterende script fra biblioteket.
+    - ID: "facecac8-c923-4847-834c-c917268f8f6b"
+      Hint: Header
+      Value: Åbn
 - Language: en
   Versions:
   - Version: 1

@@ -10,10 +10,10 @@ SharedFields:
   Value: Office/32x32/users3.png
 - ID: "6f442ac9-7001-4124-9bc3-589875876c27"
   Hint: FontSize
-  Value: 14
+  Value: 20
 - ID: "86ecc435-0924-4ea0-92d8-cca12ed7e644"
   Hint: FontFamily
-  Value: Monaco
+  Value: Source Code Pro
 - ID: "aeeb1bb0-87b9-4e16-b5de-d4cc544a992f"
   Hint: BackgroundColor
   Value: DarkBlue
@@ -24,6 +24,21 @@ SharedFields:
   Hint: ForegroundColor
   Value: White
 Languages:
+- Language: da
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Alle brugerer
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151933Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
 - Language: en
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

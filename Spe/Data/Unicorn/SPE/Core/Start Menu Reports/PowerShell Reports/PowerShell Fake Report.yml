@@ -111,6 +111,23 @@ SharedFields:
   Hint: __Standard values
   Value: 
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151813Z
+    - ID: "326cd362-cb1c-4e81-b5f2-5efa940351f7"
+      Hint: Display name
+      Value: PowerShell falsk rapport
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
+      Hint: Tool tip
+      Value: Rapporter skrevet med Sitecore PowerShell udvidelsen
 - Language: en
   Fields:
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"

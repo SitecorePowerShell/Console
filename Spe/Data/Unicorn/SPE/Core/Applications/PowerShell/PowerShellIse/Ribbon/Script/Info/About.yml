@@ -27,6 +27,23 @@ SharedFields:
   Hint: Click
   Value: "ise:iframe(spe_url=https://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
 Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151825Z
+    - ID: "4df6da21-e745-444c-956e-1d4a96ab8821"
+      Hint: Header
+      Value: Om
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
+      Hint: Tooltip
+      Value: Om modulet og dets miljø.
 - Language: en
   Versions:
   - Version: 1
