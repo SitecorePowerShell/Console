@@ -39,6 +39,11 @@ namespace Spe.Integrations.Pipelines
 
         private static void GetMasters(Item parent, GetMastersArgs args)
         {
+            if (!RulesUtils.EvaluateRules(parent[FieldNames.ShowRule], args.Item))
+            {
+                return;
+            }
+
             foreach (var scriptItem in parent.Children.Where(p => p.IsPowerShellScript() || p.IsPowerShellLibrary()))
             {
                 if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], args.Item))

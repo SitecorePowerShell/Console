@@ -25,29 +25,28 @@ namespace Spe.Commands.Modules
 
         protected override void ProcessRecord()
         {
-            if (!string.IsNullOrEmpty(Feature))
-            {
-                if (Module != null)
-                {
-                    if (ReturnPath)
-                    {
-                        WriteObject(Module.GetProviderFeaturePath(Feature));
-                    }
-                    else
-                    {
-                        WriteItem(Module.GetFeatureRoot(Feature));
-                    }
-                    return;
-                }
+            if (string.IsNullOrEmpty(Feature)) return;
 
+            if (Module != null)
+            {
                 if (ReturnPath)
                 {
-                    ModuleManager.Modules.ForEach(m => WriteObject(m.GetProviderFeaturePath(Feature)));
+                    WriteObject(Module.GetProviderFeaturePath(Feature));
                 }
                 else
                 {
-                    ModuleManager.GetFeatureRoots(Feature).ForEach(WriteItem);
+                    WriteItem(Module.GetFeatureRoot(Feature));
                 }
+                return;
+            }
+
+            if (ReturnPath)
+            {
+                ModuleManager.Modules.ForEach(m => WriteObject(m.GetProviderFeaturePath(Feature)));
+            }
+            else
+            {
+                ModuleManager.GetFeatureRoots(Feature).ForEach(WriteItem);
             }
         }
     }

@@ -29,10 +29,15 @@ namespace Spe.Integrations.Pipelines
 
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
+                if (!RulesUtils.EvaluateRules(libraryItem?[FieldNames.EnableRule], args.Item))
+                {
+                    continue;
+                }
+
                 var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
                 if (applicableScriptItems == null || !applicableScriptItems.Any())
                 {
-                    return;
+                    continue;
                 }
 
                 foreach (var scriptItem in applicableScriptItems)

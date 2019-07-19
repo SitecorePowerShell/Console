@@ -365,7 +365,7 @@
     <Compile Include="Commands\Interactive\ShowYesNoCancelCommand.cs" />
     <Compile Include="Commands\Interactive\UpdateListViewCommand.cs" />
     <Compile Include="Commands\Modules\GetSpeModule.cs" />
-    <Compile Include="Commands\Modules\GetSpeModuleFeature.cs" />
+    <Compile Include="Commands\Modules\GetSpeModuleFeatureRoot.cs" />
     <Compile Include="Commands\Packages\BasePackageCommand.cs" />
     <Compile Include="Commands\Packages\ExportPackageCommand.cs" />
     <Compile Include="Commands\Packages\GetPackageCommand.cs" />

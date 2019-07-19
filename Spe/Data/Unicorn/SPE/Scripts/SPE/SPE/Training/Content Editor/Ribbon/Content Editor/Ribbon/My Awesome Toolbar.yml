@@ -1,8 +1,8 @@
 ﻿---
-ID: "3d4c3574-b2f4-4b92-ba18-2b1fd27525bb"
-Parent: "30f00cf4-e321-4fd3-b375-18f133484cde"
+ID: "36dba4e2-d302-4ca9-a5c1-bef456b4629b"
+Parent: "c94beb9f-f1fb-4c15-855e-904f2b3bb5ea"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Contextual Ribbon/Contextual Ribbon/Images/Media
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Ribbon/Content Editor/Ribbon/My Awesome Toolbar
 DB: master
 Languages:
 - Language: en
@@ -11,7 +11,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20180524T015620Z
+      Value: 20190719T152237Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

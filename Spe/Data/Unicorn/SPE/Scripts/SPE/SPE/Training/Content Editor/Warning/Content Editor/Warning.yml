@@ -4,6 +4,27 @@ Parent: "8f995cbd-a19b-4897-8349-dbaf935a6aa2"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Warning/Content Editor/Warning
 DB: master
+SharedFields:
+- ID: "05eecf47-0bb9-4b85-b926-0bc6dd987ec8"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{10CCAAC3-2A27-4A18-A66B-9FFF0A4C7799}"
+        name="Only show for training items">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="51E64B7A88AA4DF68EAD776749942083"
+            itemid="{08B4BA05-759B-456A-8CA1-A00A8DB99FAD}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: 
 Languages:
 - Language: en
   Versions:

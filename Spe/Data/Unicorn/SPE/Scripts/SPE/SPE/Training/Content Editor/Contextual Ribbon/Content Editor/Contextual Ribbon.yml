@@ -1,8 +1,8 @@
 ﻿---
-ID: "30f00cf4-e321-4fd3-b375-18f133484cde"
-Parent: "3380d0e6-4f27-4683-a82e-3bc4e6b6d7f0"
+ID: "3380d0e6-4f27-4683-a82e-3bc4e6b6d7f0"
+Parent: "07b6827e-7880-4d71-bca0-b6237270a3b1"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Contextual Ribbon/Contextual Ribbon/Images
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Contextual Ribbon/Content Editor/Contextual Ribbon
 DB: master
 Languages:
 - Language: en

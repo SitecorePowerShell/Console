@@ -37,6 +37,10 @@ namespace Spe.Integrations.Gutters
                     string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]) ||
                     !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item)) return null;
 
+                var featureRoot = ModuleManager.GetItemModule(scriptItem)?
+                    .GetFeatureRoot(IntegrationPoints.ContentEditorGuttersFeature);
+                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.EnableRule], item)) return null;
+
                 try
                 {
                     // Create a new session for running the script.

@@ -4,6 +4,23 @@ Parent: "5b7f9cc4-a0b6-4eb8-96e3-46feb803415b"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Ribbon/Content Editor/Ribbon
 DB: master
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{10CCAAC3-2A27-4A18-A66B-9FFF0A4C7799}"
+        name="Only show for training items">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="51E64B7A88AA4DF68EAD776749942083"
+            itemid="{08B4BA05-759B-456A-8CA1-A00A8DB99FAD}" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:

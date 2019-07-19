@@ -2,7 +2,7 @@
 ID: "ba9d68d7-3d63-4fba-a396-24efa9e3cbb7"
 Parent: "2391561a-7cc4-4a6d-ba72-3caf16beb25a"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Contextual Ribbon/Contextual Ribbon/Images/Media/Image/Optimize
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Contextual Ribbon/Content Editor/Contextual Ribbon/Images/Media/Image/Optimize
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

@@ -6,6 +6,10 @@ Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training
 DB: master
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: "Check out working examples to help you along your exploration of SPE!"
   Versions:
   - Version: 1
     Fields:

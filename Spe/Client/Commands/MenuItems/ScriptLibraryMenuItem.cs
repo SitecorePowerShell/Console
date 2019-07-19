@@ -145,15 +145,14 @@ namespace Spe.Client.Commands.MenuItems
                 return;
             }
 
+            if (!RulesUtils.EvaluateRules(parent[FieldNames.ShowRule], contextItem))
+            {
+                return;
+            }
 
             foreach (var scriptItem in parent.Children.Where(p => p.IsPowerShellScript() || p.IsPowerShellLibrary()))
             {
-                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], contextItem))
-                {
-                    continue;
-                }
-
-                if (contextItem == null && !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
+                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], contextItem ?? scriptItem))
                 {
                     continue;
                 }

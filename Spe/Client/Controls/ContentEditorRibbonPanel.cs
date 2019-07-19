@@ -10,6 +10,7 @@ using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Core.Extensions;
+using Spe.Core.Modules;
 using Spe.Core.Settings.Authorization;
 using Spe.Core.Utility;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
@@ -44,6 +45,10 @@ namespace Spe.Client.Controls
                 {
                     continue;
                 }
+
+                var featureRoot = ModuleManager.GetItemModule(scriptItem)?
+                    .GetFeatureRoot(IntegrationPoints.ContentEditorRibbonFeature);
+                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.ShowRule], context.Items[0])) continue;
 
                 RenderButton(output, psButton.TemplateID, ribbon, Control.GetUniqueID("script"),
                     Translate.Text(psButton.DisplayName), scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],

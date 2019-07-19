@@ -17,10 +17,14 @@ SharedFields:
     $item = Get-Item -Path .
     if(-not $item) {
         Write-Log "The item is null."
-        return $null
+        return
     }
     
-    $tooltip = [Sitecore.Globalization.Translate]::Text("This is an interesting tooltip for the user.")
+    #$tooltip = [Sitecore.Globalization.Translate]::Text("This is an interesting tooltip for the user.")
+    $tooltip = $item."__Short description"
+    if([string]::IsNullOrEmpty($tooltip)) {
+        return
+    }
     $icon = "Office/16x16/information.png"
      
     $gutter = New-Object Sitecore.Shell.Applications.ContentEditor.Gutters.GutterIconDescriptor
@@ -36,19 +40,7 @@ SharedFields:
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
-  Value: |
-    <ruleset>
-      <rule
-        uid="{BD120BD7-FFA9-4E0C-8E8D-36331F914F4B}"
-        name="Only show for training items">
-        <conditions>
-          <condition
-            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
-            uid="E3B5DFB06FF54925ACA0DCD2F0915199"
-            itemid="{08B4BA05-759B-456A-8CA1-A00A8DB99FAD}" />
-        </conditions>
-      </rule>
-    </ruleset>
+  Value: 
 Languages:
 - Language: en
   Versions:

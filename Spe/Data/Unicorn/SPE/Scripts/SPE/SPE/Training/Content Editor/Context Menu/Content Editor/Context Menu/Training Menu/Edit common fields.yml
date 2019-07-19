@@ -1,0 +1,33 @@
+﻿---
+ID: "42c2a228-34fa-4f1b-9540-7e291eee0271"
+Parent: "dc6450e2-46b3-46df-8926-bc6bd8ce2757"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Context Menu/Content Editor/Context Menu/Training Menu/Edit common fields
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/spellcheck2.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $selectedItem = Get-Item -Path "."
+    
+    $fields = @(
+        "__Short description",
+        "__Long description"
+    )
+    $selectedItem | Show-FieldEditor -Name $fields -IncludeStandardFields -PreserveSections
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190719T144505Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
