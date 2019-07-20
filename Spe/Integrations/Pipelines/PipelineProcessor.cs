@@ -21,7 +21,7 @@ namespace Spe.Integrations.Pipelines
 
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
-                if (!libraryItem.HasChildren) return;
+                if (!libraryItem.HasChildren) continue;
 
                 foreach (var scriptItem in libraryItem.Children.Where(si => si.IsPowerShellScript() && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])))
                 {
