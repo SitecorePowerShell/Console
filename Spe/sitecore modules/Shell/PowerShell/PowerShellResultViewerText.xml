@@ -18,7 +18,7 @@
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
           <div id="HeaderIconContainer">
-            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/Logo_Square.png" Alt="" runat="server" />
+            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/spe.png" Alt="" runat="server" />
           </div>
           <Border>
             <Border Class="DialogHeader">

@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: powershell/32x32/powershell8.png
+  Value: powershell/32x32/spe.png
 - ID: "56776edf-261c-4abc-9fe7-70c618795239"
   Hint: __Help link
   Value: 
