@@ -1,0 +1,18 @@
+﻿---
+ID: "5eea1f88-a593-4d97-b119-5a81a713ccc4"
+Parent: "36dba4e2-d302-4ca9-a5c1-bef456b4629b"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Ribbon/Content Editor/Ribbon/My Awesome Toolbar/Section 1
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190722T153710Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
