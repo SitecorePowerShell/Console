@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{66068B45-2029-46F9-B768-B1D522FF7444}">
+        uid="{66068B45-2029-46F9-B768-B1D522FF7444}"
+        name="Selected item is schedules">
         <conditions>
           <condition
             id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
@@ -22,12 +23,40 @@ SharedFields:
             itemid="{A705D262-5714-4880-9962-051E25F1416D}" />
         </conditions>
       </rule>
+      <rule
+        uid="{F0D48870-20A8-4455-9FC9-7B6CAE7CD147}"
+        name="Selected item is tasks library">
+        <conditions>
+          <and
+            uid="F12525B6ED9C41DEAB76B130E8891E4A">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="D1464DD9B3CA426D97709CAF1DE98778"
+              templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+            <condition
+              id="{A4C74B82-8EBB-4BDA-BE23-B03C5BA43586}"
+              uid="CF9F41D639D549C4B0168B154D76A23E"
+              operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
+              value="Tasks" />
+          </and>
+        </conditions>
+      </rule>
     </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $parent = Get-Item -Path .
-    $item = Get-Item -Path "master:\system\Modules\PowerShell\Script Library"
+    $selectedItem = Get-Item -Path .
+    $parent = $selectedItem
+    
+    $scriptLibraryTemplate = Get-Item -Path "master:" -ID ([Spe.Templates+ScriptLibrary]::Id)
+    $scriptTemplate = Get-Item -Path "master:" -ID ([Spe.Templates+Script]::Id)
+    
+    if(
+        (Test-BaseTemplate -Item $selectedItem -TemplateItem $scriptLibraryTemplate) -or 
+        (Test-BaseTemplate -Item $selectedItem -TemplateItem $scriptTemplate)) {
+        $items = @($selectedItem)
+        $parent = Get-Item -Path "master:" -ID "{A705D262-5714-4880-9962-051E25F1416D}"
+    }
     
     $nameValidator = {
         if([string]::IsNullOrEmpty($variable.Value)){
@@ -40,6 +69,17 @@ SharedFields:
             $variable.Error = "Please select one or more scripts."
         }
     }
+    
+    $parentValidator = {
+        if(!$variable.Value) {
+            $variable.Error = "Please select a location."
+        } else {
+            $allowedTemplates = "{A87A00B1-E6DB-45AB-8B54-636FEC3B5523}","{239F9CF4-E5A0-44E0-B342-0F32CD4C6D8B}"
+            if($allowedTemplates -notcontains $variable.Value.Template.ID) {
+                $variable.Error = "Please select a parent folder for the scheduled task."
+            }
+        }
+    }
     $props = @{
         Title = "Create new scripted Schedule"
         Description = "Creates a new schedule for a task that will execute a script from your PowerShell Script Library"
@@ -50,6 +90,7 @@ SharedFields:
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Parameters = @(
             @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"; Validator = $nameValidator; },
+            @{ Name = "parent"; Title = "Scheduled task location"; Source = "DataSource={A705D262-5714-4880-9962-051E25F1416D}"; editor="droplink"; Validator = $parentValidator; }
             @{ Name = "items"; Title="Scripts to Run"; Tooltip = "Choose from one of the existing scripts."; 
                 Source="DataSource={A3572733-5062-43E9-A447-54698BC1C637}&DatabaseName=master&IncludeTemplatesForSelection={DD22F1B3-BD87-4DB2-9E7D-F7A496888D43},{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}"; 
                 editor="treelist"; Height="300px"; Validator = $itemValidator; }
