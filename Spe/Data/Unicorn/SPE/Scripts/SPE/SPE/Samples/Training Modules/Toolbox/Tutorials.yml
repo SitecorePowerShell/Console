@@ -1,13 +1,28 @@
 ﻿---
 ID: "79909674-755f-4285-a973-e476889c282f"
-Parent: "e16d0fba-7608-42d6-ac48-b3edb4ead1c1"
+Parent: "7778c3e6-fd4f-4d55-a410-361301397e42"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Toolbox/Toolbox/Tutorials
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Training Modules/Toolbox/Tutorials
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/stairs_up.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $response = Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Enable"; btn_1="Disable"; btn_2="Cancel"; te="Would you like to enable the Sitecore PowerShell Extensions training modules?"; cp="SPE Training"} -Height 120 -Width 650
+    if($response -eq "btn_2") {
+        exit
+    }
+    
+    $moduleEnabled = @{"btn_0"=$true;"btn_1"=$false}[$response]
+    $trainingRootId = "{08B4BA05-759B-456A-8CA1-A00A8DB99FAD}"
+    Get-ChildItem -Path "master:" -ID $trainingRootId -Recurse -Depth 1 | 
+        Where-Object { $_.TemplateId -eq [Spe.Templates+ScriptModule]::Id } |
+        ForEach-Object { $_.Enabled = $moduleEnabled }
+        
+    Get-Item master: -ID "{07C20F9F-7C76-4C13-8166-427A57002FF8}" | Invoke-Script -ArgumentList $true
 Languages:
 - Language: da
   Fields:

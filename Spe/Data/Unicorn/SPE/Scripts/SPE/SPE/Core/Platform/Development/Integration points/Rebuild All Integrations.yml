@@ -8,6 +8,9 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    param(
+        [bool]$HideResults = $false
+    )
     $integrations = Get-ChildItem -Path "master:{9BE73650-A188-4802-A68E-E720DB54C5E9}" # |% { "$($_.Message)" }
     
     $i = 0;
@@ -19,7 +22,10 @@ SharedFields:
       Execute-Script -Item $integration
     }
     Write-Progress -Completed -Activity "Completed rebuilding all integrations"
-    Show-Result -Text
+    
+    if(!$hideResults) {
+        Show-Result -Text
+    }
     Close-Window
 Languages:
 - Language: en
