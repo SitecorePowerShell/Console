@@ -18,7 +18,7 @@ namespace Spe.Core.Utility
                 stopWatch.Stop();
                 if (log)
                 {
-                    PowerShellLog.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
+                    PowerShellLog.Debug($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
                 }
                 return result;
             }
