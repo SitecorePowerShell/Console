@@ -3,6 +3,7 @@ using Sitecore.Data.Items;
 using Sitecore.Tasks;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
+using Spe.Core.Modules;
 using Spe.Core.Settings;
 using Spe.Core.Utility;
 
@@ -23,6 +24,10 @@ namespace Spe.Integrations.Tasks
 
         private static void ProcessTaskItem(Item item, ScriptSession session)
         {
+            var featureRoot = ModuleManager.GetItemModule(item)?
+                .GetFeatureRoot(IntegrationPoints.TasksFeature);
+            if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.EnableRule], item)) return;
+
             var queue = new Queue<Item>();
             queue.Enqueue(item);
 

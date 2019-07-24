@@ -4,6 +4,23 @@ Parent: "3d7066b8-acdc-47c2-a5fe-d2f6f30eb525"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Scheduled Tasks/Tasks
 DB: master
+SharedFields:
+- ID: "05eecf47-0bb9-4b85-b926-0bc6dd987ec8"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{D082D412-628C-4E3B-AB7C-011F358065C7}"
+        name="Only run in November">
+        <conditions>
+          <condition
+            id="{F27973B0-4439-48F6-AC06-ED2C2F31AC61}"
+            uid="278857D2773D465585FAECFC7DD65FAD"
+            Month="{E8C4C101-EB3A-4B83-8508-B0B5190F4FFC}" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:
