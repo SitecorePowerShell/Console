@@ -23,6 +23,8 @@ namespace Spe.Integrations.Pipelines
             {
                 if (!libraryItem.HasChildren) continue;
 
+                if (!RulesUtils.EvaluateRules(libraryItem[Templates.ScriptLibrary.Fields.EnableRule], libraryItem)) continue;
+
                 foreach (var scriptItem in libraryItem.Children.Where(si => si.IsPowerShellScript() && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])))
                 {
                     if (!RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], scriptItem)) continue;

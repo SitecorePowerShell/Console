@@ -4,6 +4,24 @@ Parent: "9121fba6-262a-4a40-a647-8b6f6c6deed7"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Pipelines/Pipelines/LoggedIn
 DB: master
+SharedFields:
+- ID: "05eecf47-0bb9-4b85-b926-0bc6dd987ec8"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{B0211F17-0AB2-44BB-AD07-A120DD4A4D28}"
+        name="Only sitecore domain users">
+        <conditions>
+          <condition
+            id="{F9EFD6A0-E8A7-45D7-A153-6FCC851794E8}"
+            uid="04FD4D17B8CB458098DCEBA5E172A235"
+            value="sitecore"
+            operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:
