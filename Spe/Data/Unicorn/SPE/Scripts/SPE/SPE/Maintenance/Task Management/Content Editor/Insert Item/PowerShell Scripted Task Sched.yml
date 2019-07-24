@@ -27,18 +27,25 @@ SharedFields:
         uid="{F0D48870-20A8-4455-9FC9-7B6CAE7CD147}"
         name="Selected item is tasks library">
         <conditions>
-          <and
-            uid="F12525B6ED9C41DEAB76B130E8891E4A">
+          <or
+            uid="4D1FB4E29A534462A73C67E3CCBEF66D">
             <condition
               id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
-              uid="D1464DD9B3CA426D97709CAF1DE98778"
-              templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
-            <condition
-              id="{A4C74B82-8EBB-4BDA-BE23-B03C5BA43586}"
-              uid="CF9F41D639D549C4B0168B154D76A23E"
-              operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
-              value="Tasks" />
-          </and>
+              uid="7E511A835B504E69B8CA6A0E53D8B0F0"
+              templateid="{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" />
+            <and
+              uid="EE1553DBBE7D4A01ACE20EB68A337B2C">
+              <condition
+                id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                uid="D1464DD9B3CA426D97709CAF1DE98778"
+                templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+              <condition
+                id="{A4C74B82-8EBB-4BDA-BE23-B03C5BA43586}"
+                uid="CF9F41D639D549C4B0168B154D76A23E"
+                operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
+                value="Tasks" />
+            </and>
+          </or>
         </conditions>
       </rule>
     </ruleset>
