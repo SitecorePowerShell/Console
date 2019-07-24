@@ -41,7 +41,9 @@ namespace Spe.Integrations.Tasks
 
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.EventHandlersFeature))
             {
-                var libraryItem = root.Paths.GetSubItem(eventName);
+                if (!RulesUtils.EvaluateRules(root?[Templates.ScriptLibrary.Fields.EnableRule], item)) continue;
+
+                var libraryItem = root?.Paths.GetSubItem(eventName);
 
                 var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
                 if (applicableScriptItems == null || !applicableScriptItems.Any())

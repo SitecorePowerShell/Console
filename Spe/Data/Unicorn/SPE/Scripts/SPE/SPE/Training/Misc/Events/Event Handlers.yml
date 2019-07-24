@@ -4,6 +4,24 @@ Parent: "71441d01-ed5f-4bfb-ac88-5a6e6a876503"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers
 DB: master
+SharedFields:
+- ID: "05eecf47-0bb9-4b85-b926-0bc6dd987ec8"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{E114DB39-3E83-4125-9847-5684883FAE4E}"
+        name="Only for sitecore domain users">
+        <conditions>
+          <condition
+            id="{F9EFD6A0-E8A7-45D7-A153-6FCC851794E8}"
+            uid="EC3B4083C94B4728B736160BE1DBE6E3"
+            value="sitecore"
+            operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:
