@@ -2,12 +2,15 @@
 ID: "9fbdd9a8-278a-4949-a237-dc6709c67749"
 Parent: "02bd31b0-ced3-46f4-ab42-11bdfd8d967c"
 Template: "e269fbb5-3750-427a-9149-7aa950b49301"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Interactive
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/window_gear.png
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 75
 - ID: "e2e2b75d-a2f7-4075-bde2-d13306e9e350"
   Hint: Collapsed by Default
   Type: checkbox

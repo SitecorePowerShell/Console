@@ -5,6 +5,9 @@ Template: "02bd31b0-ced3-46f4-ab42-11bdfd8d967c"
 Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/__Standard Values
 DB: master
 SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
 - ID: "bdc2fcbc-91ee-4135-bb04-196e3ae683e5"
   Hint: Type
   Value: Spe.Integrations.Workflows.ScriptAction, Spe

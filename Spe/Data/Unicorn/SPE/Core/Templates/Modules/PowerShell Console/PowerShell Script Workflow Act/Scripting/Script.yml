@@ -1,19 +1,19 @@
 ﻿---
-ID: "d51cfe9b-67d9-40c3-9aa7-31456fb9aefb"
-Parent: "9fbdd9a8-278a-4949-a237-dc6709c67749"
+ID: "cd8da5e2-3b65-4a14-b7a6-9f41181ce172"
+Parent: "4b7a8761-d909-4459-a86a-d57a9dedde89"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/EnableRule
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Scripting/Script
 DB: master
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: rulespath=/sitecore/system/Settings/Rules/PowerShell&hideactions=true&allowmultiple=true
+  Value: "DataSource={A3572733-5062-43E9-A447-54698BC1C637}"
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
-  Value: Rules
+  Value: Droptree
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 700
+  Value: 100
 - ID: "be351a73-fcb0-4213-93fa-c302d8ab4f51"
   Hint: Shared
   Type: Checkbox
@@ -23,13 +23,10 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Eksekver kun hvis reglerne er opfyldt eller ikke er definerede
-  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
-    Hint: __Long description
-    Value: Slået til status bliver evalueret for at bestemme om handlingen skal udføres.
+    Value: Script hoveddel
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Bestemmer slået til status, når regel er opfyldt eller ikke er defineret
+    Value: Kildekode skrevet i PowerShell
   Versions:
   - Version: 1
     Fields:
@@ -44,19 +41,16 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Execute only if rules are met or undefined
-  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
-    Hint: __Long description
-    Value: Enabled status is evaluated to determine when the action should be run.
+    Value: Script
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Determines enabled status when rule is met or not defined
+    Value: link to item under the Script Library
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130818T052300Z
+      Value: 20111128T194400Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
@@ -65,7 +59,7 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: ルールが設定もしくは未設定の場合のみ実行
+    Value: スクリプト本文
   Versions:
   - Version: 1
     Fields:
