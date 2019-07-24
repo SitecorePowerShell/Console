@@ -2,7 +2,7 @@
 ID: "1511a017-8304-4965-9aac-93c7c12cae13"
 Parent: "dc6450e2-46b3-46df-8926-bc6bd8ce2757"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Context Menu/Content Editor/Context Menu/Training Menu/Training Message
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Content Editor/Context Menu/Content Editor/Context Menu/Training Menu/Enabled
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
@@ -33,7 +33,7 @@ Languages:
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: Training Message
+    Value: Enabled
   Versions:
   - Version: 1
     Fields:
