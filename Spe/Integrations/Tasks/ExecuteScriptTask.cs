@@ -39,7 +39,7 @@ namespace Spe.Integrations.Tasks
                 }
                 else if (currentItem.IsPowerShellLibrary() && currentItem.HasChildren)
                 {
-                    if (!RulesUtils.EvaluateRules(currentItem[Templates.Script.Fields.EnableRule], currentItem)) continue;
+                    if (!RulesUtils.EvaluateRules(currentItem[Templates.ScriptLibrary.Fields.EnableRule], currentItem)) continue;
 
                     var children = currentItem.Children.ToArray();
                     foreach (var child in children)
