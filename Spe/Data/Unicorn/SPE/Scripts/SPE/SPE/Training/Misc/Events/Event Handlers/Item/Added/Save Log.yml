@@ -12,6 +12,22 @@ SharedFields:
     $item = $eventArgs.Parameters[0]
     "$($eventArgs.EventName) : $($item.Database.Name):$($item.Paths.Path)" >> "$($logFileName)"
     
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{2F666AF6-89A0-4E5D-B063-BD966DA11476}"
+        name="Only items added under home">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="A788EE68B6B946D4AB278D2F9805741B"
+            itemid="{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:
