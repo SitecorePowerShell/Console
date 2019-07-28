@@ -20,6 +20,15 @@
         { 
             "project": "Spe.Package",
             "minVersion": 0            
+        },
+        { 
+            "project": "Spe.Sitecore8",
+            "minVersion": 0,
+            "maxVersion": 9.1
+        },
+        { 
+            "project": "Spe.Sitecore92",
+            "minVersion": 9.2            
         }
     ],
     "sitesDefault": {
