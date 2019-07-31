@@ -14,9 +14,6 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
-  <PropertyGroup>
-    <ProjectDeployPath>$(TempDeployPath)\Spe.Sitecore92</ProjectDeployPath>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -68,9 +65,6 @@
     <AssemblyFiles Include="$(TargetDir)Spe*.*">
       <Visible>false</Visible>
     </AssemblyFiles>
-	<ProjectDeployPathFiles Include="$(ProjectDeployPath)\**\*.*">
-      <Visible>false</Visible>
-    </ProjectDeployPathFiles>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spe.Abstractions\Spe.Abstractions.csproj">
@@ -78,11 +72,4 @@
       <Name>Spe.Abstractions</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup>
-    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
-  </PropertyGroup>
-  <Target Name="AfterBuild">
-    <Copy SourceFiles="@(AssemblyFiles)" DestinationFolder="$(ProjectDeployPath)\bin" ContinueOnError="true" />
-    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
-  </Target>  
 </Project>
