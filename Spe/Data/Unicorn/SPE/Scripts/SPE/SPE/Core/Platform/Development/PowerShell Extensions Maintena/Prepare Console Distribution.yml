@@ -68,104 +68,10 @@ SharedFields:
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
-    
-    # Item templates
-    $source = Get-Item 'master:\templates\Modules' | New-ExplicitItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
-    $package.Sources.Add($source);
-    $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Module Root
-    $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
-    $package.Sources.Add($source);
-    
-    # Colors
-    $source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Fonts
-    $source = Get-Item 'master:\system\Modules\PowerShell\Fonts' | New-ItemSource -Name "Master Fonts" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Tag Definition
-    $source = Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | New-ItemSource -Name "Rules - Tag Definition" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Ise Plugins Tag Definition
-    $source = Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell ISE" | New-ItemSource -Name "ISE Plugin Rules - Tag Definition" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Ise Experience Buttons Tag Definition
-    $source = Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | New-ItemSource -Name "ISE Experience Buttons Rules - Tag Definition" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Rules
-    $source = Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | New-ItemSource -Name "Rules" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Ise Experience Buttons Rules
-    $source = Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | New-ItemSource -Name "Ise Experience Buttons Rules" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Ise Plugin Rules
-    $source = Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | New-ItemSource -Name "Ise Plugin Rules" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Security Rules
-    $source = Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell Security" | New-ItemSource -Name "Security Rules" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Rules Engine - Source Definition
-    $source = Get-Item "master:/system/Settings/Rules/PowerShell" | New-ItemSource -Name "Rules Source" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Script Library
-    $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
-    $package.Sources.Add($source);
-    $source = Get-Item 'master:\system\Modules\PowerShell\Script Library\SPE' | New-ItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
-    $package.Sources.Add($source);
-    
-    # Settings
-    $source = @(Get-Item -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem "All Users" -Path "master:\system\Modules\PowerShell\Settings" -Recurse) | New-ExplicitItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
-    $package.Sources.Add($source);
-    
-    # Snippets
-    $source = @(Get-Item -Path "master:\system\Modules\PowerShell\Snippets") + (Get-ChildItem -Path "master:\system\Modules\PowerShell\Snippets" -Recurse) | New-ExplicitItemSource -Name "Snippets" -InstallMode Merge -MergeMode Clear
-    $package.Sources.Add($source);
-    
-    # Applications
-    $source = Get-Item "core:\content\Applications\PowerShell" | New-ItemSource -Name "Applications" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # PowerShell Dictionary - translation strings
-    $source = Get-Item "core:\system\Dictionary\PowerShell" | New-ItemSource -Name "Applications" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Application Layouts
-    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent |
-        Where-Object { $_.ID -ne "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" <# Skip Reporting #> } |
-        New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Start Menu
-    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/' -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Content Editor Context Menu integration
-    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/' -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Merge -MergeMode Clear
-    $package.Sources.Add($source);
-    $source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
-    $package.Sources.Add($source);
-    
-    # LaunchPad
-    if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
-    $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    }
-    
-    # Task Integration
-    $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
-    $package.Sources.Add($source);
+    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package
+    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package
+    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package
+    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package
     
     # Files
     $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
@@ -185,11 +91,6 @@ SharedFields:
     $package.Sources.Add($source);
     $source = Get-Item -Path "$AppPath\sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" | New-ExplicitFileSource -Name "Product Version File"
     $package.Sources.Add($source);
-    
-    #Security Roles
-    $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Remoting Role" 
-    $package.Sources.Add($source);
-    
     
     $packageName = "$($package.Name)-$Version" -replace " ",".";
     Export-Package -Project $package -Path "$packageName.xml"
@@ -243,24 +144,7 @@ SharedFields:
     https://michaellwest.blogspot.com/
     "@
     
-    # Item templates
-    $source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Authorable Reports
-    $source = Get-Item -Path "master:" -ID "{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}" | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Application Layouts
-    $source = Get-Item 'core:' -ID "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    # Applications
-    $source = Get-Item "core:" -ID "{26FB797C-ED1F-4C34-8EA2-E339686855BC}" | New-ItemSource -Name "Applications" -InstallMode Overwrite
-    $package.Sources.Add($source);
-    
-    $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
-    $package.Sources.Add($source);
+    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package
     
     $packageName = "$($package.Name)-$Version" -replace " - ","-" -replace " ",".";
     Export-Package -Project $package -Path "$packageName.zip" -Zip
