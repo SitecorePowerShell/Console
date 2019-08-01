@@ -2,7 +2,7 @@
 ID: "0ee202e0-64d4-4821-a9e9-94e9fd8b9b14"
 Parent: "7785d84e-d395-4152-9988-90bda5cbe473"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Content Editor/Insert Item
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Content Editor/Insert Item
 DB: master
 Languages:
 - Language: en

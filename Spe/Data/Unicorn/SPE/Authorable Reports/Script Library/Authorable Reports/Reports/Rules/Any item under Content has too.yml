@@ -2,7 +2,7 @@
 ID: "246cf1b3-1f49-42ff-8f51-9f6279397251"
 Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules/Any item under Content has too many versions
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Any item under Content has too many versions
 DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"

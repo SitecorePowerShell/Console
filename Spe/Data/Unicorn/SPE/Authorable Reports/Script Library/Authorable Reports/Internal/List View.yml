@@ -2,7 +2,7 @@
 ID: "237c30e0-5324-43eb-b067-55af62ab21b4"
 Parent: "6fdfa7dd-ed6a-4d37-826b-abc05ea0729f"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View
 DB: master
 Languages:
 - Language: en

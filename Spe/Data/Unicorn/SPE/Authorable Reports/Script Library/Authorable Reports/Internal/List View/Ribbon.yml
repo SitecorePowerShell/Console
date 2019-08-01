@@ -2,7 +2,7 @@
 ID: "ab86b0aa-d9aa-4ab5-8714-15620207e09b"
 Parent: "237c30e0-5324-43eb-b067-55af62ab21b4"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon
 DB: master
 Languages:
 - Language: en

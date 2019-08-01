@@ -2,7 +2,7 @@
 ID: "fe29e5c3-7a3f-44e6-81f4-f22ddec3cfae"
 Parent: "0ee202e0-64d4-4821-a9e9-94e9fd8b9b14"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Content Editor/Insert Item/PowerShell Rule Library
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Content Editor/Insert Item/PowerShell Rule Library
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

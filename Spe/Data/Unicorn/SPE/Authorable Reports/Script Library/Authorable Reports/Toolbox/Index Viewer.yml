@@ -2,7 +2,7 @@
 ID: "2805c06c-f17d-4c8e-813d-7304564078eb"
 Parent: "b85e2336-26ab-47a7-b2bf-91cde1a7e3ba"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Toolbox/Index Viewer
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Toolbox/Index Viewer
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

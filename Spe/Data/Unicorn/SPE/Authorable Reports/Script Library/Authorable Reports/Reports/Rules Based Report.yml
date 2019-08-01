@@ -2,7 +2,7 @@
 ID: "f0a00908-b86c-4a32-a824-96d78a1c76aa"
 Parent: "8cdf08aa-a2c0-4eb0-8ae5-979b61b4823e"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules Based Report
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules Based Report
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

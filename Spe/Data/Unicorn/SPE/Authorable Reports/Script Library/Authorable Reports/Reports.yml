@@ -2,7 +2,7 @@
 ID: "8cdf08aa-a2c0-4eb0-8ae5-979b61b4823e"
 Parent: "1bbd1a29-8a08-413d-8f6e-01d3ec017f4d"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports
 DB: master
 SharedFields:
 - ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"

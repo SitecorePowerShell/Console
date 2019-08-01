@@ -2,7 +2,7 @@
 ID: "99839b36-9947-4cd9-b6ea-f4e59ea972a0"
 Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules/Media item with empty Alt field
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Media item with empty Alt field
 DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"

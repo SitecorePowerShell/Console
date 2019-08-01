@@ -2,7 +2,7 @@
 ID: "d7a1fed5-d7f3-4fb2-b1d0-1c08f94eaabb"
 Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules/Media item is jpeg
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Media item is jpeg
 DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"

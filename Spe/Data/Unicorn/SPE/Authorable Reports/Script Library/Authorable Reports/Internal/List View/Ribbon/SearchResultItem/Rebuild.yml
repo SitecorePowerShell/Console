@@ -2,7 +2,7 @@
 ID: "e9cdd2d4-0faa-4fe2-802d-f686749ca236"
 Parent: "7b295589-1a67-4d17-9e21-acc9fbe3a705"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
