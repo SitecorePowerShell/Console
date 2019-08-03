@@ -1,9 +1,13 @@
 ﻿---
-ID: "2af0c2f0-55a5-4db8-8495-e13570ead007"
-Parent: "9f3eea96-cec8-4c7d-b26b-6d15ab654af1"
+ID: "4994ef26-3caf-469b-9e94-81f3c4aaf84a"
+Parent: "10026e5d-4e80-4d2a-af52-850e815ae268"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Web API
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Dialogs/Script Runner
 DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
 Languages:
 - Language: en
   Versions:
@@ -11,7 +15,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20181229T133202Z
+      Value: 20190803T035445Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

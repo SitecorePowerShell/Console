@@ -22,9 +22,13 @@ SharedFields:
     - Licensing expiring in 14 days
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Demonstrates how to notify users users in the Content Editor and Experience Editor when the license is about to expire. You can also send out an email by setting up the scheduled task.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20150531T224625
+      Value: 20150601T034625Z

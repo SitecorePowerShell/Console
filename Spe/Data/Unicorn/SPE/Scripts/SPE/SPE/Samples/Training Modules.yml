@@ -14,6 +14,10 @@ SharedFields:
   Value: 1
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Provides a way to enable or disable the Training modules.
   Versions:
   - Version: 1
     Fields:

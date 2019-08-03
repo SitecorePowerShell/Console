@@ -1,0 +1,65 @@
+﻿---
+ID: "7cc5f576-fa33-4773-b94e-22dc9ceeab8d"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Which templates define the layout on Standard Values
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/desk_lamp.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Based on Blog by @Techphoria414 - Nick Wesselman
+        http://www.techphoria414.com/Blog/2012/September/Use_Sitecore_Powershell_to_Find_Templates_with_Layout
+    #>
+    
+    $layout = Get-Item -Path "master:\layout\Layouts\Sample Layout"
+    $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    $dialogProps = @{
+        Title = "Layout Usage"
+        OkButtonName = "Find"
+        CancelButtonName = "Abort"
+        Icon = $icon
+        Description = "This report analyses all of the templates with a reference to the specified layout."
+        Parameters = @(
+            @{ Name = "layout"; Title="Layout"; Root="/sitecore/layout/Layouts/"; Tooltip="Layout you want to find."}
+        )
+    }
+    $result = Read-Variable @dialogProps
+    
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $items = Get-ItemReferrer -Item $layout | Where-Object { $_.ItemPath.StartsWith("/sitecore/templates") }
+    if($items.Count -eq 0) {
+        Show-Alert "There are no items matching the specified criteria."
+    } else {
+        $props = @{
+            Title = "Layout Usage Report"
+            InfoTitle = "Layout usage for each template"
+            InfoDescription = "The report shows all Standard Values items with a reference to the $($layout.Name) layout."
+            Property = @(
+                @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+            )
+        }
+        
+        $items | Show-ListView @props
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130902T151027Z

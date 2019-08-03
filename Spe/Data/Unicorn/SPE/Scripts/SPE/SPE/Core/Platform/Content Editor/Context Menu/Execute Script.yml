@@ -1,0 +1,84 @@
+﻿---
+ID: "33810b7c-d762-45f2-a232-2372c30da86b"
+Parent: "149d1017-b71f-4253-9f1c-1c293198ff2c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Execute Script
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/media_play.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{17BC996A-7C80-4E57-8B3F-AA25991323E5}"
+        name="Only show for scripts as developer">
+        <conditions>
+          <and
+            uid="ECA2DC8BE8834514BF02D7B7118042DB">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="7681EF380666442A8301B668E1BD28B8"
+              templateid="{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" />
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="A5EDEDBA90764FEBB51C030F8B69BBC3"
+              value="sitecore\Developer" />
+          </and>
+        </conditions>
+      </rule>
+      <rule
+        uid="{A414A4C5-090D-4CF5-89EA-2706415F4BC2}"
+        name="Only show for scripts as administrator">
+        <conditions>
+          <and
+            uid="1C953375DD6A48FE978B6C4FD9A5601F">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="58EF87301CFC439A9514F219747F416E"
+              templateid="{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" />
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="94BA4A39EB244351944290259D9BDE15" />
+          </and>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Close-Window
+    $selectedItem = Get-Item -Path "."
+    Start-ScriptSession -Item $selectedItem -Interactive -AutoDispose
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{7BE43515-7EA9-4F52-B7C3-83FC9E4C414D}"
+        name="Disable for this item">
+        <conditions>
+          <condition
+            id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}"
+            uid="DFC59E85D1EF4495A54FE88D3DDCEC47"
+            operatorid="{A6AC5A6B-F409-48B0-ACE7-C3E8C5EC6406}"
+            value="{33810B7C-D762-45F2-A232-2372C30DA86B}" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190803T032703Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

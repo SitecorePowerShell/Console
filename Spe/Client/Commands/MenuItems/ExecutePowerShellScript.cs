@@ -49,12 +49,11 @@ namespace Spe.Client.Commands.MenuItems
             {
                 Context.ClientPage.SendMessage(this, $"item:refresh(id={itemId})");
                 Context.ClientPage.SendMessage(this, $"item:refreshchildren(id={itemId})");
-                if (args.HasResult && !args.Result.IsNullOrEmpty())
+                if (!args.HasResult || args.Result.IsNullOrEmpty()) return;
+
+                foreach (var closeMessage in args.Result.Split('\n'))
                 {
-                    foreach (var closeMessage in args.Result.Split('\n'))
-                    {
-                        Context.ClientPage.ClientResponse.Timer(closeMessage, 2);
-                    }
+                    Context.ClientPage.ClientResponse.Timer(closeMessage, 2);
                 }
             }
             else

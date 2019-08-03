@@ -92,51 +92,51 @@ namespace Spe.Client.Applications
 
         public string PageId
         {
-            get { return StringUtil.GetString(ServerProperties["PageId"]); }
-            set { ServerProperties["PageId"] = value; }
+            get => StringUtil.GetString(ServerProperties["PageId"]);
+            set => ServerProperties["PageId"] = value;
         }
 
         public string PageLang
         {
-            get { return StringUtil.GetString(ServerProperties["PageLang"]); }
-            set { ServerProperties["PageLang"] = value; }
+            get => StringUtil.GetString(ServerProperties["PageLang"]);
+            set => ServerProperties["PageLang"] = value;
         }
 
         public string PageVer
         {
-            get { return StringUtil.GetString(ServerProperties["PageVer"]); }
-            set { ServerProperties["PageVer"] = value; }
+            get => StringUtil.GetString(ServerProperties["PageVer"]);
+            set => ServerProperties["PageVer"] = value;
         }
 
         public bool CallerFullScreen
         {
-            get { return StringUtil.GetString(ServerProperties["CallerFullScreen"]) == "1"; }
-            set { ServerProperties["CallerFullScreen"] = value ? "1" : string.Empty; }
+            get => StringUtil.GetString(ServerProperties["CallerFullScreen"]) == "1";
+            set => ServerProperties["CallerFullScreen"] = value ? "1" : string.Empty;
         }
         
         public bool HasScript
         {
-            get { return StringUtil.GetString(ServerProperties["HasScript"]) == "1"; }
-            set { ServerProperties["HasScript"] = value ? "1" : string.Empty; }
+            get => StringUtil.GetString(ServerProperties["HasScript"]) == "1";
+            set => ServerProperties["HasScript"] = value ? "1" : string.Empty;
         }
 
         public string ScriptId
         {
-            get { return StringUtil.GetString(ServerProperties["ScriptId"]); }
-            set { ServerProperties["ScriptId"] = value; }
+            get => StringUtil.GetString(ServerProperties["ScriptId"]);
+            set => ServerProperties["ScriptId"] = value;
         }
 
         public string RenderingId
         {
-            get { return StringUtil.GetString(ServerProperties["RenderingId"]); }
-            set { ServerProperties["RenderingId"] = value; }
+            get => StringUtil.GetString(ServerProperties["RenderingId"]);
+            set => ServerProperties["RenderingId"] = value;
         }
 
 
         public string ScriptDb
         {
-            get { return StringUtil.GetString(ServerProperties["ScriptDb"]); }
-            set { ServerProperties["ScriptDb"] = value; }
+            get => StringUtil.GetString(ServerProperties["ScriptDb"]);
+            set => ServerProperties["ScriptDb"] = value;
         }
 
         protected Item CurrentItem
@@ -165,8 +165,8 @@ namespace Spe.Client.Applications
 
         public bool MonitorActive
         {
-            get { return Monitor.Active; }
-            set { Monitor.Active = value; }
+            get => Monitor.Active;
+            set => Monitor.Active = value;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -296,7 +296,7 @@ namespace Spe.Client.Applications
         private void MonitorOnJobFinished(object sender, EventArgs e)
         {
             var args = e as SessionCompleteEventArgs;
-            var result = args.RunnerOutput;
+            var result = args?.RunnerOutput;
 
             var printResults = result?.Output ??
                                Texts.PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_;
@@ -311,9 +311,8 @@ namespace Spe.Client.Applications
                 .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
                 .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
 
-            SheerResponse.Eval(string.Format("spe.scriptFinished('#progressbar',{0},{1});",
-                (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
-                result.HasErrors.ToString().ToLowerInvariant()));
+            SheerResponse.Eval(
+                $"spe.scriptFinished('#progressbar',{(!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant()},{result.HasErrors.ToString().ToLowerInvariant()});");
 
             Title.Text = "Done!";
             OkButton.Visible = true;
@@ -392,7 +391,7 @@ namespace Spe.Client.Applications
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
 
-            bool isSitecore8 = CurrentVersion.IsAtLeast(SitecoreVersion.V80);
+            var isSitecore8 = CurrentVersion.IsAtLeast(SitecoreVersion.V80);
             PsProgressStatus.Visible = showStatus && isSitecore8;
             Subtitle.Visible = showStatus && !isSitecore8;
 
@@ -414,7 +413,7 @@ namespace Spe.Client.Applications
 
                 if (!string.IsNullOrEmpty(CurrentProgressValue.Text))
                 {
-                    var percentComplete = Int32.Parse(CurrentProgressValue.Text);
+                    var percentComplete = int.Parse(CurrentProgressValue.Text);
                     percentComplete = Math.Max(percentComplete, 100);
                     SheerResponse.Eval($@"spe.updateProgress('#progressbar',{percentComplete});");
                 }
@@ -430,7 +429,7 @@ namespace Spe.Client.Applications
 
                 if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
                 {
-                    var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                    var secondsRemaining = int.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
                         sb.AppendFormat(
                             "<span class='timeRemaining'><span class='label'>" +
