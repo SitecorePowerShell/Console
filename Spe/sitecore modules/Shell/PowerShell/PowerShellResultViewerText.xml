@@ -47,9 +47,7 @@
         (function($) {
           $(function() {
             var currentYear = (new Date()).getFullYear();
-            var greetings = "Copyright &amp;copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.";
-            console.log(greetings);
-            console.log($('.credits'));
+            var greetings = "Copyright &#169; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.";
             $('.credits').html(greetings);
           });
         }($viewer));
