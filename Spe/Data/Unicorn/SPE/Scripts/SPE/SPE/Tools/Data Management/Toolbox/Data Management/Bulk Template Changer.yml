@@ -21,13 +21,21 @@ SharedFields:
     
     $sourceTemplate = Get-Item 'master:\templates\Sample\Sample Item'
     $targetTemplate = Get-Item 'master:\templates\Sample\Sample Item'
-    $result = Read-Variable -Parameters `
-        @{ Name = "root"; Title="Branch to work on"; Root="/sitecore/"; Tooltip="Items you want to work on."}, `
-        @{ Name = "sourceTemplate"; Title="Current template"; Root="/sitecore/templates/"; Tooltip="Template you want to replace."}, `
-        @{ Name = "targetTemplate"; Title="New template"; Root="/sitecore/templates/"; Tooltip="Template you want to use."} `
-        -Description "This report will replace template on all items in the tree with another template of your choice" `
-        -Title "Branch Template Replace" -Width 500 -Height 400 `
-        -OkButtonName "Replace" -CancelButtonName "Cancel" 
+    
+    $dialogProps = @{
+        Title = "Bulk Template Changer"
+        Description = "This will change all items matching the source template with the new target template."
+        OkButtonName = "Replace"
+        CancelButtonName = "Cancel"
+        Icon = "OfficeWhite/32x32/arrow_circle2.png"
+        ShowHints = $true
+        Parameters = @(
+            @{ Name = "root"; Title="Branch to work on"; Root="/sitecore/"; Tooltip="Items you want to work on."},
+            @{ Name = "sourceTemplate"; Title="Current template"; Root="/sitecore/templates/"; Tooltip="Template you want to replace."},
+            @{ Name = "targetTemplate"; Title="New template"; Root="/sitecore/templates/"; Tooltip="Template you want to use."}
+        )
+    }
+    $result = Read-Variable @dialogProps
     
     if($result -ne "ok") {
         Exit
@@ -37,9 +45,8 @@ SharedFields:
     
     $targetTemplateItem = New-Object -TypeName "Sitecore.Data.Items.TemplateItem" -ArgumentList $targetTemplate
     
-    $items = Get-ChildItem $path -Recurse | 
-        Where-Object { $_.TemplateID -eq $sourceTemplate.ID }
-    $items | ForEach-Object { $_.ChangeTemplate($targetTemplateItem) }
+    $items = Get-ChildItem $path -Recurse | Where-Object { $_.TemplateID -eq $sourceTemplate.ID }
+    $items | Set-ItemTemplate -TemplateItem $targetTemplateItem
     
     if($items.Count -eq 0) {
         Show-Alert "There are no items matching the specified criteria."

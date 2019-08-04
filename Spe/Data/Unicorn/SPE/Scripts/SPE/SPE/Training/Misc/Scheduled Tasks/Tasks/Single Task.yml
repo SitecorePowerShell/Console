@@ -9,6 +9,13 @@ SharedFields:
   Hint: Script
   Value: |
     Write-Log "Single Task"
+    1..100 | ForEach-Object {
+        [Sitecore.Context]::Job.Status.Processed = $_ 
+        [Sitecore.Context]::Job.Status.Messages.Add("Processed item $($_)") > $null
+    }
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 0
 Languages:
 - Language: da
   Fields:
