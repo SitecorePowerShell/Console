@@ -101,6 +101,7 @@ SharedFields:
     } 
     
     $stdOptions = [ordered]@{
+        "ID" = "ID"
         "Display Name" = "DisplayName"
         "ItemPath" = "ItemPath"
         "Name" = "Name"
@@ -132,6 +133,7 @@ SharedFields:
     }
     
     $defaultFields = $ruleItems[$ruleIndex].DefaultFields.Split("|")
+    
     $customFields = $defaultFields
     $saveSettings = $false
     if($showFieldSelector) {
@@ -153,6 +155,10 @@ SharedFields:
         if($result -eq "cancel"){
             Close-Window
             exit
+        }
+    } else {
+        if(!$defaultFields) {
+            $defaultFields = @("ID","Name","ItemPath")
         }
     }
     
@@ -178,6 +184,7 @@ SharedFields:
             $imageField = [Sitecore.Data.Fields.ImageField]$typedField
             if($imageField) {
                 $mediaID = $imageField.MediaID
+                if($mediaID -eq [guid]::Empty) { return "" }
                 if((Test-Path -Path "master:$($mediaID)")) {
                     $mediaItem = Get-Item -Path "master:" -ID $mediaID
                     return $mediaItem.ItemPath

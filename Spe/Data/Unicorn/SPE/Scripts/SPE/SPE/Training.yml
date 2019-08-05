@@ -7,9 +7,12 @@ DB: master
 Languages:
 - Language: en
   Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: "Check out working examples to help you along with your exploration of SPE!"
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: "Check out working examples to help you along your exploration of SPE!"
+    Value: 
   Versions:
   - Version: 1
     Fields:

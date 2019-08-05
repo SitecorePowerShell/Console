@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{91AD1EDC-9850-48C3-8D4D-B1AC4C9018D2}">
+        uid="{91AD1EDC-9850-48C3-8D4D-B1AC4C9018D2}"
+        name="Item is versioned or unversioned Jpeg">
         <conditions>
           <or
             uid="6C0CF379E4024FD6A95E28EB388F27BF">
@@ -32,7 +33,7 @@ SharedFields:
     </ruleset>
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
-  Value: DisplayName|TemplateName|Dimensions|Size
+  Value: DisplayName|TemplateName|Dimensions|Size|ID
 - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
   Hint: Query
   Value: "location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};+custom:_templatename|jpeg"

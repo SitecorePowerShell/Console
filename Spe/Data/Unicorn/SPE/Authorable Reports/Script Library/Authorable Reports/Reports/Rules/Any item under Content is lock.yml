@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{4DAE272F-26C1-44B0-AAC7-CE858608FE4A}">
+        uid="{4DAE272F-26C1-44B0-AAC7-CE858608FE4A}"
+        name="Locked items">
         <conditions>
           <condition
             id="{84E910D4-B236-4570-9626-79FDB262E97A}"
@@ -24,7 +25,7 @@ SharedFields:
     </ruleset>
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
-  Value: DisplayName|ItemPath|TemplateName|Version
+  Value: DisplayName|ItemPath|TemplateName|Version|ID
 - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
   Hint: Query
   Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"

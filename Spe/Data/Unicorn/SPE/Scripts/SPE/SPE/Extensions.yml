@@ -6,6 +6,10 @@ Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions
 DB: master
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Extension modules created by the SPE team are added here.
   Versions:
   - Version: 1
     Fields:

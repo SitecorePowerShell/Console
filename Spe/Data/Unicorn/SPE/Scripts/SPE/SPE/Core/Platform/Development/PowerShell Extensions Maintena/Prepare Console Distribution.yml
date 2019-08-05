@@ -13,7 +13,7 @@ SharedFields:
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta2"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta3"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -72,6 +72,7 @@ SharedFields:
     Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package
     Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package
     Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package
+    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package
     
     # Files
     $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
@@ -118,37 +119,6 @@ SharedFields:
         
         Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
-    
-    # Build Standard Package
-    
-    $package = New-Package "Sitecore PowerShell Extensions - Authorable Reports";
-    $package.Sources.Clear();
-    
-    $package.Metadata.Author = "Adam Najmanowicz, Michael West";
-    $package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
-    $package.Metadata.Version = $Version;
-    $package.Metadata.Readme = @"
-    This module provides a reporting dashboard and additional reports
-    to complement those included with Sitecore PowerShell Extensions. 
-    
-    Documentation: https://doc.sitecorepowershell.com
-    
-    Thank you for using Sitecore PowerShell Extensions.
-    
-    Copyright (c) 2010-$($currentYear) Adam Najmanowicz
-    Copyright (c) 2013-$($currentYear) Michael West
-    
-    Additonal Resources:
-    https://sitecorepowershell.com/
-    https://blog.najmanowicz.com/
-    https://michaellwest.blogspot.com/
-    "@
-    
-    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package
-    
-    $packageName = "$($package.Name)-$Version" -replace " - ","-" -replace " ",".";
-    Export-Package -Project $package -Path "$packageName.zip" -Zip
-    Download-File "$SitecorePackageFolder\$packageName.zip"
 Languages:
 - Language: en
   Versions:

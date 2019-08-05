@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{9FED5125-45A0-413E-B0C1-88A6B7FE3026}">
+        uid="{9FED5125-45A0-413E-B0C1-88A6B7FE3026}"
+        name="Has more than enough versions">
         <conditions>
           <condition
             id="{105D5494-5EB1-498D-83BB-6AC63A3AA69B}"
@@ -26,7 +27,7 @@ SharedFields:
     </ruleset>
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
-  Value: DisplayName|TemplateName|ItemPath|Version
+  Value: DisplayName|TemplateName|ItemPath|Version|ID
 - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
   Hint: Query
   Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"

@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{2EBF894C-82F8-4105-BEDF-6CDF7926F427}">
+        uid="{2EBF894C-82F8-4105-BEDF-6CDF7926F427}"
+        name="Items have a layout">
         <conditions>
           <condition
             id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}"
@@ -24,7 +25,7 @@ SharedFields:
     </ruleset>
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
-  Value: DisplayName|TemplateName
+  Value: DisplayName|TemplateName|ID
 - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
   Hint: Query
   Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"
