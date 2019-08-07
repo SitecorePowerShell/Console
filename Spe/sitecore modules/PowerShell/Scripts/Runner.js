@@ -15,9 +15,10 @@
         var progressBar = $("#progressbar");
         if (progressBar.length > 0) {
             progressBar.progressbar({ value: 1 });
-            setTimeout(function() {
+            var timeout = setTimeout(function() {
                 if (!animate) {
-                    clearInterval(interval);
+                    clearTimeout(timeout);
+                    return;
                 }
                 progressBar.progressbar("option", "value", false);
                 progressBar.addClass("ui-progressbar-indeterminate");
@@ -48,17 +49,11 @@
         });
     });
 
-    spe.undeterminateProgress = function(id) {
-        animate = false;
-        var widget = $(id);
-        widget.progressbar("value", 1);
-    }
-
     spe.updateProgress = function(id, progress) {
         animate = false;
         var widget = $(id);
         widget.progressbar("value", Math.max(progress, 1));
-    }
+    };
 
     spe.scriptFinished = function(id, hasResults, hasErrors) {
         animate = false;
@@ -76,6 +71,6 @@
                 .css("display", "block")
                 .effect("shake", { times: 2, distance: 5 }, 1000);
         }
-    }
+    };
 
 }($ise, window, window.spe = window.spe || {}));
