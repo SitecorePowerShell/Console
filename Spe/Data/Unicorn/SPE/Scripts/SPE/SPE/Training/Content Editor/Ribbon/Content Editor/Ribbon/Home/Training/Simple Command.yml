@@ -26,7 +26,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Show-Alert -Title "Magical ribbon script."
+    Show-Alert -Title "Magical ribbon script. <br>Name: $($SitecoreContextItem.Name) <br>Version: $($SitecoreContextItem.Version)"
     Close-Window
 Languages:
 - Language: da
