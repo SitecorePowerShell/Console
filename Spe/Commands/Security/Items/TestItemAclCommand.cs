@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using Sitecore.Data.Items;
-using Sitecore.Security.AccessControl;
 using Spe.Core.Extensions;
 using Spe.Core.Validation;
 using AuthorizationManager = Sitecore.Security.AccessControl.AuthorizationManager;
@@ -39,8 +38,7 @@ namespace Spe.Commands.Security.Items
 
         protected override void ProcessItem(Item item)
         {
-            AccessRight accessRight;
-            WriteObject(this.TryParseAccessRight(AccessRight, out accessRight) &&
+            WriteObject(this.TryParseAccessRight(AccessRight, out var accessRight) &&
                         AuthorizationManager.IsAllowed(item, accessRight, Identity));
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System.Management.Automation;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
-using Sitecore.Security.Accounts;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
 using Spe.Core.Validation;
@@ -46,7 +45,7 @@ namespace Spe.Commands.Security.Items
             {
                 if (!this.TryParseAccessRight(AccessRight, out AccessRight accessRight)) return;
 
-                Account account = this.GetAccountFromIdentity(Identity);
+                var account = this.GetAccountFromIdentity(Identity);
 
                 var accessRule = AccessRule.Create(account, accessRight, PropagationType, SecurityPermission);
                 accessRules.Add(accessRule);

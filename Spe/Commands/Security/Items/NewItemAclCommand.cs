@@ -29,11 +29,9 @@ namespace Spe.Commands.Security.Items
 
         protected override void ProcessRecord()
         {
-            AccessRight accessRight; 
-            
-            if (!this.TryParseAccessRight(AccessRight, out accessRight)) return;
+            if (!this.TryParseAccessRight(AccessRight, out var accessRight)) return;
 
-            Account account = this.GetAccountFromIdentity(Identity);
+            var account = this.GetAccountFromIdentity(Identity);
 
             var accessRule = AccessRule.Create(account, accessRight, PropagationType, SecurityPermission);
             WriteObject(accessRule);

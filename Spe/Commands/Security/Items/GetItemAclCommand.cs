@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
@@ -14,7 +13,7 @@ namespace Spe.Commands.Security.Items
 
         protected override void ProcessItem(Item item)
         {
-            List<AccessRule> accessRights = item.Security.GetAccessRules().ToList();
+            var accessRights = item.Security.GetAccessRules().ToList();
             if (ParameterSetName.StartsWith("Account ID"))
             {
                 accessRights.Where(ar => ar.Account.Name.Equals(Identity.Name)).ForEach(WriteObject);
