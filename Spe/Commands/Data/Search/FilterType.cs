@@ -14,6 +14,8 @@ namespace Spe.Commands.Data.Search
         InclusiveRange,
         ExclusiveRange,
         MatchesRegex,
-        MatchesWildcard
+        MatchesWildcard,
+        GreaterThan,
+        LessThan
     }
 }

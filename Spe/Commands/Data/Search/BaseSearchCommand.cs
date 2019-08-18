@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Management.Automation;
-using Sitecore.Configuration;
+﻿using Sitecore.Configuration;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
@@ -15,6 +9,12 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
 using Spe.Core.Extensions;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Management.Automation;
 
 namespace Spe.Commands.Data.Search
 {
@@ -40,7 +40,7 @@ namespace Spe.Commands.Data.Search
                     case FilterType.DescendantOf:
                         var root = ObjectToString(criteria.Value);
 
-                        if (String.IsNullOrEmpty(root) || !ShortID.IsShortID(root))
+                        if (string.IsNullOrEmpty(root) || !ShortID.IsShortID(root))
                         {
                             WriteError(typeof(ArgumentException),
                                 "The value for DescendantOf criteria must be an Item or ID.",
@@ -132,6 +132,10 @@ namespace Spe.Commands.Data.Search
                             ? predicate.AddPredicate(i => !i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation)
                             : predicate.AddPredicate(i => i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation);
                         break;
+                    case FilterType.GreaterThan:
+                    case FilterType.LessThan:
+                        predicate = GetComparisonExpression(predicate, criteria, operation);
+                        break;
                 }
             }
 
@@ -203,7 +207,38 @@ namespace Spe.Commands.Data.Search
 
             return predicate;
         }
-        
+
+        private static Expression<Func<T, bool>> GetComparisonExpression<T>(Expression<Func<T, bool>> predicate, SearchCriteria criteria, SearchOperation operation) where T : ISearchResult
+        {
+            var boost = criteria.Boost;
+            var value = criteria.Value;
+            
+            switch (value)
+            {
+                case DateTime _:
+                    var compareDateTime = (DateTime)value;
+                    predicate = (criteria.Invert || criteria.Filter == FilterType.LessThan)
+                        ? predicate.AddPredicate(i => ((DateTime)i[(ObjectIndexerKey)criteria.Field] < compareDateTime).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((DateTime)i[(ObjectIndexerKey)criteria.Field] > compareDateTime).Boost(boost), operation);
+                    break;
+                case double _:
+                    var compareDouble = (double)value;
+                    predicate = (criteria.Invert || criteria.Filter == FilterType.LessThan)
+                        ? predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field] < compareDouble).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field] > compareDouble).Boost(boost), operation);
+                    break;
+                case int _:
+                    var compareInt = (int)value;
+                    predicate = (criteria.Invert || criteria.Filter == FilterType.LessThan)
+                        ? predicate.AddPredicate(i => ((int)i[(ObjectIndexerKey)criteria.Field] < compareInt).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((int)i[(ObjectIndexerKey)criteria.Field] > compareInt).Boost(boost), operation);
+                    break;
+            }
+
+            return predicate;
+        }
+
+
         private static string ObjectToString(object value)
         {
             string convertedValue;
