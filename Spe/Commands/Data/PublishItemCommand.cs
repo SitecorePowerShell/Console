@@ -8,9 +8,11 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.Publish;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
 using Spe.Core.Validation;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Data
 {
@@ -123,19 +125,20 @@ namespace Spe.Commands.Data
                     options.Mode = PublishMode.SingleItem;
                 }
 
+                var publishManager = TypeResolver.ResolveFromCache<IPublishManager>();
+
                 if (AsJob)
                 {
-                    var publisher = new Publisher(options);
-                    var job = publisher.PublishAsync();
+                    var job = publishManager.PublishAsync(options);
 
                     if (job == null) return;
                     WriteObject(job);
                 }
                 else
                 {
-                    var publishContext = PublishManager.CreatePublishContext(options);
-                    publishContext.Languages = new[] { language };
-                    var stats = PublishPipeline.Run(publishContext)?.Statistics;
+                    var publishResult = publishManager.PublishSync(options);
+
+                    var stats = publishResult?.Statistics;
                     if (stats != null)
                     {
                         WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");

@@ -49,6 +49,7 @@
     <Compile Include="Services\SpeJobOptions.cs" />
     <Compile Include="Services\SpeJobMessageManager.cs" />
     <Compile Include="Services\SpeObsoleter.cs" />
+    <Compile Include="Services\SpePublishManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
