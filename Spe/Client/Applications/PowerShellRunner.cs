@@ -169,6 +169,12 @@ namespace Spe.Client.Applications
             set => Monitor.Active = value;
         }
 
+        public string RedirectUrl
+        {
+            get => StringUtil.GetString(ServerProperties["RedirectUrl"]);
+            set => ServerProperties["RedirectUrl"] = value;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
@@ -200,6 +206,7 @@ namespace Spe.Client.Applications
 
                 RenderingId = WebUtil.GetQueryString("RenderingId");
 
+                RedirectUrl = WebUtil.GetQueryString("redirectUrl");
 
                 ResultsError.Text = Texts.PowerShellRunner_OnLoad_View_script_results_and_errors;
                 ResultsOK.Text = Texts.PowerShellRunner_OnLoad_View_script_results;
@@ -323,17 +330,20 @@ namespace Spe.Client.Applications
                 SheerResponse.SetDialogValue(
                     result.CloseMessages.Aggregate((serialized, message) => serialized + "\n" + message));
             }
-            if (!result.CloseRunner)
+            if (result.CloseRunner)
             {
-                return;
+                if (Closed != null)
+                {
+                    Closed.Text = "close";
+                }
+
+                OkClick();
             }
 
-            if (Closed != null)
+            if (!string.IsNullOrEmpty(RedirectUrl))
             {
-                Closed.Text = "close";
+                SheerResponse.SetLocation(RedirectUrl);
             }
-
-            OkClick();
         }
 
         [HandleMessage("psr:close", true)]
