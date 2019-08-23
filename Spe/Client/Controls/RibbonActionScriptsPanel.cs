@@ -27,30 +27,28 @@ namespace Spe.Client.Controls
             };
             ruleContext.Parameters["ViewName"] = viewName;
 
-            ShowListViewFeatures features;
-            var showShared = Enum.TryParse(context.Parameters["features"] ?? "", out features) &&
+            var showShared = Enum.TryParse(context.Parameters["features"] ?? "", out ShowListViewFeatures features) &&
                              features.HasFlag(ShowListViewFeatures.SharedActions);
 
-            if (!string.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName)) return;
+
+            foreach (
+                var scriptItem in
+                ModuleManager.GetFeatureRoots(IntegrationPoints.ReportActionFeature)
+                    .Select(parent => parent.Paths.GetSubItem(typeName))
+                    .Where(scriptLibrary => scriptLibrary != null)
+                    .SelectMany(scriptLibrary => scriptLibrary.Children)
+                    .Where(
+                        scriptItem =>
+                            RulesUtils.EvaluateRulesForView(scriptItem[FieldNames.ShowRule], ruleContext, !showShared)))
             {
-                foreach (
-                    Item scriptItem in
-                        ModuleManager.GetFeatureRoots(IntegrationPoints.ReportActionFeature)
-                            .Select(parent => parent.Paths.GetSubItem(typeName))
-                            .Where(scriptLibrary => scriptLibrary != null)
-                            .SelectMany(scriptLibrary => scriptLibrary.Children)
-                            .Where(
-                                scriptItem =>
-                                    RulesUtils.EvaluateRulesForView(scriptItem[FieldNames.ShowRule], ruleContext, !showShared)))
-                {
-                    RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
-                        Translate.Text(scriptItem.DisplayName),
-                        scriptItem["__Icon"], scriptItem.Appearance.ShortDescription,
-                        $"listview:action(scriptDb={scriptItem.Database.Name},scriptID={scriptItem.ID})",
-                        RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], ruleContext) &&
-                        context.Parameters["ScriptRunning"] == "0",
-                        false);
-                }
+                RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
+                    Translate.Text(scriptItem.DisplayName),
+                    scriptItem["__Icon"], scriptItem.Appearance.ShortDescription,
+                    $"listview:action(scriptDb={scriptItem.Database.Name},scriptID={scriptItem.ID})",
+                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], ruleContext) &&
+                    context.Parameters["ScriptRunning"] == "0",
+                    false);
             }
         }
     }

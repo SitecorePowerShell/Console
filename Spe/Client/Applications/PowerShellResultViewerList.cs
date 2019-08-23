@@ -451,7 +451,9 @@ namespace Spe.Client.Applications
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
             if (ListViewer.Data.Data.Count > 0)
             {
-                ribbon.CommandContext.Parameters.Add("type", ListViewer.Data.Data[0].Original.GetType().Name);
+                var firstOriginalItem = ListViewer.Data.Data[0].Original;
+                var typeName = firstOriginalItem.GetType().Name.Replace("`", "");
+                ribbon.CommandContext.Parameters.Add("type", typeName);
                 ribbon.CommandContext.Parameters.Add("viewName", ListViewer.Data.ViewName);
                 ribbon.CommandContext.Parameters.Add("ScriptRunning", ScriptRunning ? "1" : "0");
                 ribbon.CommandContext.Parameters.Add("features", ListViewer.Data.VisibleFeatures.ToString("F"));
@@ -463,7 +465,7 @@ namespace Spe.Client.Applications
                 ribbon.CommandContext.Parameters.Add("showFilter",
                     ListViewer.Data.VisibleFeatures.HasFlag(ShowListViewFeatures.Filter) ? "1" : "0");
                 
-                ribbon.CommandContext.CustomData = ListViewer.Data.Data[0].Original;
+                ribbon.CommandContext.CustomData = firstOriginalItem;
             }
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
         }
