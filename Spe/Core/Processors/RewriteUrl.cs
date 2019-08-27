@@ -18,7 +18,7 @@ namespace Spe.Core.Processors
             try
             {
                 Assert.ArgumentNotNull(arguments.Context, "context");
-                var url = TypeResolver.Resolve<IObsoleter>().GetRequestUrl(arguments);
+                var url = TypeResolver.Resolve<IObsoletor>().GetRequestUrl(arguments);
                 var localPath = url.LocalPath;
 
                 if (localPath.StartsWith("/-/script/v1", StringComparison.OrdinalIgnoreCase))

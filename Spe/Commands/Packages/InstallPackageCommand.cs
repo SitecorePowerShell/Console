@@ -30,6 +30,11 @@ namespace Spe.Commands.Packages
 
         protected override void ProcessRecord()
         {
+            if (DisableIndexing.IsPresent)
+            {
+                WriteWarning($"The parameter {nameof(DisableIndexing)} is no longer used. The functionality has been removed from the Sitecore platform.");
+            }
+
             var fileName = Path;
             PerformInstallAction(() =>
                 {
@@ -55,39 +60,24 @@ namespace Spe.Commands.Packages
                         fileName = packagePath;
                     }
 
-                    if (ShouldProcess(fileName, "Install package"))
-                    {
-                        var obsoleter = TypeResolver.Resolve<IObsoleter>();
-                        var indexSetting = obsoleter.IndexingEnabled;
-                        if (DisableIndexing.IsPresent)
-                        {
-                            obsoleter.IndexingEnabled = false;
-                        }
+                    if (!ShouldProcess(fileName, "Install package")) return;
 
-                        try
-                        {
-                            IProcessingContext context = new SimpleProcessingContext();
-                            IItemInstallerEvents instance1 = new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
-                            context.AddAspect(instance1);
-                            IFileInstallerEvents instance2 = new DefaultFileInstallerEvents(true);
-                            context.AddAspect(instance2);
-                            var installer = new Installer();
-                            installer.InstallPackage(fileName, context);
-                            ISource<PackageEntry> source = new PackageReader(fileName);
-                            var previewContext = Installer.CreatePreviewContext();
-                            var view = new MetadataView(previewContext);
-                            var metadataSink = new MetadataSink(view);
-                            metadataSink.Initialize(previewContext);
-                            source.Populate(metadataSink);
-                            installer.ExecutePostStep(view.PostStep, previewContext);
-                        }
-                        finally
-                        {
-                            if (DisableIndexing.IsPresent)
-                            {
-                                obsoleter.IndexingEnabled = indexSetting;
-                            }
-                        }
+                    using(new Sitecore.Data.BulkUpdateContext())
+                    {
+                        IProcessingContext context = new SimpleProcessingContext();
+                        IItemInstallerEvents instance1 = new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
+                        context.AddAspect(instance1);
+                        IFileInstallerEvents instance2 = new DefaultFileInstallerEvents(true);
+                        context.AddAspect(instance2);
+                        var installer = new Installer();
+                        installer.InstallPackage(fileName, context);
+                        ISource<PackageEntry> source = new PackageReader(fileName);
+                        var previewContext = Installer.CreatePreviewContext();
+                        var view = new MetadataView(previewContext);
+                        var metadataSink = new MetadataSink(view);
+                        metadataSink.Initialize(previewContext);
+                        source.Populate(metadataSink);
+                        installer.ExecutePostStep(view.PostStep, previewContext);
                     }
                 });
         }

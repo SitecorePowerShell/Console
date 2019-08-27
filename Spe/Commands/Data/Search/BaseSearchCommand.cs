@@ -238,7 +238,6 @@ namespace Spe.Commands.Data.Search
             return predicate;
         }
 
-
         private static string ObjectToString(object value)
         {
             string convertedValue;
@@ -301,37 +300,6 @@ namespace Spe.Commands.Data.Search
             }
 
             return values;
-        }
-
-        public static Expression<Func<SearchResultItem, bool>> ProcessQueryRules(IProviderSearchContext context, string queryFilter, SearchOperation operation)
-        {
-            var predicate = operation == SearchOperation.Or
-                ? PredicateBuilder.False<SearchResultItem>()
-                : PredicateBuilder.True<SearchResultItem>();
-
-            var crawler = context.Index.Crawlers.FirstOrDefault(c => c is SitecoreItemCrawler);
-            if (crawler == null) return predicate;
-
-            var database = ((SitecoreItemCrawler)crawler).Database;
-            if (String.IsNullOrEmpty(database)) return predicate;
-
-            var ruleFactory = new QueryableRuleFactory();
-            var rules = ruleFactory.ParseRules<QueryableRuleContext<SearchResultItem>>(Factory.GetDatabase(database), queryFilter);
-            foreach (var rule in rules.Rules)
-            {
-                if (rule.Condition == null) continue;
-
-                var ruleContext = new QueryableRuleContext<SearchResultItem>(context);
-                var stack = new RuleStack();
-                rule.Condition.Evaluate(ruleContext, stack);
-                rule.Execute(ruleContext);
-                if (stack.Any())
-                {
-                    predicate = ruleContext.Where;
-                }
-            }
-
-            return predicate;
         }
 
         public static IQueryable<T> ProcessScopeQuery<T>(IQueryable<T> query, IProviderSearchContext context, string scope) where T : ISearchResult
