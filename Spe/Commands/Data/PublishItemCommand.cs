@@ -7,7 +7,6 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Publishing;
-using Sitecore.Publishing.Pipelines.Publish;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
@@ -198,6 +197,5 @@ namespace Spe.Commands.Data
             }
             return result;
         }
-
     }
 }

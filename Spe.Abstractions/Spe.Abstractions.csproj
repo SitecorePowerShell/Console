@@ -53,7 +53,7 @@
     <Compile Include="VersionDecoupling\Interfaces\IJobManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobOptions.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobMessageManager.cs" />
-    <Compile Include="VersionDecoupling\Interfaces\IObsoleter.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\IObsoletor.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IPublishManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
