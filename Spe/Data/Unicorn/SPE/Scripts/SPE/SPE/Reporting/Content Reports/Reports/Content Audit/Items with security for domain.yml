@@ -56,7 +56,7 @@ SharedFields:
     SELECT [ItemId], [Value]
       FROM [dbo].[SharedFields]
       WHERE [FieldId] = '$($securityFieldId.ToString())'
-    	AND [Value] <> ''
+    	AND [Value] <> '' AND [Value] LIKE '%|$($selectedDomain)%'
     "@
     $records = Invoke-SqlCommand -Connection $connection -Query $query
     
