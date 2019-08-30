@@ -112,7 +112,7 @@ namespace Spe.Core.Settings
 
         private static string CurrentUserName => validNameRegex.Replace(User.Current.LocalName, "_");
 
-        private static string CurrentDomain => validNameRegex.Replace(User.Current.Domain.Name, "_");
+        private static string CurrentDomain => User.Current?.Domain != null ? validNameRegex.Replace(User.Current?.Domain?.Name, "_") : string.Empty;
 
         private static void GetDatabaseName(ref string databaseName, string settingPath)
         {
