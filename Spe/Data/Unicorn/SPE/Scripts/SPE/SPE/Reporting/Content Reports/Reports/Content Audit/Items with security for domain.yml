@@ -66,7 +66,7 @@ SharedFields:
         InfoTitle = "Items assigned with explicit domain security"
         InfoDescription = "Items which reference the domain '$($selectedDomain)'."
     }
-    $records | Where-Object { $_.Value -match $selectedDomain } |
+    $records | Where-Object { $_.Value -match "$($selectedDomain)\\" } |
         ForEach-Object { Get-Item -Path "master:" -ID "$($_.ItemId.ToString())" } |
         Show-ListView @reportProperties
     
