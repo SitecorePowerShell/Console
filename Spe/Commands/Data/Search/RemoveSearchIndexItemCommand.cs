@@ -4,7 +4,9 @@ using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data.Items;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Data.Search
 {
@@ -53,13 +55,13 @@ namespace Spe.Commands.Data.Search
         private void DeleteItem(ISearchIndex index, IIndexableId indexableId, string itemPath)
         {
             WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
-            var job = IndexCustodian.DeleteItem(index, indexableId);
+            var indexManager = TypeResolver.ResolveFromCache<IIndexManager>();
+            var job = indexManager.DeleteItem(index, indexableId);
 
-            if (job != null && AsJob)
-            {
-                WriteVerbose($"Background job created: {job.Name}");
-                WriteObject(job);
-            }
+            if (job == null || !AsJob) return;
+
+            WriteVerbose($"Background job created: {job.Name}");
+            WriteObject(job);
         }
     }
 }

@@ -61,7 +61,8 @@ namespace Spe.Commands.Data.Search
             else
             {
                 WriteVerbose($"Starting full index rebuild for {index.Name}.");
-                var job = (isRemoteIndex) ? IndexCustodian.FullRebuildRemote(index) : IndexCustodian.FullRebuild(index);
+                var indexManager = TypeResolver.ResolveFromCache<IIndexManager>();
+                var job = indexManager.FullRebuild(index, isRemoteIndex);
 
                 if (job == null || !AsJob) return;
 

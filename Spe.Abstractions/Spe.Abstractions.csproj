@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Sitecore.ContentSearch, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.NoReferences.8.2.170728\lib\NET452\Sitecore.ContentSearch.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.170728\lib\NET452\Sitecore.Kernel.dll</HintPath>
       <Private>False</Private>
@@ -49,6 +52,7 @@
     <Compile Include="VersionDecoupling\Interfaces\IAuthenticationManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IDateConverter.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IImmediateDebugWindowLauncher.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\IIndexManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJob.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobOptions.cs" />
