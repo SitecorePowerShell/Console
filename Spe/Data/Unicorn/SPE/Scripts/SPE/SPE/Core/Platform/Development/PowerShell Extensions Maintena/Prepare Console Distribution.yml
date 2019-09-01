@@ -9,11 +9,12 @@ SharedFields:
   Hint: Script
   Value: |
     Import-Function -Name New-PackagePostStep
+    Import-Function -Name Compress-Archive
     
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta3"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta4"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -98,8 +99,6 @@ SharedFields:
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     Download-File "$SitecorePackageFolder\$packageName.zip"
     
-    Import-Function -Name Compress-Archive
-    
     # Build Minimal Package
     
     $minimalPackageName = "$($SitecorePackageFolder)\SPE.Minimal-$($Version).zip"
@@ -119,6 +118,11 @@ SharedFields:
         
         Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
+    
+    # Build Unicorn Package
+    
+    #$unicornPackageName = "$($SitecorePackageFolder)\SPE.Unicorn-$($Version).zip"
+    #Compress-Archive -Path "$($SitecoreDataFolder)" -DestinationPath $unicornPackageName -Include "SPE" > $null
 Languages:
 - Language: en
   Versions:

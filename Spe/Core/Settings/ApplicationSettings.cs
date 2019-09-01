@@ -116,13 +116,12 @@ namespace Spe.Core.Settings
 
         private static void GetDatabaseName(ref string databaseName, string settingPath)
         {
+            if (!string.IsNullOrEmpty(databaseName)) return;
+
+            databaseName = Factory.GetString(settingPath, false);
             if (string.IsNullOrEmpty(databaseName))
             {
-                databaseName = Factory.GetString(settingPath, false);
-                if (string.IsNullOrEmpty(databaseName))
-                {
-                    databaseName = "master";
-                }
+                databaseName = "master";
             }
         }
 
