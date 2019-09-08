@@ -44,7 +44,9 @@ namespace Spe.Integrations.Pipelines
             {
                 var data = new byte[stream.Length];
                 stream.Read(data, 0, data.Length);
-                return Assembly.Load(data);
+                var loadedAssembly = Assembly.Load(data);
+                TypeResolver.LoadedAssemblies.TryAdd(assemblyName, loadedAssembly);
+                return loadedAssembly;
             }
         }
     }

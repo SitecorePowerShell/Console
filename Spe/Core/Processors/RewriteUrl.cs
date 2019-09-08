@@ -17,7 +17,6 @@ namespace Spe.Core.Processors
             Assert.ArgumentNotNull(arguments, "arguments");
             try
             {
-                Assert.ArgumentNotNull(arguments.Context, "context");
                 var url = TypeResolver.Resolve<IObsoletor>().GetRequestUrl(arguments);
                 var localPath = url.LocalPath;
 

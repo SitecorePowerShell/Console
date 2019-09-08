@@ -11,7 +11,7 @@ namespace Spe.Core.VersionDecoupling
     public static class TypeResolver
     {
         private static readonly ConcurrentDictionary<string, object> TypeCache = new ConcurrentDictionary<string, object>();
-        private static readonly ConcurrentDictionary<string, Assembly> LoadedAssemblies = new ConcurrentDictionary<string, Assembly>();
+        internal static readonly ConcurrentDictionary<string, Assembly> LoadedAssemblies = new ConcurrentDictionary<string, Assembly>();
 
         public static T Resolve<T>(object[] parameters = null)
         {
