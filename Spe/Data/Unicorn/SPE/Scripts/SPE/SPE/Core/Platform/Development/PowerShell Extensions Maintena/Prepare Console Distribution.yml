@@ -14,7 +14,7 @@ SharedFields:
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta4"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta5"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -69,11 +69,11 @@ SharedFields:
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
-    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package
-    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package
-    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package
-    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package
-    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package
+    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
+    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
+    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
+    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
+    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
     
     # Files
     $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
