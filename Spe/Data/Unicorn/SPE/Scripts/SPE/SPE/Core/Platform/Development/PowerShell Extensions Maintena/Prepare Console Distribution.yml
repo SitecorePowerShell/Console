@@ -14,7 +14,7 @@ SharedFields:
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta6"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -114,7 +114,7 @@ SharedFields:
     $speSourceFolderItem = Get-Item -Path $speSourceFolder
     $modulePath = "$($speSourceFolderItem.Parent.FullName)\Modules\SPE"
     if(Test-Path -Path $modulePath) {
-        $remotingPackageName = "$($SitecorePackageFolder)\SPE Remoting-$($Version).zip"
+        $remotingPackageName = "$($SitecorePackageFolder)\SPE.Remoting-$($Version).zip"
         
         Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
