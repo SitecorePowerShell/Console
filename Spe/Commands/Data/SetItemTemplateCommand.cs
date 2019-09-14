@@ -91,7 +91,7 @@ namespace Spe.Commands.Data
                 }
             }
 
-            TemplateManager.ChangeTemplate(item, new TemplateChangeList(newTemplate, newTemplate));
+            TemplateManager.ChangeTemplate(item, new TemplateChangeList(oldTemplate, newTemplate));
 
             item.Edit(args =>
             {
