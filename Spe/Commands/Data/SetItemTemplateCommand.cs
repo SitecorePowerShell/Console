@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
+using Sitecore.Data.Templates;
+using Sitecore.Globalization;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
 using Spe.Core.Validation;
@@ -54,53 +57,59 @@ namespace Spe.Commands.Data
                 TemplateItem = TemplateUtils.GetFromPath(Template, CurrentDrive);
             }
 
-            // GetFromPath will WriteError if not found, and the cast will throw an error if item is not a tempalte, so no need to handle separately here.
+            // GetFromPath will WriteError if not found, and the cast will throw an error if item is not a template, so no need to handle separately here.
 
-            if (ShouldProcess(item.GetProviderPath(), $"Set item template '{TemplateItem.InnerItem.GetProviderPath()}'"))
+            if (!ShouldProcess(item.GetProviderPath(),
+                $"Set item template '{TemplateItem.InnerItem.GetProviderPath()}'")) return;
+
+            var newTemplate = TemplateManager.GetTemplate(TemplateItem.ID, TemplateItem.Database);
+            var oldTemplate = TemplateManager.GetTemplate(item.TemplateID, item.Database);
+            if (oldTemplate == null)
             {
-                var values = new Dictionary<string, string>();
+                WriteWarning(Translate.Text(Texts.TemplateMissing, item.TemplateID, item.Database));
+                oldTemplate = newTemplate;
+            }
+            if (FieldsToCopy == null)
+            {
+                TemplateManager.ChangeTemplate(item, new TemplateChangeList(oldTemplate, newTemplate));
+                return;
+            }
 
-                if (FieldsToCopy == null)
+            var values = new Dictionary<string, string>();
+            foreach (var fieldName in FieldsToCopy.Keys.OfType<string>())
+            {
+                var field = item.Fields[fieldName];
+                if (field != null)
                 {
-                    item.ChangeTemplate(TemplateItem);
-                    return;
+                    values.Add(fieldName, field.Value);
                 }
-
-                foreach (string fieldName in FieldsToCopy.Keys.OfType<string>())
+                else
                 {
-                    var field = item.Fields[fieldName];
+                    WriteError(typeof(MissingFieldException),
+                        $"Source template does not contain '{fieldName}' field.",
+                        ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                }
+            }
+
+            TemplateManager.ChangeTemplate(item, new TemplateChangeList(newTemplate, newTemplate));
+
+            item.Edit(args =>
+            {
+                foreach (var fieldName in values.Keys)
+                {
+                    var field = item.Fields[FieldsToCopy[fieldName].ToString()];
                     if (field != null)
                     {
-                        values.Add(fieldName, field.Value);
+                        field.Value = values[fieldName];
                     }
                     else
                     {
                         WriteError(typeof(MissingFieldException),
-                            $"Source template does not contain '{fieldName}' field.",
+                            $"Target template does not contain '{fieldName}' field.",
                             ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
                     }
                 }
-
-                item.ChangeTemplate(TemplateItem);
-
-                item.Edit(args =>
-                {
-                    foreach (var fieldName in values.Keys)
-                    {
-                        var field = item.Fields[FieldsToCopy[fieldName].ToString()];
-                        if (field != null)
-                        {
-                            field.Value = values[fieldName];
-                        }
-                        else
-                        {
-                            WriteError(typeof(MissingFieldException),
-                                $"Target template does not contain '{fieldName}' field.",
-                                ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
-                        }
-                    }
-                });
-            }
+            });
         }
     }
 }

@@ -85,6 +85,6 @@ namespace Spe
         public const string SessionIDGallery_Location = "Location: <b>{0}</b>";
         public const string SessionIDGallery_User = "User: <b>{0}</b>";
 
-
+        public const string TemplateMissing = "The template with ID {0} is missing in the {1} database.";
     }
 }
