@@ -66,7 +66,7 @@ namespace Spe.Commands.Data
             var oldTemplate = TemplateManager.GetTemplate(item.TemplateID, item.Database);
             if (oldTemplate == null)
             {
-                WriteWarning(Translate.Text(Texts.TemplateMissing, item.TemplateID, item.Database));
+                WriteVerbose(Translate.Text(Texts.TemplateMissing, item.TemplateID, item.Database));
                 oldTemplate = newTemplate;
             }
             if (FieldsToCopy == null)
