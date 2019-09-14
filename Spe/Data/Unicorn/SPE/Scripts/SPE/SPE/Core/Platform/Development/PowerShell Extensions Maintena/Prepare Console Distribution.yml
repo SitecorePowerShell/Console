@@ -34,6 +34,7 @@ SharedFields:
     * Backup your script library!
     
     AFTER UPGRADING THE MODULE
+    * Sitecore 9.1+ : Enable Spe.IdentityServer.config
     * Clean your browser cache!
     * Test all of your custom scripts!
     * Rebuild the integration points
