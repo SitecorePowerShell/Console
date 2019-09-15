@@ -114,7 +114,7 @@
     </Reference>
     <Reference Include="Sitecore.ExperienceEditor, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.ExperienceEditor.NoReferences.8.2.170728\lib\NET452\Sitecore.ExperienceEditor.dll</HintPath>
-	  <Private>False</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.170728\lib\NET452\Sitecore.Kernel.dll</HintPath>
@@ -614,6 +614,7 @@
       <Link>Resources\Version92\Spe.VersionSpecific.dll</Link>
     </EmbeddedResource>
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\version.html" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
@@ -684,6 +685,8 @@
     <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
     <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
+    <Content Include="sitecore modules\PowerShell\Scripts\purl.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\typed.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Config\Include\Spe\Spe.config">

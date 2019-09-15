@@ -18,8 +18,6 @@
           });
     	});
 	  </Script>
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"
-                  x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
       <div class="scStretch">

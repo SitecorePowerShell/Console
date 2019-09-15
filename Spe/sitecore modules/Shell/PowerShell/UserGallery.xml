@@ -7,8 +7,6 @@
       <CodeBeside Type="Spe.Client.Controls.UserGallery, Spe" />
 
       <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"
-                  x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
 

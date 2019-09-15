@@ -13,7 +13,6 @@
       <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js"></Script>
 
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
       <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css" />

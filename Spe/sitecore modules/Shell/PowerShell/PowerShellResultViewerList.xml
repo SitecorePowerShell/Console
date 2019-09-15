@@ -7,7 +7,6 @@
 
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/ListView.css" runat="server" />
