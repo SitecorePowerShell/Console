@@ -1,0 +1,107 @@
+﻿---
+ID: "99bbcd77-6dc6-4293-9db0-00d89c1c1f50"
+Parent: "b0dbfa53-161a-455c-8ca7-ca52b91f6e90"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Transfer item security
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/fingerprint_scan.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Find all items with the specified user or role assigned.
+            
+        .DESCRIPTION
+            This report helps identify all of the items with a specific user or role assigned and transfers to another role.
+            
+        .NOTES
+            Michael West
+    #>
+    
+    Import-Function -Name Invoke-SqlCommand
+    
+    $scriptItem = Get-Item -Path $SitecoreCommandPath
+    $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
+    $settings = @{
+        Title = "Report Filter"
+        Height = "325"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter items explicitly referencing the specified role."
+        Parameters = @(
+            @{ Name = "userOrRoleOwner"; Title="Current User or Role"; Tooltip="Tooltip for role"; Editor="user role"; Domain="sitecore"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)){
+                    $variable.Error = "Please specify a username or role."
+                }
+            }},
+            @{ Name = "roleNewOwner"; Title="New Role"; Tooltip="Tooltip for role"; Editor="role"; Domain="sitecore"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)){
+                    $variable.Error = "Please specify a role."
+                }
+            }},
+            @{ Name = "isTestMode"; Title = "Run Test"; Value = $true; }
+        )
+        Icon = $icon
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $selectedDomain = $userOrRoleOwner.Split("\")[0]
+    
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+    
+    $securityFieldId = [Sitecore.FieldIDs]::Security
+    
+    # Find all the items which explicitly hae security assigned.
+    $query = @"
+    SELECT [ItemId], [Value]
+      FROM [dbo].[SharedFields]
+      WHERE [FieldId] = '$($securityFieldId.ToString())'
+    	AND [Value] <> '' AND [Value] LIKE '%|$($selectedDomain)%'
+    "@
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    
+    $reportProperties = @{
+        Property = @("Name", "Id", "ItemPath", @{Name="Security";Expression={$_."__Security"}}, "Security-Original")
+        Title = "Items with security reassigned"
+        InfoTitle = "Items with security reassigned"
+        InfoDescription = "Items with the account set to '$($userOrRoleOwner)' have been transferred to $($roleNewOwner)."
+    }
+    
+    if($isTestMode) {
+        $reportProperties["Title"] += " (Test Mode)"
+    }
+    
+    $valueToMatch = [System.Text.RegularExpressions.Regex]::Escape($userOrRoleOwner)
+    $records | Where-Object { $_.Value -match $valueToMatch } |
+        ForEach-Object { 
+            $item = Get-Item -Path "master:" -ID "$($_.ItemId.ToString())"
+            $item | Add-Member -Name "Security-Original" -Value $item."__Security" -MemberType NoteProperty
+            if($isTestMode) {
+                Write-Host "Replacing security on item $($item.ItemPath)"
+            } else {
+                $item."__Security" = $item."__Security".Replace("$userOrRoleOwner","$roleNewOwner")
+            }
+            $item
+        } | Show-ListView @reportProperties
+    
+    Close-Window    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190915T012503Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

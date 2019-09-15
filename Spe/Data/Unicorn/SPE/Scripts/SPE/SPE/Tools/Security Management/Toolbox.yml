@@ -1,0 +1,41 @@
+﻿---
+ID: "b128d6e5-c50a-46b5-9477-319745182415"
+Parent: "4f892d24-dc7d-497f-bad8-c4a90b7c28b9"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox
+DB: master
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{60A99978-C598-4D25-8CF4-BB5D4084911B}"
+        name="Only show for Administrators and Developers">
+        <conditions>
+          <or
+            uid="A48F9F1473064283B3DAA087B7DC2898">
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="CF35662FD6674F26A39A384BA3AFFA0B"
+              value="sitecore\Developer" />
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="15767C7547A046C3B1C3A9CE129A4048" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190915T012408Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
