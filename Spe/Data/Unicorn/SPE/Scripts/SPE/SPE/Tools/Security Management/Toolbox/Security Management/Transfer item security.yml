@@ -53,8 +53,6 @@ SharedFields:
         Exit
     }
     
-    $selectedDomain = $userOrRoleOwner.Split("\")[0]
-    
     $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
     
     $securityFieldId = [Sitecore.FieldIDs]::Security
@@ -64,7 +62,7 @@ SharedFields:
     SELECT [ItemId], [Value]
       FROM [dbo].[SharedFields]
       WHERE [FieldId] = '$($securityFieldId.ToString())'
-    	AND [Value] <> '' AND [Value] LIKE '%|$($selectedDomain)%'
+    	AND [Value] <> '' AND [Value] LIKE '%|$($userOrRoleOwner)%'
     "@
     $records = Invoke-SqlCommand -Connection $connection -Query $query
     
