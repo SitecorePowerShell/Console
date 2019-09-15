@@ -1,8 +1,8 @@
 ﻿---
 ID: "c05db55e-caef-40b8-9f46-7195339b51b7"
-Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Parent: "03164b1c-c248-4b3c-a0d4-63f01aff4e79"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for an account
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Items with security for an account
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

@@ -1,8 +1,8 @@
 ﻿---
 ID: "b31991a9-60d3-4efa-9b83-da10d878e5e3"
-Parent: "13eb0f74-42fc-422b-9d25-86956e31e38f"
+Parent: "a763f6de-7550-4f7b-adfe-3ca7fc4f4ab0"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Item
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item
 DB: master
 Languages:
 - Language: da

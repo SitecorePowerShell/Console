@@ -2,7 +2,7 @@
 ID: "af78e99f-d56d-4b87-9830-d8e03fb84b91"
 Parent: "b31991a9-60d3-4efa-9b83-da10d878e5e3"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Item/Transfer Lock
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Transfer Lock
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"

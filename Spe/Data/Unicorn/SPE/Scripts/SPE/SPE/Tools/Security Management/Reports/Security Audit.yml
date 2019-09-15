@@ -1,10 +1,13 @@
 ﻿---
-ID: "b128d6e5-c50a-46b5-9477-319745182415"
-Parent: "4f892d24-dc7d-497f-bad8-c4a90b7c28b9"
+ID: "03164b1c-c248-4b3c-a0d4-63f01aff4e79"
+Parent: "c7397b68-2e00-424b-8a6c-76ff9a59f8fb"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit
 DB: master
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/security_details.png
 - ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
   Hint: ShowRule
   Type: Rules
@@ -29,12 +32,16 @@ SharedFields:
     </ruleset>
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Review security details about the Sitecore solution.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20190915T012408Z
+      Value: 20190915T200148Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
