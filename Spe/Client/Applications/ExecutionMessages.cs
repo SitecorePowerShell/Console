@@ -88,7 +88,11 @@
             "running your script in Powerful Ways!",
             "you thought that this would be quick &#x1F923;...",
             "what's the worse that could happen &#x1F937;?",
-            "my &#x1F9D3; runs faster than this script!"
+            "my &#x1F9D3; runs faster than this script!",
+            "then reflect on how you got trapped into this project...",
+            "then share some encouraging words to a colleague that looks worn out.",
+            "in no way is deploying on a Friday night ever a good idea!",
+            "share a root beer float with a friend. &#x1F37A;"
         };
     }
 }
