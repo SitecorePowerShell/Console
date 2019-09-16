@@ -1,0 +1,14 @@
+﻿---
+ID: "472e8f36-aff5-4078-82bd-95246f7b36fe"
+Parent: "4f892d24-dc7d-497f-bad8-c4a90b7c28b9"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Tasks
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150201T215740

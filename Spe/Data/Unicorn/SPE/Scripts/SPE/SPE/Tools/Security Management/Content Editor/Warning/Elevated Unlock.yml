@@ -1,0 +1,106 @@
+﻿---
+ID: "9d3a2ad8-2543-4e14-9021-ac037d9de399"
+Parent: "8ce5ab81-8927-4d1e-bb92-3f580dc4db39"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Warning/Elevated Unlock
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/lock_open.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: 
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $item = Get-Item -Path "."
+    
+    $rules = $PSScript.Fields["EnableRule"].Value
+    
+    $isEnabled = Test-Rule -InputObject $item -Rule $rules -RuleDatabase "master"
+    if(!$isEnabled) {
+        exit
+    }
+    
+    
+    $icon = "Office/16x16/lock_open.png"
+    $source = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
+    
+    $title = "Elevated Unlock"
+    $text = "<img src='$($source)' />Use elevated privileges to unlock the current item."
+    
+    $warning = $pipelineArgs.Add()
+    $warning.Title = $title
+    $warning.Text = $text
+    
+    $script = Get-Item -Path "master:" -ID "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $warning.AddOption("Unlock", $command)
+    $warning.HideFields = $false
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{58F071DB-6FEA-42A6-9B5E-B5AC82B6D428}"
+        name="Only show when necessary - local admin">
+        <conditions>
+          <and
+            uid="56B37F618DF04137844D1A39E6FF55C6">
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="1B06D11FC4444AA789261AEAA40CF832"
+              value="sitecore\Sitecore Local Administrators" />
+            <and
+              uid="EB9465109AA4482BBBCA14C357E26F31">
+              <condition
+                id="{84E910D4-B236-4570-9626-79FDB262E97A}"
+                uid="3962A12D9F6A40F38BA853D4987924AB" />
+              <and
+                uid="AA655322FDF348EE93A35A00ACE7921A">
+                <condition
+                  id="{A4A453B8-F4D2-42DC-B66A-63857FDAF25A}"
+                  uid="75C025473B144BC9AED7C5C4B03AC270"
+                  except="true" />
+                <condition
+                  id="{1C67B23F-EC82-459F-A7C2-DE419D4665A0}"
+                  uid="FCEA3C7B9409481994B74C83A750E657" />
+              </and>
+            </and>
+          </and>
+        </conditions>
+      </rule>
+      <rule
+        uid="{468B1714-AF4C-4F68-91CD-F8201CE8E618}"
+        name="Only show when necessary - admin">
+        <conditions>
+          <and
+            uid="FF0D461C49B540AAA8BB5DC637374AE1">
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="E5D7B2E9E711456EA2B08C9CC068D667" />
+            <and
+              uid="00CCFB53626A421495141961F8DE0C18">
+              <condition
+                id="{84E910D4-B236-4570-9626-79FDB262E97A}"
+                uid="B18ED0FE3848465CB07756E312E74ECD" />
+              <condition
+                id="{A4A453B8-F4D2-42DC-B66A-63857FDAF25A}"
+                uid="E61838F5F59F4EA2BD7B2C14A9D7B88D"
+                except="true" />
+            </and>
+          </and>
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180914T182205Z

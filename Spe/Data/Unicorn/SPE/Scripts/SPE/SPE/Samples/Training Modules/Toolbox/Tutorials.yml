@@ -41,6 +41,9 @@ Languages:
         sitecore\Admin
 - Language: en
   Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Run to enable or disable the training modules.
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
     Value: Tutorials

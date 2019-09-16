@@ -4,6 +4,29 @@ Parent: "4f892d24-dc7d-497f-bad8-c4a90b7c28b9"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports
 DB: master
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{6E35CAA6-FAAC-4571-A947-7A19C22011F4}"
+        name="Admin or Maintainer">
+        <conditions>
+          <or
+            uid="4A9455C7F9574D0AA00803C6E773D19A">
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="CD463CAA1A2E46CD9FF96A155A7D8FA0"
+              value="sitecore\Sitecore Client Maintaining" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:

@@ -14,7 +14,8 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{267ADB4A-13D2-45D2-8BDB-4D374611BB64}">
+        uid="{267ADB4A-13D2-45D2-8BDB-4D374611BB64}"
+        name="Only show for the locked items view">
         <conditions>
           <condition
             id="{1B499603-87C9-4440-969F-D9568CE1E926}"
