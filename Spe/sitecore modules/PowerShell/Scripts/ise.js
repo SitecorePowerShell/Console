@@ -7,7 +7,7 @@
             "You can change the color of the results dialog shown to your script users using the <strong>Console</strong> ribbon button.",
             "If you save your script in the <strong>Content Editor Context Menu</strong> it will automatically show as a context menu option for items that users Right Click in the tree and will start in the location of that item.",
             "All your scripts that share the same <strong>Persistent Session ID</strong> can re-use variables that were created by the scripts with the same session id that were run before.",
-            "<strong>Runtime</strong> ribbon button is active only if you're editong a script from library. Save your script in script library to enable it.",
+            "<strong>Runtime</strong> ribbon button is active only if you're editing a script from library. Save your script in script library to enable it.",
             "<strong>Script Library</strong> comes with a wealth of samples and useful scripts that you can base your scripts upon.",
             "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
             "You can abort a script running in ISE with the <strong>Ctrl+Shift+E</strong> hotkey.",
