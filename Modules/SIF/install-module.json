@@ -1,0 +1,150 @@
+﻿{
+  "Parameters": {
+    "Package": {
+      "Type": "string",
+      "DefaultValue": "",
+      "Description": "The path to the SCWDP  to deploy."
+    },
+    "SiteName": {
+      "Type": "string",
+      "DefaultValue": "Sitecore",
+      "Description": "The name of the site to be deployed."
+    },
+    "DatabasePrefix": {
+      "Type": "string",
+      "DefaultValue": "",
+      "Description": "SQL DB Prefix"
+    },
+    "SqlAdminUser": {
+      "Type": "string",
+      "DefaultValue": "sa",
+      "Description": "The Sql admin user account to use when installing databases."
+    },
+    "SqlAdminPassword": {
+      "Type": "string",
+      "DefaultValue": "12345",
+      "Description": "The Sql admin password to use when installing databases."
+    },
+    "SqlServer": {
+      "Type": "string",
+      "DefaultValue": ".\\SQLSERVER",
+      "Description": "The Sql Server where databases will be installed."
+    },
+    "ModuleDatabase": {
+      "Type": "string",
+      "DefaultValue": "",
+      "Description": "Databases required for module install: ('master','mastercore','core')"
+    }
+  },
+  "Variables": {
+    "Sql.Database.Core": "[concat(parameter('DatabasePrefix'), '_Core')]",
+    "Sql.Database.Master": "[concat(parameter('DatabasePrefix'), '_Master')]",
+    "Sql.Core.ConnectionString": "[SqlConnectionString(parameter('SqlServer'),variable('Sql.Database.Core'), parameter('SqlAdminUser'), parameter('SqlAdminPassword'))]",
+    "Sql.Master.ConnectionString": "[SqlConnectionString(parameter('SqlServer'),variable('Sql.Database.Master'), parameter('SqlAdminUser'), parameter('SqlAdminPassword'))]",
+    "Skip.Master": "[not(equal(parameter('ModuleDatabase'), 'master'))]",
+    "Skip.MasterCore": "[not(equal(parameter('ModuleDatabase'), 'mastercore'))]",
+    "Skip.Core": "[not(equal(parameter('ModuleDatabase'), 'core'))]",
+    "Skip.None":"[not(equal(parameter('ModuleDatabase'), 'none'))]"
+  },
+  "Settings": {
+    "AutoRegisterExtensions": true
+  },
+  "Tasks": {
+    "InstallWDPModuleNoDB": {
+      "Type": "WebDeploy",
+      "Params": {
+        "Verb": "Sync",
+        "Arguments": {
+          "Source": {
+            "Package": "[resolvepath(parameter('Package'))]"
+          },
+          "Dest": "Auto",
+          "EnableRule": "DoNotDeleteRule",
+          "SetParam": [
+            {
+              "Name": "IIS Web Application name",
+              "Value": "[parameter('SiteName')]"
+            }
+          ]
+        }
+      },
+      "Skip": "[variable('Skip.None')]"
+    },
+    "InstallWDPModuleMasterCore": {
+      "Type": "WebDeploy",
+      "Params": {
+        "Verb": "Sync",
+        "Arguments": {
+          "Source": {
+            "Package": "[resolvepath(parameter('Package'))]"
+          },
+          "Dest": "Auto",
+          "EnableRule": "DoNotDeleteRule",
+          "SetParam": [
+            {
+              "Name": "Application Path",
+              "Value": "[parameter('SiteName')]"
+            },
+            {
+              "Name": "Core Admin Connection String",
+              "Value": "[variable('Sql.Core.ConnectionString')]"
+            },
+            {
+              "Name": "Master Admin Connection String",
+              "Value": "[variable('Sql.Master.ConnectionString')]"
+            }
+          ]
+        }
+      },
+      "Skip": "[equal(variable('Skip.MasterCore'),'True')]"
+    },
+    "InstallWDPModuleMaster": {
+      "Type": "WebDeploy",
+      "Params": {
+        "Verb": "Sync",
+        "Arguments": {
+          "Source": {
+            "Package": "[resolvepath(parameter('Package'))]"
+          },
+          "Dest": "Auto",
+          "EnableRule": "DoNotDeleteRule",
+          "SetParam": [
+            {
+              "Name": "Application Path",
+              "Value": "[parameter('SiteName')]"
+            },
+            {
+              "Name": "Master Admin Connection String",
+              "Value": "[variable('Sql.Master.ConnectionString')]"
+            }
+          ]
+        }
+      },
+      "Skip": "[equal(variable('Skip.Master'),'True')]"
+    },
+    "InstallWDPModuleCore": {
+      "Type": "WebDeploy",
+      "Params": {
+        "Verb": "Sync",
+        "Arguments": {
+          "Source": {
+            "Package": "[resolvepath(parameter('Package'))]"
+          },
+          "Dest": "Auto",
+          "EnableRule": "DoNotDeleteRule",
+          "SetParam": [
+            {
+              "Name": "Application Path",
+              "Value": "[parameter('SiteName')]"
+            },
+            {
+              "Name": "Core Admin Connection String",
+              "Value": "[variable('Sql.Core.ConnectionString')]"
+            }
+          ]
+        }
+      },
+      "Skip": "[equal(variable('Skip.Core'),'True')]"
+    }
+  }
+}
