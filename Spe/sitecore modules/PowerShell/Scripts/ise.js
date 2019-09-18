@@ -649,7 +649,7 @@
                 left: 0
             }).hide()
             .show("drop", { direction: "down" }, "400")
-            .delay(2000)
+            .delay(5000)
             .hide("drop", { direction: "down" }, "400",
                 function() {
                     $(".status-bar-text").animate({ backgroundColor: "#fcefa1" }).animate({ backgroundColor: "#fff" });
@@ -661,7 +661,7 @@
                 tipIndex = 0;
             }
             var nextTip = tips[tipIndex];
-            $(".status-bar-text").animate({ backgroundColor: "#012456" },
+            $(".status-bar-text").animate({ backgroundColor: "#fcefa1" },
                 function() {
                     $("#TipText").html(nextTip);
                     $("#StatusTip").html(nextTip);

@@ -613,6 +613,7 @@
     <EmbeddedResource Include="..\Spe.Sitecore92\bin\$(Configuration)\Spe.VersionSpecific.dll">
       <Link>Resources\Version92\Spe.VersionSpecific.dll</Link>
     </EmbeddedResource>
+    <Content Include="sitecore modules\PowerShell\Assets\spe-32.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
     <Content Include="sitecore modules\PowerShell\Assets\version.html" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
@@ -672,6 +673,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Gallery.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\IFrame.css" />
     <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
     <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
     <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />

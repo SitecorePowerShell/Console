@@ -117,7 +117,10 @@ a.ps-link {
     position: absolute;
 }
 
-.ui-icon-info { background: url(/temp/IconCache/PowerShell/16x16/PowerShell8.png) center center; }
+.ui-icon-info {
+    background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;
+    background-size: 16px;
+}
 
 .ui-state-highlight {
     margin-bottom: 6px;
@@ -132,7 +135,7 @@ a.ps-link {
     width: 400px;
 }
 
-.tip-title { margin: 1px 0 8px 0; }
+.tip-title { margin: 0 0 8px 0; }
 
 .ui-tooltip {
     border-radius: 20px;
