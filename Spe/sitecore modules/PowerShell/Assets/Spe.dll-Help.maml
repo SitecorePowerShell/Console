@@ -8085,6 +8085,18 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
 </dev:code>
         <dev:remarks />
       </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
+        <dev:code>The following applies a new set of AccessRule to an item using `Set-ItemAcl` and `New-ItemAcl` when the PropogationType and SecurityPermission are the same.
+
+$role = "sitecore\yourrole"
+$rights = @("item:create", "item:write", "item:rename", "item:delete")
+
+Get-Item -Path master:\content\youritem | Set-ItemAcl -AccessRules ($rights | ForEach-Object { New-ItemAcl -AccessRight $_ -PropagationType Any -SecurityPermission AllowAccess -Identity $role })
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
@@ -8540,6 +8552,20 @@ Get-Item -Path master:\content\home | Add-ItemAcl -AccessRules $acl1, $acl2 -Pas
 Name   Children Languages                Id                                     TemplateName
 ----   -------- ---------                --                                     ------------
 Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
+        <dev:code>The following demonstrates how to add several AccessRule to an item when the PropogationType and SecurityPermission are the same.
+
+$item = Get-Item -Path master:\content\youritem
+$role = "sitecore\role"
+$rights = @("item:create", "item:write", "item:rename", "item:delete")
+
+$item | Clear-ItemAcl
+$rights  | ForEach-Object { Add-ItemAcl -Item $item -AccessRight $_ -PropagationType Any -SecurityPermission AllowAccess -Identity $role }
 
 </dev:code>
         <dev:remarks />
@@ -28533,6 +28559,16 @@ PS master:\&gt; Get-Item master:\content\home | Reset-ItemField -Name "a*"
 </dev:code>
         <dev:remarks />
       </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 4-----------------------</maml:title>
+        <dev:code>The following resets one of the Standard Values fields for all versions and languages.
+
+Get-ChildItem -Path "master:" -ID "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}" -Version * -Language * -Recurse |
+    Reset-ItemField -Name "__Workflow State" -IncludeStandardFields
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
@@ -28815,7 +28851,7 @@ Sets the item template.
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
         <dev:code>Set template of /sitecore/content/home item using a Template path.
 
-PS master:\&gt; Set-ItemTemplate -Path master:/sitecore/content/home -Template "/sitecore/templates/User Defined/Page"
+Set-ItemTemplate -Path master:/sitecore/content/home -Template "/sitecore/templates/User Defined/Page"
 
 </dev:code>
         <dev:remarks />
@@ -28824,8 +28860,8 @@ PS master:\&gt; Set-ItemTemplate -Path master:/sitecore/content/home -Template "
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
         <dev:code>Set template of /sitecore/content/home item using a TemplateItem.
 
-PS master:\&gt; $template = Get-ItemTemplate -Path master:\content\home\page1
-       PS master:\&gt; Set-ItemTemplate -Path master:\content\home\page2 -TemplateItem $template
+$template = Get-ItemTemplate -Path master:\content\home\page1
+Set-ItemTemplate -Path master:\content\home\page2 -TemplateItem $template
 
 </dev:code>
         <dev:remarks />
@@ -32021,7 +32057,7 @@ The following abbreviations are aliases for this cmdlet:
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
         <dev:code>The following rebuilds the index.
 
-PS master:\&gt; Rebuild-SearchIndex -Name sitecore_master_index
+Initialize-SearchIndex -Name sitecore_master_index
 
 </dev:code>
         <dev:remarks />
@@ -32030,7 +32066,7 @@ PS master:\&gt; Rebuild-SearchIndex -Name sitecore_master_index
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
         <dev:code>The following rebuilds the index.
 
-PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Rebuild-SearchIndex
+Get-SearchIndex -Name sitecore_master_index | Initialize-SearchIndex
 
 </dev:code>
         <dev:remarks />
@@ -32197,7 +32233,20 @@ The following abbreviations are aliases for this cmdlet:
         <maml:para />
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>The following rebuilds the index for a given tree with the specified root node and index name.
+
+$item = Get-Item -Path "master:" -ID "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+$indexName = "sitecore_master_index"
+Initialize-SearchIndexItem -Item $item -Name $indexName
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
     <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -32333,7 +32382,20 @@ The following abbreviations are aliases for this cmdlet:
         <maml:para />
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>The following removes the indexed item from the specified search index.
+
+$item = Get-Item -Path "master:" -ID "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+$indexName = "sitecore_master_index"
+Remove-SearchIndexItem -Item $item -Name $indexName
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
     <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -33591,6 +33653,23 @@ Find-Item @props | Measure-Object
 </dev:code>
         <dev:remarks />
       </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 11-----------------------</maml:title>
+        <dev:code>Find items and sort (boost) based on the date field. If this were used on a field containing future dates you should expect to see them mixed with past dates. This example demonstrates using Solr functions.
+
+$criteria = @(
+    @{Filter = "Equals"; Field = "_val_"; Value = "recip(abs(ms(NOW/HOUR,__smallcreateddate_tdt)),3.16e-11,4,.4)"}
+)
+$props = @{
+    Index = "sitecore_master_index"
+    Criteria = $criteria
+}
+
+Find-Item @props | Select-Object Name,CreatedDate
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
@@ -33789,7 +33868,29 @@ Find-Item @props | Measure-Object
         <maml:para />
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following gets the cloned `Item` and returns the available notifications.
+
+$clonedItem = Get-Item -Path "master:" -ID "{9F158637-52C2-4005-8329-21527685CB71}"
+Get-ItemCloneNotification -Item $clonedItem
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following gets the cloned `Item` based on the specified type of notification.
+
+$clonedItem = Get-Item -Path "master:" -ID "{9F158637-52C2-4005-8329-21527685CB71}"
+$clonedItem | Get-ItemCloneNotification -NotificationType ItemMovedChildRemovedNotification
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
     <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -34036,7 +34137,29 @@ Find-Item @props | Measure-Object
         <maml:para />
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following gets the cloned `Item`, returns the available notifications, and finally accepts the notifications.
+
+$clonedItem = Get-Item -Path "master:" -ID "{9F158637-52C2-4005-8329-21527685CB71}"
+$clonedItem  | Get-ItemCloneNotification | Receive-ItemCloneNotification -Action Accept
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following gets the cloned `Item`, returns the available notifications, and finally rejects the notifications.
+
+$clonedItem = Get-Item -Path "master:" -ID "{9F158637-52C2-4005-8329-21527685CB71}"
+$clonedItem  | Get-ItemCloneNotification | Receive-ItemCloneNotification -Action Reject
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
     <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
