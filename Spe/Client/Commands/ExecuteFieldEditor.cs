@@ -14,7 +14,9 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Client.Commands
 {
@@ -210,7 +212,7 @@ namespace Spe.Client.Commands
                     }
                 });
 
-                PageEditFieldEditorOptions.Parse(args.Result).SetPageEditorFieldValues();
+                TypeResolver.Resolve<IObsoletor>().SetPageEditorValues(args.Result);
             }
         }
     }
