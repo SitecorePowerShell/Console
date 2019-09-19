@@ -201,7 +201,7 @@ namespace Spe.Client.Applications
                         }
                     });
 
-                    PageEditFieldEditorOptions.Parse(args.Result).SetPageEditorFieldValues();
+                    TypeResolver.Resolve<IObsoletor>().SetPageEditorValues(args.Result);
                 }
                 var strJobId = args.Parameters["jobHandle"];
                 if (!string.IsNullOrEmpty(strJobId))
