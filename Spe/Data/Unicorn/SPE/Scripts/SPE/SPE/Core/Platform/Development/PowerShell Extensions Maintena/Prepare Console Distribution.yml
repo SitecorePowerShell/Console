@@ -1,4 +1,4 @@
-﻿---
+---
 ID: "ac05422c-a1b1-41ba-a1fd-4ec7e944de3b"
 Parent: "01bb164c-5e8e-4c9b-941f-e5340bdd520c"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -70,11 +70,11 @@ SharedFields:
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
-    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
-    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
-    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
-    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
-    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package -InstallMode Merge -MergeMode Merge
+    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package -InstallMode Overwrite
     
     # Files
     $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
