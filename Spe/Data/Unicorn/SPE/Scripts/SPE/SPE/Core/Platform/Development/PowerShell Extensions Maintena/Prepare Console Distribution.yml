@@ -1,4 +1,4 @@
----
+﻿---
 ID: "ac05422c-a1b1-41ba-a1fd-4ec7e944de3b"
 Parent: "01bb164c-5e8e-4c9b-941f-e5340bdd520c"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -14,7 +14,7 @@ SharedFields:
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta7"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
