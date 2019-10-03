@@ -70,11 +70,14 @@ SharedFields:
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
-    Get-UnicornConfiguration -Filter  "Spe.Core" | New-UnicornItemSource -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter  "Spe.Rules" | New-UnicornItemSource -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter  "Spe.Scripts" | New-UnicornItemSource -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter  "Spe.Roles" | New-UnicornItemSource -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter  "Spe.AuthorableReports" | New-UnicornItemSource -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.Core" | New-UnicornItemSource -Name "Spe.Core" -Project $package -InstallMode Merge -MergeMode Clear
+    Get-UnicornConfiguration -Filter "Spe.UI" | New-UnicornItemSource -Name "Spe.UI" -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.Rules" | New-UnicornItemSource -Name "Spe.Rules" -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.Scripts" | New-UnicornItemSource -Name "Spe.Scripts" -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.AuthorableReports" | New-UnicornItemSource -Name "Spe.AuthorableReports" -Project $package -InstallMode Overwrite
+    
+    $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Spe.Roles" 
+    $package.Sources.Add($source)
     
     # Files
     $source = Get-Item "$AppPath\App_Config\Include\Spe\*.*" | 
