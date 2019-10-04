@@ -47,12 +47,11 @@ namespace Spe.Commands.Security.Accounts
                 else if (Role.Exists(member.Name))
                 {
                     var role = Role.FromName(member.Name);
-                    if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                    if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false)) continue;
+                    
+                    if (ShouldProcess(targetRole.Name, $"Remove role '{role.Name}' from role"))
                     {
-                        if (ShouldProcess(targetRole.Name, $"Remove role '{role.Name}' from role"))
-                        {
-                            RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
-                        }
+                        RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
                     }
                 }
                 else
