@@ -19,7 +19,9 @@ SharedFields:
             Adam Najmanowicz, Michael West
     #>
     
-    $item = Get-Item -Path master:\content\
+    Import-Function -Name Invoke-SqlCommand
+    
+    $item = Get-Item -Path "master:\content\"
     
     $user = ""
     
@@ -45,15 +47,29 @@ SharedFields:
         Exit
     }
     
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+    
+    $fieldId = [Sitecore.FieldIDs]::Lock
+    
+    $query = @"
+    SELECT [ItemId], [Value], [Language], [Version]
+      FROM [dbo].[VersionedFields]
+      WHERE [FieldId] = '$($fieldId.ToString())'
+    	AND [Value] <> '' AND [Value] <> '<r />'
+    "@
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    
     if($user) {
         $owner = $user.Replace("\","\\")
-        $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -match "owner=""$owner""" }
+        $pattern = [regex]::Escape("owner=`"$($user)`"")
+        $items = $records | Where-Object { $_.Value -match $pattern } | 
+            ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
     } else{
-        $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -and (-not ($_.__Lock -match "<r />"))}
+        $items = $records | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
     }
     
     if($since.Year -ne 1) {
-        $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date}
+        $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields[$fieldId])).Date}
     }
     
     if($items.Count -eq 0) {
@@ -70,6 +86,7 @@ SharedFields:
         $items |
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
                 @{Label="Version"; Expression={$_.Version } },
+                @{Label="Language"; Expression={$_.Language } },
                 @{Label="Owner"; Expression={ $_.__Owner} },
                 @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} },
                 @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
