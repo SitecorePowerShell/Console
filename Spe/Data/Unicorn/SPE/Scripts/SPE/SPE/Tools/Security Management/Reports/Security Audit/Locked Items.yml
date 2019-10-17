@@ -87,14 +87,15 @@ SharedFields:
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
                 @{Label="Version"; Expression={$_.Version } },
                 @{Label="Language"; Expression={$_.Language } },
-                @{Label="Owner"; Expression={ $_.__Owner} },
-                @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} },
                 @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
+                @{Label="Locked on"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields[$fieldId])).Date} },
+                @{Label="Path"; Expression={$_.ItemPath} },
+                ID,
                 @{Label="Updated"; Expression={$_.__Updated} },
                 @{Label="Updated by"; Expression={$_."__Updated by"} },
                 @{Label="Created"; Expression={$_.__Created} },
                 @{Label="Created by"; Expression={$_."__Created by"} },
-                @{Label="Path"; Expression={$_.ItemPath} }
+                @{Label="Owner"; Expression={ $_.__Owner} }
     }
     
     Close-Window
