@@ -21,10 +21,46 @@ SharedFields:
     
     Import-Function -Name Invoke-SqlCommand
     
+    filter Where-LockedOnDate {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$Item,
+            
+            [datetime]$Date=([datetime]::Today),
+            [switch]$IsBefore,
+            
+            [int]$MaxDays
+        )
+        
+        $convertedDate = ([Sitecore.Data.Fields.LockField]($item.Fields[[Sitecore.FieldIDs]::Lock])).Date
+        $isWithinDate = $false
+        if($IsBefore.IsPresent) {
+            if($convertedDate -le $Date) {
+                $isWithinDate = $true
+            }
+        } else {
+            if($convertedDate -ge $Date) {
+                $isWithinDate = $true
+            }
+        }
+        
+        if($isWithinDate) {
+            if($MaxDays -lt [int]::MaxValue) {
+                if([math]::Abs(($convertedDate - $Date).Days) -le $MaxDays) {
+                    $item
+                }
+            } else {
+                $item
+            }
+        }
+    }
+    
     $item = Get-Item -Path "master:\content\"
     
     $user = ""
     
+    $periodOptions = [ordered]@{Before=1;After=2;}
+    $maxDaysOptions = [ordered]@{"-- Skip --"=[int]::MaxValue;30=30;90=90;120=120;365=365;}
     $props = @{
         Title = "Items Locked"
         Description = "Lists all the items locked by the specified user."
@@ -34,7 +70,29 @@ SharedFields:
             @{ Name = "info"; Title="Details"; Tooltip="Analyse the branch and report which items are currently locked. Optionally filter by user."; Editor="info";},
             @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."},
             @{ Name = "user"; Title="Locking User"; Tooltip="Specify the user associated with the locked items."; Editor="user"},
-            @{ Name = "since"; Title="Locked Since"; Tooltip="Specify when the items were placed in a lock state. Leave empty to skip this step."; Editor="date time"}
+            @{ 
+                Name = "selectedDate"
+                Value = [System.DateTime]::Now
+                Title = "Locked Date"
+                Tooltip = "Filter the results for items locked on or before/after the specified date"
+                Editor = "date time"
+            },
+            @{
+                Name = "selectedPeriod"
+                Title = "Period"
+                Value = 1
+                Options = $periodOptions
+                Tooltip = "Pick whether the items should have been last updated before or after the specified date"
+                Editor = "radio"
+            },
+            @{
+                Name = "selectedMaxDays"
+                Title = "Max Days"
+                Value = [int]::MaxValue
+                Options = $maxDaysOptions
+                Tooltip = "Pick the maximum number of days to include starting with the specified date"
+                Editor = "combo"
+            }
         )
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         ShowHints = $true
@@ -63,11 +121,8 @@ SharedFields:
     }
     
     $records = Invoke-SqlCommand -Connection $connection -Query $query
-    $items = $records | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
-    
-    if($since.Year -ne 1) {
-        $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields[$fieldId])).Date}
-    }
+    $items = $records | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version } | 
+        Where-LockedOnDate -Date $selectedDate -IsBefore:($selectedPeriod -eq 1) -MaxDays $selectedMaxDays
     
     if($items.Count -eq 0) {
         Show-Alert "There are no items items locked by the specified user."
