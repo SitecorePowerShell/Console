@@ -1,8 +1,8 @@
 ﻿---
-ID: "c4b3c98b-74fa-4e90-ac91-44f302696020"
+ID: "e6f3620d-b314-49ea-9195-9586a727a876"
 Parent: "b31991a9-60d3-4efa-9b83-da10d878e5e3"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock All
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
@@ -27,7 +27,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $allData | Unlock-Item
+    $selectedData | Unlock-Item
     $allData | Update-ListView
 Languages:
 - Language: da
@@ -52,10 +52,10 @@ Languages:
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Remove the lock from all items.
+    Value: Remove the lock from selected items.
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: Unlock All
+    Value: Unlock
   Versions:
   - Version: 1
     Fields:

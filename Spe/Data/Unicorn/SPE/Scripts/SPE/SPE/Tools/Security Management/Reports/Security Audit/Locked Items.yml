@@ -82,7 +82,7 @@ SharedFields:
                 Title = "Period"
                 Value = 1
                 Options = $periodOptions
-                Tooltip = "Pick whether the items should have been last updated before or after the specified date"
+                Tooltip = "Pick whether the items should have been locked before or after the specified date"
                 Editor = "radio"
             },
             @{
