@@ -57,16 +57,13 @@ SharedFields:
       WHERE [FieldId] = '$($fieldId.ToString())'
     	AND [Value] <> '' AND [Value] <> '<r />'
     "@
-    $records = Invoke-SqlCommand -Connection $connection -Query $query
     
     if($user) {
-        $owner = $user.Replace("\","\\")
-        $pattern = [regex]::Escape("owner=`"$($user)`"")
-        $items = $records | Where-Object { $_.Value -match $pattern } | 
-            ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
-    } else{
-        $items = $records | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
+        $query += "	AND [Value] LIKE '<r owner=`"$($user)`"%'"
     }
+    
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    $items = $records | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version }
     
     if($since.Year -ne 1) {
         $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields[$fieldId])).Date}
