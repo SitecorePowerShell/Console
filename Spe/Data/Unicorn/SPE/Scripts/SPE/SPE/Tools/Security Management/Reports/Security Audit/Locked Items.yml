@@ -32,7 +32,7 @@ SharedFields:
             [int]$MaxDays
         )
         
-        $convertedDate = ([Sitecore.Data.Fields.LockField]($item.Fields[[Sitecore.FieldIDs]::Lock])).Date
+        $convertedDate = [Sitecore.DateUtil]::ToServerTime(([Sitecore.Data.Fields.LockField]($item.Fields[[Sitecore.FieldIDs]::Lock])).Date)
         $isWithinDate = $false
         if($IsBefore.IsPresent) {
             if($convertedDate -le $Date) {
@@ -107,12 +107,10 @@ SharedFields:
     
     $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
     
-    $fieldId = [Sitecore.FieldIDs]::Lock
-    
     $query = @"
     SELECT [ItemId], [Value], [Language], [Version]
       FROM [dbo].[VersionedFields]
-      WHERE [FieldId] = '$($fieldId.ToString())'
+      WHERE [FieldId] = '$([Sitecore.FieldIDs]::Lock.ToString())'
     	AND [Value] <> '' AND [Value] <> '<r />'
     "@
     
@@ -134,13 +132,21 @@ SharedFields:
             PageSize = 25
             ViewName = "LockedItems"
         }
-    
+        function Get-FormattedDate {
+            param(
+                [datetime]$Date
+            )
+            
+            if($Date -ge [datetime]::MinValue) {
+                $Date
+            }
+        }
         $items |
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
                 @{Label="Version"; Expression={$_.Version } },
                 @{Label="Language"; Expression={$_.Language } },
                 @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
-                @{Label="Locked on"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields[$fieldId])).Date} },
+                @{Label="Locked on"; Expression={ Get-FormattedDate -Date ([Sitecore.Data.Fields.LockField]($_.Fields[[Sitecore.FieldIDs]::Lock])).Date} },
                 @{Label="Path"; Expression={$_.ItemPath} },
                 ID,
                 @{Label="Updated"; Expression={$_.__Updated} },
