@@ -1,0 +1,21 @@
+ItemID,Path,FieldId,Key,Phrase,TranslatedPhrase
+{148B7002-A342-4D2F-9159-E02080FE6746},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Administration,__Display name,Administration,Administration,
+{476489C2-B3DE-4F35-A1C7-1E992D869FE5},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Analytics,__Display name,Analytics,Analytics,
+{9197DAE0-2896-4F5A-B122-3AD96372E4D5},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Database,__Display name,Database,Database,
+{721DB01A-B4C2-4C33-AB21-FE4AF71681F9},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Globalization,__Display name,Globalization,Globalization,
+{66C45781-21DE-467E-BC01-3A89A90A27BC},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Preferences,__Display name,Preferences,Preferences,
+{4655F9C8-16BE-4343-A101-1473823EB017},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Reports,__Display name,Reports,Reports,
+{8442F585-0901-49B7-A457-D80679AABC15},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Security,__Display name,Security,Security,Sikkerhed
+{C7FA7F43-8AB1-46A8-8CF5-620030B5947F},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Reports/Users,__Display name,Users,Users,Brugere
+{721FDA95-893E-4704-8260-7A5C24E660F8},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Content Editor/Context Menu/Download,__Display name,Download,Download,Hent
+{CD36F34B-0D5F-4221-A05C-67A2EAC46B46},/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security,__Display name,Security,Security,Sikkerhed
+{8E1DBC83-6763-4E1B-9C08-1D377C98DF88},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email,__Display name,Email,Email,Email
+{84C8CA2C-C7E3-472A-B90A-328D3E953910},/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security/Tools,__Display name,Tools,Tools,Værktøj
+{5DFA45C3-35E2-4E8C-B341-2DDF5CECEAC1},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Edit,__Display name,Edit,Edit,Redigere
+{241922F3-E622-49A4-8754-8BFBE051EA83},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Open,__Display name,Open,Open,Åben
+{54C08CF9-8939-4D52-9064-BD6E4A4DF364},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Kill,__Display name,Kill,Kill,Dræbe
+{E069898E-AF58-4ABD-AD68-C277BD54509A},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Refresh,__Display name,Refresh,Refresh,Opdater
+{D6A80D77-F782-4CD4-B465-FFF0615F4C16},/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Open,__Display name,Open,Open,Åben
+{409D08B8-13C6-4425-89D7-54B097194CF6},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User,__Display name,Kick User,Kick User,Sparke Bruger
+{BB607CB6-AB3B-45CD-93DF-2BAF257F3960},/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/Session/Kick User,__Display name,Kick User,Kick User,Sparke Bruger
+{A328DBB5-DC6C-4307-AD7C-BC1E330F011A},/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site/Open,__Display name,Open,Open,Åben
