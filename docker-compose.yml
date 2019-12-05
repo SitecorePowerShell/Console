@@ -24,11 +24,11 @@ services:
 
   cm:
     image: ${REGISTRY}sitecore-xm-cm:${SITECORE_VERSION}-windowsservercore-${WINDOWSSERVERCORE_VERSION}
-    entrypoint: cmd /c "start /B powershell Watch-Directory C:/deploy C:/inetpub/wwwroot & powershell.exe -NoLogo -NoProfile -File C:\\tools\\entrypoints\\iis\\Development.ps1"
+    entrypoint: cmd /c "start /B powershell Watch-Directory C:/src C:/inetpub/wwwroot & powershell.exe -NoLogo -NoProfile -File C:\\tools\\entrypoints\\iis\\Development.ps1"
     ports:
       - "44001:80"
     volumes:
-      - .\deploy:C:\deploy
+      - .\deploy:C:\src
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
       - .\data\cm:C:\inetpub\sc\App_Data\logs
       - C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Remote Debugger:C:\remote_debugger:ro

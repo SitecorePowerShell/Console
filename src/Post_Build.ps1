@@ -10,6 +10,16 @@ Param([string]$projectfilter)
 $deployConfig = Get-Content "$PSScriptRoot\deploy.json" | ConvertFrom-Json
 $userConfig = Get-Content "$PSScriptRoot\deploy.user.json" | ConvertFrom-Json
 
+if(!$userConfig) {
+    $userConfig = [PSCustomObject]@{
+        "sites" = @(
+            [PSCustomObject]@{
+                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "deploy"
+            }
+        )
+    }
+}
+
 # Set source folder
 $sourceFolder = $PSScriptRoot
 
