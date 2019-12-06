@@ -30,7 +30,7 @@ services:
     volumes:
       - .\deploy:C:\src
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
-      - .\data\cm:C:\inetpub\sc\App_Data\logs
+      - .\data\cm:C:\inetpub\wwwroot\App_Data\logs
       - C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
     environment:
       SITECORE_LICENSE: ${SITECORE_LICENSE}
