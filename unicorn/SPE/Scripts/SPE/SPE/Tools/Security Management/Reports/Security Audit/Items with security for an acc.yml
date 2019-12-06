@@ -13,16 +13,16 @@ SharedFields:
   Value: |
     <#
         .SYNOPSIS
-            Lists the items in which security is explicitly set for the specified user.
+            Lists the items in which security is explicitly set for the specified user or role.
     #>
     
     $item = Get-Item -Path "master:\content"
     $user = ""
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Start Item"; Tooltip="Branch you want to analyse."}, `
-        @{ Name = "user"; Title="Select User"; Tooltip="Tooltip for user"; Editor="user"} `
-        -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
-        -Title "Security for a user" -Width 600 -Height 280 `
+        @{ Name = "account"; Title="Select Account"; Tooltip="The specified account will be used to filter the items."; Editor="user role"} `
+        -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific account." `
+        -Title "Security for an account" -Width 600 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort"  -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     
     if($result -ne "ok") {
@@ -30,15 +30,15 @@ SharedFields:
         Exit
     }
     
-    $user = $user.Replace("\","\\")
-    if("$user" -eq ""){
-        $user="\|"
+    $account = $account.Replace("\","\\")
+    if("$account" -eq ""){
+        $account="\|"
     }
     
-    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object {$_.__Security -match $user }
+    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object {$_.__Security -match $account }
     
     if($items.Count -eq 0){
-        Show-Alert "There are no items found which have security set for the specified user(s)."
+        Show-Alert "There are no items found which have security set for the specified user/role."
     } else {
         $props = @{
             Title = "Item User Security Report"
