@@ -24,7 +24,7 @@ services:
 
   cm:
     image: ${REGISTRY}sitecore-xm-cm:${SITECORE_VERSION}-windowsservercore-${WINDOWSSERVERCORE_VERSION}
-    entrypoint: cmd /c "start /B powershell Watch-Directory C:/src C:/inetpub/wwwroot & powershell.exe -NoLogo -NoProfile -File C:\\tools\\entrypoints\\iis\\Development.ps1"
+    entrypoint: cmd /c "start /B powershell Watch-Directory C:/src C:/inetpub/wwwroot -ExcludeDirectories 'Unicorn' & powershell.exe -NoLogo -NoProfile -File C:\\tools\\entrypoints\\iis\\Development.ps1"
     ports:
       - "44001:80"
     volumes:
