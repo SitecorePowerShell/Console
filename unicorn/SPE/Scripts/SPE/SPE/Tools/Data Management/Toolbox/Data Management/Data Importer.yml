@@ -41,6 +41,7 @@ SharedFields:
     $selection = [ordered]@{
         "<b>Import</b> and update items using a specified Template."=1;
         "<b>Update</b> existing items based on the item <b>Id</b>, item <b>Name</b>, or field name."=2;
+        "<b>Export</b> existing items based on a specified Template."=3;
     }
     
     $scriptId = "{EF72970A-DECC-420C-8DC5-155C673ED3F0}"
@@ -63,19 +64,6 @@ SharedFields:
     
     if($result -ne "ok") { exit }
     
-    $uploadDirectory = Join-Path -Path $SitecoreDataFolder -ChildPath "temp"
-    $importFilePath = Receive-File -Overwrite -Title $defaultProps.Title -Description "Choose a valid CSV file to import." -Icon $defaultProps.Icon -Path $uploadDirectory -OkButtonName "Next"
-    
-    if(-not(Test-Path -Path $importFilePath)) { exit }
-    
-    $importData = Import-CSV $importFilePath
-    $columnNames = $importData | Get-Member -MemberType NoteProperty | Where-Object { "Name","Id" -notcontains $_.Name } | Select-Object -ExpandProperty Name
-    $sourceFieldNames = $columnNames | ForEach-Object { $mappings = [ordered]@{} } { $mappings[$_] = $_ } { $mappings }
-    $fieldMappings = $sourceFieldNames
-    
-    # Create a list of field names used as an alternative to Id and Name.
-    $customKeyOptions = [ordered]@{"-- Skip --" = ""} + $sourceFieldNames
-    
     # Used to determine where queries should start.
     $destinationNode = @{$true=(Get-Item -Path "master:\content\home");$false=(Get-Item -Path "master:\content")}[(Test-Path -Path "master:\content\home")]
     
@@ -84,6 +72,20 @@ SharedFields:
     $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
     $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
     
+    if($wizardMode -ne 3) {
+        $uploadDirectory = Join-Path -Path $SitecoreDataFolder -ChildPath "temp"
+        $importFilePath = Receive-File -Overwrite -Title $defaultProps.Title -Description "Choose a valid CSV file to import." -Icon $defaultProps.Icon -Path $uploadDirectory -OkButtonName "Next"
+        
+        if(-not(Test-Path -Path $importFilePath)) { exit }
+        
+        $importData = Import-CSV $importFilePath
+        $columnNames = $importData | Get-Member -MemberType NoteProperty | Where-Object { "Name","Id" -notcontains $_.Name } | Select-Object -ExpandProperty Name
+        $sourceFieldNames = $columnNames | ForEach-Object { $mappings = [ordered]@{} } { $mappings[$_] = $_ } { $mappings }
+        $fieldMappings = $sourceFieldNames
+        
+        # Create a list of field names used as an alternative to Id and Name.
+        $customKeyOptions = [ordered]@{"-- Skip --" = ""} + $sourceFieldNames
+    }
     if($wizardMode -eq 1) {
     
         $props = @{
@@ -157,6 +159,37 @@ SharedFields:
         $result = Read-Variable @props @defaultProps
         
         if($result -ne "ok") { exit }
+    } elseif ($wizardMode -eq 3) {
+        
+        $rootOptions = [ordered]@{
+            "Root and descendants" = "RootAndDescendants"
+            "Root and children" = "RootAndChildren"
+            "Descendants only" = "DescendantsOnly"
+            "Children only" = "ChildrenOnly"
+        }
+        
+        $rootOptionTooltips = [ordered]@{
+            "RootAndDescendants" = "The selected item and everything beneath it will be added."
+            "RootAndChildren" = "The selected item and immediate children will be added."
+            "DescendantsOnly" = "Everything beneath the selected item will be added."
+            "ChildrenOnly" = "Immediate children beneath the selected item will be added."
+        }
+        
+        $props = @{
+            "Parameters" = @(
+                @{ Name = "info"; Title = ""; Value = "The export allows you to choose existing items. The <b>Id</b> and <b>Template</b> will be included to help when running in the update mode."; Editor="info" },
+                @{ Name = "destinationNode"; Title = "Destination Node"; Value = $destinationNode; Tooltip = "Narrow the updates to a specific part of the tree when using the item <b>Name</b> or field name."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/content" },
+                @{ Name = "templateItem"; Title = "Item Type"; Value = (Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"); Tooltip = "Represents the Template used for matching items."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/templates"},
+                @{ Name = "includeItems"; Title="Items to include in the export"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Editor="combo" }
+            )
+            "Description" = "Choose where to start the export."
+            "OkButtonName" = "Run"
+        }
+        $result = Read-Variable @props @defaultProps
+        
+        if($result -ne "ok") { exit }
+        
+        if($templateItem -eq $null) { exit }
     }
     
     function Check-Condition {
@@ -171,6 +204,34 @@ SharedFields:
     }
     
     Write-LogExtended "Running wizard in powerful ways."
+    
+    if($wizardMode -eq 3) {
+        $items = [System.Collections.ArrayList]@()
+        if ($includeItems -eq "RootAndDescendants") {
+            $queriedItems = @($destinationNode) + @(($destinationNode.Axes.GetDescendants() | Initialize-Item))
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "RootAndChildren") {
+            $queriedItems = @($destinationNode) + @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "DescendantsOnly") {
+            $queriedItems = @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "ChildrenOnly") {
+            $queriedItems = @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        }
+        
+        
+        $selectedTemplateItem = [Sitecore.Data.Items.TemplateItem]$templateItem
+        $selectedTemplateFields = $selectedTemplateItem.OwnFields + $selectedTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+        
+        $filterFields = @("Id") +  @(($selectedTemplateFields | Where-Object { $standardFields -notcontains $_ } | Sort-Object))
+    
+        $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+        $items | Where-Object { $_.TemplateId -eq $selectedTemplateItem.ID } | Select-Object -Property $filterFields | ConvertTo-Csv -NoTypeInformation | Out-String | Out-Download -Name "dataimport-exported$($datetime).csv" > $null
+        
+        exit
+    }
     
     New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
         $rowIndex = 0
