@@ -19,9 +19,6 @@ SharedFields:
             The import file uses the properties "Name" and "Id" to help match existing items.
             
         .NOTES
-            Requires Sitecore PowerShell Extensions 4.6 or newer.
-            
-        .NOTES
             Michael West
     #>
     
@@ -205,7 +202,7 @@ SharedFields:
             
             if($item -eq $null) {
                 if($wizardMode -eq 1) {
-                    $itemPath = "$($destinationNode.ItemPath)/$($row.Name)"
+                    $itemPath = "$($destinationNode.ProviderPath)\$($row.Name)"
                     Write-LogExtended "[A] $($itemPath)" -ForegroundColor Green
                     if([Sitecore.Data.ID]::IsID($lookupKey)) {
                         $item = New-Item -Path $itemPath -ItemType $templateItem.ID -ForceId $row.Id
