@@ -13,48 +13,60 @@ SharedFields:
   Value: |
     <#
         .SYNOPSIS
-            Lists the items in which security is explicitly set for the specified user or role.
+            Find all items referencing the specified account.
+            
+        .DESCRIPTION
+            This report helps identify all of the items with explicit security set for a given account.
+            
+        .NOTES
+            Michael West
     #>
     
-    $item = Get-Item -Path "master:\content"
-    $user = ""
-    $result = Read-Variable -Parameters `
-        @{ Name = "item"; Title="Start Item"; Tooltip="Branch you want to analyse."}, `
-        @{ Name = "account"; Title="Select Account"; Tooltip="The specified account will be used to filter the items."; Editor="user role"} `
-        -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific account." `
-        -Title "Security for an account" -Width 600 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort"  -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    Import-Function -Name Invoke-SqlCommand
     
+    $settings = @{
+        Title = "Report Filter"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter items explicitly referencing the specified domain."
+        Parameters = @(
+            @{ Name = "selectedAccount"; Title="Choose an account for the report"; Tooltip="Only items matching security with this account will be returned."; Editor="user role"}
+        )
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @settings
     if($result -ne "ok") {
-        Close-Window
         Exit
     }
     
-    $account = $account.Replace("\","\\")
-    if("$account" -eq ""){
-        $account="\|"
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+    
+    $securityFieldId = [Sitecore.FieldIDs]::Security
+    
+    # Find all the items which explicitly hae security assigned.
+    $query = @"
+    SELECT [ItemId], [Value]
+      FROM [dbo].[SharedFields]
+      WHERE [FieldId] = '$($securityFieldId.ToString())'
+    	AND [Value] <> '' AND [Value] LIKE '%|$($selectedAccount)%'
+    "@
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    
+    $reportProperties = @{
+        Property = @("Name", "Id", "ItemPath", @{Name="Security";Expression={$_."__Security"}})
+        Title = "Items assigned with explicit account security"
+        InfoTitle = "Items assigned with explicit account security"
+        InfoDescription = "Items which reference the domain '$($selectedAccount)'."
     }
     
-    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object {$_.__Security -match $account }
+    $escaped = [regex]::Escape($selectedAccount)
+    $records | Where-Object { $_.Value -match "$($escaped)" } |
+        ForEach-Object { Get-Item -Path "master:" -ID "$($_.ItemId.ToString())" } |
+        Show-ListView @reportProperties
     
-    if($items.Count -eq 0){
-        Show-Alert "There are no items found which have security set for the specified user/role."
-    } else {
-        $props = @{
-            Title = "Item User Security Report"
-            InfoTitle = "Items with security for an account"
-            InfoDescription = "Lists the items which have a user account explicitly set."
-            PageSize = 25
-        }
-        
-        $items | 
-            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} }, Version, Language, `
-                @{Label="Updated"; Expression={$_.__Updated} },
-                @{Label="Created"; Expression={$_.__Created} },
-                @{Label="Path"; Expression={$_.ItemPath} },
-                @{Label="Security"; Expression={$_.__Security} }
-    }
-    Close-Window
+    Close-Window    
 Languages:
 - Language: da
   Fields:
