@@ -32,6 +32,9 @@ SharedFields:
         Write-Log -Object $message
         Write-Host -Object $message -ForegroundColor $ForegroundColor -BackgroundColor $backgroundColor
     }
+    
+    Write-LogExtended "Warming up wizard."
+    
     $defaultProps = @{
         "Title" = "Data Import Wizard"
         "Icon" = "OfficeWhite/32x32/server_from_client.png"
@@ -73,12 +76,17 @@ SharedFields:
     $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
     
     if($wizardMode -ne 3) {
+        Write-LogExtended "Requesting a file for upload."
         $uploadDirectory = Join-Path -Path $SitecoreDataFolder -ChildPath "temp"
         $importFilePath = Receive-File -Overwrite -Title $defaultProps.Title -Description "Choose a valid CSV file to import." -Icon $defaultProps.Icon -Path $uploadDirectory -OkButtonName "Next"
         
         if(-not(Test-Path -Path $importFilePath)) { exit }
         
         $importData = Import-CSV $importFilePath
+        if(!$importData) {
+            Write-LogExtended "> The imported file contains no data." -ForegroundColor White -BackgroundColor Red
+            exit
+        }
         $columnNames = $importData | Get-Member -MemberType NoteProperty | Where-Object { "Name","Id" -notcontains $_.Name } | Select-Object -ExpandProperty Name
         $sourceFieldNames = $columnNames | ForEach-Object { $mappings = [ordered]@{} } { $mappings[$_] = $_ } { $mappings }
         $fieldMappings = $sourceFieldNames
@@ -87,7 +95,11 @@ SharedFields:
         $customKeyOptions = [ordered]@{"-- Skip --" = ""} + $sourceFieldNames
     }
     if($wizardMode -eq 1) {
-    
+        $isMissingName = $importData[0].PSObject.Properties.Name -notcontains "Name"
+        if($isMissingName) {
+            Write-LogExtended "> Item name missing from import data." -ForegroundColor White -BackgroundColor Red
+            exit
+        }
         $props = @{
             "Parameters" = @(
                 @{ Name = "info"; Title = ""; Value = "Import new items matched with the specified Template. You can avoid creating duplicates by providing the item <b>Id</b>, item <b>Name</b>, or field name."; Editor = "info" },
@@ -263,6 +275,7 @@ SharedFields:
             
             if($item -eq $null) {
                 if($wizardMode -eq 1) {
+    
                     $itemPath = "$($destinationNode.ProviderPath)\$($row.Name)"
                     Write-LogExtended "[A] $($itemPath)" -ForegroundColor Green
                     if([Sitecore.Data.ID]::IsID($lookupKey)) {
