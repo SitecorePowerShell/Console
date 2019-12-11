@@ -28,10 +28,42 @@ namespace Spe.Core.Host
 
         private ScriptingHostPrivateData PrivateData => privateData ?? (privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData);
 
+        private bool IsOutputLoggingEnabled = Sitecore.Configuration.Settings.GetBoolSetting("Spe.OutputLoggingEnabled", false);
         public ScriptingHostUserInterface(ApplicationSettings settings, ScriptingHost host)
         {
             rawUi = new ScriptingHostRawUserInterface(settings);
             this.host = host;
+        }
+
+        private enum LogLevel
+        {
+            Info,
+            Verbose,
+            Warning,
+            Debug,
+            Error
+        }
+
+        private void WriteToLog(string message, LogLevel level)
+        {
+            if (!IsOutputLoggingEnabled) return;
+
+            switch(level)
+            {
+                case LogLevel.Debug:
+                    PowerShellLog.Debug(message);
+                    break;
+                case LogLevel.Error:
+                    PowerShellLog.Error(message);
+                    break;
+                case LogLevel.Info:
+                case LogLevel.Verbose:
+                    PowerShellLog.Info(message);
+                    break;
+                case LogLevel.Warning:
+                    PowerShellLog.Warn(message);
+                    break;
+            }            
         }
 
         /// <summary>
@@ -115,6 +147,7 @@ namespace Spe.Core.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, true);
             Output.AddRange(splitter);
+            WriteToLog(value, LogLevel.Info);
         }
 
         public override void WriteErrorLine(string value)
@@ -125,14 +158,16 @@ namespace Spe.Core.Host
                 PrivateData.ErrorBackgroundColor, true);
             Output.HasErrors = true;
             Output.AddRange(splitter);
+            WriteToLog(value, LogLevel.Error);
         }
 
-        public override void WriteDebugLine(string message)
+        public override void WriteDebugLine(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + message,
+            var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + value,
                 RawUI.WindowSize.Width,
                 PrivateData.DebugForegroundColor, PrivateData.DebugBackgroundColor, true);
             Output.AddRange(splitter);
+            WriteToLog(value, LogLevel.Debug);
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
@@ -162,18 +197,20 @@ namespace Spe.Core.Host
             }
         }
 
-        public override void WriteVerboseLine(string message)
+        public override void WriteVerboseLine(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, "VERBOSE: " + message, RawUI.WindowSize.Width,
+            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, "VERBOSE: " + value, RawUI.WindowSize.Width,
                 PrivateData.VerboseForegroundColor, PrivateData.VerboseBackgroundColor, true);
             Output.AddRange(splitter);
+            WriteToLog(value, LogLevel.Info);
         }
 
-        public override void WriteWarningLine(string message)
+        public override void WriteWarningLine(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + message, RawUI.BufferSize.Width,
+            var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + value, RawUI.BufferSize.Width,
                 PrivateData.WarningForegroundColor, PrivateData.WarningBackgroundColor, true);
             Output.AddRange(splitter);
+            WriteToLog(value, LogLevel.Warning);
         }
 
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
