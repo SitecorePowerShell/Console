@@ -1,4 +1,4 @@
-﻿(function($, window, spe, ace, undefined) {
+(function($, window, spe, ace, undefined) {
     $(function() {
         var tips = [
             "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
@@ -436,7 +436,9 @@
             setTimeout(function () {
                 debugMarkers.push(codeeditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
             }, 100);
-
+            if (line < codeeditor.getFirstVisibleRow() || line > codeeditor.getLastVisibleRow()) {
+                codeeditor.gotoLine(line);
+            }
         };
 
         spe.breakpointHandled = function() {
