@@ -31,7 +31,7 @@ services:
       - .\deploy:C:\src
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
       - .\data\cm:C:\inetpub\wwwroot\App_Data\logs
-      - C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
+      - C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
     environment:
       SITECORE_LICENSE: ${SITECORE_LICENSE}
       SITECORE_APPSETTINGS_ROLE:DEFINE: ContentManagement, Indexing
