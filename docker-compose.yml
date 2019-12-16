@@ -20,11 +20,11 @@ services:
     ports:
       - "44011:8983"
     environment:
-      SOLR_LOG_LEVEL: INFO
+      SOLR_LOG_LEVEL: ERROR
 
   cm:
     image: ${REGISTRY}sitecore-xm-cm:${SITECORE_VERSION}-windowsservercore-${WINDOWSSERVERCORE_VERSION}
-    entrypoint: cmd /c "start /B powershell Watch-Directory C:/src C:/inetpub/wwwroot -ExcludeDirectories 'Unicorn' & powershell.exe -NoLogo -NoProfile -File C:\\tools\\entrypoints\\iis\\Development.ps1"
+    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1 -WatchDirectoryParameters @{ Path = 'C:\\src'; Destination = 'C:\\inetpub\\wwwroot'; ExcludeDirectories = @('Unicorn'); }"
     ports:
       - "44001:80"
     volumes:
