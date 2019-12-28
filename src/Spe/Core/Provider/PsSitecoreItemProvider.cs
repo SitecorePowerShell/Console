@@ -313,9 +313,12 @@ namespace Spe.Core.Provider
                 {
 
                     var itemById = database.GetItem(new ID(id));
-                    foreach (var resultItem in GetMatchingItem(language, version, itemById))
+                    if (itemById != null)
                     {
-                        yield return resultItem;
+                        foreach (var resultItem in GetMatchingItem(language, version, itemById))
+                        {
+                            yield return resultItem;
+                        }
                     }
                 }
                 yield break;
