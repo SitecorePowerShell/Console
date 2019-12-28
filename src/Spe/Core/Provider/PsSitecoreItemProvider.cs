@@ -319,6 +319,10 @@ namespace Spe.Core.Provider
                         {
                             yield return resultItem;
                         }
+                    } 
+                    else if(errorIfNotFound)
+                    {
+                        WriteInvalidPathError(database.Name, id);
                     }
                 }
                 yield break;
