@@ -268,7 +268,6 @@ namespace Spe.Core.Provider
         {
             LogInfo("Executing GetItem(string path='{0}')", path);
 
-
             GetVersionAndLanguageParams(out int version, out string[] language);
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
@@ -280,7 +279,14 @@ namespace Spe.Core.Provider
                 var itemUri = ItemUri.Parse(uri);
                 var uriItem = Factory.GetDatabase(itemUri.DatabaseName)
                     .GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
-                yield return uriItem;
+                if (uriItem != null)
+                {
+                    yield return uriItem;
+                }
+                else if (errorIfNotFound)
+                {
+                    WriteInvalidPathError(uri);
+                }
                 yield break;
             }
 
