@@ -2,7 +2,7 @@
 ID: "90a4b70f-d65f-477f-a3b0-cf580530dd68"
 Parent: "df688463-0cf8-4df3-a523-4148d2d35bae"
 Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
-Path: /sitecore/system/Dictionary/PowerShell/T/The data for the dialog is not available Either your server was restarted or the server cache was 
+Path: /sitecore/system/Dictionary/PowerShell/T/The data for the dialog is not available 
 DB: core
 SharedFields:
 - ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
