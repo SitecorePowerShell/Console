@@ -126,6 +126,10 @@ namespace Spe.Core.Provider
 
                     item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
+                else
+                {
+                    path = item.GetProviderPath();
+                }
 
                 if (IsDynamicParamSet(WithParentParam))
                 {
