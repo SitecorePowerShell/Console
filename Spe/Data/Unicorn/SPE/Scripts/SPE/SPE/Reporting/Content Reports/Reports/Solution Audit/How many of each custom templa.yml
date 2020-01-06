@@ -31,7 +31,7 @@ SharedFields:
     foreach($template in $templates) {
         if($template -and ($template.Value.FullName -notmatch $ignorePattern) -and -not ($template.GetType().Name -match "ErrorRecord")) {
             $templateItem = Get-Item master:\ -ID $template.Value.ID
-            $items =@(Get-ItemReferrer -Database "master" -ID $template.Value.ID | Where-Object { $template.Name -ne "__Standard Values"})
+            $items =@(Get-ItemReferrer -Database "master" -ID $template.Value.ID | Where-Object { $_.Name -ne "__Standard Values"})
             $reportItem = [PSCustomObject]@{
                 "Icon" = $templateItem."__Icon"
                 "Name"=$template.Value.Name
