@@ -67,15 +67,15 @@ namespace Spe.Commands.Interactive
 
                     if (variable != null)
                     {
-                        var varValue = result["Value"];
-                        if (varValue == null)
+                        if (!result.ContainsKey("Value"))
                         {
-                            varValue = variable.Value.BaseObject();
+                            var varValue = variable.Value.BaseObject();
 
                             if (varValue is IEnumerable<object>)
                             {
                                 varValue = (varValue as IEnumerable<object>).Select(p => p.BaseObject()).ToList();
                             }
+
                             result.Add("Value", varValue);
                         }
                         var varTitle = result["Title"];
