@@ -598,13 +598,8 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.AutoPublish.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.DataProvider.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
+    <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
     <None Include="packages.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />
-    <Content Include="App_Config\Include\Spe\Spe.Serialization.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />
     <EmbeddedResource Include="..\Spe.Sitecore8\bin\$(Configuration)\Spe.VersionSpecific.dll">
