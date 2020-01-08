@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="Sitecore.Client, Version=13.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Client.9.2.0\lib\net471\Sitecore.Client.dll</HintPath>
+	  <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.ContentSearch, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.ContentSearch.9.2.0\lib\net471\Sitecore.ContentSearch.dll</HintPath>
