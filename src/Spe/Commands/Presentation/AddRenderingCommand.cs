@@ -29,6 +29,9 @@ namespace Spe.Commands.Presentation
         [Parameter]
         public int Index { get; set; } = -1;
 
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
+
         protected override void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device)
         {
             if (!ShouldProcess(item.GetProviderPath(), "Add rendering " + Instance.ItemID))
@@ -84,6 +87,11 @@ namespace Spe.Commands.Presentation
                 var outputXml = layout.ToXml();
                 LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
             });
+
+            if (PassThru)
+            {
+                WriteObject(rendering);
+            }
         }
     }
 }
