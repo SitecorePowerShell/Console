@@ -24,6 +24,12 @@ namespace Spe.Commands.Data
             OverwriteLatest
         }
 
+        public enum ActionIfNoVersion
+        {
+            Skip,
+            Add
+        }
+
         private static readonly HashSet<string> configIgnoredFields =
             new HashSet<string>(Factory.GetStringSet("powershell/translation/ignoredFields/field"));
 
@@ -34,6 +40,9 @@ namespace Spe.Commands.Data
 
         [Parameter]
         public ActionIfExists IfExist { get; set; }
+
+        [Parameter]
+        public ActionIfNoVersion IfNoSourceVersion { get; set; }
 
         [Parameter]
         [AutocompleteSet(nameof(Cultures))]
@@ -106,14 +115,14 @@ namespace Spe.Commands.Data
         {
             try
             {
-                if (sourceItem.Versions.Count > 0)
+                if (sourceItem.Versions.Count > 0 || IfNoSourceVersion == ActionIfNoVersion.Add)
                 {
                     if (targetItem.Versions.Count == 0 || IfExist == ActionIfExists.Append)
                     {
                         targetItem = targetItem.Versions.AddVersion();
                     }
 
-                    if (!DoNotCopyFields)
+                    if (sourceItem.Versions.Count > 0 && !DoNotCopyFields)
                     {
                         targetItem.Editing.BeginEdit();
                         sourceItem.Fields.ReadAll();
