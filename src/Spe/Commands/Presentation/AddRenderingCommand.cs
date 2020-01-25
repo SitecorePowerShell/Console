@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Sitecore.Data.Fields;
@@ -53,10 +54,38 @@ namespace Spe.Commands.Presentation
                 VaryByUser = Instance.VaryByUser
             };
 
-            if (Parameter != null)
+            if (Parameter != null && Parameter.Keys.Count > 0)
             {
                 var parameters = new UrlString(rendering.Parameters ?? string.Empty);
+                var renderingItem = Sitecore.Client.ContentDatabase.GetItem(Instance.ItemID);
+                if(renderingItem == null)
+                {
+                    WriteError(new ItemNotFoundException($"The rendering with Id {Instance.ItemID} could not be found in the ContentDatabase."), ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, this);
+                    return;
+                }
+
+                var standardValuesItem = RenderingItem.GetStandardValuesItemFromParametersTemplate(renderingItem);
+                var excludedFields = new List<string> { "additional parameters", "placeholder", "data source", "caching", "personalization", "test" };
+                foreach (Field standardValueField in standardValuesItem.Fields)
+                {
+                    var fieldName = standardValueField.Name;
+                    var lowerInvariant = fieldName.ToLowerInvariant();
+                    if (excludedFields.Contains(lowerInvariant)) continue;
+                    if (!RenderingItem.IsRenderingParameterField(standardValueField)) continue;
+
+                    var fieldValue = standardValueField.Value ?? string.Empty;
+                    if (parameters.Parameters.AllKeys.Contains(fieldName))
+                    {
+                        parameters.Parameters[fieldName] = fieldValue;
+                    } 
+                    else
+                    {
+                        parameters.Add(fieldName, fieldValue);
+                    }
+
+                }
                 foreach (string name in Parameter.Keys)
+                {
                     if (parameters.Parameters.AllKeys.Contains(name))
                     {
                         parameters.Parameters[name] = Parameter[name].ToString();
@@ -65,6 +94,7 @@ namespace Spe.Commands.Presentation
                     {
                         parameters.Add(name, Parameter[name].ToString());
                     }
+                }
                 rendering.Parameters = parameters.ToString();
             }
 
