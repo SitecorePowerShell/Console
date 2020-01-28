@@ -15,6 +15,7 @@ namespace Spe.Core.Host
     {
         private const string sessionIdPrefix = "$scriptSession$";
         private const string expirationSetting = "Spe.PersistentSessionExpirationMinutes";
+        private const string preventSessionCleanupSetting = "Spe.PreventPersistentSessionCleanup";
         private static readonly HashSet<string> sessions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public static ScriptSession GetSession(string persistentId, string defaultId)
@@ -122,8 +123,11 @@ namespace Spe.Core.Host
                     session.AutoDispose = true;
                 }
                 var expiration = Sitecore.Configuration.Settings.GetIntSetting(expirationSetting, 30);
+                var preventSessionCleanup = Sitecore.Configuration.Settings.GetBoolSetting(preventSessionCleanupSetting, false);
+
                 HttpRuntime.Cache.Add(sessionKey, session, null, Cache.NoAbsoluteExpiration,
-                    new TimeSpan(0, expiration, 0), CacheItemPriority.Normal, CacheItemRemoved);
+                    new TimeSpan(0, expiration, 0), preventSessionCleanup ? CacheItemPriority.NotRemovable : CacheItemPriority.Normal, CacheItemRemoved);
+
                 sessions.Add(sessionKey);
                 session.ID = persistentId;
                 session.Key = sessionKey;
