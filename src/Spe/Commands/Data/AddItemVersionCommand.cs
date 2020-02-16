@@ -117,7 +117,7 @@ namespace Spe.Commands.Data
             {
                 if (sourceItem.Versions.Count > 0 || IfNoSourceVersion == ActionIfNoVersion.Add)
                 {
-                    if (targetItem.Versions.Count == 0 || IfExist == ActionIfExists.Append)
+                    if (targetItem.Versions.Count == 0 || IfExist == ActionIfExists.Append || targetItem.IsFallback)
                     {
                         targetItem = targetItem.Versions.AddVersion();
                     }
