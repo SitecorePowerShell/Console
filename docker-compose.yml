@@ -32,13 +32,14 @@ services:
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
       - .\data\cm:C:\inetpub\wwwroot\App_Data\logs
       - C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
+      - C:\license:C:\license:ro 
     networks:
       default:
         aliases:
           - spe.dev.local
     environment:
       HOST_HEADER: spe.dev.local
-      SITECORE_LICENSE: ${SITECORE_LICENSE}
+      SITECORE_LICENSE_LOCATION: C:\license\license.xml
       SITECORE_APPSETTINGS_ROLE:DEFINE: ContentManagement, Indexing
       SITECORE_CONNECTIONSTRINGS_CORE: Data Source=sql;Initial Catalog=Sitecore.Core;User ID=sa;Password=${SQL_SA_PASSWORD}
       SITECORE_CONNECTIONSTRINGS_SECURITY: Data Source=sql;Initial Catalog=Sitecore.Core;User ID=sa;Password=${SQL_SA_PASSWORD}
