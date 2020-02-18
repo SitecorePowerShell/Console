@@ -25,7 +25,7 @@ namespace Spe.Client.Applications
             var url = WebUtil.GetQueryString("spe_url");
             if(string.IsNullOrEmpty(url)) 
             {
-                url = "http://blog.najmanowicz.com/sitecore-powershell-console/";
+                url = "/sitecore%20modules/PowerShell/Assets/version.html";
             }
 
             var urlStr = new UrlString(url);

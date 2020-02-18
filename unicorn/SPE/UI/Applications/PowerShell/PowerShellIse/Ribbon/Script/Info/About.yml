@@ -25,7 +25,7 @@ SharedFields:
   Value: Office/32x32/information.png
 - ID: "dbbf9ee3-c30e-4456-a81f-ed8c2e8df91b"
   Hint: Click
-  Value: "ise:iframe(spe_url=https://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
+  Value: "ise:iframe(spe_url=/sitecore%20modules/PowerShell/Assets/version.html,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
 Languages:
 - Language: da
   Versions:
