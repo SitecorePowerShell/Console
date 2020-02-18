@@ -57,23 +57,31 @@ function Parse-Response {
         }
 
         if(![string]::IsNullOrEmpty($responseMessages)) {
-            if($hasRedirectedMessages) {
-                foreach($record in ConvertFrom-CliXml -InputObject $responseMessages) {
-                    if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
+            if ($hasRedirectedMessages) {
+                Write-Verbose -Message "Redirecting output to the appropriate stream."
+                foreach ($record in ConvertFrom-CliXml -InputObject $responseMessages) {
+                    if ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
                         Write-Verbose $record.ToString()
-                    } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
+                    }
+                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
                         Write-Information $record.ToString()
-                    } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
+                    }
+                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
                         Write-Debug $record.ToString()
-                    } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
+                    }
+                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
                         Write-Warning $record.ToString()
-                    } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
+                    }
+                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
                         Write-Error $record.ToString()
-                    } else {
+                    }
+                    else {
                         $record
                     }
                 }
-            } else {                        
+            }
+            else {
+                Write-Verbose -Message "Deserializing the response message from the server."                     
                 ConvertFrom-CliXml -InputObject $responseMessages
             }
         }
@@ -243,13 +251,13 @@ function Invoke-RemoteScript {
 
     $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
         Group-Object -Property SubExpression | 
-        ForEach {
-        $_.Group | Select -First 1
+        ForEach-Object {
+        $_.Group | Select-Object -First 1
     })
     
     $invokeWithArguments = $false        
     if ($usingVariables.count -gt 0) {
-        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach {$_.Group | Select -First 1}  
+        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach-Object {$_.Group | Select-Object -First 1}  
         Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
         $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
         $invokeWithArguments = $true
@@ -298,7 +306,7 @@ function Invoke-RemoteScript {
         
         $serviceUrl = "/-/script/script/?"
         $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-        foreach($uri in $ConnectionUri) {
+        foreach ($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
             $localParams = $parameters | Out-String
             
@@ -318,7 +326,7 @@ function Invoke-RemoteScript {
                 $handler.Credentials = $Credential
             }
 
-            if($UseDefaultCredentials) {
+            if ($UseDefaultCredentials) {
                 $handler.UseDefaultCredentials = $UseDefaultCredentials
             }
             
@@ -327,46 +335,45 @@ function Invoke-RemoteScript {
             $response = & {
                 try {
                     Write-Verbose -Message "Transferring script to server"                 
-                    $contentBytes = [Text.Encoding]::UTF8.GetBytes($body)
-
                     $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
                     $ms = New-Object System.IO.MemoryStream
                     $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
                     $gzip.Write($messageBytes, 0, $messageBytes.Length)
                     $gzip.Close()
                     $ms.Position = 0
-                    $content = New-Object System.Net.Http.ByteArrayContent(@(,$ms.ToArray()))
+                    $content = New-Object System.Net.Http.ByteArrayContent(@(, $ms.ToArray()))
                     $ms.Close()
                     $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
                     $content.Headers.ContentEncoding.Add("gzip")
                    
                     $taskResult = $client.PostAsync($url, $content).Result
+                    $taskResult.EnsureSuccessStatusCode() > $null
                     $taskResult.Content.ReadAsStringAsync().Result
                     Write-Verbose -Message "Script transfer complete."
                 }
-                catch [System.Net.WebException] {
-                    $webex = $_.Exception
-                    if($webex.InnerException) {
-                        $script:ex = $webex.InnerException
-                        [System.Net.HttpWebResponse]$script:errorResponse = $webex.InnerException.Response
-                        if($errorResponse) {
-                            if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                                Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                            } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                                Write-Verbose -Message "Check that the service files are properly configured."
-                            }
-                        } else {
-                            Write-Verbose -Message $webex.InnerException.Message
+                catch [System.Net.Http.HttpRequestException] {
+                    $script:ex = $_.Exception
+                    [System.Net.Http.HttpResponseMessage]$script:errorResponse = $taskResult
+                    if ($errorResponse) {
+                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
                         }
+                        elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                            Write-Verbose -Message "Check that the service files are properly configured."
+                        }
+                    }
+                    else {
+                        Write-Verbose -Message $ex.Message
                     }
                 }
             }
             
             if ($errorResponse) {
-                Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                Write-Error -Message "Server response: $($errorResponse.ReasonPhrase)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
             
+            Write-Verbose -Message "Parsing response from server."
             Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
         }
     }

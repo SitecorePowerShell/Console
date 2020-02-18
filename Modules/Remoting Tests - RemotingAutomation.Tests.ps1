@@ -16,7 +16,7 @@ Describe "Invoke remote scripts with RemotingAutomation" {
     AfterEach {
         Stop-ScriptSession -Session $session
     }
-    <#
+    
     Context "Remote Script" {
         It "returns when no parameters passed" {
             $expected = $env:COMPUTERNAME
@@ -44,7 +44,7 @@ Describe "Invoke remote scripts with RemotingAutomation" {
             $expected = @(1,1,2,3,5,8,13)
             Invoke-RemoteScript -Session $session -ScriptBlock { Do-Something } | Should Not Be $expected
         }
-    }#>
+    }<#
     Context "Remote Script Async" {
         It "returns when no parameters passed" {
             $expected = $env:COMPUTERNAME
@@ -76,5 +76,5 @@ Describe "Invoke remote scripts with RemotingAutomation" {
             $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { Do-Something }
             $actual.Result | Should Not Be $expected
         }
-    }
+    }#>
 }
