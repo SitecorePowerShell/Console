@@ -17,7 +17,8 @@ SharedFields:
     $sessions = Get-ScriptSession
     $current = Get-ScriptSession -Current
     
-    Invoke-Script "Platform\Reusable\Get-StateField"
+    # Get-StateField
+    Get-Item -Path "master:" -ID "{5482355C-96B1-48A9-9EFF-84447AF336F7}"
     
     if ($sessions.Count -gt 1) { 
         $sessions | ? { $current.ID -ne $_.ID } | Update-ListView 

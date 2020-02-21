@@ -19,7 +19,8 @@ SharedFields:
         $session.Dispose();
     }
     
-    Invoke-Script "Platform\Reusable\Get-StateField"
+    # Get-StateField
+    Get-Item -Path "master:" -ID "{5482355C-96B1-48A9-9EFF-84447AF336F7}"
     
     $sessions = Get-ScriptSession
     $current = Get-ScriptSession -Current
