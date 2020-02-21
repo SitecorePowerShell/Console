@@ -882,6 +882,7 @@ namespace Spe.Core.Host
 
         public void Close()
         {
+            Runspace.DefaultRunspace = null;
             host.Runspace.Dispose();
             disposed = true;
         }
