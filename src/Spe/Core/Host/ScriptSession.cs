@@ -771,6 +771,7 @@ namespace Spe.Core.Host
             }
 
             JobName = string.Empty;
+            Runspace.DefaultRunspace = null;
             return marshallResults
                 ? execResults?.Select(p => p?.BaseObject).ToList()
                 : execResults?.Cast<object>().ToList();
