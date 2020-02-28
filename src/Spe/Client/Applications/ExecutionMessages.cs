@@ -92,7 +92,9 @@
             "then reflect on how you got trapped into this project...",
             "then share some encouraging words to a colleague that looks worn out.",
             "in no way is deploying on a Friday night ever a good idea!",
-            "share a root beer float with a friend. &#x1F37A;"
+            "share a root beer float with a friend. &#x1F37A;",
+            "so you're telling me there's a chance?!",
+            "we're going to need a bigger server."
         };
     }
 }
