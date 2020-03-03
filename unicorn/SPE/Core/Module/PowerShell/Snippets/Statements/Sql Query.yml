@@ -12,7 +12,6 @@ SharedFields:
     
     $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
     
-    # Find all the items which explicitly hae security assigned.
     $query = @"
     SELECT TOP (10) *
       FROM [dbo].[Items]
