@@ -1,0 +1,51 @@
+﻿---
+ID: "efd671b1-e631-4757-bbbe-802d0bc60868"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with duplicate names
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Invoke-SqlCommand
+    
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+    
+    $query = @"
+    SELECT 
+        a.[ID], 
+        a.[Name], 
+        a.[ParentID]
+    FROM [dbo].[Items] a
+    JOIN (
+        SELECT
+            [Name],
+            [ParentID]
+        FROM [Sitecore.Master].[dbo].[Items]
+        GROUP BY [Name], [ParentID]
+        HAVING COUNT(*) > 1
+    ) b
+    ON a.[Name] = b.[Name]
+    AND a.[ParentID] = b.[ParentID]
+    "@
+    $itemIds = Invoke-SqlCommand -Connection $connection -Query $query -Parameters $parameters | Select-Object -ExpandProperty "ID"
+    
+    $reportItems = [System.Collections.ArrayList]@()
+    foreach($itemId in $itemIds) {
+        if(!$itemId) { continue }
+        $selectedItem = Get-Item -Path "master:" -ID ([Sitecore.Data.ID]::Parse($itemId))
+        if($selectedItem) {
+            $reportItems.Add($selectedItem) > $null
+        }
+    }
+    
+    $reportItems | Show-ListView -Property Name, ItemPath, @{"Name"="Referrer Count"; Expression={Get-ItemReferrer -Id $_.ID | Measure-Object | Select-Object -Expand Count}}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20200303T025824Z
