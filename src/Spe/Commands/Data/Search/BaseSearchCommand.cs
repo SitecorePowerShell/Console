@@ -1,13 +1,10 @@
-﻿using Sitecore.Configuration;
-using Sitecore.ContentSearch;
+﻿using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
-using Sitecore.ContentSearch.Rules;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Rules;
 using Spe.Core.Extensions;
 using System;
 using System.Collections;
@@ -326,14 +323,32 @@ namespace Spe.Commands.Data.Search
             return searchContext.GetQueryable<T>();
         }
 
-        internal static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string where, object[] whereValues) where T : ISearchResult
+        internal static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string whereCondition, object[] whereValues) where T : ISearchResult
         {
-            return query.Where(where, whereValues.BaseArray());
+            return query.Where(whereCondition, whereValues.BaseArray());
         }
 
         internal static IQueryable<T> WherePredicate<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
         {
             return query.Where(predicate);
+        }
+
+        public static Expression<Func<T, string>> MemberSelector<T>(IQueryable<T> query, string name) where T : ISearchResult
+        {
+            var parameter = Expression.Parameter(typeof(T), "item");
+            var body = Expression.PropertyOrField(parameter, name);
+            return Expression.Lambda<Func<T, string>>(body, parameter);
+        }
+
+        internal static FacetResults FacetOn<T>(IQueryable<T> query, string[] facetFields, int minimumResultCount) where T : ISearchResult
+        {
+            foreach (var facetField in facetFields)
+            {
+                var facetExpression = MemberSelector(query, facetField);
+                query = query.FacetOn(facetExpression, minimumResultCount);
+            }
+
+            return query.GetFacets();
         }
 
         internal static Expression<Func<T, bool>> GetPredicateBuilder<T>(T queryableObject, bool shouldOr) where T : ISearchResult

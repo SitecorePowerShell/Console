@@ -78,6 +78,6 @@ namespace Spe.Core.Extensions
             var lambda = expression as LambdaExpression; 
             var methodCallExpression = lambda.Body as MethodCallExpression; 
             return methodCallExpression.Method; 
-        } 
+        }
     }
 }

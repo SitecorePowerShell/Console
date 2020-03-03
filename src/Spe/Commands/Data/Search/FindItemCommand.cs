@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
-using Spe.Core.Extensions;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -30,6 +29,12 @@ namespace Spe.Commands.Data.Search
 
         [Parameter(ParameterSetName = "Dynamic")]
         public object[] WhereValues { get; set; }
+
+        [Parameter(ParameterSetName = "Dynamic")]
+        public string[] FacetOn { get; set; }
+
+        [Parameter(ParameterSetName = "Dynamic")]
+        public int FacetMinCount { get; set; }
 
         [Parameter]
         public Type QueryType { get; set; }
@@ -57,7 +62,7 @@ namespace Spe.Commands.Data.Search
 
         protected override void EndProcessing()
         {
-            var index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
+            var index = String.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
 
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
@@ -70,7 +75,7 @@ namespace Spe.Commands.Data.Search
                 var objType = (dynamic)Activator.CreateInstance(queryableType);
                 var query = GetQueryable(objType, context);
 
-                if (!string.IsNullOrEmpty(Where))
+                if (!String.IsNullOrEmpty(Where))
                 {
                     query = WhereAndValues(query, Where, WhereValues);
                 }
@@ -96,7 +101,14 @@ namespace Spe.Commands.Data.Search
                     query = ProcessScopeQuery(query, context, ScopeQuery);
                 }
 
-                if (!string.IsNullOrEmpty(OrderBy))
+                if (FacetOn != null)
+                {
+                    var facets = FacetOn(query, FacetOn, FacetMinCount);
+                    WriteObject(facets, true);
+                    return;
+                }
+
+                if (!String.IsNullOrEmpty(OrderBy))
                 {
                     query = OrderIfSupported(query, OrderBy);
                 }
