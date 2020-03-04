@@ -28,8 +28,9 @@ SharedFields:
         @{ Name = "Author"; Value = [Sitecore.Context]::User.Profile.FullName; Tab="Package Metadata"},
         @{ Name = "Publisher"; Value = [Sitecore.SecurityModel.License.License]::Licensee; Tab="Package Metadata"},
         @{ Name = "Version"; Value = $selectedItem.Version; Tab="Package Metadata"},
-        @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
+        @{ Name = "Readme"; Title="Readme"; Lines=8; Tab="Package Metadata"},
         @{ Name = "AsXml"; Title="Download Package as XML"; Value=[bool]$False; Editor="bool"; Tab="Package Metadata" },
+        @{ Name = "LeavePackage"; Title="Leave the package on the server"; Value=[bool]$False; Editor="bool"; Tab="Package Metadata" },
         @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Root : '$($selectedItem.ProviderPath)'"; Editor="combo"; Tab="Installation Options" },
         @{ Name = "Mode"; Title="Installation Options"; Value = "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"}
     )
@@ -125,7 +126,10 @@ SharedFields:
     
     Export-Package -Project $package -Path $packageFileName -Zip:$(!$AsXml)
     Download-File "$($SitecorePackageFolder)\$($packageFileName)"
-    Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
+    if( -not $LeavePackage )
+    {
+        Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
+    }
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
