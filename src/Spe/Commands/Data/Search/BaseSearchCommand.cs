@@ -328,9 +328,19 @@ namespace Spe.Commands.Data.Search
             return query.Where(whereCondition, whereValues.BaseArray());
         }
 
-        internal static IQueryable<T> WherePredicate<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
+        internal static IQueryable<T> Where<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
         {
             return query.Where(predicate);
+        }
+
+        internal static IQueryable<T> Filter<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
+        {
+            return query.Filter(predicate);
+        }
+
+        internal static IQueryable<T> FilterAndValues<T>(IQueryable<T> query, string filterCondition, object[] filterValues) where T : ISearchResult
+        {
+            return query.Filter(filterCondition, filterValues.BaseArray());
         }
 
         public static Expression<Func<T, string>> MemberSelector<T>(IQueryable<T> query, string name) where T : ISearchResult

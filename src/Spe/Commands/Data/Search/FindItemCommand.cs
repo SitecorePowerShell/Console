@@ -31,6 +31,12 @@ namespace Spe.Commands.Data.Search
         public object[] WhereValues { get; set; }
 
         [Parameter(ParameterSetName = "Dynamic")]
+        public string Filter { get; set; }
+
+        [Parameter(ParameterSetName = "Dynamic")]
+        public object[] FilterValues { get; set; }
+
+        [Parameter(ParameterSetName = "Dynamic")]
         public string[] FacetOn { get; set; }
 
         [Parameter(ParameterSetName = "Dynamic")]
@@ -39,8 +45,12 @@ namespace Spe.Commands.Data.Search
         [Parameter]
         public Type QueryType { get; set; }
 
+        [Alias("Predicate")]
         [Parameter(ParameterSetName = "Predicate")]
-        public dynamic Predicate { get; set; }
+        public dynamic WherePredicate { get; set; }
+
+        [Parameter(ParameterSetName = "Predicate")]
+        public dynamic FilterPredicate { get; set; }
 
         [Parameter(ParameterSetName = "ScopeQuery")]
         public string ScopeQuery { get; set; }
@@ -75,25 +85,54 @@ namespace Spe.Commands.Data.Search
                 var objType = (dynamic)Activator.CreateInstance(queryableType);
                 var query = GetQueryable(objType, context);
 
-                if (!String.IsNullOrEmpty(Where))
+                if (!string.IsNullOrEmpty(Where))
                 {
                     query = WhereAndValues(query, Where, WhereValues);
+                }
+                else
+                {
+                    if (WhereValues != null)
+                    {
+                        WriteWarning("The parameter (Where) containing the dynamic Linq is missing.");
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Filter))
+                {
+                    query = FilterAndValues(query, Filter, FilterValues);
+                }
+                else
+                {
+                    if (FilterValues != null)
+                    {
+                        WriteWarning("The parameter (Filter) containing the dynamic Linq is missing.");
+                    }
                 }
 
                 if (Criteria != null)
                 {
                     var criteriaPredicate = ProcessCriteria(objType, Criteria, SearchOperation.And);
-                    query = WherePredicate(query, criteriaPredicate);
+                    query = BaseSearchCommand.Where(query, criteriaPredicate);
                 }
 
-                if (Predicate != null)
+                if (WherePredicate != null)
                 {
-                    var boxedPredicate = Predicate;
+                    var boxedPredicate = WherePredicate;
                     if (boxedPredicate is PSObject)
                     {
-                        boxedPredicate = (Predicate as PSObject)?.BaseObject;
+                        boxedPredicate = (WherePredicate as PSObject)?.BaseObject;
                     }
-                    query = WherePredicate(query, boxedPredicate);
+                    query = BaseSearchCommand.Where(query, boxedPredicate);
+                }
+
+                if (FilterPredicate != null)
+                {
+                    var boxedPredicate = FilterPredicate;
+                    if (boxedPredicate is PSObject)
+                    {
+                        boxedPredicate = (FilterPredicate as PSObject)?.BaseObject;
+                    }
+                    query = BaseSearchCommand.Filter(query, boxedPredicate);
                 }
 
                 if (ScopeQuery != null)

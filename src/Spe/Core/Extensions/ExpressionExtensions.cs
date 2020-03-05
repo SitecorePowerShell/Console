@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +9,7 @@ using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Spe.Commands.Data.Search;
 using Spe.Core.Utility;
+using DynamicExpression = Sitecore.ContentSearch.Utilities.DynamicExpression;
 
 namespace Spe.Core.Extensions
 {
@@ -78,6 +79,25 @@ namespace Spe.Core.Extensions
             var lambda = expression as LambdaExpression; 
             var methodCallExpression = lambda.Body as MethodCallExpression; 
             return methodCallExpression.Method; 
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3>(
+            Func<T1, T2, T3> f,
+            T1 unused1,
+            T2 unused2)
+        {
+            return f.Method;
+        }
+
+        public static IQueryable<T> Filter<T>(this IQueryable<T> source,
+            string predicate,
+            params object[] values)
+        {
+            LambdaExpression lambda = DynamicExpression.ParseLambda(source.ElementType, typeof (bool), predicate, values);
+            return (IQueryable<T>)source.Provider.CreateQuery(Expression.Call(typeof (Queryable), nameof (Filter), new Type[1]
+            {
+                source.ElementType
+            }, source.Expression, Expression.Quote(lambda)));
         }
     }
 }
