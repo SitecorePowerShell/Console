@@ -81,14 +81,6 @@ namespace Spe.Core.Extensions
             return methodCallExpression.Method; 
         }
 
-        private static MethodInfo GetMethodInfo<T1, T2, T3>(
-            Func<T1, T2, T3> f,
-            T1 unused1,
-            T2 unused2)
-        {
-            return f.Method;
-        }
-
         public static IQueryable<T> Filter<T>(this IQueryable<T> source,
             string predicate,
             params object[] values)

@@ -323,22 +323,22 @@ namespace Spe.Commands.Data.Search
             return searchContext.GetQueryable<T>();
         }
 
-        internal static IQueryable<T> WhereAndValues<T>(IQueryable<T> query, string whereCondition, object[] whereValues) where T : ISearchResult
+        internal static IQueryable<T> ApplyWhereAndValues<T>(IQueryable<T> query, string whereCondition, object[] whereValues) where T : ISearchResult
         {
             return query.Where(whereCondition, whereValues.BaseArray());
         }
 
-        internal static IQueryable<T> Where<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
+        internal static IQueryable<T> ApplyWhere<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
         {
             return query.Where(predicate);
         }
 
-        internal static IQueryable<T> Filter<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
+        internal static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, Expression<Func<T, bool>> predicate) where T : ISearchResult
         {
             return query.Filter(predicate);
         }
 
-        internal static IQueryable<T> FilterAndValues<T>(IQueryable<T> query, string filterCondition, object[] filterValues) where T : ISearchResult
+        internal static IQueryable<T> ApplyFilterAndValues<T>(IQueryable<T> query, string filterCondition, object[] filterValues) where T : ISearchResult
         {
             return query.Filter(filterCondition, filterValues.BaseArray());
         }
@@ -350,7 +350,7 @@ namespace Spe.Commands.Data.Search
             return Expression.Lambda<Func<T, string>>(body, parameter);
         }
 
-        internal static FacetResults FacetOn<T>(IQueryable<T> query, string[] facetFields, int minimumResultCount) where T : ISearchResult
+        internal static FacetResults ApplyFacetOn<T>(IQueryable<T> query, string[] facetFields, int minimumResultCount) where T : ISearchResult
         {
             foreach (var facetField in facetFields)
             {
@@ -375,18 +375,18 @@ namespace Spe.Commands.Data.Search
                 : predicate.And(joinedPredicate);
         }
 
-        internal static IQueryable<T> OrderIfSupported<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
+        internal static IQueryable<T> ApplyOrderBy<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
         {
             return query.OrderBy(orderBy);
         }
 
-        internal static List<object> SelectProperties<T>(IQueryable<T> query, string[] properties)
+        internal static List<object> ApplySelect<T>(IQueryable<T> query, string[] properties)
             where T : ISearchResult
         {
             return query.SelectProperties(properties).Cast<object>().ToList();
         }
 
-        internal static IQueryable<T> FilterQuery<T>(IQueryable<T> query, int first, int skip)
+        internal static IQueryable<T> ApplySkipAndTake<T>(IQueryable<T> query, int first, int skip)
             where T : ISearchResult
 
         {
@@ -403,7 +403,7 @@ namespace Spe.Commands.Data.Search
             return query;
         }
 
-        internal static List<T> FilterByPosition<T>(IQueryable<T> query, int first, int last, int skip) where T : ISearchResult
+        internal static List<T> ApplySkipAndTakeByPosition<T>(IQueryable<T> query, int first, int last, int skip) where T : ISearchResult
         {
             var count = query.Count();
             var skipEnd = (last != 0 && first == 0);

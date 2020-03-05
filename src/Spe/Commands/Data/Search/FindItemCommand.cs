@@ -87,7 +87,7 @@ namespace Spe.Commands.Data.Search
 
                 if (!string.IsNullOrEmpty(Where))
                 {
-                    query = WhereAndValues(query, Where, WhereValues);
+                    query = ApplyWhereAndValues(query, Where, WhereValues);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace Spe.Commands.Data.Search
 
                 if (!string.IsNullOrEmpty(Filter))
                 {
-                    query = FilterAndValues(query, Filter, FilterValues);
+                    query = ApplyFilterAndValues(query, Filter, FilterValues);
                 }
                 else
                 {
@@ -112,7 +112,7 @@ namespace Spe.Commands.Data.Search
                 if (Criteria != null)
                 {
                     var criteriaPredicate = ProcessCriteria(objType, Criteria, SearchOperation.And);
-                    query = BaseSearchCommand.Where(query, criteriaPredicate);
+                    query = ApplyWhere(query, criteriaPredicate);
                 }
 
                 if (WherePredicate != null)
@@ -122,7 +122,7 @@ namespace Spe.Commands.Data.Search
                     {
                         boxedPredicate = (WherePredicate as PSObject)?.BaseObject;
                     }
-                    query = BaseSearchCommand.Where(query, boxedPredicate);
+                    query = ApplyWhere(query, boxedPredicate);
                 }
 
                 if (FilterPredicate != null)
@@ -132,7 +132,7 @@ namespace Spe.Commands.Data.Search
                     {
                         boxedPredicate = (FilterPredicate as PSObject)?.BaseObject;
                     }
-                    query = BaseSearchCommand.Filter(query, boxedPredicate);
+                    query = ApplyFilter(query, boxedPredicate);
                 }
 
                 if (ScopeQuery != null)
@@ -142,31 +142,31 @@ namespace Spe.Commands.Data.Search
 
                 if (FacetOn != null)
                 {
-                    var facets = FacetOn(query, FacetOn, FacetMinCount);
+                    var facets = ApplyFacetOn(query, FacetOn, FacetMinCount);
                     WriteObject(facets, true);
                     return;
                 }
 
-                if (!String.IsNullOrEmpty(OrderBy))
+                if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    query = OrderIfSupported(query, OrderBy);
+                    query = ApplyOrderBy(query, OrderBy);
                 }
 
                 if (Property != null)
                 {
                     // The use of Last is not supported because it requires Concat. Concat is not supported by Sitecore.
-                    query = FilterQuery(query, First, Skip);
+                    query = ApplySkipAndTake(query, First, Skip);
                     if (Last > 0)
                     {
                         WriteWarning($"The use of {nameof(Last)} is not supported when selecting with {nameof(Property)}.");
                     }
 
-                    var queryableSelectProperties = SelectProperties(query, Property);
+                    var queryableSelectProperties = ApplySelect(query, Property);
                     WriteObject(queryableSelectProperties, true);
                 }
                 else
                 {
-                    WriteObject(FilterByPosition(query, First, Last, Skip), true);
+                    WriteObject(ApplySkipAndTakeByPosition(query, First, Last, Skip), true);
                 }
             }
         }
