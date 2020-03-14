@@ -35,10 +35,16 @@ SharedFields:
     if($items.Count -eq 0) {
         Show-Alert "There are no items matching the specified criteria."
     } else {
+        
+        $description = "Items in this report reflect those from the search index which contain the same name. An accurate referrer count depends on the Link database to be up-to-date."
+        $hasProblem = [Sitecore.Configuration.Settings]::GetBoolSetting("AllowDuplicateItemNamesOnSameLevel", $false)
+        if($hasProblem) {
+            $description += " The setting 'AllowDuplicateItemNamesOnSameLevel' should be changed to false."
+        }
         $props = @{
             Title = "Items with duplicate names"
             InfoTitle = "Items with duplicate names"
-            InfoDescription = "Items in this report reflect those from the search index which contain the same name. An accurate referrer count depends on the Link database to be up-to-date."
+            InfoDescription = $description
             PageSize = 25
             Property = @(
                 @{Label="Name"; Expression={$_.DisplayName} },
