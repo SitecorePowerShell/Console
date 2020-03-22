@@ -48,7 +48,7 @@ SharedFields:
             PageSize = 25
             Property = @(
                 @{Label="Name"; Expression={$_.DisplayName} },
-                @{"Name"="Referrers"; Expression={Get-ItemReferrer -Id $_.ID -ItemLink | Measure-Object | Select-Object -Expand Count}},
+                @{Label="Referrers"; Expression={Get-ItemReferrer -Id $_.ID -ItemLink | Measure-Object | Select-Object -Expand Count}},
                 @{Label="Updated"; Expression={$_.__Updated} },
                 @{Label="Updated by"; Expression={$_."__Updated by"} },
                 @{Label="Created"; Expression={$_.__Created} },
