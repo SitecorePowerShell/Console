@@ -150,7 +150,7 @@ namespace Spe.Core.Debugging
             }
             else if (isExpandable)
             {
-                Type objType = value.GetType();
+                var objType = value.GetType();
 
                 // Get the "value" for an expandable object.  
                 if (value is DictionaryEntry)
@@ -163,7 +163,7 @@ namespace Spe.Core.Debugging
                 {
                     // If the ToString() matches the type name, then display the type 
                     // name in PowerShell format.
-                    string shortTypeName = objType.Name;
+                    var shortTypeName = objType.Name;
 
                     // For arrays and ICollection, display the number of contained items.
                     if (value is Array)
@@ -261,12 +261,9 @@ namespace Spe.Core.Debugging
                         obj = psObject.BaseObject;
                     }
 
-                    IDictionary dictionary = obj as IDictionary;
-                    IEnumerable enumerable = obj as IEnumerable;
-
                     // We're in the realm of regular, unwrapped .NET objects
-                    if (dictionary != null)
-                    { 
+                    if (obj is IDictionary dictionary)
+                    {
                         // Buckle up kids, this is a bit weird.  We could not use the LINQ
                         // operator OfType<DictionaryEntry>.  Even though R# will squiggle the
                         // "foreach" keyword below and offer to convert to a LINQ-expression - DON'T DO IT!
@@ -289,14 +286,11 @@ namespace Spe.Core.Debugging
                                 maxArrayParseSizeExceeded = true;
                                 break;
                             }
-                            childVariables.Add(
-                                new VariableDetails(
-                                    "[" + entry.Key + "]",
-                                    entry.Value));
+                            childVariables.Add(new VariableDetails("[" + entry.Key + "]", entry.Value));
                         }
                         isEnumerable = true;
                     }
-                    else if (enumerable != null && !(obj is string))
+                    else if (obj is IEnumerable enumerable && !(obj is string))
                     {
                         int i = 0;
                         foreach (var item in enumerable)
@@ -306,10 +300,19 @@ namespace Spe.Core.Debugging
                                 maxArrayParseSizeExceeded = true;
                                 break;
                             }
-                            childVariables.Add(
-                                new VariableDetails(
-                                    "[" + i++ + "]",
-                                    item));
+
+                            var objType = item.GetType();
+                            var genericType = objType.IsGenericType ? objType.GetGenericTypeDefinition() : null;
+                            if (genericType != null && genericType == typeof(KeyValuePair<,>))
+                            {
+                                var kvpKey = objType.GetProperty("Key")?.GetValue(item, null);
+                                var kvpValue = objType.GetProperty("Value")?.GetValue(item, null);
+                                childVariables.Add(new VariableDetails("[" + kvpKey + "]", kvpValue));
+                            }
+                            else
+                            {
+                                childVariables.Add(new VariableDetails("[" + i++ + "]", item));
+                            }
                         }
                         isEnumerable = true;
                     }
