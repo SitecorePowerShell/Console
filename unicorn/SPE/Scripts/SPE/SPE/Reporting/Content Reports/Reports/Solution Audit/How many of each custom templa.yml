@@ -31,11 +31,11 @@ SharedFields:
     foreach($template in $templates) {
         if($template -and ($template.Value.FullName -notmatch $ignorePattern) -and -not ($template.GetType().Name -match "ErrorRecord")) {
             $templateItem = Get-Item master:\ -ID $template.Value.ID
-            $items =@(Get-ItemReferrer -Database "master" -ID $template.Value.ID | Where-Object { $_.Name -ne "__Standard Values"})
+            $itemLinks = @(Get-ItemReferrer -Database "master" -ID $template.Value.ID -ItemLink)
             $reportItem = [PSCustomObject]@{
                 "Icon" = $templateItem."__Icon"
                 "Name"=$template.Value.Name
-                "UsageCount"=$items.Count
+                "UsageCount"=$itemLinks.Count
             }
             $reportItems += $reportItem
         }
