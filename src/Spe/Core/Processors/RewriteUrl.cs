@@ -47,11 +47,17 @@ namespace Spe.Core.Processors
                     localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase)
                     )
                 {
-                    var sourceArray = url.LocalPath.TrimStart('/').Split('/');
-                    if (sourceArray.Length < 4)
+                    var sourceArray = url.LocalPath.TrimStart('/').Split(new []{"/"}, StringSplitOptions.RemoveEmptyEntries);
+                    if (sourceArray.Length < 3)
                     {
                         return;
                     }
+                    if (sourceArray.Length == 3)
+                    {
+                        Array.Resize(ref sourceArray, 4);
+                        sourceArray[3] = "";
+                    }
+
                     var apiVersion = sourceArray[2].Is("v2") ? "2": sourceArray[2];
                     var length = sourceArray.Length - 4;
                     var destinationArray = new string[length];
