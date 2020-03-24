@@ -331,6 +331,7 @@ function Invoke-RemoteScript {
             }
             
             [System.Net.HttpWebResponse]$script:errorResponse = $null 
+            $script:encounteredError = $false
 
             $response = & {
                 try {
@@ -346,10 +347,24 @@ function Invoke-RemoteScript {
                     $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
                     $content.Headers.ContentEncoding.Add("gzip")
                    
-                    $taskResult = $client.PostAsync($url, $content).Result
-                    $taskResult.EnsureSuccessStatusCode() > $null
-                    $taskResult.Content.ReadAsStringAsync().Result
-                    Write-Verbose -Message "Script transfer complete."
+                    $postResponse = $client.PostAsync($url, $content)
+                    $taskResult = $postResponse.Result
+                    if($taskResult) {
+                        $taskResult.EnsureSuccessStatusCode() > $null
+                        $taskResult.Content.ReadAsStringAsync().Result
+                        Write-Verbose -Message "Script transfer complete."
+                    } else {
+                        $script:ex = $postResponse.Exception
+                        $reason = $postResponse.Exception.Message
+                        $innerException = $postResponse.Exception
+                        while(($innerException = $innerException.InnerException)) {
+                            $reason += " " + $innerException.Message                            
+                        }
+                        $script:encounteredError = $true
+                        Write-Error -Message "Server response: $($reason)" -Category ConnectionError `
+                            -CategoryActivity "Post" -CategoryTargetName $uri -CategoryReason "$($postResponse.Status)" -CategoryTargetType $RootPath -ErrorAction SilentlyContinue
+                        $Host.UI.WriteErrorLine($reason)
+                    }
                 }
                 catch [System.Net.Http.HttpRequestException] {
                     $script:ex = $_.Exception
@@ -369,12 +384,17 @@ function Invoke-RemoteScript {
             }
             
             if ($errorResponse) {
+                $script:encounteredError = $true
                 Write-Error -Message "Server response: $($errorResponse.ReasonPhrase)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
             
-            Write-Verbose -Message "Parsing response from server."
-            Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
+            if(!$encounteredError) {
+                Write-Verbose -Message "Parsing response from server."
+                Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
+            } else {
+                Write-Verbose -Message "Stopping from further execution."
+            }
         }
     }
 }
