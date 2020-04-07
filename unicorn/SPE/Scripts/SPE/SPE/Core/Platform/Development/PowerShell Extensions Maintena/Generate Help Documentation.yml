@@ -9,6 +9,9 @@ SharedFields:
   Hint: Script
   Value: |
     $documentation = Join-Path -Path "$SitecoreDataFolder\temp" -ChildPath "documentation"
+    if(-not (Test-Path -Path $documentation)) {
+        New-Item -Path $documentation -ItemType Directory
+    }
     
     $summaryUrl = "https://github.com/SitecorePowerShell/Book/blob/master/SUMMARY.md"
     $response = Invoke-WebRequest -UseBasicParsing -Uri $summaryUrl
@@ -82,18 +85,12 @@ SharedFields:
         [System.IO.File]::WriteAllText("$($documentation)\$($pageName)",$content, [System.Text.Encoding]::UTF8)
     }
     
-    $config = [Sitecore.Configuration.Factory]::GetConfiguration()
-    $speSourceFolder = $config.sitecore."sc.variable" | 
-        Where-Object { $_.Name -eq "speSourceFolder" } | 
-        Select-Object -First 1 -Expand value
-    $repo = Split-Path $speSourceFolder -Parent
-    
-    $help = Join-Path -Path $speSourceFolder -ChildPath "sitecore modules\PowerShell\Assets"
+    $help = Join-Path -Path $AppPath -ChildPath "sitecore modules\PowerShell\Assets"
     $moduleLibraryPath = (Join-Path -Path $AppPath -ChildPath "bin\Spe.dll")
     if(!(Test-Path -Path $moduleLibraryPath)) {
         Write-Error "Module Library Path not found"
     }
-    $helpLibraryPath = (Join-Path -Path $repo -ChildPath "Libraries\PowerShell.MamlGenerator.dll")
+    $helpLibraryPath = (Join-Path -Path $AppPath -ChildPath "bin\PowerShell.MamlGenerator.dll")
     if(!(Test-Path -Path $helpLibraryPath)) {
         Write-Error "Help Library Path not found"
     }

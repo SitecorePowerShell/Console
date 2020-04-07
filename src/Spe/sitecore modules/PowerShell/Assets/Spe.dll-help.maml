@@ -12,11 +12,11 @@ Writes text to the Sitecore event log.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Write-Log command writes text to the Sitecore event log with the specified logging level.
@@ -26,6 +26,7 @@ Writes text to the Sitecore event log.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -162,11 +163,11 @@ Executes Workflow action for an item. This command used to be named Execute-Work
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Workflow</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised.
@@ -180,6 +181,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -414,11 +416,11 @@ Returns entries from the history store notifying of workflow state change for th
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemWorkflowEvent command returns entries from the history store notifying of workflow state change for the specified item.
@@ -428,6 +430,7 @@ Returns entries from the history store notifying of workflow state change for th
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -657,11 +660,11 @@ Creates new entry in the history store notifying of workflow state change.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new entry in the history store notifying of workflow state change.
@@ -671,6 +674,7 @@ Creates new entry in the history store notifying of workflow state change.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -924,11 +928,11 @@ Exports a Sitecore update package containing a serialization diff list.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-UpdatePackage command generates a Sitecore update package containing a serialization diff list.
@@ -938,6 +942,7 @@ Exports a Sitecore update package containing a serialization diff list.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1111,11 +1116,11 @@ Performs a diff operation between the Source and taget path akin to Sitecore Cou
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UpdatePackageDiff</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Performs a diff operation between the Source and taget path akin to Sitecore Courier. The diff is the difference that takes the content of Source folder and transforms it to Target. IMPORTANT! This functionality requires changes to web.config file on your sitecore server to work. Please consult the first Example.
@@ -1125,6 +1130,7 @@ Performs a diff operation between the Source and taget path akin to Sitecore Cou
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1289,11 +1295,11 @@ Installs a Sitecore update package from the specified path.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Install-UpdatePackage command installs update packages that are used created by Sitecore CMS updates, TDS, and Courier.
@@ -1305,6 +1311,7 @@ Install-UpdatePackage. Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.T
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1448,11 +1455,11 @@ Executes a script from Sitecore PowerShell Extensions Script Library. This comma
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Script</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a script from Sitecore PowerShell Extensions Script Library.
@@ -1466,6 +1473,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1633,11 +1641,11 @@ Retrieves a Sitecore cache.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Cache command retrieves a Sitecore cache.
@@ -1647,6 +1655,7 @@ Retrieves a Sitecore cache.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1740,11 +1749,11 @@ Returns the current user's browser user agent.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns current user's browser user agent. Works only if Console is running outside of job. \(e.g. in ISE - script needs to be run from the dropdown under the "Execute" button\)
@@ -1754,6 +1763,7 @@ Returns the current user's browser user agent.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -1814,11 +1824,11 @@ Imports a function script from the script library's "Functions" folder.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Function command imports a function script from the script library's "Functions" folder.
@@ -1828,6 +1838,7 @@ Imports a function script from the script library's "Functions" folder.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1968,11 +1979,11 @@ Restarts the Sitecore Application pool.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Restarts the Sitecore Application pool.
@@ -1982,6 +1993,7 @@ Restarts the Sitecore Application pool.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -2023,11 +2035,11 @@ Sets the current host property.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets the current host property and perssits them for the future if used with -Persist parameter.
@@ -2037,6 +2049,7 @@ Sets the current host property.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2170,11 +2183,11 @@ Imports \(deserializes\) Sitecore roles from the Sitecore server filesystem.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Role command imports \(deserializes\) Sitecore roles from the Sitecore server filesystem.
@@ -2184,6 +2197,7 @@ Imports \(deserializes\) Sitecore roles from the Sitecore server filesystem.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2381,11 +2395,11 @@ Exports \(serializes\) Sitecore roles to the filesystem on the server.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Role command exports \(serializes\) Sitecore roles to the filesystem on the server.
@@ -2395,6 +2409,7 @@ Exports \(serializes\) Sitecore roles to the filesystem on the server.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2644,11 +2659,11 @@ Imports \(deserializes\) Sitecore users from the Sitecore server filesystem.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-User command imports \(deserializes\) Sitecore users from the Sitecore server filesystem.
@@ -2658,6 +2673,7 @@ Imports \(deserializes\) Sitecore users from the Sitecore server filesystem.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2855,11 +2871,11 @@ Export \(serialize\) a Sitecore user to the filesystem on the server.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-User command serializes a Sitecore user to the filesystem on the server.
@@ -2875,6 +2891,7 @@ You can also pipe a user from the Get-user command.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3120,11 +3137,11 @@ Imports \(deserializes\) the specified path from the filesystem on the server as
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Item command deserializes the specified items.
@@ -3147,6 +3164,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3472,11 +3490,11 @@ Returns a serialization preset for use with Export-Item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Preset command returns a serialization preset for use with Export-Item.
@@ -3486,6 +3504,7 @@ Returns a serialization preset for use with Export-Item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3593,11 +3612,11 @@ Exports \(serializes\) the Sitecore item to the filesystem.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Item command serializes Sitecore items to the filesystem. The alias for the command is Serialize-Item. The simplest command syntax is: Export-Item -path "master:\content"
@@ -3619,6 +3638,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3899,11 +3919,11 @@ Returns one or more task schedule items using the specified criteria.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-TaskSchedule command returns one or more task schedule items, based on name/database filter, path or simply converting a Sitecore item.
@@ -3913,6 +3933,7 @@ Returns one or more task schedule items using the specified criteria.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4123,11 +4144,11 @@ Executes a task schedule.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a task schedule either passed from Get-Schedule, based on Item or Schedule path.
@@ -4137,6 +4158,7 @@ Executes a task schedule.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4345,11 +4367,11 @@ Imports a CliXml string with data that represents Microsoft .NET objects and cre
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertFrom-CliXml command imports a CliXml string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
@@ -4359,6 +4381,7 @@ Imports a CliXml string with data that represents Microsoft .NET objects and cre
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4486,11 +4509,11 @@ Exports Microsoft .NET objects froms PowerShell to a CliXml string.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertTo-CliXml command exports Microsoft .NET Framework objects from PowerShell to a CliXml string.
@@ -4500,6 +4523,7 @@ Exports Microsoft .NET objects froms PowerShell to a CliXml string.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4608,11 +4632,11 @@ Returns the object that describes a Sitecore PowerShell Extensions Module
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModule</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SpeModule command returns the object that describes a Sitecore PowerShell Extensions Module.
@@ -4622,6 +4646,7 @@ Returns the object that describes a Sitecore PowerShell Extensions Module
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4765,7 +4790,7 @@ Returns the object that describes a Sitecore PowerShell Extensions Module
         <dev:type>
           <maml:name>The output type is the type of the objects that the cmdlet emits.
 
-* Cognifide.PowerShell.Core.Modules.Module 
+* Spe.Core.Modules.Module 
 
 </maml:name>
           <maml:uri />
@@ -4846,11 +4871,11 @@ Returns the library item or path to the library where scripts for a particular i
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModuleFeatureRoot</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SpeModuleFeatureRoot command returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
@@ -4860,6 +4885,7 @@ Returns the library item or path to the library where scripts for a particular i
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5021,11 +5047,11 @@ Gets the results of a script session execution.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Receive</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Receive-ScriptSession cmdlet gets the results of Windows PowerShell script sessions, such as those started by using the Start-ScriptSession. You can get the results of all script sessions by their ID or by submitting a script session objects. When you start a new script session, the session starts, but the results do not appear immediately. Instead, the command returns an object that represents the script session. The script session object contains useful information about the script session, but it does not contain the results. This method allows you to continue working in the current session while the script session runs. For more information about script sessions in Windows PowerShell, see about_script sessions. The Receive-ScriptSession cmdlet gets the results that have been generated by the time that the Receive-ScriptSession command is submitted. If the session is not yet complete an error is raised. You can run additional Receive-ScriptSession commands to get the execution results. By default, script session results and the session itself \(unless it is a persistent session\) are deleted from the system when you receive them, but you can use the KeepResult and KeepSession parameters to save the results so that you can receive them again. To delete the script session results, run the Receive-ScriptSession command again \(without the KeepResult parameter\), close the session, or use the Remove-ScriptSession cmdlet to delete the script session from the server.
@@ -5035,6 +5061,7 @@ Gets the results of a script session execution.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5222,11 +5249,11 @@ Suppresses script execution command prompt until one or all of the script sessio
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Wait</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Wait-ScriptSession cmdlet waits for script session to complete before it displays the command prompt or allows the script to continue. You can wait until any script session is complete, or until all script sessions are complete, and you can set a maximum wait time for the script session. When the commands in the script session are complete, Wait-ScriptSession displays the command prompt and returns a script session object so that you can pipe it to another command. You can use Wait-ScriptSession cmdlet to wait for script sessions, such as those that were started by using the Start-ScriptSession cmdlet.
@@ -5236,6 +5263,7 @@ Suppresses script execution command prompt until one or all of the script sessio
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5332,7 +5360,7 @@ Suppresses script execution command prompt until one or all of the script sessio
         <dev:type>
           <maml:name>The input type is the type of the objects that you can pipe to the cmdlet.
 
-* System.String or Cognifide.PowerShell.Core.Host.ScriptSessio 
+* System.String or Spe.Core.Host.ScriptSession
 
 </maml:name>
           <maml:uri />
@@ -5350,7 +5378,7 @@ Suppresses script execution command prompt until one or all of the script sessio
         <dev:type>
           <maml:name>The output type is the type of the objects that the cmdlet emits.
 
-* Cognifide.PowerShell.Core.Host.ScriptSessio 
+* Spe.Core.Host.ScriptSession
 
 </maml:name>
           <maml:uri />
@@ -5423,11 +5451,11 @@ Stops executing script session.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Stop</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Aborts the pipeline of a session that is executing. This will stop the session immediately in its next PowerShell command. Caution! If your script is running a long operation in the .net code rather than in PowerShell - the session will abort after the code has finished and the control was returned to the script.
@@ -5437,6 +5465,7 @@ Stops executing script session.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5489,7 +5518,7 @@ Stops executing script session.
         <dev:type>
           <maml:name>The input type is the type of the objects that you can pipe to the cmdlet.
 
-* System.String or Cognifide.PowerShell.Core.Host.ScriptSessio 
+* System.String or Spe.Core.Host.ScriptSession 
 
 </maml:name>
           <maml:uri />
@@ -5507,7 +5536,7 @@ Stops executing script session.
         <dev:type>
           <maml:name>The output type is the type of the objects that the cmdlet emits.
 
-* Cognifide.PowerShell.Core.Host.ScriptSessio 
+* Spe.Core.Host.ScriptSession
 
 </maml:name>
           <maml:uri />
@@ -5582,11 +5611,11 @@ Starts a new Script Session and executes a script provided in it.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Starts a new Script Session and executes a script provided in it. The session can be a background session or if the caller session is interactive providint the -Interactive switch can open a Windowd for the new sessio
@@ -5596,6 +5625,7 @@ Starts a new Script Session and executes a script provided in it.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6131,7 +6161,7 @@ Starts a new Script Session and executes a script provided in it.
         <dev:type>
           <maml:name>The output type is the type of the objects that the cmdlet emits.
 
-* Cognifide.PowerShell.Core.Host.ScriptSessio 
+* Spe.Core.Host.ScriptSession
 
 </maml:name>
           <maml:uri />
@@ -6229,11 +6259,11 @@ Returns the list of PowerShell Extensions script sessions running in the system.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ScriptSession command returns the list of PowerShell Extensions script sessions running in the system. To find all script sessions, running in the system type "Get-ScriptSession" without parameters.
@@ -6243,6 +6273,7 @@ Returns the list of PowerShell Extensions script sessions running in the system.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6386,7 +6417,7 @@ Returns the list of PowerShell Extensions script sessions running in the system.
         <dev:type>
           <maml:name>The output type is the type of the objects that the cmdlet emits.
 
-* Cognifide.PowerShell.PowerShellIntegrations.Host.ScriptSessio 
+* Spe.Core.Host.ScriptSession 
 
 </maml:name>
           <maml:uri />
@@ -6480,11 +6511,11 @@ Removes a persistent Script Session from memory.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes a persistent Script Session from memory.
@@ -6494,6 +6525,7 @@ Removes a persistent Script Session from memory.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6546,7 +6578,7 @@ Removes a persistent Script Session from memory.
         <dev:type>
           <maml:name>The input type is the type of the objects that you can pipe to the cmdlet.
 
-* Resident Script Session obtained through Get-ScriptSessio _Id of a resident Script Sessio_ Cognifide.PowerShell.Core.Host.ScriptSessio\* System.String 
+* System.String or Spe.Core.Host.ScriptSession
 
 </maml:name>
           <maml:uri />
@@ -6622,11 +6654,11 @@ Returns one or more Sitecore user sessions using the specified criteria.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Session command returns one or more Sitecore user sessions using the specified criteria.
@@ -6638,6 +6670,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6791,11 +6824,11 @@ Logs a user in and performs further script instructions in the context of the us
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs a user in and performs further script instructions in the context of the user.
@@ -6805,6 +6838,7 @@ Logs a user in and performs further script instructions in the context of the us
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6887,11 +6921,11 @@ Logs the current user out.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs the current user out.
@@ -6901,6 +6935,7 @@ Logs the current user out.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -6942,11 +6977,11 @@ Removes one or more Sitecore user sessions.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Session command removes user sessions in Sitecore.
@@ -6956,6 +6991,7 @@ Removes one or more Sitecore user sessions.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7090,11 +7126,11 @@ True
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Checks if a user can perform an operation on an item.
@@ -7104,6 +7140,7 @@ True
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7378,11 +7415,11 @@ Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
@@ -7392,6 +7429,7 @@ Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7607,11 +7645,11 @@ Removes all security information from the item specified.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Clear</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes all security information from the item specified.
@@ -7621,6 +7659,7 @@ Removes all security information from the item specified.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7860,11 +7899,11 @@ Sets new security information on an item overwriting the previous settings.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets new security information on an item. The new rules will overwrite the existing security descriptors on the item.
@@ -7874,6 +7913,7 @@ Sets new security information on an item overwriting the previous settings.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8158,11 +8198,11 @@ Adds new access rule to an item allowing for the item to have the access granted
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user. The new rules will be appended to the existing security descriptors on the item.
@@ -8172,6 +8212,7 @@ Adds new access rule to an item allowing for the item to have the access granted
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8635,11 +8676,11 @@ Retrieves security access rules from an item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves security access rules from an item.
@@ -8649,6 +8690,7 @@ Retrieves security access rules from an item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8958,11 +9000,11 @@ Locks the Sitecore item by the current or specified user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Lock-Item command unlocks the item.
@@ -8972,6 +9014,7 @@ Locks the Sitecore item by the current or specified user.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9229,11 +9272,11 @@ Protects the Sitecore item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Protect-Item command protects the item by making it read-only.
@@ -9243,6 +9286,7 @@ Protects the Sitecore item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9444,11 +9488,11 @@ Unlocks the specified Sitecore item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-Item command unlocks the item specified with parameters.
@@ -9458,6 +9502,7 @@ Unlocks the specified Sitecore item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9663,11 +9708,11 @@ Unprotects the specified Sitecore item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unprotect-Item command removes protection from the item provided to it.
@@ -9677,6 +9722,7 @@ Unprotects the specified Sitecore item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9882,11 +9928,11 @@ Creates a new Sitecore role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-Role command creates a new Sitecore role.
@@ -9896,6 +9942,7 @@ Creates a new Sitecore role.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9994,11 +10041,11 @@ Removes a Sitecore role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Role command removes a Sitecore role.
@@ -10008,6 +10055,7 @@ Removes a Sitecore role.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10127,11 +10175,11 @@ Determines if the Sitecore role or user account exists.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>Account</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Test-Account command determines if a Sitecore role or user account exists.
@@ -10141,6 +10189,7 @@ Determines if the Sitecore role or user account exists.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10259,11 +10308,11 @@ Adds one or more Sitecore users to the specified role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-RoleMember command assigns Sitecore users as members of the specified role.
@@ -10275,6 +10324,7 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10391,15 +10441,15 @@ PS master:\&gt; Add-RoleMember -Identity developer -Members "michael","adam","mi
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10467,15 +10517,15 @@ PS master:\&gt; Add-RoleMember -Identity developer -Members "michael","adam","mi
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10547,11 +10597,11 @@ Gets all available domains or the specified domain.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Domain command returns all the domains or the specified domain.
@@ -10561,6 +10611,7 @@ Gets all available domains or the specified domain.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10683,11 +10734,11 @@ Returns one or more Sitecore roles using the specified criteria.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Role command returns one or more Sitecore roles using the specified criteria.
@@ -10701,6 +10752,7 @@ To search for and retrieve more than one role, use the Filter parameter.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10874,11 +10926,11 @@ Returns the Sitecore users in the specified role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-RoleMember command returns the Sitecore users in the specified role.
@@ -10890,6 +10942,7 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11101,11 +11154,11 @@ Returns one or more Sitecore users using the specified criteria.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-User command returns a user or performs a search to retrieve multiple users from Sitecore.
@@ -11119,6 +11172,7 @@ To search for and retrieve more than one user, use the Filter parameter.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11366,11 +11420,11 @@ Creates a new domain with the specified name.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-Domain command creates a domain if it does not exist.
@@ -11380,6 +11434,7 @@ Creates a new domain with the specified name.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11500,11 +11555,11 @@ Creates a new Sitecore user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-User command creates a new user in Sitecore.
@@ -11516,6 +11571,7 @@ The Identity parameter specifies the Sitecore user to create. You can specify a 
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11768,11 +11824,11 @@ Removes the specified domain.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Domain command removes the specified domain.
@@ -11782,6 +11838,7 @@ Removes the specified domain.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11900,11 +11957,11 @@ Removes one or more Sitecore users from the specified role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-RoleMember command gets a role and removes members of the Sitecore role.
@@ -11916,6 +11973,7 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12036,11 +12094,11 @@ Removes the Sitecore user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-User command removes a user from Sitecore.
@@ -12052,6 +12110,7 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12197,11 +12256,11 @@ Sets the Sitecore user properties.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-User command sets a user profile properties in Sitecore.
@@ -12213,6 +12272,7 @@ The Identity parameter specifies the Sitecore user to set. You can specify a use
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12577,11 +12637,11 @@ Sets the Sitecore user password.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-UserPassword command resets or changes a user password.
@@ -12593,6 +12653,7 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12773,11 +12834,11 @@ Unlocks a Sitecore user using the specified criteria.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-User command gets a user and unlocks the account in Sitecore.
@@ -12789,6 +12850,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12923,15 +12985,15 @@ Sitecore.Security.Accounts.User One or more user instances.
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13120,11 +13182,11 @@ The Get-PlaceholderSetting command returns PlaceholderSettingDefinition(s) for a
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>PlaceholderSetting</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-PlaceholderSetting command returns PlaceholderSettingDefinition(s) for an item using the filtering parameters. 
@@ -13134,6 +13196,7 @@ The Get-PlaceholderSetting command returns PlaceholderSettingDefinition(s) for a
 
  
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13633,11 +13696,11 @@ Removes placeholder setting(s) from an item using the filtering parameters.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>PlaceholderSetting</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes placeholder setting(s) from an item using the filtering parameters.
@@ -13647,6 +13710,7 @@ Removes placeholder setting(s) from an item using the filtering parameters.
 
  
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14135,15 +14199,15 @@ Remove-PlaceholderSetting -Path master:\content\home -Key "content"
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Switch</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14686,11 +14750,11 @@ Removes the specified rendering parameter from the rendering.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RenderingParameter</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes the specified rendering parameter from the rendering.
@@ -14700,6 +14764,7 @@ Removes the specified rendering parameter from the rendering.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14829,11 +14894,11 @@ Gets the available rendering parameters found for a given rendering.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RenderingParameter</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Gets the available rendering parameters found for a given rendering.
@@ -14843,6 +14908,7 @@ Gets the available rendering parameters found for a given rendering.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14973,11 +15039,11 @@ The Merge-Layout command takes all the layout information stored in the FinalLay
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Merge</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -14985,6 +15051,7 @@ The Merge-Layout command takes all the layout information stored in the FinalLay
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15168,11 +15235,11 @@ Get-Rendering -Item $item -FinalLayout |
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>RenderingParameter</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds and updates the specified rendering parameter from the rendering.
@@ -15182,6 +15249,7 @@ Get-Rendering -Item $item -FinalLayout |
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15324,11 +15392,11 @@ Add-PlaceholderSetting -Item $item -Instance $placeholderSetting -Key "content-o
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>PlaceholderSetting</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds a placeholder setting to a chosen device for the presentation of an item.
@@ -15338,6 +15406,7 @@ Add-PlaceholderSetting -Item $item -Instance $placeholderSetting -Key "content-o
 
  
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15669,11 +15738,11 @@ Creates new placeholder setting definition that can later be added to an item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>PlaceholderSetting</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new placeholder setting definition that can later be added to an item. Most parameters can later be overriden when calling Add-PlaceholderSetting. 
@@ -15683,6 +15752,7 @@ Creates new placeholder setting definition that can later be added to an item.
 
  
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15902,11 +15972,11 @@ Resets the SharedLayout or FinalLayout field for the specified item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Reset</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Reset-Layout command resets the layout for the specified item.
@@ -15916,6 +15986,7 @@ Resets the SharedLayout or FinalLayout field for the specified item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16139,11 +16210,11 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds a rendering to a chosen device for the presentation of an item.
@@ -16153,6 +16224,7 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16180,6 +16252,10 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PassThru</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -16219,6 +16295,10 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PassThru</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -16262,6 +16342,10 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PassThru</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -16342,6 +16426,20 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
           <maml:name>Int32</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>PassThru</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -16530,11 +16628,11 @@ Returns the layout for the specified item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Layout command returns the layout for the specified item.
@@ -16544,6 +16642,7 @@ Returns the layout for the specified item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16794,11 +16893,11 @@ Returns the layout for the specified device.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>LayoutDevice</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-LayoutDevice command returns the layout for the specified device.
@@ -16808,6 +16907,7 @@ Returns the layout for the specified device.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16958,11 +17058,11 @@ Returns a RenderingDefinition for an item using the filtering parameters.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters.
@@ -16972,6 +17072,7 @@ Returns a RenderingDefinition for an item using the filtering parameters.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17536,11 +17637,11 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new rendering definition that can later be added to an item. Most parameters can later be overriden when calling Add-Rendering.
@@ -17550,6 +17651,7 @@ Add-Rendering -Item $item -PlaceHolder "main" -Instance $renderingItem -Paramete
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18031,11 +18133,11 @@ Removes renderings from an item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulative and narrowing the search in an "AND" manner.
@@ -18045,6 +18147,7 @@ Removes renderings from an item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18615,11 +18718,11 @@ Get-Layout $item
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets item layout for a specific device provided
@@ -18629,6 +18732,7 @@ Get-Layout $item
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18868,7 +18972,7 @@ Get-Layout $item
 * Remove-Rendering
 * Get-Layout
 * Reset-Layout
-* Issue #579</maml:linkText>
+* #579</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -18885,11 +18989,11 @@ Updates rendering with new values.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering.
@@ -18899,6 +19003,7 @@ Updates rendering with new values.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19276,15 +19381,15 @@ Get-Rendering -Item $item -PlaceHolder "main" |
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>PackageItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19352,11 +19457,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>SecuritySource</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new User &amp; Role source that can be added to a Sitecore package.
@@ -19366,6 +19471,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19566,11 +19672,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Package command creates a Sitecore installation package as either a .zip containing all items and files or .xml with project definition.
@@ -19580,6 +19686,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19773,11 +19880,11 @@ Loads the package definition \(xml\) from the specified path.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Package commands loads the package definition \(xml\) and returns the package project. Package definitions can be created by PowerShell scripts using the Export-Package command \(without the -Zip parameter\)
@@ -19787,6 +19894,7 @@ Loads the package definition \(xml\) from the specified path.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19914,11 +20022,11 @@ Installs a Sitecore package from the specified path.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. The alias for the command is Import-Package.
@@ -19932,6 +20040,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20093,11 +20202,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -20107,6 +20216,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20267,11 +20377,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. This source only includes items explicitly added to it and not their children.
@@ -20281,6 +20391,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20496,11 +20607,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -20510,6 +20621,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20706,11 +20818,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
@@ -20720,6 +20832,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20969,11 +21082,11 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new Sitecore install package object that allows for further addition of items and files &amp; further export to file.
@@ -20983,6 +21096,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -21110,11 +21224,11 @@ Returns list of the current sitecore jobs
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SitecoreJob</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SitecoreJob command returns the list of the currently running jobs of Sitecore.
@@ -21126,7 +21240,7 @@ Returns list of the current sitecore jobs
 None
 
 </maml:para>
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -21277,11 +21391,11 @@ MessageQueue : Sitecore.Jobs.AsyncUI.MessageQueue
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>JavaScript</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -21289,6 +21403,7 @@ MessageQueue : Sitecore.Jobs.AsyncUI.MessageQueue
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -21339,11 +21454,11 @@ Send an object content to the client
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Out</command:verb>
       <command:noun>Download</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The cmdlet allows to send content of an object \(FileInfo, Stream, String, String[] or Byte[]\) to the client. This is used for example by report scripts to send the report in HTML, Json or Excel without saving the content of the object to the disk drive. You can specify an object type and file name to make sure the downloaded file is interpreted properly by the browser.
@@ -21353,6 +21468,7 @@ Send an object content to the client
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -21525,11 +21641,11 @@ Closes the runner job window after the script completes.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Ensures the runner process window is closed after the script finishes execution. This is commonly used when the runner should close after a report runs while in the Desktop mode.
@@ -21539,6 +21655,7 @@ Closes the runner job window after the script completes.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -21580,11 +21697,11 @@ Shows a dialog to users allowing to upload files to either server file system or
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Receive</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executing this command with file path on the server \(provided as -Path parameter\) provides script users with means to upload a file from their computer. Executing it for an Item located in Sitecore Media library \(provided as -ParentItem\) allows the user to upload the file as a child to that item. If the file has been uploaded the dialog returns path to the file \(in case of file system storage\) or Item that has been created if the file was uplaoded to media library.
@@ -21594,6 +21711,7 @@ Shows a dialog to users allowing to upload files to either server file system or
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -22033,11 +22151,11 @@ Allows users to download files from server and file items from media library.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executing this command with file path on the server provides script users with means to download a file to their computer. Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item. If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
@@ -22051,6 +22169,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -22347,11 +22466,11 @@ Executes Sitecore Shell command for an item. This command used to be named Execu
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>ShellCommand</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
@@ -22365,6 +22484,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -22599,11 +22719,11 @@ Prompts user to provide values for variables required by the script to perform i
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Prompts user to provide values for variables required by the script to perform its operation. If user selects the "OK" button the command will return 'ok' as its value. If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the command will return 'cancel' as its value.
@@ -22613,6 +22733,7 @@ Prompts user to provide values for variables required by the script to perform i
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -22869,9 +22990,25 @@ Prompts user to provide values for variables required by the script to perform i
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>For a good understanding of all the Property types the Read-Variable command accepts open the script located in the following item: /Examples/User Interaction/Read-Variable - Sample the script is located in the Script Library in the Master database.
+        <dev:code>The following provides a dialog with a dropdown of options.
 
+$options = @{
+    "A"="a"
+    "B"="b"
+}
 
+$props = @{
+    Parameters = @(
+        @{Name="selectedOption"; Title="Choose an option"; Options=$options; Tooltip="Choose one."}
+    )
+    Title = "Option selector"
+    Description = "Choose the right option."
+    Width = 300
+    Height = 300
+    ShowHints = $true
+}
+
+Read-Variable @props
 
 </dev:code>
         <dev:remarks />
@@ -22899,7 +23036,7 @@ $result = Read-Variable -Parameters `
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
         <dev:code>Following is an example of a multi tabbed dialog asking user for various variable types.
 
-The type of some of the controls displayed to the user are iferred from the variable type \(like the $item variable or DateTime\) The editors for some other are set by providing the "editor" value
+The type of some of the controls displayed to the user are inferred from the variable type \(like the $item variable or DateTime\) The editors for some other are set by providing the "editor" value
 
 $item = Get-Item master:\content\home
 $result = Read-Variable -Parameters `
@@ -22986,11 +23123,11 @@ Sends a sheer message to the app in which context the script is executing.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sends a sheer message to the app in which context the script is executing.
@@ -23000,6 +23137,7 @@ Sends a sheer message to the app in which context the script is executing.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -23102,11 +23240,11 @@ Pauses the script and shows an alert to the user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Pauses the script and shows an alert specified in the -Title to the user. Once user clicks the OK button - script execution resumes.
@@ -23116,6 +23254,7 @@ Pauses the script and shows an alert to the user.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -23216,11 +23355,11 @@ Executes Sitecore Sheer application.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Sheer application, allows for passing additional parameters, launching it on desktop in cooperative or in Modal mode.
@@ -23230,6 +23369,7 @@ Executes Sitecore Sheer application.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -23479,11 +23619,11 @@ Shows a user a confirmation request message box.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows a user a confirmation request message box. Returns "yes" or "no" based on user's response. The buttons that are shown to the user are "OK" and "Cancel".
@@ -23493,6 +23633,7 @@ Shows a user a confirmation request message box.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -23612,11 +23753,11 @@ Shows Field editor for a provided item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Field editor for a provided item allows for editing all or selected list of fields. If user closes the dialog by pressing the "OK" button "ok" string will be returned. Otherwise "cancel" will be returned.
@@ -23626,6 +23767,7 @@ Shows Field editor for a provided item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -24158,11 +24300,11 @@ Shows prompt message box asking user to provide a text string.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows prompt message box asking user to provide a text string.
@@ -24172,6 +24314,7 @@ Shows prompt message box asking user to provide a text string.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -24389,11 +24532,11 @@ Sends output to an interactive table in a separate window.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Show-ListView command sends the output from a command to a grid view window where the output is displayed in an interactive table. Because this command requires a user interface, it does not work in a non-interactive scenarios like within web service calls. You can use the following features of the table to examine your data: -- Sort. To sort the data, click a column header. Click again to toggle from ascending to descending order. -- Quick Filter. Use the "Filter" box at the top of the window to search the text in the table. You can search for text in a particular column, search for literals, and search for multiple words. -- Execute actions on selected items. To execute action on the data from Show-ListView, Ctrl+click the items you want to be included in the action and press the desired action in the "Actions" chunk in the ribbon. -- Export contents of the view in XML, CSV, Json, HTML or Excel file and download that onto the user's computer. The downloaded results will take into account current filter and order of the items.
@@ -24403,6 +24546,7 @@ Sends output to an interactive table in a separate window.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -24872,11 +25016,11 @@ Shows Sitecore Sheer control as a modal dialog.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the command execution.
@@ -24886,6 +25030,7 @@ Shows Sitecore Sheer control as a modal dialog.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -25169,11 +25314,11 @@ Shows a Sheer dialog with text results showing the output of the script or anoth
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows a Sheer dialog with text results showing the output of the script or another control selected by the user based on either control name or Url to the control.
@@ -25183,6 +25328,7 @@ Shows a Sheer dialog with text results showing the output of the script or anoth
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -25509,11 +25655,11 @@ Shows Yes/No/Cancel dialog to the user and returns user choice.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Yes/No/Cancel dialog to the user and returns user choice as a string value.
@@ -25529,6 +25675,7 @@ Depending on the user response one of the 2 strings is returned:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -25711,11 +25858,11 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>This command updates the data displayed by List View that called the script the command is part of. Calling this command makes sense only when it's being used in script exposed as Action on the Show-ListView window. For example the main script might be listing all logged in users. And than the "Kick" action might be closing sessions for selected rows and refreshing the List view to take into account that the sessions are no longer connected. Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView command will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
@@ -25725,6 +25872,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -25937,11 +26085,11 @@ Get-ArchiveItem -Archive $archive -ItemId "{1BB32980-66B4-4ADA-9170-10A9D3336613
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ArchiveItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ArchiveItem command returns items found in the "archive" and "recyclebin" archives.
@@ -25951,6 +26099,7 @@ Get-ArchiveItem -Archive $archive -ItemId "{1BB32980-66B4-4ADA-9170-10A9D3336613
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -26158,11 +26307,11 @@ Removes items permanently from the specified archive.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ArchiveItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-ArchiveItem command permanently removes entries from specified archive.
@@ -26172,6 +26321,7 @@ Removes items permanently from the specified archive.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -26389,11 +26539,11 @@ Restores items to the original database from the specified archive.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Restore</command:verb>
       <command:noun>ArchiveItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Restore-ArchiveItem command restores entries from specified archive back to the original database.
@@ -26403,6 +26553,7 @@ Restores items to the original database from the specified archive.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -26613,16 +26764,18 @@ Get-ArchiveItem -Archive $archive | Restore-ArchiveItem
       <command:name>Test-BaseTemplate</command:name>
       <gl:group>BaseTemplate</gl:group>
       <maml:description>
-        <maml:para>Test-BaseTemplate
+        <maml:para>Alternatively you can use the Template Id
+Test-BaseTemplate -Item $item -Template "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
+
 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>BaseTemplate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -26630,6 +26783,7 @@ Get-ArchiveItem -Archive $archive | Restore-ArchiveItem
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -26813,7 +26967,6 @@ Get-ArchiveItem -Archive $archive | Restore-ArchiveItem
 $item = Get-Item -Path "master:\content\home"
 Test-BaseTemplate -Item $item -Template "Sample/Sample Content"
 
-
 </dev:code>
         <dev:remarks />
       </command:example>
@@ -26832,11 +26985,11 @@ Updates references to specified item to point to a new provided in the -NewTarge
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The cmdlet manipulates link to a specific item. The target item can be provided as an Item object or through Path/ID. it does not modifies the item itself but rather other items that link to it. If the -RemoveLink parameter is used the link will be removed rather than modified. To deliver more fine grained filtering you can provide ItemLink using the -Link parameter. You can obtain ItemLinks using Get-ItemReferrer or Get-ItemReference cmdlets. Consult Examples for specific use cases of each approach.
@@ -26846,6 +26999,7 @@ Updates references to specified item to point to a new provided in the -NewTarge
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -27228,11 +27382,11 @@ Remove one or more base templates from a template item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>BaseTemplate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-BaseTemplate command removes one or more base templates from a template item.
@@ -27242,6 +27396,7 @@ Remove one or more base templates from a template item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -27488,11 +27643,11 @@ Add one or more base templates to a template item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>BaseTemplate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-BaseTemplate command adds one or more base templates to a template item.
@@ -27502,6 +27657,7 @@ Add one or more base templates to a template item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -27748,11 +27904,11 @@ New-UsingBlock.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>UsingBlock</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The `New-UsingBlock` command disposes of the provided input object after the specified scriptblock completes execution. You may find the data returned by the scriptblock is contained within the following object `System.Collections.ObjectModel.Collection`1[System.Management.Automation.PSObject, System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]`. This helps when multiple objects are returned and is [known behavior.
@@ -27762,6 +27918,7 @@ New-UsingBlock.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -27884,7 +28041,7 @@ At line:3 char:1
 + New-UsingBlock (New-Object Sitecore.Security.Accounts.UserSwitcher $a ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (:) [New-UsingBlock], SetValueInvocationException
-    + FullyQualifiedErrorId : ScriptSetValueRuntimeException,Cognifide.PowerShell.Commandlets.Data.NewUsingBlockCommand
+    + FullyQualifiedErrorId : ScriptSetValueRuntimeException,Spe.Commands.Data.NewUsingBlockCommand
 
 </dev:code>
         <dev:remarks />
@@ -27910,11 +28067,11 @@ Removes Language/Version from a single item or a branch of items
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemVersion</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes Language/Version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. Language parameter supports globbing so you can delete whole language groups using wildcards.
@@ -27928,6 +28085,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -28306,11 +28464,11 @@ Resets item fields, specified as either names, fields or template fields.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Reset</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Resets item fields, specified as either names, fields or template fields.
@@ -28320,6 +28478,7 @@ Resets item fields, specified as either names, fields or template fields.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -28598,11 +28757,11 @@ Sets the item template.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-ItemTemplate command sets the template for an item.
@@ -28612,6 +28771,7 @@ Sets the item template.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -28910,11 +29070,11 @@ Tests item against a sitecore serialized rules engine rule set.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>Rule</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Tests item or a stream of items against a sitecore serialized rules engine rule set.
@@ -28924,6 +29084,7 @@ Tests item against a sitecore serialized rules engine rule set.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -29094,11 +29255,11 @@ Creates a version of the item in a new language based on an existing language ve
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemVersion</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new version of the item in a specified language based on an existing language/version. Based on parameters you can make the command bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
@@ -29112,6 +29273,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -29127,6 +29289,10 @@ The following abbreviations are aliases for this cmdlet:
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>IfExist</maml:name>
           <command:parameterValue required="true">Append | Skip | OverwriteLatest</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IfNoSourceVersion</maml:name>
+          <command:parameterValue required="true">Skip | Add</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>TargetLanguage</maml:name>
@@ -29158,6 +29324,10 @@ The following abbreviations are aliases for this cmdlet:
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>IfExist</maml:name>
           <command:parameterValue required="true">Append | Skip | OverwriteLatest</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IfNoSourceVersion</maml:name>
+          <command:parameterValue required="true">Skip | Add</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>TargetLanguage</maml:name>
@@ -29193,6 +29363,10 @@ The following abbreviations are aliases for this cmdlet:
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>IfExist</maml:name>
           <command:parameterValue required="true">Append | Skip | OverwriteLatest</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IfNoSourceVersion</maml:name>
+          <command:parameterValue required="true">Skip | Add</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>TargetLanguage</maml:name>
@@ -29235,6 +29409,20 @@ The following abbreviations are aliases for this cmdlet:
         <command:parameterValue required="false" variableLength="false">ActionIfExists</command:parameterValue>
         <dev:type>
           <maml:name>ActionIfExists</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>IfNoSourceVersion</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">ActionIfNoVersion</command:parameterValue>
+        <dev:type>
+          <maml:name>ActionIfNoVersion</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -29464,11 +29652,11 @@ Expands tokens in fields for items.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Expand-Token command expands the tokens in fields for items.
@@ -29483,6 +29671,7 @@ Some example of tokens include:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -29709,11 +29898,11 @@ Returns Sitecore database archives.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Archive command returns Sitecore archives in context of the specified database.
@@ -29723,6 +29912,7 @@ Returns Sitecore database archives.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -29844,11 +30034,11 @@ Retrieves a Sitecore Database.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Database command retrieves one or more Sitecore Database objects based on name or item passed to it.
@@ -29858,6 +30048,7 @@ Retrieves a Sitecore Database.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -30008,11 +30199,11 @@ Retrieves item fields as either names or fields or template fields.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves item fields as either names or fields or template fields.
@@ -30022,6 +30213,7 @@ Retrieves item fields as either names or fields or template fields.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -30329,11 +30521,11 @@ Returns all the items linked to the specified item..
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemReference command returns all items linked to the specified item. If -ItemLink parameter is used the command will return links rather than items.
@@ -30343,6 +30535,7 @@ Returns all the items linked to the specified item..
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -30619,11 +30812,11 @@ Returns all the items referring to the specified item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemReferrer command returns all items referring to the specified item. If -ItemLink parameter is used the command will return links rather than items.
@@ -30633,6 +30826,7 @@ Returns all the items referring to the specified item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -30911,11 +31105,11 @@ Returns the item template and its base templates.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemTemplate command returns the item template and its base templates.
@@ -30925,6 +31119,7 @@ Returns the item template and its base templates.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -31170,11 +31365,11 @@ Publishes a Sitecore item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
@@ -31184,6 +31379,7 @@ Publishes a Sitecore item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -31593,11 +31789,11 @@ $item.Title = "New Title"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Initialize-Item command wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving. This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item command into full Sitecore Items. The alias for the command is Wrap-Item.
@@ -31611,6 +31807,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -31743,15 +31940,15 @@ $item = Initialize-Item -Item $item
         <maml:para />
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>SearchPredicate</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -31885,11 +32082,11 @@ Rebuilds the Sitecore index.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Rebuild-SearchIndex command rebuilds Sitecore index. This command is an alias for Initialize-SearchIndex.
@@ -31903,6 +32100,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32106,11 +32304,11 @@ Get-SearchIndex -Name sitecore_master_index | Initialize-SearchIndex
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>SearchIndexItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions\#\# Aliases
@@ -32122,6 +32320,7 @@ The following abbreviations are aliases for this cmdlet:
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32259,11 +32458,11 @@ Initialize-SearchIndexItem -Item $item -Name $indexName
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>SearchIndexItem</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -32271,6 +32470,7 @@ Initialize-SearchIndexItem -Item $item -Name $indexName
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32410,11 +32610,11 @@ Resumes the suspended \(paused\) Sitecore index.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Resume</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Resume-SearchIndex command resumes the suspended \(paused\) Sitecore index.
@@ -32424,6 +32624,7 @@ Resumes the suspended \(paused\) Sitecore index.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32581,11 +32782,11 @@ Stops the Sitecore index.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Stop</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Stop-SearchIndex command stops the Sitecore index.
@@ -32595,6 +32796,7 @@ Stops the Sitecore index.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32752,11 +32954,11 @@ Suspends \(pauses\) the Sitecore index.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Suspend</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Suspend-SearchIndex command suspends \(pauses\) the Sitecore index.
@@ -32766,6 +32968,7 @@ Suspends \(pauses\) the Sitecore index.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -32923,11 +33126,11 @@ Returns the available Sitecore indexes.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SearchIndex command returns the available Sitecore indexes. These are the same as those found in the Control Panel.
@@ -32937,6 +33140,7 @@ Returns the available Sitecore indexes.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -33093,11 +33297,11 @@ Finds items using the Sitecore Content Search API.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Find</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Find-Item command searches for items using the Sitecore Content Search API. The type `SearchResultItem` is used as the type when working with `IQueryable`.
@@ -33107,6 +33311,7 @@ Finds items using the Sitecore Content Search API.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -33154,6 +33359,22 @@ Finds items using the Sitecore Content Search API.
           <maml:name>WhereValues</maml:name>
           <command:parameterValue required="true">Object[]</command:parameterValue>
         </command:parameter>
+        <command:parameter required="false" parameterSetName="Dynamic" position="named">
+          <maml:name>Filter</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Dynamic" position="named">
+          <maml:name>FilterValues</maml:name>
+          <command:parameterValue required="true">Object[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Dynamic" position="named">
+          <maml:name>FacetOn</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Dynamic" position="named">
+          <maml:name>FacetMinCount</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
         <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -33186,7 +33407,11 @@ Finds items using the Sitecore Content Search API.
       <command:syntaxItem>
         <maml:name>Find-Item</maml:name>
         <command:parameter required="false" parameterSetName="Predicate" position="named">
-          <maml:name>Predicate</maml:name>
+          <maml:name>WherePredicate</maml:name>
+          <command:parameterValue required="true">Object</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Predicate" position="named">
+          <maml:name>FilterPredicate</maml:name>
           <command:parameterValue required="true">Object</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
@@ -33312,6 +33537,62 @@ Finds items using the Sitecore Content Search API.
         </dev:type>
       </command:parameter>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>Filter</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
+        <maml:name>FilterValues</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="true">Object[]</command:parameterValue>
+        <dev:type>
+          <maml:name>Object[]</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
+        <maml:name>FacetOn</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="true">String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>String[]</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>FacetMinCount</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>QueryType</maml:name>
         <maml:description>
           <maml:para />
@@ -33326,7 +33607,21 @@ Finds items using the Sitecore Content Search API.
         </dev:type>
       </command:parameter>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>Predicate</maml:name>
+        <maml:name>WherePredicate</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">Object</command:parameterValue>
+        <dev:type>
+          <maml:name>Object</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>FilterPredicate</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
@@ -33670,6 +33965,25 @@ Find-Item @props | Select-Object Name,CreatedDate
 </dev:code>
         <dev:remarks />
       </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 12-----------------------</maml:title>
+        <dev:code>Find items where the created date is older than the specified time in UTC.
+
+$date = New-Object DateTime 2019, 8, 1, 0, 0, 0, ([DateTimeKind]::Utc)
+
+$criteria = @(
+    @{Filter = "LessThan"; Field = "__smallupdateddate"; Value = $date} 
+)
+$props = @{
+    Index = "sitecore_master_index"
+    Criteria = $criteria
+}
+
+Find-Item @props
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
@@ -33677,24 +33991,13 @@ Find-Item @props | Select-Object Name,CreatedDate
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>Get-Item</maml:linkText>
-        <maml:uri />
-      </maml:navigationLink>
-      <maml:navigationLink>
-        <maml:linkText>Get-ChildItem</maml:linkText>
-        <maml:uri />
-      </maml:navigationLink>
-      <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/273458beb3f2b179a0b6</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>https://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library</maml:linkText>
-        <maml:uri />
-      </maml:navigationLink>
-      <maml:navigationLink>
-        <maml:linkText>https://github
-.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:linkText>https://weblogs.asp
+.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library 
+* #1128</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -33709,11 +34012,11 @@ Find-Item @props | Select-Object Name,CreatedDate
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemCloneNotification</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -33721,6 +34024,7 @@ Find-Item @props | Select-Object Name,CreatedDate
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -33903,11 +34207,11 @@ $clonedItem | Get-ItemCloneNotification -NotificationType ItemMovedChildRemovedN
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Receive</command:verb>
       <command:noun>ItemCloneNotification</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions
@@ -33915,6 +34219,7 @@ $clonedItem | Get-ItemCloneNotification -NotificationType ItemMovedChildRemovedN
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -34174,11 +34479,11 @@ Converts an item from a clone to a fully independent item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Converts an item from a clone to a fully independent item.
@@ -34188,6 +34493,7 @@ Converts an item from a clone to a fully independent item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -34406,11 +34712,11 @@ Returns all the clones for the specified item.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemClone command returns all the clones for the specified item.
@@ -34420,6 +34726,7 @@ Returns all the clones for the specified item.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -34591,11 +34898,11 @@ Creates a new item clone based on the item provided.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2010-2019 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>6.0.0</dev:version>
+      <dev:version>6.1.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new item clone based on the item provided.
@@ -34605,6 +34912,7 @@ Creates a new item clone based on the item provided.
 
 
 </maml:para>
+      <maml:para>© 2010-2020 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
