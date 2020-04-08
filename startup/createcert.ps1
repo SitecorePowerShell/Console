@@ -1,15 +1,17 @@
 param (
     [ValidateNotNullOrEmpty()][string]$certificatename = "cert",
     [ValidateNotNullOrEmpty()][SecureString]$certificatepassword = ("b" | ConvertTo-SecureString -Force -AsPlainText),
-    [ValidateNotNullOrEmpty()][string]$dnsName = "*.dev.local"
+    [ValidateNotNullOrEmpty()][string[]]$dnsNameList = "*.dev.local"
 )
 
 . $PSScriptRoot\rsakeytools.ps1
 
 # setup certificate properties including the commonName (DNSName) property for Chrome 58+
+$dnsName = $dnsNameList[0]
+
 $certificate = New-SelfSignedCertificate `
     -Subject $dnsName `
-    -DnsName $dnsName `
+    -DnsName $dnsNameList `
     -KeyAlgorithm RSA `
     -KeyLength 2048 `
     -NotBefore (Get-Date) `
@@ -22,15 +24,19 @@ $certificate = New-SelfSignedCertificate `
     -KeyExportPolicy Exportable `
     -KeySpec KeyExchange `
     -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider"
+	
 $certificatePath = 'Cert:\CurrentUser\My\' + ($certificate.ThumbPrint)
+
 # create temporary certificate path
 $tmpPath = $PSScriptRoot
 if ([string]::IsNullOrEmpty($tmpPath)) {
     $tmpPath = $PWD
 }
+
 if (!(test-path $tmpPath)) {
     New-Item -ItemType Directory -Force -Path $tmpPath
 }
+
 # set certificate password here
 $pfxPassword = $certificatepassword
 $pfxFilePath = $tmpPath + "\" + $certificatename + ".pfx"
@@ -44,11 +50,13 @@ Export-PfxCertificate -Cert $certificatePath -FilePath $pfxFilePath -Password $p
 $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($certificatepassword)
 $unsecuredPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
 $unsecuredPassword | Out-File -FilePath $cerPasswordFilePath
+
 # import the pfx certificate
 Write-Host "Importing certificate"
 Import-PfxCertificate -FilePath $pfxFilePath Cert:\LocalMachine\My -Password $pfxPassword -Exportable
 $pfx = Import-PfxCertificate -FilePath $pfxFilePath -CertStoreLocation Cert:\LocalMachine\Root -Password $pfxPassword -Exportable
 #$pfx = Get-PfxCertificate -FilePath $pfxFilePath -Password $pfxPassword
+
 # optionally delete the physical certificates (don’t delete the pfx file as you need to copy this to your app directory)
 #Remove-Item $cerFilePath
 
