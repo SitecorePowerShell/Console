@@ -68,7 +68,8 @@ SharedFields:
     if($result -ne "ok") { exit }
     
     # Used to determine where queries should start.
-    $destinationNode = @{$true=(Get-Item -Path "master:\content\home");$false=(Get-Item -Path "master:\content")}[(Test-Path -Path "master:\content\home")]
+    $database = "master"
+    $destinationNode = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
     
     # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
     $standardTemplate = Get-Item -Path "master:" -ID "$([Sitecore.TemplateIDs]::StandardTemplate)"
@@ -295,9 +296,6 @@ SharedFields:
                 }
                 
                 Write-LogExtended "[U] $($item.ItemPath)"
-            }
-            
-            if ($item -ne $null) {
                 foreach($fieldKey in $fieldMappings.Keys) {
                     $fieldName = $fieldMappings[$fieldKey]
                     
