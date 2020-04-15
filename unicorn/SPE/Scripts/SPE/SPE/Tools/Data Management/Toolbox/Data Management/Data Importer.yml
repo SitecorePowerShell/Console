@@ -253,7 +253,7 @@ SharedFields:
         foreach ($row in $importData) {
             Write-Host ""
             $rowIndex++
-            $lookupKey = @{$true=$row.Id;$false=$row.Name}[![string]::IsNullOrEmpty($row.Id)] 
+            $lookupKey = @{$true=$row.Id;$false=$row.Name}[![string]::IsNullOrEmpty($row.Id)]
     
             $item = $null
             if([Sitecore.Data.ID]::IsID($lookupKey)) {
@@ -262,14 +262,24 @@ SharedFields:
                 if(Test-Path -Path $itemPath) {
                     $item = Get-Item -Path $itemPath
                 }
-            } elseif($useCustomKey -and $row.$customKey) {
-                Write-LogExtended "> Find item by $($customKey): $($row.$customKey)"
-                $itemPath = "$($destinationNode.ItemPath)//*[@$($customKey) ='$($row.$customKey)']"
-                $item = Get-Item -Path "master:" -Query $itemPath
             } else {
-                if(![string]::IsNullOrEmpty($lookupKey)) {
-                    Write-LogExtended "> Find item by Name: $($lookupKey)"
-                    $itemPath = "$($destinationNode.ItemPath)//*[@@name='$($lookupKey)']"
+                $queryKey = ""
+                $queryValue = ""
+                if($useCustomKey -and $row.$customKey) {
+                    Write-LogExtended "> Find item by $($customKey): $($row.$customKey)"
+                    $queryKey = $customKey.Trim()
+                    $queryValue = [regex]::Replace(($row.$customKey).Trim(), "[^/]*[-][^/]*", "#`$0#")
+                    
+                } else {
+                    if(![string]::IsNullOrEmpty($lookupKey)) {
+                        Write-LogExtended "> Find item by Name: $($lookupKey)"
+                        $queryKey = "@name"
+                        $queryValue = [regex]::Replace($lookupKey.Trim(), "[^/]*[-][^/]*", "#`$0#")
+                    }
+                }
+                
+                if(![string]::IsNullOrEmpty($queryKey) -and ![string]::IsNullOrEmpty($queryValue)) {
+                    $itemPath = "$($destinationNode.ItemPath)//*[@$($queryKey) ='$($queryValue)']"
                     $item = Get-Item -Path "master:" -Query $itemPath
                 }
             }
@@ -277,7 +287,7 @@ SharedFields:
             if($item -eq $null) {
                 if($wizardMode -eq 1) {
     
-                    $itemPath = "$($destinationNode.ProviderPath)\$($row.Name)"
+                    $itemPath = "$($destinationNode.ProviderPath)\$($row.Name.Trim())"
                     Write-LogExtended "[A] $($itemPath)" -ForegroundColor Green
                     if([Sitecore.Data.ID]::IsID($lookupKey)) {
                         $item = New-Item -Path $itemPath -ItemType $templateItem.ID -ForceId $row.Id
@@ -292,7 +302,7 @@ SharedFields:
                 if(($item).Count -gt 1) {
                     $item = $item | Select-Object -First 1
                     Check-Condition -Condition 3
-                    Write-LogExtended "> Found duplicate items when matching. Taking the first item $($item.ItemPath)" -ForegroundColor Yellow
+                    Write-LogExtended "> Found duplicate items when matching. Taking the first item $($item.ItemPath) with Id $($item.Id)" -ForegroundColor Yellow
                 }
                 
                 Write-LogExtended "[U] $($item.ItemPath)"
