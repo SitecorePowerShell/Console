@@ -152,11 +152,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Unicorn, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Core.4.1.1\lib\net452\Unicorn.dll</HintPath>
+    <Reference Include="Unicorn, Version=4.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unicorn.Core.4.1.2-pre3\lib\net452\Unicorn.dll</HintPath>
     </Reference>
-    <Reference Include="Unicorn.Roles, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Roles.Core.4.1.1\lib\net452\Unicorn.Roles.dll</HintPath>
+    <Reference Include="Unicorn.Roles, Version=4.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unicorn.Roles.Core.4.1.2-pre3\lib\net452\Unicorn.Roles.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -582,6 +582,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_Config\Include\Rainbow.config" />
+    <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.UI.IdentityServer.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.UI.DeployedContentEditorWarnings.config.disabled" />
@@ -598,7 +599,7 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.AutoPublish.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.DataProvider.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
-    <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
+    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />

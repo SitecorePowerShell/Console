@@ -2,8 +2,8 @@
 # Make sure to import `Sitecore.Cloud.Cmdlets.dll` and not `Sitecore.Cloud.Cmdlets.psm1`
 Import-Module -Name "C:\Sitecore\sat\tools\Sitecore.Cloud.Cmdlets.dll"
 
-$path = "C:\Websites\dev.spe\Data\packages\Sitecore.PowerShell.Extensions-6.0.zip"
-$destination = "C:\Websites\dev.spe\Data\packages"
+$path = "C:\Projects\Spe\releases\Sitecore.PowerShell.Extensions-6.1.zip"
+$destination = "C:\Projects\Spe\releases\"
 
 $wdpPath = ConvertTo-SCModuleWebDeployPackage -Path $path  -Destination $destination -DisableDacPacOptions '*' -Verbose  -Force
 #ConvertTo-SCModuleWebDeployPackage $_.fullname $destinationPath -Exclude $excludePaths -DisableDacPacOptions '*'
