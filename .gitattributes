@@ -23,3 +23,6 @@
 
 # Custom for TDS/Sitecore serialization 
 *.item -text 
+
+# Added because Corey said to. Thanks Corey!
+*.config linguist-language=XML
