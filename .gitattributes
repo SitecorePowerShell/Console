@@ -26,3 +26,5 @@
 
 # Added because Corey said to. Thanks Corey!
 *.config linguist-language=XML
+*.config.disabled linguist-language=XML
+*.config.example linguist-language=XML
