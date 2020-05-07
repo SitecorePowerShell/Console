@@ -7,7 +7,7 @@ services:
       - .\data\sql:C:\Data
     mem_limit: 2GB
     ports:
-      - "44010:1433"
+      - "20010:1433"
     environment:
       SA_PASSWORD: ${SQL_SA_PASSWORD}
       ACCEPT_EULA: "Y"
@@ -18,7 +18,7 @@ services:
       - .\data\solr:C:\Data
     mem_limit: 1GB
     ports:
-      - "44011:8983"
+      - "20011:8983"
     environment:
       SOLR_LOG_LEVEL: ERROR
 
@@ -26,7 +26,7 @@ services:
     image: ${REGISTRY}sitecore-xm-cm:${SITECORE_VERSION}-windowsservercore-${WINDOWSSERVERCORE_VERSION}
     entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1 -WatchDirectoryParameters @{ Path = 'C:\\src'; Destination = 'C:\\inetpub\\wwwroot'; ExcludeDirectories = @('App_Data\\Unicorn'); }"
     ports:
-      - "44001:80"
+      - "20001:80"
     volumes:
       - .\deploy:C:\src
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
