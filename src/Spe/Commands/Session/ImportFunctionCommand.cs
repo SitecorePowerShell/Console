@@ -4,13 +4,17 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using Sitecore.Collections;
+using Sitecore.Configuration;
+using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Spe.Commands.Interactive;
 using Spe.Core.Diagnostics;
-using Spe.Core.Extensions;
 using Spe.Core.Modules;
 using Spe.Core.Utility;
 using Spe.Core.Validation;
+using Spe.Core.Settings;
 
 namespace Spe.Commands.Session
 {
@@ -18,9 +22,19 @@ namespace Spe.Commands.Session
     [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand
     {
+        class FunctionCacheEntry
+        {
+            internal string Name { get; set; }
+            internal string Library { get; set; }
+            internal string Module { get; set; }
+            internal string Database { get; set; }
+            internal ID ScriptID { get; set; }
+        }
+
         private static string[] functions;
         private static string[] libraries;
         private static string[] modules;
+        private static List<FunctionCacheEntry> FunctionCache { get; set; }
 
 
         [Parameter(Mandatory = true, Position = 0)]
@@ -39,9 +53,19 @@ namespace Spe.Commands.Session
         {
             get
             {
-                if (functions == null)
+                if (FunctionCache == null)
                 {
                     UpdateCache();
+                }
+
+                if (functions == null)
+                {
+                    functions = FunctionCache.
+                        Select(f => f.Name).
+                        Distinct().
+                        OrderBy(s => s).
+                        Select(s => WrapNameWithSpacesInQuotes(s)).
+                        ToArray();
                 }
                 return functions;
             }
@@ -51,9 +75,19 @@ namespace Spe.Commands.Session
         {
             get
             {
-                if (functions == null)
+                if (FunctionCache == null)
                 {
                     UpdateCache();
+                }
+
+                if (libraries == null)
+                {
+                    libraries = FunctionCache.
+                        Select(f => f.Library).
+                        Distinct().
+                        Where(s => s != string.Empty).
+                        OrderBy(s => s).
+                        Select(s => WrapNameWithSpacesInQuotes(s)).ToArray();
                 }
                 return libraries;
             }
@@ -63,9 +97,19 @@ namespace Spe.Commands.Session
         {
             get
             {
-                if (functions == null)
+                if (FunctionCache == null)
                 {
                     UpdateCache();
+                }
+
+                if (libraries == null)
+                {
+                    modules = FunctionCache.
+                        Select(f => f.Module).
+                        Distinct().
+                        OrderBy(s => s).
+                        Select(s => WrapNameWithSpacesInQuotes(s)).
+                        ToArray();
                 }
                 return modules;
             }
@@ -75,12 +119,20 @@ namespace Spe.Commands.Session
         static ImportFunctionCommand()
         {
             ModuleManager.OnInvalidate += InvalidateCache;
+            FunctionCache = null;
+            libraries = null;
             functions = null;
+            modules = null;
         }
 
         // Methods
         protected override void ProcessRecord()
         {
+            if (FunctionCache == null)
+            {
+                UpdateCache();
+            }
+
             if (string.IsNullOrEmpty(Name))
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
@@ -89,32 +141,22 @@ namespace Spe.Commands.Session
                 return;
             }
 
-            var functionItems = new List<Item>();
-            var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
+            var filteredFunctions = FunctionCache.Where(f => string.Equals(f.Name, Name, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (!string.IsNullOrEmpty(Module))
             {
-                roots =
-                    roots.Where(
-                        p =>
-                            string.Equals(ModuleManager.GetItemModule(p).Name, Module,
-                                StringComparison.InvariantCultureIgnoreCase)).ToList();
-            }
-            var name = Name.ToLower();
-            foreach (var root in roots)
-            {
-                var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                var query = string.IsNullOrEmpty(Library)
-                    ? $"{path}//*[@@TemplateId=\"{Templates.Script.Id}\" and @@Key=\"{name}\"]"
-                    : $"{path}/#{Library}#//*[@@TemplateId=\"{Templates.Script.Id}\" and @@Key=\"{name}\"]";
-                var scriptItems = root.Database.SelectItems(query);
-                if (scriptItems?.Length > 0)
-                {
-                    functionItems.AddRange(scriptItems);
-                }
+                filteredFunctions = filteredFunctions.Where(f => string.Equals(f.Module, Module, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
-            if (functionItems.Count > 1)
+            if (!string.IsNullOrEmpty(Library))
+            {
+                filteredFunctions = filteredFunctions.Where(f => f.Library.StartsWith(Library, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            }
+            
+            //var functionItems = new List<Item>();
+            var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
+
+            if (filteredFunctions.Count > 1)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
                         $"Ambiguous function name '{Name}' detected, please narrow your search by specifying sub-library and/or module name."),
@@ -122,7 +164,7 @@ namespace Spe.Commands.Session
                 return;
             }
 
-            if (functionItems.Count == 0)
+            if (filteredFunctions.Count == 0)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
                         $"Function item with name '{Name}' could not be found in the specified module or library or it does not exist."),
@@ -130,14 +172,17 @@ namespace Spe.Commands.Session
                 return;
             }
 
-            if (!IsPowerShellScriptItem(functionItems[0]))
+            var functionItem = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(filteredFunctions[0].ScriptID);
+            
+            if (!IsPowerShellScriptItem(functionItem))
             {
+                // this should never happen as cache only stores Scripts
                 return;
             }
 
-            var script = functionItems[0][Templates.Script.Fields.ScriptBody];
+            var script = functionItem[Templates.Script.Fields.ScriptBody];
 
-            if (ShouldProcess(functionItems[0].GetProviderPath(), "Import functions"))
+            if (ShouldProcess(functionItem.GetProviderPath(), "Import functions"))
             {
                 var sendToPipeline = InvokeCommand.InvokeScript(script, false,
                     PipelineResultTypes.Output | PipelineResultTypes.Error, null);
@@ -152,40 +197,67 @@ namespace Spe.Commands.Session
 
         private static void UpdateCache()
         {
-            var localFunctions = new List<string>();
+            var functionCache = new List<FunctionCacheEntry>();
             var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
-
-            modules =
-                (from module in ModuleManager.Modules where module.Enabled select module.Name).ToList()
-                    .ConvertAll(WrapNameWithSpacesInQuotes)
-                    .ToArray();
-
-            libraries = (from root in roots
-                from Item library in root.GetChildren()
-                where library.IsPowerShellLibrary()
-                select library.Name).ToList().ConvertAll(WrapNameWithSpacesInQuotes).ToArray();
 
             foreach (var root in roots)
             {
-                var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                var query = $"{path}//*[@@TemplateId=\"{Templates.Script.Id}\"]";
                 try
                 {
-                    var results = root.Database.SelectItems(query);
-                    localFunctions.AddRange(
-                        results.ToList().ConvertAll(p => WrapNameWithSpacesInQuotes(p.Name)));
+                    // One does not simply Select... as modules can have more than Query.MaxItems
+                    // We have to traverse the tree.
+                    IEnumerable<Item> results = GetAllScriptChildren(root);
+                    functionCache.AddRange(results.Select(p =>
+                     new FunctionCacheEntry() { 
+                        Name = p.Name,
+                        Library = GetLibraryName(p.Parent, string.Empty),
+                        Database = p.Database.Name,
+                        Module = GetModuleName(p.Parent),
+                        ScriptID = p.ID
+                    }));
                 }
                 catch (Exception ex)
                 {
                     PowerShellLog.Error("Error while querying for items", ex);
                 }
+            } 
+
+            FunctionCache = functionCache;
+            libraries = null;
+            functions = null;
+            modules = null;
+        }
+
+        private static IEnumerable<Item> GetAllScriptChildren(Item parent)
+        {            
+            foreach (Item child in parent.GetChildren(ChildListOptions.SkipSorting))
+            {
+                if (child.TemplateID == Templates.Script.Id)
+                {
+                    yield return child;
+                }
+                foreach (Item subChild in GetAllScriptChildren(child))
+                {
+                    yield return subChild;
+                }
             }
-            functions = localFunctions.ToArray();
+        }
+
+        private static string GetModuleName(Item item)
+        {
+            return item.TemplateID != Templates.ScriptModule.Id ? GetModuleName(item.Parent) : item.Name;
+        }
+
+        private static string GetLibraryName(Item item, string pathSoFar)
+        {
+            return item.TemplateID == Templates.ScriptLibrary.Id && item.Name != "Functions"
+                ? GetLibraryName(item.Parent, $"{item.Name}\\{pathSoFar}") 
+                : pathSoFar.Trim('\\');
         }
 
         public static void InvalidateCache(object sender, EventArgs e)
         {
-            functions = null;
+            FunctionCache = null;
         }
     }
 }
