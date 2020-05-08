@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Sitecore.Common;
 using Sitecore.Data;
 using Sitecore.Data.Events;
 using Sitecore.Data.Fields;
@@ -9,6 +10,7 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Resources.Media;
+using Spe.Core.Data;
 using Spe.Core.Settings;
 
 namespace Spe.Core.Extensions
@@ -33,6 +35,8 @@ namespace Spe.Core.Extensions
         internal static PSObject GetPsObject(SessionState provider, Item item)
         {
             var psObject = PSObject.AsPSObject(item);
+
+            if (Switcher<bool, DisablePropertyExpander>.CurrentValue) return psObject;
 
             Dictionary<ID, string> propertySet;
             if (AllPropertySets.ContainsKey(item.TemplateID))

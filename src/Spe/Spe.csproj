@@ -214,6 +214,7 @@
     <Compile Include="Commands\Presentation\AddPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\NewPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Security\Accounts\BaseSecurityCommand.cs" />
+    <Compile Include="Core\Data\DisablePropertyExpander.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
     <Compile Include="Core\Extensions\ExpressionExtensions.cs" />
     <Compile Include="Core\Extensions\EnumerableExtensions.cs" />
