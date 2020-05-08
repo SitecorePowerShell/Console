@@ -14,7 +14,11 @@ SharedFields:
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+    $currentVersion = (Get-Host).Version
+    $Version = "$($currentVersion.Major).$($currentVersion.Minor)"
+    if($currentVersion.Build -gt 0) {
+        $Version += ".$($currentVersion.Build)"
+    }
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -101,7 +105,6 @@ SharedFields:
     $packageName = "$($package.Name)-$Version" -replace " ",".";
     Export-Package -Project $package -Path "$packageName.xml"
     Export-Package -Project $package -Path "$packageName.zip" -Zip
-    Download-File "$SitecorePackageFolder\$packageName.zip"
     
     # Build Minimal Package
     
@@ -113,20 +116,12 @@ SharedFields:
     
     # Build Remoting Package
     
-    $config = [Sitecore.Configuration.Factory]::GetConfiguration()
-    $speSourceFolder = $config.sitecore."sc.variable" | Where-Object { $_.Name -eq "speSourceFolder" } | Select-Object -First 1 -Expand value
-    $speSourceFolderItem = Get-Item -Path $speSourceFolder
-    $modulePath = "$($speSourceFolderItem.Parent.FullName)\Modules\SPE"
+    $modulePath = "C:\Modules\SPE"
     if(Test-Path -Path $modulePath) {
         $remotingPackageName = "$($SitecorePackageFolder)\SPE.Remoting-$($Version).zip"
         
         Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
-    
-    # Build Unicorn Package
-    
-    #$unicornPackageName = "$($SitecorePackageFolder)\SPE.Unicorn-$($Version).zip"
-    #Compress-Archive -Path "$($SitecoreDataFolder)" -DestinationPath $unicornPackageName -Include "SPE" > $null
 Languages:
 - Language: en
   Versions:
