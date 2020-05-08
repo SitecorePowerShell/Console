@@ -102,7 +102,7 @@ foreach ( $site in $userConfig.sites )
             Write-Host -ForegroundColor Green "Copying from $deployFolder to $($site.path)"
             Write-Host
 
-            $filesToCopy = Get-ChildItem $deployFolder -Recurse -Exclude "*.example","*.disabled" | ? { $_.PSIsContainer -eq $False }
+            $filesToCopy = Get-ChildItem $deployFolder -Recurse | ? { $_.PSIsContainer -eq $False }
 
             if ($site.junction -and $deployProject.junctionPoints -ne $null) {
                 # Deploy any files that are not included in junction-folders

@@ -24,7 +24,7 @@ services:
 
   cm:
     image: ${REGISTRY}sitecore-xm-cm:${SITECORE_VERSION}-windowsservercore-${WINDOWSSERVERCORE_VERSION}
-    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1 -WatchDirectoryParameters @{ Path = 'C:\\src'; Destination = 'C:\\inetpub\\wwwroot'; ExcludeDirectories = @('App_Data\\Unicorn'); }"
+    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"
     ports:
       - "20001:80"
     volumes:
@@ -32,7 +32,9 @@ services:
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
       - .\data\cm:C:\inetpub\wwwroot\App_Data\logs
       - C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
-      - C:\license:C:\license:ro 
+      - C:\license:C:\license:ro
+      - .\modules:C:\modules:ro
+      - .\releases:C:\inetpub\wwwroot\App_Data\packages
     networks:
       default:
         aliases:

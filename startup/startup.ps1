@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [string]$EntryPointScriptPath = "C:\tools\entrypoints\iis\Development.ps1"
+    [string]$EntrypointScriptPath = "C:\tools\entrypoints\iis\Development.ps1",
+    [hashtable]$EntrypointParameters
 )
 Write-Host "Running startup.ps1"
 Import-Module WebAdministration
@@ -35,5 +36,9 @@ foreach($hostheader in $hostHeaders) {
     Set-HttpBinding -SiteName $website -HostHeader $hostheader
 }
 
-Write-Host "Running $($EntryPointScriptPath)"
-& $EntryPointScriptPath
+Write-Host "Running $($EntrypointScriptPath)"
+if($EntrypointParameters) {
+    & $EntrypointScriptPath @EntrypointParameters
+} else {
+    & $EntrypointScriptPath
+}
