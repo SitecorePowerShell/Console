@@ -11,7 +11,7 @@
     RootModule = '.\SPE.psm1'
 
     # Version number of this module.
-    ModuleVersion = '6.1.0'
+    ModuleVersion = '6.1.1'
 
     # ID used to uniquely identify this module
     GUID = 'cf8d3b69-b293-4d8b-9974-e1ab80509724'
