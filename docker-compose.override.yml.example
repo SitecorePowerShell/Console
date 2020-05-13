@@ -12,4 +12,3 @@ services:
     entrypoint: powershell.exe -Command "& C:\\startup\\startup.ps1 -EntrypointScriptPath C:\\tools\\entrypoints\\iis\\Development.ps1 -EntrypointParameters @{ 'WatchDirectoryParameters' = @{ Path = 'C:\\src'; Destination = 'C:\\inetpub\\wwwroot'; DefaultExcludedFiles = @('.gitignore', '.gitkeep', '.dockerignore'); }}"
     volumes:
       - .\startup:C:\startup
-      - C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Remote Debugger:C:\remote_debugger:ro

@@ -28,11 +28,10 @@ services:
     ports:
       - "20001:80"
     volumes:
+      - C:\license:C:\license:ro
       - .\deploy:C:\src
       - .\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
       - .\data\cm:C:\inetpub\wwwroot\App_Data\logs
-      - C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\Remote Debugger:C:\remote_debugger:ro
-      - C:\license:C:\license:ro
       - .\modules:C:\modules:ro
       - .\releases:C:\inetpub\wwwroot\App_Data\packages
     networks:
