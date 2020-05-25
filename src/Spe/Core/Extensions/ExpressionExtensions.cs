@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Sitecore.ContentSearch;
+using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Spe.Commands.Data.Search;
 using Spe.Core.Utility;
@@ -85,11 +86,12 @@ namespace Spe.Core.Extensions
             string predicate,
             params object[] values)
         {
-            LambdaExpression lambda = DynamicExpression.ParseLambda(source.ElementType, typeof (bool), predicate, values);
-            return (IQueryable<T>)source.Provider.CreateQuery(Expression.Call(typeof (Queryable), nameof (Filter), new Type[1]
-            {
-                source.ElementType
-            }, source.Expression, Expression.Quote(lambda)));
+            var lambda = DynamicExpression.ParseLambda(source.ElementType, typeof (bool), predicate, values);
+            return (IQueryable<T>) source.Provider.CreateQuery(Expression.Call(typeof(QueryableExtensions), nameof(Filter),
+                new Type[1]
+                {
+                    source.ElementType
+                }, source.Expression, Expression.Quote(lambda)));
         }
     }
 }
