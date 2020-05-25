@@ -1,0 +1,26 @@
+﻿---
+ID: "0b922644-1917-443e-b21c-17985d209abb"
+Parent: "4406b665-c086-4d1f-9048-0e62a9863755"
+Template: "5ba5dbe4-f85d-4797-9084-acb31952b3b3"
+Path: /sitecore/system/Modules/PowerShell/Fonts/Cascadia Code
+DB: master
+SharedFields:
+- ID: "da69b6b3-d7bf-40d0-8609-e9b7b7be01ba"
+  Hint: Key
+  Value: Cascadia Code
+- ID: "e82a50d9-e483-4c2a-bea1-730dd9ab7de6"
+  Hint: Phrase
+  Value: |
+    "Cascadia Code", Monaco, Menlo, "Ubuntu Mono", source-code-pro, monospace
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20200525T005827Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
