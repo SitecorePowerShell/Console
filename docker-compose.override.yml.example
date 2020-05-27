@@ -2,7 +2,7 @@ version: "2.4"
 
 services:
   monitor:
-    image: rahnemann/windows-hosts-writer:1.1-nanoserver-${NANOSERVER_VERSION}
+    image: rahnemann/windows-hosts-writer:1.2-nanoserver-${NANOSERVER_VERSION}
     volumes:
       - C:\windows\system32\drivers\etc:C:\driversetc
       - source: '\\.\pipe\docker_engine'
