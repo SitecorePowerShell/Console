@@ -17,6 +17,7 @@ SharedFields:
         "500 KB" = 500000
         "1 MB" = 1000000
         "5 MB" = 5000000
+        "10 MB" = 10000000
     }
     
     $typeOptions = [ordered]@{
@@ -71,7 +72,7 @@ SharedFields:
     $mediaItemContainer = Get-Item -Path "master:\media library"
     $items = $mediaItemContainer.Axes.GetDescendants() | 
         Where-Object { $selectedType -contains $_.Fields["Extension"].Value -and [int]$_.Fields["Size"].Value -gt $selectedSize } | 
-        Initialize-Item | Sort-Object -Property Size
+        Initialize-Item | Sort-Object -Property Size -Descending
     
     $reportProps = @{
         Title = "Media by size and type"
