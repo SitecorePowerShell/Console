@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Spe.Client.Controls
 {
@@ -16,23 +17,22 @@ namespace Spe.Client.Controls
             get { return instance ?? (instance = new ListViewComparer()); }
         }
 
-        public int Compare(String str1, String str2)
+        public int Compare(string str1, string str2)
         {
-            DateTime dateTime1, dateTime2;
-            if (DateTime.TryParse(str1, out dateTime1) && DateTime.TryParse(str2, out dateTime2))
+            if (DateTime.TryParse(str1, out var dateTime1) && DateTime.TryParse(str2, out var dateTime2))
             {
                 return DateTime.Compare(dateTime1, dateTime2);
             }
 
-            int int1, int2;
-            if (int.TryParse(str1, out int1) && int.TryParse(str2, out int2))
+            if (double.TryParse(str1, NumberStyles.AllowCurrencySymbol | NumberStyles.AllowDecimalPoint, NumberFormatInfo.CurrentInfo, out var dec1)
+                && double.TryParse(str2, NumberStyles.AllowCurrencySymbol | NumberStyles.AllowDecimalPoint, NumberFormatInfo.CurrentInfo, out var dec2))
             {
-                if (int1 < int2)
+                if (dec1 < dec2)
                     return -1;
-                return int1 > int2 ? 1 : 0;
+                return dec1 > dec2 ? 1 : 0;
             }
 
-            return String.Compare(str1, str2, StringComparison.Ordinal);
+            return string.Compare(str1, str2, StringComparison.Ordinal);
         }
     }
 }
