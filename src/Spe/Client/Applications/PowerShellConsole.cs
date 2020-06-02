@@ -91,15 +91,16 @@ namespace Spe.Client.Applications
             var tokenAction = SessionElevationManager.GetToken(ApplicationNames.Console).Action;
             switch (tokenAction)
             {
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Allow:
                     // it is always elevated
                     hidePanel = true;
                     break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Password):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Password:
+                case SessionElevationManager.TokenDefinition.ElevationAction.Confirm:
                     // show that session elevation can be dropped
                     controlContent = HtmlUtil.RenderControl(isSessionElevated ? ElevatedPanel : ElevationRequiredPanel);
                     break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Block):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Block:
                     controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
                     break;
             }

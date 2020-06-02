@@ -81,11 +81,12 @@
             </Border>
             <Border style="padding: 15px 5px;">
               <Literal Text="Enter your credentials to validate access to {0} a script." ID="DialogMessage" />
+              <Literal Text="Confirm to validate access to {0} a script." ID="DialogMessageConfirm" Visible="false" />
             </Border>
             <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" Columns="2">
               <Literal GridPanel.style="text-align: right; padding: 10px 4px 20px 4px;" Text="Username:" />
               <Literal GridPanel.style="padding: 10px 4px 20px 4px;" ID="UserName" style="font-weight:bold;"/>
-              <Literal GridPanel.style="text-align: right; padding: 4px;" Text="Password:" />
+              <Literal GridPanel.style="text-align: right; padding: 4px;" Text="Password:" ID="PasswordLabel" />
               <PasswordExtended GridPanel.style="padding: 4px;" ID="PasswordBox" />
             </GridPanel>
           </Scrollbox>

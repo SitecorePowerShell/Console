@@ -21,6 +21,7 @@ namespace Spe.Core.Settings.Authorization
             switch (action)
             {
                 case SessionElevationManager.TokenDefinition.ElevationAction.Password:
+                case SessionElevationManager.TokenDefinition.ElevationAction.Confirm:
                     if (SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
                     {
                         warning.Title = "You have temporarily enabled script viewing and editing.";

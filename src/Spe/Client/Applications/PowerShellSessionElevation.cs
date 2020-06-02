@@ -22,10 +22,12 @@ namespace Spe.Client.Applications
         protected Button OKButton;
         protected Literal Result;
         protected Literal UserName;
+        protected Literal PasswordLabel;
         protected PasswordExtended PasswordBox;
         protected Literal DialogHeader;
         protected Literal DialogDescription;
         protected Literal DialogMessage;
+        protected Literal DialogMessageConfirm;
 
         protected string AppName
         {
@@ -49,6 +51,16 @@ namespace Spe.Client.Applications
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             DialogDescription.Text = Translate.Text(DialogDescription.Text, actionName);
             DialogMessage.Text = Translate.Text(DialogMessage.Text, actionName);
+            DialogMessageConfirm.Text = Translate.Text(DialogMessageConfirm.Text, actionName);
+
+            var tokenAction = SessionElevationManager.GetToken(AppName).Action;
+            if (tokenAction == SessionElevationManager.TokenDefinition.ElevationAction.Confirm)
+            {
+                PasswordLabel.Visible = false;
+                PasswordBox.Visible = false;
+                DialogMessage.Visible = false;
+                DialogMessageConfirm.Visible = true;
+            }
         }
 
         protected void CancelClick()
@@ -58,7 +70,14 @@ namespace Spe.Client.Applications
 
         protected void OkClick()
         {
-            if (Membership.ValidateUser(Sitecore.Context.User?.Name ?? string.Empty, PasswordBox.Value))
+            var validateUser = true;
+            var tokenAction = SessionElevationManager.GetToken(AppName).Action;
+            if (tokenAction == SessionElevationManager.TokenDefinition.ElevationAction.Confirm)
+            {
+                validateUser = false;
+            }
+
+            if (!validateUser || Membership.ValidateUser(Sitecore.Context.User?.Name ?? string.Empty, PasswordBox.Value))
             {
 	            SessionElevationManager.ElevateSessionToken(AppName);
 	            SheerResponse.CloseWindow();

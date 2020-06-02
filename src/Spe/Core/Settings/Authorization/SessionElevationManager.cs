@@ -68,6 +68,7 @@ namespace Spe.Core.Settings.Authorization
                 case TokenDefinition.ElevationAction.Allow:
                     return true;
                 case TokenDefinition.ElevationAction.Password:
+                case TokenDefinition.ElevationAction.Confirm:
                     var cachedSession = HttpContext.Current?.Session[string.Format(SessionCacheToken, token.Name)];
                     if (cachedSession == null || ((DateTime) cachedSession >= DateTime.Now)) return cachedSession != null;
                     PowerShellLog.Warn($"Session state elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
@@ -102,6 +103,7 @@ namespace Spe.Core.Settings.Authorization
             {
                 Block,
                 Password,
+                Confirm,
                 Allow,
             }
         }

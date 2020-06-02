@@ -899,11 +899,12 @@ namespace Spe.Client.Applications
             var tokenAction = SessionElevationManager.GetToken(ApplicationNames.ISE).Action;
             switch (tokenAction)
             {
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Allow:
                     // it is always elevated
                     hidePanel = true;
                     break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Password):
+                case SessionElevationManager.TokenDefinition.ElevationAction.Password:
+                case SessionElevationManager.TokenDefinition.ElevationAction.Confirm:
                     // show that session elevation can be dropped
                     if (isSessionElevated)
                     {
