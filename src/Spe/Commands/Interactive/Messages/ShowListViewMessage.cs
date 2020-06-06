@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Caching;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Jobs.AsyncUI;
@@ -14,6 +15,8 @@ namespace Spe.Commands.Interactive.Messages
     [Serializable]
     public class ShowListViewMessage : IMessage
     {
+        private const string ExpirationSetting = "Spe.HttpCacheExpirationMinutes";
+
         public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon,
             string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId,
             object actionData, Hashtable[] property, string viewName, string missingDataMessage, string missingDataIcon,
@@ -85,8 +88,10 @@ namespace Spe.Commands.Interactive.Messages
 
         public void Execute()
         {
+            var expiration = Sitecore.Configuration.Settings.GetIntSetting(ExpirationSetting, 20);
             var resultSig = Guid.NewGuid().ToString();
-            HttpContext.Current.Cache[resultSig] = this;
+            HttpContext.Current.Cache.Insert(resultSig, this, null,
+                Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(expiration));
 
             if (!Modal)
             {

@@ -49,8 +49,10 @@ namespace Spe.Commands.Interactive
                     IconChange = IsParameterSpecified(nameof(Icon)),
                     Icon = Icon
                 };
-                HttpRuntime.Cache.Add($"allDataInternal|{HostData.SessionId}", updateData, null,
-                    Cache.NoAbsoluteExpiration, new TimeSpan(0, 1, 0), CacheItemPriority.Normal, null);
+                
+                HttpRuntime.Cache.Insert($"allDataInternal|{HostData.SessionId}", updateData, null,
+                    Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(1));
+
                 var message = Message.Parse(null, "pslv:update");
                 message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
                 PutMessage(new SendMessageMessage(message, false));

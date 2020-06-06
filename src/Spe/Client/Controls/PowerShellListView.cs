@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Caching;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.StringExtensions;
@@ -16,6 +17,7 @@ namespace Spe.Client.Controls
     public class PowerShellListView : Listview
     {
         private List<BaseListViewCommand.DataObject> _filteredItems;
+        private const string ExpirationSetting = "Spe.HttpCacheExpirationMinutes";
 
         public int CurrentPage
         {
@@ -27,7 +29,7 @@ namespace Spe.Client.Controls
             set
             {
                 var count = FilteredItems.Count;
-                var pageCount = count/Data.PageSize + ((count%Data.PageSize > 0) ? 1 : 0);
+                var pageCount = count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
                 value = Math.Min(Math.Max(1, value), pageCount);
                 SetViewStateInt("CurrentPage", value);
             }
@@ -38,7 +40,7 @@ namespace Spe.Client.Controls
             get
             {
                 var count = FilteredItems.Count;
-                return count/Data.PageSize + ((count%Data.PageSize > 0) ? 1 : 0);
+                return count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
             }
         }
 
@@ -64,7 +66,16 @@ namespace Spe.Client.Controls
             set { SetViewStateString("SessionId", value); }
         }
 
-        public ShowListViewMessage Data => (ShowListViewMessage) HttpContext.Current.Cache[ContextId];
+        public ShowListViewMessage Data
+        {
+            get => (ShowListViewMessage) HttpContext.Current.Cache.Get(ContextId);
+            set
+            {
+                var expiration = Sitecore.Configuration.Settings.GetIntSetting(ExpirationSetting, 20);
+                HttpContext.Current.Cache.Insert(ContextId, value, null,
+                    Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(expiration));
+            }
+        }
 
         public List<BaseListViewCommand.DataObject> FilteredItems
         {
@@ -85,12 +96,12 @@ namespace Spe.Client.Controls
                         }
                         if (inPhrase)
                         {
-                           phraseinProgress += " " + filter;
+                            phraseinProgress += " " + filter;
                         }
                         if (filter.EndsWith("\"") && inPhrase)
                         {
                             inPhrase = !inPhrase;
-                            phrases.Add(phraseinProgress.Trim('"',' ','\t'));
+                            phrases.Add(phraseinProgress.Trim('"', ' ', '\t'));
                             phraseinProgress = string.Empty;
                             return false;
                         }
@@ -191,7 +202,7 @@ namespace Spe.Client.Controls
             }
 
             var pageSize = Data.PageSize;
-            var offset = (CurrentPage - 1)*pageSize;
+            var offset = (CurrentPage - 1) * pageSize;
             var columnNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var result in FilteredItems.Skip(offset).Take(pageSize))
@@ -204,7 +215,7 @@ namespace Spe.Client.Controls
                     : keys.Contains("Icon")
                         ? result.Display["Icon"]
                         : (result.Original is Item)
-                            ? ((Item) result.Original).Appearance.Icon
+                            ? ((Item)result.Original).Appearance.Icon
                             : "Office/32x32/graph_node.png";
                 lvi.Value = result.Id.ToString(CultureInfo.InvariantCulture);
                 foreach (var column in result.Display.Keys)

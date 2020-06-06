@@ -348,24 +348,22 @@ namespace Spe.Client.Applications
         public void UpdateList(string sessionId)
         {
             var key = $"allDataInternal|{sessionId}";
-            if (HttpRuntime.Cache.Remove(key) is UpdateListViewCommand.UpdateListViewData updateData)
+            if (!(HttpRuntime.Cache.Remove(key) is UpdateListViewCommand.UpdateListViewData updateData)) return;
+            
+            if (ListViewer.Data == null)
             {
-                if (ListViewer.Data == null)
-                {
-                    SheerResponse.Alert(Texts.PowerShellResultViewerList_datamissing);
-                    return;
-                }
-                ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
-                UpdatePage(1);
-                ListViewer.Refresh();
-                UpdateInfoPanel(updateData.InfoTitleChange ? updateData.InfoTitle : InfoTitle.Text,
-                    updateData.InfoDescriptionChange ? updateData.InfoDescription : Description.Text,
-                    updateData.IconChange ? updateData.Icon : string.Empty,
-                    updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text,
-                    updateData.MissingDataIconChange ? updateData.MissingDataIcon : string.Empty
-                    );
-
+                SheerResponse.Alert(Texts.PowerShellResultViewerList_datamissing);
+                return;
             }
+            ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
+            UpdatePage(1);
+            ListViewer.Refresh();
+            UpdateInfoPanel(updateData.InfoTitleChange ? updateData.InfoTitle : InfoTitle.Text,
+                updateData.InfoDescriptionChange ? updateData.InfoDescription : Description.Text,
+                updateData.IconChange ? updateData.Icon : string.Empty,
+                updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text,
+                updateData.MissingDataIconChange ? updateData.MissingDataIcon : string.Empty
+            );
         }
 
         private void ExportResults(Message message)
