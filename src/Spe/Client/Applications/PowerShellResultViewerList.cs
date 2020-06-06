@@ -298,6 +298,12 @@ namespace Spe.Client.Applications
             Error.AssertObject(message, "message");
             var item = ScriptItemId == null ? null : Sitecore.Client.ContentDatabase.GetItem(ScriptItemId);
 
+            if (ListViewer.Data == null && !message.Name.Is("event:click"))
+            {
+                SheerResponse.Alert(Texts.PowerShellResultViewerList_datamissing);
+                return;
+            }
+
             switch (message.Name)
             {
                 case ("pslv:update"):
@@ -350,11 +356,6 @@ namespace Spe.Client.Applications
             var key = $"allDataInternal|{sessionId}";
             if (!(HttpRuntime.Cache.Remove(key) is UpdateListViewCommand.UpdateListViewData updateData)) return;
             
-            if (ListViewer.Data == null)
-            {
-                SheerResponse.Alert(Texts.PowerShellResultViewerList_datamissing);
-                return;
-            }
             ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
             UpdatePage(1);
             ListViewer.Refresh();
