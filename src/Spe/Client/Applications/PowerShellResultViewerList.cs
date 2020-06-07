@@ -260,6 +260,11 @@ namespace Spe.Client.Applications
 
         public void OnDoubleClick()
         {
+            if (ListViewer.Data == null)
+            {
+                return;
+            }
+
             if (ListViewer.GetSelectedItems().Length <= 0) return;
             var clickedId = int.Parse(ListViewer.GetSelectedItems()[0].Value);
             var firstDataItem = ListViewer.Data.Data.FirstOrDefault(p => p.Id == clickedId);
