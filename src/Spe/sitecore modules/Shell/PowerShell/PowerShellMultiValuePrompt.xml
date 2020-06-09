@@ -23,40 +23,7 @@
                   x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
-
-      <script>
-        function OnTabSelect() {
-        if (window.Flexie) Flexie.updateInstance();
-        }
-        document.observe("keydown", function(event) {
-        if (event.keyCode == 13) {
-        var ctl = event.target;
-        if (ctl != null) {
-        if (ctl.tagName == "INPUT")  {
-        if (ctl.onsubmit){
-        if(ctl.onsubmit.toString().indexOf("return false;") >= 0) {
-        return;
-        }
-        }
-        }
-        }
-
-        var ok = $("OKButton");
-
-        if (ok != null) {
-        ok.click();
-        }
-        }
-        if (event.keyCode == 27) {
-        var ok = $("CancelButton");
-
-        if (ok != null) {
-        ok.click();
-        }
-        }
-        });
-      </script>
-
+      
       <Literal ID="CustomStyles" />
 
       <Border class="scFlexColumnContainer scStretch">

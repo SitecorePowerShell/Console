@@ -1,4 +1,8 @@
-﻿jQuery(document).ready(function ($) {
+﻿function OnTabSelect() {
+    if (window.Flexie) Flexie.updateInstance();
+}
+
+jQuery(document).ready(function ($) {
     $("#Copyright").each(function () { // Notice the .each() loop, discussed below
         const currentYear = (new Date()).getFullYear();
         const greetings = "Copyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
@@ -23,12 +27,11 @@
         });
     });
 
-
     const controlElements = $("*").filter(function () {
         return $(this).data("group-id") !== undefined;
     });
 
-    const stateControlElements = $("*").filter(function() {
+    const stateControlElements = $("*").filter(function () {
         return $(this).data("parent-group-id") !== undefined;
     });
 
@@ -61,11 +64,43 @@
                             }
                         }
                     }
-                    
+
                 }
             }
         });
 
         $(element).trigger("change");
+    });
+
+    document.observe("keypress", function (event) {
+        if (event.keyCode == 13) {
+            var ctl = event.target;
+            if (ctl != null) {
+                if (ctl.tagName == "TEXTAREA") {
+                    event.stopPropagation();
+                }
+                if (ctl.tagName == "INPUT") {
+                    if (ctl.onsubmit) {
+                        if (ctl.onsubmit.toString().indexOf("return false;") >= 0) {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            var ok = $("OKButton");
+
+            if (ok != null) {
+                ok.click();
+            }
+        }
+
+        if (event.keyCode == 27) {
+            var ok = $("CancelButton");
+
+            if (ok != null) {
+                ok.click();
+            }
+        }
     });
 });
