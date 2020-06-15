@@ -43,10 +43,10 @@ namespace Spe.Commands.Security.Session
 
             if (ShouldProcess(username, "Login as user"))
             {
+                var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
                 if (Context.IsLoggedIn)
                 {
-                    if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;
-                    var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
+                    if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;                    
                     authenticationManager.Logout();
                 }
                 if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
@@ -54,7 +54,7 @@ namespace Spe.Commands.Security.Session
                     WriteError(new ErrorRecord(new LicenseException("A required license is missing"),
                         "sitecore_license_missing", ErrorCategory.ResourceUnavailable, null));
                 }
-                if (!Membership.ValidateUser(username, Password))
+                if (!authenticationManager.ValidateUser(username, Password))
                 {
                     WriteError(new ErrorRecord(new LicenseException("Unknown username or password."),
                         "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));

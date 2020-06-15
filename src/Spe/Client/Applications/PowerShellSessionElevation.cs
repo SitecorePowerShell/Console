@@ -7,8 +7,10 @@ using Sitecore.Globalization;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Client.Controls;
 using Spe.Core.Settings.Authorization;
+using Spe.Core.VersionDecoupling;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
@@ -77,7 +79,8 @@ namespace Spe.Client.Applications
                 validateUser = false;
             }
 
-            if (!validateUser || Membership.ValidateUser(Sitecore.Context.User?.Name ?? string.Empty, PasswordBox.Value))
+            var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
+            if (!validateUser || authenticationManager.ValidateUser(Sitecore.Context.User?.Name ?? string.Empty, PasswordBox.Value))
             {
 	            SessionElevationManager.ElevateSessionToken(AppName);
 	            SheerResponse.CloseWindow();

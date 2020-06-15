@@ -65,17 +65,18 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 userName = "sitecore\\" + userName;
             }
 
+            var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
             if (Sitecore.Context.IsLoggedIn)
             {
                 if (Sitecore.Context.User.Name.Equals(userName, StringComparison.OrdinalIgnoreCase))
                     return true;
-                var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
                 authenticationManager.Logout();
             }
             
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
                 throw new AccessDeniedException("A required license is missing");
-            Assert.IsTrue(Membership.ValidateUser(userName, password), "Unknown username or password.");
+
+            Assert.IsTrue(authenticationManager.ValidateUser(userName, password), "Unknown username or password.");
             var user = Sitecore.Security.Accounts.User.FromName(userName, true);
             UserSwitcher.Enter(user);
             return true;

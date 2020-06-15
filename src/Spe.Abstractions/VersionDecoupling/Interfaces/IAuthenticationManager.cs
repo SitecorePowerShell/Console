@@ -6,5 +6,6 @@
         void Logout();
         bool IsAuthenticated { get; }
         string CurrentUsername { get; }
+        bool ValidateUser(string username, string password);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Sitecore;
+﻿using System.Web.Security;
+using Sitecore;
 using Sitecore.Security.Authentication;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 
@@ -18,5 +19,10 @@ namespace Spe.VersionSpecific.Services
 
         public bool IsAuthenticated => Context.IsLoggedIn;
         public string CurrentUsername => Context.User.Name;
+
+        public bool ValidateUser(string username, string password)
+        {
+            return Membership.ValidateUser(username, password);
+        }
     }
 }
