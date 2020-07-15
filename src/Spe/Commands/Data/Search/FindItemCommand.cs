@@ -36,10 +36,16 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Dynamic")]
         public object[] FilterValues { get; set; }
 
+        [Parameter(ParameterSetName = "Criteria")]
         [Parameter(ParameterSetName = "Dynamic")]
+        [Parameter(ParameterSetName = "Predicate")]
+        [Parameter(ParameterSetName = "ScopeQuery")]
         public string[] FacetOn { get; set; }
 
+        [Parameter(ParameterSetName = "Criteria")]
         [Parameter(ParameterSetName = "Dynamic")]
+        [Parameter(ParameterSetName = "Predicate")]
+        [Parameter(ParameterSetName = "ScopeQuery")]
         public int FacetMinCount { get; set; }
 
         [Parameter]
@@ -93,7 +99,7 @@ namespace Spe.Commands.Data.Search
                 {
                     if (WhereValues != null)
                     {
-                        WriteWarning("The parameter (Where) containing the dynamic Linq is missing.");
+                        WriteWarning($"The parameter ({nameof(Where)}) containing the dynamic Linq is missing.");
                     }
                 }
 
@@ -105,7 +111,7 @@ namespace Spe.Commands.Data.Search
                 {
                     if (FilterValues != null)
                     {
-                        WriteWarning("The parameter (Filter) containing the dynamic Linq is missing.");
+                        WriteWarning($"The parameter ({nameof(Filter)}) containing the dynamic Linq is missing.");
                     }
                 }
 
