@@ -55,7 +55,6 @@
         });
 		
         function registerEventListenersForRibbonButtons() {
-            console.log('initialize');
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
                 div.addEventListener("click",
                     function() {
@@ -495,6 +494,14 @@
             }
             codeeditor.getSession().getUndoManager().markClean();
             spe.clearBreakpoints();
+        };
+
+        spe.changeStartbarTitle = function (newTitle) {
+            if (window.parent && window.parent.frameElement) {
+                var frameId = window.parent.frameElement.id;
+                var startbar = window.parent.parent.document.getElementById('startbar_application_' + frameId);
+                $(startbar).find('span').html(newTitle);
+            }
         };
 
         spe.resizeEditor = function() {

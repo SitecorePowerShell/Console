@@ -10,6 +10,7 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
+using Sitecore.Resources;
 using Sitecore.Security;
 using Sitecore.Security.Accounts;
 using Sitecore.Shell.Framework;
@@ -17,6 +18,7 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
+using Sitecore.Web.UI;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
@@ -324,10 +326,12 @@ namespace Spe.Client.Applications
             var db = scriptItem.Database.Name;
             var id = scriptItem.ID.ToString();
             var name = scriptItem.Name;
-            var icon = scriptItem[Sitecore.FieldIDs.Icon];
+            var icon = scriptItem[FieldIDs.Icon];
             var scriptName = scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length);
             ScriptName.Text = scriptName;
-            SheerResponse.Eval(string.Format("spe.changeWindowTitle('{0}', false);", scriptName));
+            SheerResponse.Eval($"spe.changeWindowTitle('{scriptName}', false);");
+            UpdateStartbarTitle(icon, name);
+
             var mruMenu = ApplicationSettings.GetIseMruContainerItem();
             var mruItems = mruMenu.Children;
             if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
@@ -378,6 +382,9 @@ namespace Spe.Client.Applications
             ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
             SheerResponse.Eval("spe.changeWindowTitle('Untitled', true);");
             UpdateRibbon();
+
+            const string icon = "powershell/16x16/ise8.png";
+            UpdateStartbarTitle(icon, "Untitled");
         }
 
         [HandleMessage("ise:saveas", true)]
@@ -888,6 +895,20 @@ namespace Spe.Client.Applications
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
 
             UpdateWarning();
+        }
+
+        private void UpdateStartbarTitle(string icon, string title)
+        {
+            var builder = new ImageBuilder
+            {
+                Src = Images.GetThemedImageSource(icon, ImageDimension.id16x16),
+                Width = 16,
+                Height = 16,
+                Margin = "0px 8px 0px 0px",
+                Align = "middle"
+            };
+            var startbarTitle = $"{builder}{title}";
+            SheerResponse.Eval($"spe.changeStartbarTitle('{startbarTitle}');");
         }
 
         private void UpdateWarning(string updateFromMessage = "")

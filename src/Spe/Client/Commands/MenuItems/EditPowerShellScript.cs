@@ -25,6 +25,7 @@ namespace Spe.Client.Commands.MenuItems
             var itemId = context.Items[0].ID.ToString();
             var itemDb = context.Items[0].Database.Name;
             var item = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
+            var title = item.DisplayName;
 
             var urlString = new UrlString();
             urlString.Append("id", item.ID.ToString());
@@ -33,7 +34,10 @@ namespace Spe.Client.Commands.MenuItems
             {
                 urlString.Add("pfn", context.Parameters["frameName"]);
             }
-            Sitecore.Shell.Framework.Windows.RunApplication("PowerShell/PowerShellIse", urlString.ToString());
+
+            var appItem = Database.GetDatabase("core").GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse");
+            var icon = appItem.Appearance.Icon;
+            Sitecore.Shell.Framework.Windows.RunApplication(appItem, icon, title, urlString.Query);
         }
     }
 }
