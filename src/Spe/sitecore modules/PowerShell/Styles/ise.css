@@ -422,7 +422,3 @@ a.ps-link {
 #CodeEditor * {
     font-family: inherit !important;
 }
-
-#CodeEditor {
-    width: calc(100% - 72px) !important;
-}
