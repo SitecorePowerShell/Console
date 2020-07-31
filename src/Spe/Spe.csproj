@@ -653,7 +653,6 @@
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.terminal.js" />
-    <Content Include="sitecore modules\PowerShell\Scripts\json2.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\reports.js" />
