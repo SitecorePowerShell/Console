@@ -11,7 +11,7 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/ListView.css" runat="server" />
 
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-3.5.1.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
