@@ -48,9 +48,15 @@ namespace Spe.Integrations.Workflows
             str.Append("ver", dataItem.Version.Number.ToString(CultureInfo.InvariantCulture));
             str.Append("scriptId", scriptItem.ID.ToString());
             str.Append("scriptDb", scriptItem.Database.Name);
-            Context.ClientPage.ClientResponse.Broadcast(
-                SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
-                "Shell");
+
+            if(Context.ClientPage.Application != null)
+            {
+                Context.ClientPage.ClientResponse.Broadcast(SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false), "Shell");
+            }
+            else
+            {
+                SheerResponse.ShowModalDialog(str.ToString(), "400", "220");
+            }
         }
     }
 }
