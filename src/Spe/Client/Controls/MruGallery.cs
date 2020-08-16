@@ -91,52 +91,47 @@ namespace Spe.Client.Controls
             Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
             ItemFromQueryString = UIUtil.GetItemFromQueryString(Context.ContentDatabase);
-            if (!Context.ClientPage.IsEvent)
+            if (Context.ClientPage.IsEvent) return;
+
+            ChangeSearchPhrase();
+
+            var db = WebUtil.GetQueryString("contextDb");
+            var itemId = WebUtil.GetQueryString("contextItem");
+            InitialDatabase =
+                string.IsNullOrEmpty(db) || "core".Equals(db, StringComparison.OrdinalIgnoreCase)
+                    ? ApplicationSettings.ScriptLibraryDb
+                    : db;
+
+            BuildDatabases();
+
+            ContentDataContext.GetFromQueryString();
+            ContentDataContext.BeginUpdate();
+            ContentDataContext.Parameters = $"databasename={InitialDatabase}";
+            ContentTreeview.RefreshRoot();
+            ContentDataContext.Root = ApplicationSettings.ScriptLibraryRoot.ID.ToString();
+
+            if (!string.IsNullOrEmpty(itemId) && !string.IsNullOrEmpty(db))
             {
-                Item item;
-                Item item2;
-                Item[] itemArray;
-                ChangeSearchPhrase();
-
-                var db = WebUtil.GetQueryString("contextDb");
-                var itemId = WebUtil.GetQueryString("contextItem");
-                InitialDatabase =
-                    string.IsNullOrEmpty(db) || "core".Equals(db, StringComparison.OrdinalIgnoreCase)
-                        ? ApplicationSettings.ScriptLibraryDb
-                        : db;
-
-                BuildDatabases();
-
-
-                ContentDataContext.GetFromQueryString();
-                ContentDataContext.BeginUpdate();
-                ContentDataContext.Parameters = "databasename=" + InitialDatabase;
-                ContentTreeview.RefreshRoot();
-                ContentDataContext.Root = ApplicationSettings.ScriptLibraryRoot.ID.ToString();
-
-                if (!string.IsNullOrEmpty(itemId) && !string.IsNullOrEmpty(db))
-                {
-                    ContentDataContext.SetFolder(Factory.GetDatabase(db).GetItem(itemId).Uri);
-                }
-
-                ContentDataContext.EndUpdate();
-                ContentTreeview.RefreshRoot();
-
-                ContentDataContext.GetFromQueryString();
-                ContentDataContext.GetState(out item, out item2, out itemArray);
-                if (itemArray.Length > 0)
-                {
-                    ContentDataContext.Folder = itemArray[0].ID.ToString();
-                }
-                var placeholderText = Translate.Text(
-                    Texts
-                        .MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
-                SitecoreVersion.V80.OrNewer(() =>
-                            SearchPhrase.Placeholder = placeholderText
-                ).Else(() =>
-                            SheerResponse.SetAttribute(SearchPhrase.ClientID, "placeholder", placeholderText)
-                );
+                ContentDataContext.SetFolder(Factory.GetDatabase(db).GetItem(itemId).Uri);
             }
+
+            ContentDataContext.EndUpdate();
+            ContentTreeview.RefreshRoot();
+
+            ContentDataContext.GetFromQueryString();
+            ContentDataContext.GetState(out var item, out var item2, out var itemArray);
+            if (itemArray.Length > 0)
+            {
+                ContentDataContext.Folder = itemArray[0].ID.ToString();
+            }
+            var placeholderText = Translate.Text(
+                Texts
+                    .MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
+            SitecoreVersion.V80.OrNewer(() =>
+                SearchPhrase.Placeholder = placeholderText
+            ).Else(() =>
+                SheerResponse.SetAttribute(SearchPhrase.ClientID, "placeholder", placeholderText)
+            );
         }
 
         private void BuildDatabases()
