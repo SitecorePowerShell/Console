@@ -29,11 +29,12 @@ namespace Spe.Client.Applications
             while (HttpContext.Current.Request.QueryString.AllKeys.Contains("btn_" + i))
             {
                 var key = "btn_" + i;
+                var header = HttpUtility.HtmlDecode(HttpContext.Current.Request.QueryString[key]);
                 var button = new Button
                 {
                     ID = key,
-                    Header = HttpContext.Current.Request.QueryString[key],
-                    Click = string.Format("button:click(value={0})", key)
+                    Header = header,
+                    Click = $"button:click(value={key})"
                 };
                 if (i.ToString() == defaultChoice)
                 {
