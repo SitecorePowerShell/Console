@@ -9,7 +9,7 @@ using Spe.Core.Settings.Authorization;
 namespace Spe.Commands.Interactive
 {
     [Cmdlet(VerbsData.Out, "Download")]
-    [OutputType(typeof (string))]
+    [OutputType(typeof(string))]
     public class OutDownloadCommand : BaseShellCommand
     {
 
@@ -28,46 +28,40 @@ namespace Spe.Commands.Interactive
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
-
                 object content;
                 InputObject = InputObject.BaseObject();
 
-                if (InputObject is Stream)
+                switch (InputObject)
                 {
-                    using (var stream = InputObject as Stream)
-                    {
-                        byte[] bytes = new byte[stream.Length];
-                        stream.Seek(0, SeekOrigin.Begin);
-                        stream.Read(bytes, 0, (int)stream.Length);
-                        content = bytes;
-                    }
-                }
-                else if (InputObject is FileInfo)
-                {
-                    content = InputObject;
-                }
-                else if (InputObject is string)
-                {
-                    content = InputObject;
-                }
-                else if (InputObject is string[])
-                {
-                    content = (InputObject as string[]).ToList().Aggregate((accumulated, next) =>
-                        accumulated + "\n" + next);
-                }
-                else if (InputObject is byte[])
-                {
-                    content = InputObject;
-                }
-                else
-                {
-                    WriteError(typeof(FormatException), "InputObject must be of type string, string[], byte[], Stream or FileInfo",
-                        ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
-                    WriteObject(false);
-                    return;
+                    case Stream inputObject:
+                        {
+                            using (var stream = inputObject)
+                            {
+                                var bytes = new byte[stream.Length];
+                                stream.Seek(0, SeekOrigin.Begin);
+                                stream.Read(bytes, 0, (int)stream.Length);
+                                content = bytes;
+                            }
+
+                            break;
+                        }
+                    case FileInfo _:
+                    case string _:
+                    case byte[] _:
+                        content = InputObject;
+                        break;
+                    case string[] strings:
+                        content = strings.ToList().Aggregate((accumulated, next) =>
+                            accumulated + "\n" + next);
+                        break;
+                    default:
+                        WriteError(typeof(FormatException), "InputObject must be of type string, string[], byte[], Stream or FileInfo",
+                            ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
+                        WriteObject(false);
+                        return;
                 }
 
-                if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceHandleDownload,Sitecore.Context.User.Name))
+                if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceHandleDownload, Sitecore.Context.User.Name))
                 {
                     WriteError(typeof(FormatException), "Handle Download Service is disabled or user is not authorized.",
                         ErrorIds.InsufficientSecurityRights, ErrorCategory.PermissionDenied, InputObject, true);
