@@ -1,5 +1,5 @@
 #Requires -Modules SPE
- 
+
 function Copy-RainbowContent {
     [CmdletBinding(DefaultParameterSetName="Partial")]
     param(
@@ -145,7 +145,7 @@ function Copy-RainbowContent {
             [bool]$Overwrite
         )
 
-        $rainbowYaml = $Yaml.Replace("'","''")
+        $rainbowYaml = $Yaml
         $shouldOverwrite = $Overwrite
 
         $script = {
@@ -153,22 +153,37 @@ function Copy-RainbowContent {
             $ed = New-Object Sitecore.Data.Events.EventDisabler
             $buc = New-Object Sitecore.Data.BulkUpdateContext
 
+            $rainbowYamlBytes = [System.Convert]::FromBase64String($rainbowYamlBase64)
+            $rainbowYaml = [System.Text.Encoding]::UTF8.GetString($rainbowYamlBytes)
             $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
             $totalItems = $rainbowItems.Count
             $itemsToImport = [System.Collections.ArrayList]@()
+            $totalSkippedItems = 0
             foreach($rainbowItem in $rainbowItems) {
             
                 if($checkExistingItem) {
-                    if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
+                    if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { 
+                        Write-Log "Skipping $($rainbowItem.Id)"
+                        $totalSkippedItems++
+                        continue
+                    }
                 }
                 $itemsToImport.Add($rainbowItem) > $null
             }
             
-            $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
+            $errorMessages = @()
+            $itemsToImport | ForEach-Object { 
+                Write-Log "Importing $($_.Id)"
+                try {
+                    Import-RainbowItem -Item $_
+                } catch {
+                    $errorMessages += "Failed"
+                }
+            } > $null
 
-            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
+            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count), TotalSkippedItems: $($totalSkippedItems), ErrorCount: $($errorMessages.Count) }"
             $buc.Dispose() > $null
             $ed.Dispose() > $null
             $sd.Dispose() > $null
@@ -176,7 +191,8 @@ function Copy-RainbowContent {
 
         $scriptString = $script.ToString()
         $trueFalseHash = @{$true="`$true";$false="`$false"}
-        $scriptString = "`$rainbowYaml = '$($rainbowYaml)';`$checkExistingItem = $($trueFalseHash[!$shouldOverwrite]);" + $scriptString
+        $rainbowYamlBytes = [System.Text.Encoding]::UTF8.GetBytes($rainbowYaml)
+        $scriptString = "`$rainbowYamlBase64 = '$([System.Convert]::ToBase64String($rainbowYamlBytes))';`$checkExistingItem = $($trueFalseHash[!$shouldOverwrite]);" + $scriptString
         $script = [scriptblock]::Create($scriptString)
 
         Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
