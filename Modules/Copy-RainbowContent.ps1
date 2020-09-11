@@ -73,13 +73,12 @@ function Copy-RainbowContent {
             [bool]$SingleRequest = $false
         )
 
-        $parentId = $RootId
         $serializeParent = $IncludeParent
         $serializeChildren = $IncludeChildren
         $recurseChildren = $RecurseChildren
 
         $scriptSingleRequest = {
-            $parentItem = Get-Item -Path "master:" -ID $using:parentId
+            $parentItem = Get-Item -Path "master:" -ID "{ROOT_ID}"
             $childItems = $parentItem.Axes.GetDescendants()
 
             $builder = New-Object System.Text.StringBuilder
@@ -92,6 +91,7 @@ function Copy-RainbowContent {
 
             $builder.ToString()
         }
+        $scriptSingleRequest = [scriptblock]::Create($scriptSingleRequest.ToString().Replace("{ROOT_ID}",$RootId))
 
         $script = {
             $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
@@ -134,7 +134,7 @@ function Copy-RainbowContent {
             $scriptString = "`$parentId = '$($RootId)';`$serializeParent = $($trueFalseHash[$serializeParent]);`$serializeChildren = $($trueFalseHash[$serializeChildren]);`$recurseChildren = $($trueFalseHash[$recurseChildren]);" + $scriptString
             $script = [scriptblock]::Create($scriptString)
 
-            Invoke-RemoteScript -ScriptBlock $script  -Session $Session -Raw
+            Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
         }
     }
 
@@ -228,13 +228,14 @@ function Copy-RainbowContent {
     $serializeParent = $false
     $serializeChildren = $Recurse.IsPresent
     $recurseChildren = $Recurse.IsPresent
-
-    $compareScript = { 
-        $rootItem = Get-Item -Path "master:" -ID $using:rootId
+    $compareScript = {
+        $rootId = "{ROOT_ID}"
+        $recurseChildren = [bool]::Parse("{RECURSE_CHILDREN}")
+        $rootItem = Get-Item -Path "master:" -ID $rootId -ErrorAction 0
         if($rootItem) {
             $items = [System.Collections.ArrayList]@()
             $items.Add($rootItem) > $null
-            if($using:recurseChildren) {
+            if($recurseChildren) {
                 $children = $rootItem.Axes.GetDescendants()
                 if($children.Count -gt 0) {
                     $items.AddRange($children) > $null
@@ -244,47 +245,48 @@ function Copy-RainbowContent {
             $itemIds
         }
     }
+    $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren))
 
     if($RemoveNotInSource.IsPresent) {
         Write-Host "- Checking destination for items not in source"
         $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
         $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
 
-        if($sourceItemIds) {
-            if($destinationItemIds) {
-                $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $itemsNotInSourceIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-                    Where-Object { $_.SideIndicator -eq "=>" } | Select-Object -ExpandProperty InputObject
+        $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+        $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+        $itemsNotInSourceIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
+            Where-Object { $_.SideIndicator -eq "=>" } | Select-Object -ExpandProperty InputObject
 
-                if($itemsNotInSourceIds) {
-                    Write-Host "- Removing items from destination not in source"
-                    $itemsNotInSource = $itemsNotInSourceIds -join "|"
-                    Invoke-RemoteScript -ScriptBlock {
-                        $itemsNotInSourceIds = ($using:itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                        foreach($itemId in $itemsNotInSourceIds) {
-                            Get-Item -Path "master:" -ID $itemId | Remove-Item
-                        }
-                    } -Session $DestinationSession -Raw
+        if($itemsNotInSourceIds) {
+            Write-Host "- Removing items from destination not in source"
+            $itemsNotInSource = $itemsNotInSourceIds -join "|"
+            $removeNotInSourceScript = {
+                $itemsNotInSource = "{ITEM_IDS}"
+                $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                foreach($itemId in $itemsNotInSourceIds) {
+                    Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item
                 }
             }
+            $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
+            Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
         }
 
         Write-Host "- Verification complete"
     }
 
     if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
-        Write-Host "- Preparing to compare source and destination instances"
+        Write-Host "- Preparing to compare source and destination instances using ID $($RootId)"
 
-        Write-Host "- Getting list of IDs from source"
+        Write-Host " - Getting list of IDs from source"
         $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
 
-        Write-Host "- Getting list of IDs from destination"
+        Write-Host " - Getting list of IDs from destination"
         $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
 
         $queueIds = @()
         if($sourceItemIds) {
             if($destinationItemIds) {
+                Write-Host " - Comparing source with destination items"
                 $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
                 $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
                 $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
@@ -304,6 +306,7 @@ function Copy-RainbowContent {
                     Write-Host "- No items need to be transfered because they already exist"
                 }
             } else {
+                Write-Host " - Queueing $($RootId)"
                 $queue.Enqueue($rootId)
             }
         } else {
