@@ -155,7 +155,7 @@ function Copy-RainbowContent {
 
             $rainbowYamlBytes = [System.Convert]::FromBase64String($rainbowYamlBase64)
             $rainbowYaml = [System.Text.Encoding]::UTF8.GetString($rainbowYamlBytes)
-            $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
+            $rainbowItems = [regex]::Split($rainbowYaml, "(?=---$)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
             $totalItems = $rainbowItems.Count
@@ -250,25 +250,28 @@ function Copy-RainbowContent {
     if($RemoveNotInSource.IsPresent) {
         Write-Host "- Checking destination for items not in source"
         $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
-        $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
+        if($sourceItemIds) {
+            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
+            if($destinationItemIds) {
+                $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                $itemsNotInSourceIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
+                    Where-Object { $_.SideIndicator -eq "=>" } | Select-Object -ExpandProperty InputObject
 
-        $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-        $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-        $itemsNotInSourceIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-            Where-Object { $_.SideIndicator -eq "=>" } | Select-Object -ExpandProperty InputObject
-
-        if($itemsNotInSourceIds) {
-            Write-Host "- Removing items from destination not in source"
-            $itemsNotInSource = $itemsNotInSourceIds -join "|"
-            $removeNotInSourceScript = {
-                $itemsNotInSource = "{ITEM_IDS}"
-                $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                foreach($itemId in $itemsNotInSourceIds) {
-                    Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item
+                if($itemsNotInSourceIds) {
+                    Write-Host "- Removing items from destination not in source"
+                    $itemsNotInSource = $itemsNotInSourceIds -join "|"
+                    $removeNotInSourceScript = {
+                        $itemsNotInSource = "{ITEM_IDS}"
+                        $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                        foreach($itemId in $itemsNotInSourceIds) {
+                            Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item -Recurse
+                        }
+                    }
+                    $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
+                    Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
                 }
             }
-            $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
-            Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
         }
 
         Write-Host "- Verification complete"
