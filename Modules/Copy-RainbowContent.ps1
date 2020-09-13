@@ -1,5 +1,5 @@
 #Requires -Modules SPE
-
+ 
 function Copy-RainbowContent {
     [CmdletBinding(DefaultParameterSetName="Partial")]
     param(
@@ -19,6 +19,7 @@ function Copy-RainbowContent {
         [switch]$Recurse,
 
         [Parameter(ParameterSetName='Partial')]
+        [Parameter(ParameterSetName='SingleRequest')]
         [switch]$RemoveNotInSource,
 
         [switch]$Overwrite,
@@ -127,6 +128,7 @@ function Copy-RainbowContent {
         }
 
         if($SingleRequest) {
+            Write-Host "- Performing a single bulk request"
             Invoke-RemoteScript -ScriptBlock $scriptSingleRequest  -Session $Session -Raw
         } else {
             $scriptString = $script.ToString()
@@ -162,7 +164,9 @@ function Copy-RainbowContent {
             $itemsToImport = [System.Collections.ArrayList]@()
             $totalSkippedItems = 0
             foreach($rainbowItem in $rainbowItems) {
-            
+                <#
+                # If the comparison of __Revision works then we would always overwrite.
+                # Currently the Yaml does not contain __Revision
                 if($checkExistingItem) {
                     if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { 
                         Write-Log "Skipping $($rainbowItem.Id)"
@@ -170,23 +174,25 @@ function Copy-RainbowContent {
                         continue
                     }
                 }
+                #>
                 $itemsToImport.Add($rainbowItem) > $null
             }
             
             $errorMessages = @()
-            $itemsToImport | ForEach-Object { 
-                Write-Log "Importing $($_.Id)"
+            $itemsToImport | ForEach-Object {                
                 try {
                     Import-RainbowItem -Item $_
                 } catch {
-                    $errorMessages += "Failed"
+                    Write-Log "Importing $($_.Id) failed with error $($Error[0].Exception.Message)"
+                    $errorMessages += "$($_.Id) Failed"
                 }
             } > $null
 
-            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count), TotalSkippedItems: $($totalSkippedItems), ErrorCount: $($errorMessages.Count) }"
             $buc.Dispose() > $null
             $ed.Dispose() > $null
             $sd.Dispose() > $null
+
+            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count), TotalSkippedItems: $($totalSkippedItems), ErrorCount: $($errorMessages.Count) }"
         }
 
         $scriptString = $script.ToString()
@@ -196,25 +202,6 @@ function Copy-RainbowContent {
         $script = [scriptblock]::Create($scriptString)
 
         Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
-    }
-
-    function New-PowerShellRunspace {
-        param(
-            [System.Management.Automation.Runspaces.RunspacePool]$Pool,
-            [scriptblock]$ScriptBlock,
-            [PSCustomObject]$Session,
-            [object[]]$Arguments
-        )
-        
-        $runspace = [PowerShell]::Create()
-        $runspace.AddScript($ScriptBlock) > $null
-        $runspace.AddArgument($Session) > $null
-        foreach($argument in $Arguments) {
-            $runspace.AddArgument($argument) > $null
-        }
-        $runspace.RunspacePool = $pool
-
-        $runspace
     }
 
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -241,40 +228,44 @@ function Copy-RainbowContent {
                     $items.AddRange($children) > $null
                 }
             }
-            $itemIds = ($items | Select-Object -ExpandProperty ID) -join "|"
-            $itemIds
+            $itemIds = $items | ForEach-Object { "I:$($_.ID)+R:{$($_.Fields["__Revision"].Value)}" }
+            $itemIds -join "|"
         }
     }
-    $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren))
+    $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren -or $RemoveNotInSource))
+    function Parse-Id {
+        param(
+            [string]$Text
+        )
 
-    if($RemoveNotInSource.IsPresent) {
-        Write-Host "- Checking destination for items not in source"
-        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
-        if($sourceItemIds) {
-            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
-            if($destinationItemIds) {
-                $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $itemsNotInSourceIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-                    Where-Object { $_.SideIndicator -eq "=>" } | Select-Object -ExpandProperty InputObject
-
-                if($itemsNotInSourceIds) {
-                    Write-Host "- Removing items from destination not in source"
-                    $itemsNotInSource = $itemsNotInSourceIds -join "|"
-                    $removeNotInSourceScript = {
-                        $itemsNotInSource = "{ITEM_IDS}"
-                        $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                        foreach($itemId in $itemsNotInSourceIds) {
-                            Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item -Recurse
-                        }
-                    }
-                    $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
-                    Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
-                }
+        $guidPattern = "{[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}}"
+        if([regex]::IsMatch($Text, "^$($guidPattern)$")) {
+            $Text
+        } else {
+            $pattern = "^I:(?<guid>$($guidPattern))"
+            $matchedPattern = [regex]::Match($Text, $pattern)
+            if($matchedPattern.Success) {
+                $matchedPattern.Groups["guid"].Value
             }
         }
+    }
+    function Compare-Id {
+        param(
+            [string]$ReferenceString,
+            [string]$DifferenceString,
+            [switch]$IgnoreRevision
+        )
 
-        Write-Host "- Verification complete"
+        $referenceIds = $ReferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+        $differenceIds = $DifferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+        if($IgnoreRevision) {
+            $referenceIds = $referenceIds | ForEach-Object { Parse-Id -Text $_ }
+            $differenceIds = $differenceIds | ForEach-Object { Parse-Id -Text $_ }
+        }
+        $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
+            Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject |
+            ForEach-Object { Parse-Id -Text $_ } | Where-Object { ![string]::IsNullOrEmpty($_) }
+        ,$queueIds
     }
 
     if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
@@ -290,10 +281,7 @@ function Copy-RainbowContent {
         if($sourceItemIds) {
             if($destinationItemIds) {
                 Write-Host " - Comparing source with destination items"
-                $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-                    Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
+                $queueIds = Compare-Id -ReferenceString $sourceItemIds -DifferenceString $destinationItemIds
 
                 foreach($queueId in $queueIds) {
                     $queue.Enqueue($queueId)
@@ -306,7 +294,7 @@ function Copy-RainbowContent {
 
                     $threads = 1
                 } else {
-                    Write-Host "- No items need to be transfered because they already exist"
+                    Write-Host "- No items need to be transferred because they already exist"
                 }
             } else {
                 Write-Host " - Queueing $($RootId)"
@@ -319,7 +307,53 @@ function Copy-RainbowContent {
         $queue.Enqueue($rootId)
     }
 
-    Write-Host "- Spinning up jobs to transfer content"
+    if($RemoveNotInSource.IsPresent) {
+        Write-Host "- Checking destination for items not in source"
+        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
+        if($sourceItemIds) {
+            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
+            if($destinationItemIds) {
+                $itemsNotInSourceIds = Compare-Id -ReferenceString $destinationItemIds -DifferenceString $sourceItemIds -IgnoreRevision
+                
+                if($itemsNotInSourceIds) {
+                    Write-Host "- Removing items from destination not in source"
+                    $itemsNotInSource = $itemsNotInSourceIds -join "|"
+                    $removeNotInSourceScript = {
+                        $itemsNotInSource = "{ITEM_IDS}"
+                        $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                        foreach($itemId in $itemsNotInSourceIds) {
+                            Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item -Recurse
+                        }
+                    }
+                    $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
+                    Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
+                    Write-Host "- Removed $($itemsNotInSourceIds.Count) item(s) from the destination"
+                }
+            }
+        }
+
+        Write-Host "- Verification complete"
+    }
+
+    Write-Host "Spinning up jobs to transfer content" -ForegroundColor Yellow
+    function New-PowerShellRunspace {
+        param(
+            [System.Management.Automation.Runspaces.RunspacePool]$Pool,
+            [scriptblock]$ScriptBlock,
+            [PSCustomObject]$Session,
+            [object[]]$Arguments
+        )
+        
+        $runspace = [PowerShell]::Create()
+        $runspace.AddScript($ScriptBlock) > $null
+        $runspace.AddArgument($Session) > $null
+        foreach($argument in $Arguments) {
+            $runspace.AddArgument($argument) > $null
+        }
+        $runspace.RunspacePool = $pool
+
+        $runspace
+    }
     $pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
     $pool.Open()
     $runspaces = [System.Collections.ArrayList]@()
