@@ -62,7 +62,7 @@ function Copy-RainbowContent {
         Write-Host "- Verification complete"
     }
 
-    Write-Host "Transfering items from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -ForegroundColor Yellow
+    Write-Host "[Running] Transfer from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -ForegroundColor Yellow
 
     $sourceScript = {
         param(
@@ -218,6 +218,7 @@ function Copy-RainbowContent {
     $compareScript = {
         $rootId = "{ROOT_ID}"
         $recurseChildren = [bool]::Parse("{RECURSE_CHILDREN}")
+        <#
         $rootItem = Get-Item -Path "master:" -ID $rootId -ErrorAction 0
         if($rootItem) {
             $items = [System.Collections.ArrayList]@()
@@ -229,6 +230,27 @@ function Copy-RainbowContent {
                 }
             }
             $itemIds = $items | ForEach-Object { "I:$($_.ID)+R:{$($_.Fields["__Revision"].Value)}" }
+            $itemIds -join "|"
+        }
+        #>
+        Import-Function -Name Invoke-SqlCommand
+        $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+
+        $revisionFieldId = "{8CDC337E-A112-42FB-BBB4-4143751E123F}"
+        if($recurseChildren) {
+            $query = "
+                WITH [ContentQuery] AS (SELECT [ID], [Name] FROM [dbo].[Items] WHERE ID='$($rootId)' UNION ALL SELECT  i.[ID], i.[Name] FROM [dbo].[Items] i INNER JOIN [ContentQuery] ci ON ci.ID = i.[ParentID])
+                SELECT cq.[ID], vf.[Value] AS [Revision] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)'
+            "
+        } else {
+            $query = "
+                WITH [ContentQuery] AS (SELECT [ID], [Name] FROM [dbo].[Items] WHERE ID='$($rootId)')
+                SELECT cq.[ID], vf.[Value] AS [Revision] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)'
+            "
+        }
+        $records = Invoke-SqlCommand -Connection $connection -Query $query
+        if($records) {
+            $itemIds = $records | ForEach-Object { "I:{$($_.ID)}+R:{$($_."Revision")}" }
             $itemIds -join "|"
         }
     }
@@ -274,11 +296,10 @@ function Copy-RainbowContent {
         Write-Host " - Getting list of IDs from source"
         $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
 
-        Write-Host " - Getting list of IDs from destination"
-        $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
-
         $queueIds = @()
         if($sourceItemIds) {
+            Write-Host " - Getting list of IDs from destination"
+            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
             if($destinationItemIds) {
                 Write-Host " - Comparing source with destination items"
                 $queueIds = Compare-Id -ReferenceString $sourceItemIds -DifferenceString $destinationItemIds
@@ -297,13 +318,14 @@ function Copy-RainbowContent {
                     Write-Host "- No items need to be transferred because they already exist"
                 }
             } else {
-                Write-Host " - Queueing $($RootId)"
+                Write-Host " - Queueing $($RootId) as no destination items previously exist"
                 $queue.Enqueue($rootId)
             }
         } else {
-            $queue.Enqueue($rootId)
+            Write-Host " - Skipping $($RootId) as no source item exists with that Id" -ForegroundColor White -BackgroundColor Red
         }
     } else {
+        Write-Host " - Queueing $($RootId)"
         $queue.Enqueue($rootId)
     }
 
@@ -332,11 +354,14 @@ function Copy-RainbowContent {
             }
         }
 
-        Write-Host "- Verification complete"
+        Write-Host " - Removal complete"
     }
 
-    Write-Host "Spinning up jobs to transfer content" -ForegroundColor Yellow
-    function New-PowerShellRunspace {
+    $processedAny = $false
+    if($queue.Count -gt 0) {
+        $processedAny = $true
+        Write-Host "Spinning up jobs to transfer content" -ForegroundColor Yellow
+                                                                        function New-PowerShellRunspace {
         param(
             [System.Management.Automation.Runspaces.RunspacePool]$Pool,
             [scriptblock]$ScriptBlock,
@@ -354,14 +379,14 @@ function Copy-RainbowContent {
 
         $runspace
     }
-    $pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
-    $pool.Open()
-    $runspaces = [System.Collections.ArrayList]@()
+        $pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
+        $pool.Open()
+        $runspaces = [System.Collections.ArrayList]@()
 
-    $totalCounter = 0
-    $pullCounter = 0
-    $pushCounter = 0
-    while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
+        $totalCounter = 0
+        $pullCounter = 0
+        $pushCounter = 0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 
         if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
             $itemId = ""
@@ -484,14 +509,16 @@ function Copy-RainbowContent {
         }
     }
 
-    $pool.Close() 
-    $pool.Dispose()
-
+        $pool.Close() 
+        $pool.Dispose()
+    }
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
 
     Write-Host "[Done] Completed in $($totalSeconds) seconds" -ForegroundColor Yellow
-    Write-Host "- Copied $($totalCounter) items"
-    Write-Host "- Pull count: $($pullCounter)"
-    Write-Host "- Push count: $($pushCounter)"
+    if($processedAny) {
+        Write-Host "- Copied $($totalCounter) items"
+        Write-Host "- Pull count: $($pullCounter)"
+        Write-Host "- Push count: $($pushCounter)"
+    }
 }
