@@ -260,14 +260,13 @@ function Copy-RainbowContent {
             [string]$Text
         )
 
-        $guidPattern = "{[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}}"
-        if([regex]::IsMatch($Text, "^$($guidPattern)$")) {
-            $Text
-        } else {
-            $pattern = "^I:(?<guid>$($guidPattern))"
-            $matchedPattern = [regex]::Match($Text, $pattern)
-            if($matchedPattern.Success) {
-                $matchedPattern.Groups["guid"].Value
+        if(![string]::IsNullOrEmpty($Text)) {
+            if($Text.StartsWith("I:")) {
+                $Text.Split("+")[0].Replace("I:","")
+            } else {
+                if([regex]::IsMatch($Text, "^{[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}}$")) {
+                    $Text
+                }
             }
         }
     }
@@ -278,15 +277,28 @@ function Copy-RainbowContent {
             [switch]$IgnoreRevision
         )
 
-        $referenceIds = $ReferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-        $differenceIds = $DifferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+        $referenceIds = [System.Collections.Generic.List[string]]($ReferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries))
+        $differenceIds = [System.Collections.Generic.List[string]]($DifferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries))
         if($IgnoreRevision) {
-            $referenceIds = $referenceIds | ForEach-Object { Parse-Id -Text $_ }
-            $differenceIds = $differenceIds | ForEach-Object { Parse-Id -Text $_ }
+            $tempIds = [System.Collections.Generic.List[string]]@()
+            foreach($referenceId in $referenceIds) {
+                $tempIds.Add(($referenceId.Split("+")[0])) > $null
+            }
+            $referenceIds = $tempIds
+
+            $tempIds = [System.Collections.Generic.List[string]]@()
+            foreach($differenceId in $differenceIds) {
+                $tempIds.Add(($differenceId.Split("+")[0])) > $null
+            }
+            $differenceIds = $tempIds
         }
-        $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-            Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject |
-            ForEach-Object { Parse-Id -Text $_ } | Where-Object { ![string]::IsNullOrEmpty($_) }
+        $referenceHash = New-Object 'System.Collections.Generic.HashSet[String]'
+        $referenceHash.UnionWith($referenceIds)
+        $differenceHash = New-Object 'System.Collections.Generic.HashSet[String]'
+        $differenceHash.UnionWith($differenceIds)
+        $leftOnlyHash = New-Object 'System.Collections.Generic.HashSet[String]'($referenceHash)
+        $leftOnlyHash.ExceptWith($differenceHash)
+        $queueIds = $leftOnlyHash | ForEach-Object { Parse-Id -Text $_ } | Where-Object { ![string]::IsNullOrEmpty($_) }
         ,$queueIds
     }
 
@@ -315,7 +327,7 @@ function Copy-RainbowContent {
 
                     $threads = 1
                 } else {
-                    Write-Host "- No items need to be transferred because they already exist"
+                    Write-Host " - No items need to be transferred because they already exist"
                 }
             } else {
                 Write-Host " - Queueing $($RootId) as no destination items previously exist"
@@ -331,10 +343,14 @@ function Copy-RainbowContent {
 
     if($RemoveNotInSource.IsPresent) {
         Write-Host "- Checking destination for items not in source"
+
+        Write-Host " - Getting list of IDs from source"
         $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
         if($sourceItemIds) {
+            Write-Host " - Getting list of IDs from destination"
             $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
             if($destinationItemIds) {
+                Write-Host " - Comparing source with destination items"
                 $itemsNotInSourceIds = Compare-Id -ReferenceString $destinationItemIds -DifferenceString $sourceItemIds -IgnoreRevision
                 
                 if($itemsNotInSourceIds) {
