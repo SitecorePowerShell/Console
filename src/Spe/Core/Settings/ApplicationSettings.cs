@@ -321,8 +321,7 @@ namespace Spe.Core.Settings
                 return defaultValue;
             }
         }
-
-
+        
         public static Item ScriptLibraryRoot
         {
             get

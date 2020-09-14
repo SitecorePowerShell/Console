@@ -7,5 +7,7 @@
         bool IsAuthenticated { get; }
         string CurrentUsername { get; }
         bool ValidateUser(string username, string password);
+
+        void SwitchToUser(string username, bool isAuthenticated);
     }
 }

@@ -218,6 +218,9 @@ function Invoke-RemoteScript {
         [string]$Password,
 
         [Parameter(ParameterSetName='Uri')]
+        [string]$SharedSecret,
+
+        [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
         
@@ -294,6 +297,7 @@ function Invoke-RemoteScript {
         if($PSCmdlet.ParameterSetName -eq "Session") {
             $Username = $Session.Username
             $Password = $Session.Password
+            $SharedSecret = $Session.SharedSecret
             $SessionId = $Session.SessionId
             $Credential = $Session.Credential
             $UseDefaultCredentials = $Session.UseDefaultCredentials
@@ -306,7 +310,7 @@ function Invoke-RemoteScript {
         
         $serviceUrl = "/-/script/script/?"
         $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-        foreach ($uri in $ConnectionUri) {
+        foreach ($uri in $ConnectionUri) {            
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
             $localParams = $parameters | Out-String
             
@@ -319,9 +323,15 @@ function Invoke-RemoteScript {
             $handler = New-Object System.Net.Http.HttpClientHandler
             $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
             $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-            $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-            $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-                        
+
+            if(![string]::IsNullOrEmpty($SharedSecret)) {
+                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
+            } else {
+                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+            }
+                 
             if ($Credential) {
                 $handler.Credentials = $Credential
             }

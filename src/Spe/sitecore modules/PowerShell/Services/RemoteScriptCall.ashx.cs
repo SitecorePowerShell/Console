@@ -6,10 +6,12 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using Sitecore;
 using Sitecore.Configuration;
@@ -65,6 +67,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var request = context.Request;
             var requestParameters = request.Params;
 
+            var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
             var username = requestParameters.Get("user");
             var password = requestParameters.Get("password");
             var authHeader = request.Headers["Authorization"];
@@ -74,27 +77,30 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
                     var encoding = Encoding.GetEncoding("iso-8859-1");
                     var usernamePassword = encoding.GetString(System.Convert.FromBase64String(encodedUsernamePassword));
-
+                    
                     var separatorIndex = usernamePassword.IndexOf(':');
 
                     username = usernamePassword.Substring(0, separatorIndex);
                     password = usernamePassword.Substring(separatorIndex + 1);
                 }
+
+                if (authHeader.StartsWith("Bearer"))
+                {
+                    var token = authHeader.Substring("Bearer ".Length).Trim();
+                    if (JwtUtils.ValidateToken(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
+                    {
+                        authenticationManager.SwitchToUser(username, true);
+                    }
+                    else
+                    {
+                        RejectAuthenticationMethod(context);
+                        return;
+                    }
+                }
             }
 
-            var itemParam = requestParameters.Get("script");
-            var pathParam = requestParameters.Get("path");
-            var originParam = requestParameters.Get("scriptDb");
-            var sessionId = requestParameters.Get("sessionId");
-            var persistentSession = requestParameters.Get("persistentSession").Is("true");
-            var rawOutput = requestParameters.Get("rawOutput").Is("true");
             var apiVersion = requestParameters.Get("apiVersion");
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
-            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
-            var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
-            var skipExisting = requestParameters.Get("skipexisting").Is("true");
-            var scDb = requestParameters.Get("sc_database");
-
             var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
                 ? ApiVersionToServiceMapping[serviceMappingKey]
                 : string.Empty;
@@ -105,8 +111,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
-
             // verify that the user is authorized to access the end point
             var authUserName = string.IsNullOrEmpty(username) ? authenticationManager.CurrentUsername : username;
             var identity = new AccountIdentity(authUserName);
@@ -116,14 +120,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            
-
             lock (LoginLock)
             {
                 // login user if specified explicitly
                 if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
-                    authenticationManager.Login(identity.Name, password);
+                    if (!authenticationManager.Login(identity.Name, password))
+                    {
+                        RejectAuthenticationMethod(context);
+                        return;
+                    }
                 }
             }
 
@@ -133,6 +139,17 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 return;
             }
+
+            var itemParam = requestParameters.Get("script");
+            var pathParam = requestParameters.Get("path");
+            var originParam = requestParameters.Get("scriptDb");
+            var sessionId = requestParameters.Get("sessionId");
+            var persistentSession = requestParameters.Get("persistentSession").Is("true");
+            var rawOutput = requestParameters.Get("rawOutput").Is("true");
+            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
+            var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
+            var skipExisting = requestParameters.Get("skipexisting").Is("true");
+            var scDb = requestParameters.Get("sc_database");
             
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");
@@ -260,6 +277,19 @@ namespace Spe.sitecore_modules.PowerShell.Services
             context.Response.StatusDescription = disabledMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
             PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
+
+            return false;
+        }
+
+        private static bool RejectAuthenticationMethod(HttpContext context)
+        {
+            const string disabledMessage =
+                "The request could not be completed because the provided credentials could not be validated.";
+
+            context.Response.StatusCode = 401;
+            context.Response.StatusDescription = disabledMessage;
+            context.Response.SuppressFormsAuthenticationRedirect = true;
+            PowerShellLog.Error($"Credentials provided to the service are invalid.");
 
             return false;
         }

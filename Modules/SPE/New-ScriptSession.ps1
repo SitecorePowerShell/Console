@@ -18,7 +18,10 @@ function New-ScriptSession {
             Specifies the Sitecore identity used for connecting to a remote instance.
 
         .PARAMETER Password
-            Specifies the Sitecore password associated with the identity. 
+            Specifies the Sitecore password associated with the identity.
+
+        .PARAMETER SharedSecret
+            Specifies the SharedSecret used to authenticate the identity. 
         
         .PARAMETER Timeout
             Specifies the duration of the wait, in seconds.
@@ -48,9 +51,13 @@ function New-ScriptSession {
         [ValidateNotNullOrEmpty()]
         [string]$Username = $null,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "Password")]
         [ValidateNotNullOrEmpty()]
         [string]$Password = $null,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "SharedSecret")]
+        [ValidateNotNullOrEmpty()]
+        [string]$SharedSecret = $null,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -59,10 +66,14 @@ function New-ScriptSession {
         [Parameter(Mandatory = $false, HelpMessage = "The timeout in seconds.")]
         [int]$Timeout,
 
+        [Parameter(Mandatory = $false, ParameterSetName = "Password")]
+        [Parameter(Mandatory = $false, ParameterSetName = "SharedSecret")]
         [Parameter(Mandatory = $false, ParameterSetName = "Credential")]
         [System.Management.Automation.PSCredential]
         $Credential,
 
+        [Parameter(Mandatory = $false, ParameterSetName = "Password")]
+        [Parameter(Mandatory = $false, ParameterSetName = "SharedSecret")]
         [Parameter(Mandatory = $false, ParameterSetName = "DefaultCredentials")]
         [switch]$UseDefaultCredentials
     )
@@ -72,6 +83,7 @@ function New-ScriptSession {
         $session = @{
             "Username" = [string]$Username
             "Password" = [string]$Password
+            "SharedSecret" = [string]$SharedSecret
             "SessionId" = [string]$sessionId
             "Credential" = [System.Management.Automation.PSCredential]$Credential
             "UseDefaultCredentials" = [bool]$UseDefaultCredentials
@@ -83,7 +95,6 @@ function New-ScriptSession {
     process {
 
         foreach($uri in $ConnectionUri) {
-
             $connection = [PSCustomObject]@{
                 Uri = [Uri]$uri
                 BaseUri = [Uri]$uri

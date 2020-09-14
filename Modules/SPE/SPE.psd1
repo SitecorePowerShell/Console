@@ -68,6 +68,7 @@
         '.\Invoke-GenericMethod.ps1',
         '.\Invoke-RemoteScript.ps1',
         '.\MediaSyncWatcher.ps1',
+        '.\New-Jwt.ps1',
         '.\New-RunspacedDelegate.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
