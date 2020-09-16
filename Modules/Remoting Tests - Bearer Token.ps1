@@ -1,6 +1,6 @@
 ﻿Clear-Host
 
-$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB-1'
+$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
 $name = 'sitecore\admin'
 $hostname = "https://spe.dev.local"
 
@@ -11,7 +11,7 @@ Invoke-RemoteScript -ScriptBlock {
 } -Session $session
 Stop-ScriptSession -Session $session
 
-$issuer = 'Web API1'
+$issuer = 'Web API'
 $audience = $hostname
 $token = New-Jwt -Algorithm 'HS512' -Issuer $issuer -Audience $audience -Name $name -SecretKey $sharedSecret -ValidforSeconds 30
 $url = "$($hostname)/-/script/v2/master/HomeAndDescendants?offset=3&limit=2&fields=(Name,ItemPath,Id)"

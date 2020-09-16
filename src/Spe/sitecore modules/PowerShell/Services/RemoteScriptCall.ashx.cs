@@ -91,7 +91,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     var token = authHeader.Substring("Bearer ".Length).Trim();
                     try
                     {
-                        if (JwtUtils.ValidateToken(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
+                        if (ServiceAuthenticationManager.AuthenticationProvider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
                         {
                             authenticationManager.SwitchToUser(username, true);
                         }

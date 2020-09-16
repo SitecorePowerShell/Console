@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Spe.Abstractions.VersionDecoupling.Interfaces
+﻿namespace Spe.Abstractions.VersionDecoupling.Interfaces
 {
     public interface ISpeAuthenticationProvider
     {
-        string SharedSecret { get; set; }
-        List<string> AllowedIssuers { get; set; }
-        List<string> AllowedAudiences { get; set; }
-        bool DetailedAuthenticationErrors { get; set; }
+        bool Validate(string token, string authority, out string username);
     }
 }
