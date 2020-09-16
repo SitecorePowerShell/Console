@@ -86,6 +86,7 @@
         'Invoke-GenericMethod',
         'Invoke-RemoteScript',
         'Invoke-RemoteScriptAsync',
+        'New-Jwt',
         'New-RunspacedDelegate',
         'New-ScriptSession',
         'Receive-RemoteItem',

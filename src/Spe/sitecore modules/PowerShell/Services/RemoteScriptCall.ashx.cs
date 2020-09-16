@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +19,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Exceptions;
 using Sitecore.IO;
 using Sitecore.Resources.Media;
 using Sitecore.SecurityModel;
@@ -87,13 +89,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (authHeader.StartsWith("Bearer"))
                 {
                     var token = authHeader.Substring("Bearer ".Length).Trim();
-                    if (JwtUtils.ValidateToken(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
+                    try
                     {
-                        authenticationManager.SwitchToUser(username, true);
+                        if (JwtUtils.ValidateToken(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
+                        {
+                            authenticationManager.SwitchToUser(username, true);
+                        }
+                        else
+                        {
+                            RejectAuthenticationMethod(context);
+                            return;
+                        }
                     }
-                    else
+                    catch (SecurityException ex)
                     {
-                        RejectAuthenticationMethod(context);
+                        RejectAuthenticationMethod(context, ex);
                         return;
                     }
                 }
@@ -281,17 +291,23 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return false;
         }
 
-        private static bool RejectAuthenticationMethod(HttpContext context)
+        private static void RejectAuthenticationMethod(HttpContext context, Exception ex = null)
         {
             const string disabledMessage =
                 "The request could not be completed because the provided credentials could not be validated.";
-
+            
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = disabledMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
-            PowerShellLog.Error($"Credentials provided to the service are invalid.");
+            context.Response.TrySkipIisCustomErrors = true;
+            context.Response.ContentType = "text/plain";
 
-            return false;
+            PowerShellLog.Error($"Credentials provided to the service are invalid.");
+            if (ex != null)
+            {
+                context.Response.StatusDescription += $" {ex.Message}";
+                PowerShellLog.Error(ex.Message);
+            }
         }
 
         private static bool CheckIsUserAuthorized(HttpContext context, string authUserName, string serviceName)

@@ -8,6 +8,7 @@ namespace Spe.Core.Settings.Authorization
         public string SharedSecret { get; set; }
         public List<string> AllowedIssuers { get; set; }
         public List<string> AllowedAudiences { get; set; }
+        public bool DetailedAuthenticationErrors { get; set; }
         
         public SimpleAuthenticationProvider()
         {

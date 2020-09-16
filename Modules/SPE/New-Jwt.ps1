@@ -14,7 +14,7 @@ function New-Jwt {
         [Parameter(Mandatory = $true)]
         [string]$Name,
         [Parameter()]
-        [int]$ValidForSeconds = 60,
+        [int]$ValidForSeconds = 30,
         [Parameter(Mandatory = $true)]
         [string]$SecretKey
     )

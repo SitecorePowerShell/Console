@@ -7,5 +7,6 @@ namespace Spe.Abstractions.VersionDecoupling.Interfaces
         string SharedSecret { get; set; }
         List<string> AllowedIssuers { get; set; }
         List<string> AllowedAudiences { get; set; }
+        bool DetailedAuthenticationErrors { get; set; }
     }
 }
