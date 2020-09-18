@@ -1,7 +1,7 @@
 #Requires -Modules SPE
  
 function Copy-RainbowContent {
-    [CmdletBinding(DefaultParameterSetName="Partial")]
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -15,20 +15,17 @@ function Copy-RainbowContent {
         [ValidateNotNullOrEmpty()]
         [string]$RootId,
 
-        [Parameter(ParameterSetName='Partial')]
         [switch]$Recurse,
 
-        [Parameter(ParameterSetName='Partial')]
-        [Parameter(ParameterSetName='SingleRequest')]
         [switch]$RemoveNotInSource,
 
-        [switch]$Overwrite,
-
-        [Parameter(ParameterSetName='SingleRequest')]
-        [switch]$SingleRequest
+        [ValidateSet("SkipExisting", "Overwrite", "CompareRevision")]
+        [string]$CopyBehavior
     )
     
+    $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $threads = $env:NUMBER_OF_PROCESSORS
+    $recurseChildren = $Recurse.IsPresent
 
     $dependencyScript = {
         $dependencies = Get-ChildItem -Path "$($AppPath)\bin" -Include "Unicorn.*","Rainbow.*" -Recurse | 
@@ -64,320 +61,88 @@ function Copy-RainbowContent {
 
     Write-Host "[Running] Transfer from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -ForegroundColor Yellow
 
-    $sourceScript = {
-        param(
-            $Session,
-            [string]$RootId,
-            [bool]$IncludeParent = $true,
-            [bool]$IncludeChildren = $false,
-            [bool]$RecurseChildren = $false,
-            [bool]$SingleRequest = $false
-        )
-
-        $serializeParent = $IncludeParent
-        $serializeChildren = $IncludeChildren
-        $recurseChildren = $RecurseChildren
-
-        $scriptSingleRequest = {
-            $parentItem = Get-Item -Path "master:" -ID "{ROOT_ID}"
-            $childItems = $parentItem.Axes.GetDescendants()
-
-            $builder = New-Object System.Text.StringBuilder
-            $parentYaml = $parentItem | ConvertTo-RainbowYaml
-            $builder.AppendLine($parentYaml) > $null
-            foreach($childItem in $childItems) {
-                $childYaml = $childItem | ConvertTo-RainbowYaml
-                $builder.AppendLine($childYaml) > $null
-            }
-
-            $builder.ToString()
-        }
-        $scriptSingleRequest = [scriptblock]::Create($scriptSingleRequest.ToString().Replace("{ROOT_ID}",$RootId))
-
-        $script = {
-            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
-            $db = Get-Database -Name "master"
-            $parentItem = $db.GetItem([ID]$parentId)
-
-            $parentYaml = $parentItem | ConvertTo-RainbowYaml
-
-            $builder = New-Object System.Text.StringBuilder
-            if($serializeParent -or $isMediaItem) {
-                $builder.AppendLine($parentYaml) > $null
-            }
-
-            $children = $parentItem.GetChildren()
-
-            if($serializeChildren) {                
-
-                foreach($child in $children) {
-                    $childYaml = $child | ConvertTo-RainbowYaml
-                    $builder.AppendLine($childYaml) > $null
-                }
-            }
-
-            if($recurseChildren) {
-                $builder.Append("<#split#>") > $null
-
-                $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
-                $builder.Append($childIds) > $null
-            }
-
-            $builder.ToString()
-            $sd.Dispose() > $null          
-        }
-
-        if($SingleRequest) {
-            Write-Host "- Performing a single bulk request"
-            Invoke-RemoteScript -ScriptBlock $scriptSingleRequest  -Session $Session -Raw
-        } else {
-            $scriptString = $script.ToString()
-            $trueFalseHash = @{$true="`$true";$false="`$false"}
-            $scriptString = "`$parentId = '$($RootId)';`$serializeParent = $($trueFalseHash[$serializeParent]);`$serializeChildren = $($trueFalseHash[$serializeChildren]);`$recurseChildren = $($trueFalseHash[$recurseChildren]);" + $scriptString
-            $script = [scriptblock]::Create($scriptString)
-
-            Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
-        }
+    class ShallowItem {
+        [string]$ItemId
+        [string]$RevisionId
+        [string]$ParentId
     }
-
-    $destinationScript = {
-        param(
-            $Session,
-            [string]$Yaml,
-            [bool]$Overwrite
-        )
-
-        $rainbowYaml = $Yaml
-        $shouldOverwrite = $Overwrite
-
-        $script = {
-            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
-            $ed = New-Object Sitecore.Data.Events.EventDisabler
-            $buc = New-Object Sitecore.Data.BulkUpdateContext
-
-            $rainbowYamlBytes = [System.Convert]::FromBase64String($rainbowYamlBase64)
-            $rainbowYaml = [System.Text.Encoding]::UTF8.GetString($rainbowYamlBytes)
-            $rainbowItems = [regex]::Split($rainbowYaml, "(?=---$)") | 
-                Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
-        
-            $totalItems = $rainbowItems.Count
-            $itemsToImport = [System.Collections.ArrayList]@()
-            $totalSkippedItems = 0
-            foreach($rainbowItem in $rainbowItems) {
-                <#
-                # If the comparison of __Revision works then we would always overwrite.
-                # Currently the Yaml does not contain __Revision
-                if($checkExistingItem) {
-                    if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { 
-                        Write-Log "Skipping $($rainbowItem.Id)"
-                        $totalSkippedItems++
-                        continue
-                    }
-                }
-                #>
-                $itemsToImport.Add($rainbowItem) > $null
-            }
-            
-            $errorMessages = @()
-            $itemsToImport | ForEach-Object {                
-                try {
-                    Import-RainbowItem -Item $_
-                } catch {
-                    Write-Log "Importing $($_.Id) failed with error $($Error[0].Exception.Message)"
-                    $errorMessages += "$($_.Id) Failed"
-                }
-            } > $null
-
-            $buc.Dispose() > $null
-            $ed.Dispose() > $null
-            $sd.Dispose() > $null
-
-            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count), TotalSkippedItems: $($totalSkippedItems), ErrorCount: $($errorMessages.Count) }"
-        }
-
-        $scriptString = $script.ToString()
-        $trueFalseHash = @{$true="`$true";$false="`$false"}
-        $rainbowYamlBytes = [System.Text.Encoding]::UTF8.GetBytes($rainbowYaml)
-        $scriptString = "`$rainbowYamlBase64 = '$([System.Convert]::ToBase64String($rainbowYamlBytes))';`$checkExistingItem = $($trueFalseHash[!$shouldOverwrite]);" + $scriptString
-        $script = [scriptblock]::Create($scriptString)
-
-        Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
-    }
-
-    $watch = [System.Diagnostics.Stopwatch]::StartNew()
-
-    $queue = New-Object System.Collections.Concurrent.ConcurrentQueue[object]
-    $pushedLookup = New-Object System.Collections.Generic.HashSet[string]
-    $pushParentChildrenLookup = [ordered]@{}
-    $pushChildParentLookup = [ordered]@{}
-    $pushChildRunspaceLookup = [ordered]@{}
-
-    $serializeParent = $false
-    $serializeChildren = $Recurse.IsPresent
-    $recurseChildren = $Recurse.IsPresent
     $compareScript = {
         $rootId = "{ROOT_ID}"
         $recurseChildren = [bool]::Parse("{RECURSE_CHILDREN}")
-        <#
-        $rootItem = Get-Item -Path "master:" -ID $rootId -ErrorAction 0
-        if($rootItem) {
-            $items = [System.Collections.ArrayList]@()
-            $items.Add($rootItem) > $null
-            if($recurseChildren) {
-                $children = $rootItem.Axes.GetDescendants()
-                if($children.Count -gt 0) {
-                    $items.AddRange($children) > $null
-                }
-            }
-            $itemIds = $items | ForEach-Object { "I:$($_.ID)+R:{$($_.Fields["__Revision"].Value)}" }
-            $itemIds -join "|"
-        }
-        #>
         Import-Function -Name Invoke-SqlCommand
         $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
 
         $revisionFieldId = "{8CDC337E-A112-42FB-BBB4-4143751E123F}"
         if($recurseChildren) {
             $query = "
-                WITH [ContentQuery] AS (SELECT [ID], [Name] FROM [dbo].[Items] WHERE ID='$($rootId)' UNION ALL SELECT  i.[ID], i.[Name] FROM [dbo].[Items] i INNER JOIN [ContentQuery] ci ON ci.ID = i.[ParentID])
-                SELECT cq.[ID], vf.[Value] AS [Revision] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)'
+                WITH [ContentQuery] AS (SELECT [ID], [Name], [ParentID] FROM [dbo].[Items] WHERE ID='$($rootId)' UNION ALL SELECT  i.[ID], i.[Name], i.[ParentID] FROM [dbo].[Items] i INNER JOIN [ContentQuery] ci ON ci.ID = i.[ParentID])
+                SELECT cq.[ID], vf.[Value] AS [Revision], cq.[ParentID] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)' AND vf.[Version] = (SELECT MAX(vf2.[Version]) FROM dbo.[VersionedFields] vf2 WHERE vf2.[ItemId] = cq.[Id])
             "
         } else {
             $query = "
-                WITH [ContentQuery] AS (SELECT [ID], [Name] FROM [dbo].[Items] WHERE ID='$($rootId)')
-                SELECT cq.[ID], vf.[Value] AS [Revision] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)'
+                WITH [ContentQuery] AS (SELECT [ID], [Name], [ParentID] FROM [dbo].[Items] WHERE ID='$($rootId)')
+                SELECT cq.[ID], vf.[Value] AS [Revision], cq.[ParentID] FROM [ContentQuery] cq INNER JOIN dbo.[VersionedFields] vf ON cq.[ID] = vf.[ItemId] WHERE vf.[FieldId] = '$($revisionFieldId)' AND vf.[Version] = (SELECT MAX(vf2.[Version]) FROM dbo.[VersionedFields] vf2 WHERE vf2.[ItemId] = cq.[Id])
             "
         }
         $records = Invoke-SqlCommand -Connection $connection -Query $query
         if($records) {
-            $itemIds = $records | ForEach-Object { "I:{$($_.ID)}+R:{$($_."Revision")}" }
+            $itemIds = $records | ForEach-Object { "I:{$($_.ID)}+R:{$($_.Revision)}+P:{$($_.ParentID)}" }
             $itemIds -join "|"
         }
     }
     $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren -or $RemoveNotInSource))
-    function Parse-Id {
-        param(
-            [string]$Text
-        )
 
-        if(![string]::IsNullOrEmpty($Text)) {
-            if($Text.StartsWith("I:")) {
-                $Text.Split("+")[0].Replace("I:","")
-            } else {
-                if([regex]::IsMatch($Text, "^{[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}}$")) {
-                    $Text
-                }
-            }
+    Write-Host "- Querying item list from source"
+    $sourceTree = @{}
+    $sourceTree.Add($RootId, [System.Collections.Generic.List[ShallowItem]]@())
+    $sourceRecordsString = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
+    $sourceShallowItemsCount = 0
+    foreach($sourceRecord in $sourceRecordsString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)) {
+        $sourceShallowItemsCount++
+        $split = $sourceRecord.Split("+")
+        $shallowItem = [ShallowItem]@{
+            "ItemId"=$split[0].Replace("I:","")
+            "RevisionId"=$split[1].Replace("R:","")
+            "ParentId"=$split[2].Replace("P:","")
         }
-    }
-    function Compare-Id {
-        param(
-            [string]$ReferenceString,
-            [string]$DifferenceString,
-            [switch]$IgnoreRevision
-        )
-
-        $referenceIds = [System.Collections.Generic.List[string]]($ReferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries))
-        $differenceIds = [System.Collections.Generic.List[string]]($DifferenceString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries))
-        if($IgnoreRevision) {
-            $tempIds = [System.Collections.Generic.List[string]]@()
-            foreach($referenceId in $referenceIds) {
-                $tempIds.Add(($referenceId.Split("+")[0])) > $null
-            }
-            $referenceIds = $tempIds
-
-            $tempIds = [System.Collections.Generic.List[string]]@()
-            foreach($differenceId in $differenceIds) {
-                $tempIds.Add(($differenceId.Split("+")[0])) > $null
-            }
-            $differenceIds = $tempIds
+        if(!$sourceTree.ContainsKey($shallowItem.ParentId)) {
+            $sourceTree[$shallowItem.ParentId] = [System.Collections.Generic.List[ShallowItem]]@()
         }
-        $referenceHash = New-Object 'System.Collections.Generic.HashSet[String]'
-        $referenceHash.UnionWith($referenceIds)
-        $differenceHash = New-Object 'System.Collections.Generic.HashSet[String]'
-        $differenceHash.UnionWith($differenceIds)
-        $leftOnlyHash = New-Object 'System.Collections.Generic.HashSet[String]'($referenceHash)
-        $leftOnlyHash.ExceptWith($differenceHash)
-        $queueIds = $leftOnlyHash | ForEach-Object { Parse-Id -Text $_ } | Where-Object { ![string]::IsNullOrEmpty($_) }
-        ,$queueIds
+        $sourceTree[$shallowItem.ParentId].Add($shallowItem)
+        if(!$sourceTree.ContainsKey($shallowItem.ItemId)) {
+            $sourceTree[$shallowItem.ItemId] = [System.Collections.Generic.List[ShallowItem]]@()
+        }       
     }
+    Write-Host " - Found $($sourceShallowItemsCount) item(s)"
 
-    if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
-        Write-Host "- Preparing to compare source and destination instances using ID $($RootId)"
-
-        Write-Host " - Getting list of IDs from source"
-        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
-
-        $queueIds = @()
-        if($sourceItemIds) {
-            Write-Host " - Getting list of IDs from destination"
-            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
-            if($destinationItemIds) {
-                Write-Host " - Comparing source with destination items"
-                $queueIds = Compare-Id -ReferenceString $sourceItemIds -DifferenceString $destinationItemIds
-
-                foreach($queueId in $queueIds) {
-                    $queue.Enqueue($queueId)
-                }
-
-                if($queue.Count -ge 1) {
-                    $serializeParent = $true
-                    $serializeChildren = $false
-                    $recurseChildren = $false
-
-                    $threads = 1
-                } else {
-                    Write-Host " - No items need to be transferred because they already exist"
-                }
-            } else {
-                Write-Host " - Queueing $($RootId) as no destination items previously exist"
-                $queue.Enqueue($rootId)
+    $skipItems = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
+    if($CopyBehavior -eq "SkipExisting") {
+        Write-Host "- Querying item list from source"
+        $destinationRecordsString = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
+        $destinationShallowItems = [System.Collections.Generic.List[ShallowItem]]@()
+        foreach($destinationRecord in $destinationRecordsString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)) {
+            $split = $destinationRecord.Split("+")
+            $shallowItem = [ShallowItem]@{
+                "ItemId"=$split[0].Replace("I:","")
+                "RevisionId"=$split[1].Replace("R:","")
+                "ParentId"=$split[2].Replace("P:","")
             }
-        } else {
-            Write-Host " - Skipping $($RootId) as no source item exists with that Id" -ForegroundColor White -BackgroundColor Red
-        }
-    } else {
-        Write-Host " - Queueing $($RootId)"
-        $queue.Enqueue($rootId)
-    }
 
-    if($RemoveNotInSource.IsPresent) {
-        Write-Host "- Checking destination for items not in source"
-
-        Write-Host " - Getting list of IDs from source"
-        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
-        if($sourceItemIds) {
-            Write-Host " - Getting list of IDs from destination"
-            $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
-            if($destinationItemIds) {
-                Write-Host " - Comparing source with destination items"
-                $itemsNotInSourceIds = Compare-Id -ReferenceString $destinationItemIds -DifferenceString $sourceItemIds -IgnoreRevision
-                
-                if($itemsNotInSourceIds) {
-                    Write-Host "- Removing items from destination not in source"
-                    $itemsNotInSource = $itemsNotInSourceIds -join "|"
-                    $removeNotInSourceScript = {
-                        $itemsNotInSource = "{ITEM_IDS}"
-                        $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                        foreach($itemId in $itemsNotInSourceIds) {
-                            Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item -Recurse
-                        }
-                    }
-                    $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
-                    Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
-                    Write-Host "- Removed $($itemsNotInSourceIds.Count) item(s) from the destination"
-                }
+            if($sourceTree.ContainsKey($shallowItem.ItemId)) {
+                $skipItems.Add($shallowItem.ItemId) > $null
             }
         }
 
-        Write-Host " - Removal complete"
+        Write-Host " - Found $($skipItems.Count) item(s)"
     }
 
-    $processedAny = $false
-    if($queue.Count -gt 0) {
-        $processedAny = $true
-        Write-Host "Spinning up jobs to transfer content" -ForegroundColor Yellow
-                                                                        function New-PowerShellRunspace {
+    $totalCounter = 0
+    $pullCounter = 0
+    $pushCounter = 0
+
+    $remainingItemsTree = $sourceTree.Clone()    
+
+    function New-PowerShellRunspace {
         param(
             [System.Management.Automation.Runspaces.RunspacePool]$Pool,
             [scriptblock]$ScriptBlock,
@@ -395,146 +160,233 @@ function Copy-RainbowContent {
 
         $runspace
     }
-        $pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
-        $pool.Open()
-        $runspaces = [System.Collections.ArrayList]@()
 
-        $totalCounter = 0
-        $pullCounter = 0
-        $pushCounter = 0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
+    $sourceScript = {
+        param(
+            $Session,
+            [string]$RootId
+        )
 
-        if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
-            $itemId = ""
-            if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
-                Write-Host "[Pull] $($itemId)" -ForegroundColor Green
-                $runspaceProps = @{
-                    ScriptBlock = $sourceScript
-                    Pool = $pool
-                    Session = $SourceSession
-                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$SingleRequest)
-                }
-                $runspace = New-PowerShellRunspace @runspaceProps
-                $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull" }) > $null
-            }
+        $script = {
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $db = Get-Database -Name "master"
+            $parentItem = $db.GetItem([ID]$parentId)
+
+            $parentYaml = $parentItem | ConvertTo-RainbowYaml
+
+            $builder = New-Object System.Text.StringBuilder
+            $builder.AppendLine($parentYaml) > $null
+
+            $builder.ToString()
+            $sd.Dispose() > $null          
         }
 
-        $currentRunspaces = $runspaces.ToArray()
-        foreach($currentRunspace in $currentRunspaces) { 
-            if($currentRunspace.Status.IsCompleted) {
-                if($queue.Count -gt 0) {
-                    $itemId = ""
+        $scriptString = $script.ToString()
+        $trueFalseHash = @{$true="`$true";$false="`$false"}
+        $scriptString = "`$parentId = '$($RootId)';" + $scriptString
+        $script = [scriptblock]::Create($scriptString)
 
-                    if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
-                    
+        Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
+    }
+
+    $destinationScript = {
+        param(
+            $Session,
+            [string]$Yaml
+        )
+
+        $rainbowYaml = $Yaml
+
+        $script = {
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $ed = New-Object Sitecore.Data.Events.EventDisabler
+            $buc = New-Object Sitecore.Data.BulkUpdateContext
+
+            $rainbowYamlBytes = [System.Convert]::FromBase64String($rainbowYamlBase64)
+            $rainbowYaml = [System.Text.Encoding]::UTF8.GetString($rainbowYamlBytes)
+            $rainbowItems = [regex]::Split($rainbowYaml, "(?=---$)") | 
+                Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        
+            $totalItems = $rainbowItems.Count
+            $itemsToImport = [System.Collections.ArrayList]@()
+            $totalSkippedItems = 0
+            foreach($rainbowItem in $rainbowItems) {
+                $itemsToImport.Add($rainbowItem) > $null
+            }
+            
+            $errorMessages = @()
+            $itemsToImport | ForEach-Object {
+                $currentRainbowItem = $_               
+                try {
+                    Import-RainbowItem -Item $currentRainbowItem
+                } catch {
+                    Write-Log "Importing $($currentRainbowItem.Id) failed with error $($Error[0].Exception.Message)"
+                    Write-Log ($currentRainbowItem | ConvertTo-Json)
+                    $errorMessages += "$($currentRainbowItem.Id) Failed"
+                }
+            } > $null
+
+            $buc.Dispose() > $null
+            $ed.Dispose() > $null
+            $sd.Dispose() > $null
+
+            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count), TotalSkippedItems: $($totalSkippedItems), ErrorCount: $($errorMessages.Count) }"
+        }
+
+        $scriptString = $script.ToString()
+        $trueFalseHash = @{$true="`$true";$false="`$false"}
+        $rainbowYamlBytes = [System.Text.Encoding]::UTF8.GetBytes($rainbowYaml)
+        $scriptString = "`$rainbowYamlBase64 = '$([System.Convert]::ToBase64String($rainbowYamlBytes))';" + $scriptString
+        $script = [scriptblock]::Create($scriptString)
+
+        Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
+    }
+
+    $pushedLookup = @{}
+    $pullPool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
+    $pullPool.Open()
+    $pullRunspaces = [System.Collections.ArrayList]@()
+    $pushPool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
+    $pushPool.Open()
+    $pushRunspaces = [System.Collections.ArrayList]@()
+
+    class QueueItem {
+        [string]$ItemId
+        [string]$Yaml
+    }
+
+    if($CopyBehavior -eq "SkipExisting" -and $skipItems.Contains($RootId)) {
+        Write-Host "[Skip] $($RootId)" -ForegroundColor Green
+        $runspaceProps = @{
+            ScriptBlock = {}
+            Pool = $pullPool
+            Session = $SourceSession
+            Arguments = @($RootId)
+        }
+        $runspace = New-PowerShellRunspace @runspaceProps
+        $pullRunspaces.Add([PSCustomObject]@{ Skip = $true; Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $RootId; ParentId = ""; Time = [datetime]::Now; Operation = "Pull" }) > $null
+
+    } else {
+        Write-Host "Spinning up jobs to transfer content" -ForegroundColor Yellow
+        Write-Host "[Pull] $($RootId)" -ForegroundColor Green
+        $runspaceProps = @{
+            ScriptBlock = $sourceScript
+            Pool = $pullPool
+            Session = $SourceSession
+            Arguments = @($RootId)
+        }
+        $runspace = New-PowerShellRunspace @runspaceProps
+        $pullRunspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $RootId; ParentId = ""; Time = [datetime]::Now; Operation = "Pull" }) > $null
+    }
+
+    while($pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0) {
+        Write-Progress -Activity "Queued root $($RootId)" -Status "Pull $($pullCounter), Push $($pushCounter)" -PercentComplete ($totalCounter * 100 / $sourceShallowItemsCount)
+        $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
+        foreach($currentRunspace in $currentRunspaces) {
+            if(!$currentRunspace.Status.IsCompleted) { continue }
+                
+            $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
+            if($currentRunspace.Operation -eq "Pull" -and $currentRunspace.Skip) {
+                $currentRunspace.Pipe.Dispose()
+                $pullRunspaces.Remove($currentRunspace)
+                #continue
+            } else {
+                Write-Host "[$($currentRunspace.Operation)] $($currentRunspace.Id) completed" -ForegroundColor Gray
+                Write-Host "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray
+            }
+            if($currentRunspace.Operation -eq "Push") {
+                [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
+                if(![string]::IsNullOrEmpty($response)) {
+                    $feedback = $response | ConvertFrom-Json
+                    1..$feedback.TotalItems | % { [System.Threading.Interlocked]::Increment([ref] $totalCounter) } > $null
+                    Write-Host "- Imported $($feedback.ImportedItems)/$($feedback.TotalItems) items in destination" -ForegroundColor Gray
+                }
+                if($pushedLookup.Contains($currentRunspace.Id)) {
+                    $queuedItems = $pushedLookup[$currentRunspace.Id]
+                    if($queuedItems.Count -gt 0) {
+                        foreach($queuedItem in $queuedItems) {
+                            $itemId = $queuedItem.ItemId
+                            Write-Host "[Push] $($itemId)" -ForegroundColor Green
+                            $runspaceProps = @{
+                                ScriptBlock = $destinationScript
+                                Pool = $pushPool
+                                Session = $DestinationSession
+                                Arguments = @($yaml)
+                            }
+                            $runspace = New-PowerShellRunspace @runspaceProps  
+                            $pushRunspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; ParentId = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
+                            $pushedLookup.Add($itemId, [System.Collections.ArrayList]@()) > $null
+                        }
+                    }
+                }
+                $pushedLookup.Remove($currentRunspace.Id) > $null
+
+                $currentRunspace.Pipe.Dispose()
+                $pushRunspaces.Remove($currentRunspace)
+            }
+
+            if($currentRunspace.Operation -eq "Pull") {
+                [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
+                if(![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---")) {               
+                    $yaml = $response
+                    if($pushedLookup.Contains($currentRunspace.ParentId)) {
+                        Write-Host "[Queue] $($currentRunspace.ParentId) children" -ForegroundColor Cyan
+                        $pushedLookup[$currentRunspace.ParentId].Add([QueueItem]@{"ItemId"=$currentRunspace.Id;"Yaml"=$yaml}) > $null
+                    } else {                    
+                        Write-Host "[Push] $($currentRunspace.Id)" -ForegroundColor Green
+                        $runspaceProps = @{
+                            ScriptBlock = $destinationScript
+                            Pool = $pushPool
+                            Session = $DestinationSession
+                            Arguments = @($yaml)
+                        }
+                        $runspace = New-PowerShellRunspace @runspaceProps  
+                        $pushRunspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; ParentId = $currentRunspace.ParentId; Time = [datetime]::Now; Operation = "Push" }) > $null
+                        $pushedLookup.Add($currentRunspace.Id, [System.Collections.ArrayList]@()) > $null
+                    }
+                }
+
+                if($remainingItemsTree.Contains($currentRunspace.Id)) {
+                    $shallowItems = $remainingItemsTree[$currentRunspace.Id]
+                    foreach($shallowItem in $shallowItems) {
+                        $itemId = $shallowItem.ItemId
+                        if($CopyBehavior -eq "SkipExisting" -and $skipItems.Contains($itemId)) {
+                            Write-Host "[Skip] $($itemId)" -ForegroundColor Cyan
+                            $remainingItemsTree.Remove($itemId)
+                            continue
+                        }
+                        $parentId = $shallowItem.ParentId
                         Write-Host "[Pull] $($itemId)" -ForegroundColor Green
                         $runspaceProps = @{
                             ScriptBlock = $sourceScript
-                            Pool = $pool
+                            Pool = $pullPool
                             Session = $SourceSession
-                            Arguments = @($itemId,$serializeParent,$serializeChildren,$recurseChildren)
+                            Arguments = @($itemId)
                         }
-                        $runspace = New-PowerShellRunspace @runspaceProps                   
-                        $runspaceItem = [PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull"} 
-                        $addToRunspaces = $true
-                        if($pushChildParentLookup.Contains($itemId)) {
-                            $parentId = $pushChildParentLookup[$itemId]
-                            if($pushedLookup.Contains($parentId)) {
-                                $pushChildRunspaceLookup[$itemId] = $runspaceItem
-                                $addToRunspaces = $false
-                            } else {
-                                $pushChildParentLookup.Remove($itemId)
-                            }
-                        }
-
-                        if($addToRunspaces) {
-                            $runspaces.Add($runspaceItem) > $null
-                        }
+                        $runspace = New-PowerShellRunspace @runspaceProps
+                        $pullRunspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; ParentId = $parentId; Time = [datetime]::Now; Operation = "Pull" }) > $null
                     }
-                }
-                $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
-                Write-Host "[$($currentRunspace.Operation)] $($currentRunspace.Id) completed" -ForegroundColor Gray
-                Write-Host "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray
-                if($currentRunspace.Operation -eq "Push") {
-                    [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
-                    if(![string]::IsNullOrEmpty($response)) {
-                        $feedback = $response | ConvertFrom-Json
-                        1..$feedback.TotalItems | % { [System.Threading.Interlocked]::Increment([ref] $totalCounter) } > $null
-                        Write-Host "- Imported $($feedback.ImportedItems)/$($feedback.TotalItems) items in destination" -ForegroundColor Gray
-                    }
-                    $pushedLookup.Remove($currentRunspace.Id) > $null
-
-                    if($pushParentChildrenLookup.Contains($currentRunspace.Id)) {
-                        $childIds = $pushParentChildrenLookup[$currentRunspace.Id]
-                        foreach($childId in $childIds) {
-                            $pushChildParentLookup.Remove($childId)                          
-                            if($pushChildRunspaceLookup.Contains($childId)) {                                
-                                $runspace = $pushChildRunspaceLookup[$childId]
-                                $runspaces.Add($runspace) > $null
-                                $pushChildRunspaceLookup.Remove($childId)
-                            }
-                        }
-
-                        $pushParentChildrenLookup.Remove($currentRunspace.Id)
-                    }
-                }
-                if($currentRunspace.Operation -eq "Pull") {
-                    [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
-                    if(![string]::IsNullOrEmpty($response)) {
-                        $split = $response -split "<#split#>"
-             
-                        $yaml = $split[0]
-                        [bool]$queueChildren = $false
-                        if(![string]::IsNullOrEmpty($yaml)) {
-                            Write-Host "[Push] $($currentRunspace.Id)" -ForegroundColor Green
-                            $runspaceProps = @{
-                                ScriptBlock = $destinationScript
-                                Pool = $pool
-                                Session = $DestinationSession
-                                Arguments = @($yaml,$Overwrite.IsPresent)
-                            }
-                            $runspace = New-PowerShellRunspace @runspaceProps  
-                            $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
-                            $pushedLookup.Add($currentRunspace.Id) > $null
-                            $queueChildren = $true
-                        }
-
-                        if(![string]::IsNullOrEmpty($split[1])) {                              
-                            $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-
-                            foreach($childId in $childIds) {
-                                Write-Host "- [Pull] Adding $($childId) to queue" -ForegroundColor Gray
-                                if(!$Queue.TryAdd($childId)) {
-                                    Write-Host "Failed to add $($childId)" -ForegroundColor White -BackgroundColor Red
-                                }
-                            }
-
-                            if($queueChildren) {
-                                $pushParentChildrenLookup[$currentRunspace.Id] = $childIds
-                                foreach($childId in $childIds) {
-                                    $pushChildParentLookup[$childId] = $currentRunspace.Id
-                                }
-                            }
-                        }
-                    }
+                    $remainingItemsTree.Remove($currentRunspace.Id)                        
                 }
 
                 $currentRunspace.Pipe.Dispose()
-                $runspaces.Remove($currentRunspace)
+                $pullRunspaces.Remove($currentRunspace)
             }
         }
     }
 
-        $pool.Close() 
-        $pool.Dispose()
-    }
+    $pullPool.Close() 
+    $pullPool.Dispose()
+    $pushPool.Close() 
+    $pushPool.Dispose()
+
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
-
     Write-Host "[Done] Completed in $($totalSeconds) seconds" -ForegroundColor Yellow
-    if($processedAny) {
-        Write-Host "- Copied $($totalCounter) items"
-        Write-Host "- Pull count: $($pullCounter)"
-        Write-Host "- Push count: $($pushCounter)"
+
+    if($totalCounter -gt 0) {
+        Write-Host "- Total count: $($totalCounter)"
+        Write-Host " - Pull count: $($pullCounter)"
+        Write-Host " - Push count: $($pushCounter)"
     }
 }
