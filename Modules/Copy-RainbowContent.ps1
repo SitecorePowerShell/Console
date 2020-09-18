@@ -66,6 +66,7 @@ function Copy-RainbowContent {
         [string]$RevisionId
         [string]$ParentId
     }
+
     $compareScript = {
         $rootId = "{ROOT_ID}"
         $recurseChildren = [bool]::Parse("{RECURSE_CHILDREN}")
@@ -90,13 +91,14 @@ function Copy-RainbowContent {
             $itemIds -join "|"
         }
     }
-    $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren -or $RemoveNotInSource))
+    $compareScript = [scriptblock]::Create($compareScript.ToString().Replace("{ROOT_ID}", $RootId).Replace("{RECURSE_CHILDREN}", $recurseChildren))
 
     Write-Host "- Querying item list from source"
     $sourceTree = @{}
     $sourceTree.Add($RootId, [System.Collections.Generic.List[ShallowItem]]@())
     $sourceRecordsString = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
     $sourceShallowItemsCount = 0
+    $sourceItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     foreach($sourceRecord in $sourceRecordsString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)) {
         $sourceShallowItemsCount++
         $split = $sourceRecord.Split("+")
@@ -105,6 +107,7 @@ function Copy-RainbowContent {
             "RevisionId"=$split[1].Replace("R:","")
             "ParentId"=$split[2].Replace("P:","")
         }
+        $sourceItemsHash.Add($shallowItem.ItemId) > $null
         if(!$sourceTree.ContainsKey($shallowItem.ParentId)) {
             $sourceTree[$shallowItem.ParentId] = [System.Collections.Generic.List[ShallowItem]]@()
         }
@@ -115,8 +118,9 @@ function Copy-RainbowContent {
     }
     Write-Host " - Found $($sourceShallowItemsCount) item(s)"
 
-    $skipItems = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
-    if($CopyBehavior -eq "SkipExisting") {
+    $skipItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
+    $destinationItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
+    if($CopyBehavior -eq "SkipExisting" -or $RemoveNotInSource) {
         Write-Host "- Querying item list from source"
         $destinationRecordsString = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
         $destinationShallowItems = [System.Collections.Generic.List[ShallowItem]]@()
@@ -127,13 +131,13 @@ function Copy-RainbowContent {
                 "RevisionId"=$split[1].Replace("R:","")
                 "ParentId"=$split[2].Replace("P:","")
             }
-
+            $destinationItemsHash.Add($shallowItem.ItemId) > $null
             if($sourceTree.ContainsKey($shallowItem.ItemId)) {
-                $skipItems.Add($shallowItem.ItemId) > $null
+                $skipItemsHash.Add($shallowItem.ItemId) > $null
             }
         }
 
-        Write-Host " - Found $($skipItems.Count) item(s)"
+        Write-Host " - Found $($skipItemsHash.Count) item(s)"
     }
 
     $totalCounter = 0
@@ -170,20 +174,14 @@ function Copy-RainbowContent {
         $script = {
             $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
             $db = Get-Database -Name "master"
-            $parentItem = $db.GetItem([ID]$parentId)
+            $item = $db.GetItem([ID]$itemId)
 
-            $parentYaml = $parentItem | ConvertTo-RainbowYaml
-
-            $builder = New-Object System.Text.StringBuilder
-            $builder.AppendLine($parentYaml) > $null
-
-            $builder.ToString()
-            $sd.Dispose() > $null          
+            $itemYaml = $item | ConvertTo-RainbowYaml  
+            $itemYaml       
         }
 
         $scriptString = $script.ToString()
-        $trueFalseHash = @{$true="`$true";$false="`$false"}
-        $scriptString = "`$parentId = '$($RootId)';" + $scriptString
+        $scriptString = "`$itemId = '$($RootId)';" + $scriptString
         $script = [scriptblock]::Create($scriptString)
 
         Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
@@ -255,7 +253,7 @@ function Copy-RainbowContent {
         [string]$Yaml
     }
 
-    if($CopyBehavior -eq "SkipExisting" -and $skipItems.Contains($RootId)) {
+    if($CopyBehavior -eq "SkipExisting" -and $skipItemsHash.Contains($RootId)) {
         Write-Host "[Skip] $($RootId)" -ForegroundColor Green
         $runspaceProps = @{
             ScriptBlock = {}
@@ -350,7 +348,7 @@ function Copy-RainbowContent {
                     $shallowItems = $remainingItemsTree[$currentRunspace.Id]
                     foreach($shallowItem in $shallowItems) {
                         $itemId = $shallowItem.ItemId
-                        if($CopyBehavior -eq "SkipExisting" -and $skipItems.Contains($itemId)) {
+                        if($CopyBehavior -eq "SkipExisting" -and $skipItemsHash.Contains($itemId)) {
                             Write-Host "[Skip] $($itemId)" -ForegroundColor Cyan
                             $remainingItemsTree.Remove($itemId)
                             continue
@@ -379,6 +377,27 @@ function Copy-RainbowContent {
     $pullPool.Dispose()
     $pushPool.Close() 
     $pushPool.Dispose()
+
+    if($RemoveNotInSource) {
+        $removeItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
+        $removeItemsHash.UnionWith($destinationItemsHash)
+        $removeItemsHash.ExceptWith($sourceItemsHash)
+
+        if($removeItemsHash.Count -gt 0) {
+            Write-Host "- Removing items from destination not in source"
+            $itemsNotInSource = $removeItemsHash -join "|"
+            $removeNotInSourceScript = {
+                $itemsNotInSource = "{ITEM_IDS}"
+                $itemsNotInSourceIds = ($itemsNotInSource).Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                foreach($itemId in $itemsNotInSourceIds) {
+                    Get-Item -Path "master:" -ID $itemId -ErrorAction 0 | Remove-Item -Recurse
+                }
+            }
+            $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
+            Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
+            Write-Host "- Removed $($removeItemsHash.Count) item(s) from the destination"
+        }
+    }
 
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
