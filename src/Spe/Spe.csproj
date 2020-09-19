@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -87,14 +87,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="Rainbow, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Core.2.1.1\lib\net452\Rainbow.dll</HintPath>
+    <Reference Include="Rainbow, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rainbow.Core.2.1.2\lib\net452\Rainbow.dll</HintPath>
     </Reference>
-    <Reference Include="Rainbow.Storage.Sc, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Storage.Sc.2.1.1\lib\net452\Rainbow.Storage.Sc.dll</HintPath>
+    <Reference Include="Rainbow.Storage.Sc, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rainbow.Storage.Sc.2.1.2\lib\net452\Rainbow.Storage.Sc.dll</HintPath>
     </Reference>
-    <Reference Include="Rainbow.Storage.Yaml, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Storage.Yaml.2.1.1\lib\net452\Rainbow.Storage.Yaml.dll</HintPath>
+    <Reference Include="Rainbow.Storage.Yaml, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rainbow.Storage.Yaml.2.1.2\lib\net452\Rainbow.Storage.Yaml.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Buckets, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Buckets.NoReferences.8.2.170728\lib\NET452\Sitecore.Buckets.dll</HintPath>
@@ -153,10 +153,13 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Unicorn, Version=4.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Core.4.1.2-pre3\lib\net452\Unicorn.dll</HintPath>
+      <HintPath>..\..\packages\Unicorn.Core.4.1.2-pre5\lib\net452\Unicorn.dll</HintPath>
     </Reference>
     <Reference Include="Unicorn.Roles, Version=4.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Roles.Core.4.1.2-pre3\lib\net452\Unicorn.Roles.dll</HintPath>
+      <HintPath>..\..\packages\Unicorn.Roles.Core.4.1.2-pre5\lib\net452\Unicorn.Roles.dll</HintPath>
+    </Reference>
+    <Reference Include="Unicorn.Users, Version=4.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unicorn.Users.Core.4.1.2-pre5\lib\net452\Unicorn.Users.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -584,8 +587,8 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config.disabled">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Rainbow.config" />
     <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
+    <Content Include="App_Config\Include\Rainbow.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.UI.IdentityServer.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.UI.DeployedContentEditorWarnings.config.disabled" />
@@ -603,6 +606,9 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.DataProvider.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
+    <Content Include="App_Config\Include\Unicorn\Unicorn.Users.DataProvider.config" />
+    <Content Include="App_Config\Include\Unicorn\Unicorn.Users.config" />
+    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Users.config.example" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />

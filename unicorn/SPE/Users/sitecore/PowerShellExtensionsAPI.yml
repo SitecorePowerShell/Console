@@ -1,0 +1,31 @@
+﻿---
+Username: |
+  sitecore\PowerShellExtensionsAPI
+Email: 
+Comment: Default user used when accessing Sitecore via SPE web services.
+Created: "2020-09-17T01:39:19.0000000Z"
+IsApproved: True
+Properties:
+- Key: FullName
+  Value: Sitecore PowerShell Extensions API User
+  ValueType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+  IsCustom: False
+- Key: IsAdministrator
+  Value: True
+  ValueType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+  IsCustom: False
+- Key: Portrait
+  Value: office/16x16/default_user.png
+  ValueType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+  IsCustom: False
+- Key: digestcredentialhash
+  Value: 64fcdfacf0714152593e80677ec09bac
+  ValueType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+  IsCustom: True
+- Key: digestcredentialhashwithoutdomain
+  Value: 5231759793c16d2f33c925c3070dc8ea
+  ValueType: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+  IsCustom: True
+Roles:
+  MemberOf: |
+    sitecore\PowerShell Extensions Remoting
