@@ -12,12 +12,12 @@ namespace Spe.Core.Host
         public bool SilenceOutput { get; set; }
         public OutputBuffer SilencedOutput { get; private set; }
 
-        public string ToHtml()
+        public string ToHtml(bool enableGuidLink = true)
         {
             var output = new StringBuilder(10240);
             foreach (var outputLine in this)
             {
-                outputLine.GetHtmlLine(output);
+                outputLine.GetHtmlLine(output, enableGuidLink);
             }
             return output.ToString();
         }

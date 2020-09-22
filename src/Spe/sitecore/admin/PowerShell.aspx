@@ -14,11 +14,14 @@
             color: red;
         }
 
+        .content textarea {
+            font-family: "Cascadia Code", Monaco, Menlo, "Ubuntu Mono", source-code-pro, monospace;
+        }
+
         .console pre {
-            margin: 4px 2px;
+            margin: 0 10px;
             font-family: "Cascadia Code", Monaco, Menlo, "Ubuntu Mono", source-code-pro, monospace;
             font-size: 20px;
-            
         }
 
         #ScriptResult pre {
@@ -28,22 +31,22 @@
         .top-half, .bottom-half {
             left: 0;
             right: 0;
-            height: 50%;
             position: fixed;
             text-align: left;
         }
 
         .top-half {
             top: 0;
-            width: 860px;
+            width: 900px;
             margin: 0 auto;
             margin-bottom: 24px;
             background: white;
             overflow: auto;
+            height: 40%;
         }
 
         .top-half .content {
-            padding: 2em 100px 0 100px;
+            padding: 0 10px;
         }
 
         .bottom-half {
@@ -51,6 +54,7 @@
             overflow: auto;
             background-color: #012456;
             width: 100%;
+            height: 60%;
         }
     </style>
 </head>
@@ -64,7 +68,7 @@
                 <asp:PlaceHolder ID="ErrorMessage" runat="server">
                     <p>&nbsp;</p>
                 </asp:PlaceHolder>
-                <asp:TextBox TextMode="MultiLine" Rows="10" Columns="80" runat="server" ID="Query" />
+                <asp:TextBox TextMode="MultiLine" Rows="15" Columns="100" runat="server" ID="Query" placeholder="Get-Item -Path 'master:'" />
                 <br />
                 <asp:Button ID="Button1" runat="server" OnClick="Execute" Text="Execute" />
                 <div>&nbsp;</div>

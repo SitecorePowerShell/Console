@@ -28,12 +28,12 @@ namespace Spe.Core.Host
         public ConsoleColor BackgroundColor { get; internal set; }
         public bool Terminated { get; internal set; }
 
-        public void GetHtmlLine(StringBuilder output)
+        public void GetHtmlLine(StringBuilder output, bool enableGuidLink = true)
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
 
             outString = HttpUtility.HtmlEncode(outString);
-            if (outString.Contains("{"))
+            if (enableGuidLink && outString.Contains("{"))
             {
                 outString = Regex.Replace(outString,
                     @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
