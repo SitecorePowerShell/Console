@@ -1,0 +1,16 @@
+{
+  "name": "spe-jwt-demo",
+  "version": "1.0.0",
+  "description": "Example for connecting to SPE Remoting with JavaScript!",
+  "main": "demo.js",
+  "dependencies": {
+    "base64url": "^3.0.1",
+    "https-proxy-agent": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

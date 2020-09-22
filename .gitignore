@@ -68,3 +68,4 @@ Spe/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo\.yml
 
 Spe/Data/Translations/**/*.csv
 /docker-compose.override.yml
+node_modules/

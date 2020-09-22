@@ -1,7 +1,8 @@
 ﻿Clear-Host
 
 $sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
-$name = 'sitecore\PowerShellExtensionsAPI'
+#$name = 'sitecore\PowerShellExtensionsAPI'
+$name = 'sitecore\admin'
 $hostname = "https://spe.dev.local"
 
 Import-Module -Name SPE -Force
