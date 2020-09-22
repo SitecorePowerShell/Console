@@ -163,6 +163,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Applications\Administration\AdminPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Client\Applications\Administration\NonSecurePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Client\Applications\Administration\PowerShell.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Client\Applications\FieldEditor.cs" />
     <Compile Include="Client\Applications\ImmediateDebugWindowLauncher.cs" />
     <Compile Include="Client\Applications\PowerShellReports.cs" />
@@ -688,6 +697,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\reports.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
+    <Content Include="sitecore\admin\PowerShell.aspx" />
     <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
     <Content Include="sitecore modules\PowerShell\Scripts\purl.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\typed.min.js" />
