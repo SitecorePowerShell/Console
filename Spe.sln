@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spe", "src\Spe\Spe.csproj", "{FAC57610-989C-4D7E-8D58-CCC914688096}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -21,6 +21,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spe.Sitecore92", "src\Spe.Sitecore92\Spe.Sitecore92.csproj", "{E033FFD9-6E61-44A3-8882-61458728FD0C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spe.Abstractions", "src\Spe.Abstractions\Spe.Abstractions.csproj", "{9AADD1D5-5CD7-4B41-9A79-29D69E4CFF0A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{6B0F8804-8DB4-4B69-9F7D-8E68D0AE4017}"
+	ProjectSection(SolutionItems) = preProject
+		src\UserConfiguration\App_Config\Include\z.Spe\z.Spe.Development.User.config = src\UserConfiguration\App_Config\Include\z.Spe\z.Spe.Development.User.config
+		src\UserConfiguration\App_Config\Include\z.Spe\z.Spe.Development.User.config.sample = src\UserConfiguration\App_Config\Include\z.Spe\z.Spe.Development.User.config.sample
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

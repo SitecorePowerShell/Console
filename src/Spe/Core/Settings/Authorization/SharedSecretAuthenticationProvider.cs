@@ -7,7 +7,6 @@ using System.Web.Script.Serialization;
 using Sitecore.Exceptions;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;
-using Spe.Core.Utility;
 
 namespace Spe.Core.Settings.Authorization
 {

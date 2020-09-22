@@ -6,13 +6,10 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Mime;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
-using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using Sitecore;
 using Sitecore.Configuration;
@@ -69,6 +66,18 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var request = context.Request;
             var requestParameters = request.Params;
 
+            var apiVersion = requestParameters.Get("apiVersion");
+            var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
+            var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
+                ? ApiVersionToServiceMapping[serviceMappingKey]
+                : string.Empty;
+
+            // verify that the service is enabled
+            if (!CheckServiceEnabled(context, apiVersion, request.HttpMethod))
+            {
+                return;
+            }
+
             var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
             var username = requestParameters.Get("user");
             var password = requestParameters.Get("password");
@@ -107,18 +116,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         return;
                     }
                 }
-            }
-
-            var apiVersion = requestParameters.Get("apiVersion");
-            var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
-            var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
-                ? ApiVersionToServiceMapping[serviceMappingKey]
-                : string.Empty;
-
-            // verify that the service is enabled
-            if (!CheckServiceEnabled(context, apiVersion, request.HttpMethod))
-            {
-                return;
             }
 
             // verify that the user is authorized to access the end point
@@ -280,12 +277,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (isAuthenticated) return true;
 
-            const string disabledMessage =
-                "The request could not be completed because the service requires authentication.";
+            var disabledMessage =
+                $"The request could not be completed because the service requires authentication. Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.";
 
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = disabledMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
+            context.Response.TrySkipIisCustomErrors = true;
+            context.Response.ContentType = "text/plain";
             PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
 
             return false;
@@ -315,9 +314,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName);
             if (isAuthorized) return true;
 
+            var errorMessage = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
+
             context.Response.StatusCode = 401;
-            context.Response.StatusDescription = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
+            context.Response.StatusDescription = errorMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
+            context.Response.TrySkipIisCustomErrors = true;
+            context.Response.ContentType = "text/plain";
             PowerShellLog.Error($"Attempt to call the '{serviceName}' service failed as user '{authUserName}' was not authorized.");
 
             return false;

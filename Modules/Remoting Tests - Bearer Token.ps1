@@ -16,7 +16,7 @@ Stop-ScriptSession -Session $session
 
 $issuer = 'Web API'
 $audience = $hostname
-$token = New-Jwt -Algorithm 'HS512' -Issuer $issuer -Audience $audience -Name $name -SecretKey $sharedSecret -ValidforSeconds 30
+$token = New-Jwt -Algorithm 'HS256' -Issuer $issuer -Audience $audience -Name $name -SecretKey $sharedSecret -ValidforSeconds 30
 $url = "$($hostname)/-/script/v2/master/HomeAndDescendants?offset=3&limit=2&fields=(Name,ItemPath,Id)"
 $contentType = 'application/json'
 $headers = @{
