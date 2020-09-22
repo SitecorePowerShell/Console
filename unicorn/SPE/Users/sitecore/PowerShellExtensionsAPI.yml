@@ -4,7 +4,7 @@ Username: |
 Email: 
 Comment: Default user used when accessing Sitecore via SPE web services.
 Created: "2020-09-17T01:39:19.0000000Z"
-IsApproved: True
+IsApproved: False
 Properties:
 - Key: FullName
   Value: Sitecore PowerShell Extensions API User
