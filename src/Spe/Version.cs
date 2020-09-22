@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("6.1.1.*")]
-[assembly: AssemblyFileVersion("6.1.1.0")]
-[assembly: AssemblyInformationalVersion("6.1.1.0")]
+[assembly: AssemblyVersion("6.2.0.*")]
+[assembly: AssemblyFileVersion("6.2.0.0")]
+[assembly: AssemblyInformationalVersion("6.2.0.0")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sitecore PowerShell Extensions Team")]

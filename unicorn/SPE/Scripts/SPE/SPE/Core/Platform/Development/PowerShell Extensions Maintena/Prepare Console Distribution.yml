@@ -38,7 +38,7 @@ SharedFields:
     * Backup your script library!
     
     AFTER UPGRADING THE MODULE
-    * Sitecore 9.1+ : Enable Spe.IdentityServer.config
+    * Sitecore 9.1+ when using Identity Server : Enable Spe.IdentityServer.config
     * Clean your browser cache!
     * Test all of your custom scripts!
     * Rebuild the integration points
@@ -56,7 +56,7 @@ SharedFields:
     Copyright (c) 2013-$($currentYear) Michael West
     
     Additional Resources:
-    https://sitecorepowershell.com/
+    https://doc.sitecorepowershell.com/
     https://blog.najmanowicz.com/
     https://michaellwest.blogspot.com/
     "@
@@ -92,6 +92,8 @@ SharedFields:
     $package.Sources.Add($source);
     
     $source = Get-Item "$AppPath\bin\Spe*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
+    $package.Sources.Add($source);
+    $source = Get-Item "$AppPath/sitecore/admin/PowerShell.aspx" | New-ExplicitFileSource -Name "PowerShell Admin Page"
     $package.Sources.Add($source);
     $source = Get-Item "$AppPath/sitecore/shell/Themes/Standard/PowerShell.zip" | New-ExplicitFileSource -Name "Icons"
     $package.Sources.Add($source);
