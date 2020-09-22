@@ -6,9 +6,12 @@ $hostname = "https://spe.dev.local"
 
 Import-Module -Name SPE -Force
 $session = New-ScriptSession -Username $name -SharedSecret $sharedSecret -ConnectionUri $hostname
+$watch = [System.Diagnostics.Stopwatch]::StartNew()
 Invoke-RemoteScript -ScriptBlock {
     $env:COMPUTERNAME
-} -Session $session
+} -Session $session -Raw
+$watch.Stop()
+$watch.ElapsedMilliseconds / 1000
 Stop-ScriptSession -Session $session
 
 $issuer = 'Web API'
@@ -21,4 +24,4 @@ $headers = @{
     'Authorization' = "Bearer $($token)"
 } 
 
-#Invoke-RestMethod -Headers $headers -Uri $url
+Invoke-RestMethod -Headers $headers -Uri $url
