@@ -202,6 +202,7 @@
     <Compile Include="Commands\Data\RestoreArchiveItemCommand.cs" />
     <Compile Include="Commands\Data\Search\BaseIndexItemCommand.cs" />
     <Compile Include="Commands\Data\Search\FilterType.cs" />
+    <Compile Include="Commands\Data\Search\UpdateSearchIndexItemCommand.cs" />
     <Compile Include="Commands\Data\Search\NewSearchPredicateCommand.cs" />
     <Compile Include="Commands\Data\Search\SearchCriteria.cs" />
     <Compile Include="Commands\Data\Search\BaseSearchCommand.cs" />

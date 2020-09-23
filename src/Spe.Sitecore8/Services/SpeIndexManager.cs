@@ -12,6 +12,12 @@ namespace Spe.VersionSpecific.Services
             return job == null ? null : new SpeJob(job);
         }
 
+        public IJob UpdateItem(ISearchIndex index, IIndexableUniqueId indexableId)
+        {
+            var job = IndexCustodian.UpdateItem(index, indexableId);
+            return job == null ? null : new SpeJob(job);
+        }
+
         public IJob Refresh(ISearchIndex index, IIndexable indexable)
         {
             var job = IndexCustodian.Refresh(index, indexable);
