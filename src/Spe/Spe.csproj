@@ -200,6 +200,7 @@
     <Compile Include="Commands\Data\GetArchiveItemCommand.cs" />
     <Compile Include="Commands\Data\RemoveArchiveItemCommand.cs" />
     <Compile Include="Commands\Data\RestoreArchiveItemCommand.cs" />
+    <Compile Include="Commands\Data\Search\BaseIndexItemCommand.cs" />
     <Compile Include="Commands\Data\Search\FilterType.cs" />
     <Compile Include="Commands\Data\Search\NewSearchPredicateCommand.cs" />
     <Compile Include="Commands\Data\Search\SearchCriteria.cs" />
