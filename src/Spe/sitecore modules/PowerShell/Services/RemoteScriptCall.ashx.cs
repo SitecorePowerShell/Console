@@ -122,13 +122,22 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            var authUserName = string.IsNullOrEmpty(username) ? authenticationManager.CurrentUsername : username;
+
+            if (string.IsNullOrEmpty(authUserName))
+            {
+                RejectAuthenticationMethod(context, serviceName);
+                return;
+            }
+
+            var identity = new AccountIdentity(authUserName);
+            if (!string.IsNullOrEmpty(password))
             {
                 try
                 {
-                    if (authenticationManager.ValidateUser(username, password))
+                    if (authenticationManager.ValidateUser(identity.Name, password))
                     {
-                        authenticationManager.SwitchToUser(username, true);
+                        authenticationManager.SwitchToUser(identity.Name, true);
                     }
                     else
                     {
@@ -144,9 +153,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             // verify that the user is authorized to access the end point
-            var authUserName = string.IsNullOrEmpty(username) ? authenticationManager.CurrentUsername : username;
-            var identity = new AccountIdentity(authUserName);
-
             if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
             {
                 return;
