@@ -72,8 +72,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 ? ApiVersionToServiceMapping[serviceMappingKey]
                 : string.Empty;
 
+            PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
+            PowerShellLog.Debug($"'{request.Url}'");
+
             // verify that the service is enabled
-            if (!CheckServiceEnabled(context, apiVersion, request.HttpMethod))
+            if (!CheckServiceEnabled(context, serviceName))
             {
                 return;
             }
@@ -82,6 +85,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var username = requestParameters.Get("user");
             var password = requestParameters.Get("password");
             var authHeader = request.Headers["Authorization"];
+
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
                 if (authHeader.StartsWith("Basic")) {
@@ -106,15 +110,36 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            RejectAuthenticationMethod(context);
+                            RejectAuthenticationMethod(context, serviceName);
                             return;
                         }
                     }
                     catch (SecurityException ex)
                     {
-                        RejectAuthenticationMethod(context, ex);
+                        RejectAuthenticationMethod(context, serviceName, ex);
                         return;
                     }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            {
+                try
+                {
+                    if (authenticationManager.ValidateUser(username, password))
+                    {
+                        authenticationManager.SwitchToUser(username, true);
+                    }
+                    else
+                    {
+                        RejectAuthenticationMethod(context, serviceName);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    RejectAuthenticationMethod(context, serviceName, ex);
+                    return;
                 }
             }
 
@@ -125,19 +150,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
             {
                 return;
-            }
-
-            lock (LoginLock)
-            {
-                // login user if specified explicitly
-                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-                {
-                    if (!authenticationManager.Login(identity.Name, password))
-                    {
-                        RejectAuthenticationMethod(context);
-                        return;
-                    }
-                }
             }
 
             var isAuthenticated = authenticationManager.IsAuthenticated;
@@ -175,9 +187,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 PowerShellLog.Error($"The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
                 return;
             }
-
-            PowerShellLog.Info($"'{serviceMappingKey}' called by user: '{username}'");
-            PowerShellLog.Debug($"'{request.Url}'");
 
             Item scriptItem = null;
 
@@ -225,50 +234,30 @@ namespace Spe.sitecore_modules.PowerShell.Services
             ProcessScript(context, scriptItem);
         }
 
-        public bool IsReusable => true;
-
-        private static bool CheckServiceEnabled(HttpContext context, string apiVersion, string httpMethod)
+        private static string GetIp(HttpRequest request)
         {
-            bool isEnabled;
+            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
 
-            switch (apiVersion)
+            if (string.IsNullOrEmpty(ip))
             {
-                case "1":
-                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv1);
-                    break;
-                case "2":
-                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv2);
-                    break;
-                case "file":
-                    isEnabled = (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileUpload) &&
-                                 httpMethod.Is("POST")) ||
-                                (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileDownload) &&
-                                 httpMethod.Is("GET"));
-                    break;
-                case "media":
-                    isEnabled = ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaUpload) &&
-                                  httpMethod.Is("POST")) ||
-                                 (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaDownload) &&
-                                  httpMethod.Is("GET")));
-                    break;
-                case "handle":
-                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceHandleDownload);
-                    break;
-                case "script":
-                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting);
-                    break;
-                default:
-                    isEnabled = false;
-                    break;
+                ip = request.ServerVariables["REMOTE_ADDR"];
             }
 
+            return ip;
+        }
+
+        public bool IsReusable => true;
+
+        private static bool CheckServiceEnabled(HttpContext context, string serviceName)
+        {
+            var isEnabled = WebServiceSettings.IsEnabled(serviceName);
             if (isEnabled) return true;
 
-            const string disabledMessage = "The request could not be completed because the service is disabled.";
+            var errorMessage = $"The request could not be completed because the {serviceName} service is disabled.";
 
             context.Response.StatusCode = 403;
-            context.Response.StatusDescription = disabledMessage;
-            PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as it is not enabled.");
+            context.Response.StatusDescription = errorMessage;
+            PowerShellLog.Warn(errorMessage);
 
             return false;
         }
@@ -277,31 +266,30 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (isAuthenticated) return true;
 
-            var disabledMessage =
-                $"The request could not be completed because the service requires authentication. Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.";
+            var errorMessage =
+                $"The request could not be completed because the {serviceName} service requires authentication. Either the user is not logged in, authentication failed, or no credentials provided.";
 
             context.Response.StatusCode = 401;
-            context.Response.StatusDescription = disabledMessage;
+            context.Response.StatusDescription = errorMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
             context.Response.TrySkipIisCustomErrors = true;
             context.Response.ContentType = "text/plain";
-            PowerShellLog.Error($"Attempt to call the {serviceName} service failed as - user not logged in, authentication failed, or no credentials provided.");
+            PowerShellLog.Warn(errorMessage);
 
             return false;
         }
 
-        private static void RejectAuthenticationMethod(HttpContext context, Exception ex = null)
+        private static void RejectAuthenticationMethod(HttpContext context, string serviceName, Exception ex = null)
         {
-            const string disabledMessage =
-                "The request could not be completed because the provided credentials could not be validated.";
+            var errorMessage = $"A request to the {serviceName} service could not be completed because the provided credentials are invalid.";
             
             context.Response.StatusCode = 401;
-            context.Response.StatusDescription = disabledMessage;
+            context.Response.StatusDescription = errorMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
             context.Response.TrySkipIisCustomErrors = true;
             context.Response.ContentType = "text/plain";
 
-            PowerShellLog.Error($"Credentials provided to the service are invalid.");
+            PowerShellLog.Warn(errorMessage);
             if (ex != null)
             {
                 context.Response.StatusDescription += $" {ex.Message}";
@@ -314,14 +302,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName);
             if (isAuthorized) return true;
 
-            var errorMessage = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
+            var errorMessage = $"The specified user {authUserName} is not authorized for the {serviceName} service.";
 
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = errorMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
             context.Response.TrySkipIisCustomErrors = true;
             context.Response.ContentType = "text/plain";
-            PowerShellLog.Error($"Attempt to call the '{serviceName}' service failed as user '{authUserName}' was not authorized.");
+            PowerShellLog.Warn(errorMessage);
 
             return false;
         }
