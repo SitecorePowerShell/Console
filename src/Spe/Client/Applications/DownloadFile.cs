@@ -55,7 +55,7 @@ namespace Spe.Client.Applications
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
                 Context.User?.Name))
             {
-                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Download File dialog - denied.");
+                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Download File dialog - denied.");
                 return;
             }
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
@@ -64,8 +64,7 @@ namespace Spe.Client.Applications
             if (Context.ClientPage.IsEvent)
                 return;
 
-            UrlHandle handle = null;
-            if (!TypeResolver.Resolve<IUrlHandleWrapper>().TryGetHandle(out handle))
+            if (!TypeResolver.Resolve<IUrlHandleWrapper>().TryGetHandle(out var handle))
             {
                 FileNameLabel.Text =
                     "Invalid dialog invocation.";

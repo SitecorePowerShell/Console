@@ -56,7 +56,7 @@ namespace Spe.Client.Applications
                 ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceClient,
                     Context.User?.Name))
             {
-                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Console - denied.");
+                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Console - denied.");
                 return;
             }
             base.OnLoad(e);

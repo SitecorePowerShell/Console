@@ -618,7 +618,7 @@ namespace Spe.Core.Host
             {
                 return null;
             }
-
+            
             if (Runspace.DefaultRunspace == null)
             {
                 Runspace.DefaultRunspace = host.Runspace;
@@ -626,7 +626,7 @@ namespace Spe.Core.Host
 
             if (!internalScript)
             {
-                PowerShellLog.Info($"Executing a script in ScriptSession '{Key}'.");
+                PowerShellLog.Debug($"Executing a script in ScriptSession '{Key}'.");
                 PowerShellLog.Debug(script);
             }
 

@@ -176,7 +176,7 @@ namespace Spe.Client.Applications
                 ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceClient,
                     Context.User.Name))
             {
-                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell ISE - denied.");
+                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell ISE - denied.");
                 return;
             }
 

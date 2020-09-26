@@ -180,7 +180,7 @@ namespace Spe.Client.Applications
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
                 Context.User?.Name))
             {
-                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Script Runner Dialog - denied.");
+                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Script Runner Dialog - denied.");
                 return;
             }
 

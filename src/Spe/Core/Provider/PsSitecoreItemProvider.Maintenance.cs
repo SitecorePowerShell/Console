@@ -17,7 +17,7 @@ namespace Spe.Core.Provider
             {
                 providerInfo.Description = "Sitecore Content Provider";
                 this.providerInfo = providerInfo;
-                PowerShellLog.Info($"Executing {GetType().Name}.Start(providerInfo='{providerInfo.Name ?? "null"}')");
+                PowerShellLog.Debug($"Executing {GetType().Name}.Start(providerInfo='{providerInfo.Name ?? "null"}')");
                 return providerInfo;
             }
             catch (Exception ex)
