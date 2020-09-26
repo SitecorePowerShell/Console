@@ -22,7 +22,7 @@ function Copy-RainbowContent {
         [ValidateSet("SkipExisting", "Overwrite", "CompareRevision")]
         [string]$CopyBehavior,
 
-        [switch]$SkipDependencyCheck,
+        [switch]$CheckDependencies,
 
         [switch]$Detailed
     )
@@ -38,7 +38,7 @@ function Copy-RainbowContent {
             Write-Host $Message -ForegroundColor $ForegroundColor
         }
     }
-    
+   
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $recurseChildren = $Recurse.IsPresent
     $skipExisting = $CopyBehavior -eq "SkipExisting"
@@ -64,7 +64,16 @@ function Copy-RainbowContent {
         $result
     }
 
-    if(!$SkipDependencyCheck) {
+    if($CheckDependencies) {
+        Write-Message "Verifying connection with remote servers"
+        if(-not(Test-RemoteConnection -Session $SourceSession -Quiet)) {
+            Write-Message "- Unable to connect to $($SourceSession.Connection[0].BaseUri)"
+            exit
+        }
+        if(-not(Test-RemoteConnection -Session $DestinationSession -Quiet)) {
+            Write-Message "Unable to connect to $($DestinationSession.Connection[0].BaseUri)"
+            exit
+        }
         Write-Message "Verifying both systems have Rainbow and Unicorn" -Hide:(!$Detailed)
         $isReady = Invoke-RemoteScript -ScriptBlock $dependencyScript -Session $SourceSession
 
@@ -134,6 +143,10 @@ function Copy-RainbowContent {
     $sourceTree = [System.Collections.Generic.Dictionary[string,[System.Collections.Generic.List[ShallowItem]]]]([StringComparer]::OrdinalIgnoreCase)
     $sourceTree.Add($RootId, [System.Collections.Generic.List[ShallowItem]]@())
     $sourceRecordsString = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
+    if([string]::IsNullOrEmpty($sourceRecordsString)) {
+        Write-Message "- No items found in source"
+        exit
+    }
     $sourceShallowItemsCount = 0
     $sourceItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $sourceItemRevisionLookup = @{}
@@ -147,16 +160,15 @@ function Copy-RainbowContent {
         }
         $sourceItemsHash.Add($shallowItem.ItemId) > $null
         $sourceItemRevisionLookup[$shallowItem.ItemId] = $shallowItem.RevisionId
-        if(!$foundRootId -and $shallowItem.ItemId -eq $RootId) {
-            $foundRootId = $true
-            continue
+        if(!$sourceTree.ContainsKey($shallowItem.ItemId)) {
+            $sourceTree[$shallowItem.ItemId] = [System.Collections.Generic.List[ShallowItem]]@()
         }
-        $sourceTree[$shallowItem.ItemId] = [System.Collections.Generic.List[ShallowItem]]@()
         $childCollection = $sourceTree[$shallowItem.ParentId]
         if(!$childCollection) {
-            $sourceTree[$shallowItem.ParentId] = [System.Collections.Generic.List[ShallowItem]]@()
+            $childCollection = [System.Collections.Generic.List[ShallowItem]]@()
         }
-        $sourceTree[$shallowItem.ParentId].Add($shallowItem)
+        $childCollection.Add($shallowItem) > $null
+        $sourceTree[$shallowItem.ParentId] = $childCollection
     }
     $s1.Stop()
     Write-Message " - Found $($sourceShallowItemsCount) item(s) in $($s1.ElapsedMilliseconds / 1000) seconds"
@@ -169,20 +181,22 @@ function Copy-RainbowContent {
         $d1 = [System.Diagnostics.Stopwatch]::StartNew()
         $destinationRecordsString = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
         $destinationShallowItemsCount = 0
-        foreach($destinationRecord in $destinationRecordsString.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)) {
-            $destinationShallowItemsCount++
-            $split = $destinationRecord.Split("+")
-            $shallowItem = [ShallowItem]@{
-                "ItemId"=$split[0].Replace("I:","")
-                "RevisionId"=$split[1].Replace("R:","")
-                "ParentId"=$split[2].Replace("P:","")
+        if(![string]::IsNullOrEmpty($destinationRecordsString)) {
+            foreach($destinationRecord in $destinationRecordsString.Split("|".ToCharArray(), [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $destinationShallowItemsCount++
+                $split = $destinationRecord.Split("+")
+                $shallowItem = [ShallowItem]@{
+                    "ItemId"=$destinationRecord.Substring(2,38)
+                    "RevisionId"=$destinationRecord.Substring(43,38)
+                    "ParentId"=$destinationRecord.Substring(84,38)
+                }
+                $destinationItemsHash.Add($shallowItem.ItemId) > $null
+                $destinationItemRevisionLookup[$shallowItem.ItemId] = $shallowItem.RevisionId
+                if(($compareRevision -and $sourceItemRevisionLookup[$shallowItem.ItemId] -eq $shallowItem.RevisionId) -or
+                    ($skipExisting -and $sourceTree.ContainsKey($shallowItem.ItemId))) {
+                    $skipItemsHash.Add($shallowItem.ItemId) > $null
+                }            
             }
-            $destinationItemsHash.Add($shallowItem.ItemId) > $null
-            if(($compareRevision -and $sourceItemRevisionLookup[$shallowItem.ItemId] -eq $shallowItem.RevisionId) -or
-                ($skipExisting -and $sourceTree.ContainsKey($shallowItem.ItemId))) {
-                $skipItemsHash.Add($shallowItem.ItemId) > $null
-            }
-            $destinationItemRevisionLookup[$shallowItem.ItemId] = $shallowItem.RevisionId
         }
         $d1.Stop()
         Write-Message " - Found $($destinationShallowItemsCount) item(s) in $($d1.ElapsedMilliseconds / 1000) seconds"
@@ -192,7 +206,9 @@ function Copy-RainbowContent {
     $pullCounter = 0
     $pushCounter = 0
     $errorCounter = 0
-
+    $updateCounter = 0
+    $skipCounter = 0
+    
     function New-PowerShellRunspace {
         param(
             [System.Management.Automation.Runspaces.RunspacePool]$Pool,
@@ -308,7 +324,7 @@ function Copy-RainbowContent {
                 } catch {
                     $errorCount++
                     Write-Log "Importing $($itemId) failed with error $($Error[0].Exception.Message)"
-                    Write-Log ($currentRainbowItem | ConvertTo-Json)
+                    Write-Log ($currentRainbowItem | Select-Object -Property Id,ParentId,Path | ConvertTo-Json)
                     $errorMessages.Append("$($itemId) Failed") > $null
                 }
             } > $null
@@ -347,7 +363,7 @@ function Copy-RainbowContent {
     if(($skipExisting -and $skipItemsHash.Contains($RootId)) -or 
         ($compareRevision -and $destinationItemsHash.Contains($RootId) -and 
             $sourceItemRevisionLookup[$RootId] -eq $destinationItemRevisionLookup[$RootId])) {
-        Write-Message "[Skip] $($RootId)" -Hide:(!$Detailed)
+        Write-Message "[Skip] $($RootId)" -ForegroundColor Cyan -Hide:(!$Detailed)
         $runspaceProps = @{
             ScriptBlock = {}
             Pool = $pullPool
@@ -366,7 +382,7 @@ function Copy-RainbowContent {
          }) > $null
     } else {
         Write-Message "Spinning up jobs to transfer content" -Hide:(!$Detailed)
-        Write-Message "[Pull] $($RootId)" -Hide:(!$Detailed)
+        Write-Message "[Pull] $($RootId)" -ForegroundColor Green -Hide:(!$Detailed)
         $runspaceProps = @{
             ScriptBlock = $sourceScript
             Pool = $pullPool
@@ -396,6 +412,7 @@ function Copy-RainbowContent {
             $response = $null
             if($currentRunspace.Operation -eq "Pull" -and $currentRunspace.Skip) {
                 [System.Threading.Interlocked]::Increment([ref] $totalCounter) > $null
+                [System.Threading.Interlocked]::Increment([ref] $skipCounter) > $null
                 $currentRunspace.Pipe.Dispose()
                 $pullRunspaces.Remove($currentRunspace)
             } else {
@@ -413,6 +430,7 @@ function Copy-RainbowContent {
                 if(![string]::IsNullOrEmpty($response)) {
                     $feedback = $response | ConvertFrom-Json
                     Write-Message "- Imported $($feedback.ImportedItems)/$($feedback.TotalItems)" -ForegroundColor Gray -Hide:(!$Detailed)
+                    1..$feedback.ImportedItems | ForEach-Object { [System.Threading.Interlocked]::Increment([ref] $updateCounter) > $null }
                     if($feedback.ErrorCount -gt 0) {
                         [System.Threading.Interlocked]::Increment([ref] $errorCounter) > $null
                         Write-Message "- Errored $($feedback.ErrorCount)" -ForegroundColor Red -Hide:(!$Detailed)
@@ -481,7 +499,6 @@ function Copy-RainbowContent {
                         foreach($child in $children) {
                             $pushedLookup.Add($child.ItemId, [System.Collections.ArrayList]@()) > $null
                             $revisionLookup.Add($child.ItemId, $child.RevisionId) > $null
-
                             $grandChildren = $sourceTree[$child.ItemId]
                             foreach($grandChild in $grandChildren) {
                                 $pushedLookup.Add($grandChild.ItemId, [System.Collections.ArrayList]@()) > $null
@@ -534,7 +551,6 @@ function Copy-RainbowContent {
                         if($skipExisting -and $skipItemsHash.Contains($itemId) -or 
                             ($compareRevision -and $destinationItemsHash.Contains($itemId) -and $sourceItemRevisionLookup[$itemId] -eq $destinationItemRevisionLookup[$itemId])) {
                             Write-Message "[Skip] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                            #[System.Threading.Interlocked]::Increment([ref] $totalCounter) > $null
                             
                             $runspaceProps = @{
                                 ScriptBlock = {}
@@ -584,7 +600,7 @@ function Copy-RainbowContent {
                                 continue
                             }
                             # For the item we just pulled, get the child
-                            # If bulkcopy, also get the grandchildren,great grandchildren                      
+                            # If bulkcopy, also get the grandchildren,great grandchildren
                             Write-Message "[Pull] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
                             $runspaceProps = @{
                                 ScriptBlock = $sourceScript
@@ -613,6 +629,7 @@ function Copy-RainbowContent {
         }
     }
 
+
     $pullPool.Close() 
     $pullPool.Dispose()
     $pushPool.Close() 
@@ -635,7 +652,7 @@ function Copy-RainbowContent {
             }
             $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
             Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
-            Write-Message "- Removed $($removeItemsHash.Count) item(s) from the destination" -Hide:(!$Detailed)
+            Write-Message " - Removed $($removeItemsHash.Count) item(s) from the destination"
         }
     }
 
@@ -645,6 +662,9 @@ function Copy-RainbowContent {
     Write-Progress -Activity "[Done] Completed in $($totalSeconds) seconds" -Completed
     if($totalCounter -gt 0) {
         Write-Message "- Processed count: $($totalCounter)"
+        Write-Message " - Update count: $($updateCounter)"
+        Write-Message " - Skip count: $($skipCounter)"
+        Write-Message " - Error count: $($errorCounter)"
         Write-Message " - Pull count: $($pullCounter)"
         Write-Message " - Push count: $($pushCounter)"
     }
