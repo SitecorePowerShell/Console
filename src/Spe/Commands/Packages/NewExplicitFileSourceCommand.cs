@@ -28,15 +28,14 @@ namespace Spe.Commands.Packages
         {
             source = new ExplicitFileSource { Name = Name };
 
-            if (!String.IsNullOrEmpty(InstallMode))
+            if (string.IsNullOrEmpty(InstallMode)) return;
+
+            var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
+            if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
             {
-                var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
-                if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
-                {
-                    source.Converter.Transforms.Add(
-                        new InstallerConfigurationTransform(
-                            new BehaviourOptions(mode, MergeMode.Undefined)));
-                }
+                source.Converter.Transforms.Add(
+                    new InstallerConfigurationTransform(
+                        new BehaviourOptions(mode, MergeMode.Undefined)));
             }
         }
 
