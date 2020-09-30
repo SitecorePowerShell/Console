@@ -1,6 +1,6 @@
 # Sitecore PowerShell Extensions
 
-A command line and scripting tool built for the Sitecore platform.
+A Command Line and Scripting tool Built for the Sitecore Platform.
 
 ![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-console-ise.png)
 
