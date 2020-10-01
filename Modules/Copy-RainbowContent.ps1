@@ -44,7 +44,7 @@ function Copy-RainbowContent {
     $skipExisting = $CopyBehavior -eq "SkipExisting"
     $compareRevision = $CopyBehavior -eq "CompareRevision"
     $overwrite = $CopyBehavior -eq "Overwrite"
-    $bulkCopy = $overwrite
+    $bulkCopy = $true
 
     $dependencyScript = {
         $dependencies = Get-ChildItem -Path "$($AppPath)\bin" -Include "Unicorn.*","Rainbow.*" -Recurse | 
@@ -238,8 +238,7 @@ function Copy-RainbowContent {
     $sourceScript = {
         param(
             $Session,
-            [string]$RootId,
-            [bool]$IncludeChildren
+            [string]$ItemIdListString
         )
 
         $script = {
@@ -247,25 +246,13 @@ function Copy-RainbowContent {
             $builder = New-Object System.Text.StringBuilder
 
             $db = Get-Database -Name "master"
-            $item = $db.GetItem([ID]$itemId)
+            $itemIdList = $itemIdListString.Split("|".ToCharArray(), [System.StringSplitOptions]::RemoveEmptyEntries)
+            foreach($itemId in $itemIdList) {
+                $item = $db.GetItem([ID]$itemId)
 
-            $itemYaml = $item | ConvertTo-RainbowYaml  
-            $builder.Append($itemYaml) > $null
-
-            if($IncludeChildren) {
+                $itemYaml = $item | ConvertTo-RainbowYaml  
+                $builder.Append($itemYaml) > $null
                 $builder.Append("<#item#>") > $null
-                foreach($childItem in $item.GetChildren()) {
-                    $childYaml = $childItem | ConvertTo-RainbowYaml
-                    $builder.Append($childYaml) > $null
-                    $builder.Append("<#item#>") > $null
-
-                    $builder.Append("<#item#>") > $null
-                    foreach($grandchildItem in $childItem.GetChildren()) {
-                        $grandchildYaml = $grandchildItem | ConvertTo-RainbowYaml
-                        $builder.Append($grandchildYaml) > $null
-                        $builder.Append("<#item#>") > $null
-                    }
-                }
             }
 
             $builder.ToString()
@@ -273,8 +260,7 @@ function Copy-RainbowContent {
         }
 
         $scriptString = $script.ToString()
-        $trueFalseHash = @{$true="`$true";$false="`$false"}
-        $scriptString = "`$itemId = '$($RootId)';`$includeChildren = $($trueFalseHash[$IncludeChildren]);" + $scriptString
+        $scriptString = "`$itemIdListString = '$($ItemIdListString)';`n" + $scriptString
         $script = [scriptblock]::Create($scriptString)
 
         Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
@@ -362,69 +348,115 @@ function Copy-RainbowContent {
 
     class QueueItem {
         [string]$ItemId
-        [string]$RevisionId
         [string]$Yaml
         [hashtable]$RevisionLookup
     }
 
-    if(($skipExisting -and $skipItemsHash.Contains($RootId)) -or 
-        ($compareRevision -and $destinationItemsHash.Contains($RootId) -and 
-            $sourceItemRevisionLookup[$RootId] -eq $destinationItemRevisionLookup[$RootId])) {
-        Write-Message "[Skip] $($RootId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-        $runspaceProps = @{
-            ScriptBlock = {}
-            Pool = $pullPool
-            Session = $SourceSession
-            Arguments = @($RootId)
-        }
-        $runspace = New-PowerShellRunspace @runspaceProps
-        $pullRunspaces.Add([PSCustomObject]@{ 
-            Skip = $true
-            Operation = "Pull"
-            Pipe = $runspace
-            Status = [PSCustomObject]@{"IsCompleted"=$true}
-            Id = $RootId; ParentId = ""
-            RevisionId = $sourceItemRevisionLookup[$RootId]
-            Time = [datetime]::Now
-         }) > $null
-    } else {
-        Write-Message "Spinning up jobs to transfer content" -Hide:(!$Detailed)
-        Write-Message "[Pull] $($RootId)" -ForegroundColor Green -Hide:(!$Detailed)
-        $runspaceProps = @{
-            ScriptBlock = $sourceScript
-            Pool = $pullPool
-            Session = $SourceSession
-            Arguments = @($RootId,$bulkCopy)
-        }
-        $runspace = New-PowerShellRunspace @runspaceProps
-        $pullRunspaces.Add([PSCustomObject]@{
-            Operation = "Pull"
-            Pipe = $runspace
-            Status = $runspace.BeginInvoke()
-            Id = $RootId
-            ParentId = ""
-            RevisionId = $sourceItemRevisionLookup[$RootId]
-            IncludeChildren = $bulkCopy
-            Time = [datetime]::Now
-        }) > $null
-        $pushedLookup.Add($RootId, [System.Collections.ArrayList]@()) > $null
-    }
+    Write-Message "Spinning up jobs to transfer content" -Hide:(!$Detailed)
     
     $processedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $skippedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
-    while($pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0) {
+    $pullQueue = [System.Collections.Generic.Queue[ShallowItem]]@()
+    $pullQueue.Enqueue([ShallowItem]@{"ItemId"=$RootId;"ParentId"=""})
+    $pullLookup = @{}
+
+    $keepProcessing = $true
+    while($keepProcessing) {
         Write-Progress -Activity "Transfer of $($RootId) from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -Status "Pull $($pullCounter), Push $($pushCounter)" -PercentComplete ([Math]::Min(($updateCounter + $skippedItemsHash.Count) * 100 / $sourceShallowItemsCount, 100))
+        while($pullQueue.Count -gt 0) {
+            $itemIdList = [System.Collections.ArrayList]@()
+            $pullQueueItem = $pullQueue.Dequeue()
+            $itemId = $pullQueueItem.ItemId
+            $parentId = $pullQueueItem.ParentId
+            $processedItemsHash.Add($itemId) > $null
+            if(($skipExisting -and $skipItemsHash.Contains($itemId)) -or 
+                ($compareRevision -and $destinationItemsHash.Contains($itemId) -and 
+                    $sourceItemRevisionLookup[$itemId] -eq $destinationItemRevisionLookup[$itemId])) {
+                Write-Message "[Skip] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                $skippedItemsHash.Add($itemId) > $null
+            } else {
+                $itemIdList.Add($itemId) > $null
+                $pushedLookup.Add($itemId, [System.Collections.ArrayList]@()) > $null
+            }
+
+            if($bulkCopy) {
+                $childItems = $sourceTree[$itemId]
+                foreach($childItem in $childItems) {
+                    $childId = $childItem.ItemId
+                    $processedItemsHash.Add($childId) > $null
+                    if($skipExisting -and $skipItemsHash.Contains($childId) -or 
+                        ($compareRevision -and $destinationItemsHash.Contains($childId) -and $sourceItemRevisionLookup[$childId] -eq $destinationItemRevisionLookup[$childId])) {
+                        Write-Message "[Skip] $($childId)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                        $skippedItemsHash.Add($childId) > $null
+                    } else {
+                        $itemIdList.Add($childId) > $null
+                        $pushedLookup.Add($childId, [System.Collections.ArrayList]@()) > $null
+                    }
+
+                    $grandchildItems = $sourceTree[$childId]
+                    foreach($grandchildItem in $grandchildItems) {
+                        $grandchildId = $grandchildItem.ItemId
+                        $processedItemsHash.Add($grandchildId) > $null
+                        if($skipExisting -and $skipItemsHash.Contains($grandchildId) -or 
+                            ($compareRevision -and $destinationItemsHash.Contains($grandchildId) -and $sourceItemRevisionLookup[$grandchildId] -eq $destinationItemRevisionLookup[$grandchildId])) {
+                            Write-Message "[Skip] $($grandchildId)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                            $skippedItemsHash.Add($grandchildId) > $null
+                        } else {
+                            $itemIdList.Add($grandchildId) > $null
+                            $pushedLookup.Add($grandchildId, [System.Collections.ArrayList]@()) > $null
+                        }
+                    }
+                }
+            }
+
+            if($itemIdList.Count -gt 0) {
+                $pullLookup[$itemId] = $itemIdList
+                Write-Message "[Pull] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
+                $runspaceProps = @{
+                    ScriptBlock = $sourceScript
+                    Pool = $pullPool
+                    Session = $SourceSession
+                    Arguments = @(($itemIdList -join "|"))
+                }
+                $runspace = New-PowerShellRunspace @runspaceProps
+                $pullRunspaces.Add([PSCustomObject]@{
+                    Operation = "Pull"
+                    Pipe = $runspace
+                    Status = $runspace.BeginInvoke()
+                    Id = $itemId
+                    ParentId = $parentId
+                    Time = [datetime]::Now
+                }) > $null
+            } else {
+                $runspaceProps = @{
+                    ScriptBlock = {}
+                    Pool = $pullPool
+                    Session = $SourceSession
+                    Arguments = @()
+                }
+                $runspace = New-PowerShellRunspace @runspaceProps
+                $pullRunspaces.Add([PSCustomObject]@{
+                    Skip = $true
+                    Operation = "Pull"
+                    Pipe = $runspace
+                    Status = [PSCustomObject]@{"IsCompleted"=$true}
+                    Id = $itemId
+                    ParentId = $parentId
+                    Time = [datetime]::Now
+                }) > $null
+            }
+        }
+
         $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
         foreach($currentRunspace in $currentRunspaces) {
             if(!$currentRunspace.Status.IsCompleted) { continue }
             
-            $response = $null
-            if($currentRunspace.Skip) {
-                $skippedItemsHash.Add($currentRunspace.Id) > $null
-                $currentRunspace.Pipe.Dispose()
-                $pullRunspaces.Remove($currentRunspace)
-            } else {
-                $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
+            $skipped = $currentRunspace.Skip
+            $response = & { 
+                if($skipped) { $null }
+                else { $currentRunspace.Pipe.EndInvoke($currentRunspace.Status) }
+            }
+            if(!$skipped) {
                 if($currentRunspace.Operation -eq "Pull") {
                     [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
                 } elseif ($currentRunspace.Operation -eq "Push") {
@@ -433,6 +465,58 @@ function Copy-RainbowContent {
                 Write-Message "[$($currentRunspace.Operation)] $($currentRunspace.Id) completed" -ForegroundColor Gray -Hide:(!$Detailed)
                 Write-Message "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray -Hide:(!$Detailed)
             }
+
+            if($currentRunspace.Operation -eq "Pull") {                
+                if($skipped -or (![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---"))) {               
+                    $yaml = $response
+                    $revisionLookup = @{}
+                    $pulledIdList = $pullLookup[$currentRunspace.Id]
+                    foreach($pulledItemId in $pulledIdList) {
+                        $revisionLookup.Add($pulledItemId, $sourceItemRevisionLookup[$pulledItemId]) > $null
+                    }
+
+                    if($bulkCopy) {
+                        foreach($child in $sourceTree[$currentRunspace.Id]) {
+                            foreach($grandchild in $sourceTree[$child.ItemId]) {
+                                foreach($greatgrandchild in $sourceTree[$grandchild.ItemId]) {                                    
+                                    $pullQueue.Enqueue($greatgrandchild) > $null
+                                }
+                            }
+                        }
+                    } else {
+                        foreach($child in $sourceTree[$currentRunspace.Id]) {
+                            $pullQueue.Enqueue($child) > $null
+                        }
+                    }
+                    if($pushedLookup.Contains($currentRunspace.ParentId)) {
+                        Write-Message "[Queue] $($currentRunspace.Id)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                        $pushedLookup[$currentRunspace.ParentId].Add([QueueItem]@{"ItemId"=$currentRunspace.Id;"Yaml"=$yaml;"RevisionLookup"=$revisionLookup;}) > $null
+                    } else {
+                        if(!$skipped) {                 
+                            Write-Message "[Push] $($currentRunspace.Id)" -ForegroundColor Gray -Hide:(!$Detailed)
+                            $runspaceProps = @{
+                                ScriptBlock = $destinationScript
+                                Pool = $pushPool
+                                Session = $DestinationSession
+                                Arguments = @($yaml,$revisionLookup)
+                            }
+                            $runspace = New-PowerShellRunspace @runspaceProps  
+                            $pushRunspaces.Add([PSCustomObject]@{
+                                Operation = "Push"
+                                Pipe = $runspace
+                                Status = $runspace.BeginInvoke()
+                                Id = $currentRunspace.Id
+                                ParentId = $currentRunspace.ParentId
+                                Time = [datetime]::Now
+                            }) > $null
+                        }
+                    }
+                }
+
+                $currentRunspace.Pipe.Dispose()
+                $pullRunspaces.Remove($currentRunspace)
+            }
+
             if($currentRunspace.Operation -eq "Push") {
                 if(![string]::IsNullOrEmpty($response)) {
                     $feedback = $response | ConvertFrom-Json
@@ -450,6 +534,7 @@ function Copy-RainbowContent {
                     $queuedItems.AddRange($pushedLookup[$currentRunspace.Id])
                     $pushedLookup.Remove($currentRunspace.Id) > $null
                 }
+                
                 if($bulkCopy) {
                     foreach($child in $sourceTree[$currentRunspace.Id]) {
                         $queuedChildItems = $pushedLookup[$child.ItemId]
@@ -469,14 +554,13 @@ function Copy-RainbowContent {
                 if($queuedItems.Count -gt 0) {
                     foreach($queuedItem in $queuedItems) {
                         $itemId = $queuedItem.ItemId
-                        $revisionId = $queuedItem.RevisionId
                         Write-Message "[Dequeue] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
                         Write-Message "[Push] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
                         $runspaceProps = @{
                             ScriptBlock = $destinationScript
                             Pool = $pushPool
                             Session = $DestinationSession
-                            Arguments = @($yaml,$queuedItem.RevisionLookup)
+                            Arguments = @($queuedItem.Yaml,$queuedItem.RevisionLookup)
                         }
 
                         $runspace = New-PowerShellRunspace @runspaceProps  
@@ -486,149 +570,18 @@ function Copy-RainbowContent {
                             Status = $runspace.BeginInvoke()
                             Id = $itemId
                             ParentId = $currentRunspace.Id
-                            RevisionId = $revisionId
                             Time = [datetime]::Now
                         }) > $null
-                        $pushedLookup.Add($itemId, [System.Collections.ArrayList]@()) > $null
                     }
                 }
                 
                 $currentRunspace.Pipe.Dispose()
                 $pushRunspaces.Remove($currentRunspace)
             }
-
-            if($currentRunspace.Operation -eq "Pull") {
-                if(![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---")) {               
-                    $yaml = $response
-                    $revisionLookup = @{($currentRunspace.Id)=($currentRunspace.RevisionId);}
-                    if($currentRunspace.IncludeChildren) {
-                        $children = $sourceTree[$currentRunspace.Id]
-                        foreach($child in $children) {
-                            $pushedLookup.Add($child.ItemId, [System.Collections.ArrayList]@()) > $null
-                            $revisionLookup.Add($child.ItemId, $child.RevisionId) > $null
-                            $grandChildren = $sourceTree[$child.ItemId]
-                            foreach($grandChild in $grandChildren) {
-                                $pushedLookup.Add($grandChild.ItemId, [System.Collections.ArrayList]@()) > $null
-                                $revisionLookup.Add($grandChild.ItemId, $grandChild.RevisionId) > $null
-                            }
-                        }
-                    }
-                    if($pushedLookup.Contains($currentRunspace.ParentId)) {
-                        Write-Message "[Queue] $($currentRunspace.Id)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                        $pushedLookup[$currentRunspace.ParentId].Add([QueueItem]@{"ItemId"=$currentRunspace.Id;"RevisionId"=$currentRunspace.RevisionId;"Yaml"=$yaml;"RevisionLookup"=$revisionLookup;}) > $null
-                    } else {                    
-                        Write-Message "[Push] $($currentRunspace.Id)" -ForegroundColor Gray -Hide:(!$Detailed)
-                        $runspaceProps = @{
-                            ScriptBlock = $destinationScript
-                            Pool = $pushPool
-                            Session = $DestinationSession
-                            Arguments = @($yaml,$revisionLookup)
-                        }
-                        $runspace = New-PowerShellRunspace @runspaceProps  
-                        $pushRunspaces.Add([PSCustomObject]@{
-                            Operation = "Push"
-                            Pipe = $runspace
-                            Status = $runspace.BeginInvoke()
-                            Id = $currentRunspace.Id
-                            ParentId = $currentRunspace.ParentId
-                            RevisionId = $currentRunspace.RevisionId
-                            Time = [datetime]::Now
-                        }) > $null
-                    }
-                }
-
-                # Pull
-                if($sourceTree.ContainsKey($currentRunspace.Id)) {
-                    $processedItemsHash.Add($currentRunspace.Id) > $null
-                    $shallowItems = $sourceTree[$currentRunspace.Id]
-                    foreach($shallowItem in $shallowItems) {
-                        $processedItemsHash.Add($shallowItem.ItemId) > $null
-                        $itemId = $shallowItem.ItemId
-                        $parentId = $shallowItem.ParentId
-                        $revisionId = $shallowItem.RevisionId
-                        if($skipExisting -and $skipItemsHash.Contains($itemId) -or 
-                            ($compareRevision -and $destinationItemsHash.Contains($itemId) -and $sourceItemRevisionLookup[$itemId] -eq $destinationItemRevisionLookup[$itemId])) {
-                            Write-Message "[Skip] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                            
-                            $runspaceProps = @{
-                                ScriptBlock = {}
-                                Pool = $pullPool
-                                Session = $SourceSession
-                                Arguments = @($itemId)
-                            }
-                            $runspace = New-PowerShellRunspace @runspaceProps
-                            $pullRunspaces.Add([PSCustomObject]@{
-                                Skip = $true
-                                Operation = "Pull"
-                                Pipe = $runspace
-                                Status = [PSCustomObject]@{"IsCompleted"=$true}
-                                Id = $itemId
-                                ParentId = $parentId
-                                RevisionId = $revisionId
-                                Time = [datetime]::Now
-                            }) > $null
-                            
-                        } else {
-                            if($currentRunspace.IncludeChildren) {
-                                $children = $sourceTree[$itemId]
-                                foreach($child in $children) {
-                                    $processedItemsHash.Add($child.ItemId) > $null
-                                    # For the item that was just pulled, we get the great grandchildren
-                                    $grandchildren = $sourceTree[$child.ItemId]
-                                    foreach($grandchild in $grandchildren) {
-                                        $processedItemsHash.Add($grandchild.ItemId) > $null
-                                        Write-Message "[Pull] $($grandchild.ItemId)" -ForegroundColor Green -Hide:(!$Detailed)
-                                        $runspaceProps = @{
-                                            ScriptBlock = $sourceScript
-                                            Pool = $pullPool
-                                            Session = $SourceSession
-                                            Arguments = @($grandchild.ItemId,$bulkCopy)
-                                        }
-                                        $runspace = New-PowerShellRunspace @runspaceProps
-                                        $pullRunspaces.Add([PSCustomObject]@{
-                                            Operation = "Pull"
-                                            Pipe = $runspace
-                                            Status = $runspace.BeginInvoke()
-                                            Id = $grandchild.ItemId
-                                            ParentId = $grandchild.ParentId
-                                            RevisionId = $grandchild.RevisionId
-                                            IncludeChildren = $bulkCopy
-                                            Time = [datetime]::Now
-                                        }) > $null
-                                    }
-                                }
-                                continue
-                            }
-                            # For the item we just pulled, get the child
-                            # If bulkcopy, also get the grandchildren,great grandchildren
-                            Write-Message "[Pull] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
-                            $runspaceProps = @{
-                                ScriptBlock = $sourceScript
-                                Pool = $pullPool
-                                Session = $SourceSession
-                                Arguments = @($itemId,$bulkCopy)
-                            }
-                            $runspace = New-PowerShellRunspace @runspaceProps
-                            $pullRunspaces.Add([PSCustomObject]@{
-                                Operation = "Pull"
-                                Pipe = $runspace
-                                Status = $runspace.BeginInvoke()
-                                Id = $itemId
-                                ParentId = $parentId
-                                RevisionId = $revisionId
-                                IncludeChildren = $bulkCopy
-                                Time = [datetime]::Now
-                            }) > $null
-                        }
-                    }
-                }
-
-                $currentRunspace.Pipe.Dispose()
-                $pullRunspaces.Remove($currentRunspace)
-            }
         }
-    }
 
+        $keepProcessing = ($pullQueue.Count -gt 0 -or $pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0)
+    }
 
     $pullPool.Close() 
     $pullPool.Dispose()
