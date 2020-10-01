@@ -151,6 +151,7 @@ function Copy-RainbowContent {
     
     $sourceItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $sourceItemRevisionLookup = @{}
+    $RootParentId = ""
     foreach($sourceRecord in $sourceRecordsString.Split("|".ToCharArray(), [System.StringSplitOptions]::RemoveEmptyEntries)) {
         $shallowItem = [ShallowItem]@{
             "ItemId"=$sourceRecord.Substring(2,38)
@@ -173,6 +174,9 @@ function Copy-RainbowContent {
         }
         $childCollection.Add($shallowItem) > $null
         $sourceTree[$shallowItem.ParentId] = $childCollection
+        if([string]::IsNullOrEmpty($RootParentId) -and $shallowItem.ItemId -eq $RootId) {
+            $RootParentId = $shallowItem.ParentId
+        }
     }
     $sourceShallowItemsCount = $sourceItemsHash.Count
     $s1.Stop()
@@ -339,7 +343,7 @@ function Copy-RainbowContent {
     }
 
     $pushedLookup = @{}
-    $pullPool = [RunspaceFactory]::CreateRunspacePool(1, 2)
+    $pullPool = [RunspaceFactory]::CreateRunspacePool(1, 4)
     $pullPool.Open()
     $pullRunspaces = [System.Collections.ArrayList]@()
     $pushPool = [RunspaceFactory]::CreateRunspacePool(1, 4)
@@ -347,71 +351,66 @@ function Copy-RainbowContent {
     $pushRunspaces = [System.Collections.ArrayList]@()
 
     class QueueItem {
-        [string]$ItemId
+        [int]$Level
         [string]$Yaml
         [hashtable]$RevisionLookup
+    }
+
+    $treeLevels = [System.Collections.Generic.List[System.Collections.Generic.List[ShallowItem]]]@()
+    $treeLevelQueue = [System.Collections.Generic.Queue[ShallowItem]]@()
+    $treeLevelQueue.Enqueue($sourceTree[$RootParentId][0])
+    Write-Message "- Tree Level Counts" -Hide:(!$Detailed)
+    while($treeLevelQueue.Count -gt 0) {
+        $currentLevelItems = [System.Collections.Generic.List[ShallowItem]]@()
+        while($treeLevelQueue.Count -gt 0 -and ($currentDequeued = $treeLevelQueue.Dequeue())) {
+            $currentLevelItems.Add($currentDequeued) > $null
+        }
+        $treeLevels.Add($currentLevelItems) > $null
+
+        foreach($currentLevelItem in $currentLevelItems) {
+            $currentLevelChildren = $sourceTree[$currentLevelItem.ItemId]
+            foreach($currentLevelChild in $currentLevelChildren) {
+                $treeLevelQueue.Enqueue($currentLevelChild)
+            }
+        }
+        Write-Message " - Level $($treeLevels.Count - 1) : $($currentLevelItems.Count)" -Hide:(!$Detailed)
     }
 
     Write-Message "Spinning up jobs to transfer content" -Hide:(!$Detailed)
     
     $processedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $skippedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
-    $pullQueue = [System.Collections.Generic.Queue[ShallowItem]]@()
-    $pullQueue.Enqueue([ShallowItem]@{"ItemId"=$RootId;"ParentId"=""})
     $pullLookup = @{}
-
+    $currentLevel = 0
+    
     $keepProcessing = $true
     while($keepProcessing) {
-        Write-Progress -Activity "Transfer of $($RootId) from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -Status "Pull $($pullCounter), Push $($pushCounter)" -PercentComplete ([Math]::Min(($updateCounter + $skippedItemsHash.Count) * 100 / $sourceShallowItemsCount, 100))
-        while($pullQueue.Count -gt 0) {
+        Write-Progress -Activity "Transfer of $($RootId) from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -Status "Pull $($pullCounter), Push $($pushCounter), Level $($currentLevel)" -PercentComplete ([Math]::Min(($updateCounter + $skippedItemsHash.Count) * 100 / $sourceShallowItemsCount, 100))
+        if($currentLevel -lt $treeLevels.Count) {
+            Write-Message "Queueing level $($currentLevel)" -Hide:(!$Detailed)
             $itemIdList = [System.Collections.ArrayList]@()
-            $pullQueueItem = $pullQueue.Dequeue()
-            $itemId = $pullQueueItem.ItemId
-            $parentId = $pullQueueItem.ParentId
-            $processedItemsHash.Add($itemId) > $null
-            if(($skipExisting -and $skipItemsHash.Contains($itemId)) -or 
-                ($compareRevision -and $destinationItemsHash.Contains($itemId) -and 
+            $levelItems = $treeLevels[$currentLevel]
+            $pushedLookup.Add($currentLevel, [System.Collections.ArrayList]@()) > $null
+            foreach($levelItem in $levelItems) {
+                $itemId = $levelItem.ItemId
+                $processedItemsHash.Add($itemId) > $null
+
+                if(($skipExisting -and $skipItemsHash.Contains($itemId)) -or 
+                    ($compareRevision -and $destinationItemsHash.Contains($itemId) -and 
                     $sourceItemRevisionLookup[$itemId] -eq $destinationItemRevisionLookup[$itemId])) {
-                Write-Message "[Skip] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                $skippedItemsHash.Add($itemId) > $null
-            } else {
-                $itemIdList.Add($itemId) > $null
-                $pushedLookup.Add($itemId, [System.Collections.ArrayList]@()) > $null
-            }
+                    Write-Message "[Skip] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                    $skippedItemsHash.Add($itemId) > $null
+                } else {
+                    $itemIdList.Add($itemId) > $null
+                }
 
-            if($bulkCopy) {
-                $childItems = $sourceTree[$itemId]
-                foreach($childItem in $childItems) {
-                    $childId = $childItem.ItemId
-                    $processedItemsHash.Add($childId) > $null
-                    if($skipExisting -and $skipItemsHash.Contains($childId) -or 
-                        ($compareRevision -and $destinationItemsHash.Contains($childId) -and $sourceItemRevisionLookup[$childId] -eq $destinationItemRevisionLookup[$childId])) {
-                        Write-Message "[Skip] $($childId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                        $skippedItemsHash.Add($childId) > $null
-                    } else {
-                        $itemIdList.Add($childId) > $null
-                        $pushedLookup.Add($childId, [System.Collections.ArrayList]@()) > $null
-                    }
-
-                    $grandchildItems = $sourceTree[$childId]
-                    foreach($grandchildItem in $grandchildItems) {
-                        $grandchildId = $grandchildItem.ItemId
-                        $processedItemsHash.Add($grandchildId) > $null
-                        if($skipExisting -and $skipItemsHash.Contains($grandchildId) -or 
-                            ($compareRevision -and $destinationItemsHash.Contains($grandchildId) -and $sourceItemRevisionLookup[$grandchildId] -eq $destinationItemRevisionLookup[$grandchildId])) {
-                            Write-Message "[Skip] $($grandchildId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                            $skippedItemsHash.Add($grandchildId) > $null
-                        } else {
-                            $itemIdList.Add($grandchildId) > $null
-                            $pushedLookup.Add($grandchildId, [System.Collections.ArrayList]@()) > $null
-                        }
-                    }
+                if(!$bulkCopy) {
+                    break
                 }
             }
-
-            if($itemIdList.Count -gt 0) {
-                $pullLookup[$itemId] = $itemIdList
-                Write-Message "[Pull] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
+            $pullLookup[$currentLevel] = $itemIdList
+            if($itemIdList.Count -gt 0) {                
+                Write-Message "[Pull] $($currentLevel)" -ForegroundColor Green -Hide:(!$Detailed)
                 $runspaceProps = @{
                     ScriptBlock = $sourceScript
                     Pool = $pullPool
@@ -423,8 +422,7 @@ function Copy-RainbowContent {
                     Operation = "Pull"
                     Pipe = $runspace
                     Status = $runspace.BeginInvoke()
-                    Id = $itemId
-                    ParentId = $parentId
+                    Level = $currentLevel
                     Time = [datetime]::Now
                 }) > $null
             } else {
@@ -440,18 +438,18 @@ function Copy-RainbowContent {
                     Operation = "Pull"
                     Pipe = $runspace
                     Status = [PSCustomObject]@{"IsCompleted"=$true}
-                    Id = $itemId
-                    ParentId = $parentId
+                    Level = $currentLevel
                     Time = [datetime]::Now
                 }) > $null
             }
+            $currentLevel++
         }
 
         $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
         foreach($currentRunspace in $currentRunspaces) {
             if(!$currentRunspace.Status.IsCompleted) { continue }
             
-            $skipped = $currentRunspace.Skip
+            $skipped = ($currentRunspace.Skip -or $false)
             $response = & { 
                 if($skipped) { $null }
                 else { $currentRunspace.Pipe.EndInvoke($currentRunspace.Status) }
@@ -462,7 +460,7 @@ function Copy-RainbowContent {
                 } elseif ($currentRunspace.Operation -eq "Push") {
                     [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
                 }
-                Write-Message "[$($currentRunspace.Operation)] $($currentRunspace.Id) completed" -ForegroundColor Gray -Hide:(!$Detailed)
+                Write-Message "[$($currentRunspace.Operation)] $($currentRunspace.Level) completed" -ForegroundColor Gray -Hide:(!$Detailed)
                 Write-Message "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray -Hide:(!$Detailed)
             }
 
@@ -470,30 +468,16 @@ function Copy-RainbowContent {
                 if($skipped -or (![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---"))) {               
                     $yaml = $response
                     $revisionLookup = @{}
-                    $pulledIdList = $pullLookup[$currentRunspace.Id]
+                    $pulledIdList = $pullLookup[$currentRunspace.Level]
                     foreach($pulledItemId in $pulledIdList) {
                         $revisionLookup.Add($pulledItemId, $sourceItemRevisionLookup[$pulledItemId]) > $null
                     }
-
-                    if($bulkCopy) {
-                        foreach($child in $sourceTree[$currentRunspace.Id]) {
-                            foreach($grandchild in $sourceTree[$child.ItemId]) {
-                                foreach($greatgrandchild in $sourceTree[$grandchild.ItemId]) {                                    
-                                    $pullQueue.Enqueue($greatgrandchild) > $null
-                                }
-                            }
-                        }
-                    } else {
-                        foreach($child in $sourceTree[$currentRunspace.Id]) {
-                            $pullQueue.Enqueue($child) > $null
-                        }
-                    }
-                    if($pushedLookup.Contains($currentRunspace.ParentId)) {
-                        Write-Message "[Queue] $($currentRunspace.Id)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                        $pushedLookup[$currentRunspace.ParentId].Add([QueueItem]@{"ItemId"=$currentRunspace.Id;"Yaml"=$yaml;"RevisionLookup"=$revisionLookup;}) > $null
+                    if($pushedLookup.Contains(($currentRunspace.Level - 1))) {
+                        Write-Message "[Queue] $($currentRunspace.Level)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                        $pushedLookup[($currentRunspace.Level - 1)].Add([QueueItem]@{"Level"=$currentRunspace.Level;"Yaml"=$yaml;"RevisionLookup"=$revisionLookup;}) > $null
                     } else {
                         if(!$skipped) {                 
-                            Write-Message "[Push] $($currentRunspace.Id)" -ForegroundColor Gray -Hide:(!$Detailed)
+                            Write-Message "[Push] $($currentRunspace.Level)" -ForegroundColor Gray -Hide:(!$Detailed)
                             $runspaceProps = @{
                                 ScriptBlock = $destinationScript
                                 Pool = $pushPool
@@ -505,10 +489,11 @@ function Copy-RainbowContent {
                                 Operation = "Push"
                                 Pipe = $runspace
                                 Status = $runspace.BeginInvoke()
-                                Id = $currentRunspace.Id
-                                ParentId = $currentRunspace.ParentId
+                                Level = $currentRunspace.Level
                                 Time = [datetime]::Now
                             }) > $null
+                        } else {
+                            $pushedLookup.Remove($currentRunspace.Level)
                         }
                     }
                 }
@@ -530,32 +515,15 @@ function Copy-RainbowContent {
                 }
 
                 $queuedItems = [System.Collections.ArrayList]@()
-                if($pushedLookup.ContainsKey($currentRunspace.Id)) {
-                    $queuedItems.AddRange($pushedLookup[$currentRunspace.Id])
-                    $pushedLookup.Remove($currentRunspace.Id) > $null
-                }
-                
-                if($bulkCopy) {
-                    foreach($child in $sourceTree[$currentRunspace.Id]) {
-                        $queuedChildItems = $pushedLookup[$child.ItemId]
-                        if($queuedChildItems.Count -gt 0) {
-                            $queuedItems.AddRange($queuedChildItems) > $null
-                        }
-                        $pushedLookup.Remove($child.ItemId) > $null
-                        foreach($grandChild in $sourceTree[$child.ItemId]) {
-                            $queuedGrandchildItems = $pushedLookup[$grandChild.ItemId]
-                            if($queuedGrandchildItems.Count -gt 0) {
-                                $queuedItems.AddRange($queuedGrandchildItems) > $null
-                            }
-                            $pushedLookup.Remove($grandChild.ItemId) > $null
-                        }
-                    }
+                if($pushedLookup.ContainsKey($currentRunspace.Level)) {
+                    $queuedItems.AddRange($pushedLookup[$currentRunspace.Level])
+                    $pushedLookup.Remove($currentRunspace.Level) > $null
                 }
                 if($queuedItems.Count -gt 0) {
                     foreach($queuedItem in $queuedItems) {
-                        $itemId = $queuedItem.ItemId
-                        Write-Message "[Dequeue] $($itemId)" -ForegroundColor Cyan -Hide:(!$Detailed)
-                        Write-Message "[Push] $($itemId)" -ForegroundColor Green -Hide:(!$Detailed)
+                        $level = $queuedItem.Level
+                        Write-Message "[Dequeue] $($level)" -ForegroundColor Cyan -Hide:(!$Detailed)
+                        Write-Message "[Push] $($level)" -ForegroundColor Green -Hide:(!$Detailed)
                         $runspaceProps = @{
                             ScriptBlock = $destinationScript
                             Pool = $pushPool
@@ -568,8 +536,7 @@ function Copy-RainbowContent {
                             Operation = "Push"
                             Pipe = $runspace
                             Status = $runspace.BeginInvoke()
-                            Id = $itemId
-                            ParentId = $currentRunspace.Id
+                            Level = $level
                             Time = [datetime]::Now
                         }) > $null
                     }
@@ -580,7 +547,7 @@ function Copy-RainbowContent {
             }
         }
 
-        $keepProcessing = ($pullQueue.Count -gt 0 -or $pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0)
+        $keepProcessing = ($currentLevel -lt $treeLevels.Count -or $pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0)
     }
 
     $pullPool.Close() 
