@@ -300,6 +300,8 @@ function Copy-RainbowContent {
             $importedItems = 0
             $errorCount = 0
             $errorMessages = New-Object System.Text.StringBuilder
+            $db = Get-Database -Name "master"
+
             $rainbowItems | ForEach-Object {
                 $currentRainbowItem = $_
                 $itemId = "$($currentRainbowItem.Id)"             
@@ -307,7 +309,6 @@ function Copy-RainbowContent {
                     Import-RainbowItem -Item $currentRainbowItem
                                        
                     if($revisionLookup.ContainsKey($itemId)) {                    
-                        $db = Get-Database -Name "master"
                         $currentItem = $db.GetItem($itemId)
                         $currentItem.Editing.BeginEdit()
                         $currentItem.Fields["__Revision"].Value = $revisionLookup[$itemId]
@@ -361,18 +362,30 @@ function Copy-RainbowContent {
     $treeLevelQueue.Enqueue($sourceTree[$RootParentId][0])
     Write-Message "- Tree Level Counts" -Hide:(!$Detailed)
     while($treeLevelQueue.Count -gt 0) {
-        $currentLevelItems = [System.Collections.Generic.List[ShallowItem]]@()
-        while($treeLevelQueue.Count -gt 0 -and ($currentDequeued = $treeLevelQueue.Dequeue())) {
-            $currentLevelItems.Add($currentDequeued) > $null
-        }
-        $treeLevels.Add($currentLevelItems) > $null
-
-        foreach($currentLevelItem in $currentLevelItems) {
-            $currentLevelChildren = $sourceTree[$currentLevelItem.ItemId]
-            foreach($currentLevelChild in $currentLevelChildren) {
-                $treeLevelQueue.Enqueue($currentLevelChild)
+        if($bulkCopy) {
+            $currentLevelItems = [System.Collections.Generic.List[ShallowItem]]@()
+            while($treeLevelQueue.Count -gt 0 -and ($currentDequeued = $treeLevelQueue.Dequeue())) {
+                $currentLevelItems.Add($currentDequeued) > $null
+            }
+            $treeLevels.Add($currentLevelItems) > $null
+            foreach($currentLevelItem in $currentLevelItems) {
+                $currentLevelChildren = $sourceTree[$currentLevelItem.ItemId]
+                foreach($currentLevelChild in $currentLevelChildren) {
+                    $treeLevelQueue.Enqueue($currentLevelChild)
+                }
+            }
+        } else {
+            while($treeLevelQueue.Count -gt 0 -and ($currentDequeued = $treeLevelQueue.Dequeue())) {
+                $singleLevelItem = [System.Collections.Generic.List[ShallowItem]]@()
+                $singleLevelItem.Add($currentDequeued) > $null
+                $treeLevels.Add($singleLevelItem) > $null
+                $singleLevelChildren = $sourceTree[$singleLevelItem.ItemId]
+                foreach($singleLevelChild in $singleLevelChildren) {
+                    $treeLevelQueue.Enqueue($singleLevelChild)
+                }
             }
         }
+        
         Write-Message " - Level $($treeLevels.Count - 1) : $($currentLevelItems.Count)" -Hide:(!$Detailed)
     }
 
@@ -403,10 +416,6 @@ function Copy-RainbowContent {
                 } else {
                     $itemIdList.Add($itemId) > $null
                 }
-
-                if(!$bulkCopy) {
-                    break
-                }
             }
             $pullLookup[$currentLevel] = $itemIdList
             if($itemIdList.Count -gt 0) {                
@@ -426,21 +435,9 @@ function Copy-RainbowContent {
                     Time = [datetime]::Now
                 }) > $null
             } else {
-                $runspaceProps = @{
-                    ScriptBlock = {}
-                    Pool = $pullPool
-                    Session = $SourceSession
-                    Arguments = @()
+                if($pushedLookup.Contains($currentLevel) -and $pushedLookup[$currentLevel].Count -eq 0) {
+                    $pushedLookup.Remove($currentLevel)
                 }
-                $runspace = New-PowerShellRunspace @runspaceProps
-                $pullRunspaces.Add([PSCustomObject]@{
-                    Skip = $true
-                    Operation = "Pull"
-                    Pipe = $runspace
-                    Status = [PSCustomObject]@{"IsCompleted"=$true}
-                    Level = $currentLevel
-                    Time = [datetime]::Now
-                }) > $null
             }
             $currentLevel++
         }
@@ -448,24 +445,19 @@ function Copy-RainbowContent {
         $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
         foreach($currentRunspace in $currentRunspaces) {
             if(!$currentRunspace.Status.IsCompleted) { continue }
-            
-            $skipped = ($currentRunspace.Skip -or $false)
-            $response = & { 
-                if($skipped) { $null }
-                else { $currentRunspace.Pipe.EndInvoke($currentRunspace.Status) }
+
+            $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
+
+            if($currentRunspace.Operation -eq "Pull") {
+                [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
+            } elseif ($currentRunspace.Operation -eq "Push") {
+                [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
             }
-            if(!$skipped) {
-                if($currentRunspace.Operation -eq "Pull") {
-                    [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
-                } elseif ($currentRunspace.Operation -eq "Push") {
-                    [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
-                }
-                Write-Message "[$($currentRunspace.Operation)] $($currentRunspace.Level) completed" -ForegroundColor Gray -Hide:(!$Detailed)
-                Write-Message "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray -Hide:(!$Detailed)
-            }
+            Write-Message "[$($currentRunspace.Operation)] $($currentRunspace.Level) completed" -ForegroundColor Gray -Hide:(!$Detailed)
+            Write-Message "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray -Hide:(!$Detailed)
 
             if($currentRunspace.Operation -eq "Pull") {                
-                if($skipped -or (![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---"))) {               
+                if(![string]::IsNullOrEmpty($response) -and [regex]::IsMatch($response,"^---")) {               
                     $yaml = $response
                     $revisionLookup = @{}
                     $pulledIdList = $pullLookup[$currentRunspace.Level]
@@ -475,26 +467,22 @@ function Copy-RainbowContent {
                     if($pushedLookup.Contains(($currentRunspace.Level - 1))) {
                         Write-Message "[Queue] $($currentRunspace.Level)" -ForegroundColor Cyan -Hide:(!$Detailed)
                         $pushedLookup[($currentRunspace.Level - 1)].Add([QueueItem]@{"Level"=$currentRunspace.Level;"Yaml"=$yaml;"RevisionLookup"=$revisionLookup;}) > $null
-                    } else {
-                        if(!$skipped) {                 
-                            Write-Message "[Push] $($currentRunspace.Level)" -ForegroundColor Gray -Hide:(!$Detailed)
-                            $runspaceProps = @{
-                                ScriptBlock = $destinationScript
-                                Pool = $pushPool
-                                Session = $DestinationSession
-                                Arguments = @($yaml,$revisionLookup)
-                            }
-                            $runspace = New-PowerShellRunspace @runspaceProps  
-                            $pushRunspaces.Add([PSCustomObject]@{
-                                Operation = "Push"
-                                Pipe = $runspace
-                                Status = $runspace.BeginInvoke()
-                                Level = $currentRunspace.Level
-                                Time = [datetime]::Now
-                            }) > $null
-                        } else {
-                            $pushedLookup.Remove($currentRunspace.Level)
+                    } else {               
+                        Write-Message "[Push] $($currentRunspace.Level)" -ForegroundColor Gray -Hide:(!$Detailed)
+                        $runspaceProps = @{
+                            ScriptBlock = $destinationScript
+                            Pool = $pushPool
+                            Session = $DestinationSession
+                            Arguments = @($yaml,$revisionLookup)
                         }
+                        $runspace = New-PowerShellRunspace @runspaceProps  
+                        $pushRunspaces.Add([PSCustomObject]@{
+                            Operation = "Push"
+                            Pipe = $runspace
+                            Status = $runspace.BeginInvoke()
+                            Level = $currentRunspace.Level
+                            Time = [datetime]::Now
+                        }) > $null
                     }
                 }
 
