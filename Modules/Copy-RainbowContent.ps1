@@ -24,7 +24,9 @@ function Copy-RainbowContent {
 
         [switch]$CheckDependencies,
 
-        [switch]$Detailed
+        [switch]$Detailed,
+
+        [switch]$ShowProgress
     )
 
     function Write-Message {
@@ -46,35 +48,29 @@ function Copy-RainbowContent {
     $overwrite = $CopyBehavior -eq "Overwrite"
     $bulkCopy = $true
 
-    $dependencyScript = {
-        $dependencies = Get-ChildItem -Path "$($AppPath)\bin" -Include "Unicorn.*","Rainbow.*" -Recurse | 
-            Select-Object -ExpandProperty Name
-        
-        $result = $true
-        if($dependencies -contains "Unicorn.dll" -and $dependencies -contains "Rainbow.dll") {
-            $result = $result -band $true
-        } else {
-            $result = $result -band $false
-        }
-
+    $dependencyScript = {       
+        $result = (Test-Path -Path "$($AppPath)\bin\Unicorn.dll") -and (Test-Path -Path "$($AppPath)\bin\Rainbow.dll")
         if($result) {
-            $result = $result -band (@(Get-Command -Noun "RainbowYaml").Count -gt 0)
+            $result = $result -band (@(Get-Command -Name "Import-RainbowItem").Count -gt 0)
         }
 
         $result
     }
 
     if($CheckDependencies) {
-        Write-Message "Verifying connection with remote servers"
+        Write-Message "[Check] Testing connection with remote servers" -ForegroundColor Green
+        Write-Message "- Validating source $($SourceSession.Connection[0].BaseUri)"
         if(-not(Test-RemoteConnection -Session $SourceSession -Quiet)) {
-            Write-Message "- Unable to connect to $($SourceSession.Connection[0].BaseUri)"
+            Write-Message " - Unable to connect to $($SourceSession.Connection[0].BaseUri)"
             return
         }
+        Write-Message "- Validating destination $($DestinationSession.Connection[0].BaseUri)"
         if(-not(Test-RemoteConnection -Session $DestinationSession -Quiet)) {
-            Write-Message "Unable to connect to $($DestinationSession.Connection[0].BaseUri)"
+            Write-Message " - Unable to connect to $($DestinationSession.Connection[0].BaseUri)"
             return
         }
-        Write-Message "Verifying both systems have Rainbow and Unicorn" -Hide:(!$Detailed)
+
+        Write-Message "[Check] Verifying prerequisites are installed" -ForegroundColor Green
         $isReady = Invoke-RemoteScript -ScriptBlock $dependencyScript -Session $SourceSession
 
         if($isReady) {
@@ -82,10 +78,10 @@ function Copy-RainbowContent {
         }
 
         if(!$isReady) {
-            Write-Message "- Missing required installation of Rainbow and Unicorn" -Hide:(!$Detailed)
+            Write-Message "- Missing required installation of Rainbow and Unicorn"
             return
         } else {
-            Write-Message "- Verification complete" -Hide:(!$Detailed)
+            Write-Message "- All systems are go!"
         }
     }
 
@@ -346,10 +342,10 @@ function Copy-RainbowContent {
     $pushedLookup = @{}
     $pullPool = [RunspaceFactory]::CreateRunspacePool(1, 4)
     $pullPool.Open()
-    $pullRunspaces = [System.Collections.ArrayList]@()
+    $pullRunspaces = [System.Collections.Generic.List[PSCustomObject]]@()
     $pushPool = [RunspaceFactory]::CreateRunspacePool(1, 4)
     $pushPool.Open()
-    $pushRunspaces = [System.Collections.ArrayList]@()
+    $pushRunspaces = [System.Collections.Generic.List[PSCustomObject]]@()
 
     class QueueItem {
         [int]$Level
@@ -374,6 +370,7 @@ function Copy-RainbowContent {
                     $treeLevelQueue.Enqueue($currentLevelChild)
                 }
             }
+            Write-Message " - Level $($treeLevels.Count - 1) : $($currentLevelItems.Count)" -Hide:(!$Detailed)
         } else {
             while($treeLevelQueue.Count -gt 0 -and ($currentDequeued = $treeLevelQueue.Dequeue())) {
                 $singleLevelItem = [System.Collections.Generic.List[ShallowItem]]@()
@@ -384,26 +381,26 @@ function Copy-RainbowContent {
                     $treeLevelQueue.Enqueue($singleLevelChild)
                 }
             }
+            Write-Message " - Levels 0 to $($treeLevels.Count - 1) : 1" -Hide:(!$Detailed)
         }
-        
-        Write-Message " - Level $($treeLevels.Count - 1) : $($currentLevelItems.Count)" -Hide:(!$Detailed)
     }
 
-    Write-Message "Spinning up jobs to transfer content" -Hide:(!$Detailed)
+    Write-Message "Spinning up jobs to transfer content" -ForegroundColor Yellow -Hide:(!$Detailed)
     
     $processedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $skippedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $pullLookup = @{}
     $currentLevel = 0
-    
+    $totalLevels = $treeLevels.Count
     $keepProcessing = $true
     while($keepProcessing) {
-        Write-Progress -Activity "Transfer of $($RootId) from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -Status "Pull $($pullCounter), Push $($pushCounter), Level $($currentLevel)" -PercentComplete ([Math]::Min(($updateCounter + $skippedItemsHash.Count) * 100 / $sourceShallowItemsCount, 100))
+        if($ShowProgress) {
+            Write-Progress -Activity "Transfer of $($RootId) from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -Status "Pull $($pullCounter), Push $($pushCounter), Level $($currentLevel)" -PercentComplete ([Math]::Min(($updateCounter + $skippedItemsHash.Count) * 100 / $sourceShallowItemsCount, 100))
+        }
         if($currentLevel -lt $treeLevels.Count) {
-            Write-Message "Queueing level $($currentLevel)" -Hide:(!$Detailed)
-            $itemIdList = [System.Collections.ArrayList]@()
+            $itemIdList = [System.Collections.Generic.List[string]]@()
             $levelItems = $treeLevels[$currentLevel]
-            $pushedLookup.Add($currentLevel, [System.Collections.ArrayList]@()) > $null
+            $pushedLookup.Add($currentLevel, [System.Collections.Generic.List[QueueItem]]@()) > $null
             foreach($levelItem in $levelItems) {
                 $itemId = $levelItem.ItemId
                 $processedItemsHash.Add($itemId) > $null
@@ -418,7 +415,10 @@ function Copy-RainbowContent {
                 }
             }
             $pullLookup[$currentLevel] = $itemIdList
-            if($itemIdList.Count -gt 0) {                
+            if($itemIdList.Count -gt 0) {
+                if($bulkCopy) {
+                    Write-Message "[Pull] Level $($currentLevel) with $($itemIdList.Count) item(s)"
+                }             
                 Write-Message "[Pull] $($currentLevel)" -ForegroundColor Green -Hide:(!$Detailed)
                 $runspaceProps = @{
                     ScriptBlock = $sourceScript
@@ -435,11 +435,18 @@ function Copy-RainbowContent {
                     Time = [datetime]::Now
                 }) > $null
             } else {
+                if($bulkCopy) {
+                    Write-Message "[Skip] Level $($currentLevel)" -ForegroundColor Cyan
+                } 
                 if($pushedLookup.Contains($currentLevel) -and $pushedLookup[$currentLevel].Count -eq 0) {
                     $pushedLookup.Remove($currentLevel)
                 }
             }
-            $currentLevel++
+            $currentLevel++             
+            $percentComplete = ($currentLevel * 100 / $totalLevels)
+            if($percentComplete % 5 -eq 0) {
+                Write-Message "[Pull] $($percentComplete)% complete"
+            }
         }
 
         $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
@@ -487,7 +494,7 @@ function Copy-RainbowContent {
                 }
 
                 $currentRunspace.Pipe.Dispose()
-                $pullRunspaces.Remove($currentRunspace)
+                $pullRunspaces.Remove($currentRunspace) > $null
             }
 
             if($currentRunspace.Operation -eq "Push") {
@@ -502,10 +509,13 @@ function Copy-RainbowContent {
                     }
                 }
 
-                $queuedItems = [System.Collections.ArrayList]@()
+                $queuedItems = [System.Collections.Generic.List[QueueItem]]@()
                 if($pushedLookup.ContainsKey($currentRunspace.Level)) {
                     $queuedItems.AddRange($pushedLookup[$currentRunspace.Level])
                     $pushedLookup.Remove($currentRunspace.Level) > $null
+                    if($bulkCopy) {
+                        Write-Message "[Pull] Level $($currentRunspace.Level) completed" -ForegroundColor Gray
+                    }
                 }
                 if($queuedItems.Count -gt 0) {
                     foreach($queuedItem in $queuedItems) {
@@ -531,7 +541,7 @@ function Copy-RainbowContent {
                 }
                 
                 $currentRunspace.Pipe.Dispose()
-                $pushRunspaces.Remove($currentRunspace)
+                $pushRunspaces.Remove($currentRunspace) > $null
             }
         }
 
