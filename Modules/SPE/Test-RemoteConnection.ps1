@@ -19,7 +19,7 @@
             Test-RemoteConnection -Session $session -Quiet
     
         .EXAMPLE
-            The following example tests connectivity with the session host and returns the System.Net.HttpWebResponse object or System.Net.WebException error message.
+            The following example tests connectivity with the session host and returns an object with Sitecore details or $null results.
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Test-RemoteConnection -Session $session
@@ -34,40 +34,23 @@
         [ValidateNotNull()]
         [pscustomobject]$Session,
 
-        [Parameter()]
-        [int]$Timeout = 60,
-
         [switch]$Quiet
     )
 
     process {
-        foreach($connection in $Session.Connection) {
-            $uri = "$($connection.BaseUri.AbsoluteUri.TrimEnd('/'))/sitecore/service/keepalive.aspx?ts=$([DateTime]::Now.Ticks)&reason=default"
-            $webRequest = [System.Net.WebRequest]::Create($uri)
-            if($Session.Credential) {
-                $webRequest.Credential = $Session.Credential
+        $result = Invoke-RemoteScript -ScriptBlock {
+            [PSCustomObject]@{
+                "SPEVersion" = $PSVersionTable.SPEVersion
+                "SitecoreVersion" = [SitecoreVersion]::Current.ToString()
+                "CurrentTime" = [datetime]::UtcNow
             }
+        } -Session $Session
 
-            if($Session.UseDefaultCredentials) {
-                $webRequest.UseDefaultCredentials = $Session.UseDefaultCredentials
-            }
-
-            $webRequest.Timeout = 1000 * $Timeout
-
-            try {
-                $webResponse = [System.Net.HttpWebResponse]($webRequest.GetResponse())
-                if($Quiet) {
-                    $webResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK
-                } else {
-                    $webResponse
-                }
-            } catch [System.Net.WebException] {
-                if($Quiet) {
-                    $false
-                } else {
-                    throw $_
-                }
-            }
+        $isSuccess = $result -ne $null
+        if($Quiet) {
+            $isSuccess
+        } else {
+            $result
         }
     }
 }
