@@ -1,5 +1,5 @@
 #Requires -Modules SPE
- 
+
 function Copy-RainbowContent {
     [CmdletBinding()]
     param(
@@ -26,7 +26,8 @@ function Copy-RainbowContent {
 
         [switch]$Detailed,
 
-        [switch]$ShowProgress
+        [switch]$ShowProgress,
+        [switch]$BoringMode
     )
 
     function Write-Message {
@@ -36,8 +37,21 @@ function Copy-RainbowContent {
             [switch]$Hide
         )
 
+        $timeFormat = "HH:mm:ss:fff"
         if(!$Hide) {
-            Write-Host $Message -ForegroundColor $ForegroundColor
+            Write-Host "[$(Get-Date -Format $timeFormat)] $($Message)" -ForegroundColor $ForegroundColor
+        }
+    }
+
+    function Get-SpecialText {
+        param(
+            [int]$Character,
+            [string]$Fallback
+        )
+        if($BoringMode) {
+            $Fallback
+        } else {
+            "$([char]::ConvertFromUtf32($Character))"
         }
     }
    
@@ -356,7 +370,7 @@ function Copy-RainbowContent {
     $treeLevels = [System.Collections.Generic.List[System.Collections.Generic.List[ShallowItem]]]@()
     $treeLevelQueue = [System.Collections.Generic.Queue[ShallowItem]]@()
     $treeLevelQueue.Enqueue($sourceTree[$RootParentId][0])
-    Write-Message "- Tree Level Counts" -Hide:(!$Detailed)
+    Write-Message "- Tree Level Counts $(Get-SpecialText -Character 0x1F334)" -Hide:(!$Detailed)
     while($treeLevelQueue.Count -gt 0) {
         if($bulkCopy) {
             $currentLevelItems = [System.Collections.Generic.List[ShallowItem]]@()
@@ -385,7 +399,7 @@ function Copy-RainbowContent {
         }
     }
 
-    Write-Message "Spinning up jobs to transfer content" -ForegroundColor Yellow -Hide:(!$Detailed)
+    Write-Message "Spinning up jobs to transfer content" -ForegroundColor Green
     
     $processedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
     $skippedItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
@@ -441,12 +455,12 @@ function Copy-RainbowContent {
                 if($pushedLookup.Contains($currentLevel) -and $pushedLookup[$currentLevel].Count -eq 0) {
                     $pushedLookup.Remove($currentLevel)
                 }
+                $percentComplete = ($currentLevel * 100 / $totalLevels)
+                if($percentComplete % 5 -eq 0) {                
+                    Write-Message "[Status] $($percentComplete)% complete"
+                }
             }
-            $currentLevel++             
-            $percentComplete = ($currentLevel * 100 / $totalLevels)
-            if($percentComplete % 5 -eq 0) {
-                Write-Message "[Pull] $($percentComplete)% complete"
-            }
+            $currentLevel++
         }
 
         $currentRunspaces = $pushRunspaces.ToArray() + $pullRunspaces.ToArray()
@@ -508,7 +522,11 @@ function Copy-RainbowContent {
                         Write-Message " - $($feedback.ErrorMessages)" -ForegroundColor Red -Hide:(!$Detailed)
                     }
                 }
-
+                
+                $percentComplete = ($currentRunspace.Level * 100 / $totalLevels)
+                if($percentComplete % 5 -eq 0) {                
+                    Write-Message "[Status] $($percentComplete)% complete"
+                }
                 $queuedItems = [System.Collections.Generic.List[QueueItem]]@()
                 if($pushedLookup.ContainsKey($currentRunspace.Level)) {
                     $queuedItems.AddRange($pushedLookup[$currentRunspace.Level])
@@ -548,11 +566,13 @@ function Copy-RainbowContent {
         $keepProcessing = ($currentLevel -lt $treeLevels.Count -or $pullRunspaces.Count -gt 0 -or $pushRunspaces.Count -gt 0)
     }
 
+    Write-Message "[Status] 100% complete"
+
     $pullPool.Close() 
     $pullPool.Dispose()
     $pushPool.Close() 
     $pushPool.Dispose()
-
+    $removedCounter = 0
     if($RemoveNotInSource) {
         $removeItemsHash = [System.Collections.Generic.HashSet[string]]([StringComparer]::OrdinalIgnoreCase)
         $removeItemsHash.UnionWith($destinationItemsHash)
@@ -576,19 +596,27 @@ function Copy-RainbowContent {
             $removeNotInSourceScript = [scriptblock]::Create($removeNotInSourceScript.ToString().Replace("{ITEM_IDS}", $itemsNotInSource))
             Invoke-RemoteScript -ScriptBlock $removeNotInSourceScript -Session $DestinationSession -Raw
             Write-Message " - Removed $($removeItemsHash.Count) item(s) from the destination"
+            $removedCounter += $removeItemsHash.Count
         }
     }
 
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
-    Write-Message "[Done] Completed in $($totalSeconds) seconds" -ForegroundColor Green
+    Write-Message "[Done] Completed in a record $($totalSeconds) seconds! $(Get-SpecialText -Character 0x1F525)$(Get-SpecialText -Character 0x1F37B)" -ForegroundColor Green
     Write-Progress -Activity "[Done] Completed in $($totalSeconds) seconds" -Completed
     if($processedItemsHash.Count -gt 0) {
-        Write-Message "- Processed count: $($processedItemsHash.Count)"
-        Write-Message " - Update count: $($updateCounter)"
-        Write-Message " - Skip count: $($skippedItemsHash.Count)"
-        Write-Message " - Error count: $($errorCounter)"
-        Write-Message " - Pull count: $($pullCounter)"
-        Write-Message " - Push count: $($pushCounter)"
+        Write-Message "Processed $($processedItemsHash.Count)"
+        Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Updated $($updateCounter)"
+        Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Skipped $($skippedItemsHash.Count)"
+        if($errorCounter -gt 0) {
+            Write-Message " $(Get-SpecialText -Character 0x274C -Fallback "-") Errored $($errorCounter)"
+        } else {
+            Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Errored $($errorCounter)"
+        }
+        if($RemoveNotInSource) {
+            Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Removed $($removedCounter)"
+        }
+        Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Pulled $($pullCounter)"
+        Write-Message " $(Get-SpecialText -Character 0x2714 -Fallback "-") Pushed $($pushCounter)"
     }
 }
