@@ -93,36 +93,36 @@ namespace Spe.Commands.Security.Accounts
             }
 
             var profile = user.Profile;
-            if (!string.IsNullOrEmpty(FullName))
+            if (IsParameterSpecified(nameof(FullName)) && !string.IsNullOrEmpty(FullName))
             {
                 profile.FullName = FullName;
             }
-            if (!string.IsNullOrEmpty(Comment))
+            if (IsParameterSpecified(nameof(Comment)) && !string.IsNullOrEmpty(Comment))
             {
                 profile.Comment = Comment;
             }
 
-            if (!string.IsNullOrEmpty(Portrait))
+            if (IsParameterSpecified(nameof(Portrait)) && !string.IsNullOrEmpty(Portrait))
             {
                 profile.Portrait = Portrait;
             }
 
-            if (!ID.IsNullOrEmpty(ProfileItemId))
+            if (IsParameterSpecified(nameof(ProfileItemId)) && !ID.IsNullOrEmpty(ProfileItemId))
             {
                 profile.ProfileItemId = ProfileItemId.ToString();
             }
 
-            if (profile.Email != Email)
+            if (IsParameterSpecified(nameof(Email)) && profile.Email != Email)
             {
                 profile.Email = Email;
             }
-
-            if (User.Current.IsAdministrator && IsParameterSpecified("IsAdministrator"))
+            
+            if (IsParameterSpecified(nameof(IsAdministrator)) && User.Current.IsAdministrator)
             {
                 profile.IsAdministrator = IsAdministrator;
             }
 
-            if (!string.IsNullOrEmpty(StartUrl))
+            if (IsParameterSpecified(nameof(StartUrl)) && !string.IsNullOrEmpty(StartUrl))
             {
                 switch (StartUrl)
                 {
