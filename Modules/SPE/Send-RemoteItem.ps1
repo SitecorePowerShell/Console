@@ -194,7 +194,7 @@ function Send-RemoteItem {
                 $fileStream.Dispose()
 
                 if(!$responseMessage.IsSuccessStatusCode) {
-                    Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
+                    Write-Error "Upload failed. $($responseMessage.ReasonPhrase)"
                     return    
                 }
 
@@ -213,7 +213,7 @@ function Send-RemoteItem {
 
             if($errorResponse){
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
-                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+                    -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }            
         }
     }
