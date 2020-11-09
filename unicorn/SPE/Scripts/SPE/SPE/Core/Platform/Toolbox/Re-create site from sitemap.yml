@@ -23,7 +23,9 @@ SharedFields:
         @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"},
         @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"},
         @{ Name = "prefix"; Value=""; Placeholder = "https://www.sitecore.net/"; Title="Prefix to chop off URLs"; },
-        @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";} `
+        @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";},
+        @{ Name = "charsToRemove"; Value=""; Title="Characters to remove from Item Name separated by a comma";},
+        @{ Name = "titleCase"; Value=$false; Title="Converts the item name and display name to title case (item name = Item Name)";} `
         -Description "Create pages using the sitemap of an existing site." `
         -Title "Create Site From Sitemap" -Width 600 -Height 400 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
@@ -61,7 +63,21 @@ SharedFields:
       $parentPath = Split-Path $itemName -parent
       $itemName = Split-Path $itemName -leaf
       
+      if( $titleCase -eq $true )
+      {
+        $itemName = (Get-Culture).TextInfo.ToTitleCase($itemName)    
+      }
+      
       $itemValidName = CreateValidItemName($itemName)
+      
+      if( -not [String]::IsNullOrEmpty($charsToRemove) )
+      {
+          $charsToRemove = $charsToRemove -split ','
+  
+          $charsToRemove | ForEach-Object {
+            $itemValidName = $itemValidName -replace $_,""
+        }
+      }
       
       if(-not (Test-Path "$createAt\$parentPath")){
         if($parentPath.Length -gt 2){
