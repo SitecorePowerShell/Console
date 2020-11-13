@@ -13,7 +13,7 @@ SharedFields:
   Value: 400
 - ID: "d25b56d4-23b6-4462-be25-b6a6d7f38e13"
   Hint: Icon
-  Value: Office/32x32/chart_donut.png
+  Value: LaunchPadIcons/32x32/PowerShell Reports.png
 - ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
   Hint: __Security
   Value: |
