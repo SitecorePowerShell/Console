@@ -3,10 +3,9 @@ using System.Management.Automation;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;
 using Sitecore.IO;
-using Sitecore.Zip;
-using Sitecore.Zip.Utils;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
+using System.IO.Compression;
 
 namespace Spe.Commands.Packages
 {
@@ -61,7 +60,7 @@ namespace Spe.Commands.Packages
         {
             PackageProject packageProject = null;
 
-            using (var packageReader = new ZipReader(fileName))
+            using (var packageReader = ZipFile.Open(fileName, ZipArchiveMode.Read))
             {
                 var packageEntry = packageReader.GetEntry("package.zip");
                 if (packageEntry == null)
@@ -71,15 +70,15 @@ namespace Spe.Commands.Packages
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    StreamUtils.CopyStream(packageEntry.GetStream(), memoryStream, 0x4000);
+                    StreamUtils.CopyStream(packageEntry.Open(), memoryStream, 0x4000);
                     memoryStream.Seek(0, SeekOrigin.Begin);
-                    using (var reader = new ZipReader(memoryStream))
+                    using(var reader = new ZipArchive(memoryStream))
                     {
                         foreach (var entry in reader.Entries)
                         {
-                            if (!entry.Name.Is(Constants.ProjectKey)) continue;
+                            if (!entry.FullName.Is(Constants.ProjectKey)) continue;
 
-                            packageProject = IOUtils.LoadSolution(StreamUtil.LoadString(entry.GetStream()));
+                            packageProject = IOUtils.LoadSolution(StreamUtil.LoadString(entry.Open()));
                             break;
                         }
                     }

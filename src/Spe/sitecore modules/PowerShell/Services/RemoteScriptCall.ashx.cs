@@ -443,14 +443,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
                 {
                     PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
-                    using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
+                    using (var packageReader = new ZipArchive(request.InputStream))
                     {
                         itemParam = Path.GetDirectoryName(itemParam.TrimEnd('\\', '/'));
                         foreach (var zipEntry in packageReader.Entries)
                         {
-                            if (!zipEntry.IsDirectory && zipEntry.Size > 0)
+                            // ZipEntry does not provide an IsDirectory or IsFile property.
+                            if (!(zipEntry.FullName.EndsWith("/") && zipEntry.Name == "") && zipEntry.Length > 0)
                             {
-                                ProcessMediaUpload(zipEntry.GetStream(), scriptDb, $"{itemParam}/{zipEntry.Name}",
+                                ProcessMediaUpload(zipEntry.Open(), scriptDb, $"{itemParam}/{zipEntry.FullName}",
                                     skipExisting);
                             }
                         }
