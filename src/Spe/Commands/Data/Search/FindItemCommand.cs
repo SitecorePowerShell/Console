@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
+using Sitecore.ContentSearch.Utilities;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -40,12 +41,14 @@ namespace Spe.Commands.Data.Search
         [Parameter(ParameterSetName = "Dynamic")]
         [Parameter(ParameterSetName = "Predicate")]
         [Parameter(ParameterSetName = "ScopeQuery")]
+        [Parameter(ParameterSetName = "SearchStringModel")]
         public string[] FacetOn { get; set; }
 
         [Parameter(ParameterSetName = "Criteria")]
         [Parameter(ParameterSetName = "Dynamic")]
         [Parameter(ParameterSetName = "Predicate")]
         [Parameter(ParameterSetName = "ScopeQuery")]
+        [Parameter(ParameterSetName = "SearchStringModel")]
         public int FacetMinCount { get; set; }
 
         [Parameter]
@@ -60,6 +63,9 @@ namespace Spe.Commands.Data.Search
 
         [Parameter(ParameterSetName = "ScopeQuery")]
         public string ScopeQuery { get; set; }
+
+        [Parameter(ParameterSetName = "SearchStringModel")]
+        public SearchStringModel[] SearchStringModels { get; set; }
 
         [Parameter]
         public string OrderBy { get; set; }
@@ -78,7 +84,7 @@ namespace Spe.Commands.Data.Search
 
         protected override void EndProcessing()
         {
-            var index = String.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
+            var index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
 
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
@@ -91,6 +97,7 @@ namespace Spe.Commands.Data.Search
                 var objType = (dynamic)Activator.CreateInstance(queryableType);
                 var query = GetQueryable(objType, context);
 
+                // Dynamic
                 if (!string.IsNullOrEmpty(Where))
                 {
                     query = ApplyWhereAndValues(query, Where, WhereValues);
@@ -114,13 +121,15 @@ namespace Spe.Commands.Data.Search
                         WriteWarning($"The parameter ({nameof(Filter)}) containing the dynamic Linq is missing.");
                     }
                 }
-
+                // Dynamic End
+                // Criteria
                 if (Criteria != null)
                 {
                     var criteriaPredicate = ProcessCriteria(objType, Criteria, SearchOperation.And);
                     query = ApplyWhere(query, criteriaPredicate);
                 }
-
+                // Criteria End
+                // Predicate
                 if (WherePredicate != null)
                 {
                     var boxedPredicate = WherePredicate;
@@ -140,11 +149,19 @@ namespace Spe.Commands.Data.Search
                     }
                     query = ApplyFilter(query, boxedPredicate);
                 }
-
+                // Predicate End
+                // ScopeQuery
                 if (ScopeQuery != null)
                 {
                     query = ProcessScopeQuery(query, context, ScopeQuery);
                 }
+                // ScopeQuery End
+                // SearchStringModels
+                if (SearchStringModels != null)
+                {
+                    query = ProcessSearchStringModels(query, context, SearchStringModels.ToList());
+                }
+                // SearchStringModels End
 
                 if (FacetOn != null)
                 {

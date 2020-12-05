@@ -302,8 +302,13 @@ namespace Spe.Commands.Data.Search
         public static IQueryable<T> ProcessScopeQuery<T>(IQueryable<T> query, IProviderSearchContext context, string scope) where T : ISearchResult
         {
             var searchStringModel = SearchStringModel.ParseDatasourceString(scope).ToList();
-            query = LinqHelper.CreateQuery<T>(context, searchStringModel);
-            query = AddSorting(query, searchStringModel);
+            return ProcessSearchStringModels(query, context, searchStringModel);
+        }
+
+        public static IQueryable<T> ProcessSearchStringModels<T>(IQueryable<T> query, IProviderSearchContext context, List<SearchStringModel> models) where T : ISearchResult
+        {
+            query = LinqHelper.CreateQuery<T>(context, models);
+            query = AddSorting(query, models);
             return query;
         }
 
