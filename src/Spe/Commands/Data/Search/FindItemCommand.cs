@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
+using Sitecore.ContentSearch.Linq.Extensions;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
+using Spe.Core.Extensions;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -89,14 +90,15 @@ namespace Spe.Commands.Data.Search
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
                 var queryableType = typeof(SearchResultItem);
-                if (QueryType != null && QueryType != queryableType && QueryType.IsSubclassOf(queryableType))
+                if (QueryType != null && QueryType != queryableType && 
+                    (QueryType.IsSubclassOf(queryableType) || QueryType.ImplementsInterface(typeof(ISearchResult))))
                 {
                     queryableType = QueryType;
                 }
 
                 var objType = (dynamic)Activator.CreateInstance(queryableType);
                 var query = GetQueryable(objType, context);
-
+                
                 // Dynamic
                 if (!string.IsNullOrEmpty(Where))
                 {
@@ -189,7 +191,8 @@ namespace Spe.Commands.Data.Search
                 }
                 else
                 {
-                    WriteObject(ApplySkipAndTakeByPosition(query, First, Last, Skip), true);
+                    var sortScore = Last > 0 && (string.IsNullOrEmpty(OrderBy) || OrderBy.Is("score"));
+                    WriteObject(ApplySkipAndTakeByPosition(query, First, Last, Skip, sortScore), true);
                 }
             }
         }

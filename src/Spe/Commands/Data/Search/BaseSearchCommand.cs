@@ -209,7 +209,7 @@ namespace Spe.Commands.Data.Search
         {
             var boost = criteria.Boost;
             var value = criteria.Value;
-            
+
             switch (value)
             {
                 case DateTime _:
@@ -382,7 +382,7 @@ namespace Spe.Commands.Data.Search
 
         internal static IQueryable<T> ApplyOrderBy<T>(IQueryable<T> query, string orderBy) where T : ISearchResult
         {
-            return query.OrderBy(orderBy);
+            return orderBy.Is("score") ? query.OrderBy(i => i["score"]) : query.OrderBy(orderBy);
         }
 
         internal static List<object> ApplySelect<T>(IQueryable<T> query, string[] properties)
@@ -408,8 +408,31 @@ namespace Spe.Commands.Data.Search
             return query;
         }
 
-        internal static List<T> ApplySkipAndTakeByPosition<T>(IQueryable<T> query, int first, int last, int skip) where T : ISearchResult
+        internal static List<T> ApplySkipAndTakeByPosition<T>(IQueryable<T> query, int first, int last, int skip, bool sortScore = true) where T : ISearchResult
         {
+            if (first == 0 && last == 0 && skip == 0)
+            {
+                return query.ToList();
+            }
+
+            if (first > 0 && last == 0)
+            {
+                return query.Skip(skip).Take(first).ToList();
+            }
+
+            if (sortScore && last > 0)
+            {
+                if (skip == 0 && first == 0)
+                {
+                    return last == 1 ? new List<T> { query.Last() } : query.OrderBy(i => i["score"]).Take(last).ToList();
+                }
+
+                if (first == 0)
+                {
+                    return query.OrderBy(i => i["score"]).Skip(skip).Take(last).ToList();
+                }
+            }
+
             var count = query.Count();
             var skipEnd = (last != 0 && first == 0);
             var skipFirst = skipEnd ? 0 : skip;
