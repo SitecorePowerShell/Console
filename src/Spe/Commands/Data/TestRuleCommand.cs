@@ -28,9 +28,9 @@ namespace Spe.Commands.Data
 
         protected override void BeginProcessing()
         {
-            Item currentItem = InputObject.BaseObject() as Item;
+            var currentItem = InputObject.BaseObject() as Item;
 
-            string ruleDatabaseName = RuleDatabase;
+            var ruleDatabaseName = RuleDatabase;
             if (!string.IsNullOrEmpty(ruleDatabaseName))
             {
                 ruleDatabaseName = currentItem != null
@@ -38,13 +38,13 @@ namespace Spe.Commands.Data
                     : ApplicationSettings.RulesDb;
             }
 
-            Database ruleDatabase = Factory.GetDatabase(ruleDatabaseName);
+            var ruleDatabase = Factory.GetDatabase(ruleDatabaseName);
             rules = RuleFactory.ParseRules<RuleContext>(ruleDatabase, Rule);
         }
 
         protected override void ProcessRecord()
         {
-            Item currentItem = InputObject.BaseObject() as Item; 
+            var currentItem = InputObject.BaseObject() as Item; 
             
             var ruleContext = new RuleContext
             {
