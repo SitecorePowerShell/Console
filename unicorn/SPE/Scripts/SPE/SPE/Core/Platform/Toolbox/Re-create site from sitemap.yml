@@ -70,17 +70,15 @@ SharedFields:
       
       $itemValidName = CreateValidItemName($itemName)
       
-      if( -not [String]::IsNullOrEmpty($charsToRemove) )
-      {
+      if( -not [String]::IsNullOrEmpty($charsToRemove) ) {
           $charsToRemove = $charsToRemove -split ','
-  
           $charsToRemove | ForEach-Object {
             $itemValidName = $itemValidName -replace $_,""
         }
       }
       
-      if(-not (Test-Path "$createAt\$parentPath")){
-        if($parentPath.Length -gt 2){
+      if(-not (Test-Path "$createAt\$parentPath")) {
+        if($parentPath.Length -gt 2) {
           $parentItem = CreateItem $parentPath
         }
       } else {
