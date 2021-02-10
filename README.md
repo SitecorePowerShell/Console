@@ -63,7 +63,8 @@ Enjoy!
 
 ### Resources
 
-* Download the module from the [Sitecore Marketplace](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx).
+* For Sitecore 8/9, download the module from the [Sitecore Marketplace](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx).
+* For Sitecore 10, download the module from [Sitecore SXA Downloads](https://dev.sitecore.net/Downloads/Sitecore_Experience_Accelerator/10x/Sitecore_Experience_Accelerator_1000.aspx).
 * Read the [SPE user guide](https://doc.sitecorepowershell.com/).
 * See a whole [variety of links to SPE material](http://blog.najmanowicz.com/sitecore-powershell-console/).
 * Watch some quick start [training videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b).
