@@ -14,11 +14,10 @@ namespace Spe.Core.Settings.Authorization
 {
     public static class ServiceAuthorizationManager
     {
-
         private static readonly ConcurrentDictionary<string, List<AuthorizationEntry>> _authorizationEntries =
             new ConcurrentDictionary<string, List<AuthorizationEntry>>();
 
-        private static readonly ConcurrentDictionary<string, AuthCacheEntry> _authorizationCache = 
+        private static readonly ConcurrentDictionary<string, AuthCacheEntry> _authorizationCache =
             new ConcurrentDictionary<string, AuthCacheEntry>();
 
         public static bool IsUserAuthorized(string serviceName, string userName = null)
@@ -45,7 +44,10 @@ namespace Spe.Core.Settings.Authorization
             bool? allowedByRole = null;
             bool? allowedByName = null;
 
-            var user = User.FromName(userName, false);
+            // AzureAD: roles are available only for "Context.User". Cannot access them via user taken from "User.FromName"
+            var user = userName.Equals(Context.User?.Name, StringComparison.InvariantCultureIgnoreCase)
+                ? Context.User
+                : User.FromName(userName, false);
 
             foreach (var authEntry in authEntries)
             {
@@ -54,7 +56,7 @@ namespace Spe.Core.Settings.Authorization
                     case AccountType.Role:
                         Role role = authEntry.Identity;
                         if (!allowedByRole.HasValue || allowedByRole.Value)
-                            // if not denied by previous rules - keep checking
+                        // if not denied by previous rules - keep checking
                         {
                             if ((role != null && user.IsInRole(role)) ||
                                 // check for special role based on user having administrator privileges
@@ -67,7 +69,7 @@ namespace Spe.Core.Settings.Authorization
                         break;
                     case AccountType.User:
                         if (!allowedByName.HasValue || allowedByName.Value)
-                            // if not denied by previous rules - keep checking
+                        // if not denied by previous rules - keep checking
                         {
                             if (authEntry.WildcardMatch(userName))
                             {
