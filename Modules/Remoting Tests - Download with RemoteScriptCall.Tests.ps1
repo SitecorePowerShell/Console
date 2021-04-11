@@ -14,7 +14,9 @@ Describe "Download with RemoteScriptCall" {
         }
         New-Item -Path $destinationMediaPath -ItemType Directory | Out-Null
 
-        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+        $sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
+        #$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+        $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
     }
     AfterEach {
         Stop-ScriptSession -Session $session

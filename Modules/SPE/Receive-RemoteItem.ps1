@@ -136,6 +136,7 @@ function Receive-RemoteItem {
         if($Session) {
             $Username = $Session.Username
             $Password = $Session.Password
+            $SharedSecret = $Session.SharedSecret
             $Credential = $Session.Credential
             $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
@@ -164,9 +165,15 @@ function Receive-RemoteItem {
             $handler = New-Object System.Net.Http.HttpClientHandler
             $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
             $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-            $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-            $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-          
+
+            if(![string]::IsNullOrEmpty($SharedSecret)) {
+                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
+            } else {
+                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+            }
+                      
             if($Credential) {
                 $handler.Credentials = $Credential
             }
