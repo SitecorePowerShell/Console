@@ -113,7 +113,7 @@ SharedFields:
     $customOptions = [ordered]@{}
     $fieldLookup = @{}
     foreach($field in $templateFields){
-        $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
+        $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title) -or $field.Title -eq "__Standard Values"]
         $title = "$title [$($field.Type)]"
         if($standardFields -contains $field.Name){
             $stdOptions[$title] = $field.Name

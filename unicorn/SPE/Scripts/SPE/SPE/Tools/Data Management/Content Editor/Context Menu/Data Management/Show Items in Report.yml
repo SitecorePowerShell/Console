@@ -1,0 +1,25 @@
+﻿---
+ID: "487ff68c-e437-46f9-91b5-9092ccfcf2b9"
+Parent: "5ccbd486-b74d-463e-8237-90edc28bb0f2"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Content Editor/Context Menu/Data Management/Show Items in Report
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/clipboard_paste.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $items = Get-ChildItem -Path "master:" -ID $SitecoreContextItem.ID -WithParent
+    $items | Show-ListView -ViewName "DataManagement"
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20210501T021226Z
