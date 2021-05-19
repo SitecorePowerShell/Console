@@ -34,10 +34,10 @@ Languages:
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Overfør det låste element fra en bruger til en anden.
+    Value: Fjern låsen fra alle elementer.
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
     Hint: __Display name
-    Value: Overfør låse
+    Value: Fjern alle låse
   Versions:
   - Version: 1
     Fields:
