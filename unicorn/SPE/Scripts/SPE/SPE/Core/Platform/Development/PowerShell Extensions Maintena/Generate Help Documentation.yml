@@ -104,6 +104,7 @@ SharedFields:
     [PowerShell.MamlGenerator.CmdletHelpGenerator]::GenerateHelp($moduleLibraryPath, $help, $files)
     Remove-Item "$help/*.maml" -Force
     Get-Item "$help/*.xml" | Rename-Item -NewName { $_.name -replace '\.xml','.maml' }
+    Send-File -Path "$help/Spe.dll-help.maml"
 Languages:
 - Language: en
   Versions:
