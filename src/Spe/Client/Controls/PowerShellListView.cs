@@ -47,7 +47,7 @@ namespace Spe.Client.Controls
 
         public string Filter
         {
-            get { return GetViewStateString("Filter"); }
+            get => GetViewStateString("Filter");
             set
             {
                 SetViewStateString("Filter", value);
@@ -57,14 +57,14 @@ namespace Spe.Client.Controls
 
         public string ContextId
         {
-            get { return GetViewStateString("ContextId"); }
-            set { SetViewStateString("ContextId", value); }
+            get => GetViewStateString("ContextId");
+            set => SetViewStateString("ContextId", value);
         }
 
         public string SessionId
         {
-            get { return GetViewStateString("SessionId"); }
-            set { SetViewStateString("SessionId", value); }
+            get => GetViewStateString("SessionId");
+            set => SetViewStateString("SessionId", value);
         }
 
         public ShowListViewMessage Data
