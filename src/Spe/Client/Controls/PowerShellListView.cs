@@ -16,6 +16,7 @@ namespace Spe.Client.Controls
 {
     public class PowerShellListView : Listview
     {
+        private static readonly object locker = new object();
         private List<BaseListViewCommand.DataObject> _filteredItems;
         private const string ExpirationSetting = "Spe.HttpCacheExpirationMinutes";
 
@@ -81,8 +82,10 @@ namespace Spe.Client.Controls
         {
             get
             {
-                if (_filteredItems == null)
+                lock (locker)
                 {
+                    if (_filteredItems != null) return _filteredItems;
+
                     var filterComplete = Filter;
                     var filters = filterComplete.Split().ToList();
                     var inPhrase = false;
@@ -94,10 +97,12 @@ namespace Spe.Client.Controls
                         {
                             inPhrase = !inPhrase;
                         }
+
                         if (inPhrase)
                         {
                             phraseinProgress += " " + filter;
                         }
+
                         if (filter.EndsWith("\"") && inPhrase)
                         {
                             inPhrase = !inPhrase;
@@ -105,6 +110,7 @@ namespace Spe.Client.Controls
                             phraseinProgress = string.Empty;
                             return false;
                         }
+
                         return !inPhrase;
                     }).ToList();
 
@@ -118,8 +124,8 @@ namespace Spe.Client.Controls
                         ? Data.Data
                         : Data.Data.FindAll(p => filters.All(filter => p.Display.Values.Any(
                             value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1)));
+                    return _filteredItems;
                 }
-                return _filteredItems;
             }
         }
 
