@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
@@ -163,7 +164,7 @@ namespace Spe.Core.Provider
             if (!string.Equals(sourceDrive, destination, StringComparison.OrdinalIgnoreCase) &&
                 Factory.GetDatabase(sourceDrive) != null && Factory.GetDatabase(destinationDrive) != null)
             {
-                paramAdded |= AddDynamicParameter(typeof (TransferOptions), TransferOptionsParam, ref dic);
+                paramAdded |= AddDynamicParameter(typeof(TransferOptions), TransferOptionsParam, ref dic);
             }
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(Item), DestinationItemParam, ref dic, false);
@@ -181,7 +182,7 @@ namespace Spe.Core.Provider
             if (!string.Equals(sourceDrive, destination, StringComparison.OrdinalIgnoreCase) &&
                 Factory.GetDatabase(sourceDrive) != null && Factory.GetDatabase(destinationDrive) != null)
             {
-                paramAdded |= AddDynamicParameter(typeof (TransferOptions), TransferOptionsParam, ref dic);
+                paramAdded |= AddDynamicParameter(typeof(TransferOptions), TransferOptionsParam, ref dic);
             }
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(Item), DestinationItemParam, ref dic, false);
@@ -193,8 +194,8 @@ namespace Spe.Core.Provider
             LogInfo("Executing RemoveItemDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             var paramAdded = FailSilentlyDynamicParameters(ref dic);
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), ArchiveParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), PermanentlyParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), ArchiveParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), PermanentlyParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             return paramAdded ? dic : null;
         }
@@ -208,7 +209,7 @@ namespace Spe.Core.Provider
         protected static bool FailSilentlyDynamicParameters(ref RuntimeDefinedParameterDictionary dic)
         {
             var paramAdded = false;
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), FailSilentlyParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), FailSilentlyParam, ref dic);
             return paramAdded;
         }
 
@@ -230,42 +231,80 @@ namespace Spe.Core.Provider
         }
 
 
-        private void GetVersionAndLanguageParams(out int version, out string[] language)
+        private void GetVersionAndLanguageParams(out int version, out string[] availableLanguages)
         {
             // language selection
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            language = null;
-            if (dic != null && dic[LanguageParam].IsSet)
+            availableLanguages = new string[0];
+            version = Version.Latest.Number;
+
+            if (dic == null) return;
+
+            if (dic[LanguageParam].IsSet)
             {
-                var langs = dic[LanguageParam].Value as string[];
-                language = langs?.Select(lang =>
-                    lang.Contains("*")
-                        ? lang
-                        : LanguageManager.GetLanguage(lang)?.Name).ToArray();
-                if (langs == null)
+                var validLanguages = new List<string>();
+
+                switch (dic[LanguageParam].Value)
                 {
-                    var lang = dic[LanguageParam].Value as string;
-                    language = new[] {(lang?.Contains("*") ?? true) ? lang : LanguageManager.GetLanguage(lang)?.Name};
+                    case string[] languagesFromParameter:
+                        foreach (var providedLanguage in languagesFromParameter)
+                        {
+                            if (providedLanguage == "*")
+                            {
+                                // Using the wildcard is equivalent to not providing a value.
+                                validLanguages.Add(providedLanguage);
+                                break;
+                            }
+                            if (providedLanguage.Contains("*"))
+                            {
+                                // TODO: I don't think this behavior is correct.
+                                // Something like "invalid*" should not work.
+                                validLanguages.Add(providedLanguage);
+                            }
+                            else
+                            {
+                                var language = LanguageManager.GetLanguage(providedLanguage)?.Name;
+                                if(string.IsNullOrEmpty(language)) continue;
+                                validLanguages.Add(language);
+                            }
+                        }
+                        break;
+                    case string languageFromParameter:
+                        if (languageFromParameter == "*")
+                        {
+                            validLanguages.Add(languageFromParameter);
+                        }
+                        else if (languageFromParameter.Contains("*"))
+                        {
+                            // TODO: I don't think this behavior is correct.
+                            // Something like "invalid*" should not work.
+                            validLanguages.Add(languageFromParameter);
+                        }
+                        else
+                        {
+                            var language = LanguageManager.GetLanguage(languageFromParameter)?.Name;
+                            if (!string.IsNullOrEmpty(language))
+                            {
+                                validLanguages.Add(language);
+                            }
+                        }
+                        break;
                 }
-                if (langs == null)
+
+                if (validLanguages.Any())
                 {
-                    language = new string[0];
+                    availableLanguages = validLanguages.ToArray();
                 }
-            }
-            else
-            {
-                language = new string[0];
             }
 
-            version = Version.Latest.Number;
-            if (dic != null && dic[VersionParam].IsSet)
+            if (dic[VersionParam].IsSet)
             {
                 var versionParam = dic[VersionParam].Value.ToString();
                 if (versionParam == "*")
                 {
-                    version = Int32.MaxValue;
+                    version = int.MaxValue;
                 }
-                else if (Int32.TryParse(dic[VersionParam].Value.ToString(), out int forcedVersion))
+                else if (int.TryParse(versionParam, out var forcedVersion))
                 {
                     version = forcedVersion;
                 }
@@ -277,10 +316,10 @@ namespace Spe.Core.Provider
             LogInfo("Executing GetChildItemsDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof(string[]), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithMissingLanguagesParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithParentParam, ref dic, false, false);
@@ -306,14 +345,14 @@ namespace Spe.Core.Provider
             LogInfo("Executing GetItemDynamicParameters(string path='{0}')", path);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof(string[]), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithMissingLanguagesParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof (string), DatabaseParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof (string), UriParam, ref dic, false, true);
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
 
             return paramAdded ? dic : null;
         }
@@ -334,9 +373,9 @@ namespace Spe.Core.Provider
                 path, itemTypeName, newItemValue);
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            var paramAdded = AddDynamicParameter(typeof (SwitchParameter), StartWorkflowParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), LanguageParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (Item), ParentParam, ref dic, true);
+            var paramAdded = AddDynamicParameter(typeof(SwitchParameter), StartWorkflowParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ParentParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(string), ForceIdParam, ref dic);
             return paramAdded ? dic : null;
         }

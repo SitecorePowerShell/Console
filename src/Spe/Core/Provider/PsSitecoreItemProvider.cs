@@ -268,7 +268,8 @@ namespace Spe.Core.Provider
         {
             LogInfo("Executing GetItem(string path='{0}')", path);
 
-            GetVersionAndLanguageParams(out int version, out string[] language);
+            GetVersionAndLanguageParams(out var version, out var language);
+            if (!language.Any() || language.Any(string.IsNullOrEmpty)) yield break;
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
@@ -400,9 +401,9 @@ namespace Spe.Core.Provider
                         var pattern = WildcardUtils.GetWildcardPattern(language);
                         foreach (var matchingItem in allVersions.Where(
                             curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
-                                       (version == Int32.MaxValue ||
-                                        (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
-                                        (version == curItem.Version.Number)
+                                       (version == int.MaxValue ||
+                                        version == Version.Latest.Number && curItem.Versions.IsLatestVersion() ||
+                                        version == curItem.Version.Number
                                        )))
                         {
                             languageHandled = true;
@@ -417,8 +418,8 @@ namespace Spe.Core.Provider
                 else
                 {
                     foreach (var matchingItem in allVersions.Where(
-                    curItem => version == Int32.MaxValue ||
-                               (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
+                    curItem => version == int.MaxValue ||
+                               version == Version.Latest.Number && curItem.Versions.IsLatestVersion() ||
                                version == curItem.Version.Number))
                     {
                         yield return matchingItem;
