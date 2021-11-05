@@ -1,0 +1,14 @@
+{
+    "namespace": "Spe.Scripts",
+    "items": {
+        "path": "~/../Unicorn/SPE/Scripts",
+        "includes": [
+            {
+                "name": "SPE",
+                "database": "master",
+                "path": "/sitecore/system/Modules/PowerShell/Script Library/SPE",
+                "scope": "ItemAndDescendants"
+            }
+        ]
+    }
+}
