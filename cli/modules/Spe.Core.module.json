@@ -1,0 +1,26 @@
+{
+    "namespace": "Spe.Core",
+    "items": {
+        "path": "~/../Unicorn/SPE/Core",
+        "includes": [
+            {
+                "name": "Templates",
+                "database": "master",
+                "path": "/sitecore/templates/Modules",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Module",
+                "database": "master",
+                "path": "/sitecore/system/Modules/PowerShell",
+                "scope": "ItemAndDescendants",
+                "rules": [
+                    {
+                        "path": "/Script Library",
+                        "scope": "SingleItem"
+                    }
+                ]
+            }
+        ]
+    }
+}
