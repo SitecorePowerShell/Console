@@ -1,0 +1,86 @@
+{
+    "namespace": "Spe.UI",
+    "items": {
+        "path": "~/../Unicorn/SPE/UI",
+        "includes": [
+            {
+                "name": "Applications",
+                "database": "core",
+                "path": "/sitecore/content/Applications/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Dictionary",
+                "database": "core",
+                "path": "/sitecore/system/Dictionary/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Layouts",
+                "database": "core",
+                "path": "/sitecore/layout/Layouts/Applications/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Start Menu ISE",
+                "database": "core",
+                "path": "/sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Start Menu Console",
+                "database": "core",
+                "path": "/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Console",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Start Menu Toolbox",
+                "database": "core",
+                "path": "/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Toolbox",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Start Menu Reports",
+                "database": "core",
+                "path": "/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Content Editor ISE",
+                "database": "core",
+                "path": "/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Content Editor Console",
+                "database": "core",
+                "path": "/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Context Editor Scripts",
+                "database": "core",
+                "path": "/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Launchpad ISE",
+                "database": "core",
+                "path": "/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Launchpad Reports",
+                "database": "core",
+                "path": "/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Tasks",
+                "database": "master",
+                "path": "/sitecore/system/Tasks/Commands/PowerShellScriptCommand",
+                "scope": "ItemAndDescendants"
+            }
+        ]
+    }
+}

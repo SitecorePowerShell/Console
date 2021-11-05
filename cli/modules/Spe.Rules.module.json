@@ -1,0 +1,56 @@
+{
+    "namespace": "Spe.Rules",
+    "items": {
+        "path": "~/../Unicorn/SPE/Rules",
+        "includes": [
+            {
+                "name": "Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Experience Button Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell Experience Buttons",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "ISE Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Experience Button Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "ISE Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Security Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Definition",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/PowerShell",
+                "scope": "ItemAndDescendants"
+            }
+        ]
+    }
+}

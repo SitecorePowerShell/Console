@@ -1,0 +1,11 @@
+# may contain OAuth secrets, do not commit
+.sitecore/user.json
+
+# package reference cache
+.sitecore/package-cache
+
+# Don't commit packages
+*.itempackage
+*.sicpackage
+
+_out

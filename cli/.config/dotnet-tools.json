@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+        "sitecore.cli": {
+            "version": "4.0.0",
+            "commands": [
+                "sitecore"
+            ]
+        }
+    }
+}
