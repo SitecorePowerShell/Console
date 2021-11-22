@@ -121,13 +121,19 @@ services:
       Sitecore_AppSettings_Telerik.AsyncUpload.ConfigurationEncryptionKey: ${TELERIK_ENCRYPTION_KEY}
       Sitecore_AppSettings_Telerik.Upload.ConfigurationHashKey: ${TELERIK_ENCRYPTION_KEY}
       Sitecore_AppSettings_Telerik.Web.UI.DialogParametersEncryptionKey: ${TELERIK_ENCRYPTION_KEY}
-      Sitecore_License: ${SITECORE_LICENSE}
+      Sitecore_License_Location: ${SITECORE_LICENSE_LOCATION}
       Sitecore_Identity_Server_Authority: https://${ID_HOST}
       Sitecore_Identity_Server_InternalAuthority: http://id
       Sitecore_Identity_Server_CallbackAuthority: https://${CM_HOST}
       Sitecore_Identity_Server_Require_Https: "false"
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
       MEDIA_REQUEST_PROTECTION_SHARED_SECRET: ${MEDIA_REQUEST_PROTECTION_SHARED_SECRET}
+    volumes:
+      - ${SITECORE_LICENSE_PATH}:${SITECORE_LICENSE_PATH}:ro
+      - ..\deploy:C:\src
+      - ..\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
+      - ..\releases:C:\inetpub\wwwroot\App_Data\packages
+      - ..\modules:C:\modules:ro
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s

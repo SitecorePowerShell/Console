@@ -254,6 +254,8 @@ function Invoke-ComposeInit {
         "SITECORE_ID_CERTIFICATE" = (Get-SitecoreCertificateAsBase64String -DnsName "localhost" -Password (ConvertTo-SecureString -String $idCertPassword -Force -AsPlainText) -KeyLength 2048)
         "SITECORE_ID_CERTIFICATE_PASSWORD" = $idCertPassword
         "SITECORE_LICENSE" = ConvertTo-CompressedBase64String -Path $LicenseXmlPath
+        "SITECORE_LICENSE_LOCATION" = $LicenseXmlPath
+        "SITECORE_LICENSE_PATH" = Split-Path -Path $LicenseXmlPath
         "SQL_SERVER" = $SqlServer
         "SQL_USERNAME" = $SqlUserName
         "SQL_PASSWORD" = $SqlSaPassword
