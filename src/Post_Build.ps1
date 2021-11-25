@@ -8,11 +8,25 @@ Param([string]$projectfilter)
 
 # Load configuration files
 $deployConfig = Get-Content "$PSScriptRoot\deploy.json" | ConvertFrom-Json
-$userConfig = Get-Content "$PSScriptRoot\deploy.user.json" | ConvertFrom-Json
+
+if(Test-Path -Path "$PSScriptRoot\deploy.user.json") {
+    $userConfig = Get-Content "$PSScriptRoot\deploy.user.json" | ConvertFrom-Json
+}
 
 if(!$userConfig) {
+    Write-Host "No userconfig found. Applying default settings."
     $userConfig = [PSCustomObject]@{
         "sites" = @(
+            [PSCustomObject]@{
+                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "deploy"
+            }
+        )
+    }
+}
+
+if($userConfig) {
+    if(!$userConfig.sites) {
+        $userConfig.sites = @(
             [PSCustomObject]@{
                 "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "deploy"
             }
@@ -73,8 +87,8 @@ Write-Host
 
 
 # Loop over the sites to deploy
-foreach ( $site in $userConfig.sites )
-{
+foreach ( $site in $userConfig.sites ) {
+    Write-Host "Site: $($site)"
     $site = Update-FromDefaultSite $site 
 
     # Get folders to deploy to from configuration and based on the destination site's version
@@ -126,7 +140,18 @@ foreach ( $site in $userConfig.sites )
 
                 Write-Host "--- Copied $targetFile"
             }
-        }
+            Write-Host "Renaming and removing files"
+            foreach($action in $userConfig.files) {
+                foreach($file in $action.disable) {
+                    Get-Item -Path (Join-Path -Path $site.path -ChildPath $file) -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name + ".disabled" }
+                }
+                foreach($file in $action.enable) {
+                    Get-Item -Path (Join-Path -Path $site.path -ChildPath "$($file).disabled") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".disabled","" }
+                    Get-Item -Path (Join-Path -Path $site.path -ChildPath "$($file).example") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".example","" }
+                }
+            }
+            
+        }        
     }
     else 
     {
@@ -149,4 +174,3 @@ foreach ( $site in $userConfig.sites )
         Write-Host "--- Copied $targetFile"
     }
 }
-

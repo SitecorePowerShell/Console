@@ -130,10 +130,6 @@ services:
       MEDIA_REQUEST_PROTECTION_SHARED_SECRET: ${MEDIA_REQUEST_PROTECTION_SHARED_SECRET}
     volumes:
       - ${SITECORE_LICENSE_PATH}:${SITECORE_LICENSE_PATH}:ro
-      - ..\deploy:C:\src
-      - ..\unicorn:c:\inetpub\wwwroot\App_Data\Unicorn
-      - ..\releases:C:\inetpub\wwwroot\App_Data\packages
-      - ..\modules:C:\modules:ro
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
