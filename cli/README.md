@@ -1,5 +1,7 @@
 # How to generate resource files
 
+Set the working directory to the CLI folder before running the following commands.
+
 * Restore Sitecore CLI
 
     ```bash
