@@ -235,7 +235,7 @@ namespace Spe.Core.Provider
         {
             // language selection
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            availableLanguages = new string[0];
+            availableLanguages = null;
             version = Version.Latest.Number;
 
             if (dic == null) return;
@@ -253,9 +253,8 @@ namespace Spe.Core.Provider
                             {
                                 // Using the wildcard is equivalent to not providing a value.
                                 validLanguages.Add(providedLanguage);
-                                break;
                             }
-                            if (providedLanguage.Contains("*"))
+                            else if (providedLanguage.Contains("*"))
                             {
                                 // TODO: I don't think this behavior is correct.
                                 // Something like "invalid*" should not work.
@@ -291,10 +290,7 @@ namespace Spe.Core.Provider
                         break;
                 }
 
-                if (validLanguages.Any())
-                {
-                    availableLanguages = validLanguages.ToArray();
-                }
+                availableLanguages = validLanguages.ToArray();
             }
 
             if (dic[VersionParam].IsSet)
