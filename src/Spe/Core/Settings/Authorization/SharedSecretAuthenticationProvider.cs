@@ -6,6 +6,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using Sitecore.Exceptions;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 
 namespace Spe.Core.Settings.Authorization
@@ -81,8 +82,9 @@ namespace Spe.Core.Settings.Authorization
             return false;
         }
 
-        private bool IsValidAudience(string authority, string audience)
+        private bool IsValidAudience(string audience, string authority)
         {
+            PowerShellLog.Debug($"The current audience is {audience} and the current authority is {authority}.");
             var isValid = !string.IsNullOrEmpty(audience) &&
                           (audience.Is(authority) ||
                            AllowedAudiences.Any() &&
