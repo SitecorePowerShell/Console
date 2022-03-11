@@ -269,7 +269,8 @@ namespace Spe.Core.Provider
             LogInfo("Executing GetItem(string path='{0}')", path);
 
             GetVersionAndLanguageParams(out var version, out var language);
-            if (!language.Any() || language.Any(string.IsNullOrEmpty)) yield break;
+            if (language != null && !language.Any()) yield break;
+            language = language ?? new string[0];
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
