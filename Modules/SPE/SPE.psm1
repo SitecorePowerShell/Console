@@ -1,11 +1,3 @@
-$assemblies = @("\Libraries\Spe.dll", "\Libraries\Sitecore.Kernel.dll")
-foreach($assembly in $assemblies) {
-    $path = Join-Path -Path $PSScriptRoot -ChildPath $assembly
-    if(Test-Path -Path $path) {
-        [System.Reflection.Assembly]::LoadFile($path)
-    }
-}
-
 function Get-UsingVariables {
     param ([scriptblock]$ScriptBlock)
     if($ScriptBlock.ToString().IndexOf("`$using:", [System.StringComparison]::OrdinalIgnoreCase) -eq -1) { return }
