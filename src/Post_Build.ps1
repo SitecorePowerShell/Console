@@ -140,14 +140,27 @@ foreach ( $site in $userConfig.sites ) {
 
                 Write-Host "--- Copied $targetFile"
             }
-            Write-Host "Renaming and removing files"
+            Write-Host "Processing configs in $($site.path)"
             foreach($action in $userConfig.files) {
+                
+                foreach($file in $action.remove) {
+                    Write-Host "- Removing $($file)"
+                    $path = Join-Path -Path $site.path -ChildPath $file
+                    Get-Item -Path $path -ErrorAction SilentlyContinue | Remove-Item
+                }
                 foreach($file in $action.disable) {
-                    Get-Item -Path (Join-Path -Path $site.path -ChildPath $file) -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name + ".disabled" }
+                    Write-Host "- Disabling $($file)"
+                    $path = Join-Path -Path $site.path -ChildPath $file
+                    if(Test-Path -Path ("$($path).disabled")) {
+                        Remove-Item -Path ("$($path).disabled")
+                    }
+                    Get-Item -Path $path -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name + ".disabled" }
                 }
                 foreach($file in $action.enable) {
-                    Get-Item -Path (Join-Path -Path $site.path -ChildPath "$($file).disabled") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".disabled","" }
-                    Get-Item -Path (Join-Path -Path $site.path -ChildPath "$($file).example") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".example","" }
+                    Write-Host "- Enabling $($file)"
+                    $path = Join-Path -Path $site.path -ChildPath $file
+                    Get-Item -Path ("$($path).disabled") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".disabled","" } -Force
+                    Get-Item -Path ("$($path).example") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".example","" } -Force
                 }
             }
             

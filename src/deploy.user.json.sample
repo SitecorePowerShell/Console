@@ -1,12 +1,13 @@
-{ 
-    "sites": [
-        {
-            "path": "C:\\inetput\\wwwroot\\SitecoreSPE_8",
-            "version": 8
-        },
-        {
-            "path": "C:\\inetput\\wwwroot\\SitecoreSPE_7",
-            "version": 7
-        }
-    ]
+{
+    "sites": [],
+    "files": {
+        "remove": [
+            "App_Config/Include/Unicorn/Unicorn.DataProvider.config"
+        ],
+        "enable": [
+            "App_Config/Include/Spe/Spe.IdentityServer.config",
+            "App_Config/Include/Unicorn/Unicorn.DataProvider.10.1.config",
+            "App_Config/Include/Unicorn/Unicorn.UI.IdentityServer.config"
+        ]
+    }
 }
