@@ -16,6 +16,13 @@ namespace Spe.Commands.Data
     [Cmdlet(VerbsCommon.Set, "ItemTemplate", SupportsShouldProcess = true)]
     public class SetItemTemplateCommand : BaseLanguageAgnosticItemCommand
     {
+        [Flags]
+        public enum FieldCopyOptions
+        {
+            None = 0,
+            SkipStandardValue = 1
+        }
+
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Item from Pipeline, set by TemplateItem",
             Mandatory = true)]
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Item from Pipeline, set by Template", Mandatory = true)
@@ -42,8 +49,11 @@ namespace Spe.Commands.Data
         [AutocompleteSet(nameof(Templates))]
         public virtual string Template { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public virtual Hashtable FieldsToCopy { get; set; }
+
+        [Parameter]
+        public virtual FieldCopyOptions FieldCopyBehavior { get; set; }
 
         public static string[] Templates => MiscAutocompleteSets.Templates;
 
@@ -79,15 +89,18 @@ namespace Spe.Commands.Data
             foreach (var fieldName in FieldsToCopy.Keys.OfType<string>())
             {
                 var field = item.Fields[fieldName];
-                if (field != null)
-                {
-                    values.Add(fieldName, field.Value);
-                }
-                else
+                if (field == null)
                 {
                     WriteError(typeof(MissingFieldException),
                         $"Source template does not contain '{fieldName}' field.",
                         ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                    continue;
+                }
+
+                if (!FieldCopyBehavior.HasFlag(FieldCopyOptions.SkipStandardValue) || 
+                    !field.ContainsStandardValue)
+                {
+                    values.Add(fieldName, field.Value);
                 }
             }
 
@@ -98,16 +111,15 @@ namespace Spe.Commands.Data
                 foreach (var fieldName in values.Keys)
                 {
                     var field = item.Fields[FieldsToCopy[fieldName].ToString()];
-                    if (field != null)
-                    {
-                        field.Value = values[fieldName];
-                    }
-                    else
+                    if(field == null)
                     {
                         WriteError(typeof(MissingFieldException),
                             $"Target template does not contain '{fieldName}' field.",
                             ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                        continue;
                     }
+                    
+                    field.Value = values[fieldName];
                 }
             });
         }
