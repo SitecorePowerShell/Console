@@ -81,7 +81,8 @@ namespace Spe.Commands.Data
             }
             if (FieldsToCopy == null)
             {
-                TemplateManager.ChangeTemplate(item, new TemplateChangeList(oldTemplate, newTemplate));
+                var changeList = oldTemplate.GetTemplateChangeList(newTemplate);
+                TemplateManager.ChangeTemplate(item, changeList);
                 return;
             }
 
