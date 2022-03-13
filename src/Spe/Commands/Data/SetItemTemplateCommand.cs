@@ -20,7 +20,9 @@ namespace Spe.Commands.Data
         public enum FieldCopyOptions
         {
             None = 0,
-            SkipStandardValue = 1
+            SkipStandardValue = 1,
+            StopOnFieldError = 2,
+            CopyAllFields = 4
         }
 
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Item from Pipeline, set by TemplateItem",
@@ -79,13 +81,16 @@ namespace Spe.Commands.Data
                 WriteVerbose(Translate.Text(Texts.TemplateMissing, item.TemplateID, item.Database));
                 oldTemplate = newTemplate;
             }
+
+            var changeList = FieldCopyBehavior.HasFlag(FieldCopyOptions.CopyAllFields) ?
+                oldTemplate.GetTemplateChangeList(newTemplate) : new TemplateChangeList(oldTemplate, newTemplate);
             if (FieldsToCopy == null)
             {
-                var changeList = oldTemplate.GetTemplateChangeList(newTemplate);
                 TemplateManager.ChangeTemplate(item, changeList);
                 return;
             }
 
+            var stopOnFieldError = FieldCopyBehavior.HasFlag(FieldCopyOptions.StopOnFieldError);
             var values = new Dictionary<string, string>();
             foreach (var fieldName in FieldsToCopy.Keys.OfType<string>())
             {
@@ -95,7 +100,17 @@ namespace Spe.Commands.Data
                     WriteError(typeof(MissingFieldException),
                         $"Source template does not contain '{fieldName}' field.",
                         ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                    if (stopOnFieldError) return;
                     continue;
+                }
+
+                var targetFieldName = FieldsToCopy[fieldName].ToString();
+                if (stopOnFieldError && newTemplate.GetField(targetFieldName) == null)
+                {
+                    WriteError(typeof(MissingFieldException),
+                        $"Target template does not contain '{targetFieldName}' field.",
+                        ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                    return;
                 }
 
                 if (!FieldCopyBehavior.HasFlag(FieldCopyOptions.SkipStandardValue) || 
@@ -105,7 +120,7 @@ namespace Spe.Commands.Data
                 }
             }
 
-            TemplateManager.ChangeTemplate(item, new TemplateChangeList(oldTemplate, newTemplate));
+            TemplateManager.ChangeTemplate(item, changeList);
 
             item.Edit(args =>
             {
@@ -117,6 +132,7 @@ namespace Spe.Commands.Data
                         WriteError(typeof(MissingFieldException),
                             $"Target template does not contain '{fieldName}' field.",
                             ErrorIds.FieldNotFound, ErrorCategory.ObjectNotFound, item);
+                        //At this point we should keep going. The template has already been changed.
                         continue;
                     }
                     
