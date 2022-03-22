@@ -8,6 +8,7 @@ namespace Spe.Core.VersionDecoupling
     public static class SitecoreVersion
     {
         public static Version Current = GetVersionNumber();
+
         public static Version V80 = new Version(8, 0);
         public static Version V81 = new Version(8, 1);
         public static Version V82 = new Version(8, 2);
@@ -15,6 +16,12 @@ namespace Spe.Core.VersionDecoupling
 
         public static Version GetVersionNumber()
         {
+            var supportedConfigVersion = Sitecore.Configuration.Settings.GetSetting("Spe.SupportedVersion");
+            if (!string.IsNullOrWhiteSpace(supportedConfigVersion))
+            {
+                return Version.Parse(supportedConfigVersion);
+            }
+
             if (Version.TryParse(About.Version, out var version))
             {
                 return version;
