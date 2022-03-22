@@ -622,6 +622,8 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Users.config.example" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
+    <Content Include="sitecore modules\items\core\items.core.spe.dat.tmp" />
+    <Content Include="sitecore modules\items\master\items.master.spe.dat.tmp" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />
     <EmbeddedResource Include="..\Spe.Sitecore8\bin\$(Configuration)\Spe.VersionSpecific.dll">
       <Link>Resources\Version8\Spe.VersionSpecific.dll</Link>
