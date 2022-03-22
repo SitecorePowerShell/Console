@@ -74,7 +74,7 @@ $variablesRegex = [regex]($variablesRegexKeys -join '|')
 
 $regexCallback = { $variables[$args[0].Value] }
 
-Get-ChildItem $deployUserConfigPath -Recurse -Include *.config | % {
+Get-ChildItem $deployUserConfigPath -Recurse -Include *.config | ForEach-Object {
     $file = [System.IO.File]::ReadAllText($_.FullName)
     $file = $variablesRegex.Replace($file, $regexCallback)
     Set-Content -Path $_ -Value $file
@@ -159,8 +159,16 @@ foreach ( $site in $userConfig.sites ) {
                 foreach($file in $action.enable) {
                     Write-Host "- Enabling $($file)"
                     $path = Join-Path -Path $site.path -ChildPath $file
-                    Get-Item -Path ("$($path).disabled") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".disabled","" } -Force
-                    Get-Item -Path ("$($path).example") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".example","" } -Force
+                    if(Test-Path -Path $path) {
+                        if(Test-Path -Path ("$($path).disabled")) {
+                            Remove-Item -Path $path
+                        }
+                        if(Test-Path -Path ("$($path).example")) {
+                            Remove-Item -Path $path
+                        }
+                        Get-Item -Path ("$($path).disabled") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".disabled","" } -Force
+                        Get-Item -Path ("$($path).example") -ErrorAction SilentlyContinue | Rename-Item -NewName { $PSItem.Name -replace ".example","" } -Force   
+                    }
                 }
             }
             

@@ -74,12 +74,6 @@ SharedFields:
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
-    Get-UnicornConfiguration -Filter "Spe.Core" | New-UnicornItemSource -Name "Spe.Core" -Project $package -InstallMode Merge -MergeMode Clear
-    Get-UnicornConfiguration -Filter "Spe.UI" | New-UnicornItemSource -Name "Spe.UI" -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter "Spe.Rules" | New-UnicornItemSource -Name "Spe.Rules" -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter "Spe.Scripts" | New-UnicornItemSource -Name "Spe.Scripts" -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter "Spe.AuthorableReports" | New-UnicornItemSource -Name "Spe.AuthorableReports" -Project $package -InstallMode Overwrite
-    
     $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Spe.Roles" 
     $package.Sources.Add($source)
     
@@ -107,7 +101,22 @@ SharedFields:
     $source = Get-Item -Path "$AppPath\sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" | New-ExplicitFileSource -Name "Product Version File"
     $package.Sources.Add($source);
     
+    $iarSource = Get-ChildItem -Path "$AppPath\sitecore modules\items\" -Include "*.spe.dat.tmp" -Recurse | New-ExplicitFileSource -Name "PowerShell IAR"
+    $package.Sources.Add($iarSource);
+    
     $packageName = "$($package.Name)-$Version" -replace " ",".";
+    
+    # Package without items
+    Export-Package -Project $package -Path "$packageName-IAR.xml"
+    Export-Package -Project $package -Path "$packageName-IAR.zip" -Zip
+    $package.Sources.Remove($iarSource) > $null
+    
+    Get-UnicornConfiguration -Filter "Spe.Core" | New-UnicornItemSource -Name "Spe.Core" -Project $package -InstallMode Merge -MergeMode Clear
+    Get-UnicornConfiguration -Filter "Spe.UI" | New-UnicornItemSource -Name "Spe.UI" -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.Rules" | New-UnicornItemSource -Name "Spe.Rules" -Project $package -InstallMode Overwrite
+    Get-UnicornConfiguration -Filter "Spe.Scripts" | New-UnicornItemSource -Name "Spe.Scripts" -Project $package -InstallMode Overwrite
+    
+    # Package with items
     Export-Package -Project $package -Path "$packageName.xml"
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     
