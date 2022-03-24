@@ -1050,9 +1050,8 @@ namespace Spe.Client.Applications
         }
 
         protected void OKClick()
-        {
+        {            
             var sid = WebUtil.SafeEncode(WebUtil.GetQueryString("sid"));
-            var sid = WebUtil.GetQueryString("sid");
             var mandatoryVariables = MandatoryVariables.Split(',').ToList();
 
             var scriptVariables = GetVariableValues();

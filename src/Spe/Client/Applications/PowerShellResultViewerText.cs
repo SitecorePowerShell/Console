@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -20,13 +20,11 @@ namespace Spe.Client.Applications
 
             var sid = WebUtil.SafeEncode(WebUtil.GetQueryString("sid"));
             var settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
-            ConsoleColor fc;
-            ConsoleColor bc;
-            if (!Enum.TryParse(WebUtil.GetQueryString("fc"), true, out fc))
+            if (!Enum.TryParse(WebUtil.GetQueryString("fc"), true, out ConsoleColor fc))
             {
                 fc = settings.ForegroundColor;
             }
-            if (!Enum.TryParse(WebUtil.GetQueryString("bc"), true, out bc))
+            if (!Enum.TryParse(WebUtil.GetQueryString("bc"), true, out ConsoleColor bc))
             {
                 bc = settings.BackgroundColor;
             }
