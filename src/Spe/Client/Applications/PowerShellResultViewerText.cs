@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -18,7 +18,7 @@ namespace Spe.Client.Applications
         {
             base.OnLoad(e);
 
-            var sid = WebUtil.GetQueryString("sid");
+            var sid = WebUtil.SafeEncode(WebUtil.GetQueryString("sid"));
             var settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             ConsoleColor fc;
             ConsoleColor bc;
