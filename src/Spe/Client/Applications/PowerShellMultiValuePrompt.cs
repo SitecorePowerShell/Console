@@ -1107,7 +1107,7 @@ namespace Spe.Client.Applications
                 var error = variable["Error"] as string;
                 if (!string.IsNullOrEmpty(error))
                 {
-                    SheerResponse.SetInnerHtml($"var_{name}_validator", error);
+                    SheerResponse.SetInnerHtml($"var_{name}_validator", WebUtil.SafeEncode(error));
                     canClose = false;
                     continue;
                 }
