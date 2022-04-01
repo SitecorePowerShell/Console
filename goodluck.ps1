@@ -43,12 +43,15 @@ foreach($iarEntry in $iarEntries) {
     $iarEntry = $packageArchive.CreateEntry($fullname)
 
     if($fullname.StartsWith("files")) {
-        $writer = New-Object System.IO.StreamWriter($iarEntry.Open())
         $name = [System.IO.Path]::GetFileName($fullname)
-        $content = Get-Content -Path (Join-Path -Path ".\cli\_out" -ChildPath $name) -Raw
-        $writer.Write($content)
-        $writer.Dispose()
-        $writer.Close()
+        $content = [System.IO.File]::ReadAllBytes((Join-Path -Path ".\cli\_out" -ChildPath $name))
+        $ms = New-Object System.IO.MemoryStream(,$content)
+        $zipStream = $iarEntry.Open()
+        $ms.CopyTo($zipStream)
+        $zipStream.Dispose()
+        $zipStream.Close()
+        $ms.Dispose()
+        $ms.Close()
     }
 }
 
