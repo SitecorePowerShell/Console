@@ -389,7 +389,7 @@ namespace Spe.Core.Provider
         private IEnumerable<Item> GetMatchingItemEx(string[] languages, int version, Item item)
         {
             // if language is forced get the item in proper language
-            if (languages.Length > 0 || version != Version.Latest.Number)
+            if (languages != null && (languages.Length > 0 || version != Version.Latest.Number))
             {
                 var allVersions = item.Versions.GetVersions(languages.Length > 0);
                 TryGetDynamicParam(WithMissingLanguagesParam, out SwitchParameter addMissingLanguages);
