@@ -1,42 +1,42 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "ModuleFile",
-    "description": "Sitecore module definition file schema",
-    "allOf": [
-        {
-            "title": "ModuleConfiguration",
-            "type": "object",
-            "description": "Defines a \"DevEx Module\" that is a Helix-like module that can contain serialized item configurations, etc.\nThis class is overridden with Serialization-specific derived versions that provide access to their module-specific settings.",
-            "additionalProperties": {},
-            "required": [
-                "namespace"
-            ],
-            "properties": {
-                "$schema": {
-                    "type": "string"
-                },
-                "namespace": {
-                    "type": "string",
-                    "description": "The namespace of the module. All resources in the module inherit this namespace.\nNamespaces can contain letters, numbers, dots (.), and hyphens (-).",
-                    "minLength": 1,
-                    "pattern": "^[A-Za-z0-9\\.\\-\\$\\{\\}\\(\\)]+$"
-                },
-                "description": {
-                    "type": "string",
-                    "description": "Description of the module, for reference/docs purposes only"
-                },
-                "references": {
-                    "type": "array",
-                    "description": "Names of other modules that are referenced by resources in this module. Wildcards are allowed, i.e. Foundation.*.",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "source": {
-                    "type": "string",
-                    "description": "Generic identifier as to where the module came from. Used internally for error messaging. Do not set in a module file; it will be ignored."
-                }
-            }
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ModuleFile",
+  "description": "Sitecore module definition file schema",
+  "allOf": [
+    {
+      "title": "ModuleConfiguration",
+      "type": "object",
+      "description": "Defines a \"DevEx Module\" that is a Helix-like module that can contain serialized item configurations, etc.\nThis class is overridden with Serialization-specific derived versions that provide access to their module-specific settings.",
+      "additionalProperties": {},
+      "required": [
+        "namespace"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "The namespace of the module. All resources in the module inherit this namespace.\nNamespaces can contain letters, numbers, dots (.), and hyphens (-).",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9\\.\\-\\$\\{\\}\\(\\)]+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the module, for reference/docs purposes only"
+        },
+        "references": {
+          "type": "array",
+          "description": "Names of other modules that are referenced by resources in this module. Wildcards are allowed, i.e. Foundation.*.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string",
+          "description": "Generic identifier as to where the module came from. Used internally for error messaging. Do not set in a module file; it will be ignored."
         }
-    ]
+      }
+    }
+  ]
 }

@@ -1,79 +1,83 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "UserConfiguration",
-    "type": "object",
-    "description": "Sitecore user configuration file",
-    "additionalProperties": false,
-    "properties": {
-        "endpoints": {
-            "type": "object",
-            "description": "Sitecore instance base URL to fetch or push data to",
-            "additionalProperties": {
-                "$ref": "#/definitions/EnvironmentConfiguration"
-            }
-        },
-        "$schema": {
-            "type": "string"
-        }
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UserConfiguration",
+  "type": "object",
+  "description": "Sitecore user configuration file",
+  "additionalProperties": false,
+  "properties": {
+    "endpoints": {
+      "type": "object",
+      "description": "Sitecore instance base URL to fetch or push data to",
+      "additionalProperties": {
+        "$ref": "#/definitions/EnvironmentConfiguration"
+      }
     },
-    "definitions": {
-        "EnvironmentConfiguration": {
-            "type": "object",
-            "description": "Configures named Sitecore API endpoint",
-            "additionalProperties": false,
-            "required": [
-                "host",
-                "authority"
-            ],
-            "properties": {
-                "allowWrite": {
-                    "type": "boolean",
-                    "description": "Whether writing data to this endpoint is allowed (i.e. to prevent accidental writes to production)"
-                },
-                "host": {
-                    "type": "string",
-                    "description": "Base URL to the Sitecore instance to connect to (i.e. http://my.site.core)",
-                    "format": "uri",
-                    "minLength": 1
-                },
-                "authority": {
-                    "type": "string",
-                    "description": "Base URL to authentication server (IdentityServer, AAD, etc - i.e. https://my.site.core.identityserver - to test, $url/.well-known/openid-configuration should work)",
-                    "format": "uri",
-                    "minLength": 1
-                },
-                "useClientCredentials": {
-                    "type": [
-                        "boolean",
-                        "null"
-                    ],
-                    "description": "If true, use client credentials (client id and secret) instead of device (username/password). This is good for CI."
-                },
-                "accessToken": {
-                    "type": "string",
-                    "description": "OAuth access token for this endpoint (use login command to get this)"
-                },
-                "refreshToken": {
-                    "type": "string",
-                    "description": "OAuth refresh token for this endpoint (use login command to get this)"
-                },
-                "clientId": {
-                    "type": "string",
-                    "description": "OAuth client ID for this endpoint",
-                    "default": "SitecoreCLI"
-                },
-                "clientSecret": {
-                    "type": "string",
-                    "description": "OAuth client secret for this endpoint (when useClientCredentials is true; ignored for device auth mode)"
-                },
-                "variables": {
-                    "type": "object",
-                    "description": "Defines variables that are specific to this environment. Variables defined here override any definitions in the root configuration for this environment.",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        }
+    "$schema": {
+      "type": "string"
     }
+  },
+  "definitions": {
+    "EnvironmentConfiguration": {
+      "type": "object",
+      "description": "Configures named Sitecore API endpoint",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "authority"
+      ],
+      "properties": {
+        "allowWrite": {
+          "type": "boolean",
+          "description": "Whether writing data to this endpoint is allowed (i.e. to prevent accidental writes to production)"
+        },
+        "host": {
+          "type": "string",
+          "description": "Base URL to the Sitecore instance to connect to (i.e. http://my.site.core)",
+          "format": "uri",
+          "minLength": 1
+        },
+        "authority": {
+          "type": "string",
+          "description": "Base URL to authentication server (IdentityServer, AAD, etc - i.e. https://my.site.core.identityserver - to test, $url/.well-known/openid-configuration should work)",
+          "format": "uri",
+          "minLength": 1
+        },
+        "useClientCredentials": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, use client credentials (client id and secret) instead of device (username/password). This is good for CI."
+        },
+        "accessToken": {
+          "type": "string",
+          "description": "OAuth access token for this endpoint (use login command to get this)"
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "OAuth refresh token for this endpoint (use login command to get this)"
+        },
+        "clientId": {
+          "type": "string",
+          "description": "OAuth client ID for this endpoint",
+          "default": "SitecoreCLI"
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "OAuth client secret for this endpoint (when useClientCredentials is true; ignored for device auth mode)"
+        },
+        "variables": {
+          "type": "object",
+          "description": "Defines variables that are specific to this environment. Variables defined here override any definitions in the root configuration for this environment.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "insecure": {
+          "type": "boolean",
+          "description": "If true, allows cli to use http protocol to communicate with Identity Service Authority. "
+        }
+      }
+    }
+  }
 }

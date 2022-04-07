@@ -1,76 +1,86 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "RootConfigurationFile",
-    "type": "object",
-    "description": "Defines the root Sitecore Developer Configuration file",
-    "additionalProperties": false,
-    "required": [
-        "modules"
-    ],
-    "properties": {
-        "$schema": {
-            "type": "string"
-        },
-        "modules": {
-            "type": "array",
-            "description": "Sitecore module file resolution globs",
-            "minItems": 1,
-            "items": {
-                "type": "string"
-            }
-        },
-        "plugins": {
-            "type": "array",
-            "description": "Contains a list of Sitecore Plugin NugetPackages. The format of the name is [NugetPackageName]@[NugetPackageVersion]. These entries are normally managed using\nthe 'Sitecore Plugin Add' and 'Sitecore Plugin Remove' commands",
-            "items": {
-                "type": "string"
-            }
-        },
-        "serialization": {
-            "description": "Global item serialization default settings",
-            "oneOf": [
-                {
-                    "$ref": "#/definitions/SerializationRootConfiguration"
-                }
-            ]
-        }
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RootConfigurationFile",
+  "type": "object",
+  "description": "Defines the root Sitecore Developer Configuration file",
+  "additionalProperties": false,
+  "required": [
+    "modules"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
     },
-    "definitions": {
-        "SerializationRootConfiguration": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "defaultMaxRelativeItemPathLength": {
-                    "type": "integer",
-                    "description": "Max relative item path length to serialize before considering path too long (and requiring aliasing to shorten).\nOverridable on a per-module basis; this is the default when it is unspecified.",
-                    "format": "int32",
-                    "default": 120
-                },
-                "defaultModuleRelativeSerializationPath": {
-                    "type": "string",
-                    "description": "The default relative physical path from a module file where serialized items for that module will be stored.\nFor example given module /c/foo/bar.module.json, and default '/serialization/items' path,\nthe serialized items for bar would be stored at /c/foo/bar/serialization/items.\nPrefix the path with ~/ for a root configuration relative path instead of a module-relative path.\nUse '$(module)' to insert the module name when using a root relative path.\nOverridable on a per-module basis; this is the default when it is unspecified.",
-                    "default": "serialization"
-                },
-                "excludedFields": {
-                    "type": "array",
-                    "description": "Configure base fields filter",
-                    "items": {
-                        "$ref": "#/definitions/FieldFilter"
-                    }
-                }
-            }
-        },
-        "FieldFilter": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "fieldId": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                }
-            }
+    "modules": {
+      "type": "array",
+      "description": "Sitecore module file resolution globs",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "description": "Contains a list of Sitecore Plugin NugetPackages. The format of the name is [NugetPackageName]@[NugetPackageVersion]. These entries are normally managed using\nthe 'Sitecore Plugin Add' and 'Sitecore Plugin Remove' commands",
+      "items": {
+        "type": "string"
+      }
+    },
+    "serialization": {
+      "description": "Global item serialization default settings",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/SerializationRootConfiguration"
         }
+      ]
     }
+  },
+  "definitions": {
+    "SerializationRootConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultMaxRelativeItemPathLength": {
+          "type": "integer",
+          "description": "Max relative item path length to serialize before considering path too long (and requiring aliasing to shorten).\nOverridable on a per-module basis; this is the default when it is unspecified.",
+          "format": "int32",
+          "default": 120
+        },
+        "defaultModuleRelativeSerializationPath": {
+          "type": "string",
+          "description": "The default relative physical path from a module file where serialized items for that module will be stored.\nFor example given module /c/foo/bar.module.json, and default '/serialization/items' path,\nthe serialized items for bar would be stored at /c/foo/bar/serialization/items.\nPrefix the path with ~/ for a root configuration relative path instead of a module-relative path.\nUse '$(module)' to insert the module name when using a root relative path.\nOverridable on a per-module basis; this is the default when it is unspecified.",
+          "default": "serialization"
+        },
+        "removeOrphansForRoles": {
+          "type": "boolean",
+          "description": "Specifies remove orphans functionality for roles serialization",
+          "default": true
+        },
+        "continueOnItemFailure": {
+          "type": "boolean",
+          "description": "Specifies behavior when item synchronization fails",
+          "default": false
+        },
+        "excludedFields": {
+          "type": "array",
+          "description": "Configure base fields filter",
+          "items": {
+            "$ref": "#/definitions/FieldFilter"
+          }
+        }
+      }
+    },
+    "FieldFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fieldId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
