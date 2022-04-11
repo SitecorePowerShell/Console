@@ -16,8 +16,8 @@ services:
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
     volumes:
-      - source: \\.\pipe\docker_engine
-        target: \\.\pipe\docker_engine
+      - source: \\.\pipe\docker_engine\
+        target: \\.\pipe\docker_engine\
         type: npipe
       - ./traefik:C:/etc/traefik
     depends_on:
@@ -87,7 +87,8 @@ services:
       Sitecore_Sitecore__IdentityServer__CertificateRawData: ${SITECORE_ID_CERTIFICATE}
       Sitecore_Sitecore__IdentityServer__PublicOrigin: https://${ID_HOST}
       Sitecore_Sitecore__IdentityServer__CertificateRawDataPassword: ${SITECORE_ID_CERTIFICATE_PASSWORD}
-      Sitecore_License: ${SITECORE_LICENSE}
+    volumes:
+      - ${SITECORE_LICENSE_PATH}:C:\identity\sitecoreruntime:ro
     healthcheck:
       test: ["CMD", "pwsh", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
