@@ -19,7 +19,7 @@ services:
       - source: \\.\pipe\docker_engine\
         target: \\.\pipe\docker_engine\
         type: npipe
-      - ./traefik:C:/etc/traefik
+      - ./docker/traefik:C:/etc/traefik
     depends_on:
       id:
         condition: service_healthy
@@ -35,7 +35,7 @@ services:
       - "14330:1433"
     volumes:
       - type: bind
-        source: .\mssql-data
+        source: .\docker\data\mssql
         target: c:\data
   mssql-init:
     isolation: ${ISOLATION}
@@ -61,7 +61,7 @@ services:
       - "8984:8983"
     volumes:
       - type: bind
-        source: .\solr-data
+        source: .\docker\data\solr
         target: c:\data
     environment:
       SOLR_MODE: solrcloud

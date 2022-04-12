@@ -1,1 +1,0 @@
-.\compose-init.ps1 -Topology xm1 -CmHost "spe.dev.local" -CdHost "specd.dev.local" -IdHost "speid.dev.local" -SitecoreAdminPassword b

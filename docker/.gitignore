@@ -1,3 +1,14 @@
-traefik/
-mssql-data/
-solr-data/
+/data/cm/*
+!/data/cm/.gitkeep
+/data/cd/*
+!/data/cd/.gitkeep
+/data/mssql/*
+!/data/mssql/.gitkeep
+/data/solr/*
+!/data/solr/.gitkeep
+
+/deploy/*
+!/deploy/.gitkeep
+
+/traefik/certs/*
+!/traefik/certs/.gitkeep

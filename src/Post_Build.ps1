@@ -18,7 +18,7 @@ if(!$userConfig) {
     $userConfig = [PSCustomObject]@{
         "sites" = @(
             [PSCustomObject]@{
-                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "deploy"
+                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "docker\deploy"
             }
         )
     }
@@ -28,7 +28,7 @@ if($userConfig) {
     if(!$userConfig.sites) {
         $userConfig.sites = @(
             [PSCustomObject]@{
-                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "deploy"
+                "path" = Join-Path -Path (Get-Item -Path $PSScriptRoot).Parent.FullName -ChildPath "docker\deploy"
             }
         )
     }
@@ -116,7 +116,7 @@ foreach ( $site in $userConfig.sites ) {
             Write-Host -ForegroundColor Green "Copying from $deployFolder to $($site.path)"
             Write-Host
 
-            $filesToCopy = Get-ChildItem $deployFolder -Recurse | ? { $_.PSIsContainer -eq $False }
+            $filesToCopy = Get-ChildItem $deployFolder -Recurse | Where-Object { $_.PSIsContainer -eq $False }
 
             if ($site.junction -and $deployProject.junctionPoints -ne $null) {
                 # Deploy any files that are not included in junction-folders
