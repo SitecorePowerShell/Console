@@ -1,11 +1,33 @@
 Clear-Host
 
+$releases = Join-Path -Path $PSScriptRoot -ChildPath "releases"
+
+$sat = Join-Path -Path $releases -ChildPath "sat"
+if(-not (Test-Path -Path $sat)) {
+    New-Item -Path $sat -ItemType Directory
+}
+
+$satConfig = Get-ChildItem -Path $releases -Filter "configuration.json" | 
+    Get-Content | ConvertFrom-Json | Select-Object -ExpandProperty "SitecoreAzureToolkit"
+
+$satPackage = Join-Path -Path $sat -ChildPath $satConfig.Filename
+if(-not (Test-Path -Path $satPackage)) {
+    Get-ChildItem -Path $sat -Recurse | Remove-Item -Recurse
+
+    Write-Host "Downloading $($satConfig.Filename)"
+    $webClient = New-Object System.Net.WebClient
+    $webClient.Downloadfile($satConfig.Url, $satPackage)
+    
+    Write-Host "Unblocking $($satConfig.Filename)"
+    Unblock-File -Path $satPackage
+
+    Expand-Archive -Path $satPackage -DestinationPath $sat
+}
+
 Write-Host "Generate dat files"
 
 $cli = Join-Path -Path $PSScriptRoot -ChildPath "cli"
 & $cli\generate.bat
-
-$releases = Join-Path -Path $PSScriptRoot -ChildPath "releases"
 
 Write-Host "Remove old packages from $releases"
 Get-ChildItem -Path $releases -Filter "Sitecore.PowerShell.Extensions-*" | Remove-Item
@@ -65,7 +87,7 @@ $zip.Dispose()
 Write-Host "Generate wdp module"
 Write-Host ""
 
-Import-Module -Name "C:\Sitecore\sat\tools\Sitecore.Cloud.Cmdlets.dll"
+Import-Module -Name (Join-Path -Path $sat -ChildPath "tools\Sitecore.Cloud.Cmdlets.dll")
 
 $packages = Get-ChildItem -Path $releases -Filter "Sitecore.PowerShell.Extensions-*.*.zip" | Select-Object -ExpandProperty FullName
 $destination = "$($releases)\"
