@@ -1,0 +1,36 @@
+﻿---
+ID: "737cd0cc-12f7-4528-8fbd-e0fdefc41325"
+Parent: "c67c2375-51ac-4acf-a76f-2db678e84304"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Upgrade/Compatibility
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $oldVersion = New-Object System.Version(10,0)
+    if($PSVersionTable["SitecoreVersion"] -lt $oldVersion) {
+        $iseButton = Get-Item -Path "core:{bfc79034-857c-4432-a5c2-2d93af784384}"
+        $iseButton.Editing.BeginEdit()
+        $iseButton.Fields["{D25B56D4-23B6-4462-BE25-B6A6D7F38E13}"].Value = "powershell/32x32/ise8.png"
+        $iseButton.Editing.EndEdit() > $null
+        
+        $reportButton = Get-Item -Path "core:{74744022-353c-43f1-b8e4-5bc569ca9348}"
+        $reportButton.Editing.BeginEdit()
+        $reportButton.Fields["{D25B56D4-23B6-4462-BE25-B6A6D7F38E13}"].Value = "Office/32x32/chart_donut.png"
+        $reportButton.Editing.EndEdit() > $null
+    } else {
+        Write-Host "No changes required"
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220416T163343Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

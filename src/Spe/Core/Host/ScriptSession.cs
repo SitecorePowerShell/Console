@@ -576,6 +576,7 @@ namespace Spe.Core.Host
                 if (GetVariable("PSVersionTable") is Hashtable psVersionTable)
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
+                    psVersionTable["SitecoreVersion"] = SitecoreVersion.Current;
                 }
             }
         }

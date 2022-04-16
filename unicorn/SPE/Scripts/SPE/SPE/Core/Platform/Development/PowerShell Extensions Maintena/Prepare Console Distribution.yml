@@ -39,6 +39,7 @@ SharedFields:
     
     AFTER UPGRADING THE MODULE
     * Sitecore 9.1+ when using Identity Server : Enable Spe.IdentityServer.config
+    * Sitecore 10.0 and older should need to run the icon reset script
     * Clean your browser cache!
     * Test all of your custom scripts!
     * Rebuild the integration points
@@ -72,6 +73,7 @@ SharedFields:
         [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.VersionSpecific.dll"}
     )
     $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
+    $package.Metadata.Attributes = "scriptId={737CD0CC-12F7-4528-8FBD-E0FDEFC41325}"
     $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
     $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Spe.Roles" 
