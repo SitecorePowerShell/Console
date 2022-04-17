@@ -61,20 +61,9 @@ SharedFields:
     https://blog.najmanowicz.com/
     https://michaellwest.blogspot.com/
     "@
-    $newPackageFiles = @(
-        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.config"},
-        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.Events.config.disabled"},
-        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.IdentityServer.config.disabled"},
-        [PSCustomObject]@{"FileName"="/App_Config/Include/Cognifide.PowerShell.Minimal.config.disabled"},
-        [PSCustomObject]@{"FileName"="/App_Config/Include/z.Cognifide.PowerShell.config"},
-        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.dll"},
-        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.Abstractions.dll"},
-        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.Package.dll"}
-        [PSCustomObject]@{"FileName"="/bin/Cognifide.PowerShell.VersionSpecific.dll"}
-    )
-    $package.Metadata.PostStep = "Spe.Package.Install.PackagePostStep, Spe.Package"
+    
+    $package.Metadata.PostStep = "Spe.Integrations.Install.ScriptPostStep, Spe"
     $package.Metadata.Attributes = "scriptId={737CD0CC-12F7-4528-8FBD-E0FDEFC41325}"
-    $package.Metadata.Comment = New-PackagePostStep -PackageFiles $newPackageFiles
     
     $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Spe.Roles" 
     $package.Sources.Add($source)
