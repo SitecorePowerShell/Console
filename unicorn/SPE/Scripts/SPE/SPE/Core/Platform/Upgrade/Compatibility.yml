@@ -8,6 +8,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    Write-Log "Processing changes to ensure backwards compatibility."
     $oldVersion = New-Object System.Version(10,0)
     if($PSVersionTable["SitecoreVersion"] -lt $oldVersion) {
         $iseButton = Get-Item -Path "core:{bfc79034-857c-4432-a5c2-2d93af784384}"
@@ -19,9 +20,11 @@ SharedFields:
         $reportButton.Editing.BeginEdit()
         $reportButton.Fields["{D25B56D4-23B6-4462-BE25-B6A6D7F38E13}"].Value = "Office/32x32/chart_donut.png"
         $reportButton.Editing.EndEdit() > $null
+        Write-Log "Changes complete."
     } else {
-        Write-Host "No changes required"
+        Write-Host "No changes required."
     }
+    Close-Window
 Languages:
 - Language: en
   Versions:
