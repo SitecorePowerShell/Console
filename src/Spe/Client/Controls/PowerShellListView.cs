@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using Sitecore;
@@ -230,13 +231,17 @@ namespace Spe.Client.Controls
                     var val = result.Display[column];
                     switch (val)
                     {
-                        case ("False"):
+                        case "False":
                             var uncheckedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/delete.png");
                             val = $"<div class='unchecked'><img src='{uncheckedSource}'/></div>";
                             break;
-                        case ("True"):
+                        case "True":
                             var checkedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/check.png");
                             val = $"<div class='checked'><img src='{checkedSource}'/></div>";
+                            break;
+                        default:
+                            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>");
+                            val = xssCleanup.Replace(val, "<div title='Script tag removed'>&#9888;</div>");
                             break;
                     }
                     lvi.ColumnValues.Add(column, val);
