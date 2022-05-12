@@ -1,0 +1,18 @@
+﻿---
+ID: "18e552b4-3bab-469d-91ba-6063ee8ad29d"
+Parent: "801cc293-16aa-4128-9f29-fe7ae55579f6"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Ribbon/Presentation
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220512T191029Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
