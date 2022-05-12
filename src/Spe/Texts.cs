@@ -64,6 +64,7 @@ namespace Spe
         public const string PowerShellMultiValuePrompt_GetCheckboxControl_Select_all = "Select all";
         public const string PowerShellMultiValuePrompt_GetCheckboxControl_Unselect_all = "Unselect all";
         public const string PowerShellMultiValuePrompt_GetCheckboxControl_Invert_selection = "Invert selection";
+        public const string PowerShellMultiValuePrompt_InsecureData_error = "One or more field values include insecure data.";
 
         public const string PowerShellSessionElevation_Execution_prevented = "Execution prevented!";
 

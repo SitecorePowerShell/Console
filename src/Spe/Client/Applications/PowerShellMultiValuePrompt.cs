@@ -1055,6 +1055,17 @@ namespace Spe.Client.Applications
             var mandatoryVariables = MandatoryVariables.Split(',').ToList();
 
             var scriptVariables = GetVariableValues();
+
+            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            foreach (var variable in scriptVariables)
+            {
+                if (xssCleanup.IsMatch(variable["Value"].ToString()))
+                {
+                    SheerResponse.Alert(Texts.PowerShellMultiValuePrompt_InsecureData_error);
+                    return;
+                }
+            }
+
             var varsHashtable = new Hashtable();
             var canClose = true;
             var fieldValidators = FieldValidators;
@@ -1327,6 +1338,7 @@ namespace Spe.Client.Applications
             {
                 result.Add("Value", control.Value.Split('|'));
             }
+
             return result;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
@@ -73,8 +74,11 @@ namespace Spe.Client.Controls
             control["Class"] = (user.Name == CurrentUser) ? "selected" : string.Empty;
             control["UserIcon"] = $"<div class=\"versionNum\">{builder}</div>";
             control["Name"] = Translate.Text("<b>{0}</b>", user.Name);
-            control["FullName"] = Translate.Text("<b>{0}</b>",
-                string.IsNullOrEmpty(user.Profile.FullName) ? user.LocalName : user.Profile.FullName);
+
+            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            var fullname = string.IsNullOrEmpty(user.Profile.FullName) ? user.LocalName : user.Profile.FullName;
+            fullname = xssCleanup.Replace(fullname, "<span title='Script tag removed'>&#9888;</span>");
+            control["FullName"] = Translate.Text("<b>{0}</b>", fullname);
             control["Click"] = $"ise:setuser(user={WebUtil.UrlEncode(user.Name).Replace(@"\", @"\\")})";
         }
     }

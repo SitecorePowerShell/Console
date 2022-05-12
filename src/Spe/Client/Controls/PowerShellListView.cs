@@ -240,7 +240,7 @@ namespace Spe.Client.Controls
                             val = $"<div class='checked'><img src='{checkedSource}'/></div>";
                             break;
                         default:
-                            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>");
+                            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
                             val = xssCleanup.Replace(val, "<div title='Script tag removed'>&#9888;</div>");
                             break;
                     }
