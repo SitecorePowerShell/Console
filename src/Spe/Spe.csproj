@@ -681,6 +681,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\token_tooltip.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\validation.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
     <Content Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx" />

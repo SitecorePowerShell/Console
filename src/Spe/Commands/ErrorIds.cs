@@ -10,6 +10,7 @@ namespace Spe.Commands
         DomainNotFound,
         FieldNotFound,
         FileAlreadyExists,
+        FileNameInvalid,
         InsufficientSecurityRights,
         InvalidOperation,
         InvalidItemType,

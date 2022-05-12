@@ -52,7 +52,7 @@ namespace Spe.Commands.Packages
 
                     if (NoClobber.IsPresent && File.Exists(fileName))
                     {
-                        WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
+                        WriteError(typeof(IOException), $"The file '{fileName}' already exists.",
                             ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);
                     }
 
@@ -78,6 +78,12 @@ namespace Spe.Commands.Packages
                             fileName = $"{Project.Metadata.PackageName}-PS-{Project.Metadata.Version}{Constants.PackageExtension}";
                         }
 
+                        if (fileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) > 0)
+                        {
+                            WriteError(typeof(IOException), "The file specified contains invalid characters in the name.",
+                                ErrorIds.FileNameInvalid, ErrorCategory.InvalidArgument, fileName);
+                        }
+
                         if (!System.IO.Path.IsPathRooted(fileName))
                         {
                             fileName = FullPackagePath(fileName);
@@ -90,7 +96,7 @@ namespace Spe.Commands.Packages
 
                         if (NoClobber.IsPresent && File.Exists(fileName))
                         {
-                            WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
+                            WriteError(typeof(IOException), $"The file '{fileName}' already exists.",
                                 ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);
                         }
 

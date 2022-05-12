@@ -12,6 +12,7 @@
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/validation.js"></Script>
 
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"

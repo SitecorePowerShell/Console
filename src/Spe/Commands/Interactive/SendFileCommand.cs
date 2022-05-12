@@ -58,6 +58,12 @@ namespace Spe.Commands.Interactive
                 }               
                 else if (!string.IsNullOrEmpty(Path))
                 {
+                    if(Path.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) > 0)
+                    {
+                        PutMessage(new AlertMessage("The file specified contains invalid characters in the name."));
+                        return;
+                    }
+
                     var file = FileUtil.MapPath(Path);
 
                     if (!File.Exists(file))
