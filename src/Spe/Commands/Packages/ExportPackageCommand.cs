@@ -26,6 +26,19 @@ namespace Spe.Commands.Packages
         [Parameter]
         public SwitchParameter IncludeProject { get; set; }
 
+        private static bool ContainsInvalidPathCharacters(string filePath)
+        {
+            for (var i = 0; i < filePath.Length; i++)
+            {
+                int c = filePath[i];
+
+                if (c == '\"' || c == '<' || c == '>' || c == '|' || c == '*' || c == '?' || c < 32)
+                    return true;
+            }
+
+            return false;
+        }
+
         protected override void ProcessRecord()
         {
             var fileName = Path;
@@ -78,7 +91,7 @@ namespace Spe.Commands.Packages
                             fileName = $"{Project.Metadata.PackageName}-PS-{Project.Metadata.Version}{Constants.PackageExtension}";
                         }
 
-                        if (fileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) > 0)
+                        if (ContainsInvalidPathCharacters(fileName))
                         {
                             WriteError(typeof(IOException), "The file specified contains invalid characters in the name.",
                                 ErrorIds.FileNameInvalid, ErrorCategory.InvalidArgument, fileName);

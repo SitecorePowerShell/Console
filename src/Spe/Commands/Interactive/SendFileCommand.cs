@@ -32,6 +32,18 @@ namespace Spe.Commands.Interactive
         [Parameter]
         public SwitchParameter ShowFullPath { get; set; }
 
+        private static bool ContainsInvalidPathCharacters(string filePath)
+        {
+            for (var i = 0; i < filePath.Length; i++)
+            {
+                int c = filePath[i];
+
+                if (c == '\"' || c == '<' || c == '>' || c == '|' || c == '*' || c == '?' || c < 32)
+                    return true;
+            }
+
+            return false;
+        }
 
         protected override void ProcessRecord()
         {
@@ -58,7 +70,7 @@ namespace Spe.Commands.Interactive
                 }               
                 else if (!string.IsNullOrEmpty(Path))
                 {
-                    if(Path.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) > 0)
+                    if(ContainsInvalidPathCharacters(Path))
                     {
                         PutMessage(new AlertMessage("The file specified contains invalid characters in the name."));
                         return;
