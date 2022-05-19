@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -38,7 +39,16 @@ namespace Spe.Client.Applications
                     urlStr.Parameters.Add(key, urlParams[key]);
                 }
             }
-            Result.Text = $"<iframe class='externalViewer' src='{urlStr}'></iframe>";
+
+            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            if(xssCleanup.IsMatch(urlStr.ToString()))
+            {
+                Result.Text = "<div>Unable to properly parse the query string. It may contain unsafe code.</div>";
+            }
+            else
+            {
+                Result.Text = $"<iframe class='externalViewer' src='{urlStr}'></iframe>";
+            }
         }
 
     }
