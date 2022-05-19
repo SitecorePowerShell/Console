@@ -17,11 +17,19 @@ namespace Spe.Client.Applications
         {
             base.OnLoad(e);
 
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
+            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            var errorMessage = "Unable to properly parse the query string. It may contain unsafe code.";
             var title = WebUtil.GetQueryString("spe_t");
             if (!string.IsNullOrEmpty(title))
             {
-                DialogHeader.Text = title;
+                if (xssCleanup.IsMatch(title))
+                {
+                    DialogHeader.Text = errorMessage;
+                }
+                else
+                {
+                    DialogHeader.Text = title;
+                }
             }
             var url = WebUtil.GetQueryString("spe_url");
             if(string.IsNullOrEmpty(url)) 
@@ -40,10 +48,9 @@ namespace Spe.Client.Applications
                 }
             }
 
-            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
             if(xssCleanup.IsMatch(urlStr.ToString()))
             {
-                Result.Text = "<div>Unable to properly parse the query string. It may contain unsafe code.</div>";
+                Result.Text = errorMessage;
             }
             else
             {
