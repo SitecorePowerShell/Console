@@ -88,7 +88,6 @@
                     Write-Verbose "Finished polling job $($id)."
                 } else {
                     Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
-                    Start-Sleep -Seconds $Delay
                 }
         }
         if ($keepRunning -ne $Ids.Count) # Only sleep if we're not 'done' waiting for jobs
