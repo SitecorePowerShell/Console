@@ -6,6 +6,7 @@ using Sitecore.Data.Items;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
 using Spe.Commands.Interactive.Messages;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 
 namespace Spe.Commands.Interactive
@@ -80,8 +81,10 @@ namespace Spe.Commands.Interactive
 
                     if (!File.Exists(file))
                     {
-                        PutMessage(
-                            new AlertMessage($"You cannot download:\n{Path}\n\n The file could not be found."));
+                        var name = System.IO.Path.GetFileName(Path);
+
+                        PutMessage(new AlertMessage($"The file could not be found:\n{name}"));
+                        PowerShellLog.Warn($"Attempted to download the file {Path} but it does not exist.");
                         return;
                     }
 
