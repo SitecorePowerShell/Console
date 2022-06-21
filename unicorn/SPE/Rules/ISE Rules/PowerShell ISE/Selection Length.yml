@@ -24,6 +24,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "40030076-0d0e-47e5-bf94-660d4f5ecdf3"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når [MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&setRootAsSearchRoot=true,length] længden på scriptet er [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] karakterer langt"
@@ -42,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b4d11b03-a27a-4f98-93f2-4a105d79c584"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "when [MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&setRootAsSearchRoot=true,length] script length is [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] characters long"
@@ -60,6 +66,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "048068f4-34ee-4004-b45b-65cb61398b19"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "[MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&setRootAsSearchRoot=true,length] スクリプトの長さが [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] 文字よりも長い"

@@ -48,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "fedf2265-cdba-410c-b83b-0753878754ff"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: Bruger
@@ -68,6 +71,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "51d722ed-d4f1-466e-b326-76a7ffb61bdd"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: User
@@ -85,6 +91,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c5ec1880-c3a6-4400-b2ba-40ad32a2fca8"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: ワンタイムセッション

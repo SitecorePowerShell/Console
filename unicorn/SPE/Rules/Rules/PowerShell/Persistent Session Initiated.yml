@@ -27,6 +27,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "6e0a4889-91c2-449f-ad66-ec2371d4a432"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når den vedvarende [persistentsessionid,,,specific] PowerShell session allerde var startet"
@@ -45,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ada6c63a-e6dc-406c-8a9c-fad278142fd5"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "where [persistentsessionid,,,specific] persistent PowerShell session was already initiated"
@@ -63,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d269f07e-2537-42a2-bb5d-c0abee304683"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "[persistentsessionid,,,specific] 現在の PowerShell セッションは初期化されました"

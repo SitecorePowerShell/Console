@@ -30,6 +30,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9a222765-6ec4-4402-b5c5-0b38218ffd12"
     - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
       Hint: Tool tip
       Value: Værktøj til at skrive PowerShell scripts.
@@ -47,6 +50,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "badb4f62-b227-48ad-803d-5d02757a0fcb"
     - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
       Hint: Tool tip
       Value: Tool for writing PowerShell scripts.
@@ -64,6 +70,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "dab5dba4-55ce-4574-9bd1-8e903a39d84f"
     - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
       Hint: Tool tip
       Value: ** Tool for writing PowerShell scripts. **

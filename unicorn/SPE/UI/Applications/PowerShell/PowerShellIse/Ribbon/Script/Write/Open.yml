@@ -38,6 +38,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "22d0abf4-ebe8-4394-b686-293502ffbb89"
     - ID: "e9f2581a-fbfc-4ac6-90cb-04ca5c02b70d"
       Hint: Tooltip
       Value: Åbn et eksisterende script fra biblioteket.
@@ -55,6 +58,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "41a4d940-504b-4728-a811-15c50ac4957e"
     - ID: "e9f2581a-fbfc-4ac6-90cb-04ca5c02b70d"
       Hint: Tooltip
       Value: Open an existing script from the library.
@@ -72,6 +78,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4ac42902-dd05-4393-b68f-b2fc3edb222c"
     - ID: "facecac8-c923-4847-834c-c917268f8f6b"
       Hint: Header
       Value: 開く

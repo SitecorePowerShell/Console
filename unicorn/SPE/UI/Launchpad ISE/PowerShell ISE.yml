@@ -30,6 +30,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f802f862-a71e-4dda-bb24-9c2ef18c4407"
     - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
       Hint: Text
       Value: PowerShell ISE
@@ -44,6 +47,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "32aff4d1-0d2d-4fea-90bb-17d7bff5978c"
     - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
       Hint: Text
       Value: PowerShell ISE
@@ -58,6 +64,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b13de70b-3d23-4891-bf07-4c86768799bf"
     - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
       Hint: Text
       Value: PowerShell ISE

@@ -125,6 +125,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4480bd96-6b72-457a-abe0-c57ed42d1266"
     - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
       Hint: Tool tip
       Value: Rapporter skrevet med Sitecore PowerShell udvidelsen
@@ -158,6 +161,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e930caba-2327-429f-8695-950c28812952"
     - ID: "abe5d54c-59d7-41e6-8d3f-c1a3e4ec9b9e"
       Hint: __Reminder date
       Value: 
@@ -188,6 +194,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8b667368-084d-426e-8b0e-ad674685d838"
     - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
       Hint: Tool tip
       Value: Sitecore PowerShell Extensions によるレポートの書き出し

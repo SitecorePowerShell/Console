@@ -24,6 +24,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d35ff5b8-5610-4369-9ba7-4c52a7a9b407"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når chrome er af [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&setRootAsSearchRoot=true,unspecified] typen"
@@ -42,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c518a940-2198-475f-9066-eb946ee5422c"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "when chrome is of [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&setRootAsSearchRoot=true,unspecified] type"
@@ -60,6 +66,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b9d0033c-7d1c-4763-bd16-36142c555ff7"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "クロームは [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&setRootAsSearchRoot=true,unspecified] タイプ"

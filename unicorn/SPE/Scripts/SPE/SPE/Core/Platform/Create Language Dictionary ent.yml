@@ -146,6 +146,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3800a9ae-b676-42b0-bf87-ec248eec4620"
 - Language: en
   Versions:
   - Version: 1
@@ -153,3 +156,6 @@ Languages:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20160826T125427
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9815fcf2-dc8a-4861-abc2-38f045b447d0"
