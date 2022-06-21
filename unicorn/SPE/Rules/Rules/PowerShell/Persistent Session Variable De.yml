@@ -27,6 +27,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d298cbd7-a910-41ed-a21a-8db4f0dd7128"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når den vedvarende [persistentsessionid,,,specific] PowerShell session allerede er startet og har [VariableName,,,specific] variablen defineret og ikke er null"
@@ -45,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ed80d897-cd07-4551-b1c0-fc6b53ac1779"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "where [persistentsessionid,,,specific] persistent PowerShell session was already initiated and has the [VariableName,,,specific] variable defined and not null"
@@ -63,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "7bcfbf96-adf6-4250-b1d0-4186c55d164e"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "[persistentsessionid,,,specific] 現在の PowerShell セッションは既に初期化され、 [VariableName,,,specific] 変数は定義され、空ではありません"

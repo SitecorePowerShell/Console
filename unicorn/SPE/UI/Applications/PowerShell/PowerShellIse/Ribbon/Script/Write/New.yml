@@ -45,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9fd26f30-272e-4058-86fd-7ee2999607a7"
 - Language: en
   Fields:
   - ID: "b11f9f5f-88fc-48c5-9501-2e827ef40ead"
@@ -66,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f9a7c498-7cdb-4b29-ba6b-1482beadf0c6"
     - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
       Hint: __Valid from
       Value: 20060320T102016
@@ -87,3 +93,6 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5de117cc-8cba-4ea1-bbbc-07548b110a72"

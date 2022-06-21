@@ -82,6 +82,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell konsol
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "aad47f59-ee2e-4083-9517-577059511fb1"
 - Language: en
   Versions:
   - Version: 1
@@ -99,6 +102,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell Console
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "22e4093a-1ee2-4d8e-95c3-045a9971bf4a"
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -116,3 +122,6 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell コンソール
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "606b3659-6e0a-44ba-b833-87030448b1fa"

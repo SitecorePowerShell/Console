@@ -48,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "29062dce-f858-4ad4-b3d1-123e465d8541"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: Session
@@ -68,6 +71,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8d92ac5c-776b-46be-afbc-9d13b0f404ad"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: Session
@@ -85,6 +91,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8ef75ce5-fd73-45a7-88a2-6740bdc50cc6"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: ワンタイムセッション

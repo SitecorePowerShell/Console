@@ -126,6 +126,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "05078840-bdeb-4292-8164-54d2b88ecc1b"
     - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
       Hint: Tool tip
       Value: Brugerdefinerede værktøjer bygget med PowerShell scripts.
@@ -159,6 +162,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a15d7cca-e688-48d5-a476-4b359732b77c"
     - ID: "abe5d54c-59d7-41e6-8d3f-c1a3e4ec9b9e"
       Hint: __Reminder date
       Value: 
@@ -189,6 +195,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "bbb7ce0e-8bd5-42bd-b8b2-8c1dae013397"
     - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
       Hint: Tool tip
       Value: PowerShell ソリューション

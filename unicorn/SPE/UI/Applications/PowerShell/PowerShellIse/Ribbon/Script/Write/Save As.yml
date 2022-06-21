@@ -35,6 +35,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "cbded58e-6512-4f97-8044-82aced6e98da"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Gem som et nyt script.
@@ -55,6 +58,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ae682bc2-df55-4078-8dbe-d6dc017cc710"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Save as a new script.
@@ -75,6 +81,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0bc2f844-30be-4e9a-b791-ca519d81db83"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: 新しいスクリプトアイテムを保存

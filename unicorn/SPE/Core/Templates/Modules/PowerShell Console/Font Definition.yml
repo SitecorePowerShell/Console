@@ -27,3 +27,6 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e734be19-4ac1-41f4-8e2b-cafa8259976e"

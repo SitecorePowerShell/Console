@@ -24,6 +24,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0d4bae2f-dda8-4ce0-96d6-7dbd49e0fd9b"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "NÃ¥r den aktuelle bruger er medlem af [value,,,specific] role"
@@ -42,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "996ffd5b-4e98-42b7-80f1-a009b0848b63"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "Wo der aktuelle Benutzer ein Mitglied der [value,,,spezifischen] Rolle ist"
@@ -56,6 +62,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9899771d-bf4e-4d48-a8f7-5573a81d0f45"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "where the current user is a member of the [value,UserRoles,,specific] role, either directly or through inheritance"
@@ -74,6 +83,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1f6a6c95-edc9-4307-b807-8ed42b65034f"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "条件： （ユーザー） ユーザーが [value,UserRoles,,特定の] ロールのメンバーの場合"

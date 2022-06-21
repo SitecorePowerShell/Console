@@ -39,6 +39,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f93470bb-e760-4d33-8746-8e91cd37f1fb"
 - Language: "de-DE"
   Fields:
   - ID: "9b72a62b-2775-423d-b17a-ec34a9f31af8"
@@ -57,6 +60,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9c2783e6-f99e-4da4-b774-da96d5fa4e94"
 - Language: en
   Fields:
   - ID: "9b72a62b-2775-423d-b17a-ec34a9f31af8"
@@ -72,6 +78,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "19842c77-7797-4130-997b-fffd2df4798f"
     - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
       Hint: __Valid from
       Value: 20050404T072308
@@ -93,3 +102,6 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "19dba874-2c22-4d9e-ab0a-c998abaced83"

@@ -27,6 +27,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3d43fd20-3cf4-440d-a66a-56932c1048ec"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når vist i et [ValidViewName,,,specific] view"
@@ -45,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "7e04c33a-c93d-4cb8-9969-8ea6dbcd197d"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "where exposed in a [ValidViewName,,,specific] view"
@@ -63,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "56175149-215c-4ef3-8f46-81b62f2ff1bd"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "[ValidViewName,,,specific] を表示"

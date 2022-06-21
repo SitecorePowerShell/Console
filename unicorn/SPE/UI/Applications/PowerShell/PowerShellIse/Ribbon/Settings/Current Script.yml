@@ -26,6 +26,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0f1c2485-a7b2-4793-b187-511158736179"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Script
@@ -40,6 +43,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3ad3da25-67fc-46e0-aef4-cf42a7a6bcd3"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Script
@@ -54,6 +60,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f25dbd4c-11fe-402f-8928-8d84ca57ad5c"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: スクリプト

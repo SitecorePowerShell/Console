@@ -35,6 +35,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "68542de0-800b-4298-9e6a-b170aae75ed8"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Udfør den valgt tekst i scriptet.
@@ -55,6 +58,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "be5638a3-4fed-4383-9454-f48300dd7c53"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Execute the selected script text.
@@ -75,6 +81,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2df53ec7-2a72-4a15-bc79-46cc1ba06f0f"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: |

@@ -33,6 +33,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "7cce292c-bc91-40a3-ad6c-587e6a011af9"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Side
@@ -47,6 +50,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b73ee227-e7ca-49f2-81a1-f02f64f0d389"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Page
@@ -61,6 +67,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8a77d6bf-146d-4e17-b717-763ac5f30c6d"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: ページ

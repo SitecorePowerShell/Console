@@ -31,3 +31,6 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3ebc3c5b-74f1-414c-92f2-121bc8b2e737"

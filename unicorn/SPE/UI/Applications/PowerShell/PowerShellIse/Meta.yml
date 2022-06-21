@@ -26,6 +26,9 @@ Languages:
     - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
       Hint: Default Title
       Value: Meta
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ade99dd4-70c9-4a1d-b27e-dc6ee297a5d6"
 - Language: en
   Versions:
   - Version: 1
@@ -40,6 +43,9 @@ Languages:
     - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
       Hint: Default Title
       Value: Meta
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3f2eeb8e-bfb9-4764-bf03-e87d7d77c960"
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -54,3 +60,6 @@ Languages:
     - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
       Hint: Default Title
       Value: メタ
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ce208f24-05be-4dc8-aeb1-dd748b5c32f5"

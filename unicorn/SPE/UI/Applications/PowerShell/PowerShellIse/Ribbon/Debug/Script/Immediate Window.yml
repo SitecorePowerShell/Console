@@ -38,6 +38,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0101d466-1ea8-4ced-90a2-be5a2834bef6"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: Viser en dialogboks til at afvikle kommandoer, mens udførelsen af scriptet er sat på pause i sessionen.
@@ -58,6 +61,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a8a92de4-8ce4-449a-b937-2e4f9a6e89fc"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: Show a dialog to run commands while the executing script is paused in the session.
@@ -78,6 +84,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "92967093-d246-48a8-be11-ba2bffce20b9"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: 実行中で停止したセッションのコードをすぐに Window に表示

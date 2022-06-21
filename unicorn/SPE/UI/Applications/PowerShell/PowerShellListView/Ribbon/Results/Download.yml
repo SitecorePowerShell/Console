@@ -33,6 +33,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "84229e89-bf60-4654-a3cd-5ca91d771f3b"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Eksport
@@ -47,6 +50,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0b184b8d-d6f0-4dd9-9cbc-760594c46d0e"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: Export
@@ -61,6 +67,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d7655f45-4ea7-4e31-af12-ba066c567361"
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
       Value: エキスポート

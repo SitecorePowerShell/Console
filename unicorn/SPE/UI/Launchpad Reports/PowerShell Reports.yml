@@ -30,6 +30,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "012352a0-3d37-452b-aba6-11003116c9a5"
     - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
       Hint: Text
       Value: PowerShell rapporter
@@ -48,6 +51,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d86f362b-fd2d-425f-b006-c9c7b0d5cae8"
     - ID: "aa4a4643-5bfc-45a7-b9d9-5183a5211d99"
       Hint: Text
       Value: PowerShell Reports

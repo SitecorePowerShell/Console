@@ -38,6 +38,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "cb80b2dd-f884-49d2-9968-7db0022ca91e"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: Fortsæt udførelsen af scriptet.
@@ -58,6 +61,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "069f9af5-5354-41be-9500-c9acbb8827d4"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: Continue script execution.
@@ -78,6 +84,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "fe7d219f-96ca-4650-87a0-ef91097e9e83"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: スクリプトを実行

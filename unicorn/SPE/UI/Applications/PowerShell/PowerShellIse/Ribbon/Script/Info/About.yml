@@ -41,6 +41,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0ad4e403-75cb-462f-8b8c-2bc7bcfc83d5"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: Om modulet og dets miljø.
@@ -61,6 +64,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1624aa0f-14c9-4824-8ffc-e0b3b34f3f8d"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: About the module and environment.
@@ -81,6 +87,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "94cd6297-b60d-43da-93c5-6104d9e8d6ce"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: モジュールと環境について

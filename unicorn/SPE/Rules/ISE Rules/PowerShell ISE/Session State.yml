@@ -24,6 +24,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4a45270c-51c2-4108-b42b-bce8d71dcf73"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når det redigerede scriptet er [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&setRootAsSearchRoot=true,in a state]"
@@ -42,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b66e59c8-2269-4bf7-b8aa-f0622dba088e"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "when the edited script is [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&setRootAsSearchRoot=true,in a state]"
@@ -60,6 +66,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "6aa658fa-4c36-49e1-b7a3-446f2fe28d91"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "編集されたスクリプト [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&setRootAsSearchRoot=true,in a state]"

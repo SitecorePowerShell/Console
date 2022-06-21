@@ -24,6 +24,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "12aa769f-e619-4192-9a3e-b4f221ecd375"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "når chrome elementet er af [ChromeName,,,specific] navn"
@@ -42,6 +45,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "6227539c-a3cd-4f6c-8501-d56362962fb1"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "when the chrome element is of [ChromeName,,,specific] name "
@@ -60,6 +66,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e034c870-8d52-4163-b4c3-62d5d87c6d37"
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: "クローム属性は [ChromeName,,,specific] という名前です"

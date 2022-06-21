@@ -29,6 +29,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c16d4a87-95aa-44c8-a54a-bef630d570ef"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Flyt listen til næste side.
@@ -46,6 +49,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "aba6715e-6634-4e0e-8a1c-cba324b76bc9"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Move the list to the next page.
@@ -63,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5551e300-b791-4609-89a3-e65893eb07bb"
     - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
       Hint: Header
       Value: 下へ移動

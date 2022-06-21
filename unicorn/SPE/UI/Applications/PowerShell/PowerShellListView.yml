@@ -70,6 +70,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: Listevisning
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f03328df-f0de-43b9-ba6c-7000736c7490"
 - Language: en
   Versions:
   - Version: 1
@@ -87,6 +90,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: List View
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "167d7775-c5ad-4c9e-bb73-0d0f36efd172"
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -104,3 +110,6 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: リストビュー
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f491626b-310d-498d-a12a-6d3f8bcfb719"

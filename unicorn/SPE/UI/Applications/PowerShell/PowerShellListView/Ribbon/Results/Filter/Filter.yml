@@ -35,6 +35,9 @@ Languages:
     - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
       Hint: Header
       Value: Filtre
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5d473644-5da5-418f-bd80-6aea9c8ebc62"
     - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
       Hint: Tooltip
       Value: Filtre rapporten ved hjælp af et nøgleord.
@@ -52,6 +55,9 @@ Languages:
     - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
       Hint: Header
       Value: Filter
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1c37b50c-3fe2-4e17-96f5-dc58747cd9eb"
     - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
       Hint: Tooltip
       Value: Filter the report using a keyword.
@@ -69,6 +75,9 @@ Languages:
     - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
       Hint: Header
       Value: フィルター
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c0b1c2e5-a7a6-43a8-b465-f910bd0628a6"
     - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
       Hint: Tooltip
       Value: レポートのフィルタ

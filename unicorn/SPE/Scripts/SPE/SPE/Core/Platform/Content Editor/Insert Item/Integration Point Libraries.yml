@@ -54,6 +54,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9e0a101f-3b89-43c8-a9aa-03943d50ab0e"
 - Language: en
   Fields:
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
@@ -71,3 +74,6 @@ Languages:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20141203T085232Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5257f213-e296-4577-97ae-101205b75060"

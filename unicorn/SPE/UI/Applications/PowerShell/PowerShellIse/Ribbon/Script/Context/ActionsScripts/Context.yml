@@ -48,6 +48,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "71719ece-1b34-4b80-bcd2-645a5582b901"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: Kontekst
@@ -68,6 +71,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "eab78db6-9236-4d68-bd09-e54b66e56641"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: Context
@@ -85,6 +91,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a9e698df-a1ca-4605-b198-7e979e4c599d"
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
       Value: コンテキスト

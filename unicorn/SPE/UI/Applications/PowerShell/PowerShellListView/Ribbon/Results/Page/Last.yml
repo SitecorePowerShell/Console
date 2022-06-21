@@ -29,6 +29,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "775e97db-7bb3-423b-9a03-3c3bc0b74083"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Flyt listen til den sidste side.
@@ -46,6 +49,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "231e58cc-70cd-4191-819d-2cc9f33f73ef"
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
       Value: Move the list to the last page.
@@ -63,6 +69,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1e23a1fd-181a-4429-bf68-a492b6c8ef74"
     - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
       Hint: Header
       Value: 最後に移動

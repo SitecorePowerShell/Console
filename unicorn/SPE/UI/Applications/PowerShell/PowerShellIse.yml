@@ -76,6 +76,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell ISE
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8b91462e-9668-425c-b10e-70dd78e7b983"
 - Language: en
   Versions:
   - Version: 1
@@ -93,6 +96,9 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell ISE
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "84f1600c-25f3-45f1-a085-f37ce7e57d8a"
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -110,3 +116,6 @@ Languages:
     - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
       Hint: Display name
       Value: PowerShell ISE
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0461b7f5-02d2-4fc1-9cdb-61bc566ae2c9"
