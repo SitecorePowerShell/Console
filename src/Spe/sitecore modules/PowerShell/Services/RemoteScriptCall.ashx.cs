@@ -663,7 +663,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (string.IsNullOrEmpty(script))
             {
-                context.Response.StatusCode = 404;
+                context.Response.StatusCode = 400;
                 context.Response.StatusDescription = "The specified script is invalid.";
                 return;
             }
