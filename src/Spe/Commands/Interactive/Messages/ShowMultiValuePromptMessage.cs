@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Management.Automation;
 using Sitecore;
 using Sitecore.Text;
@@ -60,7 +61,10 @@ namespace Spe.Commands.Interactive.Messages
         protected override object ProcessResult(bool hasResult, string sig)
         {
             var session = ScriptSessionManager.GetSession(SessionKey);
-            session.DialogStack.Pop();
+            if (session.DialogStack.Any())
+            {
+                session.DialogStack.Pop();
+            }
             if (hasResult)
             {
                 var result = session.DialogResults;

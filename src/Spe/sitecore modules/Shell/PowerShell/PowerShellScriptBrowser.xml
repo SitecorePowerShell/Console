@@ -7,7 +7,6 @@
                 Text="Select the item that you want to open." OKButton="Open">
 
       <CodeBeside Type="Spe.Client.Applications.PowerShellScriptBrowser,Spe" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/ScriptBrowser.css" x:placeholder="Stylesheets" />
 
       <DataContext ID="ScriptDataContext" Root="/sitecore/system/Modules/PowerShell/Script Library"/>
         <GridPanel Width="100%" Height="100%" Style="table-layout:fixed">

@@ -7,9 +7,9 @@
 
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery-ui.min.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-3.5.1.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
       <Script>$viewer = jQuery.noConflict();</Script>
       <Stylesheet>
         pre { margin: 2px;}

@@ -4,7 +4,7 @@
          xmlns:x="http://www.sitecore.net/xaml">
   <ConfirmChoice>
     <FormPage>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-3.5.1.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>

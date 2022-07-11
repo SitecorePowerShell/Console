@@ -117,7 +117,7 @@ a.ps-link {
     position: absolute;
 }
 
-.ui-icon-info {
+.ui-state-highlight .ui-icon.ui-icon-info {
     background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;
     background-size: 16px;
 }
