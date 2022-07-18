@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Sitecore;
 using Sitecore.Configuration;
@@ -168,6 +169,17 @@ namespace Spe.Client.Applications
         {
             get { return Monitor.Active; }
             set { Monitor.Active = value; }
+        }
+
+        private static bool IsHackedParameter(string parameter)
+        {
+            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            if (xssCleanup.IsMatch(parameter))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -966,6 +978,10 @@ namespace Spe.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             var sessionId = args.Parameters["id"];
+            if(IsHackedParameter(sessionId))
+            {
+                return;
+            }
             CurrentSessionId = sessionId;
             SheerResponse.Eval($"spe.changeSessionId('{sessionId}');");
             UpdateRibbon();
@@ -976,6 +992,10 @@ namespace Spe.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             var language = args.Parameters["language"];
+            if (IsHackedParameter(language))
+            {
+                return;
+            }
             CurrentLanguage = language;
             new LanguageHistory().Add(language);
             UpdateRibbon();
@@ -986,6 +1006,10 @@ namespace Spe.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             var user = args.Parameters["user"];
+            if (IsHackedParameter(user))
+            {
+                return;
+            }
             CurrentUser = user;
             new UserHistory().Add(user);
             UpdateRibbon();
