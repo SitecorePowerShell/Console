@@ -721,6 +721,12 @@ namespace Spe.Client.Applications
         {
             if (!string.IsNullOrEmpty(result))
             {
+                var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+                if (xssCleanup.IsMatch(result))
+                {
+                    result = xssCleanup.Replace(result, "<div title='Script tag removed'>&#9888;</div>");
+                }
+
                 result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
                 SheerResponse.Eval($"spe.appendOutput(\"{result}\");");
             }
