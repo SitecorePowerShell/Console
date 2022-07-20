@@ -339,12 +339,13 @@ namespace Spe.Core.Host
             var message = string.IsNullOrEmpty(operation)
                 ? "Non interactive session cannot perform an interactive operation."
                 : $"Non interactive session cannot perform an interactive '{operation}' operation.";
+            
+            PowerShellLog.Debug(message);
 
             if (throwException)
             {
                 throw new InvalidOperationException(message);
             }
-            PowerShellLog.Info(message);
             return true;
         }
     }
