@@ -33,12 +33,9 @@ namespace Spe.Core.Settings.Authorization
                 return false;
             }
 
-            if (ExistsInCache(cacheKey))
+            if (ExistsInCache(cacheKey, out var entry))
             {
-                lock (_authorizationCache)
-                {
-                    return _authorizationCache[cacheKey].Authorized;
-                }
+                return entry.Authorized;
             }
 
             bool? allowedByRole = null;
@@ -94,14 +91,11 @@ namespace Spe.Core.Settings.Authorization
                 allowed = allowedByRole.Value;
             }
 
-            lock (_authorizationCache)
+            _authorizationCache[cacheKey] = new AuthCacheEntry()
             {
-                _authorizationCache[cacheKey] = new AuthCacheEntry()
-                {
-                    Authorized = allowed,
-                    ExpirationDate = DateTime.Now.AddSeconds(WebServiceSettings.AuthorizationCacheExpirationSecs)
-                };
-            }
+                Authorized = allowed,
+                ExpirationDate = DateTime.Now.AddSeconds(WebServiceSettings.AuthorizationCacheExpirationSecs)
+            };
 
             return allowed;
         }
@@ -117,18 +111,15 @@ namespace Spe.Core.Settings.Authorization
             return true;
         }
 
-        private static bool ExistsInCache(string cacheKey)
+        private static bool ExistsInCache(string cacheKey, out AuthCacheEntry entry)
         {
-            // cache health check
-            lock (_authorizationCache)
+            if (_authorizationCache.Count > 1000)
             {
-                if (_authorizationCache.Keys.Count > 1000)
-                {
-                    _authorizationCache.Clear();
-                }
-                return _authorizationCache.ContainsKey(cacheKey) &&
-                       _authorizationCache[cacheKey].ExpirationDate > DateTime.Now;
+                _authorizationCache.Clear();
             }
+
+            return _authorizationCache.TryGetValue(cacheKey, out entry) &&
+                   entry.ExpirationDate > DateTime.Now;
         }
 
         private static string GetAuthorizationCacheKey(string serviceName, string userName)
@@ -138,26 +129,24 @@ namespace Spe.Core.Settings.Authorization
 
         private static List<AuthorizationEntry> GetServiceAuthorizationInfo(string serviceName)
         {
-            if (_authorizationEntries.ContainsKey(serviceName))
+            if (_authorizationEntries.TryGetValue(serviceName, out var authEntry))
             {
-                return _authorizationEntries[serviceName];
+                return authEntry;
             }
 
             var authEntryList = new List<AuthorizationEntry>();
 
-            var servicesNode =
-                Factory.GetConfigNode($"powershell/services/{serviceName}/authorization");
+            var servicesNode = Factory.GetConfigNode($"powershell/services/{serviceName}/authorization");
 
             if (servicesNode == null) return authEntryList;
 
             foreach (XmlNode node in servicesNode.ChildNodes)
             {
-                AuthorizationEntry entry;
                 if (node.Name.Is("#comment"))
                 {
                     continue;
                 }
-                if (AuthorizationEntry.TryParse(node, out entry))
+                if (AuthorizationEntry.TryParse(node, out AuthorizationEntry entry))
                 {
                     authEntryList.Add(entry);
                 }
