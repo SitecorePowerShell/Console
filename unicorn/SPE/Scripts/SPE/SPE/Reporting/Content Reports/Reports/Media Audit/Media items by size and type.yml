@@ -26,6 +26,9 @@ SharedFields:
         "pdf" = 3
         "png" = 4
         "svg" = 5
+        "doc, docx" = 6
+        "xls, xlsx" = 7
+        "csv" = 8
     }
     
     $settings = @{
@@ -66,6 +69,9 @@ SharedFields:
             3 { $selectedType += "pdf" }
             4 { $selectedType += "png" }
             5 { $selectedType += "svg" }
+            6 { $selectedType += "doc","docx" }
+            7 { $selectedType += "xls","xlsx" }
+            8 { $selectedType += "csv" }
         }
     }
     
@@ -104,7 +110,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "febf7777-7466-4f5d-9835-ed25aed6970c"
+      Value: "1ab4762b-135a-49bf-86b5-2c0aa5338b95"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -125,4 +131,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "00715221-a52a-43d3-8e82-b96b842dc854"
+      Value: "2979753b-1730-4832-ac30-afeb1224b494"
