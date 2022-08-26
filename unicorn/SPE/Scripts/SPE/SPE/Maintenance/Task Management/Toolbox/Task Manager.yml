@@ -23,7 +23,7 @@ SharedFields:
         InfoDescription = "Use the actions to help edit or run scheduled tasks."
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Property = @(
-            @{Label="Name"; Expression={ $_.DisplayName } },
+            @{Label="Name"; Expression={ "<span title='$($_.Schedule)'>" + $_.DisplayName + "</span>" } },
             @{Label="Last Run"; Expression={ (Format-TaskScheduleDate -Date $_."Last Run" -Text "Never") } },
             @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
             @{Label="Start Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "from") -Text "Beginning of Time") } },
@@ -63,7 +63,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "88b2a0e1-221f-4688-ab50-0d9ddcbc75ab"
+      Value: "8cd7a77f-c65b-46d3-b5f2-ee141497dab6"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -80,4 +80,4 @@ Languages:
       Value: 20130916T193800Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "f631ec38-3e24-4806-ab92-b09ec249c63a"
+      Value: "3394f300-d6e9-4d9c-bd63-671abd5a6fde"
