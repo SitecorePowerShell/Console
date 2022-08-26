@@ -12,6 +12,7 @@ SharedFields:
   Hint: Script
   Value: |
     $sizeOptions = [ordered]@{
+        "0 KB (any size)" = 0
         "100 KB" = 100000
         "250 KB" = 250000
         "500 KB" = 500000
@@ -131,4 +132,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "2979753b-1730-4832-ac30-afeb1224b494"
+      Value: "b664cd75-a9d1-4379-b330-c4be184524fb"
