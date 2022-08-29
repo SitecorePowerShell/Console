@@ -1,9 +1,9 @@
 [CmdletBinding()]
 Param (
-    [Parameter(Mandatory = $true)]
+    [Parameter()]
     [string]
     [ValidateNotNullOrEmpty()]
-    $LicenseXmlPath,
+    $LicenseXmlPath = "C:\license\license.xml",
 
     [string]
     $HostName = "dev.local",
@@ -26,6 +26,10 @@ if (-not (Test-Path $LicenseXmlPath)) {
 }
 if (-not (Test-Path $LicenseXmlPath -PathType Leaf)) {
     throw "$LicenseXmlPath is not a file"
+}
+if (-not (Test-Path ".env")) {
+    Write-Host "Copying new .env" -ForegroundColor Green
+    Copy-Item ".\docker\.env" ".env"
 }
 
 # Check for Sitecore Gallery
