@@ -1,8 +1,4 @@
 tls:
   certificates:
-    - certFile: C:\etc\traefik\certs\specd.dev.local.crt
-      keyFile: C:\etc\traefik\certs\specd.dev.local.key
-    - certFile: C:\etc\traefik\certs\spe.dev.local.crt
-      keyFile: C:\etc\traefik\certs\spe.dev.local.key
-    - certFile: C:\etc\traefik\certs\speid.dev.local.crt
-      keyFile: C:\etc\traefik\certs\speid.dev.local.key
+    - certFile: C:\etc\traefik\certs\cert.pem
+      keyFile: C:\etc\traefik\certs\key.pem
