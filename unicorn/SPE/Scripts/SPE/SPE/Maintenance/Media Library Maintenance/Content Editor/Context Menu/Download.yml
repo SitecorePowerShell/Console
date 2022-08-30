@@ -26,48 +26,93 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    function ZipItems( $zipArchive, $sourcedir )
-    {
-      Set-Location $sourcedir
-      [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
-          Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
-      $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
-          [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
-      $items = @(Get-Item $sourceDir) + (Get-ChildItem -recurse $sourceDir)
-      [byte[]]$buff = new-object byte[] 40960
-      $i = 0;
-      ForEach ($item In $items) {
-        $i++
-        if([Sitecore.Resources.Media.MediaManager]::HasMediaContent($item)){
-          $mediaItem = New-Object "Sitecore.Data.Items.MediaItem" $item;
-          $mediaStream = $mediaItem.GetMediaStream();
-          $fileName = Resolve-Path -Path $item.ProviderPath -Relative
-          $fileName = "$fileName.$($item.Extension)".Replace("\","/").Replace("./","/");
-          "Added: $fileName"
-          Write-Progress -Activity "Zipping Files " -CurrentOperation "Adding $fileName" -Status "$i out of $($items.Length)" -PercentComplete ($i *100 / $items.Length)
-          $partUri = New-Object System.Uri($fileName, [System.UriKind]::Relative)
-          $partUri = [System.IO.Packaging.PackUriHelper]::CreatePartUri($partUri);
-          $part=$ZipPackage.CreatePart($partUri, "application/zip", [System.IO.Packaging.CompressionOption]::Maximum)
-          $stream=$part.GetStream();
-          do {
-            $count = $mediaStream.Read($buff, 0, $buff.Length)
-            $stream.Write($buff, 0, $count)
-          } while ($count -gt 0)
-          $stream.Close()
-          $mediaStream.Close()
-        }
-      }
-      $ZipPackage.Close()
+    Import-Function Resolve-Error
+    
+    $props = @{
+        "Title" = "Download options"
+        "Description" = "Download a compressed archive of the selected media."
+        "Icon" = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        "ShowHints" = $true
     }
     
-    $location = get-location
-    $time = Get-Date -format "yyyy-MM-d_hhmmss"
-    $zipName = Split-Path -leaf $location | % { $_ -replace " ", ""}
-    $zipPath = "$($SitecoreDataFolder)\$zipName-$time.zip"
+    $rootOptions = [ordered]@{
+        "Children and descendants" = "ChildrenAndDescendants"
+        "Children only" = "ChildrenOnly"
+    }
+    $rootOptionTooltips = [ordered]@{
+        "ChildrenAndDescendants" = "The selected item children and everything beneath it will be added."
+        "ChildrenOnly" = "Immediate children beneath the selected item will be added."
+    }
     
-    ZipItems $zipPath $location
-    Download-File -FullName $zipPath > $null
-    Remove-Item $zipPath
+    $parameters = @(
+        @{ Name = "IncludeItems"; Title="Media items to include in zip"; Value="ChildrenAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the media items based on your selection below. `n`nSelected Root : '$($SitecoreContextItem.ProviderPath)'"; Editor="combo" },
+        @{ Name = "autoRemoveZip"; Title="Automatically Remove Zip"; Value=$true; Hint = "If you would like the zip file to be automatically removed after the download dialog closes choose an option below."; }
+    )
+    $result = Read-Variable @props -Parameters $parameters
+    
+    Resolve-Error
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $sourceDirectory = Get-Location
+    $items = @(Get-Item -Path $sourceDirectory)
+    if($IncludeItems -eq "ChildrenAndDescendants") {
+        $items += @(Get-ChildItem -Path $sourceDirectory -Recurse)
+    } else {
+        $items += @(Get-ChildItem -Path $sourceDirectory)
+    }
+    
+    Add-Type -AssemblyName System.IO.Compression
+    
+    $time = Get-Date -format "yyyy-MM-d_hhmmss"
+    $zipName = Split-Path -Leaf $sourceDirectory | ForEach-Object { $_ -replace " ", ""}
+    $zipOutputPath = "$($SitecorePackageFolder)\$($zipName)-$($time).zip"
+    
+    $compressionLevel = [System.IO.Compression.CompressionLevel]::Optimal
+    
+    try {
+        $stream = New-Object System.IO.FileStream($zipOutputPath, [System.IO.FileMode]::OpenOrCreate)
+        $zip = New-Object System.IO.Compression.ZipArchive($stream, [System.IO.Compression.ZipArchiveMode]::Update)
+        
+        $counter = 0
+        $total = $items.Length
+        foreach($item in $items) {
+            $counter++
+    
+            Write-Progress -Activity "Zipping Files" -CurrentOperation "Processing $($item.ID) $($item.Name)" -Status "$($counter) of $($total)" -PercentComplete ($counter * 100 / $total)
+            
+            if(![Sitecore.Resources.Media.MediaManager]::HasMediaContent($item)) { continue }
+            
+            $filename = Resolve-Path -Path $item.ProviderPath -Relative
+            $entryname = "$($fileName).$($item.Extension)".Replace("\","/").Replace("./","/").TrimStart("/")
+            Write-Host "Adding $($item.ID) $($entryname)"
+    
+            $mediaItem = [Sitecore.Data.Items.MediaItem]$item
+            $mediaStream = $mediaItem.GetMediaStream()
+            
+            $entry = $zip.CreateEntry($entryname, $compressionLevel)
+            $entryStream = $entry.Open()
+            
+            $mediaStream.CopyTo($entryStream)
+            
+            $entryStream.Dispose()
+            $entryStream.Close()
+            
+            $mediaStream.Dispose()
+            $mediaStream.Close()
+        }
+    } finally {
+        Write-Progress -Activity "Finishing up" -Completed
+        $zip, $stream | Where-Object { $_ -is [System.IDisposable] } | ForEach-Object Dispose
+    }
+    
+    Send-File -FullName $zipOutputPath > $null
+    if($autoRemoveZip) {
+        Remove-Item $zipOutputPath
+    }
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
@@ -93,7 +138,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "43bcd22b-8106-44e6-ad80-4370dad982ce"
+      Value: "5f7586b9-430f-4966-9a85-0413c83349e6"
 - Language: en
   Fields:
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
@@ -113,4 +158,4 @@ Languages:
       Value: 20130708T073100Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "eb158183-04f0-4d5a-b218-7eab30d0d66f"
+      Value: "54f524e9-7159-4843-9c67-351261aa4f0e"
