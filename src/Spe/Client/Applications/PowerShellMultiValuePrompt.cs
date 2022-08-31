@@ -575,10 +575,11 @@ namespace Spe.Client.Applications
                 Value = strValue,
                 AllowMultipleSelection = true,
                 DatabaseName = dbName,
-                Database = dbName,
+                //Database = dbName,
                 Source = variable["Source"] as string ?? "/sitecore",
                 DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName"
             };
+
             treeList.Class += " treePicker";
 
             return treeList;
