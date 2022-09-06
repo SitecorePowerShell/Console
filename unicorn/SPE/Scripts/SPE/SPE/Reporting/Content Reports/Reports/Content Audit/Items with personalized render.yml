@@ -40,7 +40,7 @@ SharedFields:
        Exit
     }
     
-    $query = "fast:$($root.ItemPath)//*[@__renderings='%<conditions%' or @#__Final Renderings#='%<conditions%']"
+    $query = "$($root.ItemPath)//*[@__renderings='%<conditions%' or @#__Final Renderings#='%<conditions%']"
     $items = @($root) + @((Get-Item -Path "master:" -Query $query))
     
     function HasRuleOnRendering {
@@ -119,7 +119,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "6eba83f2-60d6-4134-8d33-fa5d5c49f08c"
+      Value: "3003929e-ed7e-4d60-8421-f6b72b800243"
 - Language: en
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
@@ -137,4 +137,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "22864825-291e-409f-b46f-17489dc8bf2c"
+      Value: "2b3e8564-01d5-40d5-896f-094fed800bdd"
