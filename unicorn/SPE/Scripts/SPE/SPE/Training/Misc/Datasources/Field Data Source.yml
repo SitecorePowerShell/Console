@@ -1,0 +1,21 @@
+﻿---
+ID: "3a53cca7-fcf6-4c84-90d0-e5fea1d01dd9"
+Parent: "a88434f0-8c6f-4d38-bd9e-fdd6d43dd136"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Datasources/Field Data Source
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220906T220143Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "60551acd-9848-4f7a-b725-68e3dd76d4aa"
