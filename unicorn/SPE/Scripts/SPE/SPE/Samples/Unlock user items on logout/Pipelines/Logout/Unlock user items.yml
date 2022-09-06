@@ -8,18 +8,27 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    <#
-        Adapted from:
-        http://sitecorejunkie.com/2013/09/24/unlock-sitecore-users-items-during-logout/
-    #>
+    Import-Function -Name Invoke-SqlCommand
     
-    $username = [Sitecore.Context]::User.Name
+    $owner = [Sitecore.Context]::User.Name
     
-    $query = "fast://*[@__lock='%$($username)%']"
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
     
-    Write-Log "Unlocking items for $($username)"
+    $fieldId = [Sitecore.FieldIDs]::Lock
     
-    [Sitecore.Context]::ContentDatabase.SelectItems($query) | Unlock-Item
+    $query = @"
+    SELECT [ItemId], [Value], [Language], [Version]
+      FROM [dbo].[VersionedFields]
+      WHERE [FieldId] = '$($fieldId.ToString())'
+        AND [Value] <> '' AND [Value] <> '<r />'
+    "@
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    
+    if($records -and ![string]::IsNullOrEmpty($owner)) {
+        Write-Log "Unlocking items for $($owner)"
+        $pattern = [regex]::Escape("owner=`"$($owner)`"")
+        $records | Where-Object { $_.Value -match $pattern } | ForEach-Object { Get-Item -Path "master:" -ID $_.ItemId -Language $_.Language -Version $_.Version | Unlock-Item }
+    }
 Languages:
 - Language: en
   Versions:
@@ -30,4 +39,4 @@ Languages:
       Value: 20150201T174646
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7d75b5d2-91a2-47e3-a9fd-622d1c24d17f"
+      Value: "fa178da4-92a8-4204-959e-8b6d152724d9"
