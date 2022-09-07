@@ -32,7 +32,7 @@ SharedFields:
     }
     
     # We need to change location to a Sitecore database do that PowerShell can recognize -Query as a valid parameter
-    $fields = Get-Item -Path "$($item.Database.Name):\" -Query "$($item.Paths.Path)//*[@@templateid=`"{455A3E98-A627-4B40-8035-E683A0331AC7}`"]" | Group-Object Type
+    $fields = $item.Axes.GetDescendants() | Where-Object { $_.TemplateId -eq "{455A3E98-A627-4B40-8035-E683A0331AC7}" } | Initialize-Item | Group-Object Type
     $total = 0 
     $fields | ForEach-Object { $total += $_.Count } > $null
     $fields | ForEach-Object { Add-Member -InputObject $_ -MemberType NoteProperty -Name Percent -Value ([math]::Round($_.Count * 100 / $total)) }
@@ -81,4 +81,4 @@ Languages:
       Value: 20121204T000757Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "3980934e-3287-4cc6-98a2-33ae5d2f2127"
+      Value: "3f849f1b-1524-4367-998f-3ebda8c02e29"
