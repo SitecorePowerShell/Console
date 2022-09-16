@@ -75,9 +75,10 @@ SharedFields:
     }
     
     $languageOptions = [ordered]@{}
-    $languages = [Sitecore.Context]::Database.GetLanguages() | Sort-Object -Property Title
+    $languages = [Sitecore.Context]::Database.GetLanguages() | Sort-Object -Property Name
     foreach($language in $languages) {
-        $languageOptions[$language.Title] = $language.Name
+        # Changed from Title to Name. Perhaps newer versions of Sitecore have a different property.
+        $languageOptions[$language.Name] = $language.Name
     }
     
     $props.Parameters = @(
@@ -169,7 +170,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "41830eaa-8510-4508-92ee-0ffd1f2705b5"
+      Value: "9332e87c-324a-48c7-a983-7626c08e7237"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -186,4 +187,4 @@ Languages:
       Value: 20150627T045351Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "e47a9b6e-b7a0-4190-83b1-d935b99e2201"
+      Value: "07523ed0-3509-43ee-bd7d-a877b4a0fe02"
