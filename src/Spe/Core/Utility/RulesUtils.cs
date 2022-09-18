@@ -11,18 +11,12 @@ namespace Spe.Core.Utility
     {
         public static bool EvaluateRules(string strRules, Item contextItem, bool failEmpty = false)
         {
-            if (string.IsNullOrEmpty(strRules) || strRules.Length < 70)
-            {
-                return !failEmpty;
-            }
-            // hacking the rules xml
-            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
             var ruleContext = new RuleContext
             {
                 Item = contextItem
             };
 
-            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
+            return EvaluateRules(strRules, ruleContext, failEmpty);
         }
 
         public static bool EvaluateRules(string strRules, RuleContext ruleContext, bool failEmpty = false)
@@ -35,6 +29,7 @@ namespace Spe.Core.Utility
             var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
+
         public static bool EvaluateRulesForView(string strRules, RuleContext ruleContext, bool failNonSpecific = false)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 70)

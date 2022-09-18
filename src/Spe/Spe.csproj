@@ -226,6 +226,8 @@
     <Compile Include="Commands\Presentation\AddPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\NewPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Security\Accounts\BaseSecurityCommand.cs" />
+    <Compile Include="Core\Rules\PowerShellDelegatedAccess.cs" />
+    <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
     <Compile Include="Core\Data\DisablePropertyExpander.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
@@ -484,6 +486,7 @@
     <Compile Include="Core\Settings\Authorization\SessionElevationErrors.cs" />
     <Compile Include="Core\Settings\Authorization\SessionElevationManager.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthorizationManager.cs" />
+    <Compile Include="Core\Settings\DelegatedAccessManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />

@@ -1,0 +1,25 @@
+﻿---
+ID: "6111d5be-ec09-4a5c-ad27-7d8005e91216"
+Parent: "5fb5eb9f-41c5-43dd-b9f7-70a482b21093"
+Template: "ab86861a-6030-46c5-b394-e8f99e8b87db"
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/keys.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220917T013353Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "794e4c1d-e26d-4407-b9b7-90e75667c5eb"

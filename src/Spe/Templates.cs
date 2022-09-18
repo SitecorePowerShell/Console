@@ -64,5 +64,18 @@ namespace Spe
                 public static readonly ID Text = new ID("{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}");
             }
         }
+
+        public struct DelegatedAccess
+        {
+            public static readonly ID Id = new ID("{6111D5BE-EC09-4A5C-AD27-7D8005E91216}");
+
+            public struct Fields
+            {
+                public static readonly ID Enabled = new ID("{464C9789-617A-4CE6-988C-8AF421B6D385}");
+                public static readonly ID ElevatedRole = new ID("{A0506748-B498-49C9-8B25-23F9030C1A98}");
+                public static readonly ID ImpersonatedUser = new ID("{FF4855AB-377F-4CF5-94C7-4A8EE32D143F}");
+                public static readonly ID ScriptItemId = new ID("{75560CD0-EB3F-45D4-AB41-4B37DDE1C741}");
+            }
+        }
     }
 }

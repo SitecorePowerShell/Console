@@ -153,7 +153,6 @@ namespace Spe.Commands.Session
                 filteredFunctions = filteredFunctions.Where(f => f.Library.StartsWith(Library, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
             
-            //var functionItems = new List<Item>();
             var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
 
             if (filteredFunctions.Count > 1)

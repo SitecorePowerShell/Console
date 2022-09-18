@@ -273,11 +273,14 @@ namespace Spe.Client.Applications
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
             var jobName = "Interactive Script Execution";
+            var jobUser = Context.User;
             if (!ScriptDb.IsNullOrEmpty() && !ScriptId.IsNullOrEmpty())
             {
                 var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
                 jobName = $"SPE - \"{scriptItem?.Name}\"";
                 scriptSession.SetExecutedScript(scriptItem);
+
+                jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
             }
             if (scriptSession.JobOptions != null)
             {
@@ -290,7 +293,7 @@ namespace Spe.Client.Applications
             
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
-            Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, Context.User,
+            Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, jobUser,
                 scriptSession.JobOptions);
             Monitor.SessionID = scriptSession.Key;
         }

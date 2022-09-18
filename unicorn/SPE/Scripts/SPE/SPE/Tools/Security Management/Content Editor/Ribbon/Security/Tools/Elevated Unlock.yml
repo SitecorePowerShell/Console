@@ -18,14 +18,20 @@ SharedFields:
         name="Show only if user has access">
         <conditions>
           <or
-            uid="590BE2A190744CF9A7431C3CFF20798B">
+            uid="977E0EC6012940FF8745BFBEEE0CDE59">
+            <or
+              uid="EE6F81AFE57B48649A74248D912A7EDD">
+              <condition
+                id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+                uid="45A518D00072415BB5FD523BC7A0F653" />
+              <condition
+                id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+                uid="99E9781CD67F4BB785C2F965BF6FAB18"
+                value="sitecore\Sitecore Local Administrators" />
+            </or>
             <condition
-              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
-              uid="45A518D00072415BB5FD523BC7A0F653" />
-            <condition
-              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
-              uid="99E9781CD67F4BB785C2F965BF6FAB18"
-              value="sitecore\Sitecore Local Administrators" />
+              id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
+              uid="EB53697A46CC43458187F81DA0F7C07F" />
           </or>
         </conditions>
       </rule>
@@ -83,7 +89,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "c6a34805-6eb6-4295-ab00-7173a6c83d8d"
+      Value: "f5ec4e5c-a091-4b97-8e29-f32dac5df25e"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -104,4 +110,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "70927c2e-7269-4955-9900-50ed22baf74f"
+      Value: "df7b3634-916f-418d-9db1-69f4be751f4a"

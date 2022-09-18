@@ -3,6 +3,7 @@ using System.Linq;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetContentEditorWarnings;
+using Sitecore.Rules;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
@@ -23,13 +24,25 @@ namespace Spe.Integrations.Pipelines
         {
             Assert.ArgumentNotNull(args, "args");
 
+            RuleContext GetRuleContext(Item contextItem, Item scriptItem)
+            {
+                var ruleContext = new RuleContext
+                {
+                    Item = contextItem ?? scriptItem
+                };
+                ruleContext.Parameters.Add("ScriptItem", scriptItem);
+
+                return ruleContext;
+            }
+            
+
             Func<Item, bool> filter = si => si.IsPowerShellScript()
                                             && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
-                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], args.Item);
+                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], GetRuleContext(args.Item, si));
 
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
-                if (!RulesUtils.EvaluateRules(libraryItem?[FieldNames.EnableRule], args.Item))
+                if (!RulesUtils.EvaluateRules(libraryItem?[FieldNames.EnableRule], GetRuleContext(args.Item, libraryItem)))
                 {
                     continue;
                 }

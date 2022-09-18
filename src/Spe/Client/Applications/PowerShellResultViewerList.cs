@@ -503,8 +503,9 @@ namespace Spe.Client.Applications
             scriptSession.Interactive = true;
             ScriptSessionId = scriptSession.ID;
 
+            var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
-            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run);
+            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
             LvProgressOverlay.Visible = false;
             Monitor.SessionID = scriptSession.ID;
         }

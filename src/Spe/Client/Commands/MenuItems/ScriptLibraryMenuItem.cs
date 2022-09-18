@@ -6,6 +6,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
@@ -152,7 +153,13 @@ namespace Spe.Client.Commands.MenuItems
 
             foreach (var scriptItem in parent.Children.Where(p => p.IsPowerShellScript() || p.IsPowerShellLibrary()))
             {
-                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], contextItem ?? scriptItem))
+                var ruleContext = new RuleContext
+                {
+                    Item = contextItem ?? scriptItem
+                };
+                ruleContext.Parameters.Add("ScriptItem", scriptItem);
+
+                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], ruleContext))
                 {
                     continue;
                 }

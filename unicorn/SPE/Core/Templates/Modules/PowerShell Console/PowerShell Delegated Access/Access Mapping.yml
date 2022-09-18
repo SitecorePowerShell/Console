@@ -1,0 +1,21 @@
+﻿---
+ID: "ea02ce21-8a4b-43d5-9ff2-2f39d4895505"
+Parent: "6111d5be-ec09-4a5c-ad27-7d8005e91216"
+Template: "e269fbb5-3750-427a-9149-7aa950b49301"
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220917T013735Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4d875c9c-38d0-4f12-bbcb-231b82b2a6a2"

@@ -76,7 +76,7 @@ namespace Spe.Client.Controls
             base.HandleMessage(message);
             if (message.Name != "pstaskmonitor:check")
                 return;
-            
+
             var jobHandle = JobHandle;
             if (jobHandle.Equals((object)Handle.Null))
                 return;
@@ -121,7 +121,7 @@ namespace Spe.Client.Controls
         private void OnJobFinished(RunnerOutput runnerOutput)
         {
             JobHandle = Handle.Null;
-            var eventArgs = new SessionCompleteEventArgs {RunnerOutput = runnerOutput};
+            var eventArgs = new SessionCompleteEventArgs { RunnerOutput = runnerOutput };
             JobFinished?.Invoke(this, eventArgs);
         }
 
@@ -131,9 +131,11 @@ namespace Spe.Client.Controls
             Assert.ArgumentNotNullOrEmpty(name, "name");
             Assert.ArgumentNotNullOrEmpty(category, "category");
             Assert.ArgumentNotNull(task, "task");
+
             var siteName = Sitecore.Context.Site?.Name ?? string.Empty;
-            var jobOptions = TypeResolver.Resolve<IJobOptions>(new object[]{$"{name} - {Sitecore.Context.User?.Name}", category, siteName, new TaskRunner(task), "Run"});
-            jobOptions.ContextUser = user ?? options?.ContextUser ?? Sitecore.Context.User;
+            var currentUser = user ?? options?.ContextUser ?? Sitecore.Context.User;
+            var jobOptions = TypeResolver.Resolve<IJobOptions>(new object[] { $"{name} - {currentUser?.Name}", category, siteName, new TaskRunner(task), "Run" });
+            jobOptions.ContextUser = currentUser;
             jobOptions.AtomicExecution = false;
             jobOptions.EnableSecurity = options?.EnableSecurity ?? true;
             jobOptions.ClientLanguage = language ?? options?.ClientLanguage ?? Sitecore.Context.Language;

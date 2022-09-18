@@ -17,14 +17,6 @@ SharedFields:
   Value: |
     $item = Get-Item -Path "."
     
-    $rules = $PSScript.Fields["EnableRule"].Value
-    
-    $isEnabled = Test-Rule -InputObject $item -Rule $rules -RuleDatabase "master"
-    if(!$isEnabled) {
-        exit
-    }
-    
-    
     $icon = "Office/16x16/lock_open.png"
     $source = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
     
@@ -44,35 +36,6 @@ SharedFields:
   Type: Rules
   Value: |
     <ruleset>
-      <rule
-        uid="{58F071DB-6FEA-42A6-9B5E-B5AC82B6D428}"
-        name="Only show when necessary - local admin">
-        <conditions>
-          <and
-            uid="56B37F618DF04137844D1A39E6FF55C6">
-            <condition
-              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
-              uid="1B06D11FC4444AA789261AEAA40CF832"
-              value="sitecore\Sitecore Local Administrators" />
-            <and
-              uid="EB9465109AA4482BBBCA14C357E26F31">
-              <condition
-                id="{84E910D4-B236-4570-9626-79FDB262E97A}"
-                uid="3962A12D9F6A40F38BA853D4987924AB" />
-              <and
-                uid="AA655322FDF348EE93A35A00ACE7921A">
-                <condition
-                  id="{A4A453B8-F4D2-42DC-B66A-63857FDAF25A}"
-                  uid="75C025473B144BC9AED7C5C4B03AC270"
-                  except="true" />
-                <condition
-                  id="{1C67B23F-EC82-459F-A7C2-DE419D4665A0}"
-                  uid="FCEA3C7B9409481994B74C83A750E657" />
-              </and>
-            </and>
-          </and>
-        </conditions>
-      </rule>
       <rule
         uid="{468B1714-AF4C-4F68-91CD-F8201CE8E618}"
         name="Only show when necessary - admin">
@@ -95,6 +58,44 @@ SharedFields:
           </and>
         </conditions>
       </rule>
+      <rule
+        uid="{58F071DB-6FEA-42A6-9B5E-B5AC82B6D428}"
+        name="Only show when necessary - local admin">
+        <conditions>
+          <and
+            uid="EE10640D1DB54B33826BC44240622C69">
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="1B06D11FC4444AA789261AEAA40CF832"
+              value="sitecore\Sitecore Local Administrators" />
+            <and
+              uid="AC64DA9645B34B898FA181FBA4ACBD2C">
+              <condition
+                id="{84E910D4-B236-4570-9626-79FDB262E97A}"
+                uid="3962A12D9F6A40F38BA853D4987924AB" />
+              <and
+                uid="3E160A0C391341558ECD784A252FDD1E">
+                <condition
+                  id="{A4A453B8-F4D2-42DC-B66A-63857FDAF25A}"
+                  uid="75C025473B144BC9AED7C5C4B03AC270"
+                  except="true" />
+                <condition
+                  id="{1C67B23F-EC82-459F-A7C2-DE419D4665A0}"
+                  uid="FCEA3C7B9409481994B74C83A750E657" />
+              </and>
+            </and>
+          </and>
+        </conditions>
+      </rule>
+      <rule
+        uid="{7D9EE195-66A4-430E-B949-7ADBEB175257}"
+        name="Only show when necessary - delegated">
+        <conditions>
+          <condition
+            id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
+            uid="9EC0FFDDB469457FA613680B02AADA4E" />
+        </conditions>
+      </rule>
     </ruleset>
 Languages:
 - Language: en
@@ -106,4 +107,4 @@ Languages:
       Value: 20180914T182205Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "17187c33-786f-4a41-b4c8-5ab50b9d2320"
+      Value: "62fd2146-c621-469c-85ae-858a61587038"

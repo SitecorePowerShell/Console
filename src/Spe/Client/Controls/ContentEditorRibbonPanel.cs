@@ -5,6 +5,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.Sheer;
@@ -40,19 +41,25 @@ namespace Spe.Client.Controls
 
                 var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
 
+                var ruleContext = new RuleContext
+                {
+                    Item = context.Items[0]
+                };
+                ruleContext.Parameters.Add("ScriptItem", scriptItem);
+
                 if (!scriptItem.IsPowerShellScript() ||
-                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.ShowRule], context.Items[0]))
+                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.ShowRule], ruleContext))
                 {
                     continue;
                 }
 
                 var featureRoot = ModuleManager.GetItemModule(scriptItem)?
                     .GetFeatureRoot(IntegrationPoints.ContentEditorRibbonFeature);
-                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.ShowRule], context.Items[0])) continue;
+                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.ShowRule], ruleContext)) continue;
 
                 RenderButton(output, psButton.TemplateID, ribbon, Control.GetUniqueID("script"),
                     Translate.Text(psButton.DisplayName), scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],
-                    command, RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], context.Items[0]), context,
+                    command, RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], ruleContext), context,
                     psButton.Paths.Path);
             }
         }
