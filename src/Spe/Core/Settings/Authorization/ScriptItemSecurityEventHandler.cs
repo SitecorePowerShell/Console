@@ -17,7 +17,9 @@ namespace Spe.Core.Settings.Authorization
     {
         public void OnEvent(object sender, EventArgs args)
         {
-            Item item = null;
+            //Should we adhere to EventDisabler? Are there cases in which the events are disabled
+            //through c# code that would matter?
+
             if (!(args is SitecoreEventArgs scArgs) || HttpContext.Current?.Session == null || scArgs.Parameters.Length < 1 ||
                 SecurityDisabler.CurrentValue == SecurityState.Disabled)
             {
@@ -26,7 +28,7 @@ namespace Spe.Core.Settings.Authorization
                 return;
             }
 
-            item = scArgs.Parameters[0] as Item;
+            var item = scArgs.Parameters[0] as Item;
             if (item != null && !item.IsPowerShellScript() && !item.IsPowerShellLibrary())
             {
                 // not a PowerShell related item

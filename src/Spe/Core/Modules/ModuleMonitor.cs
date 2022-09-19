@@ -22,47 +22,59 @@ namespace Spe.Core.Modules
 
         internal void OnItemDeleted(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
-            var item = Event.ExtractParameter(args, 0) as Item;
-            if (item != null && IsPowerShellMonitoredItem(item))
+            var item = Event.ExtractParameter<Item>(args, 0);
+            if (IsPowerShellMonitoredItem(item))
             {
                 ModuleManager.Invalidate(item);
-            }
+            }            
         }
 
         internal void OnItemDeletedRemote(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
-            var idreArgs = args as ItemDeletedRemoteEventArgs;
-            if (idreArgs != null)
+            if (!(args is ItemDeletedRemoteEventArgs idreArgs))
             {
-                var item = idreArgs.Item.Database.GetItem(idreArgs.ParentId);
-                using (new SecurityDisabler())
+                return;
+            }
+
+            var item = idreArgs.Item.Database.GetItem(idreArgs.ParentId);
+            using (new SecurityDisabler())
+            {
+                if (IsPowerShellMonitoredItem(item))
                 {
-                    if (item != null && IsPowerShellMonitoredItem(item))
-                    {
-                        ModuleManager.Invalidate(item);
-                    }
+                    ModuleManager.Invalidate(item);
                 }
             }
         }
 
         internal void OnItemMoved(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
             var item = Event.ExtractParameter<Item>(args, 0);
-            var itemId = Event.ExtractParameter<ID>(args, 1);
-            using (new SecurityDisabler())
+            if (IsPowerShellMonitoredItem(item))
             {
-                ModuleManager.Invalidate(item.Parent);
-                ModuleManager.Invalidate(item.Database.GetItem(itemId));
+                var itemId = Event.ExtractParameter<ID>(args, 1);
+                using (new SecurityDisabler())
+                {
+                    ModuleManager.Invalidate(item.Parent);
+                    ModuleManager.Invalidate(item.Database.GetItem(itemId));
+                }
             }
         }
 
         internal void OnItemSaved(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
-            var item = Event.ExtractParameter(args, 0) as Item;
+            var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
                 ModuleManager.Invalidate(item);
@@ -71,9 +83,10 @@ namespace Spe.Core.Modules
 
         internal void OnItemSavedRemote(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
-            var isreErgs = args as ItemSavedRemoteEventArgs;
-            if (isreErgs != null)
+            if (args is ItemSavedRemoteEventArgs isreErgs)
             {
                 ModuleManager.Invalidate(isreErgs.Item);
             }
@@ -81,6 +94,8 @@ namespace Spe.Core.Modules
 
         internal void OnItemSaving(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
             var sargs = args as SitecoreEventArgs;
             if (sargs?.Parameters == null) return;

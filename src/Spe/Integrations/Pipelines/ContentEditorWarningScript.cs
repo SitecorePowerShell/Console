@@ -33,8 +33,7 @@ namespace Spe.Integrations.Pipelines
                 ruleContext.Parameters.Add("ScriptItem", scriptItem);
 
                 return ruleContext;
-            }
-            
+            }            
 
             Func<Item, bool> filter = si => si.IsPowerShellScript()
                                             && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])

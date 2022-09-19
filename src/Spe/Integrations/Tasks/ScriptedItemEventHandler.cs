@@ -4,6 +4,7 @@ using System.Linq;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Events;
+using Sitecore.Rules;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Modules;
@@ -22,26 +23,38 @@ namespace Spe.Integrations.Tasks
 
         public void OnEvent(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Item item = null;
             var eventName = EventArgToEventName(args);
-            if (args is SitecoreEventArgs)
+            if (args is SitecoreEventArgs scevent)
             {
-                var scevent = (SitecoreEventArgs)args;
                 item = scevent.Parameters[0] as Item;
             }
 
-            if (String.IsNullOrEmpty(eventName))
+            if (string.IsNullOrEmpty(eventName))
             {
                 return;
             }
 
+            RuleContext GetRuleContext(Item contextItem, Item scriptItem)
+            {
+                var ruleContext = new RuleContext
+                {
+                    Item = contextItem ?? scriptItem
+                };
+                ruleContext.Parameters.Add("ScriptItem", scriptItem);
+
+                return ruleContext;
+            }
+
             Func<Item, bool> filter = si => si.IsPowerShellScript()
                                             && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
-                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], item);
+                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], GetRuleContext(item, si));
 
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.EventHandlersFeature))
             {
-                if (!RulesUtils.EvaluateRules(root?[Templates.ScriptLibrary.Fields.EnableRule], item)) continue;
+                if (!RulesUtils.EvaluateRules(root?[Templates.ScriptLibrary.Fields.EnableRule], GetRuleContext(item, root))) continue;
 
                 var libraryItem = root?.Paths.GetSubItem(eventName);
 
@@ -74,8 +87,7 @@ namespace Spe.Integrations.Tasks
 
             switch (args)
             {
-                case SitecoreEventArgs _:
-                    var scevent = (SitecoreEventArgs)args;
+                case SitecoreEventArgs scevent:
                     eventName = scevent.EventName;
                     break;
                 case IPassNativeEventArgs _:

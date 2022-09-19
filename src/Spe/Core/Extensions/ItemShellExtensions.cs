@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -17,8 +18,8 @@ namespace Spe.Core.Extensions
 {
     public class ItemShellExtensions
     {
-        private static readonly Dictionary<ID, Dictionary<ID, string>> AllPropertySets =
-            new Dictionary<ID, Dictionary<ID, string>>();
+        private static readonly ConcurrentDictionary<ID, Dictionary<ID, string>> AllPropertySets =
+            new ConcurrentDictionary<ID, Dictionary<ID, string>>();
 
         private static readonly string HelperClassName = typeof(ItemShellExtensions).FullName;
 
@@ -38,12 +39,7 @@ namespace Spe.Core.Extensions
 
             if (Switcher<bool, DisablePropertyExpander>.CurrentValue) return psObject;
 
-            Dictionary<ID, string> propertySet;
-            if (AllPropertySets.ContainsKey(item.TemplateID))
-            {
-                propertySet = AllPropertySets[item.TemplateID];
-            }
-            else
+            if (!AllPropertySets.TryGetValue(item.TemplateID, out var propertySet))
             {
                 item.Fields.ReadAll();
                 propertySet = new Dictionary<ID, string>(item.Fields.Count);
@@ -54,7 +50,7 @@ namespace Spe.Core.Extensions
                         propertySet.Add(field.ID, field.Name);
                     }
                 }
-                AllPropertySets.Add(item.TemplateID, propertySet);
+                AllPropertySets.TryAdd(item.TemplateID, propertySet);
             }
 
             var typedFieldGetter = new CustomFieldAccessor(item);
@@ -127,69 +123,69 @@ namespace Spe.Core.Extensions
                     }
                     if (newValue is Item)
                     {
-                        newValue = new List<Item> {newValue as Item};
+                        newValue = new List<Item> { newValue as Item };
                     }
 
                     switch (newValue)
                     {
                         case List<Item> items:
-                        {
-                            var lastItem = items.Last();
-                            switch (field)
                             {
-                                case ImageField imageField:
+                                var lastItem = items.Last();
+                                switch (field)
                                 {
-                                    var media = new MediaItem(lastItem);
+                                    case ImageField imageField:
+                                        {
+                                            var media = new MediaItem(lastItem);
 
-                                    if (imageField.MediaID == media.ID) return;
+                                            if (imageField.MediaID == media.ID) return;
 
-                                    imageField.Clear();
-                                    imageField.MediaID = media.ID;
-                                    imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
-                                    break;
-                                }
-                                case LinkField linkField:
-                                {
-                                    linkField.Clear();
+                                            imageField.Clear();
+                                            imageField.MediaID = media.ID;
+                                            imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
+                                            break;
+                                        }
+                                    case LinkField linkField:
+                                        {
+                                            linkField.Clear();
 
-                                    if (MediaManager.HasMediaContent(lastItem))
-                                    {
-                                        linkField.LinkType = "media";
-                                        linkField.Url = lastItem.Paths.MediaPath;
-                                    }
-                                    else
-                                    {
-                                        linkField.LinkType = "internal";
-                                        linkField.Url = lastItem.Paths.ContentPath;
-                                    }
-                                    linkField.TargetID = lastItem.ID;
-                                    break;
+                                            if (MediaManager.HasMediaContent(lastItem))
+                                            {
+                                                linkField.LinkType = "media";
+                                                linkField.Url = lastItem.Paths.MediaPath;
+                                            }
+                                            else
+                                            {
+                                                linkField.LinkType = "internal";
+                                                linkField.Url = lastItem.Paths.ContentPath;
+                                            }
+                                            linkField.TargetID = lastItem.ID;
+                                            break;
+                                        }
+                                    case MultilistField multilistField:
+                                        {
+                                            multilistField.Value = string.Empty;
+                                            foreach (var linkedItem in items)
+                                                multilistField.Add(linkedItem.ID.ToString());
+                                            break;
+                                        }
+                                    case FileField _ when !MediaManager.HasMediaContent(lastItem):
+                                        return;
+                                    case FileField fileField:
+                                        fileField.Clear();
+                                        fileField.MediaID = lastItem.ID;
+                                        fileField.Src = MediaManager.GetMediaUrl(lastItem);
+                                        break;
+                                    case ValueLookupField _:
+                                        field.Value = lastItem.Name;
+                                        break;
+                                    // LookupField, GroupedDroplinkField, ReferenceField, Other
+                                    default:
+                                        field.Value = lastItem.ID.ToString();
+                                        break;
                                 }
-                                case MultilistField multilistField:
-                                {
-                                    multilistField.Value = string.Empty;
-                                    foreach (var linkedItem in items)
-                                        multilistField.Add(linkedItem.ID.ToString());
-                                    break;
-                                }
-                                case FileField _ when !MediaManager.HasMediaContent(lastItem):
-                                    return;
-                                case FileField fileField:
-                                    fileField.Clear();
-                                    fileField.MediaID = lastItem.ID;
-                                    fileField.Src = MediaManager.GetMediaUrl(lastItem);
-                                    break;
-                                case ValueLookupField _:
-                                    field.Value = lastItem.Name;
-                                    break;
-                                // LookupField, GroupedDroplinkField, ReferenceField, Other
-                                default:
-                                    field.Value = lastItem.ID.ToString();
-                                    break;
+
+                                break;
                             }
-
-                            break;
-                        }
                         case DateTime time:
                             item[propertyName] = time.ToString("yyyyMMddTHHmmss");
                             break;
@@ -219,6 +215,8 @@ namespace Spe.Core.Extensions
 
         internal void TemplateFieldsInvalidateCheck(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
             if (Event.ExtractParameter(args, 0) is Item item && item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -228,6 +226,8 @@ namespace Spe.Core.Extensions
 
         internal void TemplateFieldsInvalidateCheckRemote(object sender, EventArgs args)
         {
+            if (EventDisabler.IsActive) return;
+
             Assert.ArgumentNotNull(args, "args");
             var isreErgs = args as ItemSavedRemoteEventArgs;
             if (isreErgs?.Item != null &&
