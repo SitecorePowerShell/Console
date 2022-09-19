@@ -57,7 +57,8 @@ namespace Spe.Core.Settings.Authorization
 
         internal static TokenDefinition GetToken(string appName)
         {
-            return Tokens.ContainsKey(appName) ? Tokens[appName] : Tokens["Default"];
+            if (Tokens.TryGetValue(appName, out var token)) return token;
+            return Tokens["Default"];
         }
 
         public static bool IsSessionTokenElevated(string appName)

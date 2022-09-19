@@ -156,10 +156,7 @@ namespace Spe.Core.Settings
             ApplicationSettings instance = null;
             lock (instances)
             {
-                if (instances.ContainsKey(settingsPath))
-                {
-                    instance = instances[settingsPath];
-                }
+                instances.TryGetValue(settingsPath, out instance) ;
                 if (instance == null || !instance.Loaded)
                 {
                     instance = new ApplicationSettings(applicationName, personalizedSettings);

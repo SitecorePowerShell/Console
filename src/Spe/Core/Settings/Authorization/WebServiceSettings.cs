@@ -11,14 +11,13 @@ namespace Spe.Core.Settings.Authorization
 {
     public static class WebServiceSettings
     {
-
         private class ServiceState
         {
             public bool Enabled { get; set; }
             public bool RequireSecureConnection { get; set; }
         }
 
-        private static Dictionary<string,ServiceState> services = new Dictionary<string,ServiceState>();
+        private static readonly Dictionary<string,ServiceState> services = new Dictionary<string,ServiceState>();
 
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
@@ -66,7 +65,7 @@ namespace Spe.Core.Settings.Authorization
 
         public static bool IsEnabled(string serviceName)
         {
-            if (!services.Keys.Contains(serviceName))
+            if (!services.ContainsKey(serviceName))
             {
                 return false;
             }

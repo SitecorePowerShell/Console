@@ -48,7 +48,6 @@ namespace Spe.Core.Settings.Authorization
                 }
             }
 
-
             if (!SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
             {
                 SessionElevationErrors.OperationRequiresElevation();
