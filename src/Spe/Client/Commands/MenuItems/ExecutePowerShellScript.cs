@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Sitecore;
+using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
@@ -29,6 +30,7 @@ namespace Spe.Client.Commands.MenuItems
             Assert.ArgumentNotNull(context, "context");
             scriptId = context.Parameters["script"];
             scriptDb = context.Parameters["scriptDb"];
+            var shouldContinue = true;
             if (context.Items.Length > 0)
             {
                 var item = context.Items[0];
@@ -36,10 +38,18 @@ namespace Spe.Client.Commands.MenuItems
                 itemDb = item.Database.Name;
                 itemLang = item.Language.Name;
                 itemVer = item.Version.Number.ToString(CultureInfo.InvariantCulture);
-
             }
-            SheerResponse.CheckModified(false);
-            Context.ClientPage.Start(this, "Process");
+            else
+            {
+                //Something is misconfigured.
+                shouldContinue = false;
+            }
+
+            if (shouldContinue)
+            {
+                SheerResponse.CheckModified(false);
+                Context.ClientPage.Start(this, "Process");
+            }
         }
 
         protected void Process(ClientPipelineArgs args)

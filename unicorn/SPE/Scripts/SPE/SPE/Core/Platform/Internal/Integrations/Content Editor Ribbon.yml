@@ -171,7 +171,8 @@ SharedFields:
     							$menuItem.Icon = $itemScript.__Icon;
     							$menuItem."Display name" = $itemScript.Name;
     							$menuItem.__Sortorder = $itemScript.__Sortorder;
-    							$menuItem.Message = "item:executescript(id=`$ItemID,script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
+    							# Leave the id value empty so Sitecore will properly determine the context item.
+    							$menuItem.Message = "item:executescript(id=,script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
     
     						}
     					}
@@ -200,4 +201,4 @@ Languages:
       Value: 20131001T173321
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7e15625e-1d8d-4fa3-9ce4-4a0bc14c1eee"
+      Value: "117d13f1-4a43-4e80-b6a4-7f4c0f090fb5"
