@@ -91,9 +91,28 @@ SharedFields:
         uid="{7D9EE195-66A4-430E-B949-7ADBEB175257}"
         name="Only show when necessary - delegated">
         <conditions>
-          <condition
-            id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
-            uid="9EC0FFDDB469457FA613680B02AADA4E" />
+          <and
+            uid="E059D306C3AB41E9ADFDC1758B2D4A32">
+            <condition
+              id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
+              uid="9EC0FFDDB469457FA613680B02AADA4E" />
+            <and
+              uid="94E2CBC4E7F54920816983940F039A00">
+              <condition
+                id="{84E910D4-B236-4570-9626-79FDB262E97A}"
+                uid="F8C350ABD3ED43F5ADCBF436C955B9B2" />
+              <and
+                uid="FD3EA1EF531D4BA0BF09E2C68C4DFBF2">
+                <condition
+                  id="{A4A453B8-F4D2-42DC-B66A-63857FDAF25A}"
+                  uid="A8217454D2504D7BB628DD73563E69C2"
+                  except="true" />
+                <condition
+                  id="{1C67B23F-EC82-459F-A7C2-DE419D4665A0}"
+                  uid="AA372DA58DBF489FA00F720579EFDBC0" />
+              </and>
+            </and>
+          </and>
         </conditions>
       </rule>
     </ruleset>
@@ -107,4 +126,4 @@ Languages:
       Value: 20180914T182205Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "62fd2146-c621-469c-85ae-858a61587038"
+      Value: "0b56238d-d213-4707-b958-d5442e34106d"
