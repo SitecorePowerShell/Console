@@ -30,7 +30,6 @@ namespace Spe.Client.Commands.MenuItems
             Assert.ArgumentNotNull(context, "context");
             scriptId = context.Parameters["script"];
             scriptDb = context.Parameters["scriptDb"];
-            var shouldContinue = true;
             if (context.Items.Length > 0)
             {
                 var item = context.Items[0];
@@ -41,15 +40,15 @@ namespace Spe.Client.Commands.MenuItems
             }
             else
             {
-                //Something is misconfigured.
-                shouldContinue = false;
+                //Found this to occur with the report menu.
+                itemId = null;
+                itemDb = null;
+                itemLang = null;
+                itemVer = null;
             }
 
-            if (shouldContinue)
-            {
-                SheerResponse.CheckModified(false);
-                Context.ClientPage.Start(this, "Process");
-            }
+            SheerResponse.CheckModified(false);
+            Context.ClientPage.Start(this, "Process");
         }
 
         protected void Process(ClientPipelineArgs args)

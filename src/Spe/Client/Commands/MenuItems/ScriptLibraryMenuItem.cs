@@ -175,13 +175,17 @@ namespace Spe.Client.Commands.MenuItems
                 menuItem.Attributes.Add(FieldIDs.Sortorder.ToString(), scriptItem[FieldIDs.Sortorder]);
 
                 if (scriptItem.IsPowerShellScript())
-                {
-                    menuItem.Click = contextItem != null ? $"item:executescript(id={contextItem.ID},db={contextItem.Database.Name},script={scriptItem.ID},scriptDb={scriptItem.Database.Name})" : $"item:executescript(script={scriptItem.ID},scriptDb={scriptItem.Database.Name})";
+                {                    
+                    menuItem.Click = contextItem != null ? 
+                        $"item:executescript(id={contextItem.ID},db={contextItem.Database.Name},script={scriptItem.ID},scriptDb={scriptItem.Database.Name})" : 
+                        $"item:executescript(script={scriptItem.ID},scriptDb={scriptItem.Database.Name})";
                 }
                 else
                 {
                     menuItem.Type = MenuItemType.Submenu;
-                    menuItem.Click = contextItem != null ? $"item:scriptlibrary(id={contextItem.ID},db={contextItem.Database.Name},scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})" : $"item:scriptlibrary(scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})";
+                    menuItem.Click = contextItem != null ? 
+                        $"item:scriptlibrary(id={contextItem.ID},db={contextItem.Database.Name},scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})" : 
+                        $"item:scriptlibrary(scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})";
                 }
                 menuItems.Add(menuItem);
             }
