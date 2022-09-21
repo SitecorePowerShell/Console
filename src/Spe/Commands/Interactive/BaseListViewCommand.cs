@@ -116,10 +116,10 @@ namespace Spe.Commands.Interactive
                         : "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
 
                     var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
-                    var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
+                    var properties = new List<object>(propResult.Count + 1) {propDefault};
                     if (propResult.Any())
                     {
-                        properties.AddRange(propResult.Where(p => p != null));
+                        properties = properties.Union(propResult.Where(p => p != null)).ToList();
                     }
                     Property = properties.ToArray();
                     SessionState.PSVariable.Set("ScPsSlvProperties", Property);
