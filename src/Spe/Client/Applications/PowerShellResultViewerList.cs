@@ -176,6 +176,7 @@ namespace Spe.Client.Applications
 
             ListViewer.Refresh();
             UpdatePage(ListViewer.CurrentPage);
+            ReportContextUser.Text = ListViewer.Data.ContextUsername;
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
             StatusBar.Visible = ListViewer.Data.VisibleFeatures.HasFlag(ShowListViewFeatures.StatusBar);
@@ -427,7 +428,6 @@ namespace Spe.Client.Applications
 
         private void UpdatePage(int newPage)
         {
-            ReportContextUser.Text = Context.User?.Name;
             ListViewer.CurrentPage = newPage;
             ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);

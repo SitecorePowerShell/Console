@@ -20,7 +20,7 @@ namespace Spe.Commands.Interactive.Messages
         public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon,
             string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId,
             object actionData, Hashtable[] property, string viewName, string missingDataMessage, string missingDataIcon,
-            ShowListViewFeatures visibleFeatures)
+            ShowListViewFeatures visibleFeatures, string contextUsername)
         {
             Data = data;
             Title = title;
@@ -38,6 +38,7 @@ namespace Spe.Commands.Interactive.Messages
             MissingDataIcon = missingDataIcon;
             VisibleFeatures = visibleFeatures;
             Property = property;
+            ContextUsername = contextUsername;
         }
 
 
@@ -55,6 +56,7 @@ namespace Spe.Commands.Interactive.Messages
         public string MissingDataMessage { get; set; }
         public string MissingDataIcon { get; set; }
         public ShowListViewFeatures VisibleFeatures { get; set; }
+        public string ContextUsername { get; set; }
 
         public string FormatProperty
         {

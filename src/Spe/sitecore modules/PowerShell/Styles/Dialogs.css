@@ -128,7 +128,8 @@ textarea[disabled] {
     }
 
     #StatusBar .status-bar-middle {
-        width: 250px;
+        width: auto;
+        max-width: 400px;
     }
 
     #StatusBar #RefreshHint {
