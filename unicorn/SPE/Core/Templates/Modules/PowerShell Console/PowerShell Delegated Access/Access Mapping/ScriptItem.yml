@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: "Datasource={A3572733-5062-43E9-A447-54698BC1C637}&IncludeTemplatesForSelection=PowerShell Script"
+  Value: "Datasource={A3572733-5062-43E9-A447-54698BC1C637}&IncludeTemplatesForSelection=PowerShell Script,PowerShell Script Library"
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Treelist
@@ -36,4 +36,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "ba43ac93-fadb-4a06-99d2-11ad179341ab"
+      Value: "20023449-54c1-4316-b85d-e8f1d1b82474"

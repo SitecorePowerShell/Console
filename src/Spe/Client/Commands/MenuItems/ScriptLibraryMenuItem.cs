@@ -78,8 +78,7 @@ namespace Spe.Client.Commands.MenuItems
 
             foreach (var item in menuItems)
             {
-                var menuItem = item as MenuItem;
-                if (menuItem == null) continue;
+                if (!(item is MenuItem menuItem)) continue;
 
                 var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
                     menuItem.Click,
@@ -146,7 +145,13 @@ namespace Spe.Client.Commands.MenuItems
                 return;
             }
 
-            if (!RulesUtils.EvaluateRules(parent[FieldNames.ShowRule], contextItem))
+            var rootRuleContext = new RuleContext
+            {
+                Item = contextItem ?? parent
+            };
+            rootRuleContext.Parameters.Add("ScriptItem", parent);
+
+            if (!RulesUtils.EvaluateRules(parent[FieldNames.ShowRule], rootRuleContext))
             {
                 return;
             }
