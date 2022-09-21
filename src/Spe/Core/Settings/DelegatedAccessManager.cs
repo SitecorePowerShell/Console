@@ -3,6 +3,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
+using Sitecore.Shell.Applications.ContentManager.ReturnFieldEditorValues;
 using Spe.Core.Diagnostics;
 using System;
 using System.Collections.Concurrent;
@@ -51,13 +52,13 @@ namespace Spe.Core.Settings
             foreach (var delegatedItem in delegatedItems)
             {
                 var entry = GetDelegatedCachedEntry(scriptItem, delegatedItem, currentUser);
-                if (entry != null)
+                if (entry != null && entry.IsElevated)
                 {
                     return entry;
                 }
             }
 
-            return GetDeniedElevation($"{currentUser.Name}-{scriptItem.ID}", currentUser);
+            return null;
         }
 
         public static User GetDelegatedUser(User currentUser, Item scriptItem)
@@ -90,7 +91,7 @@ namespace Spe.Core.Settings
 
         private static DelegatedAccessEntry GetDelegatedCachedEntry(Item scriptItem, Item delegatedItem, User currentUser)
         {
-            var cacheKey = $"{currentUser.Name}-{scriptItem.ID}";
+            var cacheKey = $"{currentUser.Name}-{scriptItem.ID}-{delegatedItem.ID}";
             if(_accessEntries.TryGetValue(cacheKey, out var entry))
             {
                 return entry;
@@ -146,7 +147,7 @@ namespace Spe.Core.Settings
         }
     }
 
-    public class DelegatedAccessEntry
+    internal class DelegatedAccessEntry
     {
         public ID DelegatedAccessItemId { get; set; }
         public User CurrentUser { get; set; }
