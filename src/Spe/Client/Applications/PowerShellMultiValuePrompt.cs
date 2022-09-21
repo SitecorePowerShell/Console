@@ -1060,7 +1060,8 @@ namespace Spe.Client.Applications
             var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
             foreach (var variable in scriptVariables)
             {
-                if (xssCleanup.IsMatch(variable["Value"].ToString()))
+                if (variable["Value"] != null &&
+                    xssCleanup.IsMatch(variable["Value"].ToString()))
                 {
                     SheerResponse.Alert(Texts.PowerShellMultiValuePrompt_InsecureData_error);
                     return;
