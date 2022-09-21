@@ -36,6 +36,7 @@ namespace Spe.Client.Applications
         protected Border InfoPanel;
         protected Literal InfoTitle;
         protected Literal ItemCount;
+        protected Literal ReportContextUser;
         protected PowerShellListView ListViewer;
         protected Border LvProgressOverlay;
         protected Literal PageCount;
@@ -426,6 +427,7 @@ namespace Spe.Client.Applications
 
         private void UpdatePage(int newPage)
         {
+            ReportContextUser.Text = Context.User?.Name;
             ListViewer.CurrentPage = newPage;
             ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);

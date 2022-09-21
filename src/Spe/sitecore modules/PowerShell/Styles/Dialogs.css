@@ -120,11 +120,15 @@ textarea[disabled] {
         width: 500px;
     }
 
-    #StatusBar .status-bar-left {
+    #StatusBar .status-bar-left, #StatusBar .status-bar-middle {
         float: left;
         margin-right: 2px;
         padding-left: 3px;
         width: 80px;
+    }
+
+    #StatusBar .status-bar-middle {
+        width: 250px;
     }
 
     #StatusBar #RefreshHint {
