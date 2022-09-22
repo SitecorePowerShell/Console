@@ -1,8 +1,8 @@
 ﻿---
-ID: "edb45895-c683-41be-8453-f61bd344b945"
-Parent: "685709c4-d6d9-46a6-8a9d-df689292daa9"
+ID: "2fbf2a7f-0cd6-475f-9e04-1ed4d25e1c0f"
+Parent: "149d1017-b71f-4253-9f1c-1c293198ff2c"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/PowerShell Delegated Access
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Edit Delegated Access
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
@@ -14,23 +14,29 @@ SharedFields:
   Value: |
     <ruleset>
       <rule
-        uid="{B68392BB-77AC-44F8-A17E-4E024DB78FCB}"
-        name="Only show for Delegated Access root">
+        uid="{04821A8B-2D8A-479C-81D6-A143936E5C07}"
+        name="Only show for Delegated Access templates">
         <conditions>
           <condition
-            id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}"
-            uid="2A23E7576A08454088227836A9E4DCA6"
-            operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
-            value="{E60089B1-00C3-45FC-A83F-804D2ED4610C}" />
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="CB1BF5F3690C436396937C374CD327EA"
+            templateid="{6111D5BE-EC09-4A5C-AD27-7D8005E91216}" />
         </conditions>
       </rule>
     </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    $item = $SitecoreContextItem | Initialize-Item
+    
+    $isEnabled = [Sitecore.MainUtil]::GetBool($item.Enabled, $false)
+    $itemName = $item.Name
+    $elevatedRole = $item.ElevatedRole
+    $impersonatedUser = $item.ImpersonatedUser
+    $scriptItem = $item.PSFields.ScriptItem.GetItems()
+    
     Get-Item -Path "master:" -ID "{1714DBB1-2A36-44BE-A7AF-EE73A5F8B69B}" | Invoke-Script
     
-    $item = New-Item -Path $SitecoreContextItem.ProviderPath -Name $itemName -ItemType "{6111D5BE-EC09-4A5C-AD27-7D8005E91216}"
     $item.Enabled = $isEnabled
     $item.ElevatedRole = $elevatedRole | Select-Object -First 1
     $item.ImpersonatedUser = $impersonatedUser | Select-Object -First 1
@@ -42,11 +48,11 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20220922T020907Z
+      Value: 20220922T200457Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "80353535-d161-4b68-b6d0-b9000f882b06"
+      Value: "d64ba6ca-657b-4e29-a67f-4b722432f04d"

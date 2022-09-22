@@ -178,6 +178,9 @@ namespace Spe.Client.Applications
             var fieldNames = new HashSet<string>();
             foreach (Hashtable variable in variables)
             {
+                var isVisible = MainUtil.GetBool(variable["Visible"], true);
+                if (!isVisible) continue;
+
                 var tabName = variable["Tab"] as string ?? "Other";
                 var name = variable["Name"] as string ?? string.Empty;
                 var title = variable["Title"] as string ?? name;
