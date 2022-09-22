@@ -1274,7 +1274,9 @@ namespace Spe.Client.Applications
             {
                 var strIds = treeList.GetValue();
                 var ids = strIds.Split('|');
-                var db = Database.GetDatabase(treeList.DatabaseName);
+                var db = string.IsNullOrEmpty(treeList.DatabaseName)
+                    ? Sitecore.Context.ContentDatabase
+                    : Database.GetDatabase(treeList.DatabaseName);
                 var items = ids.Select(p => db.GetItem(p)).ToList();
                 result.Add("Value", items);
             }
