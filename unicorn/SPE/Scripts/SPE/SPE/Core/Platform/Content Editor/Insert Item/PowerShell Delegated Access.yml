@@ -38,7 +38,7 @@ SharedFields:
         CancelButtonName = "Abort"
         Description = "Configure a new entry for Delegated Access."
         Parameters = @(
-            @{ Name = "isEnabled"; Title="Enabled the delegated access"; Value = $false; },
+            @{ Name = "isEnabled"; Title="Enable the delegated access"; Value = $false; },
             @{
                 Name="itemName"; 
                 Title="Item Name"; 
@@ -110,4 +110,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "6848b1ca-57a5-40ed-a4d9-71e4055611c1"
+      Value: "87a4b768-7201-4e1e-b782-b6aeadb36c3b"
