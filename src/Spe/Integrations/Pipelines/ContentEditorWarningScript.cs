@@ -15,11 +15,6 @@ namespace Spe.Integrations.Pipelines
 {
     public class ContentEditorWarningScript
     {
-        public string IntegrationPoint
-        {
-            get { return IntegrationPoints.ContentEditorWarningFeature; }
-        }
-
         public void Process(GetContentEditorWarningsArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
@@ -39,7 +34,7 @@ namespace Spe.Integrations.Pipelines
                                             && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
                                             && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], GetRuleContext(args.Item, si));
 
-            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
+            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoints.ContentEditorWarningFeature))
             {
                 if (!RulesUtils.EvaluateRules(libraryItem?[FieldNames.EnableRule], GetRuleContext(args.Item, libraryItem)))
                 {

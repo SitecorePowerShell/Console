@@ -14,8 +14,6 @@ namespace Spe.Integrations.Pipelines
 {
     public class PageEditorNotificationScript
     {
-        private string IntegrationPoint => IntegrationPoints.PageEditorNotificationFeature;
-
         public void Process(GetPageEditorNotificationsArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
@@ -24,7 +22,7 @@ namespace Spe.Integrations.Pipelines
                                             && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
                                             && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], args.ContextItem);
 
-            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
+            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoints.PageEditorNotificationFeature))
             {
                 var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
                 if (applicableScriptItems == null || !applicableScriptItems.Any())

@@ -18,8 +18,6 @@ namespace Spe.Integrations.Pipelines
 {
     public class PageEditorExperienceButtonScript : GetChromeDataProcessor
     {
-        public string IntegrationPoint => IntegrationPoints.PageEditorExperienceButtonFeature;
-
         public override void Process(GetChromeDataArgs args)
         {
             var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name);
@@ -57,7 +55,7 @@ namespace Spe.Integrations.Pipelines
                 ruleContext.Parameters[parameter] = args.CommandContext.Parameters[parameter];
             }
 
-            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
+            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoints.PageEditorExperienceButtonFeature))
             {
                 if (!libraryItem.HasChildren) return;
 
