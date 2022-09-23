@@ -90,7 +90,7 @@ namespace Spe.Core.Modules
                     .ToList();
         }
 
-        public static void Invalidate(Item item)
+        public static void Invalidate()
         {
             modulesListDirty = true;
             OnInvalidate?.Invoke(null, EventArgs.Empty);

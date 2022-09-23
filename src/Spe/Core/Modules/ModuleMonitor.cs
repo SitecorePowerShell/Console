@@ -28,7 +28,7 @@ namespace Spe.Core.Modules
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
-                ModuleManager.Invalidate(item);
+                ModuleManager.Invalidate();
             }            
         }
 
@@ -47,7 +47,7 @@ namespace Spe.Core.Modules
             {
                 if (IsPowerShellMonitoredItem(item))
                 {
-                    ModuleManager.Invalidate(item);
+                    ModuleManager.Invalidate();
                 }
             }
         }
@@ -63,8 +63,7 @@ namespace Spe.Core.Modules
                 var itemId = Event.ExtractParameter<ID>(args, 1);
                 using (new SecurityDisabler())
                 {
-                    ModuleManager.Invalidate(item.Parent);
-                    ModuleManager.Invalidate(item.Database.GetItem(itemId));
+                    ModuleManager.Invalidate();
                 }
             }
         }
@@ -77,7 +76,7 @@ namespace Spe.Core.Modules
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
-                ModuleManager.Invalidate(item);
+                ModuleManager.Invalidate();
             }
         }
 
@@ -88,7 +87,7 @@ namespace Spe.Core.Modules
             Assert.ArgumentNotNull(args, "args");
             if (args is ItemSavedRemoteEventArgs isreErgs)
             {
-                ModuleManager.Invalidate(isreErgs.Item);
+                ModuleManager.Invalidate();
             }
         }
 
