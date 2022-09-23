@@ -18,14 +18,20 @@ SharedFields:
         name="Admin or Maintainer">
         <conditions>
           <or
-            uid="A60295B4E556489BBE3E8F17EF1CD9A9">
+            uid="3010A5B7BEB34CD8977F6B3D7F00B23D">
+            <or
+              uid="4F33A6E0417E4EF380936ECDBFF900EC">
+              <condition
+                id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+                uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
+              <condition
+                id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+                uid="70840624A49E48B999437C2B8D85ED4C"
+                value="sitecore\Sitecore Client Maintaining" />
+            </or>
             <condition
-              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
-              uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
-            <condition
-              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
-              uid="70840624A49E48B999437C2B8D85ED4C"
-              value="sitecore\Sitecore Client Maintaining" />
+              id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
+              uid="318CA49482CF4679A822497AD9F350E0" />
           </or>
         </conditions>
       </rule>
@@ -51,7 +57,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "5ad6bb74-36a5-412b-beba-98d3954e8938"
+      Value: "6711e65f-d2c3-41ef-8eac-76fb870c8104"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -68,4 +74,4 @@ Languages:
       Value: 20140413T182959Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "2b0eed19-179d-48f5-9ad2-f243ef725ff3"
+      Value: "6ce0093a-2037-4598-84f4-55e54ddd20b8"
