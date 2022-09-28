@@ -22,7 +22,7 @@ SharedFields:
             Michael West
     #>
     
-    $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
+    $icon = $PSScript.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
     $settings = @{
         Title = "Report Filter"
         Height = "325"
@@ -75,4 +75,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "243698e8-adbb-4b80-9238-9a501ed4a6cf"
+      Value: "2e8b773a-d8b4-40af-a135-5b3ef2dab97e"
