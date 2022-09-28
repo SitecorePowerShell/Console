@@ -27,18 +27,18 @@ SharedFields:
     $scriptItem = Get-Item -Path $SitecoreCommandPath
     $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
     $settings = @{
-        Title = "Report Filter"
+        Title = "Transfer item security"
         Height = "325"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
-        Description = "Filter items explicitly referencing the specified role."
+        Description = "Transfer item security from the current user or role to a new role."
         Parameters = @(
-            @{ Name = "userOrRoleOwner"; Title="Current User or Role"; Tooltip="Tooltip for role"; Editor="user role"; Domain="sitecore"; Validator={
+            @{ Name = "userOrRoleOwner"; Title="Current User or Role"; Tooltip="Items with explicit security assigned matching this user or role."; Editor="user role"; Domain="sitecore"; Validator={
                 if([string]::IsNullOrEmpty($variable.Value)){
                     $variable.Error = "Please specify a username or role."
                 }
             }},
-            @{ Name = "roleNewOwner"; Title="New Role"; Tooltip="Tooltip for role"; Editor="role"; Domain="sitecore"; Validator={
+            @{ Name = "roleNewOwner"; Title="New Role"; Tooltip="Items matching the current user or role will be assigned this role instead."; Editor="role"; Domain="sitecore"; Validator={
                 if([string]::IsNullOrEmpty($variable.Value)){
                     $variable.Error = "Please specify a role."
                 }
@@ -46,6 +46,7 @@ SharedFields:
             @{ Name = "isTestMode"; Title = "Run Test"; Value = $true; }
         )
         Icon = $icon
+        ShowHints = $true
     }
     
     $result = Read-Variable @settings
@@ -105,4 +106,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "9e887fcf-5a79-4cb4-8feb-74a7b031f4e5"
+      Value: "c643bb2f-d34c-4fe3-afd0-802a93aa915b"
