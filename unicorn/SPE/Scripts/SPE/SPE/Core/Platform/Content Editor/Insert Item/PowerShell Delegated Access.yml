@@ -28,6 +28,8 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    $isEnabled = $false
+    
     Get-Item -Path "master:" -ID "{1714DBB1-2A36-44BE-A7AF-EE73A5F8B69B}" | Invoke-Script
     
     $item = New-Item -Path $SitecoreContextItem.ProviderPath -Name $itemName -ItemType "{6111D5BE-EC09-4A5C-AD27-7D8005E91216}"
@@ -49,4 +51,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "80353535-d161-4b68-b6d0-b9000f882b06"
+      Value: "e6678d6c-fd37-43cd-b51d-8d70fc364df4"
