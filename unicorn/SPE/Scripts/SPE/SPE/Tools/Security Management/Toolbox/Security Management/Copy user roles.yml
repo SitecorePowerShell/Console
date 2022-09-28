@@ -35,7 +35,7 @@ SharedFields:
                     $variable.Error = "Please specify a username."
                 }
             }},
-            @{ Name = "userTarget"; Title="Target User"; Tooltip="Specifify the user to receive the updated roles."; Editor="user multiple"; Validator={
+            @{ Name = "userTarget"; Title="Target User"; Tooltip="Specify the user to receive the updated roles."; Editor="user multiple"; Validator={
                 if([string]::IsNullOrEmpty($variable.Value)){
                     $variable.Error = "Please specify a user."
                 }
@@ -55,7 +55,7 @@ SharedFields:
     Write-Host "Copying roles from $($user.Name) to the target account(s)."
     foreach ($role in $user.Roles.Name) {
     	Write-Host " - Updating '$($role)' with members '$($userTarget)'" -ForegroundColor Green
-    	Add-RoleMember -Identity $Role -Members $userTarget
+    	Add-RoleMember -Identity $Role -Members $userTarget -WhatIf:$isTestMode
     }
     
     Show-Result -Text
@@ -75,4 +75,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "2e8b773a-d8b4-40af-a135-5b3ef2dab97e"
+      Value: "f5cce0aa-c4f7-4507-ad10-a21d8aed014c"

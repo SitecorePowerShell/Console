@@ -48,10 +48,9 @@ namespace Spe.Commands.Security.Accounts
                     var role = Role.FromName(member.Name);
                     if (RolesInRolesManager.IsRoleInRole(role, targetRole, false)) continue;
 
-                    if (ShouldProcess(targetRole.Name, $"Add role '{role.Name}' to role"))
-                    {
-                        RolesInRolesManager.AddRoleToRole(role, targetRole);
-                    }
+                    if (!ShouldProcess(targetRole.Name, $"Add role '{role.Name}' to role")) continue;
+                    
+                    RolesInRolesManager.AddRoleToRole(role, targetRole);
                 }
                 else
                 {
