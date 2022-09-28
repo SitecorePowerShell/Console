@@ -17,8 +17,6 @@ SharedFields:
       Sitecore recommendation:
          Limit the number of versions of any item to the fewest possible. 
          Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number. 
-         There is a shared source module, Version Manager, available at: 
-         http://marketplace.sitecore.net/en/Modules/Version_Manager.aspx to help manage versions.
      
       Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
      
@@ -64,7 +62,7 @@ SharedFields:
         )
         Title = "Which of my items have the most versions?"
         InfoTitle = "Sitecore recommendation: Limit the number of versions of any item to the fewest possible."
-        InfoDescription = "The report shows all items that have more than <b>$count versions</b> to allow you to address any potential issues arising. Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number.  <br> <br> Use the command <b>Remove-ItemVersion</b> to remove unnecessary versions in your scripts. The shared source module <a href='https://marketplace.sitecore.net/en/Modules/Version_Manager.aspx' style='text-decoration:underline' target='_blank'>Version Manager - available at Sitecore Marketplace</a> can help manage versions."
+        InfoDescription = "The report shows all items that have more than <b>$count versions</b> to allow you to address any potential issues arising. Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number.  <br> <br> Use the command <b>Remove-ItemVersion</b> to remove unnecessary versions in your scripts."
     }
     
     $items | Show-ListView @reportProps
@@ -90,7 +88,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "e0147995-8c46-46ab-8f10-828b992070f0"
+      Value: "346d09fa-909c-4eb1-9f4f-fdc61faaa83b"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -107,4 +105,4 @@ Languages:
       Value: 20130206T233118Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "12be1fc3-3e34-47ea-ab29-01c1d308b037"
+      Value: "1825d85d-7bdc-40f3-b03e-80e208ddbe86"
