@@ -8,10 +8,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $user = Get-User -Id "sitecore\admin"
-    New-UsingBlock (New-Object Sitecore.Security.Accounts.UserSwitcher $user) {
-        Get-Item -Path . | Unlock-Item
-    }
+    Get-Item -Path . | Unlock-Item
     Close-Window
 Languages:
 - Language: en
@@ -23,4 +20,4 @@ Languages:
       Value: 20180914T182531Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "786f05ca-9659-4dc1-857a-7ffb5d50086c"
+      Value: "376c915d-eeaa-4ac3-8b5f-38ac8c60349a"
