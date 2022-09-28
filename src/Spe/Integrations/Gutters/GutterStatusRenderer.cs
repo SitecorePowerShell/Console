@@ -1,8 +1,10 @@
 ﻿using System;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
+using Sitecore.Security.Accounts;
 using Sitecore.Shell.Applications.ContentEditor.Gutters;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
@@ -49,33 +51,49 @@ namespace Spe.Integrations.Gutters
                 if (string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]) ||
                     !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item)) return null;
 
-                try
+                if(DelegatedAccessManager.IsElevated(Context.User, scriptItem))
                 {
-                    //TODO: How should we impersonate the user?
-
-                    // Create a new session for running the script.
-                    var session = ScriptSessionManager.GetSession(scriptItem[Templates.Script.Fields.PersistentSessionId],
-                        IntegrationPoints.ContentEditorGuttersFeature);
-
-                    // We will need the item variable in the script.
-                    session.SetItemLocationContext(item);
-
-                    // Any objects written to the pipeline in the script will be returned.
-                    var output = session.ExecuteScriptPart(scriptItem, false);
-                    foreach (var result in output)
+                    var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
+                    using (new UserSwitcher(jobUser))
                     {
-                        if (result.GetType() == typeof(GutterIconDescriptor))
-                        {
-                            return (GutterIconDescriptor)result;
-                        }
+                        return RunGutterScript(item, scriptItem);
                     }
                 }
-                catch (Exception ex)
-                {
-                    PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' for rendering in Content Editor gutter.", ex);
-                }
-                return null;
+
+                return RunGutterScript(item, scriptItem);
             });
+        }
+
+        private GutterIconDescriptor RunGutterScript(Item contextItem, Item scriptItem)
+        {
+            try
+            {
+                //TODO: How should we impersonate the user?
+
+                // Create a new session for running the script.
+                var session = ScriptSessionManager.GetSession(scriptItem[Templates.Script.Fields.PersistentSessionId],
+                    IntegrationPoints.ContentEditorGuttersFeature);
+
+                // We will need the item variable in the script.
+                session.SetItemLocationContext(contextItem);
+                session.SetExecutedScript(scriptItem);
+
+                // Any objects written to the pipeline in the script will be returned.
+                var output = session.ExecuteScriptPart(scriptItem, false);
+                foreach (var result in output)
+                {
+                    if (result.GetType() == typeof(GutterIconDescriptor))
+                    {
+                        return (GutterIconDescriptor)result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' for rendering in Content Editor gutter.", ex);
+            }
+
+            return null;
         }
     }
 }

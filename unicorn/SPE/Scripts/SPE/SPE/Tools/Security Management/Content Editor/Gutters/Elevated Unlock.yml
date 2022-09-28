@@ -1,36 +1,51 @@
 ﻿---
-ID: "9d3a2ad8-2543-4e14-9021-ac037d9de399"
-Parent: "8ce5ab81-8927-4d1e-bb92-3f580dc4db39"
+ID: "cfe81af6-2468-4e62-8bf2-588b7cc60f80"
+Parent: "4b015c25-27b7-4b84-8e4f-3c300e791250"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Warning/Elevated Unlock
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Gutters/Elevated Unlock
 DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/lock_open.png
-- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
-  Hint: ShowRule
-  Type: Rules
-  Value: 
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $item = Get-Item -Path "."
+    <#
+        This script will run for every item that appears in the content tree.
+        To improve performance you can use the rules field on the script item to
+        evaluate if/when this script should run.
+    #>
     
-    $icon = $PSScript.Appearance.Icon -replace "32x32","16x16"
-    $source = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
+    $item = Get-Item -Path .
+    if(-not $item) {
+        Write-Log "The item is null."
+        #return
+    }
     
-    $title = "Elevated Unlock"
-    $text = "<img src='$($source)' />Use elevated privileges to unlock the current item."
+    $tooltip = $PSScript.Appearance.Shortdescription
+    if([string]::IsNullOrEmpty($tooltip)) {
+        Write-Log "The tooltip is null."
+        #return
+    }
     
-    $warning = $pipelineArgs.Add()
-    $warning.Title = $title
-    $warning.Text = $text
     
-    $script = Get-Item -Path "master:" -ID "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
+    if(-not ($item.Locking.IsLocked())) {
+        Write-Log "The item is not locked."
+        #return
+    }
+    
+    $icon = $PSScript.Appearance.Icon
+     
+    $gutter = New-Object Sitecore.Shell.Applications.ContentEditor.Gutters.GutterIconDescriptor
+    $gutter.Icon = $icon
+    $gutter.Tooltip = $tooltip
+    
+    $scriptId = "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
+    $script = Get-Item -Path "master:" -ID $scriptId
     $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
-    $warning.AddOption("Unlock", $command)
-    $warning.HideFields = $false
+    $gutter.Click = $command
+    $gutter
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
@@ -118,12 +133,20 @@ SharedFields:
     </ruleset>
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Use elevated privileges to unlock this item.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20180914T182205Z
+      Value: 20220928T170247Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7faf7def-62bb-49e1-9bd3-908537ba03b1"
+      Value: "22e5e4ea-c6ef-4113-9f2c-2f4e94e6b31e"
