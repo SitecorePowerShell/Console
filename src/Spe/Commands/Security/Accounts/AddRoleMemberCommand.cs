@@ -22,43 +22,42 @@ namespace Spe.Commands.Security.Accounts
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
-            if (Role.Exists(name))
+            if (!Role.Exists(name))
             {
-                var targetRole = Role.FromName(name);
+                WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{name}'.",
+                    ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, Identity);
+                return;
+            }
 
-                foreach (var member in Members)
+            var targetRole = Role.FromName(name);
+
+            foreach (var member in Members)
+            {
+                if (User.Exists(member.Name))
                 {
-                    if (User.Exists(member.Name))
-                    {
-                        var user = User.FromName(member.Name, false);
-                        if (user.IsInRole(targetRole)) continue;
+                    var user = User.FromName(member.Name, false);
+                    if (user.IsInRole(targetRole)) continue;
 
-                        if (!ShouldProcess(targetRole.Name, $"Add user '{user.Name}' to role")) continue;
+                    if (!ShouldProcess(targetRole.Name, $"Add user '{user.Name}' to role")) continue;
 
-                        var profile = UserRoles.FromUser(user);
-                        profile.Add(targetRole);
-                    }
-                    else if (Role.Exists(member.Name))
-                    {
-                        var role = Role.FromName(member.Name);
-                        if (RolesInRolesManager.IsRoleInRole(role, targetRole, false)) continue;
+                    var profile = UserRoles.FromUser(user);
+                    profile.Add(targetRole);
+                }
+                else if (Role.Exists(member.Name))
+                {
+                    var role = Role.FromName(member.Name);
+                    if (RolesInRolesManager.IsRoleInRole(role, targetRole, false)) continue;
 
-                        if (ShouldProcess(targetRole.Name, $"Add role '{role.Name}' to role"))
-                        {
-                            RolesInRolesManager.AddRoleToRole(role, targetRole);
-                        }
-                    }
-                    else
+                    if (ShouldProcess(targetRole.Name, $"Add role '{role.Name}' to role"))
                     {
-                        WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{member}'.", 
-                            ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, member);
+                        RolesInRolesManager.AddRoleToRole(role, targetRole);
                     }
                 }
-            }
-            else
-            {
-                WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{name}'.", 
-                    ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, Identity);
+                else
+                {
+                    WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{member}'.",
+                        ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, member);
+                }
             }
         }
     }

@@ -1,0 +1,78 @@
+﻿---
+ID: "c381312c-d0a8-41b9-8824-109b6434d615"
+Parent: "b0dbfa53-161a-455c-8ca7-ca52b91f6e90"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Copy user roles
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/users_relation2.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Copy roles from one user to another.
+            
+        .NOTES
+            Gabe Streza
+            https://www.sitecoregabe.com/2022/09/copy-sitecore-user-roles-from-one-user-to-another.html
+            
+            Michael West
+    #>
+    
+    $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
+    $settings = @{
+        Title = "Report Filter"
+        Height = "325"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Copy roles from one user to another. Useful when new members join the team."
+        Parameters = @(
+            @{ Name = "userSource"; Title="Source User"; Tooltip="Specify the user with membership to the desired roles."; Editor="user"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)){
+                    $variable.Error = "Please specify a username."
+                }
+            }},
+            @{ Name = "userTarget"; Title="Target User"; Tooltip="Specifify the user to receive the updated roles."; Editor="user multiple"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)){
+                    $variable.Error = "Please specify a user."
+                }
+            }},
+            @{ Name = "isTestMode"; Title = "Run Test"; Value = $true; }
+        )
+        Icon = $icon
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $user = Get-User -Id ($userSource | Select-Object -First 1)
+    Write-Host "Copying roles from $($user.Name) to the target account(s)."
+    foreach ($role in $user.Roles.Name) {
+    	Write-Host " - Updating '$($role)' with members '$($userTarget)'" -ForegroundColor Green
+    	Add-RoleMember -Identity $Role -Members $userTarget
+    }
+    
+    Show-Result -Text
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20220928T100525Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "243698e8-adbb-4b80-9238-9a501ed4a6cf"
