@@ -93,7 +93,7 @@ namespace Spe.Client.Controls
                 {
                     options.DomainName = DomainName;
                 }
-                SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), true);
+                SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), "1200px", "600px", string.Empty, true);
                 args.WaitForPostBack();
             }
             else
