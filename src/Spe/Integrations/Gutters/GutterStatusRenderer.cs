@@ -37,7 +37,13 @@ namespace Spe.Integrations.Gutters
 
                 var featureRoot = ModuleManager.GetItemModule(scriptItem)?
                     .GetFeatureRoot(IntegrationPoints.ContentEditorGuttersFeature);
-                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.EnableRule], item)) return null;
+
+                var rootRuleContext = new RuleContext
+                {
+                    Item = item ?? featureRoot
+                };
+                rootRuleContext.Parameters.Add("ScriptItem", featureRoot);
+                if (!RulesUtils.EvaluateRules(featureRoot?[Templates.ScriptLibrary.Fields.EnableRule], rootRuleContext)) return null;
 
                 // If a script is configured but does not exist or is of a wrong template then do nothing.
                 if (scriptItem == null || !scriptItem.IsPowerShellScript()) return null;
@@ -49,7 +55,7 @@ namespace Spe.Integrations.Gutters
                 ruleContext.Parameters.Add("ScriptItem", scriptItem);
 
                 if (string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]) ||
-                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item)) return null;
+                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], ruleContext)) return null;
 
                 if(DelegatedAccessManager.IsElevated(Context.User, scriptItem))
                 {

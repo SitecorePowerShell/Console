@@ -3,7 +3,6 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
-using Sitecore.Shell.Applications.ContentManager.ReturnFieldEditorValues;
 using Spe.Core.Diagnostics;
 using System;
 using System.Collections.Concurrent;
