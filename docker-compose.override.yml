@@ -2,6 +2,7 @@ services:
   cm:
     environment:
       Sitecore_AppSettings_role:define: Standalone
+      SITECORE_SPE_ADMIN_PAGE_ENABLED: ${SPE_ADMIN_PAGE_ENABLED}
       SITECORE_DEVELOPMENT_PATCHES: CustomErrorsOff
     volumes:
       - .\docker\deploy:C:\deploy

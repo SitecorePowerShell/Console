@@ -1,4 +1,5 @@
-﻿using Sitecore.Diagnostics;
+﻿using Sitecore;
+using Sitecore.Diagnostics;
 using System;
 using System.IO;
 using System.Web;
@@ -11,16 +12,20 @@ namespace Spe.Client.Applications.Administration
 
         private const string EnabledFilePath = "~/sitecore/admin/enabled";
 
-        private const string SettingFilePrefix = "~/sitecore/admin/";
-
         private const string ErrorPageUrl = "/sitecore/admin/NonSecurePageDisabled.aspx";
 
         protected virtual bool IsEnabled
         {
             get
             {
-                var enabledFile = base.Server.MapPath("~/sitecore/admin/enabled");
-                var disabledFile = base.Server.MapPath("~/sitecore/admin/disabled");
+                var environmentVariable = Environment.GetEnvironmentVariable("SITECORE_SPE_ADMIN_PAGE_ENABLED");
+                if (!string.IsNullOrEmpty(environmentVariable))
+                {
+                    return MainUtil.GetBool(environmentVariable, false);
+                }
+
+                var enabledFile = base.Server.MapPath(EnabledFilePath);
+                var disabledFile = base.Server.MapPath(DisabledFilePath);                
                 return !File.Exists(disabledFile) & File.Exists(enabledFile);
             }
         }
@@ -35,7 +40,7 @@ namespace Spe.Client.Applications.Administration
 
         protected virtual void HandleDisabled()
         {
-            base.Response.Redirect(string.Concat("/sitecore/admin/NonSecurePageDisabled.aspx?returnUrl=", HttpUtility.UrlEncode(base.Request.Url.PathAndQuery)));
+            base.Response.Redirect($"{ErrorPageUrl}?returnUrl={HttpUtility.UrlEncode(base.Request.Url.PathAndQuery)}");
         }
 
         protected override void OnInit(EventArgs args)
