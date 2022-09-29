@@ -11,28 +11,14 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    <#
-        This script will run for every item that appears in the content tree.
-        To improve performance you can use the rules field on the script item to
-        evaluate if/when this script should run.
-    #>
-    
     $item = Get-Item -Path .
     if(-not $item) {
-        Write-Log "The item is null."
-        #return
+        return
     }
     
-    $tooltip = $PSScript.Appearance.Shortdescription
+    $tooltip = $PSScript.Appearance.ShortDescription
     if([string]::IsNullOrEmpty($tooltip)) {
-        Write-Log "The tooltip is null."
-        #return
-    }
-    
-    
-    if(-not ($item.Locking.IsLocked())) {
-        Write-Log "The item is not locked."
-        #return
+        return
     }
     
     $icon = $PSScript.Appearance.Icon
@@ -149,4 +135,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "22e5e4ea-c6ef-4113-9f2c-2f4e94e6b31e"
+      Value: "a67437dc-b40e-4b6f-866d-45742dcec6df"
