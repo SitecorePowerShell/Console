@@ -18,6 +18,7 @@ using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Client.Controls;
 using Spe.Commands.Interactive;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;
@@ -506,6 +507,7 @@ namespace Spe.Client.Applications
             ScriptSessionId = scriptSession.ID;
 
             var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
+            PowerShellLog.Info($"[Report] Running script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
             Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
             LvProgressOverlay.Visible = false;

@@ -281,6 +281,11 @@ namespace Spe.Client.Applications
                 scriptSession.SetExecutedScript(scriptItem);
 
                 jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
+                PowerShellLog.Info($"[Runner] Executing script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
+            }
+            else
+            {
+                PowerShellLog.Info($"[Runner] Executing arbitrary script for Context User {Context.User.Name}.");
             }
             if (scriptSession.JobOptions != null)
             {
@@ -290,7 +295,7 @@ namespace Spe.Client.Applications
             scriptSession.SetVariable("RenderingId", RenderingId);
             scriptSession.SetVariable("SitecoreFullScreen", CallerFullScreen);
             scriptSession.Interactive = true;
-            
+
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
             Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, jobUser,

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Tasks;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Modules;
@@ -39,6 +41,7 @@ namespace Spe.Integrations.Tasks
                     if (string.IsNullOrWhiteSpace(currentItem[Templates.Script.Fields.ScriptBody])) continue;
                     if (!RulesUtils.EvaluateRules(currentItem[Templates.Script.Fields.EnableRule], currentItem)) continue;
 
+                    PowerShellLog.Info($"[Task] Executing script {currentItem.ID} for Context User {Context.User.Name}.");
                     session.SetItemLocationContext(currentItem);
                     session.ExecuteScriptPart(currentItem, true);
                 }
