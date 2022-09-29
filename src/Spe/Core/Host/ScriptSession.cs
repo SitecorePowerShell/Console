@@ -868,7 +868,7 @@ namespace Spe.Core.Host
             if (scriptItem == null) return;
 
             var scriptPath = scriptItem.GetProviderPath();
-            PowerShellLog.Info($"Script item set to {scriptPath} in ScriptSession {Key}.");
+            PowerShellLog.Debug($"Script item set to {scriptPath} in ScriptSession {Key}.");
             SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
             SetVariable("SitecoreCommandPath", scriptPath);
             SetVariable("PSScript", scriptItem);
