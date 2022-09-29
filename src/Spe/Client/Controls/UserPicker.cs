@@ -93,7 +93,21 @@ namespace Spe.Client.Controls
                 {
                     options.DomainName = DomainName;
                 }
-                SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), "1200px", "600px", string.Empty, true);
+
+                var width = "1200px";
+                var height = "815px";
+                if(ExcludeRoles)
+                {
+                    // Ideal for just users.
+                    height = "630px";
+                }
+                else if(ExcludeUsers)
+                {
+                    // Ideal for just roles.
+                    height = "760px";
+                }
+
+                SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), width, height, string.Empty, true);
                 args.WaitForPostBack();
             }
             else
