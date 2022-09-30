@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
   <sitecore>
-    <sc.variable name="speSourceFolder" value="%%sourceFolder%%\Spe" />  
+    <sc.variable name="speSourceFolder" value="%%sourceFolder%%\Spe" />
 
     <powershell>
       <services>
@@ -14,29 +14,60 @@
         <mediaDownload>
           <patch:attribute name="enabled">true</patch:attribute>
         </mediaDownload>
-	      <fileDownload>
+        <fileDownload>
           <patch:attribute name="enabled">true</patch:attribute>
         </fileDownload>
         <fileUpload>
           <patch:attribute name="enabled">true</patch:attribute>
         </fileUpload>
         <remoting>
-          <patch:attribute name="requireSecureConnection">true</patch:attribute>
           <patch:attribute name="enabled">true</patch:attribute>
-          <authorization>
-            <add Permission="Allow" IdentityType="Role" Identity="sitecore\IsAdministrator"/>
-          </authorization>
         </remoting>
       </services>
-     <userAccountControl>
+      <authenticationProvider>
+        <sharedSecret>7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB</sharedSecret>
+        <detailedAuthenticationErrors>true</detailedAuthenticationErrors>
+        <allowedAudiences hint="list">
+          <audience>https://spe.dev.local</audience>
+        </allowedAudiences>
+      </authenticationProvider>
+      <userAccountControl>
         <!-- In development, remove default elevationActions -->
         <tokens>
           <token patch:instead="*[@name='Default']" name="Default" elevationAction="Allow" expiration="00:00:00"/>
           <token patch:instead="*[@name='Console']" name="Console" elevationAction="Allow" expiration="00:00:00"/>
           <token patch:instead="*[@name='ISE']" name="ISE" elevationAction="Allow" expiration="00:00:00"/>
-          <token patch:instead="*[@name='ItemSave']" name="ItemSave" elevationAction="Allow" expiration="00:00:00"/>          
+          <token patch:instead="*[@name='ItemSave']" name="ItemSave" elevationAction="Allow" expiration="00:00:00"/>
         </tokens>
       </userAccountControl>
     </powershell>
+    <pipelines>
+      <owin.cookieAuthentication.validateIdentity>
+        <processor type="Sitecore.Owin.Authentication.Pipelines.CookieAuthentication.ValidateIdentity.ValidateSiteNeutralPaths, Sitecore.Owin.Authentication">
+          <siteNeutralPaths hint="list">
+            <!-- This entry corrects the infinite loop of ExecuteCommand in the SPE Console -->
+            <path hint="spe">/sitecore%20modules/PowerShell</path>
+          </siteNeutralPaths>
+        </processor>
+      </owin.cookieAuthentication.validateIdentity>
+
+      <unicornSyncComplete>
+        <processor type="Unicorn.Pipelines.UnicornSyncComplete.AddSyncedItemsToPublishQueue, Unicorn">
+          <patch:delete />
+        </processor>
+      </unicornSyncComplete>
+
+      <unicornSyncEnd>
+        <processor type="Unicorn.Pipelines.UnicornSyncEnd.TriggerAutoPublishSyncedItems, Unicorn">
+          <patch:delete />
+        </processor>
+      </unicornSyncEnd>
+
+      <publish>
+        <processor patch:after="*[@type='Sitecore.Publishing.Pipelines.Publish.AddItemsToQueue, Sitecore.Kernel']" type="Unicorn.Publishing.ManualPublishQueueHandler, Unicorn">
+          <patch:delete />
+        </processor>
+      </publish>
+    </pipelines>
   </sitecore>
 </configuration>
