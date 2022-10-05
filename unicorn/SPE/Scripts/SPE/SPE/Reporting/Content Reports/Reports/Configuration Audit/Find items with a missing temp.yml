@@ -24,7 +24,6 @@ SharedFields:
     
     $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
     
-    # Find all the items which explicitly hae security assigned.
     $query = @"
     SELECT [ID] FROM [dbo].[Items] WHERE [TemplateID] NOT IN (SELECT DISTINCT [ID] FROM [dbo].[Items])
     "@
@@ -43,6 +42,7 @@ SharedFields:
         Property = @("Name","Language","Version","ID","Database","Template","ItemPath")
     }
     $items | Show-ListView @reportProps
+    Close-Window
 Languages:
 - Language: en
   Fields:
@@ -61,4 +61,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "037590a9-4c21-4da3-8ac9-e881d5e7d304"
+      Value: "16d830c0-f36f-446c-9845-35c00600326d"

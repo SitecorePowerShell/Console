@@ -1,0 +1,64 @@
+﻿---
+ID: "60c6ebe3-a736-4c51-96b3-6a6c926188ef"
+Parent: "0acbfea0-c6b1-4263-993f-5bcb231a1fff"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find scripts with rules configured
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/graph.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Report all the PowerShell Script (Library) items which contain a ShowRule or EnableRule
+            
+        .NOTES
+            Michael West
+    #>
+    
+    $items = Get-ChildItem -Path "master:" -ID "{A3572733-5062-43E9-A447-54698BC1C637}" -Recurse |
+        Where-Object { $_.TemplateID -eq "{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" -or $_.TemplateID -eq "{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" } |
+        Where-Object { (![string]::IsNullOrEmpty($_.ShowRule) -and $_.ShowRule -ne "<ruleset />") -or (![string]::IsNullOrEmpty($_.EnableRule) -and $_.EnableRule -ne "<ruleset />") }
+    
+    function Render-Rule {
+        param(
+            [string]$rule
+        )
+        
+        if([string]::IsNullOrEmpty($rule) -or $rule -eq "<ruleset />") {
+            return $null
+        }
+        
+        $output = New-Object System.Web.UI.HtmlTextWriter (New-Object System.IO.StringWriter)
+        $renderer = New-Object Sitecore.Shell.Applications.Rules.RulesRenderer ($rule)
+        $renderer.Render($output)
+        $output.InnerWriter.ToString()
+    }
+    
+    $reportProps = @{
+        Title = "PowerShell scripts with rules"
+        InfoTitle = "PowerShell scripts with rules configured"
+        InfoDescription = "PowerShell scripts and script libraries where the ShowRule or EnableRule are configured."
+        Property = @("Name","ItemPath",@{Name="ShowRule";Expression={Render-Rule -Rule $_.ShowRule}}, @{Name="EnableRule";Expression={Render-Rule -Rule $_.EnableRule}})
+    }
+    
+    $items | Show-ListView @reportProps
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20221002T020825Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "17975e26-6e26-43bc-a7a7-1f56048b2520"
