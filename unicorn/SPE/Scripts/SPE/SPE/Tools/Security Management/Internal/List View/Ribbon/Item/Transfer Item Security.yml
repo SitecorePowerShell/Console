@@ -1,0 +1,99 @@
+﻿---
+ID: "642a6b07-cd06-4822-a57b-8b8c0eae6a76"
+Parent: "b31991a9-60d3-4efa-9b83-da10d878e5e3"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Transfer Item Security
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/fingerprint_scan.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{84012F1F-0A5A-4884-8061-914C91C78702}"
+        name="Only for specific view">
+        <conditions>
+          <condition
+            id="{1B499603-87C9-4440-969F-D9568CE1E926}"
+            uid="321CE4409B494A8CA64F0CD1B7770C6D"
+            ValidViewName="ExplicitItemSecurity" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $originalAccountNames = [System.Collections.ArrayList]@()
+    foreach($selectedDatum in $selectedData) {
+        $names = Get-ItemAcl -Item $selectedDatum | ForEach-Object { $_.Account.Name }
+        $originalAccountNames.AddRange(@($names)) > $null
+    }
+    
+    if($originalAccountNames.Count -eq 0) {
+        Show-Alert -Title "No items selected"
+        exit
+    }
+    
+    $options = [ordered]@{}
+    foreach($originalAccountName in $originalAccountNames) {
+        $options[$originalAccountName] = $originalAccountName
+    }
+    
+    $scriptItem = Get-Item -Path $SitecoreCommandPath
+    $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32" -replace "Office", "OfficeWhite"
+    $props = @{
+        Title = "Transfer item security"
+        Height = "325"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Transfer item security from the current user or role to a new role."
+        Parameters = @(
+            @{ Name = "originalAccountNames"; Title="Original Accounts"; Options=$options; Tooltip="Select all of the users and roles that should be replaced."; Editor="checklist"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)) {
+                    $variable.Error = "Please specify one or more accounts."
+                }
+            }},
+            @{ Name = "replacementRole"; Title="Replacement Account"; Tooltip="Each of the selected users and roles will be replaced with this role."; Editor="role"; Validator={
+                if([string]::IsNullOrEmpty($variable.Value)) {
+                    $variable.Error = "Please specify a role."
+                }
+            }}
+        )
+        Icon = $icon
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    if($result -eq "cancel"){
+        $allData | Update-ListView
+        exit
+    }
+    
+    foreach($selectedDatum in $selectedData) {
+        $securityValue = $selectedDatum."__Security"
+        foreach($originalAccountName in $originalAccountNames) {
+            $securityValue = $securityValue.Replace("$originalAccountName","$replacementRole")
+        }
+        $selectedDatum."__Security" = $securityValue
+    }
+    
+    $allData | Update-ListView
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20221005T012841Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8aa5fc48-181c-4d2a-b733-41be63f8788c"

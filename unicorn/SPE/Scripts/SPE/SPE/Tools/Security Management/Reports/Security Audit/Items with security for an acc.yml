@@ -59,6 +59,7 @@ SharedFields:
         Title = "Items assigned with explicit account security"
         InfoTitle = "Items assigned with explicit account security"
         InfoDescription = "Items which reference the domain '$($selectedAccount)'."
+        ViewName = "ExplicitItemSecurity"
     }
     
     $escaped = [regex]::Escape($selectedAccount)
@@ -88,7 +89,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "4eee02ed-ab5a-43d9-ad28-4ece485a5451"
+      Value: "5f09129e-07b2-4e5e-a236-691a00c7e946"
 - Language: en
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
@@ -105,4 +106,4 @@ Languages:
       Value: 20130911T053914Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "4af45b6f-5819-4344-8efa-a07d7451761a"
+      Value: "57a1015d-478d-4025-938f-813633ffe06b"
