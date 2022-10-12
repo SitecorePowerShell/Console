@@ -32,14 +32,13 @@ SharedFields:
     $props = @{
         Parameters = @(
             @{Name="selectedDatabaseName"; Title="Database"; Tooltip="Each database contains a recyclebin"; Options=$options; }
+            @{Name="selectedUser"; Title="User"; Tooltip="User responsible for archiving the items."; Editor="user"; },
             @{Name="selectedDate"; Title="Date"; Tooltip="Restore all items between this date and now"; Editor = "date" }
             @{Name="dryRun"; Title="Dry Run"; Tooltip="When selected the items will remain in the recyclebin"; }
         )
         Title = "Bulk Item Restorer"
         Icon = "OfficeWhite/32x32/undo.png"
         Description = "Choose the database and how far back to restore."
-        Width = 450
-        Height = 300
         ShowHints = $true
     }
     
@@ -57,7 +56,8 @@ SharedFields:
     foreach($archive in $availableArchives | Where-Object { $_.Database.Name -eq $selectedDatabaseName }) {
         $database = $archive.Database
         Write-Host "- Found $($archive.GetEntryCount()) entries in the $($database.Name) database"
-        $entries = Get-ArchiveItem -Archive $archive | Where-Object { $_.ArchiveLocalDate -ge $selectedDate }
+        $filterByUser = ![string]::IsNullOrEmpty($selectedUser)
+        $entries = Get-ArchiveItem -Archive $archive | Where-Object { $_.ArchiveLocalDate -ge $selectedDate -and (!$filterByUser -or $_.ArchivedBy -eq $selectedUser) }
         if(!$entries) {
            Write-Host "- No matching entries found" -ForegroundColor Yellow 
         }
@@ -108,7 +108,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "37ad97bc-00ac-4928-82a3-347c3957c261"
+      Value: "638ff514-8601-409e-89ba-e4c6f16dfb5e"
 - Language: en
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
@@ -126,4 +126,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "749d3f27-af6d-46ab-80cc-918ad5502711"
+      Value: "7db318e5-a788-4c70-85c0-acef071c1956"
