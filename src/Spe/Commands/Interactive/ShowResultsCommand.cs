@@ -35,6 +35,8 @@ namespace Spe.Commands.Interactive
                     return;
                 }
 
+                AssertDefaultSize(1200, 600);
+
                 string response = null;
 
                 if (Text.IsPresent)
