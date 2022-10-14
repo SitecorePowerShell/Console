@@ -438,6 +438,7 @@ namespace Spe.Core.Provider
 
             var psObject = ItemShellExtensions.GetPsObject(SessionState, item);
             var path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
+            Context.Items["SPE::CurrentLanguage"] = item.Language;
             WriteItemObject(psObject, path, item.HasChildren);
         }
 
@@ -681,7 +682,8 @@ namespace Spe.Core.Provider
             {
                 LogInfo("Executing RenameItem(string path='{0}', string newName='{1}')",
                     path, newName);
-                var item = GetItemForPath(path);
+                Language language = Context.Items["SPE::CurrentLanguage"] as Language ?? Context.Language;
+                var item = GetItemForPath(path, language);
                 if (item != null)
                 {
                     CheckOperationAllowed("rename", item.Access.CanRename(), item.Uri.ToString());

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.StringExtensions;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
@@ -21,6 +22,14 @@ namespace Spe.Core.Provider
             var databaseName = colonIndex < 0 ? PSDriveInfo.Name : path.Substring(0, colonIndex);
             var currentItem = PathUtilities.GetItem(databaseName, relativePath);
             return currentItem;
+        }
+
+        private Item GetItemForPath(string path, Language language)
+        {
+            using (new LanguageSwitcher(language))
+            {
+                return GetItemForPath(path);
+            }
         }
 
         private Item GetItemById(string partialPath, string id)
