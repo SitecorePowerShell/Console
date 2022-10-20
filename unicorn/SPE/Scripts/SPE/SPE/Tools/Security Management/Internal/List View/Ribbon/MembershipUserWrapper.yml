@@ -4,6 +4,35 @@ Parent: "a763f6de-7550-4f7b-adfe-3ca7fc4f4ab0"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/MembershipUserWrapper
 DB: master
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{6E35CAA6-FAAC-4571-A947-7A19C22011F4}"
+        name="Admin or Maintainer">
+        <conditions>
+          <or
+            uid="17FD9822B32645EF8E10DB5863F269AF">
+            <or
+              uid="73A15D55F5EA49FABDD107601B879859">
+              <condition
+                id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+                uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
+              <condition
+                id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+                uid="CD463CAA1A2E46CD9FF96A155A7D8FA0"
+                value="sitecore\Sitecore Client Maintaining" />
+            </or>
+            <condition
+              id="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}"
+              uid="01DF4EECB3DB4B34A34B7F61BA72C147" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: da
   Fields:
@@ -22,7 +51,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "fee9b42c-b2c6-46e6-8f81-2d620c26fce1"
+      Value: "0888f7ba-f83a-49ec-bdb1-d8f34e84e6b9"
 - Language: en
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
@@ -36,4 +65,4 @@ Languages:
       Value: 20161016T194726
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "fce66867-39fd-4ced-94d9-ebfef4420262"
+      Value: "90134361-a444-48db-ab1e-0f044cca4320"

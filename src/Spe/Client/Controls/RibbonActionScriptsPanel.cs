@@ -8,6 +8,9 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Commands.Interactive;
+using Spe.Core.Diagnostics;
+using Spe.Core.Extensions;
+using Spe.Core.Host;
 using Spe.Core.Modules;
 using Spe.Core.Settings;
 using Spe.Core.Utility;
@@ -21,34 +24,52 @@ namespace Spe.Client.Controls
         {
             var typeName = context.Parameters["type"];
             var viewName = context.Parameters["viewName"];
-            var ruleContext = new RuleContext
-            {
-                Item = context.CustomData as Item
-            };
-            ruleContext.Parameters["ViewName"] = viewName;
 
             var showShared = Enum.TryParse(context.Parameters["features"] ?? "", out ShowListViewFeatures features) &&
                              features.HasFlag(ShowListViewFeatures.SharedActions);
 
             if (string.IsNullOrEmpty(typeName)) return;
 
-            foreach (
-                var scriptItem in
-                ModuleManager.GetFeatureRoots(IntegrationPoints.ReportActionFeature)
-                    .Select(parent => parent.Paths.GetSubItem(typeName))
-                    .Where(scriptLibrary => scriptLibrary != null)
-                    .SelectMany(scriptLibrary => scriptLibrary.Children)
-                    .Where(
-                        scriptItem =>
-                            RulesUtils.EvaluateRulesForView(scriptItem[FieldNames.ShowRule], ruleContext, !showShared)))
+            RuleContext GetRuleContext(Item contextItem, Item scriptItem)
             {
-                RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
+                var ruleContext = new RuleContext
+                {
+                    Item = context.CustomData as Item
+                };
+                ruleContext.Parameters["ViewName"] = viewName;
+                ruleContext.Parameters.Add("ScriptItem", scriptItem);
+
+                return ruleContext;
+            }
+
+            Func<Item, bool> filter = si => si.IsPowerShellScript()
+                                            && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
+                                            && RulesUtils.EvaluateRulesForView(si[Templates.Script.Fields.ShowRule], GetRuleContext(context.CustomData as Item, si));
+
+            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoints.ReportActionFeature)
+                .Select(parent => parent.Paths.GetSubItem(typeName)).Where(scriptLibrary => scriptLibrary != null))
+            {
+                if (!RulesUtils.EvaluateRulesForView(libraryItem?[FieldNames.ShowRule], GetRuleContext(context.CustomData as Item, libraryItem)))
+                {
+                    continue;
+                }
+
+                var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
+                if (applicableScriptItems == null || !applicableScriptItems.Any())
+                {
+                    continue;
+                }
+
+                foreach (var scriptItem in applicableScriptItems)
+                {
+                    RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),
                     scriptItem["__Icon"], scriptItem.Appearance.ShortDescription,
                     $"listview:action(scriptDb={scriptItem.Database.Name},scriptID={scriptItem.ID})",
-                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], ruleContext) &&
+                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], GetRuleContext(context.CustomData as Item, scriptItem)) &&
                     context.Parameters["ScriptRunning"] == "0",
                     false);
+                }
             }
         }
     }
