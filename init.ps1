@@ -130,13 +130,4 @@ finally {
     Pop-Location
 }
 
-################################
-# Add Windows hosts file entries
-################################
-
-Write-Host "Adding Windows hosts file entries..." -ForegroundColor Green
-
-Add-HostsEntry $cmHost
-Add-HostsEntry $idHost
-
 Write-Host "Done!" -ForegroundColor Green

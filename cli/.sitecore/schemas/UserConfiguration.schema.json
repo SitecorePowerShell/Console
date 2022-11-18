@@ -26,6 +26,10 @@
         "authority"
       ],
       "properties": {
+        "ref": {
+          "type": "string",
+          "description": "Name of the environment to depends on"
+        },
         "allowWrite": {
           "type": "boolean",
           "description": "Whether writing data to this endpoint is allowed (i.e. to prevent accidental writes to production)"
@@ -57,6 +61,13 @@
           "type": "string",
           "description": "OAuth refresh token for this endpoint (use login command to get this)"
         },
+        "refreshTokenParameters": {
+          "type": "object",
+          "description": "OAuth parameters for this endpoint (use login command to get this)",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "clientId": {
           "type": "string",
           "description": "OAuth client ID for this endpoint",
@@ -74,8 +85,15 @@
           }
         },
         "insecure": {
-          "type": "boolean",
+          "type": [
+            "boolean",
+            "null"
+          ],
           "description": "If true, allows cli to use http protocol to communicate with Identity Service Authority. "
+        },
+        "audience": {
+          "type": "string",
+          "description": "The unique identifier of the audience for an issued token"
         }
       }
     }
