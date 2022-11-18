@@ -5,7 +5,9 @@
 $language = "da"
 $includeEmptyPhrases = $false
 
-foreach ( $file in Get-ChildItem $language -Filter "*.xml" )
+$sourceDirectory = Join-Path $PSScriptRoot -ChildPath $language
+
+foreach ( $file in Get-ChildItem $sourceDirectory -Filter "*.xml" )
 {
     Write-Host Processing $file.Name
 
