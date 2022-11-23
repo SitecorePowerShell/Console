@@ -38,7 +38,12 @@ namespace Spe.Core.Host
                 outString = Regex.Replace(outString,
                     @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
                     "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
-                    RegexOptions.IgnoreCase);
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            }
+            else if(outString.Contains("http:") || outString.Contains("https:"))
+            {
+                var urlRegex = new Regex(@"(\w+:\/\/[\w@][\w.:@]+\/?[\w\.?=%&=\-@/$,]*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                outString = urlRegex.Replace(outString, "<a target='_blank' href='$1'>$1</a>");
             }
             output.AppendFormat(
                 Terminated
