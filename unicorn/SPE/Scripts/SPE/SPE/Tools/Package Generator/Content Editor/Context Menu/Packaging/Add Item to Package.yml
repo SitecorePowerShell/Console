@@ -24,10 +24,7 @@ SharedFields:
     $parameters = @(
         @{ Name = "Mode"; Title="Installation Options"; Value = "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?<br/><br/>Item : $($selectedItem.ProviderPath)"; Editor="combo"})
     
-    #if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
-        #$parameters += @{ Name = "IncludeLinkedItems"; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox" }
-        $parameters += @{ Name = "IncludeLinkOptions"; Title = "Include linked Items"; Value=0; Tooltip = "Define how linked items will be included in the package"; Options = $linkOptions; OptionTooltips = $linkOptionsTooltips; Editor = "radio" }
-    #}
+    $parameters += @{ Name = "IncludeLinkOptions"; Title = "Include linked Items"; Value=0; Tooltip = "Define how linked items will be included in the package"; Options = $linkOptions; OptionTooltips = $linkOptionsTooltips; Editor = "radio" }
     
     $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
     
@@ -152,4 +149,4 @@ Languages:
       Value: 20130919T174300Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "319f1438-14a9-4cbf-99d7-418d2fe388c7"
+      Value: "1ffe0387-a7f6-44d7-a382-6ba35afbde2d"
