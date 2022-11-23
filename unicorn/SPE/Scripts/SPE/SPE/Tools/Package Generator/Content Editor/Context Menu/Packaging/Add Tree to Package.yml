@@ -26,9 +26,10 @@ SharedFields:
         @{ Name = "Mode"; Title="Installation Options";  Value= "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"}
     )
     
-    if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
-        $parameters += @{ Name = "IncludeLinkedItems"; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox" }
-    }
+    #if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
+        #$parameters += @{ Name = "IncludeLinkedItems"; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox" }
+        $parameters += @{ Name = "IncludeLinkOptions"; Title = "Include linked Items"; Value=0; Tooltip = "Define how linked items will be included in the package"; Options = $linkOptions; OptionTooltips = $linkOptionsTooltips; Editor = "radio" }
+    #}
     
     $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
     
@@ -74,19 +75,26 @@ SharedFields:
         }
     }
     
-    $LinkedOptions = ($IncludeLinkedItems | Measure-Object -Sum) | Select-Object -ExpandProperty Sum
+    # Linked items dialog
+    $itemsToPack = @()
+    $itemsToPack += Get-ChildrenToInclude $selectedItem $IncludeItems
+    $linkedItems = @()
+    $linkedItems += Get-LinkedItems $selectedItem $itemsToPack $IncludeLinkOptions
     
-    if ($IncludeItems -eq "RootAndDescendants") {
-        $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $true
-    } else {
-        if ($IncludeItems -eq "RootAndChildren") {
-            $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $false
+    if ($linkedItems.Count -gt 0){
+        $selectedLinks = Get-SelectedLinks $linkedItems
+    }
+    
+    # Add selected linked items to package
+    if ($selectedLinks -AND $selectedLinks.Count -gt 0){
+        foreach ($linkId in $selectedLinks) {
+            $itemsToPack += $linkedItems | Where-Object -FilterScript { $_.ID.ToString() -like $linkId }
         }
-        
-        # Iterate over the children and either add to include descendants or just themselves
-        Get-ChildItem -Path . | ForEach-Object {
-            $package = Add-ItemToPackage -Package $package -Item $_ -LinkedOptions $LinkedOptions -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
-        }
+    }
+    
+    # Adding items to package
+    foreach ($itemToPack in $itemsToPack) {
+        $package = Add-ItemToPackage -Package $package -Item $itemToPack -IncludeDescendants $false
     }
     
     Close-Window
@@ -146,4 +154,4 @@ Languages:
       Value: 20130919T174500Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "6a920805-c223-47ff-ba1e-976f2b80995c"
+      Value: "87e341af-53d8-40c5-9343-0c2bee94967c"
