@@ -337,6 +337,241 @@ SharedFields:
         
         return $package
     }
+    
+    # Advanced Packaging adds
+    function Get-UniqueLinks {
+        param(
+            [item]$Item
+        )
+        
+        $combined = @()
+        $combined += Get-UniqueReferrers $Item
+        $combined += Get-UniqueReferences $Item
+        return $combined | Sort-Object -Property @{Expression={$_.ID}} -Unique
+    }
+    
+    function Get-UniqueReferrers {
+        param(
+            [item]$Item
+        )
+        $items = Get-ItemReferrer -Item $Item
+        return $items | Sort-Object -Property @{Expression={$_.ID}} -Unique
+    }
+    
+    function Get-UniqueReferences {
+        param(
+            [item]$Item
+        )
+        $links = $Item.Links.GetAllLinks($true,$true)
+        $items = @()
+        foreach ($link in $links) {
+            $path = $link.TargetDatabaseName
+            $path += ":" + $link.TargetPath
+            try { 
+                $item = Get-Item -Database $link.TargetDatabaseName -Path $path -ErrorAction SilentlyContinue
+                if ($item -ne $null){
+                    $items += $item
+                }
+            }
+            catch {}
+        }
+        return $items | Sort-Object -Property @{Expression={$_.ID}} -Unique
+    }
+    
+    function Get-OptionsForItems {
+        param(
+            [item[]]$Items,
+            [Item]$baseItem
+        )
+        $options = [ordered]@{}
+        foreach ($item in $Items) {
+            $display = $item.Paths.Path.ToString()
+            if ($baseItem.Database.Name -ne $item.Database.Name){
+                $display = $item.Database.Name + ":" + $display
+            }
+            
+            if ($options.Contains($display) -eq $false){
+                $options.Add($display, $item.ID.ToString())
+            }
+        }
+        return $options
+    }
+    
+    function Filter-ByPathContains {
+        param(
+            [item[]]$Items,
+            [string]$path
+        )
+        $filtered = @()
+        $filtered += $Items | Where-Object -FilterScript { $_.Paths.Path -like $path }
+        return $filtered
+    }
+    
+    function Get-OtherItems {
+        param(
+            [item[]]$coveredItems,
+            [item[]]$allItems
+        )
+        $others = @()
+        foreach ($i in $allItems) {
+            $filtered = $coveredItems | Where-Object -FilterScript { $_.ID -eq $i.ID }
+            if ($filtered -eq $null -or $filtered.Count -eq 0){
+                $others += $i
+            }
+        }
+        return $others
+    }
+    
+    function Get-ChildrenToInclude {
+        param(
+            [Item]$baseItem,
+            [string]$rootOption
+        )
+        $items = @()
+        
+        if($rootOption -eq "RootAndDescendants"){
+            $items += $baseItem
+            $items += $baseItem.Axes.GetDescendants()
+        }
+        elseif($rootOption -eq "RootAndChildren"){
+            $items += $baseItem
+            $items += $baseItem.Children
+        }
+        elseif($rootOption -eq "DescendantsOnly"){
+            $items += $baseItem.Axes.GetDescendants()
+        }
+        elseif($rootOption -eq "ChildrenOnly"){
+            $items += $baseItem.Children
+        }
+    
+        return $items
+    }
+    
+    function Get-LinkedItems {
+        param(
+            [Item]$selectedItem,
+            [Item[]]$itemsToPack,
+            [int]$IncludeLinkOptions
+        )
+        $linkedItems = @()
+        
+        # 1 - Only parent references are added to the package
+        if ($IncludeLinkOptions -eq 1){
+            $parentItem = $itemsToPack | Where-Object -FilterScript { $_.ID -like $selectedItem.ID }
+            if ($parentItem){
+                $linkedItems = Get-UniqueLinks $parentItem
+            }
+        }
+        # 2 - All references are added to the package
+        elseif ($IncludeLinkOptions -eq 2){
+            foreach ($item in $itemsToPack) {
+                $linkedItems += Get-UniqueLinks $item
+            }
+        }
+    
+        return $linkedItems
+    }
+    
+    function Get-SelectedLinks {
+        param(
+            [Item[]]$linkedItems
+        )
+        $selectedLinks = @()
+        $parameters = @()
+    
+        $linkedItems = $linkedItems|Sort-Object {$_.Paths.Path}
+    
+        # Separate items by type
+        $covered = @()
+        $content = Filter-ByPathContains $linkedItems -Path "/sitecore/content/*"
+        if ($content -ne $null){
+            $covered += $content
+        }
+        $media = Filter-ByPathContains $linkedItems -Path "/sitecore/media library/*"
+        if ($media -ne $null){
+            $covered += $media
+        }
+        $layouts = Filter-ByPathContains $linkedItems -Path "/sitecore/layout/*"
+        if ($layouts -ne $null){
+            $covered += $layouts
+        }
+        $templates = Filter-ByPathContains $linkedItems -Path "/sitecore/templates/*"
+        if ($templates -ne $null){
+            $covered += $templates
+        }
+        $system = Filter-ByPathContains $linkedItems -Path "/sitecore/system/*"
+        if ($system -ne $null){
+            $covered += $system
+        }
+        
+        $others = Get-OtherItems $covered $linkedItems
+        
+        foreach ($template in $templates) {
+            $templateChildren = $template.Axes.GetDescendants()
+            $templates += $templateChildren
+            $linkedItems += $templateChildren
+        }
+    
+        $templates = $templates|Sort-Object {$_.Paths.Path}
+        $linkedItems = $linkedItems|Sort-Object {$_.Paths.Path}
+        
+        # Build dialogs for each type
+        if ($content){
+            $options = Get-OptionsForItems $content $selectedItem
+            $parameters += @{ Name = "IncludedContent"; Title = "Content"; Options = $options; Editor = "checkbox"; Tab="Content ("+$options.Count+")" }
+        }
+        if ($media){
+            $options = Get-OptionsForItems $media $selectedItem
+            $parameters += @{ Name = "IncludedMedia"; Title = "Media"; Options = $options; Editor = "checkbox"; Tab="Media ("+$options.Count+")" }
+        }
+        if ($layouts){
+            $options = Get-OptionsForItems $layouts $selectedItem
+            $parameters += @{ Name = "IncludedLayouts"; Title = "Layouts"; Options = $options; Editor = "checkbox"; Tab="Layouts ("+$options.Count+")" }
+        }
+        if ($system){
+            $options = Get-OptionsForItems $system $selectedItem
+            $parameters += @{ Name = "IncludedSystem"; Title = "System"; Options = $options; Editor = "checkbox"; Tab="System ("+$options.Count+")" }
+        }
+        if ($templates){
+            $options = Get-OptionsForItems $templates $selectedItem
+            $parameters += @{ Name = "IncludedTemplates"; Title = "Templates"; Options = $options; Editor = "checkbox"; Tab="Templates ("+$options.Count+")" }
+        }
+        if ($others){
+            $options = Get-OptionsForItems $others $selectedItem
+            $parameters += @{ Name = "IncludedOthers"; Title = "Others"; Options = $options; Editor = "checkbox"; Tab="Others ("+$options.Count+")" }
+        }
+        
+        $props = @{} + $defaultProps
+        $props["Title"] = "Download Tree as Package - Select Linked Items"
+        $props["Description"] = "Choose the Linked Items that you want to include in the package."
+        $props["Parameters"] = $parameters
+        $props["Width"] = 800
+        $props["Height"] = 750
+        
+        $result = Read-Variable @props
+        
+        Resolve-Error
+        if($result -ne "ok") {
+            Close-Window
+            Exit
+        }
+        
+        $selectedLinks = $IncludedContent + $IncludedMedia + $IncludedLayouts + $IncludedSystem + $IncludedTemplates + $IncludedOthers    
+     
+        return $selectedLinks
+    }
+    
+    $linkOptions = [ordered]@{
+        "Do not include linked items" = 0
+        "Include parent links only" = 1
+        "Include all linked items" = 2
+    }
+    
+    $linkOptionsTooltips = [ordered]@{
+        0 = "Linked items are not included in the package"
+        1 = "Only items linked to the parent will be included in the package"
+        2 = "All linked items will be included in the package"
+    }
 Languages:
 - Language: en
   Versions:
@@ -351,4 +586,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "1916c22f-6566-4589-a803-7e601617337e"
+      Value: "c1188004-4ea5-45c7-9927-02d997c9659f"
