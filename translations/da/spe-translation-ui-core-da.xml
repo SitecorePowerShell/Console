@@ -1,0 +1,577 @@
+<sitecore>
+  <phrase updated="20211124T190806Z" fieldid="Display name" itemid="{10052E00-DF82-4271-93C4-994F9D4D6B80}" key="PowerShell ISE" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE">
+    <da>** PowerShell ISE **</da>
+  </phrase>
+  <phrase updated="20211124T190806Z" fieldid="Tool tip" itemid="{10052E00-DF82-4271-93C4-994F9D4D6B80}" key="PowerShell ISE" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE">
+    <da>** Tool for writing PowerShell scripts. **</da>
+  </phrase>
+  <phrase updated="20211124T190809Z" fieldid="Display name" itemid="{743877AB-3556-4A61-926D-F0DEDE280D72}" key="PowerShell Toolbox" path="/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Toolbox">
+    <da>** PowerShell Toolbox **</da>
+  </phrase>
+  <phrase updated="20211124T190809Z" fieldid="Tool tip" itemid="{743877AB-3556-4A61-926D-F0DEDE280D72}" key="PowerShell Toolbox" path="/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Toolbox">
+    <da>** Custom tools built with PowerShell scripts. **</da>
+  </phrase>
+  <phrase updated="20220921T011812Z" fieldid="Display name" itemid="{8803C527-14AF-4750-9F5D-44770AEC7805}" key="PowerShell Reports" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports">
+    <da>** PowerShell Reports **</da>
+  </phrase>
+  <phrase updated="20220921T011812Z" fieldid="Tool tip" itemid="{8803C527-14AF-4750-9F5D-44770AEC7805}" key="PowerShell Reports" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports">
+    <da>** Reports written with Sitecore PowerShell Extensions **</da>
+  </phrase>
+  <phrase updated="20211124T190817Z" fieldid="Display name" itemid="{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}" key="Edit Script" path="/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script">
+    <da>** Edit with ISE **</da>
+  </phrase>
+  <phrase updated="20211124T190820Z" fieldid="Display name" itemid="{91447F09-FD62-4BE6-96AF-265FAEBD1429}" key="PowerShell Console" path="/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console">
+    <da>** Console **</da>
+  </phrase>
+  <phrase updated="20211124T190822Z" fieldid="Display name" itemid="{3FB872EC-B14E-4603-AA0D-DB184E7605E7}" key="Context PowerShell Scripts" path="/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts">
+    <da>** Scripts **</da>
+  </phrase>
+  <phrase updated="20220416T010727Z" fieldid="Text" itemid="{BFC79034-857C-4432-A5C2-2D93AF784384}" key="PowerShell ISE" path="/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE">
+    <da>** PowerShell ISE **</da>
+  </phrase>
+  <phrase updated="20220416T010730Z" fieldid="Text" itemid="{74744022-353C-43F1-B8E4-5BC569CA9348}" key="PowerShell Reports" path="/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports">
+    <da>** PowerShell Reports **</da>
+  </phrase>
+  <phrase updated="20211124T190312Z" fieldid="Display name" itemid="{6857D035-AB70-4DAC-8E7F-C6534BB8141F}" key="PowerShellIse" path="/sitecore/content/Applications/PowerShell/PowerShellIse">
+    <da>** PowerShell ISE **</da>
+  </phrase>
+  <phrase updated="20211124T190312Z" fieldid="Tool tip" itemid="{6857D035-AB70-4DAC-8E7F-C6534BB8141F}" key="PowerShellIse" path="/sitecore/content/Applications/PowerShell/PowerShellIse">
+    <da>** Interface for writing PowerShell scripts. **</da>
+  </phrase>
+  <phrase updated="20211124T190307Z" fieldid="Display name" itemid="{EC050E47-CB0E-481C-B299-ABD275258FC6}" key="PowerShellListView" path="/sitecore/content/Applications/PowerShell/PowerShellListView">
+    <da>** List View **</da>
+  </phrase>
+  <phrase updated="20211124T190307Z" fieldid="Tool tip" itemid="{EC050E47-CB0E-481C-B299-ABD275258FC6}" key="PowerShellListView" path="/sitecore/content/Applications/PowerShell/PowerShellListView">
+    <da>** Shows results from PowerShell **</da>
+  </phrase>
+  <phrase updated="20211124T190310Z" fieldid="Display name" itemid="{26FB797C-ED1F-4C34-8EA2-E339686855BC}" key="PowerShellReports" path="/sitecore/content/Applications/PowerShell/PowerShellReports">
+    <da>** PowerShell Reports **</da>
+  </phrase>
+  <phrase updated="20211124T190310Z" fieldid="Tool tip" itemid="{26FB797C-ED1F-4C34-8EA2-E339686855BC}" key="PowerShellReports" path="/sitecore/content/Applications/PowerShell/PowerShellReports">
+    <da>** Shows results from PowerShell **</da>
+  </phrase>
+  <phrase updated="20211124T190309Z" fieldid="Display name" itemid="{C6771AF0-903F-432C-8595-E84FE79D8B6C}" key="PowerShell Console" path="/sitecore/content/Applications/PowerShell/PowerShell Console">
+    <da>** PowerShell Console **</da>
+  </phrase>
+  <phrase updated="20211124T190309Z" fieldid="Tool tip" itemid="{C6771AF0-903F-432C-8595-E84FE79D8B6C}" key="PowerShell Console" path="/sitecore/content/Applications/PowerShell/PowerShell Console">
+    <da>** Command line interface to manage content. **</da>
+  </phrase>
+  <phrase updated="20211124T190311Z" fieldid="Display name" itemid="{EE8B0A19-8710-4AA2-9C21-710BC4AE8265}" key="PowerShell Runner" path="/sitecore/content/Applications/PowerShell/PowerShell Runner">
+    <da>** PowerShell Script **</da>
+  </phrase>
+  <phrase updated="20211124T190311Z" fieldid="Tool tip" itemid="{EE8B0A19-8710-4AA2-9C21-710BC4AE8265}" key="PowerShell Runner" path="/sitecore/content/Applications/PowerShell/PowerShell Runner">
+    <da>** PowerShell Script Runner **</da>
+  </phrase>
+  <phrase updated="20211124T190814Z" fieldid="Display name" itemid="{AE3F218A-2ED4-40AA-A5A0-60BF385AEBDB}" key="PowerShell Fake Report" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports/PowerShell Fake Report">
+    <da>** PowerShell Fake Report **</da>
+  </phrase>
+  <phrase updated="20211124T190814Z" fieldid="Tool tip" itemid="{AE3F218A-2ED4-40AA-A5A0-60BF385AEBDB}" key="PowerShell Fake Report" path="/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports/PowerShell Fake Report">
+    <da>** Reports written with Sitecore PowerShell Extensions **</da>
+  </phrase>
+  <phrase updated="20211124T190317Z" fieldid="Default Title" itemid="{BB48D97A-3B30-4EC2-9F2B-88CE27970983}" key="Meta" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Meta">
+    <da>** Meta **</da>
+  </phrase>
+  <phrase updated="20211124T190702Z" fieldid="Phrase" itemid="{DE15F132-565B-4F64-854C-067E8CDE0354}" key="A security dialog will prompt you for your credentials upon first execution For more information r" path="/sitecore/system/Dictionary/PowerShell/A/A security dialog will prompt you for your credentials upon first execution For more information r">
+    <da>** A security dialog will prompt you for your credentials upon first execution. For more information, refer to  **</da>
+  </phrase>
+  <phrase updated="20211124T190700Z" fieldid="Phrase" itemid="{9A9BA619-BEAC-46C6-B24C-BFB82F715D87}" key="Are you sure you want to overwrite the selected script" path="/sitecore/system/Dictionary/PowerShell/A/Are you sure you want to overwrite the selected script">
+    <da>** Are you sure you want to overwrite the selected script? **</da>
+  </phrase>
+  <phrase updated="20211124T190707Z" fieldid="Phrase" itemid="{95EF7809-A86F-4FFD-A8CB-9C4130CFC38F}" key="Confirm to validate access to 0 a script" path="/sitecore/system/Dictionary/PowerShell/C/Confirm to validate access to 0 a script">
+    <da>** Confirm to validate access to {0} a script. **</da>
+  </phrase>
+  <phrase updated="20211124T190709Z" fieldid="Phrase" itemid="{80224EF4-E2F7-43A0-93EC-BE700FE6FF6F}" key="Could not validate access using the provided credentials" path="/sitecore/system/Dictionary/PowerShell/C/Could not validate access using the provided credentials">
+    <da>** Could not validate access using the provided credentials. **</da>
+  </phrase>
+  <phrase updated="20211124T190705Z" fieldid="Phrase" itemid="{AFF0EAF3-A905-460A-B005-BDF4772E7640}" key="Create a new module" path="/sitecore/system/Dictionary/PowerShell/C/Create a new module">
+    <da>** Create a new module **</da>
+  </phrase>
+  <phrase updated="20211124T190713Z" fieldid="Phrase" itemid="{D336ECE1-5A43-4031-A1B4-1C27D6AF23A1}" key="Documentation" path="/sitecore/system/Dictionary/PowerShell/D/Documentation">
+    <da>** Documentation. **</da>
+  </phrase>
+  <phrase updated="20211124T190718Z" fieldid="Phrase" itemid="{BB17EAFF-8290-4685-8A1E-DC46736A07D5}" key="Done" path="/sitecore/system/Dictionary/PowerShell/D/Done">
+    <da>** Done! **</da>
+  </phrase>
+  <phrase updated="20211124T190711Z" fieldid="Phrase" itemid="{700F7C63-196C-467A-BE4C-F2A020422FF9}" key="Drop elevated session state" path="/sitecore/system/Dictionary/PowerShell/D/Drop elevated session state">
+    <da>** Drop elevated session state **</da>
+  </phrase>
+  <phrase updated="20211124T190715Z" fieldid="Phrase" itemid="{0924C245-B5F3-47F2-AC9A-C84D4DB14E61}" key="DropList control cannot render items from the database 0 because it its not the same as 1 which is" path="/sitecore/system/Dictionary/PowerShell/D/DropList control cannot render items from the database 0 because it its not the same as 1 which is">
+    <da>** DropList control cannot render items from the database '{0}' because it its not the same as '{1}' which is the current content database . **</da>
+  </phrase>
+  <phrase updated="20211124T190722Z" fieldid="Phrase" itemid="{14866A2C-6533-4BE5-8F40-79580702F988}" key="Elevate Session State" path="/sitecore/system/Dictionary/PowerShell/E/Elevate Session State">
+    <da>** Elevate Session State **</da>
+  </phrase>
+  <phrase updated="20211124T190727Z" fieldid="Phrase" itemid="{007CE298-4643-4C90-A2B5-CF0AA20BEEFE}" key="Elevated session state is required to run the script" path="/sitecore/system/Dictionary/PowerShell/E/Elevated session state is required to run the script">
+    <da>** Elevated session state is required to run the script. **</da>
+  </phrase>
+  <phrase updated="20211124T190729Z" fieldid="Phrase" itemid="{989E67D0-2B26-46F7-BED1-7524B293F4BD}" key="Enter your credentials to validate access to 0 a script" path="/sitecore/system/Dictionary/PowerShell/E/Enter your credentials to validate access to 0 a script">
+    <da>** Enter your credentials to validate access to {0} a script. **</da>
+  </phrase>
+  <phrase updated="20211124T190720Z" fieldid="Phrase" itemid="{61E519DA-83FA-40F4-9895-2C04CBBFFA65}" key="Error while rendering this editor" path="/sitecore/system/Dictionary/PowerShell/E/Error while rendering this editor">
+    <da>** Error while rendering this editor **</da>
+  </phrase>
+  <phrase updated="20211124T190724Z" fieldid="Phrase" itemid="{701479AE-13AD-4121-B003-9AE31665BFD9}" key="Execution prevented!" path="/sitecore/system/Dictionary/PowerShell/E/Execution prevented!">
+    <da>** Execution prevented! **</da>
+  </phrase>
+  <phrase updated="20211124T190731Z" fieldid="Phrase" itemid="{6C5022FA-015B-4640-AC1D-6E440BF352DE}" key="Files from outside of the Sitecore Data and Website folders cannot be downloadedCopy the file to t" path="/sitecore/system/Dictionary/PowerShell/F/Files from outside of the Sitecore Data and Website folders cannot be downloadedCopy the file to t">
+    <da>** Files from outside of the Sitecore Data and Website folders cannot be downloaded.
+
+Copy the file to the Sitecore Data folder and try again. **</da>
+  </phrase>
+  <phrase updated="20211124T190737Z" fieldid="Phrase" itemid="{08BB1CF2-126E-4BEF-B063-FFB6F04BCBE3}" key="ID b0b" path="/sitecore/system/Dictionary/PowerShell/I/ID b0b">
+    <da>** ID: &lt;b&gt;{0}&lt;/b&gt; **</da>
+  </phrase>
+  <phrase updated="20211124T190742Z" fieldid="Phrase" itemid="{8261B13F-12DA-4BCF-8D43-8C0B29FBEE84}" key="if you no longer require it For more information refer to" path="/sitecore/system/Dictionary/PowerShell/I/if you no longer require it For more information refer to">
+    <da>**  if you no longer require it. For more information, refer to  **</da>
+  </phrase>
+  <phrase updated="20211124T190733Z" fieldid="Phrase" itemid="{3D896592-9321-4478-A92B-FDE215282B48}" key="If you were sent to this page from a link obtained from an untrusted source please proceed with ca" path="/sitecore/system/Dictionary/PowerShell/I/If you were sent to this page from a link obtained from an untrusted source please proceed with ca">
+    <da>** If you were sent to this page from a link obtained from an untrusted source please proceed with caution or validate the link source before continuing. **</da>
+  </phrase>
+  <phrase updated="20211124T190740Z" fieldid="Phrase" itemid="{40CBB383-A9D6-4A30-AA70-113D05757397}" key="Invert selection" path="/sitecore/system/Dictionary/PowerShell/I/Invert selection">
+    <da>** Invert selection **</da>
+  </phrase>
+  <phrase updated="20211124T190744Z" fieldid="Phrase" itemid="{CE2C7D1A-C68F-403D-9620-1C7836189F0B}" key="Location b0b" path="/sitecore/system/Dictionary/PowerShell/L/Location b0b">
+    <da>** Location: &lt;b&gt;{0}&lt;/b&gt; **</da>
+  </phrase>
+  <phrase updated="20211124T190746Z" fieldid="Phrase" itemid="{20C42397-EF41-4749-9965-A8D3964097E6}" key="Most Recently opened scripts" path="/sitecore/system/Dictionary/PowerShell/M/Most Recently opened scripts">
+    <da>** Most Recently opened scripts: **</da>
+  </phrase>
+  <phrase updated="20211124T190751Z" fieldid="Phrase" itemid="{ADC39AE3-C6A7-4532-B339-D748C0FA8E01}" key="No items available" path="/sitecore/system/Dictionary/PowerShell/N/No items available">
+    <da>** No items available **</da>
+  </phrase>
+  <phrase updated="20211124T190748Z" fieldid="Phrase" itemid="{45F3918E-201B-4DE3-9E9D-19A9517AFC6B}" key="No scripts foundDo you need to re-index your databases" path="/sitecore/system/Dictionary/PowerShell/N/No scripts foundDo you need to re-index your databases">
+    <da>** No scripts found...Do you need to re-index your databases? **</da>
+  </phrase>
+  <phrase updated="20211124T190756Z" fieldid="Phrase" itemid="{84C86B9B-416A-4619-92F7-ECE62262FF6E}" key="Open Script" path="/sitecore/system/Dictionary/PowerShell/O/Open Script">
+    <da>** Open Script **</da>
+  </phrase>
+  <phrase updated="20211124T190753Z" fieldid="Phrase" itemid="{B5C9C506-4EC0-4EB1-AF2B-15CF93CC9C70}" key="Operation" path="/sitecore/system/Dictionary/PowerShell/O/Operation">
+    <da>** Operation: **</da>
+  </phrase>
+  <phrase updated="20211124T190758Z" fieldid="Phrase" itemid="{59AD84CD-DBB2-445D-85AE-35BBDD209BAA}" key="Operation cannot be performed due to session elevation restrictions Elevate your session and try a" path="/sitecore/system/Dictionary/PowerShell/O/Operation cannot be performed due to session elevation restrictions Elevate your session and try a">
+    <da>** Operation cannot be performed due to session elevation restrictions. Elevate your session and try again. **</da>
+  </phrase>
+  <phrase updated="20211124T190524Z" fieldid="Phrase" itemid="{9C093D91-313A-4A93-9E82-F67F629F9286}" key="Performing 0 action on a script requires an elevated session state" path="/sitecore/system/Dictionary/PowerShell/P/Performing 0 action on a script requires an elevated session state">
+    <da>** Performing '{0}' action on a script requires an elevated session state. **</da>
+  </phrase>
+  <phrase updated="20211124T190529Z" fieldid="Phrase" itemid="{8AC68939-310B-41F5-84CF-C817C8E5A34B}" key="Pick the settings for the module that you will be creating" path="/sitecore/system/Dictionary/PowerShell/P/Pick the settings for the module that you will be creating">
+    <da>** Pick the settings for the module that you will be creating and the integration points to include in it. **</da>
+  </phrase>
+  <phrase updated="20211124T190531Z" fieldid="Phrase" itemid="{10FECDC6-B129-455C-8B9F-EB3B89F24150}" key="Please wait 0" path="/sitecore/system/Dictionary/PowerShell/P/Please wait 0">
+    <da>** Please wait, {0} **</da>
+  </phrase>
+  <phrase updated="20211124T190522Z" fieldid="Phrase" itemid="{7EE1B5CB-6CC4-4D76-871A-04EB833CB896}" key="PowerShell Message" path="/sitecore/system/Dictionary/PowerShell/P/PowerShell Message">
+    <da>** PowerShell Message **</da>
+  </phrase>
+  <phrase updated="20211124T190527Z" fieldid="Phrase" itemid="{90B187D0-8FF1-4E07-BDAC-F8B14D4B89D7}" key="Progress" path="/sitecore/system/Dictionary/PowerShell/P/Progress">
+    <da>** Progress **</da>
+  </phrase>
+  <phrase updated="20211124T190535Z" fieldid="Phrase" itemid="{98B64807-5DE6-470C-A342-3F03D70CC8C1}" key="Recent and enabled languages" path="/sitecore/system/Dictionary/PowerShell/R/Recent and enabled languages">
+    <da>** Recent and enabled languages **</da>
+  </phrase>
+  <phrase updated="20211124T190540Z" fieldid="Phrase" itemid="{4D27C10D-3397-470D-9835-C9C31AB5D380}" key="Recent Users" path="/sitecore/system/Dictionary/PowerShell/R/Recent Users">
+    <da>** Recent Users **</da>
+  </phrase>
+  <phrase updated="20211124T190533Z" fieldid="Phrase" itemid="{D7CBE4BF-8AB6-44C2-B399-589AD6648FE3}" key="remaining" path="/sitecore/system/Dictionary/PowerShell/R/remaining">
+    <da>** remaining **</da>
+  </phrase>
+  <phrase updated="20211124T190537Z" fieldid="Phrase" itemid="{113BD007-EA40-4D78-9498-ABD8BBAB9A6E}" key="Running script" path="/sitecore/system/Dictionary/PowerShell/R/Running script">
+    <da>** Running script... **</da>
+  </phrase>
+  <phrase updated="20211124T190542Z" fieldid="Phrase" itemid="{065E0E9F-8E39-4463-9AB0-64537051802F}" key="Script cannot be executed as it is of a wrong data template!" path="/sitecore/system/Dictionary/PowerShell/S/Script cannot be executed as it is of a wrong data template!">
+    <da>** Script cannot be executed as it is of a wrong data template! **</da>
+  </phrase>
+  <phrase updated="20211124T190547Z" fieldid="Phrase" itemid="{932E0C3D-028E-4673-B80E-C7EB6C32BCA3}" key="Script defined 0" path="/sitecore/system/Dictionary/PowerShell/S/Script defined 0">
+    <da>** Script defined: {0} **</da>
+  </phrase>
+  <phrase updated="20211124T190551Z" fieldid="Phrase" itemid="{0A2F3A5A-26C4-4006-AFCC-BE769F2799C4}" key="Script Execution Result" path="/sitecore/system/Dictionary/PowerShell/S/Script Execution Result">
+    <da>** Script Execution Result... **</da>
+  </phrase>
+  <phrase updated="20211124T190555Z" fieldid="Phrase" itemid="{F50C8024-5354-4F9B-8F1E-917D62528F90}" key="Script finished - no results to display" path="/sitecore/system/Dictionary/PowerShell/S/Script finished - no results to display">
+    <da>** Script finished - no results to display. **</da>
+  </phrase>
+  <phrase updated="20211124T190600Z" fieldid="Phrase" itemid="{688F98E9-6406-4C67-8AE6-F6A264E0DF44}" key="Script name to search for - prefix with eg master to narrow to specific database" path="/sitecore/system/Dictionary/PowerShell/S/Script name to search for - prefix with eg master to narrow to specific database">
+    <da>** Script name to search for - prefix with e.g. 'master:' to narrow to specific database **</da>
+  </phrase>
+  <phrase updated="20211124T190604Z" fieldid="Phrase" itemid="{47335F2C-DA16-4D0D-B677-3161A7272500}" key="Script parameters" path="/sitecore/system/Dictionary/PowerShell/S/Script parameters">
+    <da>** Script parameters **</da>
+  </phrase>
+  <phrase updated="20211124T190609Z" fieldid="Phrase" itemid="{63E9FA98-4897-4073-B959-1179442945B8}" key="Script with that name already exists are you sure you want to overwrite the script" path="/sitecore/system/Dictionary/PowerShell/S/Script with that name already exists are you sure you want to overwrite the script">
+    <da>** Script with that name already exists, are you sure you want to overwrite the script? **</da>
+  </phrase>
+  <phrase updated="20211124T190613Z" fieldid="Phrase" itemid="{961629F0-E691-48F0-A77B-B2F350C365EA}" key="Scripts matching 0 in 1 database" path="/sitecore/system/Dictionary/PowerShell/S/Scripts matching 0 in 1 database">
+    <da>** Scripts matching: '{0}' in '{1}*' database **</da>
+  </phrase>
+  <phrase updated="20211124T190620Z" fieldid="Phrase" itemid="{BB233C12-42AC-4C20-B1B1-01469D758435}" key="Scripts matching 0 in all databases" path="/sitecore/system/Dictionary/PowerShell/S/Scripts matching 0 in all databases">
+    <da>** Scripts matching: '{0}' in all databases **</da>
+  </phrase>
+  <phrase updated="20211124T190624Z" fieldid="Phrase" itemid="{EC14642E-F15F-42A4-9DB2-F56C033114A6}" key="Select a library where you want your script saved and specify a name for your script" path="/sitecore/system/Dictionary/PowerShell/S/Select a library where you want your script saved and specify a name for your script">
+    <da>** Select a library where you want your script saved and specify a name for your script. **</da>
+  </phrase>
+  <phrase updated="20211124T190629Z" fieldid="Phrase" itemid="{69B8A3D6-F404-4B57-B5C8-C233B8047178}" key="Select a script you want to open" path="/sitecore/system/Dictionary/PowerShell/S/Select a script you want to open">
+    <da>** Select a script you want to open. **</da>
+  </phrase>
+  <phrase updated="20211124T190544Z" fieldid="Phrase" itemid="{5CD9DE2B-CBB6-4DE5-BAE7-6FA464F9E802}" key="Select Script Library" path="/sitecore/system/Dictionary/PowerShell/S/Select Script Library">
+    <da>** Select Script Library **</da>
+  </phrase>
+  <phrase updated="20211124T190549Z" fieldid="Phrase" itemid="{2CE2707D-0E00-40DF-9B5F-0B44514E4AC3}" key="Select the Library that you want to save your script to" path="/sitecore/system/Dictionary/PowerShell/S/Select the Library that you want to save your script to">
+    <da>** Select the Library that you want to save your script to. **</da>
+  </phrase>
+  <phrase updated="20211124T190553Z" fieldid="Phrase" itemid="{228B7308-1D19-40A1-8A14-67852EE17866}" key="Select the script item that you want to open" path="/sitecore/system/Dictionary/PowerShell/S/Select the script item that you want to open">
+    <da>** Select the script item that you want to open. **</da>
+  </phrase>
+  <phrase updated="20211124T190557Z" fieldid="Phrase" itemid="{7DB1CCE5-839A-4DA4-931C-C41E94422C12}" key="Session privilege elevation is blocked and you cannot run scripts in Console" path="/sitecore/system/Dictionary/PowerShell/S/Session privilege elevation is blocked and you cannot run scripts in Console">
+    <da>** Session privilege elevation is blocked and you cannot run scripts in Console. **</da>
+  </phrase>
+  <phrase updated="20211124T190602Z" fieldid="Phrase" itemid="{34FFA31F-746E-4B42-959F-D714173CB1B8}" key="Session privilege elevation is blocked and you cannot run scripts in ISE" path="/sitecore/system/Dictionary/PowerShell/S/Session privilege elevation is blocked and you cannot run scripts in ISE">
+    <da>** Session privilege elevation is blocked and you cannot run scripts in ISE. **</da>
+  </phrase>
+  <phrase updated="20211124T190606Z" fieldid="Phrase" itemid="{071937CD-8EA2-44C0-8A16-B11F5D9C6EDA}" key="Sessions in memory" path="/sitecore/system/Dictionary/PowerShell/S/Sessions in memory">
+    <da>** Sessions in memory **</da>
+  </phrase>
+  <phrase updated="20211124T190611Z" fieldid="Phrase" itemid="{64398AE9-580B-4597-907B-CF979E64646A}" key="Show copyright" path="/sitecore/system/Dictionary/PowerShell/S/Show copyright">
+    <da>** Show copyright.. **</da>
+  </phrase>
+  <phrase updated="20211124T190617Z" fieldid="Phrase" itemid="{3B60BB2D-A9B5-4E70-B2FC-53B9B96F218C}" key="Single execution" path="/sitecore/system/Dictionary/PowerShell/S/Single execution">
+    <da>** Single execution **</da>
+  </phrase>
+  <phrase updated="20211124T190622Z" fieldid="Phrase" itemid="{34F787CF-B77A-4057-BDFF-388B23FA0D29}" key="Size" path="/sitecore/system/Dictionary/PowerShell/S/Size">
+    <da>** Size: **</da>
+  </phrase>
+  <phrase updated="20211124T190626Z" fieldid="Phrase" itemid="{B4F9B3B2-9B16-451C-8F03-5BAC943776A7}" key="Specify a name for your script" path="/sitecore/system/Dictionary/PowerShell/S/Specify a name for your script">
+    <da>** Specify a name for your script. **</da>
+  </phrase>
+  <phrase updated="20211124T190631Z" fieldid="Phrase" itemid="{283BAB5C-C232-49BC-B9B8-16AA18CE8AE6}" key="Status" path="/sitecore/system/Dictionary/PowerShell/S/Status">
+    <da>** Status: **</da>
+  </phrase>
+  <phrase updated="20211124T190635Z" fieldid="Phrase" itemid="{90A4B70F-D65F-477F-A3B0-CF580530DD68}" key="The data for the dialog is not available" path="/sitecore/system/Dictionary/PowerShell/T/The data for the dialog is not available">
+    <da>** The data for the dialog is not available. Either your server was restarted or the server cache was flushed. If this is a recurring problem, contact your system administrator. **</da>
+  </phrase>
+  <phrase updated="20211124T190639Z" fieldid="Phrase" itemid="{C7E34A15-49DB-477A-AC58-48BB27AE124A}" key="The item is not a script" path="/sitecore/system/Dictionary/PowerShell/T/The item is not a script">
+    <da>** The item is not a script. **</da>
+  </phrase>
+  <phrase updated="20211124T190641Z" fieldid="Phrase" itemid="{ABF09AE4-2F7A-480B-A1EE-5BA8D10820CF}" key="The script you are running requires that you provide some values to continute running Please provi" path="/sitecore/system/Dictionary/PowerShell/T/The script you are running requires that you provide some values to continute running Please provi">
+    <da>** The script you are running requires that you provide some values to continute running. Please provide the parameters below. **</da>
+  </phrase>
+  <phrase updated="20211124T190633Z" fieldid="Phrase" itemid="{A13DD285-A420-4D46-B975-9628ADD33210}" key="There is no file attached" path="/sitecore/system/Dictionary/PowerShell/T/There is no file attached">
+    <da>** There is no file attached. **</da>
+  </phrase>
+  <phrase updated="20211124T190637Z" fieldid="Phrase" itemid="{CF7F6B31-DD3B-4EB2-BBF1-29F3D350FEEE}" key="Time remaining" path="/sitecore/system/Dictionary/PowerShell/T/Time remaining">
+    <da>** Time remaining: **</da>
+  </phrase>
+  <phrase updated="20211124T190646Z" fieldid="Phrase" itemid="{24581C49-B427-4B38-8B7C-E3D252564701}" key="Untitled" path="/sitecore/system/Dictionary/PowerShell/U/Untitled">
+    <da>** Untitled **</da>
+  </phrase>
+  <phrase updated="20211124T190648Z" fieldid="Phrase" itemid="{960325A7-C427-4769-91BF-21BA9CEB896A}" key="User b0b" path="/sitecore/system/Dictionary/PowerShell/U/User b0b">
+    <da>** User: &lt;b&gt;{0}&lt;/b&gt; **</da>
+  </phrase>
+  <phrase updated="20211124T190644Z" fieldid="Phrase" itemid="{79486E99-C7A9-47E3-BF25-E8FB1135D9A0}" key="Username" path="/sitecore/system/Dictionary/PowerShell/U/Username">
+    <da>** Username: **</da>
+  </phrase>
+  <phrase updated="20211124T190650Z" fieldid="Phrase" itemid="{47635A88-2E30-4FF0-8D84-D6199760261E}" key="View script results" path="/sitecore/system/Dictionary/PowerShell/V/View script results">
+    <da>** View script results **</da>
+  </phrase>
+  <phrase updated="20211124T190653Z" fieldid="Phrase" itemid="{AC5A3550-BEA8-4F94-ABB7-E884EE49C7CC}" key="View script results and errors" path="/sitecore/system/Dictionary/PowerShell/V/View script results and errors">
+    <da>** View script results and errors **</da>
+  </phrase>
+  <phrase updated="20211124T190655Z" fieldid="Phrase" itemid="{CA6D3559-F12F-4429-BED6-EBB231307347}" key="Working" path="/sitecore/system/Dictionary/PowerShell/W/Working">
+    <da>** Working **</da>
+  </phrase>
+  <phrase updated="20211124T190658Z" fieldid="Phrase" itemid="{7F13C623-6961-46AF-9F6E-BBF767D73FE1}" key="You have temporarily enabled script execution" path="/sitecore/system/Dictionary/PowerShell/Y/You have temporarily enabled script execution">
+    <da>** You have temporarily enabled script execution.  **</da>
+  </phrase>
+  <phrase updated="20211124T190332Z" fieldid="Header" itemid="{666237D3-38AC-4E2E-BABF-E79A9B310432}" key="Edit" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/Edit">
+    <da>** Script runtime settings **</da>
+  </phrase>
+  <phrase updated="20211124T190334Z" fieldid="Header" itemid="{25C829E2-02B8-4132-8065-4F8606960AB4}" key="EditConsoleSettings" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleSettings">
+    <da>** Script runtime settings **</da>
+  </phrase>
+  <phrase updated="20211124T190330Z" fieldid="Header" itemid="{0FE8E7FE-13A8-4983-9BCA-3F88AEF37C65}" key="EditIseSettings" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditIseSettings">
+    <da>** Script runtime settings **</da>
+  </phrase>
+  <phrase updated="20211124T190320Z" fieldid="Header" itemid="{693B043E-B20B-4C2F-86A8-786161D08DAB}" key="Script" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script">
+    <da>** Home **</da>
+  </phrase>
+  <phrase updated="20211124T190323Z" fieldid="Header" itemid="{40D0A766-25D1-4B84-B20C-8BE9F2E54D53}" key="Settings" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings">
+    <da>** Settings **</da>
+  </phrase>
+  <phrase updated="20211124T190326Z" fieldid="Header" itemid="{A76FB1C3-4D26-4623-BB7D-8A1A0D1AE08C}" key="Plugins" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins">
+    <da>** Plugins **</da>
+  </phrase>
+  <phrase updated="20211124T190321Z" fieldid="Header" itemid="{A7427E18-C044-4AEE-863F-99E44F82F2A6}" key="Debug" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug">
+    <da>** Debug **</da>
+  </phrase>
+  <phrase updated="20211124T190318Z" fieldid="Header" itemid="{9410D5DD-186B-4CD7-ACB2-D2F3A464EFFF}" key="Results" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results">
+    <da>** Write **</da>
+  </phrase>
+  <phrase updated="20211124T190414Z" fieldid="Display name" itemid="{B76D2B94-6CA9-4936-92BB-C9377101493C}" key="Do not set location" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Context/Do not set location">
+    <da>** Do not set location **</da>
+  </phrase>
+  <phrase updated="20211124T190416Z" fieldid="Display name" itemid="{B8B685AD-C208-444B-A5E7-F8B9F48431CE}" key="Execute in a background job" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Execute/Execute in a background job">
+    <da>** Execute in a background job **</da>
+  </phrase>
+  <phrase updated="20211124T190418Z" fieldid="Display name" itemid="{FDDE4730-06FA-46EA-AAD5-DB3C225E3851}" key="Execute in http request context" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Execute/Execute in http request context">
+    <da>** Execute in http request context **</da>
+  </phrase>
+  <phrase updated="20211124T190420Z" fieldid="Display name" itemid="{B808BFE9-0E2E-459C-B437-12326938097D}" key="Content Editor Contextual Ribbon" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Integrations/Content Editor Contextual Ribbon">
+    <da>** Sync Library with Content Editor Contextual Ribbon **</da>
+  </phrase>
+  <phrase updated="20211124T190425Z" fieldid="Display name" itemid="{F5CA0BD1-BFD8-4253-AA80-7A4F352E8AC2}" key="Content Editor Gutter" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Integrations/Content Editor Gutter">
+    <da>** Sync Library with Content Editor Gutter **</da>
+  </phrase>
+  <phrase updated="20211124T190423Z" fieldid="Display name" itemid="{E4108F18-9ADE-4D01-B746-4ECE9985EA21}" key="Content Editor Ribbon" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Integrations/Content Editor Ribbon">
+    <da>** Sync Library with Content Editor Ribbon **</da>
+  </phrase>
+  <phrase updated="20211124T190427Z" fieldid="Display name" itemid="{0C9FBBE4-B629-49A6-B0ED-38F1CBED5ADC}" key="Control Panel" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Integrations/Control Panel">
+    <da>** Sync Library with Control Panel **</da>
+  </phrase>
+  <phrase updated="20211124T190432Z" fieldid="Display name" itemid="{B0E0FEA4-D27B-4C72-96C4-0241FF0B3F01}" key="Current language" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Languages/Current language">
+    <da>** Current language **</da>
+  </phrase>
+  <phrase updated="20211124T190430Z" fieldid="Display name" itemid="{A30C6ED6-B2E6-4C3D-B7A5-2A5DE42C80F1}" key="More Languages" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Languages/More Languages">
+    <da>** More languages **</da>
+  </phrase>
+  <phrase updated="20211124T190434Z" fieldid="Display name" itemid="{8E6A8C78-B72C-47C7-A68B-94D3B9753531}" key="New Module" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/New/New Module">
+    <da>** New Module **</da>
+  </phrase>
+  <phrase updated="20211124T190354Z" fieldid="Display name" itemid="{58ADC7A6-2BF4-4A26-8604-7D61117AB650}" key="Save As" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Save/Save As">
+    <da>** Save As... **</da>
+  </phrase>
+  <phrase updated="20211124T190358Z" fieldid="Display name" itemid="{B22817A1-89E7-4B0B-805E-E655711F47CA}" key="ISE editing session" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session">
+    <da>** Keep ISE session between script executions **</da>
+  </phrase>
+  <phrase updated="20211124T190400Z" fieldid="Display name" itemid="{3597EC4E-D513-4754-A9C7-04666E6545EB}" key="Script defined" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/Script defined">
+    <da>** Script defined **</da>
+  </phrase>
+  <phrase updated="20211124T190356Z" fieldid="Display name" itemid="{BA5B0AF4-AAA1-46D6-9CB6-C53A77F05EAA}" key="Single execution" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/Single execution">
+    <da>** Dispose session after script execution **</da>
+  </phrase>
+  <phrase updated="20211124T190405Z" fieldid="Display name" itemid="{731EE1E0-C10D-4DEE-95B8-BB7E25CCC3B8}" key="Console" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Settings/Console">
+    <da>** Console **</da>
+  </phrase>
+  <phrase updated="20211124T190407Z" fieldid="Display name" itemid="{41E314FF-B78E-4E5D-A01C-17DC0306C209}" key="ISE" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Settings/ISE">
+    <da>** ISE **</da>
+  </phrase>
+  <phrase updated="20211124T190403Z" fieldid="Display name" itemid="{40B7C90D-8457-447C-92A6-0DCA5CA0C3DF}" key="Results" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Settings/Results">
+    <da>** Results **</da>
+  </phrase>
+  <phrase updated="20211124T190412Z" fieldid="Display name" itemid="{EB85226A-2E90-4921-9404-358FDF05F65D}" key="Current user" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Users/Current user">
+    <da>** Current user **</da>
+  </phrase>
+  <phrase updated="20211124T190410Z" fieldid="Display name" itemid="{CD7786C1-32F5-4E36-99AB-ED08C30AD954}" key="More Users" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Users/More Users">
+    <da>** More Users **</da>
+  </phrase>
+  <phrase updated="20211124T190346Z" fieldid="Header" itemid="{D6C55BB3-43D3-4516-A1A9-9836702B29FE}" key="Write" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write">
+    <da>** Write **</da>
+  </phrase>
+  <phrase updated="20211124T190342Z" fieldid="Header" itemid="{FC5B9682-5BAD-4412-96EA-BB0C9AA457CF}" key="Script" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script">
+    <da>** Script Execution **</da>
+  </phrase>
+  <phrase updated="20211124T190344Z" fieldid="Header" itemid="{4C794DE3-FA37-46E2-AFEC-FD458211C11A}" key="Context" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context">
+    <da>** Context **</da>
+  </phrase>
+  <phrase updated="20211124T190347Z" fieldid="Header" itemid="{2BF02911-1244-4AB8-A3C9-9BE70A8B51CD}" key="ContextEx" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx">
+    <da>** UI Context **</da>
+  </phrase>
+  <phrase updated="20211124T190348Z" fieldid="Header" itemid="{06C34C75-3F9D-4DA7-B435-16F96D79CD23}" key="Info" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Info">
+    <da>** Info **</da>
+  </phrase>
+  <phrase updated="20211124T190349Z" fieldid="Header" itemid="{58B6A738-B732-4855-B4EC-302B7BF61CB1}" key="Preferences" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Preferences">
+    <da>** Preferences **</da>
+  </phrase>
+  <phrase updated="20211124T190352Z" fieldid="Header" itemid="{EE616FC9-E971-40C6-B357-5EE53C2D0DAA}" key="Integration" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Integration">
+    <da>** Integration **</da>
+  </phrase>
+  <phrase updated="20211124T190350Z" fieldid="Header" itemid="{D38E07A3-C814-43BE-9549-312BC6D560DB}" key="Current Script" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script">
+    <da>** Script **</da>
+  </phrase>
+  <phrase updated="20211124T190340Z" fieldid="Header" itemid="{DB0A30D6-4FAE-47E0-9C02-75A758B75547}" key="Script" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script">
+    <da>** Script Execution **</da>
+  </phrase>
+  <phrase updated="20211124T190339Z" fieldid="Header" itemid="{5EB6C3C3-2D50-4D2E-84A7-296253A19BA7}" key="Download" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Download">
+    <da>** Export **</da>
+  </phrase>
+  <phrase updated="20211124T190335Z" fieldid="Header" itemid="{90DC2831-3508-415F-8AF3-40160577AC47}" key="Filter" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter">
+    <da>** Filter **</da>
+  </phrase>
+  <phrase updated="20211124T190337Z" fieldid="Header" itemid="{72ABEE96-FAC4-4C83-906C-BA75B2D794F0}" key="Page" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page">
+    <da>** Page **</da>
+  </phrase>
+  <phrase updated="20211124T190336Z" fieldid="Header" itemid="{FADA4300-E388-4E73-A9AB-4B766B7536EB}" key="Actions" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Actions">
+    <da>** Actions **</da>
+  </phrase>
+  <phrase updated="20211124T190500Z" fieldid="Header" itemid="{35AA85FC-CE35-43AE-9D76-D7E4E04BC92A}" key="New" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/New">
+    <da>** New **</da>
+  </phrase>
+  <phrase updated="20211124T190500Z" fieldid="Tooltip" itemid="{35AA85FC-CE35-43AE-9D76-D7E4E04BC92A}" key="New" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/New">
+    <da>** Clear the editor and start creating a new script. **</da>
+  </phrase>
+  <phrase updated="20211124T190502Z" fieldid="Header" itemid="{E439A715-F0E9-4064-9E08-995253361BB0}" key="Open" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Open">
+    <da>** Open **</da>
+  </phrase>
+  <phrase updated="20211124T190502Z" fieldid="Tooltip" itemid="{E439A715-F0E9-4064-9E08-995253361BB0}" key="Open" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Open">
+    <da>** Open an existing script from the library. **</da>
+  </phrase>
+  <phrase updated="20211124T190501Z" fieldid="Header" itemid="{85C8B67A-434D-4001-9F04-0EE5CFDB745B}" key="Save" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Save">
+    <da>** Save **</da>
+  </phrase>
+  <phrase updated="20211124T190501Z" fieldid="Tooltip" itemid="{85C8B67A-434D-4001-9F04-0EE5CFDB745B}" key="Save" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Save">
+    <da>** Save changes to the current script. **</da>
+  </phrase>
+  <phrase updated="20211124T190457Z" fieldid="Header" itemid="{14E3F59F-838E-4649-BF9E-6A04F132648D}" key="Save As" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Save As">
+    <da>** Save As... **</da>
+  </phrase>
+  <phrase updated="20211124T190457Z" fieldid="Tooltip" itemid="{14E3F59F-838E-4649-BF9E-6A04F132648D}" key="Save As" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Save As">
+    <da>** Save as a new script. **</da>
+  </phrase>
+  <phrase updated="20211124T190503Z" fieldid="Header" itemid="{85E05ECD-6DF2-43D4-9D98-75552C221B23}" key="Reload" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Reload">
+    <da>** Reload **</da>
+  </phrase>
+  <phrase updated="20211124T190503Z" fieldid="Tooltip" itemid="{85E05ECD-6DF2-43D4-9D98-75552C221B23}" key="Reload" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Reload">
+    <da>** Reload the script from the library. **</da>
+  </phrase>
+  <phrase updated="20211124T190456Z" fieldid="Header" itemid="{F4A0BC54-AC8B-47EB-ACCB-E09F08D5C85C}" key="Execute" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Execute">
+    <da>** Execute **</da>
+  </phrase>
+  <phrase updated="20211124T190456Z" fieldid="Tooltip" itemid="{F4A0BC54-AC8B-47EB-ACCB-E09F08D5C85C}" key="Execute" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Execute">
+    <da>** Execute the script as a background job. **</da>
+  </phrase>
+  <phrase updated="20211124T190453Z" fieldid="Header" itemid="{50A2B82D-0B72-4614-AD51-A13E868FDDE4}" key="Execute Selection Small" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Execute Selection Small">
+    <da>** Selection **</da>
+  </phrase>
+  <phrase updated="20211124T190453Z" fieldid="Tooltip" itemid="{50A2B82D-0B72-4614-AD51-A13E868FDDE4}" key="Execute Selection Small" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Execute Selection Small">
+    <da>** Execute the selected script text. **</da>
+  </phrase>
+  <phrase updated="20211124T190454Z" fieldid="Header" itemid="{1F2EBEF7-4AB7-477A-B2DD-1B6CAE8BDFE0}" key="Debug Small" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Debug Small">
+    <da>** Debug **</da>
+  </phrase>
+  <phrase updated="20211124T190454Z" fieldid="Tooltip" itemid="{1F2EBEF7-4AB7-477A-B2DD-1B6CAE8BDFE0}" key="Debug Small" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Debug Small">
+    <da>** Execute the script with debugging. **</da>
+  </phrase>
+  <phrase updated="20211124T190452Z" fieldid="Header" itemid="{5F4D54F3-B5B3-4BAC-92F1-8FFDFE6E7ADC}" key="Abort" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Abort">
+    <da>** Abort **</da>
+  </phrase>
+  <phrase updated="20211124T190452Z" fieldid="Tooltip" itemid="{5F4D54F3-B5B3-4BAC-92F1-8FFDFE6E7ADC}" key="Abort" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Abort">
+    <da>** Abort the running script. **</da>
+  </phrase>
+  <phrase updated="20211124T190507Z" fieldid="Header" itemid="{E65BB045-81F6-444F-AE48-96E79E1E9262}" key="About" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Info/About">
+    <da>** About **</da>
+  </phrase>
+  <phrase updated="20211124T190507Z" fieldid="Tooltip" itemid="{E65BB045-81F6-444F-AE48-96E79E1E9262}" key="About" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Info/About">
+    <da>** About the module and environment. **</da>
+  </phrase>
+  <phrase updated="20211124T190508Z" fieldid="Header" itemid="{C6047CA6-0A24-4966-A9D8-E12BFCAA6FF6}" key="Settings" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Preferences/Settings">
+    <da>** Settings **</da>
+  </phrase>
+  <phrase updated="20211124T190508Z" fieldid="Tooltip" itemid="{C6047CA6-0A24-4966-A9D8-E12BFCAA6FF6}" key="Settings" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Preferences/Settings">
+    <da>** Edit your personal settings. **</da>
+  </phrase>
+  <phrase updated="20211124T190512Z" fieldid="Header" itemid="{A3E22AA9-8160-43C4-B3E6-CF1CC35EA333}" key="Rebuild" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Integration/Rebuild">
+    <da>** Rebuild All... **</da>
+  </phrase>
+  <phrase updated="20211124T190512Z" fieldid="Tooltip" itemid="{A3E22AA9-8160-43C4-B3E6-CF1CC35EA333}" key="Rebuild" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Integration/Rebuild">
+    <da>** Rebuild all integration points. **</da>
+  </phrase>
+  <phrase updated="20211124T190509Z" fieldid="Header" itemid="{EB294A95-86B6-4664-9175-548446AF746E}" key="Runtime" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script/Runtime">
+    <da>** Runtime **</da>
+  </phrase>
+  <phrase updated="20211124T190509Z" fieldid="Tooltip" itemid="{EB294A95-86B6-4664-9175-548446AF746E}" key="Runtime" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script/Runtime">
+    <da>** Edit the script runtime properties. **</da>
+  </phrase>
+  <phrase updated="20211124T190451Z" fieldid="Header" itemid="{6B151C2E-9017-4BC7-84C5-692EE671BECA}" key="fake" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins/Plugin/fake">
+    <da>** fake **</da>
+  </phrase>
+  <phrase updated="20211124T190451Z" fieldid="Tooltip" itemid="{6B151C2E-9017-4BC7-84C5-692EE671BECA}" key="fake" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Plugins/Plugin/fake">
+    <da>** Fake **</da>
+  </phrase>
+  <phrase updated="20211124T190443Z" fieldid="Header" itemid="{9989ECE2-E790-4CCC-83B8-F4675E9BF22E}" key="Continue" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Continue">
+    <da>** Continue **</da>
+  </phrase>
+  <phrase updated="20211124T190443Z" fieldid="Tooltip" itemid="{9989ECE2-E790-4CCC-83B8-F4675E9BF22E}" key="Continue" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Continue">
+    <da>** Continue script execution. **</da>
+  </phrase>
+  <phrase updated="20211124T190448Z" fieldid="Header" itemid="{5E1F7F79-7E42-4569-8087-F2CB44B84B69}" key="Step into" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step into">
+    <da>** Step into **</da>
+  </phrase>
+  <phrase updated="20211124T190448Z" fieldid="Tooltip" itemid="{5E1F7F79-7E42-4569-8087-F2CB44B84B69}" key="Step into" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step into">
+    <da>** Step into the deeper context. **</da>
+  </phrase>
+  <phrase updated="20211124T190444Z" fieldid="Header" itemid="{E36C7E41-6C1C-4EB1-8C9E-7F77A6CFE38A}" key="Step out" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step out">
+    <da>** Step out **</da>
+  </phrase>
+  <phrase updated="20211124T190444Z" fieldid="Tooltip" itemid="{E36C7E41-6C1C-4EB1-8C9E-7F77A6CFE38A}" key="Step out" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step out">
+    <da>** Step out of current context. **</da>
+  </phrase>
+  <phrase updated="20211124T190447Z" fieldid="Header" itemid="{15F7E60C-799A-4123-B9F0-ABA3D7323589}" key="Step Over" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step Over">
+    <da>** Step over **</da>
+  </phrase>
+  <phrase updated="20211124T190447Z" fieldid="Tooltip" itemid="{15F7E60C-799A-4123-B9F0-ABA3D7323589}" key="Step Over" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Step Over">
+    <da>** Step over the current line. **</da>
+  </phrase>
+  <phrase updated="20211124T190449Z" fieldid="Header" itemid="{E4BCB959-8C3A-4218-81E2-FE7FF7593611}" key="Stop" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Stop">
+    <da>** Stop **</da>
+  </phrase>
+  <phrase updated="20211124T190449Z" fieldid="Tooltip" itemid="{E4BCB959-8C3A-4218-81E2-FE7FF7593611}" key="Stop" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Stop">
+    <da>** Abort the running script. **</da>
+  </phrase>
+  <phrase updated="20211124T190445Z" fieldid="Header" itemid="{6D174099-70D6-4246-8E39-298BBF832186}" key="Immediate Window" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Immediate Window">
+    <da>** Immediate Window **</da>
+  </phrase>
+  <phrase updated="20211124T190445Z" fieldid="Tooltip" itemid="{6D174099-70D6-4246-8E39-298BBF832186}" key="Immediate Window" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Debug/Script/Immediate Window">
+    <da>** Show a dialog to run commands while the executing script is paused in the session. **</da>
+  </phrase>
+  <phrase updated="20211124T190435Z" fieldid="Header" itemid="{633D0055-5E83-495C-8D07-D882C062E5EB}" key="Filter" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter/Filter">
+    <da>** Filter **</da>
+  </phrase>
+  <phrase updated="20211124T190435Z" fieldid="Tooltip" itemid="{633D0055-5E83-495C-8D07-D882C062E5EB}" key="Filter" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter/Filter">
+    <da>** Filter the report using a keyword. **</da>
+  </phrase>
+  <phrase updated="20211124T190437Z" fieldid="Header" itemid="{F2E23628-BD21-40CB-8FF4-72DBE642BDD0}" key="First" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/First">
+    <da>** First **</da>
+  </phrase>
+  <phrase updated="20211124T190437Z" fieldid="Tooltip" itemid="{F2E23628-BD21-40CB-8FF4-72DBE642BDD0}" key="First" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/First">
+    <da>** Move the list to the first page. **</da>
+  </phrase>
+  <phrase updated="20211124T190439Z" fieldid="Header" itemid="{7BFEE1F0-9778-4A33-96B9-43BF0435C204}" key="Last" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Last">
+    <da>** Last **</da>
+  </phrase>
+  <phrase updated="20211124T190439Z" fieldid="Tooltip" itemid="{7BFEE1F0-9778-4A33-96B9-43BF0435C204}" key="Last" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Last">
+    <da>** Move the list to the last page. **</da>
+  </phrase>
+  <phrase updated="20211124T190440Z" fieldid="Header" itemid="{FBAC8C25-3157-4017-9CB3-CE15A15BF716}" key="Previous" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Previous">
+    <da>** Previous **</da>
+  </phrase>
+  <phrase updated="20211124T190440Z" fieldid="Tooltip" itemid="{FBAC8C25-3157-4017-9CB3-CE15A15BF716}" key="Previous" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Previous">
+    <da>** Move the list to the previous page. **</da>
+  </phrase>
+  <phrase updated="20211124T190438Z" fieldid="Header" itemid="{CF9C093F-2D19-4965-A5AC-CFDC33D08920}" key="Next" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Next">
+    <da>** Next **</da>
+  </phrase>
+  <phrase updated="20211124T190438Z" fieldid="Tooltip" itemid="{CF9C093F-2D19-4965-A5AC-CFDC33D08920}" key="Next" path="/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Next">
+    <da>** Move the list to the next page. **</da>
+  </phrase>
+  <phrase updated="20211124T190514Z" fieldid="Header" itemid="{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}" key="Context" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts/Context">
+    <da>** Context **</da>
+  </phrase>
+  <phrase updated="20211124T190514Z" fieldid="Tooltip" itemid="{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}" key="Context" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts/Context">
+    <da>** Select the context item to use when running the script. **</da>
+  </phrase>
+  <phrase updated="20211124T190515Z" fieldid="Header" itemid="{0C784F54-2B46-4EE2-B0BA-72384125E123}" key="Session" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts/Session">
+    <da>** Session **</da>
+  </phrase>
+  <phrase updated="20211124T190515Z" fieldid="Tooltip" itemid="{0C784F54-2B46-4EE2-B0BA-72384125E123}" key="Session" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts/Session">
+    <da>** Select from a list of in-memory sessions to run the script. **</da>
+  </phrase>
+  <phrase updated="20211124T190517Z" fieldid="Header" itemid="{3939B85B-3A9B-45FA-8EFB-67AF84E0CF18}" key="Language" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx/UserLanguageContextPanel/Language">
+    <da>** Language **</da>
+  </phrase>
+  <phrase updated="20211124T190517Z" fieldid="Tooltip" itemid="{3939B85B-3A9B-45FA-8EFB-67AF84E0CF18}" key="Language" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx/UserLanguageContextPanel/Language">
+    <da>** Select context language to use when running the script. **</da>
+  </phrase>
+  <phrase updated="20211124T190516Z" fieldid="Header" itemid="{71044CE9-03D1-4D5C-81B5-854993686189}" key="User" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx/UserLanguageContextPanel/User">
+    <da>** User **</da>
+  </phrase>
+  <phrase updated="20211124T190516Z" fieldid="Tooltip" itemid="{71044CE9-03D1-4D5C-81B5-854993686189}" key="User" path="/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx/UserLanguageContextPanel/User">
+    <da>** Select a user to impersonate when running the script. **</da>
+  </phrase>
+</sitecore>

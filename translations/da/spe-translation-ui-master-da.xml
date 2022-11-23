@@ -1,0 +1,11 @@
+<sitecore>
+  <phrase updated="20211124T190826Z" fieldid="__Display name" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <da>PowerShell scriptkommando</da>
+  </phrase>
+  <phrase updated="20211124T190826Z" fieldid="__Long description" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <da>Denne kommando er brugt sammen med programsatte opgaver, konfigureret til at udføre PowerShell scripts.</da>
+  </phrase>
+  <phrase updated="20211124T190826Z" fieldid="__Short description" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
+    <da>Denne kommando bliver brugt til programsatte opgaver til udførelse af PowerShell scripts.</da>
+  </phrase>
+</sitecore>

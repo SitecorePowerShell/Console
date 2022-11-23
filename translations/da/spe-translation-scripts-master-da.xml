@@ -1,749 +1,848 @@
 <sitecore>
-  <phrase updated="20180922T010903Z" fieldid="__Long description" itemid="{EE368C71-B105-4B26-B938-60BEBC0E47E8}" key="Core" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core">
+  <phrase updated="20211124T190830Z" fieldid="__Long description" itemid="{36657C88-3F10-4B16-A3C7-03E011B0F6C2}" key="SPE" path="/sitecore/system/Modules/PowerShell/Script Library/SPE">
+    <da>** Location of all scripts included with SPE. Consider creating your own module folder to add custom scripts. **</da>
+  </phrase>
+  <phrase updated="20211124T190834Z" fieldid="__Long description" itemid="{EE368C71-B105-4B26-B938-60BEBC0E47E8}" key="Core" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core">
     <da>Rør ikke! Hvis du starter med at rode rundt med disse scripts der ligger her, vil modulet med sikkerhed blive totalskadet.</da>
   </phrase>
-  <phrase updated="20180922T010915Z" fieldid="__Long description" itemid="{5E1F1B3B-EF89-4D00-82E2-36629DA4F3AD}" key="Maintenance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance">
+  <phrase updated="20211124T190837Z" fieldid="__Long description" itemid="{67B5E3AF-75C1-4E0E-9947-F51106122BE5}" key="Extensions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions">
+    <da>** Extension modules created by the SPE team are added here. **</da>
+  </phrase>
+  <phrase updated="20211124T190840Z" fieldid="__Long description" itemid="{5E1F1B3B-EF89-4D00-82E2-36629DA4F3AD}" key="Maintenance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance">
     <da>En samling af vedligeholdelsesscripts, som kan assistere dig med at holde din løsning solidt kørende.</da>
   </phrase>
-  <phrase updated="20180922T010923Z" fieldid="__Long description" itemid="{1CED8E94-0458-4E3A-8CEE-38F7EFA93E15}" key="Reporting" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting">
+  <phrase updated="20211124T190842Z" fieldid="__Long description" itemid="{1CED8E94-0458-4E3A-8CEE-38F7EFA93E15}" key="Reporting" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting">
     <da>En samling af rapporter, som hjælper dig med at lære dig mere om det styrede indhold.</da>
   </phrase>
-  <phrase updated="20180922T010932Z" fieldid="__Long description" itemid="{F15B3095-FF78-444B-97EE-5AE9AE7BBB59}" key="Samples" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples">
+  <phrase updated="20211124T190832Z" fieldid="__Long description" itemid="{F15B3095-FF78-444B-97EE-5AE9AE7BBB59}" key="Samples" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples">
     <da>En samling af eksempeler på scripts, som hjælper dig med at lære mere om SPE.</da>
   </phrase>
-  <phrase updated="20180922T010939Z" fieldid="__Long description" itemid="{486437B1-8A1D-4184-BC07-5C394F7EA13C}" key="Tools" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools">
+  <phrase updated="20211124T190836Z" fieldid="__Long description" itemid="{486437B1-8A1D-4184-BC07-5C394F7EA13C}" key="Tools" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools">
     <da>En samling af værktøjer, som hjælper dig med at spare en masse tid.</da>
   </phrase>
-  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{344414EA-DBD4-488A-BDBC-BD9685C66E39}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox">
+  <phrase updated="20211124T190852Z" fieldid="__Long description" itemid="{05A448FF-22B3-4449-93A7-9977F94D8941}" key="License Expiration" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/License Expiration">
+    <da>** Demonstrates how to notify users users in the Content Editor and Experience Editor when the license is about to expire. You can also send out an email by setting up the scheduled task. **</da>
+  </phrase>
+  <phrase updated="20211124T190844Z" fieldid="__Long description" itemid="{72B588DF-B675-471F-A8A5-814BD93A3EF0}" key="Random desktop background" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Random desktop background">
+    <da>** Demonstrates how to change the desktop background whenever a user is logged in. **</da>
+  </phrase>
+  <phrase updated="20211124T190847Z" fieldid="__Long description" itemid="{8BF25F6A-9784-4F8D-A3EF-6AF6A2382A04}" key="Training Modules" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Training Modules">
+    <da>** Provides a way to enable or disable the Training modules. **</da>
+  </phrase>
+  <phrase updated="20211124T190938Z" fieldid="__Display name" itemid="{344414EA-DBD4-488A-BDBC-BD9685C66E39}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox">
     <da>Toolbox</da>
   </phrase>
-  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{07609222-FB8D-4BB0-B29D-B10252616FF2}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox">
+  <phrase updated="20211124T190940Z" fieldid="__Display name" itemid="{B85E2336-26AB-47A7-B2BF-91CDE1A7E3BA}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Toolbox">
+    <da>** Toolbox **</da>
+  </phrase>
+  <phrase updated="20211124T190943Z" fieldid="__Display name" itemid="{07609222-FB8D-4BB0-B29D-B10252616FF2}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox">
     <da>Toolbox</da>
   </phrase>
-  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{E0EC5A20-E94F-47D3-8C5B-4015F6DB7F8A}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Toolbox">
+  <phrase updated="20211124T190915Z" fieldid="__Display name" itemid="{9370660D-6BC6-4A54-A154-F4C4A034B3B0}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox">
     <da>Toolbox</da>
   </phrase>
-  <phrase updated="20170623T014024Z" fieldid="__Display name" itemid="{97909803-E651-41E4-A13A-BA1A831685B3}" key="User Interaction" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Getting Started/User Interaction">
-    <da>Brugerinteraktion - Hvordan...</da>
-  </phrase>
-  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{9370660D-6BC6-4A54-A154-F4C4A034B3B0}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox">
+  <phrase updated="20211124T190911Z" fieldid="__Display name" itemid="{A5481454-0C2C-4A54-8BEB-1B51030C40C0}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox">
     <da>Toolbox</da>
   </phrase>
-  <phrase updated="20190718T183451Z" fieldid="__Display name" itemid="{A5481454-0C2C-4A54-8BEB-1B51030C40C0}" key="Toolbox" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox">
-    <da>Toolbox</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{7760775F-0CE7-4A01-A4E5-1AB9103FFFD3}" key="PowerShell Background Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/PowerShell Background Session Manager">
-    <da>Styr sessioner lavet med PowerShell.</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{7760775F-0CE7-4A01-A4E5-1AB9103FFFD3}" key="PowerShell Background Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/PowerShell Background Session Manager">
+  <phrase updated="20211124T191020Z" fieldid="__Display name" itemid="{7760775F-0CE7-4A01-A4E5-1AB9103FFFD3}" key="PowerShell Background Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/PowerShell Background Session Manager">
     <da>PowerShell baggrundssessionsmanager</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{D5C7F7B5-524F-43B5-A19B-89247CF713DE}" key="Rebuild script integration points" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Rebuild script integration points">
-    <da>Genbyg elementer, lavet for båndet, træstrukturen og ...</da>
+  <phrase updated="20211124T191020Z" fieldid="__Short description" itemid="{7760775F-0CE7-4A01-A4E5-1AB9103FFFD3}" key="PowerShell Background Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/PowerShell Background Session Manager">
+    <da>Styr sessioner lavet med PowerShell.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{D5C7F7B5-524F-43B5-A19B-89247CF713DE}" key="Rebuild script integration points" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Rebuild script integration points">
+  <phrase updated="20211124T191018Z" fieldid="__Display name" itemid="{D5C7F7B5-524F-43B5-A19B-89247CF713DE}" key="Rebuild script integration points" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Rebuild script integration points">
     <da>Genbyg scriptets integrationspunkter</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{EB994C17-44B1-4620-9DCF-DF046812F016}" key="Re-create site from sitemap" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Re-create site from sitemap">
-    <da>Laver indholdselementer baseret på en sitemapstruktur.</da>
+  <phrase updated="20211124T191018Z" fieldid="__Short description" itemid="{D5C7F7B5-524F-43B5-A19B-89247CF713DE}" key="Rebuild script integration points" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Rebuild script integration points">
+    <da>Genbyg elementer, lavet for båndet, træstrukturen og ...</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{EB994C17-44B1-4620-9DCF-DF046812F016}" key="Re-create site from sitemap" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Re-create site from sitemap">
+  <phrase updated="20211124T191014Z" fieldid="__Display name" itemid="{EB994C17-44B1-4620-9DCF-DF046812F016}" key="Re-create site from sitemap" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Re-create site from sitemap">
     <da>Genskab site fra sitemap</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{BBC64A41-D1FE-4C09-A76A-6A8E01B479D9}" key="About Sitecore PowerShell Extensions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/About Sitecore PowerShell Extensions">
-    <da>Vis versionsdetaljer om SPE.</da>
+  <phrase updated="20211124T191014Z" fieldid="__Short description" itemid="{EB994C17-44B1-4620-9DCF-DF046812F016}" key="Re-create site from sitemap" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/Re-create site from sitemap">
+    <da>Laver indholdselementer baseret på en sitemapstruktur.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{BBC64A41-D1FE-4C09-A76A-6A8E01B479D9}" key="About Sitecore PowerShell Extensions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/About Sitecore PowerShell Extensions">
+  <phrase updated="20211124T191016Z" fieldid="__Display name" itemid="{BBC64A41-D1FE-4C09-A76A-6A8E01B479D9}" key="About Sitecore PowerShell Extensions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/About Sitecore PowerShell Extensions">
     <da>Om Sitecore PowerShell udviddelsen</da>
   </phrase>
-  <phrase updated="20190718T194028Z" fieldid="__Display name" itemid="{86FBEE0D-6190-40BA-B045-511969B65745}" key="Delete unused media items older than 30 days" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Tasks/Delete unused media items older than 30 days">
+  <phrase updated="20211124T191016Z" fieldid="__Short description" itemid="{BBC64A41-D1FE-4C09-A76A-6A8E01B479D9}" key="About Sitecore PowerShell Extensions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox/About Sitecore PowerShell Extensions">
+    <da>Vis versionsdetaljer om SPE.</da>
+  </phrase>
+  <phrase updated="20211124T191042Z" fieldid="__Display name" itemid="{150D9F3E-1782-4439-A0DC-532426428BC5}" key="Rules" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules">
+    <da>** Rules **</da>
+  </phrase>
+  <phrase updated="20211124T191044Z" fieldid="__Display name" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules Based Report">
+    <da>** Rules Based Report **</da>
+  </phrase>
+  <phrase updated="20211124T191044Z" fieldid="__Long description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules Based Report">
+    <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
+  </phrase>
+  <phrase updated="20211124T191044Z" fieldid="__Short description" itemid="{F0A00908-B86C-4A32-A824-96D78A1C76AA}" key="Rules Based Report" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules Based Report">
+    <da>Kør brugerdefinerede rapporter bygget med forespørgsler og reglemotoren.</da>
+  </phrase>
+  <phrase updated="20220916T013013Z" fieldid="__Display name" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Toolbox/Index Viewer">
+    <da>** Index Viewer **</da>
+  </phrase>
+  <phrase updated="20220916T013013Z" fieldid="__Short description" itemid="{2805C06C-F17D-4C8E-813D-7304564078EB}" key="Index Viewer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Toolbox/Index Viewer">
+    <da>Smugkig ind i søgeindekset; brugbart ved fejlsøgning af indeksfejl.</da>
+  </phrase>
+  <phrase updated="20211124T191054Z" fieldid="__Display name" itemid="{86FBEE0D-6190-40BA-B045-511969B65745}" key="Delete unused media items older than 30 days" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Tasks/Delete unused media items older than 30 days">
     <da>Slet ubrugte medie elementer ældre end 30 dage</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{148B7002-A342-4D2F-9159-E02080FE6746}" key="Administration" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Administration">
+  <phrase updated="20211124T191057Z" fieldid="__Display name" itemid="{148B7002-A342-4D2F-9159-E02080FE6746}" key="Administration" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Administration">
     <da>** Administration **</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{476489C2-B3DE-4F35-A1C7-1E992D869FE5}" key="Analytics" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Analytics">
-    <da>** Analytics **</da>
-  </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{9197DAE0-2896-4F5A-B122-3AD96372E4D5}" key="Database" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Database">
+  <phrase updated="20211124T191058Z" fieldid="__Display name" itemid="{9197DAE0-2896-4F5A-B122-3AD96372E4D5}" key="Database" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Database">
     <da>** Database **</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{721DB01A-B4C2-4C33-AB21-FE4AF71681F9}" key="Globalization" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Globalization">
-    <da>** Globalization **</da>
-  </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{66C45781-21DE-467E-BC01-3A89A90A27BC}" key="Preferences" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Preferences">
-    <da>** Preferences **</da>
-  </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{4655F9C8-16BE-4343-A101-1473823EB017}" key="Reports" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Reports">
+  <phrase updated="20211124T191055Z" fieldid="__Display name" itemid="{4655F9C8-16BE-4343-A101-1473823EB017}" key="Reports" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Reports">
     <da>** Reports **</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{8442F585-0901-49B7-A457-D80679AABC15}" key="Security" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Security">
-    <da>Sikkerhed</da>
-  </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{B6FB54C1-5890-4898-8F7F-582FC793A2E0}" key="Archive Sitecore logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Archive Sitecore logs">
+  <phrase updated="20211124T191102Z" fieldid="__Display name" itemid="{B6FB54C1-5890-4898-8F7F-582FC793A2E0}" key="Archive Sitecore logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Archive Sitecore logs">
     <da>Arkiver Sitecore log filer</da>
   </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{33AA183D-7B0B-43C3-9833-4D530D49CED8}" key="Clean up database tables" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up database tables">
+  <phrase updated="20211124T191107Z" fieldid="__Display name" itemid="{33AA183D-7B0B-43C3-9833-4D530D49CED8}" key="Clean up database tables" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up database tables">
     <da>Rens database tabellerne</da>
   </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{DC7387B0-4909-4974-AE9F-68873702CB05}" key="Clean up databases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up databases">
+  <phrase updated="20211124T191111Z" fieldid="__Display name" itemid="{DC7387B0-4909-4974-AE9F-68873702CB05}" key="Clean up databases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up databases">
     <da>Rens databaserne</da>
   </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{65900675-DB8C-4BB5-8E39-E9485DA8C477}" key="Clean up deleted items older than 30 days" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up deleted items older than 30 days">
+  <phrase updated="20211124T191100Z" fieldid="__Display name" itemid="{65900675-DB8C-4BB5-8E39-E9485DA8C477}" key="Clean up deleted items older than 30 days" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up deleted items older than 30 days">
     <da>Fjern slettede elemeneter der er ældren end 30 dage</da>
   </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{E7AB8E76-96F0-4A8D-B80B-D9971515D1E4}" key="Clean up link databases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up link databases">
+  <phrase updated="20211124T191104Z" fieldid="__Display name" itemid="{E7AB8E76-96F0-4A8D-B80B-D9971515D1E4}" key="Clean up link databases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Clean up link databases">
     <da>Rens link databasen</da>
   </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{F993EB2A-6BA8-4D36-BC05-E7340FDF1B28}" key="Rebuild content search indexes" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Rebuild content search indexes">
+  <phrase updated="20211124T191109Z" fieldid="__Display name" itemid="{F993EB2A-6BA8-4D36-BC05-E7340FDF1B28}" key="Rebuild content search indexes" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Tasks/Rebuild content search indexes">
     <da>Genbyg indholdssøgeindeks</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{E68879C2-E532-442D-AD98-A9955F3BBC70}" key="Task Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox/Task Manager">
-    <da>Styring af programsatte opgaver.</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{E68879C2-E532-442D-AD98-A9955F3BBC70}" key="Task Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox/Task Manager">
+  <phrase updated="20220826T212244Z" fieldid="__Display name" itemid="{E68879C2-E532-442D-AD98-A9955F3BBC70}" key="Task Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox/Task Manager">
     <da>Opgavemanager</da>
   </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Short description" itemid="{C7FA7F43-8AB1-46A8-8CF5-620030B5947F}" key="Users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Reports/Users">
-    <da>Gennemse generelle detaljer om brugerne.</da>
+  <phrase updated="20220826T212244Z" fieldid="__Short description" itemid="{E68879C2-E532-442D-AD98-A9955F3BBC70}" key="Task Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Toolbox/Task Manager">
+    <da>Styring af programsatte opgaver.</da>
   </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Display name" itemid="{C7FA7F43-8AB1-46A8-8CF5-620030B5947F}" key="Users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Reports/Users">
-    <da>Brugere</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{FB9F165C-7AA8-4833-B5AD-D14598E71BC9}" key="Logged in Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Toolbox/Logged in Session Manager">
-    <da>Vis og luk aktuelle brugersessioner.</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{FB9F165C-7AA8-4833-B5AD-D14598E71BC9}" key="Logged in Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Toolbox/Logged in Session Manager">
-    <da>Påloggende brugersessions manager</da>
-  </phrase>
-  <phrase updated="20190718T194032Z" fieldid="__Display name" itemid="{09DF6EB1-4E1C-4F40-8C12-6EB223093AC4}" key="Remove idle user sessions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Session Management/Tasks/Remove idle user sessions">
-    <da>Fjern ikke aktive bruger sessioner</da>
-  </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Short description" itemid="{0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}" key="Configuration Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit">
-    <da>Gennemse generelle detaljer om Sitecore løsningen.</da>
-  </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Display name" itemid="{0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}" key="Configuration Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit">
+  <phrase updated="20220923T023938Z" fieldid="__Display name" itemid="{0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}" key="Configuration Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit">
     <da>Konfigurationsrevision</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}" key="Content Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit">
-    <da>Gennemse detaljer om indholds og medieelementer.</da>
+  <phrase updated="20220923T023938Z" fieldid="__Short description" itemid="{0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}" key="Configuration Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit">
+    <da>Gennemse generelle detaljer om Sitecore løsningen.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}" key="Content Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit">
+  <phrase updated="20211124T191121Z" fieldid="__Display name" itemid="{66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}" key="Content Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit">
     <da>Indholdsrevision</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{F2E422C9-726E-4A6D-B992-71945BBE2F0A}" key="Media Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit">
-    <da>Gennemse detaljer om medieelementer. Brugbar til at finde spildt plads.</da>
+  <phrase updated="20211124T191121Z" fieldid="__Short description" itemid="{66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}" key="Content Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit">
+    <da>Gennemse detaljer om indholds og medieelementer.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{F2E422C9-726E-4A6D-B992-71945BBE2F0A}" key="Media Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit">
+  <phrase updated="20211124T191119Z" fieldid="__Display name" itemid="{F2E422C9-726E-4A6D-B992-71945BBE2F0A}" key="Media Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit">
     <da>Medierevision</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
-    <da>Forbedringspotentialer baseret på Sitecores anbefalinger.</da>
+  <phrase updated="20211124T191119Z" fieldid="__Short description" itemid="{F2E422C9-726E-4A6D-B992-71945BBE2F0A}" key="Media Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit">
+    <da>Gennemse detaljer om medieelementer. Brugbar til at finde spildt plads.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Long description" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
-    <da>Sitecore har leveret en række anbefalinger. Brug disse rapporter til at guide dig med at skabe en klippestabil løsning.</da>
-  </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
+  <phrase updated="20220923T023956Z" fieldid="__Display name" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
     <da>Løsningsrevision</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{44C09E51-9D3E-42FF-9690-682A97DDF94C}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management">
-    <da>Importer indhold eller data i en arbejdsgang.</da>
+  <phrase updated="20220923T023956Z" fieldid="__Long description" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
+    <da>Sitecore har leveret en række anbefalinger. Brug disse rapporter til at guide dig med at skabe en klippestabil løsning.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{44C09E51-9D3E-42FF-9690-682A97DDF94C}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management">
+  <phrase updated="20220923T023956Z" fieldid="__Short description" itemid="{A608590E-6B4D-4BD0-BEBE-9753037072CC}" key="Solution Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit">
+    <da>Forbedringspotentialer baseret på Sitecores anbefalinger.</da>
+  </phrase>
+  <phrase updated="20211124T190946Z" fieldid="__Display name" itemid="{79909674-755F-4285-A973-E476889C282F}" key="Tutorials" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Training Modules/Toolbox/Tutorials">
+    <da>** Tutorials **</da>
+  </phrase>
+  <phrase updated="20211124T190946Z" fieldid="__Short description" itemid="{79909674-755F-4285-A973-E476889C282F}" key="Tutorials" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Training Modules/Toolbox/Tutorials">
+    <da>** Run to enable or disable the training modules. **</da>
+  </phrase>
+  <phrase updated="20211124T191002Z" fieldid="__Display name" itemid="{44C09E51-9D3E-42FF-9690-682A97DDF94C}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management">
     <da>Datamanagement</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{D977A9DF-B38D-490F-A490-CBA48AA37F09}" key="Create Anti-Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox/Create Anti-Package">
-    <da>Lav en afinstallationspakke, før installation.</da>
+  <phrase updated="20211124T191002Z" fieldid="__Short description" itemid="{44C09E51-9D3E-42FF-9690-682A97DDF94C}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management">
+    <da>Importer indhold eller data i en arbejdsgang.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{D977A9DF-B38D-490F-A490-CBA48AA37F09}" key="Create Anti-Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox/Create Anti-Package">
+  <phrase updated="20211124T190949Z" fieldid="__Display name" itemid="{D977A9DF-B38D-490F-A490-CBA48AA37F09}" key="Create Anti-Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox/Create Anti-Package">
     <da>Lav anti-pakke</da>
   </phrase>
-  <phrase updated="20190718T195809Z" fieldid="__Short description" itemid="{6D3D8082-455B-4523-B147-C76B03EA14A4}" key="Purge Empty Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Purge Empty Libraries">
-    <da>Fjern alle tomme script biblioteker.</da>
+  <phrase updated="20211124T190949Z" fieldid="__Short description" itemid="{D977A9DF-B38D-490F-A490-CBA48AA37F09}" key="Create Anti-Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox/Create Anti-Package">
+    <da>Lav en afinstallationspakke, før installation.</da>
   </phrase>
-  <phrase updated="20190718T195809Z" fieldid="__Display name" itemid="{6D3D8082-455B-4523-B147-C76B03EA14A4}" key="Purge Empty Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Purge Empty Libraries">
+  <phrase updated="20211124T190954Z" fieldid="__Short description" itemid="{03164B1C-C248-4B3C-A0D4-63F01AFF4E79}" key="Security Audit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit">
+    <da>** Review security details about the Sitecore solution. **</da>
+  </phrase>
+  <phrase updated="20211124T190956Z" fieldid="__Display name" itemid="{09DF6EB1-4E1C-4F40-8C12-6EB223093AC4}" key="Remove idle user sessions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Tasks/Remove idle user sessions">
+    <da>Fjern ikke aktive bruger sessioner</da>
+  </phrase>
+  <phrase updated="20211124T191305Z" fieldid="__Display name" itemid="{6D3D8082-455B-4523-B147-C76B03EA14A4}" key="Purge Empty Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Purge Empty Libraries">
     <da>Fjern tomme biblioteker</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{14F9CC2F-DD44-4AE8-9FB4-CF49AC787BAD}" key="PowerShell Action" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/PowerShell Action">
+  <phrase updated="20211124T191305Z" fieldid="__Short description" itemid="{6D3D8082-455B-4523-B147-C76B03EA14A4}" key="Purge Empty Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Purge Empty Libraries">
+    <da>Fjern alle tomme script biblioteker.</da>
+  </phrase>
+  <phrase updated="20220825T002503Z" fieldid="__Display name" itemid="{14F9CC2F-DD44-4AE8-9FB4-CF49AC787BAD}" key="PowerShell Action" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/PowerShell Action">
     <da>PowerShell handlinger</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
-    <da>Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Long description" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
-    <da>Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
+  <phrase updated="20211124T191311Z" fieldid="__Display name" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
     <da>Integrationspunktsbiblioteker</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
-    <da>Start en ny modul guiden.</da>
+  <phrase updated="20211124T191311Z" fieldid="__Long description" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
+    <da>Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Long description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
-    <da>Start en ny modul guiden.</da>
+  <phrase updated="20211124T191311Z" fieldid="__Short description" itemid="{5945F6DC-A29D-4A8D-A29D-860693F08241}" key="Integration Point Libraries" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries">
+    <da>Kør guiden for at tilføje flere integrationspunktsbiblioteker til modulet.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
+  <phrase updated="20211124T191313Z" fieldid="__Display name" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
     <da>Modul guide</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Short description" itemid="{F52A5B18-6E32-42C3-9B6F-61B6BD113F13}" key="Format" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format">
-    <da>Formater scriptteksten.</da>
+  <phrase updated="20211124T191313Z" fieldid="__Long description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
+    <da>Start en ny modul guiden.</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{F52A5B18-6E32-42C3-9B6F-61B6BD113F13}" key="Format" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format">
+  <phrase updated="20211124T191313Z" fieldid="__Short description" itemid="{41BF54CD-BC65-40B7-A3CF-7A1940B4CEF7}" key="Module Wizard" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Module Wizard">
+    <da>Start en ny modul guiden.</da>
+  </phrase>
+  <phrase updated="20211124T191253Z" fieldid="__Display name" itemid="{F52A5B18-6E32-42C3-9B6F-61B6BD113F13}" key="Format" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format">
     <da>Format</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Short description" itemid="{DC057106-E746-42E3-9ADA-2A5215C00F85}" key="Scripts containing" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Scripts containing">
-    <da>Find alle scripts, hvor den valgte tekst indgår.</da>
+  <phrase updated="20211124T191253Z" fieldid="__Short description" itemid="{F52A5B18-6E32-42C3-9B6F-61B6BD113F13}" key="Format" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format">
+    <da>Formater scriptteksten.</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{DC057106-E746-42E3-9ADA-2A5215C00F85}" key="Scripts containing" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Scripts containing">
+  <phrase updated="20211124T191256Z" fieldid="__Display name" itemid="{DC057106-E746-42E3-9ADA-2A5215C00F85}" key="Scripts containing" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Scripts containing">
     <da>Scripts indeholdende</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Short description" itemid="{B3420EDE-DFA2-4D2D-96C3-D79ED56AF48A}" key="Snippet" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Snippet">
-    <da>Indsæt en stump almindelig kode.</da>
+  <phrase updated="20211124T191256Z" fieldid="__Short description" itemid="{DC057106-E746-42E3-9ADA-2A5215C00F85}" key="Scripts containing" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Scripts containing">
+    <da>Find alle scripts, hvor den valgte tekst indgår.</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{B3420EDE-DFA2-4D2D-96C3-D79ED56AF48A}" key="Snippet" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Snippet">
+  <phrase updated="20211124T191250Z" fieldid="__Display name" itemid="{B3420EDE-DFA2-4D2D-96C3-D79ED56AF48A}" key="Snippet" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Snippet">
     <da>Stump</da>
   </phrase>
-  <phrase updated="20181017T024505Z" fieldid="__Short description" itemid="{374F14C6-867A-47F2-B5E2-E9A7224F33A0}" key="Index this" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Index On Demand/Content Editor/Context Menu/Index this">
+  <phrase updated="20211124T191250Z" fieldid="__Short description" itemid="{B3420EDE-DFA2-4D2D-96C3-D79ED56AF48A}" key="Snippet" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Snippet">
+    <da>Indsæt en stump almindelig kode.</da>
+  </phrase>
+  <phrase updated="20211124T191357Z" fieldid="__Display name" itemid="{FE29E5C3-7A3F-44E6-81F4-F22DDEC3CFAE}" key="PowerShell Rule Library" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Content Editor/Insert Item/PowerShell Rule Library">
+    <da>** PowerShell Rule Library **</da>
+  </phrase>
+  <phrase updated="20211124T191345Z" fieldid="__Display name" itemid="{3B93315F-C240-4682-A45F-CDB09D0F2F65}" key="Any item under Content has layout" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Any item under Content has layout">
+    <da>** Any item under Content has layout **</da>
+  </phrase>
+  <phrase updated="20211124T191349Z" fieldid="__Display name" itemid="{246CF1B3-1F49-42FF-8F51-9F6279397251}" key="Any item under Content has too many versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Any item under Content has too many versions">
+    <da>** Any item under Content has too many versions **</da>
+  </phrase>
+  <phrase updated="20211124T191352Z" fieldid="__Display name" itemid="{9AB5103C-C40F-4A44-A35E-FA92EDEE9391}" key="Any item under Content is locked" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Any item under Content is locked">
+    <da>** Any item under Content is locked **</da>
+  </phrase>
+  <phrase updated="20211124T191342Z" fieldid="__Display name" itemid="{D7A1FED5-D7F3-4FB2-B1D0-1C08F94EAABB}" key="Media item is jpeg" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Media item is jpeg">
+    <da>** Media item is jpeg **</da>
+  </phrase>
+  <phrase updated="20211124T191347Z" fieldid="__Display name" itemid="{99839B36-9947-4CD9-B6EA-F4E59EA972A0}" key="Media item with empty Alt field" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Reports/Rules/Media item with empty Alt field">
+    <da>** Media item with empty Alt field **</da>
+  </phrase>
+  <phrase updated="20211124T191401Z" fieldid="__Short description" itemid="{374F14C6-867A-47F2-B5E2-E9A7224F33A0}" key="Index this" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Index On Demand/Content Editor/Context Menu/Index this">
     <da>Opdater søgeindekset med det valgte element.</da>
   </phrase>
-  <phrase updated="20181017T024505Z" fieldid="__Short description" itemid="{0CBA0962-ED5F-4D05-8560-849790209392}" key="Index this and descendants" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Index On Demand/Content Editor/Context Menu/Index this and descendants">
+  <phrase updated="20211124T191359Z" fieldid="__Short description" itemid="{0CBA0962-ED5F-4D05-8560-849790209392}" key="Index this and descendants" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Index On Demand/Content Editor/Context Menu/Index this and descendants">
     <da>Opdater søgeindekset med det valgte element og dets efterkommere.</da>
   </phrase>
-  <phrase updated="20190718T195809Z" fieldid="__Short description" itemid="{721FDA95-893E-4704-8260-7A5C24E660F8}" key="Download" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Content Editor/Context Menu/Download">
-    <da>Download et arkiv af det valgte medie.</da>
-  </phrase>
-  <phrase updated="20190718T195809Z" fieldid="__Display name" itemid="{721FDA95-893E-4704-8260-7A5C24E660F8}" key="Download" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Content Editor/Context Menu/Download">
+  <phrase updated="20220830T191503Z" fieldid="__Display name" itemid="{721FDA95-893E-4704-8260-7A5C24E660F8}" key="Download" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Content Editor/Context Menu/Download">
     <da>Hent</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{C2BBD223-5189-42ED-B6E9-5591E69CD0C7}" key="Clean up deleted items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Database/Clean up deleted items">
+  <phrase updated="20220830T191503Z" fieldid="__Short description" itemid="{721FDA95-893E-4704-8260-7A5C24E660F8}" key="Download" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Content Editor/Context Menu/Download">
+    <da>Download et arkiv af det valgte medie.</da>
+  </phrase>
+  <phrase updated="20211124T191408Z" fieldid="__Display name" itemid="{C2BBD223-5189-42ED-B6E9-5591E69CD0C7}" key="Clean up deleted items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Database/Clean up deleted items">
     <da>Fjern slettede elementer</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{66FB1E5C-7E32-4C5B-8648-7B30FADAE2BE}" key="Download Sitecore logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Reports/Download Sitecore logs">
+  <phrase updated="20211124T191406Z" fieldid="__Display name" itemid="{66FB1E5C-7E32-4C5B-8648-7B30FADAE2BE}" key="Download Sitecore logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/System Maintenance/Control Panel/Reports/Download Sitecore logs">
     <da>Download Sitecore log-filer</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{0C430EA2-AB92-4BEF-9982-C559CF3E4DC2}" key="Edit Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Edit Task Schedule">
-    <da>Åbn dialogboks for at redigere den programsate opgave.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{0C430EA2-AB92-4BEF-9982-C559CF3E4DC2}" key="Edit Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Edit Task Schedule">
+  <phrase updated="20211124T191411Z" fieldid="__Display name" itemid="{0C430EA2-AB92-4BEF-9982-C559CF3E4DC2}" key="Edit Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Edit Task Schedule">
     <da>Editer opgavetidsplanen</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" key="Run Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Run Task Schedule">
-    <da>Lad den programsate opgave køre nu.</da>
+  <phrase updated="20211124T191411Z" fieldid="__Short description" itemid="{0C430EA2-AB92-4BEF-9982-C559CF3E4DC2}" key="Edit Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Edit Task Schedule">
+    <da>Åbn dialogboks for at redigere den programsate opgave.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" key="Run Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Run Task Schedule">
+  <phrase updated="20211124T191413Z" fieldid="__Display name" itemid="{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" key="Run Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Run Task Schedule">
     <da>Kør opgavetidsplanen</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{38C2F540-8609-4050-A60A-D7A914F5798C}" key="PowerShell Scripted Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Insert Item/PowerShell Scripted Task Schedule">
-    <da>Lav en ny programsat opgave med PowerShell.</da>
+  <phrase updated="20211124T191413Z" fieldid="__Short description" itemid="{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" key="Run Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Context Menu/Run Task Schedule">
+    <da>Lad den programsate opgave køre nu.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{38C2F540-8609-4050-A60A-D7A914F5798C}" key="PowerShell Scripted Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Insert Item/PowerShell Scripted Task Schedule">
+  <phrase updated="20211124T191415Z" fieldid="__Display name" itemid="{38C2F540-8609-4050-A60A-D7A914F5798C}" key="PowerShell Scripted Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Insert Item/PowerShell Scripted Task Schedule">
     <da>PowerShell scripted opgavetidsplan</da>
   </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Display name" itemid="{13E1A607-6064-42B9-AA6F-BD245E1F3555}" key="Recently logged in users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Reports/Users/Recently logged in users">
-    <da>For nyelig påloggede brugerer</da>
+  <phrase updated="20211124T191415Z" fieldid="__Short description" itemid="{38C2F540-8609-4050-A60A-D7A914F5798C}" key="PowerShell Scripted Task Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Content Editor/Insert Item/PowerShell Scripted Task Schedule">
+    <da>Lav en ny programsat opgave med PowerShell.</da>
   </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Short description" itemid="{29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}" key="Find all Sitecore PowerShell Commands" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find all Sitecore PowerShell Commands">
-    <da>Find alle kommandoer inkluderet i Sitecore PowerShell udvidelsen.</da>
-  </phrase>
-  <phrase updated="20190718T195814Z" fieldid="__Display name" itemid="{29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}" key="Find all Sitecore PowerShell Commands" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find all Sitecore PowerShell Commands">
+  <phrase updated="20211124T191442Z" fieldid="__Display name" itemid="{29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}" key="Find all Sitecore PowerShell Commands" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find all Sitecore PowerShell Commands">
     <da>Find alle Sitecore PowerShell kommandoer</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{32CAFC20-4C63-4F60-B474-42145A5F1518}" key="Find Audit Trail from logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find Audit Trail from logs">
-    <da>Find alle audit elementerne i standard log-filen.</da>
+  <phrase updated="20211124T191442Z" fieldid="__Short description" itemid="{29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}" key="Find all Sitecore PowerShell Commands" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find all Sitecore PowerShell Commands">
+    <da>Find alle kommandoer inkluderet i Sitecore PowerShell udvidelsen.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{32CAFC20-4C63-4F60-B474-42145A5F1518}" key="Find Audit Trail from logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find Audit Trail from logs">
-    <da>Find revisionsspor fra log-filerne</da>
+  <phrase updated="20221002T024941Z" fieldid="__Short description" itemid="{183DEE78-836B-4066-B929-9155BBB7EED0}" key="Find items with a missing template" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find items with a missing template">
+    <da>** Find items where the template is missing; a situation that can cause undesirable behaviors. **</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{783CAF2B-E77A-486C-AFD0-B33558CAC066}" key="Find site domain conflicts" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find site domain conflicts">
-    <da>Identificer mulige hostnavne konflikter mellem sites.</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{783CAF2B-E77A-486C-AFD0-B33558CAC066}" key="Find site domain conflicts" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find site domain conflicts">
+  <phrase updated="20211124T191440Z" fieldid="__Display name" itemid="{783CAF2B-E77A-486C-AFD0-B33558CAC066}" key="Find site domain conflicts" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find site domain conflicts">
     <da>Find site domæne konflikter</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{8193727A-D008-4634-AE9D-6A2CBBF8C856}" key="Aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Aliases">
-    <da>Auditer alle tilgængelige aliaser.</da>
+  <phrase updated="20211124T191440Z" fieldid="__Short description" itemid="{783CAF2B-E77A-486C-AFD0-B33558CAC066}" key="Find site domain conflicts" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Configuration Audit/Find site domain conflicts">
+    <da>Identificer mulige hostnavne konflikter mellem sites.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{8193727A-D008-4634-AE9D-6A2CBBF8C856}" key="Aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Aliases">
+  <phrase updated="20211124T191522Z" fieldid="__Display name" itemid="{8193727A-D008-4634-AE9D-6A2CBBF8C856}" key="Aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Aliases">
     <da>Aliaser</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{49C76CD6-5D9F-45B3-8799-84B9D0E59C1C}" key="Broken Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Broken Links">
-    <da>Rapporter brudte links filtreret via versioner og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191522Z" fieldid="__Short description" itemid="{8193727A-D008-4634-AE9D-6A2CBBF8C856}" key="Aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Aliases">
+    <da>Auditer alle tilgængelige aliaser.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{49C76CD6-5D9F-45B3-8799-84B9D0E59C1C}" key="Broken Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Broken Links">
+  <phrase updated="20211124T191528Z" fieldid="__Display name" itemid="{49C76CD6-5D9F-45B3-8799-84B9D0E59C1C}" key="Broken Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Broken Links">
     <da>Brudte links</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{3BE04279-3707-4D78-ACC9-D1AFB33D19E6}" key="Items have no publishable version" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items have no publishable version">
-    <da>Rapporter elementer uden nogen publiserbare versioner og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191528Z" fieldid="__Short description" itemid="{49C76CD6-5D9F-45B3-8799-84B9D0E59C1C}" key="Broken Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Broken Links">
+    <da>Rapporter brudte links filtreret via versioner og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{3BE04279-3707-4D78-ACC9-D1AFB33D19E6}" key="Items have no publishable version" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items have no publishable version">
+  <phrase updated="20211124T191531Z" fieldid="__Display name" itemid="{3BE04279-3707-4D78-ACC9-D1AFB33D19E6}" key="Items have no publishable version" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items have no publishable version">
     <da>Elementer der ikke har nogen publiserbar version</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{4842F9A8-5F78-41D6-ABC2-A33760F41718}" key="Items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items last updated">
-    <da>Rapporter på elementer uden en opdatering i et antal dage og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191531Z" fieldid="__Short description" itemid="{3BE04279-3707-4D78-ACC9-D1AFB33D19E6}" key="Items have no publishable version" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items have no publishable version">
+    <da>Rapporter elementer uden nogen publiserbare versioner og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{4842F9A8-5F78-41D6-ABC2-A33760F41718}" key="Items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items last updated">
+  <phrase updated="20211124T191536Z" fieldid="__Display name" itemid="{4842F9A8-5F78-41D6-ABC2-A33760F41718}" key="Items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items last updated">
     <da>Elementer sidst opdateret</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{33F7B3D5-C675-461E-83EF-1E08165725E0}" key="Items scheduled to archive" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items scheduled to archive">
-    <da>Rapporter på elementer programsat til at blive arkiveret og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191536Z" fieldid="__Short description" itemid="{4842F9A8-5F78-41D6-ABC2-A33760F41718}" key="Items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items last updated">
+    <da>Rapporter på elementer uden en opdatering i et antal dage og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{33F7B3D5-C675-461E-83EF-1E08165725E0}" key="Items scheduled to archive" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items scheduled to archive">
+  <phrase updated="20211124T191540Z" fieldid="__Display name" itemid="{33F7B3D5-C675-461E-83EF-1E08165725E0}" key="Items scheduled to archive" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items scheduled to archive">
     <da>Elementer programsat til arkivering</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{4E530464-6DEA-493B-B3B3-A85E88E2D5FC}" key="Items unpublished in one or more targets" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items unpublished in one or more targets">
-    <da>Rapporter på elementer som ikke er blevet publiceret og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191540Z" fieldid="__Short description" itemid="{33F7B3D5-C675-461E-83EF-1E08165725E0}" key="Items scheduled to archive" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items scheduled to archive">
+    <da>Rapporter på elementer programsat til at blive arkiveret og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{4E530464-6DEA-493B-B3B3-A85E88E2D5FC}" key="Items unpublished in one or more targets" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items unpublished in one or more targets">
+  <phrase updated="20211124T191544Z" fieldid="__Display name" itemid="{4E530464-6DEA-493B-B3B3-A85E88E2D5FC}" key="Items unpublished in one or more targets" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items unpublished in one or more targets">
     <da>Elementer upubliseret i en eller flere målkilder</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{1478088D-E64E-4D8C-9828-6624AC644BED}" key="Items with active reminders" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with active reminders">
-    <da>Rapporter på elementer med en arkiveringsreminder og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191544Z" fieldid="__Short description" itemid="{4E530464-6DEA-493B-B3B3-A85E88E2D5FC}" key="Items unpublished in one or more targets" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items unpublished in one or more targets">
+    <da>Rapporter på elementer som ikke er blevet publiceret og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{1478088D-E64E-4D8C-9828-6624AC644BED}" key="Items with active reminders" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with active reminders">
+  <phrase updated="20211124T191549Z" fieldid="__Display name" itemid="{1478088D-E64E-4D8C-9828-6624AC644BED}" key="Items with active reminders" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with active reminders">
     <da>Elementer med aktive påmindelser</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{4ADB96CA-9011-4888-9500-8E9A891CB0B3}" key="Items with aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with aliases">
-    <da>Rapporter på elementer med et alias og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191549Z" fieldid="__Short description" itemid="{1478088D-E64E-4D8C-9828-6624AC644BED}" key="Items with active reminders" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with active reminders">
+    <da>Rapporter på elementer med en arkiveringsreminder og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{4ADB96CA-9011-4888-9500-8E9A891CB0B3}" key="Items with aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with aliases">
+  <phrase updated="20211124T191525Z" fieldid="__Display name" itemid="{4ADB96CA-9011-4888-9500-8E9A891CB0B3}" key="Items with aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with aliases">
     <da>Elementer med aliaser</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{11F3A846-FD48-4C98-B2F9-2CC3A93F9662}" key="Items with personalized renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with personalized renderings">
+  <phrase updated="20211124T191525Z" fieldid="__Short description" itemid="{4ADB96CA-9011-4888-9500-8E9A891CB0B3}" key="Items with aliases" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with aliases">
+    <da>Rapporter på elementer med et alias og med udgangspunkt i et rod-element.</da>
+  </phrase>
+  <phrase updated="20220906T194759Z" fieldid="__Display name" itemid="{11F3A846-FD48-4C98-B2F9-2CC3A93F9662}" key="Items with personalized renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with personalized renderings">
     <da>Elementer med personaliserede renderinger</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{C05DB55E-CAEF-40B8-9F46-7195339B51B7}" key="Items with security for an account" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for an account">
-    <da>Rapporter på elementer hvor sikkerheden er sat med en bruger og med udgangspunkt i et rod-element.</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{C05DB55E-CAEF-40B8-9F46-7195339B51B7}" key="Items with security for an account" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for an account">
-    <da>Elementer med sikkerhed sat for en konto</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{2CA02EFB-2BBA-43B5-B552-C5BB39D4CB91}" key="Items with security for domain" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for domain">
-    <da>Rapporter på elementer hvor sikkerheden er konfigureret med brugere eller roller fra et specifikt domæne.</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{2CA02EFB-2BBA-43B5-B552-C5BB39D4CB91}" key="Items with security for domain" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for domain">
-    <da>Elementer med sikkerhed sat for et domæne</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{701177E5-09EF-4B40-9E33-C12FA925EA46}" key="Items with template" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with template">
-    <da>Rapporter på elementer som arver fra en specifik template og med udgangspunkt i et rod-element.</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{701177E5-09EF-4B40-9E33-C12FA925EA46}" key="Items with template" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with template">
+  <phrase updated="20211124T191538Z" fieldid="__Display name" itemid="{701177E5-09EF-4B40-9E33-C12FA925EA46}" key="Items with template" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with template">
     <da>Elementer med templates</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{0C97AC4B-647F-4012-A11D-608A4BC39045}" key="Items with tokens in fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with tokens in fields">
-    <da>Rapporter på elementer med en tolken i en af felterne og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191538Z" fieldid="__Short description" itemid="{701177E5-09EF-4B40-9E33-C12FA925EA46}" key="Items with template" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with template">
+    <da>Rapporter på elementer som arver fra en specifik template og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{0C97AC4B-647F-4012-A11D-608A4BC39045}" key="Items with tokens in fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with tokens in fields">
+  <phrase updated="20211124T191542Z" fieldid="__Display name" itemid="{0C97AC4B-647F-4012-A11D-608A4BC39045}" key="Items with tokens in fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with tokens in fields">
     <da>Elementer med tolkens i felterne</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{59E3E841-A68B-42D2-B52B-D0EFE822435A}" key="Locked Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Locked Items">
-    <da>Rapporter på elementer hvor en version er låst af en given bruger og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191542Z" fieldid="__Short description" itemid="{0C97AC4B-647F-4012-A11D-608A4BC39045}" key="Items with tokens in fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with tokens in fields">
+    <da>Rapporter på elementer med en tolken i en af felterne og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{59E3E841-A68B-42D2-B52B-D0EFE822435A}" key="Locked Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Locked Items">
-    <da>Låste elementer</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{53402CF4-BCFF-437D-83E6-B7A6D1BE2BAD}" key="Recent workflow history" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history">
-    <da>Rapporter på workflow historikken indenfor de sidste to uger.</da>
-  </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{53402CF4-BCFF-437D-83E6-B7A6D1BE2BAD}" key="Recent workflow history" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history">
+  <phrase updated="20211124T191546Z" fieldid="__Display name" itemid="{53402CF4-BCFF-437D-83E6-B7A6D1BE2BAD}" key="Recent workflow history" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history">
     <da>Nylig workflow historie</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Short description" itemid="{A068E625-4CB9-4BF9-BFED-F8D93225E6C9}" key="Stale workflow items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Stale workflow items">
-    <da>Rapporter på elementer hvor workflow status ikke er ændret i et antal dage og med udgangspunkt i et rod-element.</da>
+  <phrase updated="20211124T191546Z" fieldid="__Short description" itemid="{53402CF4-BCFF-437D-83E6-B7A6D1BE2BAD}" key="Recent workflow history" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history">
+    <da>Rapporter på workflow historikken indenfor de sidste to uger.</da>
   </phrase>
-  <phrase updated="20190718T195815Z" fieldid="__Display name" itemid="{A068E625-4CB9-4BF9-BFED-F8D93225E6C9}" key="Stale workflow items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Stale workflow items">
+  <phrase updated="20211124T191551Z" fieldid="__Display name" itemid="{A068E625-4CB9-4BF9-BFED-F8D93225E6C9}" key="Stale workflow items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Stale workflow items">
     <da>Gamle workflow elementer</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{46137F1E-0987-4B6E-AE82-02B71F3BFCEF}" key="Database based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Database based media items">
-    <da>Rapporter på media elementer med binær data gemt i databasen.</da>
+  <phrase updated="20211124T191551Z" fieldid="__Short description" itemid="{A068E625-4CB9-4BF9-BFED-F8D93225E6C9}" key="Stale workflow items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Stale workflow items">
+    <da>Rapporter på elementer hvor workflow status ikke er ændret i et antal dage og med udgangspunkt i et rod-element.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{46137F1E-0987-4B6E-AE82-02B71F3BFCEF}" key="Database based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Database based media items">
+  <phrase updated="20211124T191420Z" fieldid="__Display name" itemid="{46137F1E-0987-4B6E-AE82-02B71F3BFCEF}" key="Database based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Database based media items">
     <da>Database baserede medie elementer</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{2C3337FF-E4D2-4281-A250-97383D75338F}" key="File based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/File based media items">
-    <da>Rapporter på media elementer med binær data gemt på filsystemet.</da>
+  <phrase updated="20211124T191420Z" fieldid="__Short description" itemid="{46137F1E-0987-4B6E-AE82-02B71F3BFCEF}" key="Database based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Database based media items">
+    <da>Rapporter på media elementer med binær data gemt i databasen.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{2C3337FF-E4D2-4281-A250-97383D75338F}" key="File based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/File based media items">
+  <phrase updated="20211124T191425Z" fieldid="__Display name" itemid="{2C3337FF-E4D2-4281-A250-97383D75338F}" key="File based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/File based media items">
     <da>Filbaserede medie elementer</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{3C3CEE69-83B7-4629-A7A6-1A8145C3E101}" key="Image items with empty Alt field" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Image items with empty Alt field">
-    <da>Rapporter på media elementer hvor Alt-tekst feltet er tomt.</da>
+  <phrase updated="20211124T191425Z" fieldid="__Short description" itemid="{2C3337FF-E4D2-4281-A250-97383D75338F}" key="File based media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/File based media items">
+    <da>Rapporter på media elementer med binær data gemt på filsystemet.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{3C3CEE69-83B7-4629-A7A6-1A8145C3E101}" key="Image items with empty Alt field" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Image items with empty Alt field">
+  <phrase updated="20211124T191430Z" fieldid="__Display name" itemid="{3C3CEE69-83B7-4629-A7A6-1A8145C3E101}" key="Image items with empty Alt field" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Image items with empty Alt field">
     <da>Billedeelementer med et tomt Alt-felt</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{045A4653-131C-445C-8341-B8B9C448AD46}" key="Media items by size and type" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items by size and type">
-    <da>Rapporter på media elementer større end den angivne størrelse og med den angivne filtype</da>
+  <phrase updated="20211124T191430Z" fieldid="__Short description" itemid="{3C3CEE69-83B7-4629-A7A6-1A8145C3E101}" key="Image items with empty Alt field" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Image items with empty Alt field">
+    <da>Rapporter på media elementer hvor Alt-tekst feltet er tomt.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{045A4653-131C-445C-8341-B8B9C448AD46}" key="Media items by size and type" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items by size and type">
+  <phrase updated="20220826T135614Z" fieldid="__Display name" itemid="{045A4653-131C-445C-8341-B8B9C448AD46}" key="Media items by size and type" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items by size and type">
     <da>Medieelementer efter størrelse og type</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{649AA26D-8532-4CAF-94DC-3DAA4980811A}" key="Media items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated">
-    <da>Rapporter på mediaelementer uden en opdateringen indenfor et antal dage.</da>
+  <phrase updated="20220826T135614Z" fieldid="__Short description" itemid="{045A4653-131C-445C-8341-B8B9C448AD46}" key="Media items by size and type" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items by size and type">
+    <da>Rapporter på media elementer større end den angivne størrelse og med den angivne filtype</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{649AA26D-8532-4CAF-94DC-3DAA4980811A}" key="Media items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated">
+  <phrase updated="20211124T191438Z" fieldid="__Display name" itemid="{649AA26D-8532-4CAF-94DC-3DAA4980811A}" key="Media items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated">
     <da>Medieelementer sidst opdateret</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{9052B33D-52DD-4C99-BE20-5D0ED2135ECF}" key="Media items not used by content items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items not used by content items">
-    <da>Rapporter på media elementer som ikke indgår i noget indholdselement. Kræver at linkdatabsen er opdateret.</da>
+  <phrase updated="20211124T191438Z" fieldid="__Short description" itemid="{649AA26D-8532-4CAF-94DC-3DAA4980811A}" key="Media items last updated" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated">
+    <da>Rapporter på mediaelementer uden en opdateringen indenfor et antal dage.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{9052B33D-52DD-4C99-BE20-5D0ED2135ECF}" key="Media items not used by content items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items not used by content items">
+  <phrase updated="20211124T191418Z" fieldid="__Display name" itemid="{9052B33D-52DD-4C99-BE20-5D0ED2135ECF}" key="Media items not used by content items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items not used by content items">
     <da>Medieelementer der ikke bliver brugt af et indholdselement</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{0C204443-C3D1-4AB7-A79A-52180E76060C}" key="Media items with obsolete versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with obsolete versions">
-    <da>Rapporter på media elementer med mere end en version.</da>
+  <phrase updated="20211124T191418Z" fieldid="__Short description" itemid="{9052B33D-52DD-4C99-BE20-5D0ED2135ECF}" key="Media items not used by content items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items not used by content items">
+    <da>Rapporter på media elementer som ikke indgår i noget indholdselement. Kræver at linkdatabsen er opdateret.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{0C204443-C3D1-4AB7-A79A-52180E76060C}" key="Media items with obsolete versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with obsolete versions">
+  <phrase updated="20211124T191422Z" fieldid="__Display name" itemid="{0C204443-C3D1-4AB7-A79A-52180E76060C}" key="Media items with obsolete versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with obsolete versions">
     <da>Medieelementer med forældede versioner</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{DF0FB7FB-C4EF-40AA-89BA-3DB8A7EC66B3}" key="Media items with warnings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with warnings">
-    <da>Rapporter på media elementer med en eller flere valideringsadvarsler.</da>
+  <phrase updated="20211124T191422Z" fieldid="__Short description" itemid="{0C204443-C3D1-4AB7-A79A-52180E76060C}" key="Media items with obsolete versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with obsolete versions">
+    <da>Rapporter på media elementer med mere end en version.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{DF0FB7FB-C4EF-40AA-89BA-3DB8A7EC66B3}" key="Media items with warnings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with warnings">
+  <phrase updated="20211124T191427Z" fieldid="__Display name" itemid="{DF0FB7FB-C4EF-40AA-89BA-3DB8A7EC66B3}" key="Media items with warnings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with warnings">
     <da>Medielementer med advarsler</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{6192B98A-E907-440B-9E46-15E09759DAD9}" key="Media items without associated files" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items without associated files">
-    <da>Rapporter på media elementer som refererer til en manglende fil.</da>
+  <phrase updated="20211124T191427Z" fieldid="__Short description" itemid="{DF0FB7FB-C4EF-40AA-89BA-3DB8A7EC66B3}" key="Media items with warnings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items with warnings">
+    <da>Rapporter på media elementer med en eller flere valideringsadvarsler.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{6192B98A-E907-440B-9E46-15E09759DAD9}" key="Media items without associated files" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items without associated files">
+  <phrase updated="20211124T191432Z" fieldid="__Display name" itemid="{6192B98A-E907-440B-9E46-15E09759DAD9}" key="Media items without associated files" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items without associated files">
     <da>Medieelementer uden filtilknytning</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{1B9B69BB-9874-4418-89DF-C411E7A2E6CA}" key="Unused media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Unused media items">
-    <da>Rapporter på media elementer der ikke bliver refereret til fra et andet element. Kræver at linkdatabasen er opdateret.</da>
+  <phrase updated="20211124T191432Z" fieldid="__Short description" itemid="{6192B98A-E907-440B-9E46-15E09759DAD9}" key="Media items without associated files" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items without associated files">
+    <da>Rapporter på media elementer som refererer til en manglende fil.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{1B9B69BB-9874-4418-89DF-C411E7A2E6CA}" key="Unused media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Unused media items">
+  <phrase updated="20211124T191436Z" fieldid="__Display name" itemid="{1B9B69BB-9874-4418-89DF-C411E7A2E6CA}" key="Unused media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Unused media items">
     <da>Ubrugte medieelementer</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{CA464755-FCD5-434B-A989-054C512E2DEE}" key="Apply security to roles rather than users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Apply security to roles rather than users">
-    <da>Rapporter på elementer hvor sikkerheden er eksplict angivet for en bruger end for en rolle. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191436Z" fieldid="__Short description" itemid="{1B9B69BB-9874-4418-89DF-C411E7A2E6CA}" key="Unused media items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Unused media items">
+    <da>Rapporter på media elementer der ikke bliver refereret til fra et andet element. Kræver at linkdatabasen er opdateret.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{CA464755-FCD5-434B-A989-054C512E2DEE}" key="Apply security to roles rather than users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Apply security to roles rather than users">
+  <phrase updated="20211124T191447Z" fieldid="__Display name" itemid="{CA464755-FCD5-434B-A989-054C512E2DEE}" key="Apply security to roles rather than users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Apply security to roles rather than users">
     <da>Tilføj sikkerhed til roller istedet for bruger</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{E3BFF71B-2E1E-4DC4-BA01-7746F621CDAA}" key="Assign icons to templates" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Assign icons to templates">
-    <da>Rapporter på elementer hvor der ikke er sat ikon. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191447Z" fieldid="__Short description" itemid="{CA464755-FCD5-434B-A989-054C512E2DEE}" key="Apply security to roles rather than users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Apply security to roles rather than users">
+    <da>Rapporter på elementer hvor sikkerheden er eksplict angivet for en bruger end for en rolle. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{E3BFF71B-2E1E-4DC4-BA01-7746F621CDAA}" key="Assign icons to templates" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Assign icons to templates">
+  <phrase updated="20211124T191451Z" fieldid="__Display name" itemid="{E3BFF71B-2E1E-4DC4-BA01-7746F621CDAA}" key="Assign icons to templates" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Assign icons to templates">
     <da>Tilknyt ikoner til templates</da>
   </phrase>
-  <phrase updated="20190103T024632Z" fieldid="__Short description" itemid="{8ECC55A1-B9D9-418F-9ECC-0D25BC59121F}" key="Break inheritance - do not deny" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Break inheritance - do not deny">
-    <da>Rapporter på elementer hvor sikkerhed er eksplicit sat til at afvise end til at bryde nedarvningen. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191451Z" fieldid="__Short description" itemid="{E3BFF71B-2E1E-4DC4-BA01-7746F621CDAA}" key="Assign icons to templates" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Assign icons to templates">
+    <da>Rapporter på elementer hvor der ikke er sat ikon. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190103T024632Z" fieldid="__Display name" itemid="{8ECC55A1-B9D9-418F-9ECC-0D25BC59121F}" key="Break inheritance - do not deny" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Break inheritance - do not deny">
+  <phrase updated="20211124T191457Z" fieldid="__Display name" itemid="{8ECC55A1-B9D9-418F-9ECC-0D25BC59121F}" key="Break inheritance - do not deny" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Break inheritance - do not deny">
     <da>Stop hellere nedarvning end eksplicit at afvise adgangsrettigheder</da>
   </phrase>
-  <phrase updated="20190103T021840Z" fieldid="__Short description" itemid="{4ED80E5E-F349-4642-BFCA-D52BD30EAF56}" key="How many of each custom template is used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of each custom template is used">
-    <da>Rapporter på hvor mange gange en brugerdefineret template er blevet brugt.</da>
+  <phrase updated="20211124T191457Z" fieldid="__Short description" itemid="{8ECC55A1-B9D9-418F-9ECC-0D25BC59121F}" key="Break inheritance - do not deny" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Break inheritance - do not deny">
+    <da>Rapporter på elementer hvor sikkerhed er eksplicit sat til at afvise end til at bryde nedarvningen. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190103T021840Z" fieldid="__Display name" itemid="{4ED80E5E-F349-4642-BFCA-D52BD30EAF56}" key="How many of each custom template is used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of each custom template is used">
+  <phrase updated="20211124T191502Z" fieldid="__Display name" itemid="{4ED80E5E-F349-4642-BFCA-D52BD30EAF56}" key="How many of each custom template is used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of each custom template is used">
     <da>Hvor mange gange er hver brugerdefineret template brugt?</da>
   </phrase>
-  <phrase updated="20190103T024703Z" fieldid="__Short description" itemid="{558614B3-03C1-4E7B-86DE-AB5508C990EF}" key="How many of which field types are used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of which field types are used">
-    <da>Rapporter på hvor mange gange en felttype er brugt af templates. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191502Z" fieldid="__Short description" itemid="{4ED80E5E-F349-4642-BFCA-D52BD30EAF56}" key="How many of each custom template is used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of each custom template is used">
+    <da>Rapporter på hvor mange gange en brugerdefineret template er blevet brugt.</da>
   </phrase>
-  <phrase updated="20190103T024703Z" fieldid="__Display name" itemid="{558614B3-03C1-4E7B-86DE-AB5508C990EF}" key="How many of which field types are used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of which field types are used">
+  <phrase updated="20220907T181357Z" fieldid="__Display name" itemid="{558614B3-03C1-4E7B-86DE-AB5508C990EF}" key="How many of which field types are used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of which field types are used">
     <da>Hvor mange af hvilke felttyper er brugt?</da>
   </phrase>
-  <phrase updated="20190103T022052Z" fieldid="__Short description" itemid="{2B6A200B-3752-4827-BCE9-40F4F5F4C8D4}" key="How many times is each rendering used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many times is each rendering used">
-    <da>Rapporter på hvor mange gange en redering er brugt.</da>
+  <phrase updated="20220907T181357Z" fieldid="__Short description" itemid="{558614B3-03C1-4E7B-86DE-AB5508C990EF}" key="How many of which field types are used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many of which field types are used">
+    <da>Rapporter på hvor mange gange en felttype er brugt af templates. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190103T022052Z" fieldid="__Display name" itemid="{2B6A200B-3752-4827-BCE9-40F4F5F4C8D4}" key="How many times is each rendering used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many times is each rendering used">
+  <phrase updated="20211124T191511Z" fieldid="__Display name" itemid="{2B6A200B-3752-4827-BCE9-40F4F5F4C8D4}" key="How many times is each rendering used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many times is each rendering used">
     <da>Hvor mange gange er hver redering brugt?</da>
   </phrase>
-  <phrase updated="20190103T024755Z" fieldid="__Short description" itemid="{DE79022D-391F-4EE5-AF89-22AA6A6FE311}" key="Image Fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Image Fields">
-    <da>Rapporter på templates som bruger en billedefelttype. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191511Z" fieldid="__Short description" itemid="{2B6A200B-3752-4827-BCE9-40F4F5F4C8D4}" key="How many times is each rendering used" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many times is each rendering used">
+    <da>Rapporter på hvor mange gange en redering er brugt.</da>
   </phrase>
-  <phrase updated="20190103T024755Z" fieldid="__Display name" itemid="{DE79022D-391F-4EE5-AF89-22AA6A6FE311}" key="Image Fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Image Fields">
+  <phrase updated="20211124T191515Z" fieldid="__Display name" itemid="{DE79022D-391F-4EE5-AF89-22AA6A6FE311}" key="Image Fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Image Fields">
     <da>Billedefelter - definer kildefeltet for at vise hvor i mediebiblioteket det er relevant for elementet at blive skabt</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Short description" itemid="{9BB0D6B2-8351-48DF-812F-BECDE518CA79}" key="Leverage the presentation component parameters" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Leverage the presentation component parameters">
-    <da>Rapporter på renderinger, hvor der ikke er nogen rederingsparametre er brugt. Filtret på en rod element.</da>
+  <phrase updated="20211124T191515Z" fieldid="__Short description" itemid="{DE79022D-391F-4EE5-AF89-22AA6A6FE311}" key="Image Fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Image Fields">
+    <da>Rapporter på templates som bruger en billedefelttype. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190718T195816Z" fieldid="__Display name" itemid="{9BB0D6B2-8351-48DF-812F-BECDE518CA79}" key="Leverage the presentation component parameters" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Leverage the presentation component parameters">
+  <phrase updated="20211124T191519Z" fieldid="__Display name" itemid="{9BB0D6B2-8351-48DF-812F-BECDE518CA79}" key="Leverage the presentation component parameters" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Leverage the presentation component parameters">
     <da>Afslør præsentationskomponentens parametre</da>
   </phrase>
-  <phrase updated="20190103T024908Z" fieldid="__Short description" itemid="{410774B5-4162-43A1-8A0C-53CEFFB81638}" key="Limit number of versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit number of versions">
-    <da>Rapporter på elementer hvor antal versioner overstiger den anbefalede grænse. Filtret på en rod element.</da>
+  <phrase updated="20211124T191519Z" fieldid="__Short description" itemid="{9BB0D6B2-8351-48DF-812F-BECDE518CA79}" key="Leverage the presentation component parameters" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Leverage the presentation component parameters">
+    <da>Rapporter på renderinger, hvor der ikke er nogen rederingsparametre er brugt. Filtret på en rod element.</da>
   </phrase>
-  <phrase updated="20190103T024908Z" fieldid="__Display name" itemid="{410774B5-4162-43A1-8A0C-53CEFFB81638}" key="Limit number of versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit number of versions">
+  <phrase updated="20220928T032841Z" fieldid="__Display name" itemid="{410774B5-4162-43A1-8A0C-53CEFFB81638}" key="Limit number of versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit number of versions">
     <da>Begræns antal versioner af et hvert element til færrest mulige</da>
   </phrase>
-  <phrase updated="20190718T195817Z" fieldid="__Short description" itemid="{89EA962C-DA7D-4316-A492-CACA879CA5DC}" key="Limit the number of items under any given node" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit the number of items under any given node">
-    <da>Rapporter på elementer, hvor antal børn overstiger den anbefalede grænse. Filtret på en rod element.</da>
+  <phrase updated="20220928T032841Z" fieldid="__Short description" itemid="{410774B5-4162-43A1-8A0C-53CEFFB81638}" key="Limit number of versions" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit number of versions">
+    <da>Rapporter på elementer hvor antal versioner overstiger den anbefalede grænse. Filtret på en rod element.</da>
   </phrase>
-  <phrase updated="20190718T195817Z" fieldid="__Display name" itemid="{89EA962C-DA7D-4316-A492-CACA879CA5DC}" key="Limit the number of items under any given node" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit the number of items under any given node">
+  <phrase updated="20211124T191453Z" fieldid="__Display name" itemid="{89EA962C-DA7D-4316-A492-CACA879CA5DC}" key="Limit the number of items under any given node" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit the number of items under any given node">
     <da>Begræns antal elementer under enhver given node</da>
   </phrase>
-  <phrase updated="20190718T195817Z" fieldid="__Short description" itemid="{2CB400D1-AEE0-437D-8ED7-590B33990F5C}" key="Make good use of inheritance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Make good use of inheritance">
-    <da>Rapporter på templates som arver direkte fra standard templaten. Filtret på en rod element.</da>
+  <phrase updated="20211124T191453Z" fieldid="__Short description" itemid="{89EA962C-DA7D-4316-A492-CACA879CA5DC}" key="Limit the number of items under any given node" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Limit the number of items under any given node">
+    <da>Rapporter på elementer, hvor antal børn overstiger den anbefalede grænse. Filtret på en rod element.</da>
   </phrase>
-  <phrase updated="20190718T195817Z" fieldid="__Display name" itemid="{2CB400D1-AEE0-437D-8ED7-590B33990F5C}" key="Make good use of inheritance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Make good use of inheritance">
+  <phrase updated="20211124T191459Z" fieldid="__Display name" itemid="{2CB400D1-AEE0-437D-8ED7-590B33990F5C}" key="Make good use of inheritance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Make good use of inheritance">
     <da>Gør god brug af nedarvning</da>
   </phrase>
-  <phrase updated="20190103T024947Z" fieldid="__Short description" itemid="{A008E2A4-625F-40A8-B476-AC798EEEB0A4}" key="Standard Values define settings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Standard Values define settings">
-    <da>Rapporter på templates uden __Standard Values defineret. Filtret på en rod element.</da>
+  <phrase updated="20211124T191459Z" fieldid="__Short description" itemid="{2CB400D1-AEE0-437D-8ED7-590B33990F5C}" key="Make good use of inheritance" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Make good use of inheritance">
+    <da>Rapporter på templates som arver direkte fra standard templaten. Filtret på en rod element.</da>
   </phrase>
-  <phrase updated="20190103T024947Z" fieldid="__Display name" itemid="{A008E2A4-625F-40A8-B476-AC798EEEB0A4}" key="Standard Values define settings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Standard Values define settings">
+  <phrase updated="20211124T191504Z" fieldid="__Display name" itemid="{A008E2A4-625F-40A8-B476-AC798EEEB0A4}" key="Standard Values define settings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Standard Values define settings">
     <da>Standardværdier skal definere layout detaljer, initiale workflows og indsætningsmuligheder på en template.</da>
   </phrase>
-  <phrase updated="20190103T025001Z" fieldid="__Short description" itemid="{5EDE870F-3D48-4753-B763-77E511AC464C}" key="TreelistEx instead of Treelist for big trees" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/TreelistEx instead of Treelist for big trees">
-    <da>Rapporter på templates der bruger Treelist i stedet for TreelistEx. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191504Z" fieldid="__Short description" itemid="{A008E2A4-625F-40A8-B476-AC798EEEB0A4}" key="Standard Values define settings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Standard Values define settings">
+    <da>Rapporter på templates uden __Standard Values defineret. Filtret på en rod element.</da>
   </phrase>
-  <phrase updated="20190103T025001Z" fieldid="__Display name" itemid="{5EDE870F-3D48-4753-B763-77E511AC464C}" key="TreelistEx instead of Treelist for big trees" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/TreelistEx instead of Treelist for big trees">
+  <phrase updated="20211124T191509Z" fieldid="__Display name" itemid="{5EDE870F-3D48-4753-B763-77E511AC464C}" key="TreelistEx instead of Treelist for big trees" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/TreelistEx instead of Treelist for big trees">
     <da>Brug TreelistEx istedet for Treelist når der vises store træer</da>
   </phrase>
-  <phrase updated="20190103T025016Z" fieldid="__Short description" itemid="{7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}" key="Use special tree syntax" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use special tree syntax">
-    <da>Rapporter på templates som gør brug af et Link template felt, som ikke er nogen kilde-værdi konfigureret. Filtreret på et rod element.</da>
+  <phrase updated="20211124T191509Z" fieldid="__Short description" itemid="{5EDE870F-3D48-4753-B763-77E511AC464C}" key="TreelistEx instead of Treelist for big trees" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/TreelistEx instead of Treelist for big trees">
+    <da>Rapporter på templates der bruger Treelist i stedet for TreelistEx. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190103T025016Z" fieldid="__Display name" itemid="{7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}" key="Use special tree syntax" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use special tree syntax">
+  <phrase updated="20211124T191513Z" fieldid="__Display name" itemid="{7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}" key="Use special tree syntax" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use special tree syntax">
     <da>Brug kildeforespørgsel til at begrænse resultaterne på Treelists, DropTrees og TreelistEX</da>
   </phrase>
-  <phrase updated="20190103T025040Z" fieldid="__Short description" itemid="{5E0F7528-C46F-417A-8402-FD0C2C6E482D}" key="Use the Help and Title for fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use the Help and Title for fields">
-    <da>Rapporter på templates med felter, som mangler Hjælpe og titel tekst.</da>
+  <phrase updated="20211124T191513Z" fieldid="__Short description" itemid="{7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}" key="Use special tree syntax" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use special tree syntax">
+    <da>Rapporter på templates som gør brug af et Link template felt, som ikke er nogen kilde-værdi konfigureret. Filtreret på et rod element.</da>
   </phrase>
-  <phrase updated="20190103T025040Z" fieldid="__Display name" itemid="{5E0F7528-C46F-417A-8402-FD0C2C6E482D}" key="Use the Help and Title for fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use the Help and Title for fields">
+  <phrase updated="20211124T191517Z" fieldid="__Display name" itemid="{5E0F7528-C46F-417A-8402-FD0C2C6E482D}" key="Use the Help and Title for fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use the Help and Title for fields">
     <da>Brug hjælp og titel muligheden i den individuelle felt definition</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}" key="Author Statistics" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics">
-    <da>Rapporter på elementer opdateret af hver enkelte redaktør, startende med det valgte element.</da>
+  <phrase updated="20211124T191517Z" fieldid="__Short description" itemid="{5E0F7528-C46F-417A-8402-FD0C2C6E482D}" key="Use the Help and Title for fields" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use the Help and Title for fields">
+    <da>Rapporter på templates med felter, som mangler Hjælpe og titel tekst.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}" key="Author Statistics" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics">
+  <phrase updated="20211124T191137Z" fieldid="__Display name" itemid="{1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}" key="Author Statistics" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics">
     <da>Redaktørstatistik</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{F8573830-393A-45B1-8856-DCCE48EB5E92}" key="Publish My Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items">
-    <da>Publiser alle elementer opdateret af mig selv, startende med det valgte element.</da>
+  <phrase updated="20211124T191137Z" fieldid="__Short description" itemid="{1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}" key="Author Statistics" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics">
+    <da>Rapporter på elementer opdateret af hver enkelte redaktør, startende med det valgte element.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{F8573830-393A-45B1-8856-DCCE48EB5E92}" key="Publish My Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items">
+  <phrase updated="20211124T191139Z" fieldid="__Display name" itemid="{F8573830-393A-45B1-8856-DCCE48EB5E92}" key="Publish My Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items">
     <da>Publiser mine elementer</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{20D867D5-584B-4494-99A8-0511667E9BEB}" key="Recent Author Activity" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Recent Author Activity">
-    <da>Gennemse elementer som er blevet ændret af redaktørerne indenfor et givet tidsrum.</da>
+  <phrase updated="20211124T191139Z" fieldid="__Short description" itemid="{F8573830-393A-45B1-8856-DCCE48EB5E92}" key="Publish My Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items">
+    <da>Publiser alle elementer opdateret af mig selv, startende med det valgte element.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{20D867D5-584B-4494-99A8-0511667E9BEB}" key="Recent Author Activity" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Recent Author Activity">
+  <phrase updated="20211124T191135Z" fieldid="__Display name" itemid="{20D867D5-584B-4494-99A8-0511667E9BEB}" key="Recent Author Activity" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Recent Author Activity">
     <da>Nylig redaktør aktivitet</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}" key="Layout" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout">
-    <da>Kopier og indsæt rederinger fra et element til et andet.</da>
+  <phrase updated="20211124T191135Z" fieldid="__Short description" itemid="{20D867D5-584B-4494-99A8-0511667E9BEB}" key="Recent Author Activity" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu/Recent Author Activity">
+    <da>Gennemse elementer som er blevet ændret af redaktørerne indenfor et givet tidsrum.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}" key="Layout" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout">
+  <phrase updated="20211124T191142Z" fieldid="__Display name" itemid="{8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}" key="Layout" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout">
     <da>Layout</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{D9572667-4EB7-4D57-B730-0B52B2094BB9}" key="Bulk Data Generator" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Data Generator">
-    <da>Genere testbruger og data i en arbejdsgang.</da>
+  <phrase updated="20211124T191142Z" fieldid="__Short description" itemid="{8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}" key="Layout" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout">
+    <da>Kopier og indsæt rederinger fra et element til et andet.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{D9572667-4EB7-4D57-B730-0B52B2094BB9}" key="Bulk Data Generator" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Data Generator">
+  <phrase updated="20211124T191200Z" fieldid="__Display name" itemid="{5CCBD486-B74D-463E-8237-90EDC28BB0F2}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Content Editor/Context Menu/Data Management">
+    <da>** Data Management **</da>
+  </phrase>
+  <phrase updated="20211124T191200Z" fieldid="__Short description" itemid="{5CCBD486-B74D-463E-8237-90EDC28BB0F2}" key="Data Management" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Content Editor/Context Menu/Data Management">
+    <da>** Import content or generate data in bulk. **</da>
+  </phrase>
+  <phrase updated="20211124T191205Z" fieldid="__Display name" itemid="{D9572667-4EB7-4D57-B730-0B52B2094BB9}" key="Bulk Data Generator" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Data Generator">
     <da>Massedata generator</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{5B1F4575-5002-4F14-B8E4-6BABB54EA742}" key="Bulk Item Restorer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Item Restorer">
+  <phrase updated="20211124T191205Z" fieldid="__Short description" itemid="{D9572667-4EB7-4D57-B730-0B52B2094BB9}" key="Bulk Data Generator" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Data Generator">
+    <da>Genere testbruger og data i en arbejdsgang.</da>
+  </phrase>
+  <phrase updated="20221012T014956Z" fieldid="__Display name" itemid="{5B1F4575-5002-4F14-B8E4-6BABB54EA742}" key="Bulk Item Restorer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Item Restorer">
     <da>Genetablering af elementer i en arbejdsgang</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{469FAEB8-6FD3-42E8-B44F-4D4ACDA869E5}" key="Data Importer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Data Importer">
-    <da>Importer en fil for at tilføje eller opdatere elementer i en arbejdsgang.</da>
-  </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{469FAEB8-6FD3-42E8-B44F-4D4ACDA869E5}" key="Data Importer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Data Importer">
+  <phrase updated="20211124T191203Z" fieldid="__Display name" itemid="{469FAEB8-6FD3-42E8-B44F-4D4ACDA869E5}" key="Data Importer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Data Importer">
     <da>Importer data</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Short description" itemid="{B15E5729-2E38-43F1-A725-CDD376F9E8C0}" key="Find and Replace" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Find and Replace">
-    <da>Find elementer som matcher teksten og erstat.</da>
+  <phrase updated="20211124T191203Z" fieldid="__Short description" itemid="{469FAEB8-6FD3-42E8-B44F-4D4ACDA869E5}" key="Data Importer" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Data Importer">
+    <da>Importer en fil for at tilføje eller opdatere elementer i en arbejdsgang.</da>
   </phrase>
-  <phrase updated="20190718T183817Z" fieldid="__Display name" itemid="{B15E5729-2E38-43F1-A725-CDD376F9E8C0}" key="Find and Replace" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Find and Replace">
+  <phrase updated="20211124T191207Z" fieldid="__Display name" itemid="{B15E5729-2E38-43F1-A725-CDD376F9E8C0}" key="Find and Replace" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Find and Replace">
     <da>Find og erstat</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{CD36F34B-0D5F-4221-A05C-67A2EAC46B46}" key="Security" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security">
-    <da>Sikkerhed</da>
+  <phrase updated="20211124T191207Z" fieldid="__Short description" itemid="{B15E5729-2E38-43F1-A725-CDD376F9E8C0}" key="Find and Replace" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Find and Replace">
+    <da>Find elementer som matcher teksten og erstat.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{C83CC1EE-A860-4E64-9715-E9C3BBB885F0}" key="Packaging" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging">
-    <da>Pakker elementerne for distribution.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{C83CC1EE-A860-4E64-9715-E9C3BBB885F0}" key="Packaging" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging">
+  <phrase updated="20211124T191133Z" fieldid="__Display name" itemid="{C83CC1EE-A860-4E64-9715-E9C3BBB885F0}" key="Packaging" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging">
     <da>Pakketering</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{448D3126-B424-49DE-BF8B-24E17D1AE279}" key="CSV" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/CSV">
-    <da>Eksporter rapportens resultat i csv format.</da>
+  <phrase updated="20211124T191133Z" fieldid="__Short description" itemid="{C83CC1EE-A860-4E64-9715-E9C3BBB885F0}" key="Packaging" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging">
+    <da>Pakker elementerne for distribution.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{448D3126-B424-49DE-BF8B-24E17D1AE279}" key="CSV" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/CSV">
+  <phrase updated="20220928T214108Z" fieldid="__Short description" itemid="{CFE81AF6-2468-4E62-8BF2-588B7CC60F80}" key="Elevated Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Gutters/Elevated Unlock">
+    <da>** Use elevated privileges to unlock this item. **</da>
+  </phrase>
+  <phrase updated="20211124T191158Z" fieldid="__Display name" itemid="{CD36F34B-0D5F-4221-A05C-67A2EAC46B46}" key="Security" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Ribbon/Security">
+    <da>Sikkerhed</da>
+  </phrase>
+  <phrase updated="20211124T191147Z" fieldid="__Display name" itemid="{32CAFC20-4C63-4F60-B474-42145A5F1518}" key="Find Audit Trail from logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Find Audit Trail from logs">
+    <da>Find revisionsspor fra log-filerne</da>
+  </phrase>
+  <phrase updated="20211124T191147Z" fieldid="__Short description" itemid="{32CAFC20-4C63-4F60-B474-42145A5F1518}" key="Find Audit Trail from logs" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Find Audit Trail from logs">
+    <da>Find alle audit elementerne i standard log-filen.</da>
+  </phrase>
+  <phrase updated="20221005T013300Z" fieldid="__Display name" itemid="{C05DB55E-CAEF-40B8-9F46-7195339B51B7}" key="Items with security for an account" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Items with security for an account">
+    <da>Elementer med sikkerhed sat for en konto</da>
+  </phrase>
+  <phrase updated="20221005T013300Z" fieldid="__Short description" itemid="{C05DB55E-CAEF-40B8-9F46-7195339B51B7}" key="Items with security for an account" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Items with security for an account">
+    <da>Rapporter på elementer hvor sikkerheden er sat med en bruger og med udgangspunkt i et rod-element.</da>
+  </phrase>
+  <phrase updated="20211124T191153Z" fieldid="__Display name" itemid="{2CA02EFB-2BBA-43B5-B552-C5BB39D4CB91}" key="Items with security for domain" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Items with security for domain">
+    <da>Elementer med sikkerhed sat for et domæne</da>
+  </phrase>
+  <phrase updated="20211124T191153Z" fieldid="__Short description" itemid="{2CA02EFB-2BBA-43B5-B552-C5BB39D4CB91}" key="Items with security for domain" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Items with security for domain">
+    <da>Rapporter på elementer hvor sikkerheden er konfigureret med brugere eller roller fra et specifikt domæne.</da>
+  </phrase>
+  <phrase updated="20211124T191145Z" fieldid="__Display name" itemid="{59E3E841-A68B-42D2-B52B-D0EFE822435A}" key="Locked Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Locked Items">
+    <da>Låste elementer</da>
+  </phrase>
+  <phrase updated="20211124T191145Z" fieldid="__Short description" itemid="{59E3E841-A68B-42D2-B52B-D0EFE822435A}" key="Locked Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Locked Items">
+    <da>Rapporter på elementer hvor en version er låst af en given bruger og med udgangspunkt i et rod-element.</da>
+  </phrase>
+  <phrase updated="20211124T191149Z" fieldid="__Display name" itemid="{13E1A607-6064-42B9-AA6F-BD245E1F3555}" key="Recently logged in users" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Reports/Security Audit/Recently logged in users">
+    <da>For nyelig påloggede brugerer</da>
+  </phrase>
+  <phrase updated="20211124T191156Z" fieldid="__Display name" itemid="{FB9F165C-7AA8-4833-B5AD-D14598E71BC9}" key="Logged in Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Logged in Session Manager">
+    <da>Påloggende brugersessions manager</da>
+  </phrase>
+  <phrase updated="20211124T191156Z" fieldid="__Short description" itemid="{FB9F165C-7AA8-4833-B5AD-D14598E71BC9}" key="Logged in Session Manager" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Logged in Session Manager">
+    <da>Vis og luk aktuelle brugersessioner.</da>
+  </phrase>
+  <phrase updated="20221123T023625Z" fieldid="__Short description" itemid="{C381312C-D0A8-41B9-8824-109B6434D615}" key="Copy user roles" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Copy user roles">
+    <da>** Copy roles from one user to another. **</da>
+  </phrase>
+  <phrase updated="20221123T023713Z" fieldid="__Short description" itemid="{99BBCD77-6DC6-4293-9DB0-00D89C1C1F50}" key="Transfer item security" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Toolbox/Security Management/Transfer item security">
+    <da>** Transfer item security from one user or role to another role. **</da>
+  </phrase>
+  <phrase updated="20211124T191646Z" fieldid="__Display name" itemid="{448D3126-B424-49DE-BF8B-24E17D1AE279}" key="CSV" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/CSV">
     <da>CSV</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{5035E6E4-53D3-4778-A0F5-6246BAE6F76D}" key="Excel" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Excel">
-    <da>Eksporter rapportens resultat i xlsx format.</da>
+  <phrase updated="20211124T191646Z" fieldid="__Short description" itemid="{448D3126-B424-49DE-BF8B-24E17D1AE279}" key="CSV" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/CSV">
+    <da>Eksporter rapportens resultat i csv format.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{5035E6E4-53D3-4778-A0F5-6246BAE6F76D}" key="Excel" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Excel">
+  <phrase updated="20211124T191655Z" fieldid="__Display name" itemid="{5035E6E4-53D3-4778-A0F5-6246BAE6F76D}" key="Excel" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Excel">
     <da>Excel</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{132E6B5D-0190-4599-8A28-C5336B3E69B4}" key="HTML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/HTML">
-    <da>Eksporter rapportens resultat i html format.</da>
+  <phrase updated="20211124T191655Z" fieldid="__Short description" itemid="{5035E6E4-53D3-4778-A0F5-6246BAE6F76D}" key="Excel" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Excel">
+    <da>Eksporter rapportens resultat i xlsx format.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{132E6B5D-0190-4599-8A28-C5336B3E69B4}" key="HTML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/HTML">
+  <phrase updated="20211124T191644Z" fieldid="__Display name" itemid="{132E6B5D-0190-4599-8A28-C5336B3E69B4}" key="HTML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/HTML">
     <da>HTML</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{E760C50A-9555-40D3-A547-D7E78CF555DD}" key="JSON" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/JSON">
-    <da>Eksporter rapportens resultat i json format.</da>
+  <phrase updated="20211124T191644Z" fieldid="__Short description" itemid="{132E6B5D-0190-4599-8A28-C5336B3E69B4}" key="HTML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/HTML">
+    <da>Eksporter rapportens resultat i html format.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{E760C50A-9555-40D3-A547-D7E78CF555DD}" key="JSON" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/JSON">
+  <phrase updated="20211124T191648Z" fieldid="__Display name" itemid="{E760C50A-9555-40D3-A547-D7E78CF555DD}" key="JSON" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/JSON">
     <da>JSON</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{6EC0BB6E-5D84-4932-A9D6-C8574D5A9EED}" key="XML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/XML">
-    <da>Eksporter rapportens resultat i xml format.</da>
+  <phrase updated="20211124T191648Z" fieldid="__Short description" itemid="{E760C50A-9555-40D3-A547-D7E78CF555DD}" key="JSON" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/JSON">
+    <da>Eksporter rapportens resultat i json format.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{6EC0BB6E-5D84-4932-A9D6-C8574D5A9EED}" key="XML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/XML">
+  <phrase updated="20211124T191653Z" fieldid="__Display name" itemid="{6EC0BB6E-5D84-4932-A9D6-C8574D5A9EED}" key="XML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/XML">
     <da>XML</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{8E1DBC83-6763-4E1B-9C08-1D377C98DF88}" key="Email" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email">
-    <da>Email rapportens resultat som en vedhæftet fil.</da>
+  <phrase updated="20211124T191653Z" fieldid="__Short description" itemid="{6EC0BB6E-5D84-4932-A9D6-C8574D5A9EED}" key="XML" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/XML">
+    <da>Eksporter rapportens resultat i xml format.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{8E1DBC83-6763-4E1B-9C08-1D377C98DF88}" key="Email" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email">
+  <phrase updated="20211124T191651Z" fieldid="__Display name" itemid="{8E1DBC83-6763-4E1B-9C08-1D377C98DF88}" key="Email" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email">
     <da>Email</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{253849CD-BBE6-4850-BB68-5680C214164A}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item">
+  <phrase updated="20211124T191651Z" fieldid="__Short description" itemid="{8E1DBC83-6763-4E1B-9C08-1D377C98DF88}" key="Email" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email">
+    <da>Email rapportens resultat som en vedhæftet fil.</da>
+  </phrase>
+  <phrase updated="20211124T191642Z" fieldid="__Display name" itemid="{253849CD-BBE6-4850-BB68-5680C214164A}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item">
     <da>Item</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{A29C833B-50C6-439D-B65F-8B894A37E824}" key="ScriptSession" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession">
+  <phrase updated="20211124T191641Z" fieldid="__Display name" itemid="{A29C833B-50C6-439D-B65F-8B894A37E824}" key="ScriptSession" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession">
     <da>ScriptSession</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{4D8AF2C7-1AE4-409E-B0D5-10500DED0FDF}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item">
+  <phrase updated="20211124T191718Z" fieldid="__Display name" itemid="{F02D18C2-2F4C-4845-8D15-8DD03CC20C31}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/Item">
+    <da>** Item **</da>
+  </phrase>
+  <phrase updated="20211124T191719Z" fieldid="__Display name" itemid="{7B295589-1A67-4D17-9E21-ACC9FBE3A705}" key="SearchResultItem" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem">
+    <da>** SearchResultItem **</da>
+  </phrase>
+  <phrase updated="20211124T191720Z" fieldid="__Display name" itemid="{4D8AF2C7-1AE4-409E-B0D5-10500DED0FDF}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item">
     <da>Item</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{87E1B7E9-50C5-4E7A-B7A0-E9E02310EBBB}" key="MembershipUserWrapper" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/MembershipUserWrapper">
-    <da>MembershipUserWrapper</da>
-  </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{461323D0-0D35-43B0-A715-03F60D96421A}" key="Session" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/Session">
-    <da>Session</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{B31991A9-60D3-4EFA-9B83-DA10D878E5E3}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Item">
-    <da>Item</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{963E1CDD-5FAF-41E2-8347-3142268AEC0F}" key="PSObject" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject">
+  <phrase updated="20211124T191721Z" fieldid="__Display name" itemid="{963E1CDD-5FAF-41E2-8347-3142268AEC0F}" key="PSObject" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject">
     <da>PSObject</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{F6129B06-151D-40DB-ABBD-53E41727CACA}" key="Site" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site">
+  <phrase updated="20211124T191722Z" fieldid="__Display name" itemid="{F6129B06-151D-40DB-ABBD-53E41727CACA}" key="Site" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site">
     <da>Site</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{CC45B728-3141-4B2D-BC6E-CA74EE04AED2}" key="Copy Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Copy Renderings">
-    <da>Kopier alle rederingerne fra det valgte element.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{CC45B728-3141-4B2D-BC6E-CA74EE04AED2}" key="Copy Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Copy Renderings">
+  <phrase updated="20211124T191609Z" fieldid="__Display name" itemid="{CC45B728-3141-4B2D-BC6E-CA74EE04AED2}" key="Copy Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Copy Renderings">
     <da>Kopier rederinger</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}" key="Paste Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Paste Renderings">
-    <da>Indsæt alle rederingerne, som fornyeligt er kopieret til det udvalgte element.</da>
+  <phrase updated="20211124T191609Z" fieldid="__Short description" itemid="{CC45B728-3141-4B2D-BC6E-CA74EE04AED2}" key="Copy Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Copy Renderings">
+    <da>Kopier alle rederingerne fra det valgte element.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}" key="Paste Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Paste Renderings">
+  <phrase updated="20211124T191607Z" fieldid="__Display name" itemid="{AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}" key="Paste Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Paste Renderings">
     <da>Indsær rederinger</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{84C8CA2C-C7E3-472A-B90A-328D3E953910}" key="Tools" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security/Tools">
-    <da>Værktøj</da>
+  <phrase updated="20211124T191607Z" fieldid="__Short description" itemid="{AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}" key="Paste Renderings" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Context Menu/Layout/Paste Renderings">
+    <da>Indsæt alle rederingerne, som fornyeligt er kopieret til det udvalgte element.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{E6F6FCAA-644A-418C-A5F2-19352D66A260}" key="Start New Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Start New Package">
-    <da>Lav en ny pakke session.</da>
-  </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{E6F6FCAA-644A-418C-A5F2-19352D66A260}" key="Start New Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Start New Package">
+  <phrase updated="20211124T191601Z" fieldid="__Display name" itemid="{E6F6FCAA-644A-418C-A5F2-19352D66A260}" key="Start New Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Start New Package">
     <da>Start på en ny pakke</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{A6D3CE99-9BDE-4344-911D-CFB3FB742DE6}" key="Add Item to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package">
-    <da>Tilføj det valgte element til pakken.</da>
+  <phrase updated="20211124T191601Z" fieldid="__Short description" itemid="{E6F6FCAA-644A-418C-A5F2-19352D66A260}" key="Start New Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Start New Package">
+    <da>Lav en ny pakke session.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{A6D3CE99-9BDE-4344-911D-CFB3FB742DE6}" key="Add Item to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package">
+  <phrase updated="20211124T191555Z" fieldid="__Display name" itemid="{A6D3CE99-9BDE-4344-911D-CFB3FB742DE6}" key="Add Item to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package">
     <da>Tilføj element til pakken</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{E6B36111-8411-414B-A7E9-58E75B365EA7}" key="Add Tree to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package">
-    <da>Tilføj det valgte træ til pakken.</da>
+  <phrase updated="20211124T191555Z" fieldid="__Short description" itemid="{A6D3CE99-9BDE-4344-911D-CFB3FB742DE6}" key="Add Item to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package">
+    <da>Tilføj det valgte element til pakken.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{E6B36111-8411-414B-A7E9-58E75B365EA7}" key="Add Tree to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package">
+  <phrase updated="20211124T191559Z" fieldid="__Display name" itemid="{E6B36111-8411-414B-A7E9-58E75B365EA7}" key="Add Tree to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package">
     <da>Tilføj træ til pakken</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{6B51CBC9-C706-4155-B365-684C33F4AF8A}" key="Preview Package Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Preview Package Items">
-    <da>Gennemse elementerne udvalgt til pakken.</da>
+  <phrase updated="20211124T191559Z" fieldid="__Short description" itemid="{E6B36111-8411-414B-A7E9-58E75B365EA7}" key="Add Tree to Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package">
+    <da>Tilføj det valgte træ til pakken.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{6B51CBC9-C706-4155-B365-684C33F4AF8A}" key="Preview Package Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Preview Package Items">
+  <phrase updated="20211124T191553Z" fieldid="__Display name" itemid="{6B51CBC9-C706-4155-B365-684C33F4AF8A}" key="Preview Package Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Preview Package Items">
     <da>Forhåndsvisning af elementerne i pakken</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{9C3AF32E-8104-465A-9843-56EDC2B024BB}" key="Download Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Download Package">
-    <da>Download den aktuelle pakke dato til fil.</da>
+  <phrase updated="20211124T191553Z" fieldid="__Short description" itemid="{6B51CBC9-C706-4155-B365-684C33F4AF8A}" key="Preview Package Items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Preview Package Items">
+    <da>Gennemse elementerne udvalgt til pakken.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{9C3AF32E-8104-465A-9843-56EDC2B024BB}" key="Download Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Download Package">
+  <phrase updated="20211124T191605Z" fieldid="__Display name" itemid="{9C3AF32E-8104-465A-9843-56EDC2B024BB}" key="Download Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Download Package">
     <da>Daownload pakke</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Short description" itemid="{B9B4D349-D805-4743-A5FE-787EFAF52DDD}" key="Quick Download Tree as Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Quick Download Tree as Package">
-    <da>Har du travlt? Download det valgte træ og underliggende elementer til en pakke.</da>
+  <phrase updated="20211124T191605Z" fieldid="__Short description" itemid="{9C3AF32E-8104-465A-9843-56EDC2B024BB}" key="Download Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Download Package">
+    <da>Download den aktuelle pakke dato til fil.</da>
   </phrase>
-  <phrase updated="20190718T195810Z" fieldid="__Display name" itemid="{B9B4D349-D805-4743-A5FE-787EFAF52DDD}" key="Quick Download Tree as Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Quick Download Tree as Package">
+  <phrase updated="20211124T191557Z" fieldid="__Display name" itemid="{B9B4D349-D805-4743-A5FE-787EFAF52DDD}" key="Quick Download Tree as Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Quick Download Tree as Package">
     <da>Download hurtigt træstrukturen som en pakke</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{5DFA45C3-35E2-4E8C-B341-2DDF5CECEAC1}" key="Edit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Edit">
-    <da>Rediger scriptet i PowerShell ISE.</da>
+  <phrase updated="20211124T191557Z" fieldid="__Short description" itemid="{B9B4D349-D805-4743-A5FE-787EFAF52DDD}" key="Quick Download Tree as Package" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Quick Download Tree as Package">
+    <da>Har du travlt? Download det valgte træ og underliggende elementer til en pakke.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{5DFA45C3-35E2-4E8C-B341-2DDF5CECEAC1}" key="Edit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Edit">
+  <phrase updated="20211124T191610Z" fieldid="__Display name" itemid="{84C8CA2C-C7E3-472A-B90A-328D3E953910}" key="Tools" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Ribbon/Security/Tools">
+    <da>Værktøj</da>
+  </phrase>
+  <phrase updated="20221020T115128Z" fieldid="__Display name" itemid="{B31991A9-60D3-4EFA-9B83-DA10D878E5E3}" key="Item" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item">
+    <da>Item</da>
+  </phrase>
+  <phrase updated="20221020T115135Z" fieldid="__Display name" itemid="{87E1B7E9-50C5-4E7A-B7A0-E9E02310EBBB}" key="MembershipUserWrapper" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/MembershipUserWrapper">
+    <da>MembershipUserWrapper</da>
+  </phrase>
+  <phrase updated="20221020T115142Z" fieldid="__Display name" itemid="{461323D0-0D35-43B0-A715-03F60D96421A}" key="Session" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Session">
+    <da>Session</da>
+  </phrase>
+  <phrase updated="20211124T191757Z" fieldid="__Display name" itemid="{5DFA45C3-35E2-4E8C-B341-2DDF5CECEAC1}" key="Edit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Edit">
     <da>Redigere</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{241922F3-E622-49A4-8754-8BFBE051EA83}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Open">
+  <phrase updated="20211124T191757Z" fieldid="__Short description" itemid="{5DFA45C3-35E2-4E8C-B341-2DDF5CECEAC1}" key="Edit" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Edit">
+    <da>Rediger scriptet i PowerShell ISE.</da>
+  </phrase>
+  <phrase updated="20211124T191754Z" fieldid="__Display name" itemid="{241922F3-E622-49A4-8754-8BFBE051EA83}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Open">
+    <da>Åben</da>
+  </phrase>
+  <phrase updated="20211124T191754Z" fieldid="__Short description" itemid="{241922F3-E622-49A4-8754-8BFBE051EA83}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Open">
     <da>Åbn elementet i indholdsredigeringen.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{241922F3-E622-49A4-8754-8BFBE051EA83}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/Item/Open">
-    <da>Åben</da>
-  </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{54C08CF9-8939-4D52-9064-BD6E4A4DF364}" key="Kill" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Kill">
-    <da>Stop PowerShell sessionen og nulstil de anvendte ressourcer.</da>
-  </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{54C08CF9-8939-4D52-9064-BD6E4A4DF364}" key="Kill" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Kill">
+  <phrase updated="20211124T191802Z" fieldid="__Display name" itemid="{54C08CF9-8939-4D52-9064-BD6E4A4DF364}" key="Kill" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Kill">
     <da>Dræbe</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{E069898E-AF58-4ABD-AD68-C277BD54509A}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Refresh">
-    <da>Genopfrisk listen med PowerShell sessioner i hukommelsen.</da>
+  <phrase updated="20211124T191802Z" fieldid="__Short description" itemid="{54C08CF9-8939-4D52-9064-BD6E4A4DF364}" key="Kill" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Kill">
+    <da>Stop PowerShell sessionen og nulstil de anvendte ressourcer.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{E069898E-AF58-4ABD-AD68-C277BD54509A}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Refresh">
+  <phrase updated="20211124T191800Z" fieldid="__Display name" itemid="{E069898E-AF58-4ABD-AD68-C277BD54509A}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Refresh">
     <da>Opdater</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{D6A80D77-F782-4CD4-B465-FFF0615F4C16}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Open">
+  <phrase updated="20211124T191800Z" fieldid="__Short description" itemid="{E069898E-AF58-4ABD-AD68-C277BD54509A}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Refresh">
+    <da>Genopfrisk listen med PowerShell sessioner i hukommelsen.</da>
+  </phrase>
+  <phrase updated="20211124T191805Z" fieldid="__Display name" itemid="{D6A80D77-F782-4CD4-B465-FFF0615F4C16}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Open">
+    <da>Åben</da>
+  </phrase>
+  <phrase updated="20211124T191805Z" fieldid="__Short description" itemid="{D6A80D77-F782-4CD4-B465-FFF0615F4C16}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Open">
     <da>Åbn PowerShell session i konsollen eller ISE.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{D6A80D77-F782-4CD4-B465-FFF0615F4C16}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Ribbon/ScriptSession/Open">
-    <da>Åben</da>
+  <phrase updated="20211124T191813Z" fieldid="__Display name" itemid="{B00381B5-A50C-445F-A23F-B5D01272FE17}" key="Find and Replace" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/Item/Find and Replace">
+    <da>** Find and Replace **</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{C17B827E-2FDC-4997-A2F7-A1831635D701}" key="Edit Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Edit Schedule">
-    <da>Åbn dialogboks for at rederigere den programsatte opgave.</da>
+  <phrase updated="20211124T191809Z" fieldid="__Display name" itemid="{542EED7B-4464-418E-AA70-F7342BF3D046}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open">
+    <da>** Open **</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{C17B827E-2FDC-4997-A2F7-A1831635D701}" key="Edit Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Edit Schedule">
+  <phrase updated="20211124T191809Z" fieldid="__Short description" itemid="{542EED7B-4464-418E-AA70-F7342BF3D046}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open">
+    <da>Åbn det relaterede indholdselementer.</da>
+  </phrase>
+  <phrase updated="20211124T191811Z" fieldid="__Display name" itemid="{E9CDD2D4-0FAA-4FE2-802D-F686749CA236}" key="Rebuild" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild">
+    <da>** Rebuild **</da>
+  </phrase>
+  <phrase updated="20211124T191811Z" fieldid="__Short description" itemid="{E9CDD2D4-0FAA-4FE2-802D-F686749CA236}" key="Rebuild" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild">
+    <da>Genbyg elementet i søgeindekset.</da>
+  </phrase>
+  <phrase updated="20211124T191807Z" fieldid="__Display name" itemid="{50EE334B-C2B0-47DC-9D7A-CE9D6A8149CE}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh">
+    <da>** Refresh **</da>
+  </phrase>
+  <phrase updated="20211124T191807Z" fieldid="__Short description" itemid="{50EE334B-C2B0-47DC-9D7A-CE9D6A8149CE}" key="Refresh" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh">
+    <da>Genopfrisk resultaterne.</da>
+  </phrase>
+  <phrase updated="20211124T191817Z" fieldid="__Display name" itemid="{C17B827E-2FDC-4997-A2F7-A1831635D701}" key="Edit Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Edit Schedule">
     <da>Editer tidsplanen</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{F738CE8E-F56B-479C-A6D0-5FEB1A94DECC}" key="Execute Now" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Execute Now">
-    <da>Lad den programsatte opgave køre nu.</da>
+  <phrase updated="20211124T191817Z" fieldid="__Short description" itemid="{C17B827E-2FDC-4997-A2F7-A1831635D701}" key="Edit Schedule" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Edit Schedule">
+    <da>Åbn dialogboks for at rederigere den programsatte opgave.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{F738CE8E-F56B-479C-A6D0-5FEB1A94DECC}" key="Execute Now" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Execute Now">
+  <phrase updated="20211124T191815Z" fieldid="__Display name" itemid="{F738CE8E-F56B-479C-A6D0-5FEB1A94DECC}" key="Execute Now" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Execute Now">
     <da>Kør nu</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{409D08B8-13C6-4425-89D7-54B097194CF6}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User">
-    <da>Fjern de valgte brugersessioner.</da>
+  <phrase updated="20211124T191815Z" fieldid="__Short description" itemid="{F738CE8E-F56B-479C-A6D0-5FEB1A94DECC}" key="Execute Now" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Task Management/Internal/List View/Ribbon/Item/Execute Now">
+    <da>Lad den programsatte opgave køre nu.</da>
   </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{409D08B8-13C6-4425-89D7-54B097194CF6}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User">
-    <da>Sparke Bruger</da>
-  </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Short description" itemid="{BB607CB6-AB3B-45CD-93DF-2BAF257F3960}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/Session/Kick User">
-    <da>Fjern de valgte brugersessioner.</da>
-  </phrase>
-  <phrase updated="20190718T195812Z" fieldid="__Display name" itemid="{BB607CB6-AB3B-45CD-93DF-2BAF257F3960}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/Session/Kick User">
-    <da>Sparke Bruger</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{AF78E99F-D56D-4B87-9830-D8E03FB84B91}" key="Transfer Lock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Item/Transfer Lock">
-    <da>Overfør det låste element fra en bruger til en anden.</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{AF78E99F-D56D-4B87-9830-D8E03FB84B91}" key="Transfer Lock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Item/Transfer Lock">
-    <da>Overfør låse</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{F6A96176-F9E9-4746-AE48-3A6A0F242FED}" key="Remove Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject/Remove Links">
-    <da>Fjern det brudte link fra de tilknyttede felter.</da>
-  </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{F6A96176-F9E9-4746-AE48-3A6A0F242FED}" key="Remove Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject/Remove Links">
+  <phrase updated="20211124T191821Z" fieldid="__Display name" itemid="{F6A96176-F9E9-4746-AE48-3A6A0F242FED}" key="Remove Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject/Remove Links">
     <da>Fjern links</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Short description" itemid="{A328DBB5-DC6C-4307-AD7C-BC1E330F011A}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site/Open">
-    <da>Åbn det valgte start element i indholdsredigeringen.</da>
+  <phrase updated="20211124T191821Z" fieldid="__Short description" itemid="{F6A96176-F9E9-4746-AE48-3A6A0F242FED}" key="Remove Links" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/PSObject/Remove Links">
+    <da>Fjern det brudte link fra de tilknyttede felter.</da>
   </phrase>
-  <phrase updated="20190718T195813Z" fieldid="__Display name" itemid="{A328DBB5-DC6C-4307-AD7C-BC1E330F011A}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site/Open">
+  <phrase updated="20211124T191819Z" fieldid="__Display name" itemid="{A328DBB5-DC6C-4307-AD7C-BC1E330F011A}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site/Open">
     <da>Åben</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Short description" itemid="{F4819743-C9D5-48A4-911B-017F8BA1415C}" key="Elevated Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security/Tools/Elevated Unlock">
+  <phrase updated="20211124T191819Z" fieldid="__Short description" itemid="{A328DBB5-DC6C-4307-AD7C-BC1E330F011A}" key="Open" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Internal/List View/Ribbon/Site/Open">
+    <da>Åbn det valgte start element i indholdsredigeringen.</da>
+  </phrase>
+  <phrase updated="20220512T192357Z" fieldid="__Short description" itemid="{A5CA7CD6-133F-4799-924D-BFCEB57803B3}" key="Final to Shared" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Copy Renderings/Content Editor/Ribbon/Presentation/Layout/Final to Shared">
+    <da>** Merge layout from Final to Shared for the selected item. **</da>
+  </phrase>
+  <phrase updated="20220918T030923Z" fieldid="__Display name" itemid="{F4819743-C9D5-48A4-911B-017F8BA1415C}" key="Elevated Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Ribbon/Security/Tools/Elevated Unlock">
+    <da>Ophæv til oplåsning</da>
+  </phrase>
+  <phrase updated="20220918T030923Z" fieldid="__Short description" itemid="{F4819743-C9D5-48A4-911B-017F8BA1415C}" key="Elevated Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Ribbon/Security/Tools/Elevated Unlock">
     <da>Brug forhøjet rettigheder til at låse dette element op.</da>
   </phrase>
-  <phrase updated="20190718T195811Z" fieldid="__Display name" itemid="{F4819743-C9D5-48A4-911B-017F8BA1415C}" key="Elevated Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Elevated Unlock/Content Editor/Ribbon/Security/Tools/Elevated Unlock">
-    <da>Ophæv til oplåsning</da>
+  <phrase updated="20211124T191730Z" fieldid="__Display name" itemid="{AF78E99F-D56D-4B87-9830-D8E03FB84B91}" key="Transfer Lock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Transfer Lock">
+    <da>Overfør låse</da>
+  </phrase>
+  <phrase updated="20211124T191730Z" fieldid="__Short description" itemid="{AF78E99F-D56D-4B87-9830-D8E03FB84B91}" key="Transfer Lock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Transfer Lock">
+    <da>Overfør det låste element fra en bruger til en anden.</da>
+  </phrase>
+  <phrase updated="20211124T191728Z" fieldid="__Display name" itemid="{E6F3620D-B314-49EA-9195-9586A727A876}" key="Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock">
+    <da>Fjern valgte låse</da>
+  </phrase>
+  <phrase updated="20211124T191728Z" fieldid="__Short description" itemid="{E6F3620D-B314-49EA-9195-9586A727A876}" key="Unlock" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock">
+    <da>Fjern lås fra de valgte elementer.</da>
+  </phrase>
+  <phrase updated="20211124T191733Z" fieldid="__Display name" itemid="{C4B3C98B-74FA-4E90-AC91-44F302696020}" key="Unlock All" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock All">
+    <da>Fjern alle låse</da>
+  </phrase>
+  <phrase updated="20211124T191733Z" fieldid="__Short description" itemid="{C4B3C98B-74FA-4E90-AC91-44F302696020}" key="Unlock All" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Item/Unlock All">
+    <da>Fjern låsen fra alle elementer.</da>
+  </phrase>
+  <phrase updated="20211124T191735Z" fieldid="__Display name" itemid="{409D08B8-13C6-4425-89D7-54B097194CF6}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User">
+    <da>Sparke Bruger</da>
+  </phrase>
+  <phrase updated="20211124T191735Z" fieldid="__Short description" itemid="{409D08B8-13C6-4425-89D7-54B097194CF6}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User">
+    <da>Fjern de valgte brugersessioner.</da>
+  </phrase>
+  <phrase updated="20211124T191726Z" fieldid="__Display name" itemid="{BB607CB6-AB3B-45CD-93DF-2BAF257F3960}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Session/Kick User">
+    <da>Sparke Bruger</da>
+  </phrase>
+  <phrase updated="20211124T191726Z" fieldid="__Short description" itemid="{BB607CB6-AB3B-45CD-93DF-2BAF257F3960}" key="Kick User" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Internal/List View/Ribbon/Session/Kick User">
+    <da>Fjern de valgte brugersessioner.</da>
   </phrase>
 </sitecore>

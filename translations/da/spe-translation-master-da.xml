@@ -1,0 +1,455 @@
+<sitecore>
+  <phrase updated="20211124T185808Z" fieldid="__Long description" itemid="{DADC7C07-2606-4F1C-98C6-FB8162E55257}" key="PowerShell" path="/sitecore/system/Modules/PowerShell">
+    <da>Rod for Sitecore PowerShell udvidelsesmodulet.</da>
+  </phrase>
+  <phrase updated="20211124T185808Z" fieldid="__Short description" itemid="{DADC7C07-2606-4F1C-98C6-FB8162E55257}" key="PowerShell" path="/sitecore/system/Modules/PowerShell">
+    <da>Velkommen til Sitecore PowerShell udvidelsesmodulet.</da>
+  </phrase>
+  <phrase updated="20211124T185815Z" fieldid="__Display name" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <da>Konsolfarver</da>
+  </phrase>
+  <phrase updated="20211124T185815Z" fieldid="__Long description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <da>Farver brugt til at tilpasse PowerShell konsollen og ISE.</da>
+  </phrase>
+  <phrase updated="20211124T185815Z" fieldid="__Short description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <da>Farver brugt til at tilpasse PowerShell konsollen og ISE.</da>
+  </phrase>
+  <phrase updated="20211124T185819Z" fieldid="__Display name" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <da>Skrifttyper</da>
+  </phrase>
+  <phrase updated="20211124T185819Z" fieldid="__Long description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <da>Skrifttyper brugt til at tilpasse PowerShell konsollen og ISE.</da>
+  </phrase>
+  <phrase updated="20211124T185819Z" fieldid="__Short description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <da>Skrifttyper brugt til at tilpasse PowerShell konsollen og ISE.</da>
+  </phrase>
+  <phrase updated="20211124T185821Z" fieldid="__Display name" itemid="{A3572733-5062-43E9-A447-54698BC1C637}" key="Script Library" path="/sitecore/system/Modules/PowerShell/Script Library">
+    <da>** Script Library **</da>
+  </phrase>
+  <phrase updated="20211124T185821Z" fieldid="__Long description" itemid="{A3572733-5062-43E9-A447-54698BC1C637}" key="Script Library" path="/sitecore/system/Modules/PowerShell/Script Library">
+    <da>** Contains PowerShell scripts stored in libraries and modules. **</da>
+  </phrase>
+  <phrase updated="20211124T185821Z" fieldid="__Short description" itemid="{A3572733-5062-43E9-A447-54698BC1C637}" key="Script Library" path="/sitecore/system/Modules/PowerShell/Script Library">
+    <da>** Sitecore PowerShell Extensions script library. **</da>
+  </phrase>
+  <phrase updated="20211124T185812Z" fieldid="__Display name" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <da>Opsætning</da>
+  </phrase>
+  <phrase updated="20211124T185812Z" fieldid="__Long description" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <da>Opsætning bliver gemt for hver bruger. Denne inkludere de sidst anvendte scripts og brugergrænsefladeopsætning i form af skrifttyper og farver.</da>
+  </phrase>
+  <phrase updated="20211124T185812Z" fieldid="__Short description" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <da>Modulets opsætning af brugergrænsefladen.</da>
+  </phrase>
+  <phrase updated="20211124T185817Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+    <da>Foruddefinerede kodestumper til hjælp i forbindelse med udarbejdelse af scripts.</da>
+  </phrase>
+  <phrase updated="20211124T185817Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+    <da>Foruddefinerede kodestumper til hjælp i forbindelse med udarbejdelse af scripts.</da>
+  </phrase>
+  <phrase updated="20211124T185546Z" fieldid="__Display name" itemid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" key="PowerShell Script Module" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module">
+    <da>PowerShell scriptmodul</da>
+  </phrase>
+  <phrase updated="20211124T185528Z" fieldid="__Display name" itemid="{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}" key="PowerShell Script Workflow Action" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action">
+    <da>PowerShell workflow handling</da>
+  </phrase>
+  <phrase updated="20211124T185834Z" fieldid="__Display name" itemid="{81184848-ECF9-4448-8515-DFDBC83AC41B}" key="Black" path="/sitecore/system/Modules/PowerShell/Console Colors/Black">
+    <da>Sort</da>
+  </phrase>
+  <phrase updated="20211124T185839Z" fieldid="__Display name" itemid="{BD085463-EEB5-4BB8-8473-078943D7EFD8}" key="Blue" path="/sitecore/system/Modules/PowerShell/Console Colors/Blue">
+    <da>Blå</da>
+  </phrase>
+  <phrase updated="20211124T185843Z" fieldid="__Display name" itemid="{E2E5425E-3524-472F-9F50-1EE7B383F315}" key="Cyan" path="/sitecore/system/Modules/PowerShell/Console Colors/Cyan">
+    <da>Turkis</da>
+  </phrase>
+  <phrase updated="20211124T185848Z" fieldid="__Display name" itemid="{AB222740-C3B4-46CD-AF84-8B3BB4B9BA37}" key="DarkBlue" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkBlue">
+    <da>Mørkeblå</da>
+  </phrase>
+  <phrase updated="20211124T185852Z" fieldid="__Display name" itemid="{23E6E1F1-66BF-4A4C-A1EB-B61A0EF2F6B4}" key="DarkCyan" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkCyan">
+    <da>Mørk turkis</da>
+  </phrase>
+  <phrase updated="20211124T185856Z" fieldid="__Display name" itemid="{B1893C54-8D20-4A6C-8A37-5B2887CFB6D7}" key="DarkGray" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGray">
+    <da>Mørkegrå</da>
+  </phrase>
+  <phrase updated="20211124T185900Z" fieldid="__Display name" itemid="{E517A968-CC59-425B-8BAA-6D26EBC1564D}" key="DarkGreen" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGreen">
+    <da>Mørkegrøn</da>
+  </phrase>
+  <phrase updated="20211124T185905Z" fieldid="__Display name" itemid="{1454C6B5-BD50-4745-A569-644F4AD2622D}" key="DarkMagenta" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkMagenta">
+    <da>Mørk magenta</da>
+  </phrase>
+  <phrase updated="20211124T185836Z" fieldid="__Display name" itemid="{C9F7DFDB-A714-4B14-9F1C-5C31961D493E}" key="DarkRed" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkRed">
+    <da>Mørkerød</da>
+  </phrase>
+  <phrase updated="20211124T185841Z" fieldid="__Display name" itemid="{10752CF2-8D56-4DC6-9FFC-6F51DB195422}" key="DarkYellow" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkYellow">
+    <da>Mørkegul</da>
+  </phrase>
+  <phrase updated="20211124T185845Z" fieldid="__Display name" itemid="{2146E874-FA2E-419F-8E29-29A72E0FCB4A}" key="Gray" path="/sitecore/system/Modules/PowerShell/Console Colors/Gray">
+    <da>Grå</da>
+  </phrase>
+  <phrase updated="20211124T185850Z" fieldid="__Display name" itemid="{4BDA1126-D3D3-4831-8CA2-A913E01C6208}" key="Green" path="/sitecore/system/Modules/PowerShell/Console Colors/Green">
+    <da>Grøn</da>
+  </phrase>
+  <phrase updated="20211124T185854Z" fieldid="__Display name" itemid="{31509572-F2A3-455B-887A-D67EE25151AB}" key="Magenta" path="/sitecore/system/Modules/PowerShell/Console Colors/Magenta">
+    <da>Magenta</da>
+  </phrase>
+  <phrase updated="20211124T185858Z" fieldid="__Display name" itemid="{0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5}" key="Red" path="/sitecore/system/Modules/PowerShell/Console Colors/Red">
+    <da>Rød</da>
+  </phrase>
+  <phrase updated="20211124T185902Z" fieldid="__Display name" itemid="{711AFE32-3147-41F4-81B7-821CFCF45079}" key="White" path="/sitecore/system/Modules/PowerShell/Console Colors/White">
+    <da>Hvid</da>
+  </phrase>
+  <phrase updated="20211124T185910Z" fieldid="__Display name" itemid="{EAF596B9-BCF7-48AA-939C-A15604D6D98F}" key="Yellow" path="/sitecore/system/Modules/PowerShell/Console Colors/Yellow">
+    <da>Gul</da>
+  </phrase>
+  <phrase updated="20211124T185825Z" fieldid="__Display name" itemid="{A6F7AE21-E569-492B-9122-578F0E696DCB}" key="Console" path="/sitecore/system/Modules/PowerShell/Settings/Console">
+    <da>Konsol</da>
+  </phrase>
+  <phrase updated="20211124T185829Z" fieldid="__Display name" itemid="{BCE6F88B-4128-4292-BD13-0402358BFE7C}" key="Context" path="/sitecore/system/Modules/PowerShell/Settings/Context">
+    <da>Kontekst</da>
+  </phrase>
+  <phrase updated="20211124T185831Z" fieldid="__Display name" itemid="{6B3434F0-4398-4BE8-9C14-73EFC3367FC4}" key="Default" path="/sitecore/system/Modules/PowerShell/Settings/Default">
+    <da>Standard</da>
+  </phrase>
+  <phrase updated="20211124T185823Z" fieldid="__Display name" itemid="{0D691C42-71E5-44C3-8CDE-6A05FA88DFF8}" key="ISE" path="/sitecore/system/Modules/PowerShell/Settings/ISE">
+    <da>ISE</da>
+  </phrase>
+  <phrase updated="20211124T185827Z" fieldid="__Display name" itemid="{86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}" key="RemoteAutomation" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation">
+    <da>Fjernautomatisering</da>
+  </phrase>
+  <phrase updated="20211124T185557Z" fieldid="__Display name" itemid="{616C618F-8631-4199-8CDE-34FBEB398C6C}" key="Data" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data">
+    <da>Data</da>
+  </phrase>
+  <phrase updated="20220801T020025Z" fieldid="__Display name" itemid="{6CB327FA-4783-4DF6-B3C2-F396073D7962}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Console/All Users">
+    <da>Alle brugerer</da>
+  </phrase>
+  <phrase updated="20220801T020010Z" fieldid="__Display name" itemid="{D237B896-675E-4D63-B86E-6BA898BBBFF8}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Context/All Users">
+    <da>Alle brugerer</da>
+  </phrase>
+  <phrase updated="20211124T185929Z" fieldid="__Display name" itemid="{910D33B7-AB6E-429A-9E56-8923346BED66}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/Default/All Users">
+    <da>Alle brugerer</da>
+  </phrase>
+  <phrase updated="20211124T185921Z" fieldid="__Display name" itemid="{DB19F00D-05F0-4589-8807-189CE2807224}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/ISE/All Users">
+    <da>Alle brugerer</da>
+  </phrase>
+  <phrase updated="20211124T185923Z" fieldid="__Display name" itemid="{C02D13EE-8F7C-426D-8623-EEA082B59A79}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation/All Users">
+    <da>Alle brugerer</da>
+  </phrase>
+  <phrase updated="20211124T185800Z" fieldid="Title" itemid="{743B8C3C-BA19-4E24-B324-C01DCD20F465}" key="Query" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search/Query">
+    <da>Rækkevide for søgningen - primær forespørgsel anvendt til at returnere resultater</da>
+  </phrase>
+  <phrase updated="20211124T185802Z" fieldid="Title" itemid="{072645B6-C332-446F-9F2C-255467AF5BC9}" key="RootItem" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search/RootItem">
+    <da>Rodnode - fallback når søgeindekset ikke bliver brugt</da>
+  </phrase>
+  <phrase updated="20211124T185758Z" fieldid="Title" itemid="{37D9ED28-C31B-4686-8564-A0F181721640}" key="FilterRule" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Filter/FilterRule">
+    <da>Filtreringsregler - tilføjet efter søgningen blev færdig</da>
+  </phrase>
+  <phrase updated="20211124T185804Z" fieldid="Title" itemid="{52C8F3B7-3110-41D1-ABCA-979ED691135C}" key="DefaultFields" path="/sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Report/DefaultFields">
+    <da>Pipe adskilt liste af felter returneret af rapporten</da>
+  </phrase>
+  <phrase updated="20211124T185706Z" fieldid="Title" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
+    <da>Nøgle</da>
+  </phrase>
+  <phrase updated="20211124T185706Z" fieldid="__Short description" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
+    <da>Værdi anvendt ved valg af skrifttype</da>
+  </phrase>
+  <phrase updated="20211124T185708Z" fieldid="Title" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
+    <da>Sætning</da>
+  </phrase>
+  <phrase updated="20211124T185708Z" fieldid="__Short description" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
+    <da> Værdi brugt af browseren til at gøre skrifttypen</da>
+  </phrase>
+  <phrase updated="20211124T185722Z" fieldid="Title" itemid="{F59378A5-F21D-4E07-B7DE-7986DDA3A510}" key="HostWidth" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/HostWidth">
+    <da>Host bredde (i antal tekstkolonner)</da>
+  </phrase>
+  <phrase updated="20211124T185726Z" fieldid="Title" itemid="{6F442AC9-7001-4124-9BC3-589875876C27}" key="FontSize" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/FontSize">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185724Z" fieldid="Title" itemid="{86ECC435-0924-4EA0-92D8-CCA12ED7E644}" key="FontFamily" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/FontFamily">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185717Z" fieldid="Title" itemid="{F810EEC7-9A73-43E6-84C1-36E4951D2B3E}" key="ForegroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/ForegroundColor">
+    <da>Tekstfarve</da>
+  </phrase>
+  <phrase updated="20211124T185719Z" fieldid="Title" itemid="{AEEB1BB0-87B9-4E16-B5DE-D4CC544A992F}" key="BackgroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/BackgroundColor">
+    <da>Baggrundstekstfarve</da>
+  </phrase>
+  <phrase updated="20211124T185710Z" fieldid="Title" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <da>Gem sidst eksekverede script?</da>
+  </phrase>
+  <phrase updated="20211124T185710Z" fieldid="__Long description" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <da>Indikerer at scriptet vil blive gemt i brugeropsætningen efter udførelsen. Hvis PowerShell ISE bliver lukket, vil scriptet blive genskabt i editoren, når denne genåbnes. Dette er hjælpsomt når PowerShell ISE bliver lukket ved en fejl, selvom det ikke er en erstatning for at gemme scripts i scriptbiblioteket.</da>
+  </phrase>
+  <phrase updated="20211124T185710Z" fieldid="__Short description" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <da>Midlertidigt gem scripts som bliver eksekveret i PowerShell ISE</da>
+  </phrase>
+  <phrase updated="20211124T185713Z" fieldid="Title" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <da>Det sidste eksekverede script</da>
+  </phrase>
+  <phrase updated="20211124T185713Z" fieldid="__Long description" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <da>Sidte eksekverede script i PowerShell ISE. Dette er hjælpsomt når scriptet ikke er blevet gemt i scriptbiblioteket og indholdseditoren er genopfrisket eller PowerShell ISE bliver lukket.</da>
+  </phrase>
+  <phrase updated="20211124T185713Z" fieldid="__Short description" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <da>Script bliver genskabt i PowerShell ISE, ved genåbning</da>
+  </phrase>
+  <phrase updated="20211124T185715Z" fieldid="Title" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <da>Live autofuldførelse</da>
+  </phrase>
+  <phrase updated="20211124T185715Z" fieldid="__Long description" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <da>Når man angiver karaterene "\" eller "-", så vil man aktivere auto-fuldfør; en web service bliver kaldt for at forespøge efter ny auto-fuldfør data, og dette kan resultere i en midlertidig forsinkelse i svar fra editoren.</da>
+  </phrase>
+  <phrase updated="20211124T185715Z" fieldid="__Short description" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <da>Når man angiver karaterene "\" eller "-", så vil man aktivere auto-fuldfør (kan resultere i en midlertidig forsinkelse i svar fra editoren)</da>
+  </phrase>
+  <phrase updated="20220921T015659Z" fieldid="Title" itemid="{464C9789-617A-4CE6-988C-8AF421B6D385}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/Enabled">
+    <da>** Enable the delegated access **</da>
+  </phrase>
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{A0506748-B498-49C9-8B25-23F9030C1A98}" key="ElevatedRole" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ElevatedRole">
+    <da>** Elevated Role (the current user must be a member) **</da>
+  </phrase>
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{FF4855AB-377F-4CF5-94C7-4A8EE32D143F}" key="ImpersonatedUser" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ImpersonatedUser">
+    <da>** Impersonated User (scripts will be executed as this user) **</da>
+  </phrase>
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{75560CD0-EB3F-45D4-AB41-4B37DDE1C741}" key="ScriptItem" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ScriptItem">
+    <da>** Script Item (one or more scripts to delegate access) **</da>
+  </phrase>
+  <phrase updated="20211124T185657Z" fieldid="Title" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">
+    <da>Scriptets hoveddel</da>
+  </phrase>
+  <phrase updated="20211124T185657Z" fieldid="__Short description" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">
+    <da>Kildekode skrevet i PowerShell</da>
+  </phrase>
+  <phrase updated="20211124T185652Z" fieldid="Title" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <da>Vis regel</da>
+  </phrase>
+  <phrase updated="20211124T185652Z" fieldid="__Long description" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <da>Synlighed bliver evalueret for integrationspunkter, så som dem der er i kontektmenuen eller i båndet.</da>
+  </phrase>
+  <phrase updated="20211124T185652Z" fieldid="__Short description" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <da>Bestemmer synlighed når en regel er opfyldt eller ikke er defineret.</da>
+  </phrase>
+  <phrase updated="20211124T185654Z" fieldid="Title" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <da>Slå regel til</da>
+  </phrase>
+  <phrase updated="20211124T185654Z" fieldid="__Long description" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <da>Slået til status bliver evalueret for integrationspunkter, så som dem der er i kontektmenuen eller i båndet.</da>
+  </phrase>
+  <phrase updated="20211124T185654Z" fieldid="__Short description" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <da>Bestemmer slået til status, når en regel er opfyldt eller ikke er defineret</da>
+  </phrase>
+  <phrase updated="20211124T185659Z" fieldid="Title" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <da>Det vedvarende sessionsid</da>
+  </phrase>
+  <phrase updated="20211124T185659Z" fieldid="__Long description" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <da>Scripts med dette ID vil blive eksekveret med brug af en enkelt delt session; efter dette vil disse sessioner blive i hukommelsen. Når de efterlades tomme, vil sessionerne lukke efter hvert brug.</da>
+  </phrase>
+  <phrase updated="20211124T185659Z" fieldid="__Short description" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <da>Scripts med dette ID vil blive eksekveret med brug af en enkelt delt session</da>
+  </phrase>
+  <phrase updated="20211124T185730Z" fieldid="Title" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <da>Vis regel</da>
+  </phrase>
+  <phrase updated="20211124T185730Z" fieldid="__Long description" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <da>Synlighed bliver evalueret for integrationspunkter, så som dem der er i kontektmenuen eller i båndet.</da>
+  </phrase>
+  <phrase updated="20211124T185730Z" fieldid="__Short description" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <da>Bestemmer synlighed, når en regel er opfyldt eller ikke er defineret</da>
+  </phrase>
+  <phrase updated="20211124T185728Z" fieldid="Title" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <da>Slå regel til</da>
+  </phrase>
+  <phrase updated="20211124T185728Z" fieldid="__Long description" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <da>Slået til status bliver evalueret for integrationspunkter, så som dem der er i kontektmenuen eller i båndet.</da>
+  </phrase>
+  <phrase updated="20211124T185728Z" fieldid="__Short description" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <da>Bestemmer slået til status, når en regel er opfyldt eller ikke er defineret</da>
+  </phrase>
+  <phrase updated="20211124T185733Z" fieldid="Title" itemid="{218CA464-CB77-4C97-B141-34871ECAE00B}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation/Enabled">
+    <da>__Standard Values</da>
+  </phrase>
+  <phrase updated="20211124T185733Z" fieldid="__Long description" itemid="{218CA464-CB77-4C97-B141-34871ECAE00B}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation/Enabled">
+    <da>Hvis du slår dette fra, vil det betyde at integrationspunkterne ignorerer modulet, så som funktioner og rapporter.</da>
+  </phrase>
+  <phrase updated="20211124T185733Z" fieldid="__Short description" itemid="{218CA464-CB77-4C97-B141-34871ECAE00B}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation/Enabled">
+    <da>Slå modulet til for alle integrationspunkter.</da>
+  </phrase>
+  <phrase updated="20211124T185735Z" fieldid="Title" itemid="{6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}" key="Description" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/Description">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185741Z" fieldid="Title" itemid="{7093B5A2-4406-4272-9759-238BF60814FD}" key="Whats new" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/Whats new">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185739Z" fieldid="Title" itemid="{67E00FBC-C080-4F57-8CFC-70095AAB39E0}" key="History" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/History">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185737Z" fieldid="Title" itemid="{9911A28E-2120-4AB0-9113-5BAE386769C1}" key="Module Version" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/Module Version">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185745Z" fieldid="Title" itemid="{53996CFF-BB46-498C-AE54-5D8C6AA7B6A4}" key="Author" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Author">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185751Z" fieldid="Title" itemid="{8DBAF611-51C6-4A44-A0DB-92C3DC6DDAC9}" key="Url" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Url">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185753Z" fieldid="Title" itemid="{BF45C4B6-CC60-4FEC-B6CE-E260C306FECA}" key="Email" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Email">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185747Z" fieldid="Title" itemid="{37CCA7C1-4B3D-4113-8218-BF621C8F8D9A}" key="Support" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Support">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185755Z" fieldid="Title" itemid="{5337BB18-2B6A-4326-BD7E-E00010BEC356}" key="License" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/License">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185743Z" fieldid="Title" itemid="{E1D6475E-58E6-4A11-8BEA-2E58B6F834F6}" key="Published by" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Published by">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185749Z" fieldid="Title" itemid="{CC3C200C-921A-4CA8-B5F7-FF8F3AA6EBD2}" key="Category" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Copyright/Category">
+    <da>** __Standard Values **</da>
+  </phrase>
+  <phrase updated="20211124T185647Z" fieldid="Title" itemid="{CD8DA5E2-3B65-4A14-B7A6-9F41181CE172}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Scripting/Script">
+    <da>Script hoveddel</da>
+  </phrase>
+  <phrase updated="20211124T185647Z" fieldid="__Short description" itemid="{CD8DA5E2-3B65-4A14-B7A6-9F41181CE172}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Scripting/Script">
+    <da>Kildekode skrevet i PowerShell</da>
+  </phrase>
+  <phrase updated="20211124T185649Z" fieldid="Title" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Interactive/EnableRule">
+    <da>Eksekver kun hvis reglerne er opfyldt eller ikke er definerede</da>
+  </phrase>
+  <phrase updated="20211124T185649Z" fieldid="__Long description" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Interactive/EnableRule">
+    <da>Slået til status bliver evalueret for at bestemme om handlingen skal udføres.</da>
+  </phrase>
+  <phrase updated="20211124T185649Z" fieldid="__Short description" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Interactive/EnableRule">
+    <da>Bestemmer slået til status, når regel er opfyldt eller ikke er defineret</da>
+  </phrase>
+  <phrase updated="20211124T185645Z" fieldid="Title" itemid="{BDC2FCBC-91EE-4135-BB04-196E3AE683E5}" key="Type" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data/Type">
+    <da>Type streng</da>
+  </phrase>
+  <phrase updated="20211124T185702Z" fieldid="Title" itemid="{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/Snippet Definition/Scripting/Script">
+    <da>__Standard Values</da>
+  </phrase>
+  <phrase updated="20211124T185702Z" fieldid="__Short description" itemid="{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/Snippet Definition/Scripting/Script">
+    <da>Kildekode skrevet i PowerShell</da>
+  </phrase>
+  <phrase updated="20211124T190143Z" fieldid="__Display name" itemid="{C84F4255-CF8A-455D-9C11-94A774773ABA}" key="PowerShell" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell">
+    <da>PowerShell</da>
+  </phrase>
+  <phrase updated="20211124T190157Z" fieldid="__Display name" itemid="{077B0435-77D4-46FF-89D0-AA78190DB8BD}" key="PowerShell Experience Buttons" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons">
+    <da>PowerShell Experience knapper</da>
+  </phrase>
+  <phrase updated="20211124T190225Z" fieldid="__Display name" itemid="{95323F20-ADAA-4354-B8BD-2D6FD847F205}" key="PowerShell ISE" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE">
+    <da>PowerShell ISE</da>
+  </phrase>
+  <phrase updated="20211124T190151Z" fieldid="Text" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <da>når den vedvarende [persistentsessionid,,,specific] PowerShell session allerde var startet</da>
+  </phrase>
+  <phrase updated="20211124T190151Z" fieldid="__Display name" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <da>Den vedvarende session startet</da>
+  </phrase>
+  <phrase updated="20211124T190153Z" fieldid="Text" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <da>når den vedvarende [persistentsessionid,,,specific] PowerShell session allerede er startet og har [VariableName,,,specific] variablen defineret og ikke er null</da>
+  </phrase>
+  <phrase updated="20211124T190153Z" fieldid="__Display name" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <da>Definition af den vedvarende sessionsvariable</da>
+  </phrase>
+  <phrase updated="20211124T190147Z" fieldid="Text" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <da>når vist i et [ValidViewName,,,specific] view</da>
+  </phrase>
+  <phrase updated="20211124T190147Z" fieldid="__Display name" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <da>ListView navnematching</da>
+  </phrase>
+  <phrase updated="20211124T190145Z" fieldid="__Display name" itemid="{3F56D6C5-24E0-48DD-8A0C-79FE5AC96A45}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags">
+    <da>Tags</da>
+  </phrase>
+  <phrase updated="20211124T190149Z" fieldid="__Display name" itemid="{DF828AF3-8F0C-406D-AE87-61B2340A4833}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Visibility">
+    <da>Synlighed</da>
+  </phrase>
+  <phrase updated="20211124T190202Z" fieldid="Text" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <da>når chrome elementet er af [ChromeName,,,specific] navn</da>
+  </phrase>
+  <phrase updated="20211124T190202Z" fieldid="__Display name" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <da>Chrome navn</da>
+  </phrase>
+  <phrase updated="20211124T190206Z" fieldid="Text" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <da>når chrome er af [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&amp;setRootAsSearchRoot=true,unspecified] typen</da>
+  </phrase>
+  <phrase updated="20211124T190206Z" fieldid="__Display name" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <da>Chrome type</da>
+  </phrase>
+  <phrase updated="20211124T190159Z" fieldid="__Display name" itemid="{2AECAD56-18F1-43DF-93FF-35D9C5865E7A}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags">
+    <da>Tags</da>
+  </phrase>
+  <phrase updated="20211124T190204Z" fieldid="__Display name" itemid="{02F717CF-3EA0-4C60-9D35-5EEF83ED1476}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Visibility">
+    <da>Synlighed</da>
+  </phrase>
+  <phrase updated="20211124T190229Z" fieldid="Text" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <da>når [MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&amp;setRootAsSearchRoot=true,length] længden på scriptet er [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] karakterer langt</da>
+  </phrase>
+  <phrase updated="20211124T190229Z" fieldid="__Display name" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <da>Længde af det udvalgte</da>
+  </phrase>
+  <phrase updated="20211124T190233Z" fieldid="Text" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <da>når det redigerede scriptet er [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&amp;setRootAsSearchRoot=true,in a state]</da>
+  </phrase>
+  <phrase updated="20211124T190233Z" fieldid="__Display name" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <da>Sessionsstatus</da>
+  </phrase>
+  <phrase updated="20211124T190227Z" fieldid="__Display name" itemid="{4A1A2169-951F-4098-95BA-271506DADF42}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags">
+    <da>Tags</da>
+  </phrase>
+  <phrase updated="20211124T190231Z" fieldid="__Display name" itemid="{3CCE52E5-0FB0-463E-B751-8A586DA58549}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Visibility">
+    <da>Synlighed</da>
+  </phrase>
+  <phrase updated="20220918T000827Z" fieldid="Text" itemid="{AAC2CC73-828C-4E42-9765-EA9E0B53390A}" key="User has Delegated Access" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security/User has Delegated Access">
+    <da>NÃ¥r den aktuelle bruger er medlem af [value,,,specific] role</da>
+  </phrase>
+  <phrase updated="20211124T190254Z" fieldid="Text" itemid="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}" key="User Role with inheritance" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security/User Role with inheritance">
+    <da>NÃ¥r den aktuelle bruger er medlem af [value,,,specific] role</da>
+  </phrase>
+  <phrase updated="20211124T190155Z" fieldid="__Display name" itemid="{E9622DF0-ED90-47A5-97F8-EBE1E4E5B7DE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags/Default">
+    <da>Standard</da>
+  </phrase>
+  <phrase updated="20211124T190210Z" fieldid="__Display name" itemid="{4741FCEE-24E1-460B-A126-2736A5F57871}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State">
+    <da>Status</da>
+  </phrase>
+  <phrase updated="20211124T190213Z" fieldid="__Display name" itemid="{F5D1B95B-30D3-4738-B41E-6884517CB485}" key="of Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type">
+    <da>af typen</da>
+  </phrase>
+  <phrase updated="20211124T190208Z" fieldid="__Display name" itemid="{F92D8CC3-B46B-475D-BFBA-E8A04BE64A8F}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags/Default">
+    <da>Standard</da>
+  </phrase>
+  <phrase updated="20211124T190237Z" fieldid="__Display name" itemid="{77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}" key="Length of" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of">
+    <da>Længde af</da>
+  </phrase>
+  <phrase updated="20211124T190240Z" fieldid="__Display name" itemid="{0C6821F1-3977-4427-9CAF-F963BB8E172D}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State">
+    <da>Status</da>
+  </phrase>
+  <phrase updated="20211124T190235Z" fieldid="__Display name" itemid="{CAB0E012-D2DB-42EB-9D8A-3FCF981431AE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags/Default">
+    <da>Standard</da>
+  </phrase>
+  <phrase updated="20211124T190217Z" fieldid="__Display name" itemid="{C04EB772-961B-425C-8057-04D3D5D76954}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/saved">
+    <da>gemt</da>
+  </phrase>
+  <phrase updated="20211124T190215Z" fieldid="__Display name" itemid="{AFC4CFC7-D9AF-49AC-9F9E-8AB823897CB0}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/modified">
+    <da>ændret</da>
+  </phrase>
+  <phrase updated="20211124T190223Z" fieldid="__Display name" itemid="{4C6068C8-E969-4DFD-B22C-33E820D20651}" key="placeholder" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/placeholder">
+    <da>placeholder</da>
+  </phrase>
+  <phrase updated="20211124T190221Z" fieldid="__Display name" itemid="{F4E27AEB-AA6C-4B36-B8B5-72648F47BC98}" key="field" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/field">
+    <da>felt</da>
+  </phrase>
+  <phrase updated="20211124T190219Z" fieldid="__Display name" itemid="{041A8A44-DD56-42AB-B4E3-579845669252}" key="rendering" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/rendering">
+    <da>rendering</da>
+  </phrase>
+  <phrase updated="20211124T190242Z" fieldid="__Display name" itemid="{83DD228B-D7BD-4DE2-B858-DEC59CC06ADF}" key="selected" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/selected">
+    <da>udvalgt</da>
+  </phrase>
+  <phrase updated="20211124T190244Z" fieldid="__Display name" itemid="{22BE997D-B182-4C9B-888B-FB543D79E7BE}" key="total" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/total">
+    <da>total</da>
+  </phrase>
+  <phrase updated="20211124T190246Z" fieldid="__Display name" itemid="{9B141D4F-BCC7-4579-A108-192B955C3539}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/saved">
+    <da>gemt</da>
+  </phrase>
+  <phrase updated="20211124T190248Z" fieldid="__Display name" itemid="{CA052047-96B6-4802-A58E-AA353757B585}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/modified">
+    <da>ændret</da>
+  </phrase>
+</sitecore>
