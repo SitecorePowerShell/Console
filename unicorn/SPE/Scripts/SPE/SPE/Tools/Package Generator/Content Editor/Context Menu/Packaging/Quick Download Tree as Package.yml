@@ -15,7 +15,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Import-Function -Name Setup-PackageGeneratorAdvanced
+    Import-Function -Name Setup-PackageGenerator
     
     $timestamp = Get-Date -Format "yyyyMMdd.HHss"
     $selectedItem = Get-Item -Path .
@@ -181,4 +181,4 @@ Languages:
       Value: 20130919T210627Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "8e6cd783-954a-483e-9783-e0eda1c26e3b"
+      Value: "3f313d53-4316-4fe0-8ca3-4f904e862ddb"
