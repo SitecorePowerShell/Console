@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Xml;
 using Sitecore;
@@ -17,7 +16,7 @@ namespace Spe.Core.Settings.Authorization
             public bool RequireSecureConnection { get; set; }
         }
 
-        private static readonly Dictionary<string,ServiceState> services = new Dictionary<string,ServiceState>();
+        private static readonly Dictionary<string, ServiceState> services = new Dictionary<string, ServiceState>();
 
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
@@ -29,7 +28,7 @@ namespace Spe.Core.Settings.Authorization
         public const string ServiceMediaDownload = "mediaDownload";
         public const string ServiceMediaUpload = "mediaUpload";
         public const string ServiceHandleDownload = "handleDownload";
-        
+
         static WebServiceSettings()
         {
             var servicesNodes = Factory.GetConfigNode("powershell/services").ChildNodes;
@@ -45,7 +44,7 @@ namespace Spe.Core.Settings.Authorization
                     Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
                     RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true
                 };
-                services.Add(xmlDefinition.Name,service);
+                services.Add(xmlDefinition.Name, service);
             }
 
             CommandWaitMillis = Sitecore.Configuration.Settings.GetIntSetting("Spe.CommandWaitMillis", 25);
@@ -54,7 +53,7 @@ namespace Spe.Core.Settings.Authorization
             AuthorizationCacheExpirationSecs = Sitecore.Configuration.Settings.GetIntSetting("Spe.AuthorizationCacheExpirationSecs", 10);
             var settingStr = Sitecore.Configuration.Settings.GetSetting("Spe.SerializationSizeBuffer", "5KB");
             var sizeLong = StringUtil.ParseSizeString(settingStr);
-            SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
+            SerializationSizeBuffer = (int)(sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
         }
 
         public static int CommandWaitMillis { get; private set; }
@@ -70,8 +69,32 @@ namespace Spe.Core.Settings.Authorization
                 return false;
             }
             var service = services[serviceName];
-            return service.Enabled &&
-                   (HttpContext.Current == null || !service.RequireSecureConnection || HttpContext.Current.Request?.IsSecureConnection == true);
+            return service.Enabled && CheckSecureConnectionRequirement(service);
         }
+
+        private static bool CheckSecureConnectionRequirement(ServiceState stateOfService)
+        {
+            if (HttpContext.Current == null || HttpContext.Current.Request == null)
+            {
+                return true;
+            }
+
+            if (!stateOfService.RequireSecureConnection)
+            {
+                return true;
+            }
+
+            if (HttpContext.Current.Request.IsSecureConnection == true)
+            {
+                return true;
+            }
+            else
+            {
+                // need to check, if request was offloaded on edge web server
+                return HttpContext.Current.Request.Headers["X-Forwarded-Proto"].Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
     }
 }
+
