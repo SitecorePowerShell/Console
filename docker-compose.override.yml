@@ -1,4 +1,8 @@
 services:
+  traefik:
+    depends_on:
+      cm:
+        condition: service_started
   cm:
     environment:
       Sitecore_AppSettings_role:define: Standalone

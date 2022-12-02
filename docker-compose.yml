@@ -27,7 +27,7 @@ services:
         condition: service_healthy
   mssql:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/mssql-developer:2017-${SITECORE_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/mssql-developer:${MSSQL_VERSION}
     environment:
       SA_PASSWORD: ${SQL_SA_PASSWORD}
       ACCEPT_EULA: "Y"
@@ -44,6 +44,7 @@ services:
       SQL_SERVER: ${SQL_SERVER}
       SQL_ADMIN_LOGIN: ${SQL_SA_LOGIN}
       SQL_ADMIN_PASSWORD: ${SQL_SA_PASSWORD}
+      SQL_DATABASE_PREFIX: ${SQL_DATABASE_PREFIX}
       SITECORE_ADMIN_PASSWORD: ${SITECORE_ADMIN_PASSWORD}
       POST_DEPLOYMENT_WAIT_PERIOD: 300
     healthcheck:
@@ -56,7 +57,7 @@ services:
 
   solr:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/solr:8.8.2-${SITECORE_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/solr:${SOLR_VERSION}
     ports:
       - "8984:8983"
     volumes:
@@ -78,9 +79,9 @@ services:
         condition: service_healthy
   id:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}sitecore-id6:${SITECORE_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}sitecore-id7:${SITECORE_VERSION}
     environment:
-      Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
       Sitecore_Sitecore__IdentityServer__AccountOptions__PasswordRecoveryUrl: https://${CM_HOST}/sitecore/login?rc=1
       Sitecore_Sitecore__IdentityServer__Clients__PasswordClient__ClientSecrets__ClientSecret1: ${SITECORE_IDSECRET}
       Sitecore_Sitecore__IdentityServer__Clients__DefaultClient__AllowedCorsOrigins__AllowedCorsOriginsGroup1: https://${CM_HOST}
@@ -112,11 +113,11 @@ services:
         condition: service_started
     environment:
       Sitecore_AppSettings_instanceNameMode:define: default
-      Sitecore_ConnectionStrings_Core: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Security: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Master: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Master;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Web: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.Web;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_ExperienceForms: Data Source=${SQL_SERVER};Initial Catalog=Sitecore.ExperienceForms;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Core: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Security: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Master: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Master;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_Web: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Web;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      Sitecore_ConnectionStrings_ExperienceForms: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.ExperienceForms;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
       Sitecore_ConnectionStrings_Solr.Search: http://solr:8983/solr;solrCloud=true
       Sitecore_ConnectionStrings_Sitecoreidentity.secret: ${SITECORE_IDSECRET}
       Sitecore_AppSettings_Telerik.AsyncUpload.ConfigurationEncryptionKey: ${TELERIK_ENCRYPTION_KEY}
