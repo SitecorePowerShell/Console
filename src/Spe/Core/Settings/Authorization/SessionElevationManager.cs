@@ -36,7 +36,7 @@ namespace Spe.Core.Settings.Authorization
                     token.Expiration = expiration;
                 }
 
-                token.Action = Enum.TryParse(xmlDefinition.Attributes["elevationAction"].Value, out TokenDefinition.ElevationAction action)
+                token.Action = Enum.TryParse(xmlDefinition.Attributes["elevationAction"].Value, true, out TokenDefinition.ElevationAction action)
                     ? action
                     : TokenDefinition.ElevationAction.Block;
                 tokenDefinitions.Add(token.Name, token);
