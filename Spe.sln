@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spe.Sitecore8", "src\Spe.Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spe.Package", "src\Spe.Package\Spe.Package.csproj", "{DB7E4D87-B450-4EC4-BB77-61E39E0450A5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{91D50538-0272-4DD1-9065-50CBB9A45827}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "src\Nuget", "{91D50538-0272-4DD1-9065-50CBB9A45827}"
 	ProjectSection(SolutionItems) = preProject
 		NuGet.config = NuGet.config
 	EndProjectSection

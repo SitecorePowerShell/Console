@@ -2,7 +2,7 @@
 
 A command line and scripting tool built for the Sitecore platform.
 
-![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-console-ise.png)
+![Sitecore PowerShell Extensions](docs/readme-console-ise.png)
 
 ---
 
@@ -20,7 +20,7 @@ or run it in setups that face the Internet in an unprotected connections
 
 The Sitecore PowerShell Extensions module (SPE) provides a robust environment for automating tasks within Sitecore.
 
-![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-ise.gif)
+![Sitecore PowerShell Extensions](docs/readme-ise.gif)
 
 Consider some of the following examples to see how SPE can improve your quality of life as a Sitecore developer/administrator:
 
