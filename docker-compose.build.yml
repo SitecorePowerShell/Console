@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   cm:
-    image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}  
+    image: ${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}  
     build:
       context: ./docker/build/cm
       args:

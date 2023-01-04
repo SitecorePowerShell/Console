@@ -1,18 +1,14 @@
 services:
-  traefik:
-    depends_on:
-      cm:
-        condition: service_started
   cm:
     environment:
       Sitecore_AppSettings_role:define: Standalone
       SITECORE_SPE_ADMIN_PAGE_ENABLED: ${SPE_ADMIN_PAGE_ENABLED}
-      SITECORE_DEVELOPMENT_PATCHES: CustomErrorsOff
+      SITECORE_DEVELOPMENT_PATCHES: CustomErrorsOff,DebugOn,DevEnvOn,DeviceDetectionOff,HttpErrorsDetailed,InitMessagesOff
     volumes:
       - .\docker\deploy:C:\deploy
       - .\unicorn:C:\inetpub\wwwroot\App_Data\Unicorn
       - .\translations:C:\inetpub\wwwroot\App_Data\Translations
-      - .\releases:C:\inetpub\wwwroot\App_Data\packages
+      - .\build\releases:C:\inetpub\wwwroot\App_Data\packages
       - .\modules:C:\modules:ro
       - .\docker\tools:C:\tools:ro
     entrypoint: powershell -Command "& C:/tools/entrypoints/iis/Development.ps1"
