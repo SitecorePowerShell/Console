@@ -71,7 +71,7 @@ SharedFields:
     }
     
     # Linked items dialog
-    $itemsToPack = @()
+    $itemsToPack = @($selectedItem)
     $itemsToPack += Get-ChildrenToInclude $selectedItem $IncludeItems
     $linkedItems = @()
     $linkedItems += Get-LinkedItems $selectedItem $itemsToPack $IncludeLinkOptions
@@ -149,4 +149,4 @@ Languages:
       Value: 20130919T174300Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "1ffe0387-a7f6-44d7-a382-6ba35afbde2d"
+      Value: "fa5c5991-cf07-46b9-aa71-904667070a30"
