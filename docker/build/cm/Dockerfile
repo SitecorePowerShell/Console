@@ -19,7 +19,7 @@ ADD https://sitecoredev.azureedge.net/~/media/561F69767C104E62AF6BA47728833652.a
 ADD https://sitecoredev.azureedge.net/~/media/20A814F6985E4E61AFBE241E4628EB56.ashx?date=20221124T073716 '.\packages\'
 # Chinese
 ADD https://sitecoredev.azureedge.net/~/media/5E6BEFCF4BE8434DBAABEFF8CB7E9341.ashx?date=20221124T073716 '.\packages\'
-RUN Get-ChildItem -Path '.\packages\*.zip' | ForEach-Object { $_ | Expand-Archive -DestinationPath '.\extract' }; Copy-Item -Path '.\extract\*' -Destination 'C:\inetpub\wwwroot\App_Data' -Recurse -Force;
+RUN Get-ChildItem -Path '.\packages\*.zip' | ForEach-Object { $_ | Expand-Archive -DestinationPath '.\extract' }; Copy-Item -Path '.\extract\*' -Destination 'C:\inetpub\wwwroot\App_Data' -Recurse -Force; Get-Item -Path ".\packages" | Remove-Item -Recurse; Get-Item -Path ".\extract" | Remove-Item -Recurse;
 
 WORKDIR C:\inetpub\wwwroot
 
