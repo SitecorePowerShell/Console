@@ -94,7 +94,9 @@
             "in no way is deploying on a Friday night ever a good idea!",
             "share a root beer float with a friend. &#x1F37A;",
             "so you're telling me there's a chance?!",
-            "we're going to need a bigger server."
+            "we're going to need a bigger server.",
+            "trying to decipher this mess you call a script.",
+            "taking a breath of fresh air while your script bakes..."
         };
     }
 }
