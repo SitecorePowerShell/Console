@@ -422,7 +422,7 @@ namespace Spe.Client.Applications
             else
             {
                 Subtitle.Text = showStatus
-                ? $"<span class=\'status\'>{Texts.PowerShellRunner_UpdateProgress_Status_} {status}</span>"
+                ? $"<span class=\'status\'>{Texts.PowerShellRunner_UpdateProgress_Status_.Translate()} {status}</span>"
                     : "<span class='status'> </span>";
             }
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
@@ -451,7 +451,7 @@ namespace Spe.Client.Applications
                     if (secondsRemaining > -1)
                         sb.AppendFormat(
                             "<span class='timeRemaining'><span class='label'>" +
-                            Texts.PowerShellRunner_UpdateProgress_Time_remaining_ +
+                            Texts.PowerShellRunner_UpdateProgress_Time_remaining_.Translate() +
                             "</span> {0:c}</span><br/>",
                             new TimeSpan(0, 0, 0, secondsRemaining));
                 }
@@ -459,7 +459,7 @@ namespace Spe.Client.Applications
                 if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
                 {
                     sb.AppendFormat("<span class='operation'><span class='label'>" +
-                                    Texts.PowerShellRunner_UpdateProgress_Operation_ + 
+                                    Texts.PowerShellRunner_UpdateProgress_Operation_.Translate() + 
                                     "</span> {0}</span>",
                         args.Parameters["CurrentOperation"]);
                 }

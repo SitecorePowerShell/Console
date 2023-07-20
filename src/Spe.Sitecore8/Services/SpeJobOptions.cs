@@ -57,7 +57,8 @@ namespace Spe.VersionSpecific.Services
         {
             return new SpeJobOptions(options.JobName, options.Category, options.SiteName, options.Method.Object, options.Method.Method.Name)
             {
-                WriteToLog = options.WriteToLog
+                WriteToLog = options.WriteToLog,
+                ClientLanguage = options.ClientLanguage
             };
         }
     }
