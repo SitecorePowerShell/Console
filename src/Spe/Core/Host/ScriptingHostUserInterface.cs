@@ -48,7 +48,7 @@ namespace Spe.Core.Host
         {
             if (!IsOutputLoggingEnabled) return;
 
-            switch(level)
+            switch (level)
             {
                 case LogLevel.Debug:
                     PowerShellLog.Debug(message);
@@ -63,7 +63,7 @@ namespace Spe.Core.Host
                 case LogLevel.Warning:
                     PowerShellLog.Warn(message);
                     break;
-            }            
+            }
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Spe.Core.Host
             job.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
                 "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, string.Empty, false, null, null,
                 host.SessionKey));
-            var values = (object[]) job.MessageQueue.GetResult() ?? new object[] {string.Empty};
+            var values = (object[])job.MessageQueue.GetResult() ?? new object[] { string.Empty };
 
             return ToSecureString(((Hashtable)values[0])["Value"] as string);
         }
@@ -152,7 +152,7 @@ namespace Spe.Core.Host
 
         public override void WriteErrorLine(string value)
         {
-            
+
             var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width,
                 PrivateData.ErrorForegroundColor,
                 PrivateData.ErrorBackgroundColor, true);
@@ -176,14 +176,14 @@ namespace Spe.Core.Host
             var message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
-            message.Arguments.Add("CurrentOperation", record.CurrentOperation);
-            message.Arguments.Add("StatusDescription", record.StatusDescription);
+            message.Arguments.Add("CurrentOperation", Sitecore.Globalization.Translate.Text(record.CurrentOperation));
+            message.Arguments.Add("StatusDescription", Sitecore.Globalization.Translate.Text(record.StatusDescription));
             message.Arguments.Add("ParentActivityId", record.ParentActivityId.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("PercentComplete", record.PercentComplete.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("RecordType", record.RecordType.ToString());
             message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString(CultureInfo.InvariantCulture));
             var sheerMessage = new SendMessageMessage(message, false);
-            
+
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
             if (job != null)
@@ -224,7 +224,7 @@ namespace Spe.Core.Host
 
             var secureOptions = new Dictionary<string, bool>();
 
-            for (var i=0 ; i < descriptions.Count; i++)
+            for (var i = 0; i < descriptions.Count; i++)
             {
                 var description = descriptions[i];
                 var isSecure = description.ParameterTypeName.Contains("SecureString");
@@ -244,13 +244,13 @@ namespace Spe.Core.Host
                 string.IsNullOrEmpty(caption) ? "Sitecore PowerShell Extensions" : caption,
                 string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, string.Empty, false,
                 null, null, host.SessionKey));
-            var values = (object[]) job.MessageQueue.GetResult();
+            var values = (object[])job.MessageQueue.GetResult();
 
             return values?.Cast<Hashtable>()
                 .ToDictionary(value => value["Name"].ToString(),
                     value =>
                         secureOptions[value["Name"].ToString()]
-                            ? PSObject.AsPSObject(ToSecureString((string) value["Value"]))
+                            ? PSObject.AsPSObject(ToSecureString((string)value["Value"]))
                             : PSObject.AsPSObject(value["Value"]));
         }
 
@@ -281,7 +281,7 @@ namespace Spe.Core.Host
 
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices,
             int defaultChoice)
-        {            
+        {
             if (!CheckSessionCanDoInteractiveAction(nameof(PromptForChoice))) return -1;
 
 
@@ -298,14 +298,14 @@ namespace Spe.Core.Host
             var job = jobManager.GetContextJob();
 
             Context.Site = Factory.GetSite(job.Options.SiteName);
-            var lineWidth = choices.Count*80 + 140;
-            var strLineWidth = lineWidth/8;
+            var lineWidth = choices.Count * 80 + 140;
+            var strLineWidth = lineWidth / 8;
             var lineHeight = 0;
             foreach (var line in message.Split('\n'))
             {
-                lineHeight += 1 + line.Length/strLineWidth;
+                lineHeight += 1 + line.Length / strLineWidth;
             }
-            lineHeight = Math.Max(lineHeight*21 + 130,150);
+            lineHeight = Math.Max(lineHeight * 21 + 130, 150);
             var jobUiManager = TypeResolver.Resolve<IJobMessageManager>();
             var dialogResult = jobUiManager.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
@@ -339,7 +339,7 @@ namespace Spe.Core.Host
             var message = string.IsNullOrEmpty(operation)
                 ? "Non interactive session cannot perform an interactive operation."
                 : $"Non interactive session cannot perform an interactive '{operation}' operation.";
-            
+
             PowerShellLog.Debug(message);
 
             if (throwException)

@@ -79,5 +79,14 @@ namespace Spe.Core.Extensions
         {
             return words.Any(word => value.IndexOf(word, StringComparison.OrdinalIgnoreCase) > -1);
         }
+
+        public static string Translate(this string value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return Sitecore.Globalization.Translate.Text(value);
+            }
+            return value;
+        }
     }
 }
