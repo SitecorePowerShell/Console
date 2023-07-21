@@ -15,6 +15,7 @@ using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
+using Spe.Core.Extensions;
 using Spe.Core.Settings;
 using Spe.Core.VersionDecoupling;
 
@@ -176,8 +177,8 @@ namespace Spe.Core.Host
             var message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
-            message.Arguments.Add("CurrentOperation", Sitecore.Globalization.Translate.Text(record.CurrentOperation));
-            message.Arguments.Add("StatusDescription", Sitecore.Globalization.Translate.Text(record.StatusDescription));
+            message.Arguments.Add("CurrentOperation", record.CurrentOperation.Translate());
+            message.Arguments.Add("StatusDescription", record.StatusDescription.Translate());
             message.Arguments.Add("ParentActivityId", record.ParentActivityId.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("PercentComplete", record.PercentComplete.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("RecordType", record.RecordType.ToString());
