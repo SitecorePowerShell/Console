@@ -8,7 +8,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Get-Item -Path . | Unlock-Item
+    $SitecoreContextItem | Unlock-Item
     Close-Window
 Languages:
 - Language: en
@@ -20,4 +20,4 @@ Languages:
       Value: 20180914T182531Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "376c915d-eeaa-4ac3-8b5f-38ac8c60349a"
+      Value: "39c091d9-c521-48e0-b813-959d6788e85a"
