@@ -832,7 +832,8 @@ namespace Spe.Core.Host
         {
             if (item == null) return;
 
-            SetVariable("SitecoreContextItem", item);
+            var psObject = ItemShellExtensions.GetPsObject(Engine.SessionState, item);
+            SetVariable("SitecoreContextItem", psObject);
 
             Engine.SessionState.Path.SetLocation(item.GetProviderPath());
         }
@@ -854,7 +855,8 @@ namespace Spe.Core.Host
 
                 if (item != null)
                 {
-                    SetVariable("SitecoreContextItem", item);
+                    var psObject = ItemShellExtensions.GetPsObject(Engine.SessionState, item);
+                    SetVariable("SitecoreContextItem", psObject);
                     return;
                 }
             }
