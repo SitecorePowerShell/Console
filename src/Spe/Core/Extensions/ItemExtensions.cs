@@ -20,6 +20,11 @@ namespace Spe.Core.Extensions
             return item.InheritsFrom(Templates.Script.Id);
         }
 
+        public static bool IsPowerShellScriptTemplateField(this Item item)
+        {
+            return item.ID == Templates.Script.Fields.ScriptBody;
+        }
+
         public static bool IsPowerShellModule(this Item item)
         {
             return item.InheritsFrom(Templates.ScriptModule.Id);

@@ -15,9 +15,7 @@ namespace Spe.Core.Modules
 
         protected bool IsPowerShellMonitoredItem(Item item)
         {
-            return (item != null) &&
-                   item.Paths.Path.StartsWith(ApplicationSettings.ScriptLibraryPath,
-                       StringComparison.InvariantCultureIgnoreCase);
+            return item != null && item.Paths.Path.StartsWith(ApplicationSettings.ScriptLibraryPath, StringComparison.InvariantCultureIgnoreCase);
         }
 
         internal void OnItemDeleted(object sender, EventArgs args)

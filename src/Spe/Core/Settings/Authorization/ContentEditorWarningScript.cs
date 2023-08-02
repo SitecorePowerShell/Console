@@ -10,7 +10,10 @@ namespace Spe.Core.Settings.Authorization
         {
             Assert.ArgumentNotNull(args, "args");
 
-            if (!args.Item.IsPowerShellScript() && !args.Item.IsPowerShellLibrary() && !args.Item.InheritsFrom(Templates.ScriptModule.Id))
+            if (!args.Item.IsPowerShellScript() && 
+                !args.Item.IsPowerShellLibrary() && 
+                !args.Item.InheritsFrom(Templates.ScriptModule.Id) &&
+                !args.Item.IsPowerShellScriptTemplateField())
             {
                 return;
             }
