@@ -8,7 +8,7 @@ services:
       - .\docker\deploy:C:\deploy
       - .\unicorn:C:\inetpub\wwwroot\App_Data\Unicorn
       - .\translations:C:\inetpub\wwwroot\App_Data\Translations
-      - .\build\releases:C:\inetpub\wwwroot\App_Data\packages
+      - .\releases:C:\inetpub\wwwroot\App_Data\packages
       - .\modules:C:\modules:ro
       - .\docker\tools:C:\tools:ro
     entrypoint: powershell -Command "& C:/tools/entrypoints/iis/Development.ps1"

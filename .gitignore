@@ -41,7 +41,7 @@ deploy/*
 web.Debug.config
 web.Release.config
 Tests/
-/build/releases/
+/releases/
 
 # Project Split
 Spe/bin/
