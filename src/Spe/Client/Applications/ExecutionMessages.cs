@@ -61,6 +61,7 @@
             "are your shoelaces tied?",
             "working... unlike you!",
             "doing something useful...",
+            "doing something useful...can't say the same for you!",
             "oh, yeah, comments! Good idea!",
             "it's still faster than doing this in Java...",
             "prepare for awesomeness!",
@@ -96,7 +97,10 @@
             "so you're telling me there's a chance?!",
             "we're going to need a bigger server.",
             "trying to decipher this mess you call a script.",
-            "taking a breath of fresh air while your script bakes..."
+            "taking a breath of fresh air while your script bakes...",
+            "I've seen better scripts written by my toddler...",
+            "by the looks of this script you need a vacation!",
+            "did you copy and paste this work of art?"
         };
     }
 }
