@@ -18,6 +18,7 @@ namespace Spe.VersionSpecific.Services
         {
             var publishContext = PublishManager.CreatePublishContext(options);
             publishContext.Languages = new[] { options.Language };
+            publishContext.Job = Sitecore.Context.Job;
 
             return PublishPipeline.Run(publishContext);
         }
