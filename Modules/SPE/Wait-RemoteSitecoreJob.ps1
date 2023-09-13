@@ -45,7 +45,7 @@
         [pscustomobject]$Session,
 
         [ValidateNotNull()]
-        [string]$Id,
+        [string[]]$Ids,
 
         [int]$Delay = 1
     )
@@ -77,16 +77,21 @@
         }
     }
 
-    $keepRunning = $true
-    while($keepRunning) {
-        $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript
-        if($response -and $response.IsDone) {
-            $keepRunning = $false
-            Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
-            Write-Verbose "Finished polling job $($id)."
-            Invoke-RemoteScript -Session $session -ScriptBlock $finishScript
-        } else {
-            Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+    $keepRunning = 0
+    while($keepRunning -ne $Ids.Count) {
+        foreach ($id in $Ids)
+        {
+                $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript
+                if($response -and $response.IsDone) {
+                    $keepRunning++
+                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+                    Write-Verbose "Finished polling job $($id)."
+                } else {
+                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+                }
+        }
+        if ($keepRunning -ne $Ids.Count) # Only sleep if we're not 'done' waiting for jobs
+        {
             Start-Sleep -Seconds $Delay
         }
     }
