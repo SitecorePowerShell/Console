@@ -499,7 +499,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 path = Constants.MediaLibraryPath + (path.StartsWith("/") ? path : "/" + path);
             }
-            var mediaItem = (MediaItem)db.GetItem(path.ToLower());
+            var mediaItem = (MediaItem)db.GetItem(path);
 
             if (mediaItem == null && Regex.IsMatch(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
             {
