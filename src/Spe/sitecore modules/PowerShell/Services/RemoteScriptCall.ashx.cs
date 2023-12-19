@@ -88,11 +88,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
-                if (authHeader.StartsWith("Basic")) {
+                if (authHeader.StartsWith("Basic"))
+                {
                     var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
                     var encoding = Encoding.GetEncoding("iso-8859-1");
                     var usernamePassword = encoding.GetString(System.Convert.FromBase64String(encodedUsernamePassword));
-                    
+
                     var separatorIndex = usernamePassword.IndexOf(':');
 
                     username = usernamePassword.Substring(0, separatorIndex);
@@ -175,7 +176,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
             var skipExisting = requestParameters.Get("skipexisting").Is("true");
             var scDb = requestParameters.Get("sc_database");
-            
+
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");
 
@@ -288,7 +289,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static void RejectAuthenticationMethod(HttpContext context, string serviceName, Exception ex = null)
         {
             var errorMessage = $"A request to the {serviceName} service could not be completed because the provided credentials are invalid.";
-            
+
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = errorMessage;
             context.Response.SuppressFormsAuthenticationRedirect = true;
@@ -485,9 +486,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
             path = path.Replace('\\', '/').TrimEnd('/');
             path = (path.StartsWith("/") ? path : "/" + path);
             var originalPath = path;
-            var dotIndex = path.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+            var dotIndex = path.LastIndexOf(".", StringComparison.OrdinalIgnoreCase);
+            string extension = string.Empty;
             if (dotIndex > -1)
             {
+                PowerShellLog.Warn($"The File Dot Index {dotIndex} {path}.");
+                extension = path.Substring(dotIndex + 1);
                 path = path.Substring(0, dotIndex);
             }
 
@@ -495,8 +499,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 path = Constants.MediaLibraryPath + (path.StartsWith("/") ? path : "/" + path);
             }
-
-            var mediaItem = (MediaItem)db.GetItem(path);
+            var mediaItem = (MediaItem)db.GetItem(path.ToLower());
 
             if (mediaItem == null && Regex.IsMatch(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
             {
@@ -507,7 +510,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (mediaItem == null)
             {
                 var fileName = Path.GetFileName(originalPath);
-                var itemName = Path.GetFileNameWithoutExtension(path);
+                var itemName = string.Empty;
+                if (fileName.Count(f => f == '.') > 1)
+                    itemName = fileName.Substring(0, fileName.LastIndexOf('.'));
+                else
+                    itemName = Path.GetFileNameWithoutExtension(path);
                 var dirName = (Path.GetDirectoryName(path) ?? string.Empty).Replace('\\', '/');
 
                 if (String.IsNullOrEmpty(fileName))
@@ -534,17 +541,57 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (skipExisting) return;
 
-                var mediaUri = MediaUri.Parse(mediaItem);
-                var media = MediaManager.GetMedia(mediaUri);
-
-                using (var ms = new MemoryStream())
+                var siblings = db.GetItem(path).Parent.Children; //To find duplicate items if any.               
+                var matches = from sibling in siblings
+                              where db.GetItem(path.ToLower()).Paths.Path.ToLower() == sibling.Paths.Path.ToLower() &&
+                                    sibling["Extension"].ToLower() == extension.ToLower()
+                              select sibling;
+                if (!matches.Any()) //This section is to create a new item When we already have an Item in same Level with different extension
                 {
-                    content.CopyTo(ms);
-                    using (new EditContext(mediaItem, SecurityCheck.Disable))
+                    var fileName = Path.GetFileName(originalPath);
+                    var itemName = string.Empty;
+                    if (fileName.Count(f => f == '.') > 1)
+                        itemName = fileName.Substring(0, fileName.LastIndexOf('.'));
+                    else
+                        itemName = Path.GetFileNameWithoutExtension(path);
+                    var dirName = (Path.GetDirectoryName(path) ?? string.Empty).Replace('\\', '/');
+
+                    if (String.IsNullOrEmpty(fileName))
                     {
-                        using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
+                        PowerShellLog.Warn($"The filename cannot be determined for the entry {fileName}.");
+                        return;
+                    }
+
+                    var mco = new MediaCreatorOptions
+                    {
+                        Database = db,
+                        Versioned = Settings.Media.UploadAsVersionableByDefault,
+                        OverwriteExisting = false,
+                        Destination = $"{dirName}/{itemName}",
+                    };
+
+                    var mc = new MediaCreator();
+                    using (var ms = new MemoryStream())
+                    {
+                        content.CopyTo(ms);
+                        mc.CreateFromStream(ms, fileName, mco);
+                    }
+                }
+                else
+                {
+                    mediaItem = matches.First();
+                    var mediaUri = MediaUri.Parse(mediaItem);
+                    var media = MediaManager.GetMedia(mediaUri);
+
+                    using (var ms = new MemoryStream())
+                    {
+                        content.CopyTo(ms);
+                        using (new EditContext(mediaItem, SecurityCheck.Disable))
                         {
-                            media.SetStream(mediaStream);
+                            using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
+                            {
+                                media.SetStream(mediaStream);
+                            }
                         }
                     }
                 }
@@ -614,7 +661,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             using (var ms = new MemoryStream())
             {
                 request.InputStream.CopyTo(ms);
-                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false ;
+                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false;
                 var bytes = shouldDecompress ? ConvertFromGzipBytes(ms.ToArray()) : ms.ToArray();
                 var requestBody = Encoding.UTF8.GetString(bytes);
                 var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
@@ -830,15 +877,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
-            if(HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
-            
+            if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
+
             apiScripts = new ApiScriptCollection();
 
             if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
             {
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
                 GetAvailableScripts(roots, apiScripts);
-            } 
+            }
             else if (!apiScripts.ContainsKey(dbName))
             {
                 var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
@@ -907,5 +954,5 @@ namespace Spe.sitecore_modules.PowerShell.Services
         public ID Id { get; set; }
     }
 
-    internal class ApiScriptCollection : ConcurrentDictionary<string, SortedDictionary<string, ApiScript>> {}
+    internal class ApiScriptCollection : ConcurrentDictionary<string, SortedDictionary<string, ApiScript>> { }
 }
