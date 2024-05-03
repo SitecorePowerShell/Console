@@ -260,7 +260,7 @@ namespace Spe.Client.Controls
             {
                 var scriptsFound = false;
                 // get all items in medialibrary
-                var rootID = ApplicationSettings.ScriptLibraryRoot.ID.ToShortID().ToString();
+                var rootID = ApplicationSettings.ScriptLibraryRoot.ID.ToShortID().ToString().ToLower();
                 var query =
                     context.GetQueryable<SearchResultItem>()
                         .Where(

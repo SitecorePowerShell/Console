@@ -72,3 +72,6 @@ node_modules/
 
 # Ephemeral index caches used by serialization, do not commit
 *.scindex
+
+# Jetbrains Rider
+.idea
