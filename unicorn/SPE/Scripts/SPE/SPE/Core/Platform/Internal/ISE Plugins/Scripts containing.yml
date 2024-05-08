@@ -16,13 +16,17 @@ SharedFields:
         exit
     }
     
+    class ScriptSearchResultItem : SearchResultItem
+    {
+       [Sitecore.ContentSearch.IndexField("script")]
+       [string]$Script;
+    }
+    
     $searchProps = @{
         Index = "sitecore_master_index"
-        Criteria = @(
-            @{ Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/system/modules/PowerShell/" },
-            @{ Filter = "Equals"; Field = "_templatename"; Value = "PowerShell Script" },
-            @{ Filter = "Contains"; Field = "script"; Value = "$selectionText"; CaseSensitive = $true }
-        )
+        Where = "Paths.Contains(@0) and Script.Contains(@1) and Language== `"en`""
+        WhereValues = [Spe.Core.Settings.ApplicationSettings]::ScriptLibraryRoot.ID, $selectionText
+        QueryType = [ScriptSearchResultItem]
     }
     
     $reportProps = @{
@@ -91,4 +95,4 @@ Languages:
       Value: 20150625T211456Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "f7b824f0-4bfe-426a-bae8-9d69e361696e"
+      Value: "cab138dc-42f8-4987-98ff-7df638b178e9"
