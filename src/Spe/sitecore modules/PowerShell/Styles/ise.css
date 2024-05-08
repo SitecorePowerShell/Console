@@ -9,7 +9,10 @@
     background-color: white;
 }
 
-#ResultsSplitter + tr > td { height: 100%; }
+#ResultsSplitter + tr > td { 
+    height: 100%;
+    overflow: auto;
+}
 
 #Databases {
     border: solid 1px ButtonShadow;
@@ -194,10 +197,10 @@ a.ps-link {
     padding: 0 4px 0 4px;
 }
 
-#Result {
-    position: fixed;
-    bottom: 27px;
-}
+/*#Result {*/
+/*    position: fixed;*/
+/*    bottom: 27px;*/
+/*}*/
 
 #HelpClose {
     font-size: 18px;
@@ -417,4 +420,59 @@ a.ps-link {
 
 #ResultsStatusBarAction.status-bar-results-hidden {
     background-color: rgb(1, 36, 86);
+}
+
+.scTabPage {
+    padding: 4px 0 0 0;
+}
+
+.scTab, .scTab_Hover, .scTabActive, .scTabActive_Hover {
+    text-transform: none;
+    line-height: 30px;
+}
+
+.scTabActive:after, .scTabActive_Hover:after {
+    height: 30px;
+}
+
+.ff .scTabstrip {
+    margin-top: 4px;
+    height: 33px;
+}
+
+.scTabs {
+    top: 30px;
+    display:none;
+}
+
+.aceCodeEditor, #EditingArea, #Content, #Wrapper, #Result {
+    width: 100%;
+    height: 100%;
+}
+
+#TabsPanel {
+    width: 100%;
+    height: 35px;
+}
+
+#EditingArea {
+    overflow: auto;
+}
+
+#CodeEditors {
+    width: 100%;
+    height: calc(100% - 40px);
+}
+
+.scriptModified{
+    display:none;
+    color:#fc2929
+}
+
+.closeTab {
+    display: inline-block;
+    cursor: pointer;
+    background: url(/sitecore%20modules/PowerShell/Assets/TabClose.png) no-repeat center;
+    padding: 0 4px 0 4px;
+    margin: 0 -10px 0 10px;
 }

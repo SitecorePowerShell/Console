@@ -1,5 +1,5 @@
-(function($, window, spe, ace, undefined) {
-    $(function() {
+(function ($, window, spe, ace, undefined) {
+    $(function () {
         var tips = [
             "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
             "You can show help by pressing <strong>Ctrl+Enter</strong> for the closest command to the left of the cursor.",
@@ -18,8 +18,26 @@
             "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
-			"You can find more documentation in the Sitecore PowerShell Extensions <a href='https://doc.sitecorepowershell.com/' target='_blank'>book</a>."
+            "You can find more documentation in the Sitecore PowerShell Extensions <a href='https://doc.sitecorepowershell.com/' target='_blank'>book</a>."
         ];
+
+        class EditorSession {
+            constructor(selectedText, editor, name, editorContainerId, path, index) {
+                this.index = index;               // int: sort order
+                this.editor = editor;             // string: the ace editor
+                this.name = name;                 // string: Script name
+                this.editorContainerId = editorContainerId;
+                this.path = path;                 // string: path
+                this.selectedText = selectedText; // string: selected text
+                this.startBarHtml = "";           // string: start bar html
+                this.tabTitleInnerHTML = "";      // string: tab title inner html
+                this.windowTitleInnerHTML = "";   // string: window title inner html
+                this.isModified = false;          // bool: is modified
+                this.initialAssignment = true;    // bool: initial assignment
+                this.breakpoints = "";            // string: breakpoints
+                this.results = "";                // string: Script execution results
+            }
+        }
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;
         var guid = "ISE_Editing_Session";
@@ -30,35 +48,34 @@
         var resultsBottomOffset = 10;
         var typingTimer;
         var resultsVisibilityIntent = true;
-        
+        var editorSessions = [];
+        var editorFontFamily = "Monaco";
+        var editorFontSize = 12;
+        var editorLiveAutocompletion = false;
+        var currentEditorIndex = 1;
+        var currentEditorSession;
+        var currentAceEditor;
+        var previousIndex = 1;
+        var perTabResults = true;
+
         var editor = $($("#Editor")[0]);
-        editor.hide();
-
+        var openedScriptsMemo = $($("#OpenedScripts")[0]);
+        var selectionTextMemo = $($("#SelectionText")[0]);
+        var breakpointsMemo = $($("#Breakpoints")[0]);
+        var scriptItemIdMemo = $($("#ScriptItemIdMemo")[0]);
+        var scriptItemDbMemo = $($("#ScriptItemDbMemo")[0]);
         // Setup the ace code editor.
-        var codeeditor = ace.edit("CodeEditor");
-        codeeditor.setTheme("ace/theme/powershellise");
-        codeeditor.session.setMode("ace/mode/powershell");
-        codeeditor.setShowPrintMargin(false);
-        codeeditor.session.setValue(editor.val());
-        codeeditor.session.on("change", function () {
-            editor.val(codeeditor.session.getValue());
-        });
-        codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
-
-        addProxy(codeeditor, "onPaste", function () {
-            spe.updateRibbon();
-        });
 
         addProxy(scForm, "invoke", function (args) {
             if (args[0] === "ise:immediatewindow") {
                 clearVariablesCache();
             }
         });
-		
+
         function registerEventListenersForRibbonButtons() {
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
                 div.addEventListener("click",
-                    function() {
+                    function () {
                         clearTimeout(typingTimer);
                     });
             });
@@ -71,7 +88,7 @@
         }
 
         registerEventListenersForRibbonButtons();
-		
+
         window.parent.focus();
         window.focus();
 
@@ -84,32 +101,40 @@
             };
         }
 
-        function setFocusOnConsole() {
-            $("body").focus();
-            $(codeeditor).focus();
-            ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("CodeEditor");
-        }
-
-        window.addEventListener("focus", function(event) {
+        window.addEventListener("focus", function (event) {
             setFocusOnConsole();
         }, false);
 
         function getQueryStringValue(key) {
             key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
-            var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+            var match = location.search.match(new RegExp("[?&]" + key + "=([^&]+)(&|$)"));
             return match && decodeURIComponent(match[1].replace(/\+/g, " "));
         }
 
-        if(getQueryStringValue("sc_bw") === "1"){
-            //$("#RibbonPanel").css("padding-top","50px");
-            $("#Wrapper").css("padding-top","0px");
+        if (getQueryStringValue("sc_bw") === "1") {
+            $("#Wrapper").css("padding-top", "0px");
         }
 
-        setTimeout(setFocusOnConsole, 1000);        
+        function hasSessionWithIndex(targetIndex) {
+            return editorSessions.some(session => session.index === targetIndex);
+        }
+
+        function getSessionByIndex(index) {
+            // Find the session with the specified index
+            return editorSessions.find(session => session.index === index);
+        }
+
+        function setFocusOnConsole() {
+            $("body").focus();
+            $(currentAceEditor).focus();
+            ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("CodeEditor");
+        }
+
+        setTimeout(setFocusOnConsole, 1000);
 
         spe.updateRibbon = function () {
-            if (!codeeditor.getReadOnly()) {
-                scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+            if (!currentAceEditor.getReadOnly()) {
+                scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !currentEditorSession.isModified + ")");
                 registerEventListenersForRibbonButtons();
             }
         };
@@ -125,249 +150,343 @@
 
         var posx = $("#PosX");
         var posy = $("#PosY");
-        $("#CodeEditor").on("keyup mousedown", function() {
-            var position = codeeditor.getCursorPosition();
-            posx.text(position.column);
-            posy.text((position.row + 1));
-            spe.updateRibbonNeeded();
-        });
 
-        $("#CodeEditor").on("keyup mouseup", function() {
-            var range = codeeditor.getSelectionRange();
-            $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
-		});
+        spe.updateModificationFlag = function (clear) {
 
-        $("#CopyResultsToClipboard").on("click", function() {
-			clipboard.copy(spe.getOutput());
-		});
+            if (currentEditorSession.initialAssignment) {
+                currentEditorSession.initialAssignment = false;
+            } else
+            if (clear === currentEditorSession.isModified) {
+                currentEditorSession.isModified = !clear;
+                spe.applyWindowTitle(currentEditorIndex);
+            }
+        };
 
-        ace.config.loadModule("ace/ext/emmet", function() {
-            ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function() {
-                codeeditor.setOption("enableEmmet", true);
+        spe.changeTab = function (index) {
+
+            if (!hasSessionWithIndex(index)) {
+                return;
+            }
+
+            previousIndex = currentEditorIndex;
+            currentEditorIndex = index;
+            currentEditorSession = getSessionByIndex(currentEditorIndex);
+            currentAceEditor = currentEditorSession.editor;
+            clearVariablesCache();
+            editor.val(currentAceEditor.session.getValue());
+            selectionTextMemo.val(currentEditorSession.selectedText);
+            breakpointsMemo.val(currentEditorSession.breakpoints);
+            scriptItemIdMemo.val(currentEditorSession.scriptId);
+            scriptItemDbMemo.val(currentEditorSession.scriptDb);
+            spe.applyWindowTitle(currentEditorIndex);
+
+            editorSessions.forEach(function (editorSession) {
+                if (editorSession.index === index) {
+                    $("#" + editorSession.editorContainerId).show();
+                } else {
+                    $("#" + editorSession.editorContainerId).hide();
+                }
             });
 
-            codeeditor.setOptions({
-                enableSnippets: true,
-                enableBasicAutocompletion: true
+            if(perTabResults) {
+                $("#ScriptResultCode").text("");
+                $("#ScriptResultCode").append(currentEditorSession.results);
+                $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            }            
+        }
+
+        spe.createEditor = function (index) {
+            previousIndex = currentEditorIndex;
+
+            currentEditorIndex = editorSessions.length + 1;
+
+            var editorContainerId = "CodeEditor" + index;
+            $("#CodeEditors").append("<div id='" + editorContainerId + "' class='aceCodeEditor'></div>");
+            currentAceEditor = ace.edit(editorContainerId);
+
+            const newSession = new EditorSession("", currentAceEditor, "", editorContainerId, "", currentEditorIndex);
+            editorSessions.push(newSession);
+            currentEditorSession = newSession;
+
+            currentAceEditor.setTheme("ace/theme/powershellise");
+            currentAceEditor.session.setMode("ace/mode/powershell");
+            currentAceEditor.setShowPrintMargin(false);
+            currentAceEditor.session.setValue(editor.val());
+            currentAceEditor.session.on("change", function () {
+                editor.val(currentAceEditor.session.getValue());
             });
-        });
-
-        ace.config.loadModule("ace/ext/language_tools", function(module) {
-            codeeditor.setOptions({
-                enableSnippets: true,
-                enableBasicAutocompletion: true
+            currentAceEditor.tokenTooltip = new TokenTooltip(currentAceEditor);
+            currentAceEditor.setOption("fontFamily", editorFontFamily);
+            currentAceEditor.setOption("fontSize", editorFontSize);
+            currentAceEditor.setOptions({
+                enableLiveAutocompletion: editorLiveAutocompletion
             });
 
-            var keyWordCompleter = {
-                insertMatch: function(editor) {
+            addProxy(currentAceEditor, "onPaste", function () {
+                spe.updateRibbon();
+            });
 
-                    var data = editor.completer.popup.getData(editor.completer.popup.getRow());
+            $("#CodeEditor" + currentEditorIndex).on("keyup mousedown", function () {
+                var position = currentAceEditor.getCursorPosition();
+                posx.text(position.column);
+                posy.text((position.row + 1));
+                spe.updateRibbonNeeded();
+            });
 
-                    var ranges = editor.selection.getAllRanges();
-                    for (var i = 0, range; range = ranges[i]; i++) {
-                        if (data.meta === "Signature") {
-                            data.value = data.fullValue;
-                        } else if (data.meta === "Type") {
-                            while (range.start.column > 0 && codeeditor.session.getTextRange(range).lastIndexOf("[") !== 0) {
-                                range.start.column--;
-                            }
-                            range.start.column++;
-                            data.value = data.fullValue;
-                        } else if (data.meta === "Item" || data.meta === "ProviderItem" || data.meta === "ProviderContainer") {
-                            range.start.column = data.position;
-                            data.value = data.fullValue;
+            $("#CodeEditor" + currentEditorIndex).on("keyup mouseup", function () {
+                var range = currentAceEditor.getSelectionRange();
+                currentEditorSession.selectedText = currentAceEditor.session.getTextRange(range);
+                selectionTextMemo.val(currentEditorSession.selectedText);
+            });
 
-                            //try trim prefix quotes
-                            range.start.column--;
-                            range.end.column++;
-                            var replacedText = codeeditor.session.getTextRange(range);
-                            var charStart = replacedText.charAt(0);
-                            var charEnd = replacedText.charAt(replacedText.length-1);
-                            if (charStart !== '"' && charStart !== "'") {
+            ace.config.loadModule("ace/ext/emmet", function () {
+                ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function () {
+                    currentAceEditor.setOption("enableEmmet", true);
+                });
+
+                currentAceEditor.setOptions({
+                    enableSnippets: true,
+                    enableBasicAutocompletion: true
+                });
+            });
+
+            ace.config.loadModule("ace/ext/language_tools", function (module) {
+                currentAceEditor.setOptions({
+                    enableSnippets: true,
+                    enableBasicAutocompletion: true
+                });
+
+                var keyWordCompleter = {
+                    insertMatch: function (editor) {
+
+                        var data = editor.completer.popup.getData(editor.completer.popup.getRow());
+
+                        var ranges = editor.selection.getAllRanges();
+                        for (var i = 0, range; range = ranges[i]; i++) {
+                            if (data.meta === "Signature") {
+                                data.value = data.fullValue;
+                            } else if (data.meta === "Type") {
+                                while (range.start.column > 0 && currentAceEditor.session.getTextRange(range).lastIndexOf("[") !== 0) {
+                                    range.start.column--;
+                                }
                                 range.start.column++;
-                            }
+                                data.value = data.fullValue;
+                            } else if (data.meta === "Item" || data.meta === "ProviderItem" || data.meta === "ProviderContainer") {
+                                range.start.column = data.position;
+                                data.value = data.fullValue;
 
-                            //try trim trailing quotes
-                            if (charEnd !== '"' && charEnd !== "'") {
-                                range.end.column--;
+                                //try trim prefix quotes
+                                range.start.column--;
+                                range.end.column++;
+                                var replacedText = currentAceEditor.session.getTextRange(range);
+                                var charStart = replacedText.charAt(0);
+                                var charEnd = replacedText.charAt(replacedText.length - 1);
+                                if (charStart !== '"' && charStart !== "'") {
+                                    range.start.column++;
+                                }
+
+                                //try trim trailing quotes
+                                if (charEnd !== '"' && charEnd !== "'") {
+                                    range.end.column--;
+                                }
+                            } else {
+                                range.start.column -= editor.completer.completions.filterText.length;
+                            }
+                            editor.session.remove(range);
+                        }
+
+                        editor.execCommand("insertstring", data.value || data);
+                        $.lastPrefix = "";
+
+                    },
+                    getCompletions: function (editor, session, pos, prefix, callback) {
+                        session.$mode.$keywordList = [];
+
+                        var range = currentAceEditor.getSelectionRange();
+                        range.start.column = 0;
+                        var line = currentAceEditor.session.getTextRange(range);
+
+                        if (line) {
+
+                            if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) !== 0) {
+                                $.lastPrefix = prefix;
+                                _getTabCompletions(line);
                             }
                         } else {
-                            range.start.column -= editor.completer.completions.filterText.length;
+                            $.tabCompletions = [""];
                         }
-                        editor.session.remove(range);
-                    }
+                        var keywords = $.tabCompletions;
 
-                    editor.execCommand("insertstring", data.value || data);
-                    $.lastPrefix = "";
+                        if (keywords && keywords.length > 0 && keywords[0].indexOf("Signature", 0) === 0) {
 
-                },
-                getCompletions: function(editor, session, pos, prefix, callback) {
-                    session.$mode.$keywordList = [];
+                            callback(null, []);
+                            $.tabCompletions = null;
 
-                    var range = codeeditor.getSelectionRange();
-                    range.start.column = 0;
-                    var line = codeeditor.session.getTextRange(range);
+                            var msgType = "information";
+                            if (keywords.length === 1 && keywords[0].indexOf("not found in session", 0) > 0) {
+                                msgType = "error";
+                            }
 
-                    if (line) {
-
-                        if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) !== 0) {
-                            $.lastPrefix = prefix;
-                            _getTabCompletions(line);
-                        }
-                    } else {
-                        $.tabCompletions = [""];
-                    }
-                    var keywords = $.tabCompletions;
-
-                    if (keywords && keywords.length > 0 && keywords[0].indexOf("Signature", 0) === 0) {
-
-                        callback(null, []);
-                        $.tabCompletions = null;
-
-                        var msgType = "information";
-                        if (keywords.length === 1 && keywords[0].indexOf("not found in session", 0) > 0) {
-                            msgType = "error";
+                            session.setAnnotations(keywords.map(function (word) {
+                                var hint = word.split("|");
+                                return {
+                                    row: pos.row,
+                                    column: pos.column,
+                                    text: hint[3],
+                                    type: msgType // error, warning or information
+                                };
+                            }));
+                            ace.config.loadModule("ace/ext/error_marker", function (module) {
+                                module.showErrorMarker(currentAceEditor, -1);
+                            });
+                            return;
                         }
 
-                        session.setAnnotations(keywords.map(function (word) {
+                        var psCompleter = this;
+                        callback(null, keywords.map(function (word) {
                             var hint = word.split("|");
                             return {
-                                row: pos.row,
-                                column: pos.column,
-                                text: hint[3],
-                                type: msgType // error, warning or information
+                                name: hint[1],
+                                value: hint[1],
+                                score: 1000,
+                                meta: hint[0],
+                                position: hint[2],
+                                fullValue: hint[3],
+                                completer: psCompleter
                             };
                         }));
-                        ace.config.loadModule("ace/ext/error_marker", function (module) {
-                            module.showErrorMarker(codeeditor, -1);
-                        });
-                        return;
                     }
+                };
 
-                    var psCompleter = this;
-                    callback(null, keywords.map(function(word) {
-                        var hint = word.split("|");
-                        return {
-                            name: hint[1],
-                            value: hint[1],
-                            score: 1000,
-                            meta: hint[0],
-                            position: hint[2],
-                            fullValue: hint[3],
-                            completer: psCompleter
-                        };
-                    }));
+                module.addCompleter(keyWordCompleter);
+            });
+
+
+            currentAceEditor.setAutoScrollEditorIntoView(true);
+
+            currentAceEditor.on("guttermousedown", function (editor) {
+                var target = editor.domEvent.target;
+                if (target.className.indexOf("ace_gutter-cell") === -1)
+                    return;
+
+                if (editor.clientX > 25 + target.getBoundingClientRect().left)
+                    return;
+
+                var currRow = editor.getDocumentPosition().row;
+                spe.breakpointSet(currRow, "toggle");
+                editor.stop();
+                var sparseKeys = Object.keys(editor.editor.session.getBreakpoints());
+                currentEditorSession.breakpoints = sparseKeys.toString();
+                breakpointsMemo.val(currentEditorSession.breakpoints);
+            });
+
+            currentAceEditor.on("input", function () {
+                spe.updateModificationFlag(false);
+            });
+
+            var codeeeditorcommands = [
+                {
+                    name: "help",
+                    bindKey: {win: "ctrl-enter|shift-enter", mac: "ctrl-enter|command-enter", sender: "codeeditor|cli"},
+                    exec: function (env, args, request) {
+                        var range = currentAceEditor.getSelectionRange();
+                        if (range.start.row === range.end.row && range.start.column === range.end.column) {
+                            range.start.column = 0;
+                        }
+                        var command = currentAceEditor.session.getTextRange(range);
+                        if (command) {
+                            spe.showCommandHelp(command);
+                        }
+                    },
+                    readOnly: true
+                }, {
+                    name: "fontSizeIncrease",
+                    bindKey: {win: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+", mac: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+"},
+                    exec: function (editor) {
+                        spe.changeFontSize(editor.getFontSize() + 1);
+                    },
+                    readOnly: true
+                }, {
+                    name: "fontSizeDecrease",
+                    bindKey: {win: "Ctrl-Alt-Shift--", mac: "Ctrl-Alt-Shift--"},
+                    exec: function (editor) {
+                        spe.changeFontSize(Math.max(editor.getFontSize() - 1, 8));
+                    },
+                    readOnly: true
+                }, {
+                    name: "setDebugPoint",
+                    bindKey: {win: "F8", mac: "F8"},
+                    exec: function (editor) {
+                        var currRow = editor.selection.getCursor().row;
+                        spe.breakpointSet(currRow, "toggle");
+                    },
+                    readOnly: true
                 }
-            };
+            ];
 
-            module.addCompleter(keyWordCompleter);
+            currentAceEditor.commands.addCommands(codeeeditorcommands);
+
+        }
+
+        spe.changeLiveAutocompletion = function (liveAutocompletion) {
+            editorLiveAutocompletion = liveAutocompletion;
+            editorSessions.forEach(function (editor) {
+                editor.editor.setOptions({
+                    enableLiveAutocompletion: liveAutocompletion
+                });
+            });
+        };
+
+
+        $("#CopyResultsToClipboard").on("click", function () {
+            clipboard.copy(spe.getOutput());
         });
 
-
-        codeeditor.setAutoScrollEditorIntoView(true);
-
-        codeeditor.on("guttermousedown", function(editor) {
-            var target = editor.domEvent.target;
-            if (target.className.indexOf("ace_gutter-cell") === -1)
-                return;
-
-            if (editor.clientX > 25 + target.getBoundingClientRect().left)
-                return;
-
-            var currRow = editor.getDocumentPosition().row;
-            spe.breakpointSet(currRow, "toggle");
-            editor.stop();
-            var sparseKeys = Object.keys(editor.editor.session.getBreakpoints());
-            $("#Breakpoints")[0].value  = sparseKeys.toString();
-        });
-
-        codeeditor.on("input", function () {
-            spe.updateModificationFlag(false);
-        });
-
-        var codeeeditorcommands = [
-            {
-                name: "help",
-                bindKey: { win: "ctrl-enter|shift-enter", mac: "ctrl-enter|command-enter", sender: "codeeditor|cli" },
-                exec: function(env, args, request) {
-                    var range = codeeditor.getSelectionRange();
-                    if (range.start.row === range.end.row && range.start.column === range.end.column) {
-                        range.start.column = 0;
-                    }
-                    var command = codeeditor.session.getTextRange(range);
-                    if (command) {
-                        spe.showCommandHelp(command);
-                    }
-                },
-                readOnly: true
-            }, {
-                name: "fontSizeIncrease",
-                bindKey: { win: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+", mac: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+" },
-                exec: function(editor) {
-                    spe.changeFontSize(editor.getFontSize() + 1);
-                },
-                readOnly: true
-            }, {
-                name: "fontSizeDecrease",
-                bindKey: { win: "Ctrl-Alt-Shift--", mac: "Ctrl-Alt-Shift--" },
-                exec: function(editor) {
-                    spe.changeFontSize(Math.max(editor.getFontSize() - 1, 8));
-                },
-                readOnly: true
-            }, {
-                name: "setDebugPoint",
-                bindKey: { win: "F8", mac: "F8" },
-                exec: function (editor) {
-                    var currRow = editor.selection.getCursor().row;
-                    spe.breakpointSet(currRow, "toggle");
-                },
-                readOnly: true
-            }
-        ];
-
-		codeeditor.commands.addCommands(codeeeditorcommands);
-
-        spe.getOutput = function() {
+        spe.getOutput = function () {
             return $("#ScriptResultCode")[0].innerText;
         };
 
-        spe.changeFontSize = function(setting) {
-            setting = parseInt(setting) || 12;
-            codeeditor.setOption("fontSize", setting);
-            $("#ScriptResult").css({ "font-size": setting + "px" });
-        };
-
-        spe.changeLiveAutocompletion = function(liveAutocompletion) {
-            codeeditor.setOptions({
-                enableLiveAutocompletion: liveAutocompletion
-            });
-        };
-
-        spe.clearOutput = function() {
+        spe.clearOutput = function () {
             $("#ScriptResultCode").text("");
             $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            currentEditorSession.results = "";
             clearVariablesCache();
         };
 
-        spe.appendOutput = function(outputToAppend) {
+        spe.appendOutput = function (outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
             $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            currentEditorSession.results = currentEditorSession.results + decoded;
             clearVariablesCache();
         };
 
-        spe.changeFontFamily = function(setting) {
+        spe.changeFontFamily = function (setting) {
             setting = setting || "Monaco";
-            codeeditor.setOption("fontFamily", setting);
+            editorFontFamily = setting;
+            editorSessions.forEach(function (editor) {
+                editor.editor.setOption("fontFamily", setting);
+            });
+
             document.getElementById("ScriptResult").style.fontFamily = setting;
         };
 
-        spe.changeBackgroundColor = function (setting) {
-            $("#ScriptResult").css({ "background-color": setting });
-            $("#Result").css({ "background-color": setting });
+        spe.changeFontSize = function (setting) {
+            setting = parseInt(setting) || 12;
+            editorFontSize = setting;
+            editorSessions.forEach(function (editor) {
+                editor.editor.setOption("fontSize", setting);
+            });
+            $("#ScriptResult").css({"font-size": setting + "px"});
         };
 
-        spe.changeSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion) {
+
+        spe.changeBackgroundColor = function (setting) {
+            $("#ScriptResult").css({"background-color": setting});
+            $("#Result").css({"background-color": setting});
+        };
+
+        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
             spe.changeBackgroundColor(backgroundColor);
             spe.changeFontFamily(fontFamily);
             spe.changeFontSize(fontSize);
@@ -375,54 +494,44 @@
                 spe.changeLiveAutocompletion(liveAutocompletion);
             }
             resultsBottomOffset = bottomOffset;
+            perTabResults = perTabOutput;
         };
 
         spe.changeSessionId = function (sessionId) {
             guid = sessionId;
         };
 
-        spe.debugStart = function(sessionId) {
-            codeeditor.setReadOnly(true);
+        spe.debugStart = function (sessionId) {
+            currentAceEditor.setReadOnly(true);
         };
 
         spe.debugStop = function (sessionId) {
             setTimeout(spe.breakpointHandled, 100);
-            codeeditor.setReadOnly(false);
+            currentAceEditor.setReadOnly(false);
         };
 
-        spe.updateModificationFlag = function (clear) {
-            if (clear) {
-                codeeditor.getSession().getUndoManager().markClean();
-            }
-            var scriptModified = $("#scriptModified", window.parent.document);
-            if (codeeditor.getSession().getUndoManager().isClean())
-                scriptModified.hide();
-            else
-                scriptModified.show();
-        };
-
-        spe.toggleBreakpoint = function(row, set) {
+        spe.toggleBreakpoint = function (row, set) {
             if (set) {
-                codeeditor.session.setBreakpoint(row);
+                currentAceEditor.session.setBreakpoint(row);
             } else {
-                codeeditor.session.clearBreakpoint(row);
+                currentAceEditor.session.clearBreakpoint(row);
             }
             scForm.postRequest("", "", "", "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
         };
 
-        spe.breakpointSet = function(row, action) {
+        spe.breakpointSet = function (row, action) {
             if (action === "toggle") {
-                if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
+                if (currentAceEditor.session.getBreakpoints()[row] === "ace_breakpoint") {
                     spe.toggleBreakpoint(row, false);
                 } else {
                     spe.toggleBreakpoint(row, true);
                 }
             } else if (action === "Set" || action === "Enabled") {
-                if (codeeditor.session.getBreakpoints()[row] !== "ace_breakpoint") {
+                if (currentAceEditor.session.getBreakpoints()[row] !== "ace_breakpoint") {
                     spe.toggleBreakpoint(row, true);
                 }
             } else if (action === "Removed" || action === "Disabled") {
-                if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
+                if (currentAceEditor.session.getBreakpoints()[row] === "ace_breakpoint") {
                     spe.toggleBreakpoint(row, false);
                 }
             }
@@ -434,30 +543,27 @@
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
-                debugMarkers.push(codeeditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
+                debugMarkers.push(currentAceEditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
             }, 100);
-            if (line < codeeditor.getFirstVisibleRow() || line > codeeditor.getLastVisibleRow()) {
-                codeeditor.gotoLine(line);
+            if (line < currentAceEditor.getFirstVisibleRow() || line > currentAceEditor.getLastVisibleRow()) {
+                currentAceEditor.gotoLine(line);
             }
         };
 
-        spe.breakpointHandled = function() {
+        spe.breakpointHandled = function () {
             while (debugMarkers.length > 0) {
-                codeeditor.session.removeMarker(debugMarkers.shift());
+                currentAceEditor.session.removeMarker(debugMarkers.shift());
             }
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
         };
 
-        scForm.postRequest("", "", "", "ise:updatesettings");
-
         spe.updateEditor = function () {
-            codeeditor.getSession().setValue(editor.val());
-            spe.clearBreakpoints();
+            currentAceEditor.getSession().setValue(editor.val());
         };
 
         spe.insertEditorContent = function (text) {
-            var position = codeeditor.getCursorPosition();
-            codeeditor.getSession().insert(position, text);
+            var position = currentAceEditor.getCursorPosition();
+            currentAceEditor.getSession().insert(position, text);
             spe.clearBreakpoints();
         };
 
@@ -466,16 +572,16 @@
                 spe.preventCloseWhenRunning(false);
             }
             clearVariablesCache();
-            if(!resultsVisibilityIntent){
+            if (!resultsVisibilityIntent) {
                 setTimeout(spe.closeResults, 2000);
             }
         };
 
-        spe.clearBreakpoints = function() {
-            var breakPoints = Object.keys(codeeditor.session.getBreakpoints());
+        spe.clearBreakpoints = function () {
+            var breakPoints = Object.keys(currentAceEditor.session.getBreakpoints());
             var bpCount = breakPoints.length;
             for (var i = 0; i < bpCount; i++) {
-                codeeditor.session.clearBreakpoint(breakPoints[i]);
+                currentAceEditor.session.clearBreakpoint(breakPoints[i]);
             }
         };
 
@@ -487,40 +593,115 @@
             return string.replace(new RegExp(escapeRegExp(find), "g"), replace);
         }
 
-        spe.changeWindowTitle = function(newTitle, clearWindow) {
-            if (clearWindow) {
-                codeeditor.getSession().setValue("");
-            }
-            newTitle = replaceAll(newTitle, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+        spe.changeTabDetails = function (codeEditorIndex, newTitle, startBarHtml, scriptId, scriptDb) {
+
+            var editorSession = getSessionByIndex(codeEditorIndex);
+            var itemName = newTitle.split("/").last();
+            editorSession.name = itemName
+            editorSession.path = newTitle;
+            const newTabTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.tabTitleInnerHTML = "<span title='" + editorSession.path + "'><span class=\"scriptModified ModifiedMark#tabindex#\">⬤</span> " + editorSession.name +
+                "</i>" +
+                "<span class=\"closeTab\" onclick=\"javascript:spe.closeTab(event, #tabindex#)\">&nbsp;</span>";
+            const newWindowTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span> <i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i> - ";
+            editorSession.tabTitleHtml = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.scriptId = scriptId;
+            editorSession.scriptDb = scriptDb;
+            editorSession.startBarHtml = startBarHtml;
+            var openedScripts = editorSessions.map(session => session.path + ":" + session.index).join('\n');
+            openedScriptsMemo.val(openedScripts);
+        }
+
+        spe.applyWindowTitle = function (codeEditorIndex) {
+
+            var editorSession = getSessionByIndex(codeEditorIndex);
             var windowCaption = $("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
-                windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> <span id=\"scriptModified\" style=\"display:none;color:#fc2929;\">(*)</span> - ";
-            }
-            codeeditor.getSession().getUndoManager().markClean();
-            spe.clearBreakpoints();
-        };
+                windowCaption[0].innerHTML =
+                    editorSession.windowTitleInnerHTML.
+                    replace("#tabindex#", editorSession.index).
+                    replace("#styles#", editorSession.isModified ? "display:inline;" : "display:none;");
 
-        spe.changeStartbarTitle = function (newTitle) {
+            }
+
+            var styles = $("#ModifiedStatusStyles");
+            if (styles.length === 0) {
+                var head = $("head");
+                head.append("<style id='ModifiedStatusStyles'>.ModifiedMark" + codeEditorIndex + "{color:#fc2929;}</style>");
+                styles = $("#ModifiedStatusStyles");
+            }
+            var stylesinnerHTML = "";
+            editorSessions.forEach(function (currEditor) {
+                var tabHeader = $("#Tabs_tab_" + (currEditor.index - 1))
+                if (tabHeader.length > 0) {
+                    tabHeader[0].innerHTML = currEditor.tabTitleInnerHTML.replaceAll("#tabindex#", currEditor.index);
+                    if (currEditor.isModified) {
+                        stylesinnerHTML = stylesinnerHTML + ".ModifiedMark" + currEditor.index + "{display:inline;}";
+                    }
+                }
+            });
+            styles[0].innerHTML = stylesinnerHTML;
+
+
             if (window.parent && window.parent.frameElement) {
                 var frameId = window.parent.frameElement.id;
                 var startbar = window.parent.parent.document.getElementById('startbar_application_' + frameId);
-                $(startbar).find('span').html(newTitle);
+                $(startbar).find('span').html(editorSession.startBarHtml);
             }
         };
 
-        spe.resizeEditor = function() {
-            codeeditor.resize();
-            var resultsHeight =$(window).height() -$("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
-	        $("#Result").height(resultsHeight);
+
+        spe.closeTab = function (event, index) {
+
+            event.stopPropagation();
+            var closingEditorSession = getSessionByIndex(index);
+            var selectIndex = currentEditorIndex;
+            if (index === currentEditorIndex) {
+                selectIndex = previousIndex;
+            }
+            if (selectIndex > index) {
+                selectIndex--;
+            }
+            selectIndex = Math.min(selectIndex, editorSessions.length - 1);
+            scForm.postRequest("", "", "", "ise:closetab(index=" + index + ",modified=" + closingEditorSession.isModified + ",selectIndex=" + selectIndex + ")");
+        };
+
+        spe.closeScript = function (index) {
+
+            // Remove the session with the specified index
+            var closingEditorSession = getSessionByIndex(index);
+
+            editorSessions = editorSessions.filter(session => session.index !== index);
+
+            // cleanup the DOM and script content
+            var editorContainer = $(closingEditorSession.editor.container)
+            closingEditorSession.editor.destroy();
+            editorContainer.remove();
+            editor.val("");
+
+            // Update the indices of the remaining sessions
+            editorSessions.forEach((session, i) => {
+                session.index = i + 1;
+            });
+        }
+
+        spe.resizeEditor = function () {
+            if (currentAceEditor !== undefined) {
+                currentAceEditor.resize();
+            }
+            var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
+            $("#Result").height(resultsHeight);
             $("#Result").width($(window).width() - $("#Result").offset().left * 2);
-            $("#ProgressOverlay").css("top",($("#Result").offset().top+4)+"px");
+            $("#ProgressOverlay").css("top", ($("#Result").offset().top + 4) + "px");
+
         };
 
         function isEmpty(val) {
             return (val === undefined || val == null || val.length <= 0) ? true : false;
         }
 
-        spe.showInfoPanel = function(showPanel, updateFromMessage) {
+        spe.showInfoPanel = function (showPanel, updateFromMessage) {
             if (showPanel) {
                 $("#InfoPanel").css("display", "block");
             } else {
@@ -532,21 +713,21 @@
             }
         };
 
-        spe.requestElevation = function() {
+        spe.requestElevation = function () {
             scForm.postRequest("", "", "", "ise:requestelevation");
         };
 
-        spe.restoreResults = function() {
+        spe.restoreResults = function () {
             $("#ResultsSplitter").show();
             $("#ResultsRow").show();
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
         };
 
-        spe.closeResults = function() {
+        spe.closeResults = function () {
             $("#ResultsSplitter").hide();
-            $("#ResultsRow").hide("slow", function() {
-                codeeditor.resize();
+            $("#ResultsRow").hide("slow", function () {
+                currentAceEditor.resize();
             });
             $("#ResultsStatusBarAction").addClass("status-bar-results-hidden")
         };
@@ -599,7 +780,7 @@
                 return cachedValue;
             }
 
-            getPowerShellResponse({ "guid": sessionId, "variableName": variableName }, "GetVariableValue",
+            getPowerShellResponse({"guid": sessionId, "variableName": variableName}, "GetVariableValue",
                 function (json) {
                     data = json.d;
                 });
@@ -608,16 +789,16 @@
             return data;
         };
 
-        spe.getAutocompletionPrefix = function(text) {
+        spe.getAutocompletionPrefix = function (text) {
             var data;
-            getPowerShellResponse({ "guid": guid, "command": text }, "GetAutoCompletionPrefix",
-                function(json) {
+            getPowerShellResponse({"guid": guid, "command": text}, "GetAutoCompletionPrefix",
+                function (json) {
                     data = JSON.parse(json.d);
                 });
             return data;
         };
 
-        spe.showCommandHelp = function(command) {
+        spe.showCommandHelp = function (command) {
             _getCommandHelp(command);
             if (spe.ajaxDialog)
                 spe.ajaxDialog.remove();
@@ -631,7 +812,7 @@
                         spe.ajaxDialog.dialog("close");
                     });
                 },
-                close: function(event, ui) {
+                close: function (event, ui) {
                     $(this).remove();
                 },
                 height: $(window).height() - 20,
@@ -645,7 +826,7 @@
 
         $.commandHelp = "";
 
-        spe.changeWindowTitle($("#ScriptName")[0].innerHTML, false);
+
         var tipIndex = Math.floor(Math.random() * tips.length);
         var tip = tips[tipIndex];
 
@@ -653,37 +834,37 @@
         $("#StatusTip").html(tip);
 
         $("#TipOfTheSession").position({
-                my: "left bottom",
-                at: "left bottom-30px",
-                within: $("#Result"),
-                of: $("#Result")
-            }).css({
-                right: 0,
-                left: 0
-            }).hide()
-            .show("drop", { direction: "down" }, "400")
+            my: "left bottom",
+            at: "left bottom-30px",
+            within: $("#Result"),
+            of: $("#Result")
+        }).css({
+            right: 0,
+            left: 0
+        }).hide()
+            .show("drop", {direction: "down"}, "400")
             .delay(5000)
-            .hide("drop", { direction: "down" }, "400",
-                function() {
-                    $(".status-bar-text").animate({ backgroundColor: "#fcefa1" }).animate({ backgroundColor: "#fff" });
+            .hide("drop", {direction: "down"}, "400",
+                function () {
+                    $(".status-bar-text").animate({backgroundColor: "#fcefa1"}).animate({backgroundColor: "#fff"});
                 });
 
-        $(".status-bar-text").click(function() {
+        $(".status-bar-text").click(function () {
             tipIndex++;
             if (tipIndex >= tips.length) {
                 tipIndex = 0;
             }
             var nextTip = tips[tipIndex];
-            $(".status-bar-text").animate({ backgroundColor: "#fcefa1" },
-                function() {
+            $(".status-bar-text").animate({backgroundColor: "#fcefa1"},
+                function () {
                     $("#TipText").html(nextTip);
                     $("#StatusTip").html(nextTip);
-                }).animate({ backgroundColor: "#fff" });
+                }).animate({backgroundColor: "#fff"});
 
         });
 
-        
-        $("#ShowHideResults").click(function() {
+
+        $("#ShowHideResults").click(function () {
             if ($("#ResultsRow").is(":visible")) {
                 resultsVisibilityIntent = false;
                 spe.closeResults();
@@ -692,44 +873,51 @@
                 spe.restoreResults();
             }
         });
-        
+
         function _getCommandHelp(str) {
-            getPowerShellResponse({ "guid": guid, "command": str }, "GetHelpForCommand",
-                function(json) {
+            getPowerShellResponse({"guid": guid, "command": str}, "GetHelpForCommand",
+                function (json) {
                     var data = JSON.parse(json.d);
                     $.commandHelp = data[0];
                 });
         }
 
         function _getTabCompletions(str) {
-            getPowerShellResponse({ "guid": guid, "command": str }, "CompleteAceCommand",
-                function(json) {
+            getPowerShellResponse({"guid": guid, "command": str}, "CompleteAceCommand",
+                function (json) {
                     var data = JSON.parse(json.d);
                     $.tabCompletions = data;
                 });
         }
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
-            if(remotefunction != "GetVariableValue"){
+            if (remotefunction != "GetVariableValue") {
                 spe.requestElevation();
-            };
+            }
+            ;
             var datastring = JSON.stringify(callData);
             $.ajax({
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
-                    data: datastring,
-                    processData: false,
-                    cache: false,
-                    async: false
-                }).done(doneFunction)
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
+                data: datastring,
+                processData: false,
+                cache: false,
+                async: false
+            }).done(doneFunction)
                 .fail(errorFunction);
         }
 
-	$(window).on('resize', function(){
-	    spe.resizeEditor();
+        $(window).on('resize', function () {
+            spe.resizeEditor();
         }).trigger('resize');
+
+
+        setTimeout(function () {
+            scForm.postRequest("", "", "", "ise:updatesettings");
+            scForm.postRequest("", "", "", "ise:loadinitialscript");
+        }, 100);
 
     });
 }(jQuery, window, window.spe = window.spe || {}, window.ace = window.ace || {}));

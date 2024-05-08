@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI.WebControls;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -11,6 +13,7 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
+using Sitecore.Mvc.Extensions;
 using Sitecore.Resources;
 using Sitecore.Security;
 using Sitecore.Security.Accounts;
@@ -32,6 +35,7 @@ using Spe.Core.Host;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
 using Spe.Core.VersionDecoupling;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Spe.Client.Applications
 {
@@ -42,11 +46,12 @@ namespace Spe.Client.Applications
         public const string DefaultLanguage = "CurrentLanguage";
 
         protected Memo Editor;
+        protected Memo OpenedScripts;
+        protected Memo ScriptItemIdMemo;
+        protected Memo ScriptItemDbMemo;
         protected Literal Progress;
         protected Border ProgressOverlay;
-        protected Border Result;
         protected Border RibbonPanel;
-        protected Literal ScriptName;
         protected Border ScriptResult;
         protected Memo SelectionText;
         protected Memo Breakpoints;
@@ -54,7 +59,8 @@ namespace Spe.Client.Applications
         protected GridPanel ElevatedPanel;
         protected GridPanel ElevationBlockedPanel;
         protected Border InfoPanel;
-
+        protected Tabstrip Tabs;
+        protected Border TabsPanel;
         public bool Debugging { get; set; }
         public bool InBreakpoint { get; set; }
 
@@ -76,16 +82,32 @@ namespace Spe.Client.Applications
             set { ServerProperties["ParentFrameName"] = value; }
         }
 
-        public static string ScriptItemId
+        public string ScriptItemId
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemID"]); }
-            set { Context.ClientPage.ServerProperties["ItemID"] = value; }
+            get { return ScriptItemIdMemo.Value; }
+            set
+            {
+                if (value.IsWhiteSpaceOrNull())
+                {
+                    Log.Error("ScriptItemId is null or empty", this);
+                }
+
+                ScriptItemIdMemo.Value = value;
+            }
         }
 
-        public static string ScriptItemDb
+        public string ScriptItemDb
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemDb"]); }
-            set { Context.ClientPage.ServerProperties["ItemDb"] = value; }
+            get { return ScriptItemDbMemo.Value; }
+            set
+            {
+                if (value.IsWhiteSpaceOrNull())
+                {
+                    Log.Error("ScriptItemDb is null or empty", this);
+                }
+
+                ScriptItemDbMemo.Value = value;
+            }
         }
 
         public static string ContextItemId
@@ -106,6 +128,12 @@ namespace Spe.Client.Applications
             set { Context.ClientPage.ServerProperties["ScriptModified"] = value ? "1" : string.Empty; }
         }
 
+        public static int TabSequencer
+        {
+            get { return (int)(Context.ClientPage.ServerProperties["TabSequencer"] ?? 0); }
+            set { Context.ClientPage.ServerProperties["TabSequencer"] = value; }
+        }
+
         public static bool UseContext
         {
             get
@@ -115,7 +143,7 @@ namespace Spe.Client.Applications
             set { Context.ClientPage.ServerProperties["UseContext"] = value ? string.Empty : "0"; }
         }
 
-        public static Item ScriptItem
+        public Item ScriptItem
         {
             get
             {
@@ -161,7 +189,7 @@ namespace Spe.Client.Applications
         {
             var itemNotNull = Sitecore.Client.CoreDatabase.GetItem("{FDD5B2D5-31BE-41C3-AA76-64E5CC63B187}");
             // /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon
-            var context = new CommandContext {RibbonSourceUri = itemNotNull.Uri};
+            var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
             return context;
         }
 
@@ -173,7 +201,8 @@ namespace Spe.Client.Applications
 
         private static bool IsHackedParameter(string parameter)
         {
-            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            var xssCleanup =
+                new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
             if (xssCleanup.IsMatch(parameter))
             {
                 return true;
@@ -193,20 +222,23 @@ namespace Spe.Client.Applications
             }
 
             base.OnLoad(e);
-            
+
             if (Monitor == null)
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new SpeJobMonitor {ID = "Monitor"};
+                    Monitor = new SpeJobMonitor { ID = "Monitor" };
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = (SpeJobMonitor) Context.ClientPage.FindControl("Monitor");
+                    Monitor = (SpeJobMonitor)Context.ClientPage.FindControl("Monitor");
                 }
             }
+
             Monitor.JobFinished += MonitorOnJobFinished;
+
+            Tabs.OnChange += TabsOnChange;
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -219,11 +251,11 @@ namespace Spe.Client.Applications
 
             var itemId = WebUtil.GetQueryString("id");
             var itemDb = WebUtil.GetQueryString("db");
-            if (itemId.Length > 0)
+
+            if (!itemId.IsWhiteSpaceOrNull())
             {
                 ScriptItemId = itemId;
                 ScriptItemDb = itemDb;
-                LoadItem(itemDb, itemId);
             }
 
             ContextItemDb = Context.ContentDatabase.Name;
@@ -236,6 +268,12 @@ namespace Spe.Client.Applications
             CurrentLanguage = DefaultLanguage;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
+        }
+
+        private void TabsOnChange(object sender, EventArgs e)
+        {
+            var tab = Tabs.Controls.OfType<Tab>().Skip(Tabs.Active).FirstOrDefault();
+            SelectTabByIndex(Tabs.Active + 1);
         }
 
         public override void HandleMessage(Message message)
@@ -261,6 +299,7 @@ namespace Spe.Client.Applications
                     ? Context.Language.Name
                     : CurrentLanguage;
             }
+
             Dispatcher.Dispatch(message, context);
         }
 
@@ -289,6 +328,7 @@ namespace Spe.Client.Applications
                     if (obj != null)
                         str = obj.ID.ToString();
                 }
+
                 var urlString = new UrlString(UIUtil.GetUri("control:PowerShellScriptBrowser"));
                 urlString.Append("id", selected);
                 urlString.Append("fo", str);
@@ -310,14 +350,13 @@ namespace Spe.Client.Applications
             LoadItem(args.Parameters["db"], args.Parameters["id"]);
         }
 
-        
+
         [HandleMessage("ise:changecontextaccount", true)]
         protected void SecurityChangeContextAccount(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
             args.CarryResultToNextProcessor = false;
             args.AbortPipeline();
-            //LoadItem(args.Parameters["db"], args.Parameters["id"]);
         }
 
         [HandleMessage("item:load", true)]
@@ -339,10 +378,6 @@ namespace Spe.Client.Applications
             var id = scriptItem.ID.ToString();
             var name = scriptItem.Name;
             var icon = scriptItem[FieldIDs.Icon];
-            var scriptName = scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length);
-            ScriptName.Text = scriptName;
-            SheerResponse.Eval($"spe.changeWindowTitle('{scriptName}', false);");
-            UpdateStartbarTitle(icon, name);
 
             var mruMenu = ApplicationSettings.GetIseMruContainerItem();
             var mruItems = mruMenu.Children;
@@ -370,6 +405,7 @@ namespace Spe.Client.Applications
                         mruItem.Delete();
                         continue;
                     }
+
                     if (!(mruItem["Message"].Contains(id)))
                     {
                         var item = mruItem;
@@ -392,11 +428,8 @@ namespace Spe.Client.Applications
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
             ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
-            SheerResponse.Eval("spe.changeWindowTitle('Untitled', true);");
+            CreateNewTab(null);
             UpdateRibbon();
-
-            const string icon = "powershell/16x16/ise8.png";
-            UpdateStartbarTitle(icon, "Untitled");
         }
 
         [HandleMessage("ise:saveas", true)]
@@ -404,10 +437,11 @@ namespace Spe.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             args.Parameters["message"] = "ise:saveas";
-            if (!RequestSessionElevationEx(args,ApplicationNames.ItemSave,SessionElevationManager.SaveAction))
+            if (!RequestSessionElevationEx(args, ApplicationNames.ItemSave, SessionElevationManager.SaveAction))
             {
                 return;
             }
+
             if (args.IsPostBack)
             {
                 if (!args.HasResult)
@@ -437,12 +471,14 @@ namespace Spe.Client.Applications
                     if (obj != null)
                         str = obj.ID.ToString();
                 }
+
                 var urlString = new UrlString(UIUtil.GetUri("control:PowerShellScriptBrowser"));
                 urlString.Append("id", selected);
                 urlString.Append("fo", str);
                 urlString.Append("ro", root);
                 urlString.Append("he", Texts.PowerShellIse_SaveAs_Select_Script_Library);
-                urlString.Append("txt", Texts.PowerShellIse_SaveAs_Select_the_Library_that_you_want_to_save_your_script_to_);
+                urlString.Append("txt",
+                    Texts.PowerShellIse_SaveAs_Select_the_Library_that_you_want_to_save_your_script_to_);
                 urlString.Append("ic", icon);
                 urlString.Append("btn", Sitecore.Texts.SELECT);
                 SheerResponse.ShowModalDialog(urlString.ToString(), true);
@@ -465,12 +501,28 @@ namespace Spe.Client.Applications
                 {
                     return;
                 }
+
                 var scriptItem = ScriptItem;
                 if (scriptItem == null)
                     return;
                 scriptItem.Edit(
                     editArgs => { scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value = Editor.Value; });
                 SheerResponse.Eval("spe.updateModificationFlag(true);");
+                var tabIndex = Tabs.Active + 1;
+                UpdateTabInfo(scriptItem, tabIndex);
+            }
+        }
+
+        [HandleMessage("ise:loadinitialscript", true)]
+        protected void LoadInitialScript(ClientPipelineArgs args)
+        {
+            if (ScriptItemId.Length > 0)
+            {
+                LoadItem(ScriptItemDb, ScriptItemId);
+            }
+            else
+            {
+                CreateNewTab(null);
             }
         }
 
@@ -495,9 +547,11 @@ namespace Spe.Client.Applications
             if (scriptItem[Templates.Script.Fields.ScriptBody] != null)
             {
                 Editor.Value = scriptItem[Templates.Script.Fields.ScriptBody];
-                SheerResponse.Eval("spe.updateEditor();");
+                var createdNew = CreateNewTab(scriptItem);
+
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
+                SelectTabByIndex(Tabs.Controls.Count);
                 MruUpdate(scriptItem);
                 UpdateRibbon();
             }
@@ -506,6 +560,79 @@ namespace Spe.Client.Applications
                 SheerResponse.Alert(Texts.PowerShellIse_LoadItem_The_item_is_not_a_script_, true);
             }
         }
+
+        private bool CreateNewTab(Item scriptItem)
+        {
+            var itemEditing = scriptItem != null;
+            var path = itemEditing
+                ? scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length)
+                : String.Empty;
+            var tabIndex = 0;
+            var searchPath = $"{path}:";
+            var openedScript = OpenedScripts.Value.Split('\n').Select(line => line.Trim())
+                .FirstOrDefault(line => line.StartsWith(searchPath, StringComparison.OrdinalIgnoreCase));
+            var scriptAlreadyOpened = itemEditing && openedScript != null;
+            if (scriptAlreadyOpened)
+            {
+                tabIndex = int.Parse(openedScript.Split(':')[1]);
+            }
+            else
+            {
+                TabSequencer++;
+                SheerResponse.Eval($"spe.createEditor({TabSequencer});");
+                var newTab = new Tab
+                    { Header = $"{Tabs.Controls.Count + 1}", Active = true };
+                Tabs.Controls.Add(newTab);
+                tabIndex = Tabs.Controls.Count;
+                UpdateTabInfo(scriptItem, tabIndex);
+            }
+
+            SelectTabByIndex(tabIndex);
+            SheerResponse.Eval("spe.updateEditor();");
+            return !scriptAlreadyOpened;
+        }
+
+        private void SelectTabByIndex(int tabIndex)
+        {
+            if (tabIndex < 0)
+                return;
+
+            var tabIndexString = tabIndex.ToString();
+            Tabs.Controls.OfType<Tab>().ForEach(tab => tab.Active = tab.Header == tabIndexString);
+            Tabs.Active = tabIndex - 1;
+            var tabsHtml = HtmlUtil.RenderControl(Tabs);
+            TabsPanel.InnerHtml = tabsHtml;
+
+            SheerResponse.Eval($"spe.changeTab({tabIndex});");
+        }
+
+        private void UpdateTabInfo(Item scriptItem, int tabIndex)
+        {
+            var itemEditing = scriptItem != null;
+            var path = itemEditing
+                ? scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length)
+                : String.Empty;
+
+            var title = itemEditing ? scriptItem.Name : $"Untitled{TabSequencer}";
+            var icon = itemEditing ? scriptItem[FieldIDs.Icon] : "powershell/16x16/ise8.png";
+            path = itemEditing ? path : title;
+            var id = itemEditing ? scriptItem.ID.ToString() : string.Empty;
+            var db = itemEditing ? scriptItem.Database.Name : string.Empty;
+
+            var builder = new ImageBuilder
+            {
+                Src = Images.GetThemedImageSource(icon, ImageDimension.id16x16),
+                Width = 16,
+                Height = 16,
+                Margin = "0px 8px 0px 0px",
+                Align = "middle"
+            };
+            var startbarHtml = $"{builder}{title} - ISE";
+
+            SheerResponse.Eval($"spe.changeTabDetails({tabIndex},'{path}', '{startbarHtml}', '{id}', '{db}');");
+            SelectTabByIndex(tabIndex);
+        }
+
 
         [HandleMessage("ise:run", true)]
         protected virtual void ClientExecute(ClientPipelineArgs args)
@@ -527,6 +654,7 @@ namespace Spe.Client.Applications
                     {
                         scriptSession.SetItemLocationContext(ContextItem);
                     }
+
                     scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
                     ClearOutput();
@@ -540,6 +668,7 @@ namespace Spe.Client.Applications
                     var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html);
                     PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
                 }
+
                 if (settings.SaveLastScript)
                 {
                     settings.Load();
@@ -573,7 +702,7 @@ namespace Spe.Client.Applications
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
             if (!RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction))
-            {                
+            {
                 return;
             }
 
@@ -602,8 +731,10 @@ namespace Spe.Client.Applications
                     var bPoints = strBrPoints.Select(int.Parse);
                     scriptSession.SetBreakpoints(bPoints);
                 }
+
                 scriptToExecute = scriptSession.DebugFile;
             }
+
             if (UseContext)
             {
                 scriptSession.SetItemLocationContext(ContextItem);
@@ -633,16 +764,17 @@ namespace Spe.Client.Applications
                 "ScriptResult",
                 string.Format(
                     "<div id='PleaseWait'>" +
-                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='"+
-                    Texts.PowerShellIse_JobExecuteScript_Working+
+                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
+                    Texts.PowerShellIse_JobExecuteScript_Working +
                     "' />" +
-                    "<div>"+
-                    Texts.PowerShellIse_JobExecuteScript_Please_wait___0_+
+                    "<div>" +
+                    Texts.PowerShellIse_JobExecuteScript_Please_wait___0_ +
                     "</div>" +
                     "</div>" +
                     "<pre ID='ScriptResultCode'></pre>", executionMessage));
 
-            Context.ClientPage.ClientResponse.Eval("if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
+            Context.ClientPage.ClientResponse.Eval(
+                "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
             Monitor.Start($"{DefaultSessionName}", "ISE", progressBoxRunner.Run,
@@ -721,7 +853,8 @@ namespace Spe.Client.Applications
         {
             if (!string.IsNullOrEmpty(result))
             {
-                var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+                var xssCleanup =
+                    new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
                 if (xssCleanup.IsMatch(result))
                 {
                     result = xssCleanup.Replace(result, "<div title='Script tag removed'>&#9888;</div>");
@@ -740,6 +873,7 @@ namespace Spe.Client.Applications
                 {
                     scriptSession.InitBreakpoints();
                 }
+
                 scriptSession.ExecuteScriptPart(script);
             }
             finally
@@ -750,6 +884,7 @@ namespace Spe.Client.Applications
                     scriptSession.DebugFile = string.Empty;
                     scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
                 }
+
                 scriptSession.Debugging = false;
                 scriptSession.Interactive = false;
             }
@@ -772,6 +907,7 @@ namespace Spe.Client.Applications
                 ScriptRunning = false;
                 UpdateRibbon();
             }
+
             Monitor.SessionID = string.Empty;
             ScriptRunning = false;
         }
@@ -787,9 +923,11 @@ namespace Spe.Client.Applications
 
             if (result?.Exception != null)
             {
-                var error = ScriptSession.GetExceptionString(result.Exception, ScriptSession.ExceptionStringFormat.Html);
+                var error = ScriptSession.GetExceptionString(result.Exception,
+                    ScriptSession.ExceptionStringFormat.Html);
                 PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
             }
+
             SheerResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptRunning = false;
@@ -802,7 +940,8 @@ namespace Spe.Client.Applications
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
             var showProgress = ScriptRunning &&
-                !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
+                               !string.Equals(args.Parameters["RecordType"], "Completed",
+                                   StringComparison.OrdinalIgnoreCase);
             ProgressOverlay.Visible = showProgress;
             var sb = new StringBuilder();
             if (showProgress)
@@ -824,9 +963,9 @@ namespace Spe.Client.Applications
                 {
                     var secondsRemaining = int.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
-                        sb.AppendFormat("<p><strong>{0:c} </strong> "+
-                            Texts.PowerShellIse_UpdateProgress_remaining+
-                            ".</p>",
+                        sb.AppendFormat("<p><strong>{0:c} </strong> " +
+                                        Texts.PowerShellIse_UpdateProgress_remaining +
+                                        ".</p>",
                             new TimeSpan(0, 0, secondsRemaining));
                 }
 
@@ -847,6 +986,82 @@ namespace Spe.Client.Applications
             UpdateRibbon();
         }
 
+        [HandleMessage("ise:closetab")]
+        protected void CloseTabInitiated(Message message)
+        {
+            bool.TryParse(message.Arguments["modified"], out var modified);
+            if (!int.TryParse(message.Arguments["index"], out var tabIndex))
+                tabIndex = -1;
+
+            if (!int.TryParse(message.Arguments["selectIndex"], out var previouslySelectedIndex))
+                previouslySelectedIndex = -1;
+
+            if (modified)
+            {
+                var parameters = new NameValueCollection
+                {
+                    ["index"] = $"{tabIndex}",
+                    ["message"] =
+                        Texts.PowerShellIse_The_script_is_modified_Do_you_want_to_close_it_without_saving_the_changes,
+                    ["selectIndex"] = $"{previouslySelectedIndex}"
+                };
+                Context.ClientPage.Start(this, "CloseModifiedScript", parameters);
+            }
+            else
+            {
+                CloseTab(tabIndex, previouslySelectedIndex);
+            }
+
+            UpdateRibbon();
+        }
+
+        protected void CloseModifiedScript(ClientPipelineArgs args)
+        {
+            if (args.IsPostBack)
+            {
+                if (args.Result == "yes")
+                {
+                    if (!int.TryParse(args.Parameters["index"], out int index))
+                    {
+                        index = -1;
+                    }
+
+                    if (!int.TryParse(args.Parameters["selectIndex"], out int selectIndex))
+                        selectIndex = -1;
+
+                    CloseTab(index, selectIndex);
+                }
+            }
+            else
+            {
+                var index = int.Parse(args.Parameters["index"]);
+                SelectTabByIndex(index);
+                SheerResponse.Confirm(args.Parameters["message"]);
+                args.WaitForPostBack();
+            }
+        }
+
+        private void CloseTab(int index, int newSelectedIndex)
+        {
+            if (index < 0)
+                return;
+            var tab = Tabs.Controls.OfType<Tab>().Skip(Tabs.Active).FirstOrDefault();
+            if (tab != null)
+            {
+                Tabs.Controls.RemoveAt(Tabs.Controls.Count - 1);
+            }
+
+            SheerResponse.Eval($"spe.closeScript({index});");
+            if (Tabs.Controls.Count == 0)
+            {
+                CreateNewTab(null);
+            }
+            else
+            {
+                SelectTabByIndex(newSelectedIndex);
+            }
+        }
+
         [HandleMessage("ise:updateribbon")]
         protected void UpdateRibbon(Message message)
         {
@@ -858,7 +1073,7 @@ namespace Spe.Client.Applications
         /// </summary>
         private void UpdateRibbon()
         {
-            var ribbon = new Ribbon {ID = "PowerShellRibbon"};
+            var ribbon = new Ribbon { ID = "PowerShellRibbon" };
             var item = ScriptItem;
             ribbon.CommandContext = new CommandContext(item);
             ribbon.ShowContextualTabs = false;
@@ -890,10 +1105,10 @@ namespace Spe.Client.Applications
                 ? Texts.PowerShellIse_UpdateRibbon_Single_execution
                 : (sessionName == DefaultSessionName)
                     ? Factory.GetDatabase("core")
-                          .GetItem(
-                              "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
-                          ?
-                          .DisplayName ?? DefaultSessionName
+                        .GetItem(
+                            "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
+                        ?
+                        .DisplayName ?? DefaultSessionName
                     : sessionName;
             var obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
@@ -913,20 +1128,6 @@ namespace Spe.Client.Applications
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
 
             UpdateWarning();
-        }
-
-        private void UpdateStartbarTitle(string icon, string title)
-        {
-            var builder = new ImageBuilder
-            {
-                Src = Images.GetThemedImageSource(icon, ImageDimension.id16x16),
-                Width = 16,
-                Height = 16,
-                Margin = "0px 8px 0px 0px",
-                Align = "middle"
-            };
-            var startbarTitle = $"{builder}{title}";
-            SheerResponse.Eval($"spe.changeStartbarTitle('{startbarTitle}');");
         }
 
         private void UpdateWarning(string updateFromMessage = "")
@@ -961,6 +1162,7 @@ namespace Spe.Client.Applications
                             controlContent = HtmlUtil.RenderControl(ElevationRequiredPanel);
                         }
                     }
+
                     break;
                 case SessionElevationManager.TokenDefinition.ElevationAction.Block:
                     controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
@@ -970,7 +1172,6 @@ namespace Spe.Client.Applications
             InfoPanel.InnerHtml = controlContent;
             InfoPanel.Visible = !hidePanel;
             SheerResponse.Eval($"spe.showInfoPanel({(!hidePanel).ToString().ToLower()}, '{updateFromMessage}');");
-
         }
 
         [HandleMessage("item:updated", true)]
@@ -984,10 +1185,11 @@ namespace Spe.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             var sessionId = args.Parameters["id"];
-            if(IsHackedParameter(sessionId))
+            if (IsHackedParameter(sessionId))
             {
                 return;
             }
+
             CurrentSessionId = sessionId;
             SheerResponse.Eval($"spe.changeSessionId('{sessionId}');");
             UpdateRibbon();
@@ -1002,6 +1204,7 @@ namespace Spe.Client.Applications
             {
                 return;
             }
+
             CurrentLanguage = language;
             new LanguageHistory().Add(language);
             UpdateRibbon();
@@ -1016,6 +1219,7 @@ namespace Spe.Client.Applications
             {
                 return;
             }
+
             CurrentUser = user;
             new UserHistory().Add(user);
             UpdateRibbon();
@@ -1040,6 +1244,7 @@ namespace Spe.Client.Applications
                 ContextItemDb = contextDb;
                 ContextItemId = contextId;
             }
+
             UpdateRibbon();
         }
 
@@ -1050,7 +1255,10 @@ namespace Spe.Client.Applications
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
             SheerResponse.Eval(
-                $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, '{backgroundColor}', {bottomPadding}, {settings.LiveAutocompletion.ToString().ToLower()});");
+                $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, " +
+                $"'{backgroundColor}', {bottomPadding}," +
+                $" {settings.LiveAutocompletion.ToString().ToLower()}," +
+                $" {settings.PerTabOutput.ToString().ToLower()});");
         }
 
         [HandleMessage("ise:setbreakpoint", true)]
@@ -1158,6 +1366,7 @@ namespace Spe.Client.Applications
                 {
                     message = args.Parameters["message"] + "(elevationResult=1)";
                 }
+
                 UpdateWarning(message);
             }
         }
@@ -1180,7 +1389,7 @@ namespace Spe.Client.Applications
 
             var pipelineArgs = new ClientPipelineArgs
             {
-                Parameters = {["message"] = args.Parameters["message"], ["app"] = appName, ["action"] = action}
+                Parameters = { ["message"] = args.Parameters["message"], ["app"] = appName, ["action"] = action }
             };
             Context.ClientPage.Start(this, nameof(SessionElevationPipeline), pipelineArgs);
             return false;
