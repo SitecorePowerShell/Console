@@ -104,7 +104,6 @@
                     </p>
                   </Border>
                 </Border>
-                <Border ID="ResultsClose">x</Border>
                 <Border ID="ScriptResult" class="console">
                   <pre ID="ScriptResultCode"></pre>
                 </Border>
@@ -122,6 +121,10 @@
           <Border class="status-bar-panel status-bar-right-icon">
             <Image ID="CopyResultsToClipboard" src="/~/icon/office/16x16/element_copy.png"
                    Alt="Copy results to clipboard" Title="Copy results to clipboard" />
+          </Border>
+          <Border  ID="ResultsStatusBarAction" class="status-bar-panel status-bar-right-icon">
+            <Image ID="ShowHideResults" src="/~/icon/office/16x16/text_align_left.png"
+                   Alt="Show/Hide Execution results pane" Title="Show/Hide Execution results pane" />
           </Border>
           <Border class="status-bar-panel status-bar-text">
             <Image ID="RefreshHint" src="/~/icon/office/16x16/nav_refresh.png"

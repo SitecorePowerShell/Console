@@ -29,6 +29,7 @@
         var debugMarkers = [];
         var resultsBottomOffset = 10;
         var typingTimer;
+        var resultsVisibilityIntent = true;
         
         var editor = $($("#Editor")[0]);
         editor.hide();
@@ -465,6 +466,9 @@
                 spe.preventCloseWhenRunning(false);
             }
             clearVariablesCache();
+            if(!resultsVisibilityIntent){
+                setTimeout(spe.closeResults, 2000);
+            }
         };
 
         spe.clearBreakpoints = function() {
@@ -510,7 +514,6 @@
 	        $("#Result").height(resultsHeight);
             $("#Result").width($(window).width() - $("#Result").offset().left * 2);
             $("#ProgressOverlay").css("top",($("#Result").offset().top+4)+"px");
-            $("#ResultsClose").css("top", ($("#Result").offset().top + 4) + "px");
         };
 
         function isEmpty(val) {
@@ -536,7 +539,8 @@
         spe.restoreResults = function() {
             $("#ResultsSplitter").show();
             $("#ResultsRow").show();
-            codeeditor.resize();
+            spe.resizeEditor();
+            $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
         };
 
         spe.closeResults = function() {
@@ -544,6 +548,7 @@
             $("#ResultsRow").hide("slow", function() {
                 codeeditor.resize();
             });
+            $("#ResultsStatusBarAction").addClass("status-bar-results-hidden")
         };
 
         function getCachedVariableValue(storageKey, variableName) {
@@ -677,13 +682,17 @@
 
         });
 
-        $("#ResultsClose").click(function() {
-            $("#ResultsSplitter").hide();
-            $("#ResultsRow").hide("slow", function() {
-                codeeditor.resize(); /* do something cool here? */
-            });
+        
+        $("#ShowHideResults").click(function() {
+            if ($("#ResultsRow").is(":visible")) {
+                resultsVisibilityIntent = false;
+                spe.closeResults();
+            } else {
+                resultsVisibilityIntent = true;
+                spe.restoreResults();
+            }
         });
-
+        
         function _getCommandHelp(str) {
             getPowerShellResponse({ "guid": guid, "command": str }, "GetHelpForCommand",
                 function(json) {

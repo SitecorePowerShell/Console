@@ -146,7 +146,7 @@ a.ps-link {
     text-transform: uppercase;
 }
 
-#HelpClose, #ResultsClose {
+#HelpClose {
     -moz-border-radius-bottomleft: 9px;
     -moz-border-radius-bottomright: 9px;
     -moz-border-radius-topleft: 9px;
@@ -183,23 +183,15 @@ a.ps-link {
     top: 0;
 }
 
-#HelpClose:hover, #ResultsClose:hover {
+#HelpClose:hover {
     background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%);
     background-color: #e3e3e3;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
 }
 
-#ResultsClose:active {
-    top: 1px;
-}
-
 #ResultsSplitter {
     background: url(/sitecore%20modules/PowerShell/Assets/Splitter.png) no-repeat center;
     padding: 0 4px 0 4px;
-}
-
-#ResultsClose { 
-    position: fixed;
 }
 
 #Result {
@@ -421,4 +413,8 @@ a.ps-link {
 
 #CodeEditor * {
     font-family: inherit !important;
+}
+
+#ResultsStatusBarAction.status-bar-results-hidden {
+    background-color: rgb(1, 36, 86);
 }
