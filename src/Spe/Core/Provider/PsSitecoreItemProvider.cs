@@ -766,12 +766,10 @@ namespace Spe.Core.Provider
                 switch (TemplateUtils.GetType(templateItem))
                 {
                     case TemplateItemType.Template:
+                    case TemplateItemType.Branch:
                         createdItem = forcedId != ID.Null
                             ? ItemManager.AddFromTemplate(name, templateItem.ID, parentItem, forcedId)
                             : ItemManager.AddFromTemplate(name, templateItem.ID, parentItem);
-                        break;
-                    case TemplateItemType.Branch:
-                        createdItem = parentItem.Add(name, (BranchItem)templateItem);
                         break;
                     default:
                         WriteError(
