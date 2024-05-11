@@ -4,6 +4,8 @@
          xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellUploadFile>
     <FormPage FormTarget="sitecoreattach" Enctype="multipart/form-data">
+      <CodeBeside Type="Spe.Client.Applications.UploadFile.PowerShellUploadFileForm,Spe" />
+
 
       <Script Key="Upload">
 
@@ -32,9 +34,6 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server" />
 
-      <CodeBeside
-        Type="Spe.Client.Applications.UploadFile.PowerShellUploadFileForm,Spe" />
-
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
@@ -49,8 +48,16 @@
           </Border>
         </Border>
 
-        <Scrollbox Class="scFlexContent">
-          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+        <Scrollbox Class="scFlexContent" style="min-height: 180px;">
+          <Border id="MessageBar" class="scMessageBar scError">
+            <Border class="scMessageBarIcon"></Border>
+            <div class="scMessageBarTextContainer">
+              <Border id="scMessageBarText" class="scMessageBarText">
+                <Literal ID="Message" Text=""/>
+              </Border>
+            </div>
+          </Border>
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer scUploadDialogContentContainer">
             <input id="ItemUri" name="ItemUri" type="hidden" value="" />
             <input id="Versioned" name="Versioned" type="hidden" value="" />
             <input id="Overwrite" name="Overwrite" type="hidden" value="" />

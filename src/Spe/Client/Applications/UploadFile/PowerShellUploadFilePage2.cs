@@ -105,14 +105,23 @@ namespace Spe.Client.Applications.UploadFile
                 }
                 catch (Exception ex)
                 {
-                    if (ex.InnerException is OutOfMemoryException)
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
+                    if (ex is OutOfMemoryException)
                         HttpContext.Current.Response.Write(
                             "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'ShowFileTooBig(" +
                             StringUtil.EscapeJavascriptString(Request.Files[0].FileName) +
                             ")')</script></head><body>Done</body></html>");
                     else
+                    {
+                        var message = ex.Message.Replace("\"", "").Replace("'", "");
                         HttpContext.Current.Response.Write(
-                            "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'ShowError')</script></head><body>Done</body></html>");
+                            "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'ShowError(" +
+                            StringUtil.EscapeJavascriptString(message) +
+                            ")')</script></head><body>Done</body></html>");
+                    }
                 }
             }
         }

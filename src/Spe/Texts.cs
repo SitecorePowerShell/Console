@@ -87,5 +87,7 @@ namespace Spe
         public const string SessionIDGallery_User = "User: <b>{0}</b>";
 
         public const string TemplateMissing = "The template with ID {0} is missing in the {1} database.";
+        public const string UploadDialog_An_error_occured_while_uploading_the_file_0 = "An error occured while uploading a file:\n\n{0}";
+        
     }
 }

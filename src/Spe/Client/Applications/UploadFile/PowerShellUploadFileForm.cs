@@ -20,7 +20,7 @@ namespace Spe.Client.Applications.UploadFile
         protected XmlControl Dialog;
         protected Literal DialogDescription;
         protected Literal DialogHeader;
-        protected Literal UploadWarning;
+        protected Literal UploadWarning;    
         protected Image DialogIcon;
         protected GenericControl ItemUri;
         protected GenericControl LanguageName;
@@ -28,7 +28,9 @@ namespace Spe.Client.Applications.UploadFile
         protected GenericControl Overwrite;
         protected GenericControl Unpack;
         protected GenericControl Versioned;
-
+        protected Border MessageBar;
+        protected Literal Message;
+        protected Scrollbox ValuePanel;
         protected void EndUploading(string id)
         {
             SheerResponse.SetDialogValue(ID.TryParse(id, out _) ? id : HttpUtility.UrlDecode(id));
@@ -38,6 +40,7 @@ namespace Spe.Client.Applications.UploadFile
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            MessageBar.Visible = false;
             if (Context.ClientPage.IsEvent || Context.ClientPage.IsPostBack) return;
 
             var handle = UrlHandle.Get();
@@ -116,7 +119,13 @@ namespace Spe.Client.Applications.UploadFile
 
         protected void ShowError()
         {
-            SheerResponse.Alert(Sitecore.Texts.AN_ERROR_OCCURED_WHILE_UPLOADING_THE_REASON_MAY_BE_THAT_THE_FILE_DOES_NOT_EXIST);
+            ShowError(Sitecore.Texts.AN_ERROR_OCCURED_WHILE_UPLOADING_THE_REASON_MAY_BE_THAT_THE_FILE_DOES_NOT_EXIST);
+        }
+
+        protected void ShowError(string errorText)
+        {
+            MessageBar.Visible = true;
+            Message.Text = Translate.Text(Texts.UploadDialog_An_error_occured_while_uploading_the_file_0, errorText);
             OKButton.Disabled = true;
             CancelButton.Disabled = true;
             OKButton.Disabled = false;
@@ -125,25 +134,17 @@ namespace Spe.Client.Applications.UploadFile
 
         protected void ShowFileTooBig()
         {
-            SheerResponse.Alert(
-                Translate.Text(Sitecore.Texts.THE_FILE_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_0, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize))
-            );
-            OKButton.Disabled = true;
-            CancelButton.Disabled = true;
-            OKButton.Disabled = false;
-            CancelButton.Disabled = false;
+            ShowError(Translate.Text(
+                Sitecore.Texts.THE_FILE_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_0,
+                MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
         }
 
         protected void ShowFileTooBig(string filename)
         {
             Assert.ArgumentNotNullOrEmpty(filename, "filename");
-            SheerResponse.Alert(
-                Translate.Text(Sitecore.Texts.THE_FILE_0_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_1, filename, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize))
-            );
-            OKButton.Disabled = true;
-            CancelButton.Disabled = true;
-            OKButton.Disabled = false;
-            CancelButton.Disabled = false;
+            ShowError(Translate.Text(
+                Sitecore.Texts.THE_FILE_0_IS_TOO_BIG_TO_BE_UPLOADED_THE_MAXIMUM_SIZE_FOR_UPLOADING_FILES_IS_1, filename,
+                MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
         }
 
         protected void StartUploading()
