@@ -14,14 +14,12 @@
     $(function() {
         var progressBar = $("#progressbar");
         if (progressBar.length > 0) {
-            progressBar.progressbar({ value: 1 });
+            progressBar.progressbar({ value: false });
             var timeout = setTimeout(function() {
                 if (!animate) {
                     clearTimeout(timeout);
                     return;
                 }
-                progressBar.progressbar("option", "value", false);
-                progressBar.addClass("ui-progressbar-indeterminate");
             }, 2000);
         }
         $("#Copyright").each(function () { // Notice the .each() loop, discussed below
@@ -52,7 +50,13 @@
     spe.updateProgress = function(id, progress) {
         animate = false;
         var widget = $(id);
-        widget.progressbar("value", Math.max(progress, 1));
+        if(progress === false || progress === -1){
+            widget.progressbar("option", "value", false);
+            widget.addClass("ui-progressbar-indeterminate");
+            
+        } else {
+            widget.progressbar("value", Math.max(progress, 1));
+        }
     };
 
     spe.scriptFinished = function(id, hasResults, hasErrors) {

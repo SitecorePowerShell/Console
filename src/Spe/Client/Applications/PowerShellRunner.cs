@@ -40,7 +40,6 @@ namespace Spe.Client.Applications
         protected ThemedImage Icon;
         protected Button OkButton;
         protected Literal PreviousProgressValue;
-        protected Literal ProgressBar;
         protected Literal PsProgress;
         protected Literal PsProgressStatus;
         protected Literal Subtitle;
