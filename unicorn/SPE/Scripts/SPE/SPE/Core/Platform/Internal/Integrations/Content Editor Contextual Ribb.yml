@@ -98,6 +98,8 @@ SharedFields:
         			foreach($script in $scripts) {
         			    if ($script.TemplateName -eq "PowerShell Script" -or $script.TemplateName -eq "PowerShell Script Library") {
         
+        					$command = "item:executescript(script=$($script.ID),scriptDb=$($script.Database.Name))"
+    
         					$name = $script.Name;
         					$buttonTemplate = ""
         					$isSmall = $false;
@@ -138,10 +140,10 @@ SharedFields:
         					$button.Header = $name;
         					$button.__Sortorder = $script.__Sortorder;
         					if (Get-Member -InputObject $button -Name "Click" -MemberType Properties) {
-        						$button.Click = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+        						$button.Click = $command
         					}
         					if (Get-Member -InputObject $button -Name "Command" -MemberType Properties) {
-        						$button.Command = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+        						$button.Command = $command
         					}
         
         					#build menu
@@ -157,7 +159,8 @@ SharedFields:
         							$menuItem."Display name" = $itemScript.Name;
         							$menuItem.__Sortorder = $itemScript.__Sortorder;
         							# Leave the id value empty so Sitecore will properly determine the context item.
-        							$menuItem.Message = "item:executescript(id=,script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
+        							
+        							$menuItem.Message = $command
         
         						}
         					}
@@ -187,4 +190,4 @@ Languages:
       Value: 20131001T173321
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "63355011-70a7-4788-8c6f-a1fd19ec0900"
+      Value: "b9470386-ec95-480b-abb7-5a6dcdbcadf6"

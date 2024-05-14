@@ -14,7 +14,7 @@ SharedFields:
         evaluate if/when this script should run.
     #>
     
-    $item = Get-Item -Path .
+    $item = $SitecoreContextItem
     if(-not $item) {
         Write-Log "The item is null."
         return
@@ -34,7 +34,7 @@ SharedFields:
     # Be sure to update this ID to whichever script you want to execute when the link is clicked.
     $scriptId = "{2DABC57E-1793-47F7-BD73-EFA8206CEC66}"
     $script = Get-Item -Path "master:" -ID $scriptId
-    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
     $gutter.Click = $command
     $gutter
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
@@ -55,4 +55,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "f0cf87ed-5df9-42ad-971d-d9a7e337751d"
+      Value: "3fb2bc46-c9c0-4a6c-8a37-d1fd338c1549"

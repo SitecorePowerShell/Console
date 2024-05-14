@@ -153,10 +153,10 @@ SharedFields:
     					$button.Header = $name;
     					$button.__Sortorder = $script.__Sortorder;
     					if (Get-Member -InputObject $button -Name "Click" -MemberType Properties) {
-    						$button.Click = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+    						$button.Click = "item:executescript(id=,la=,vs=,db=,script=$($script.ID),scriptDb=$($script.Database.Name))"
     					}
     					if (Get-Member -InputObject $button -Name "Command" -MemberType Properties) {
-    						$button.Command = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+    						$button.Command = "item:executescript(script=$($script.ID),scriptDb=$($script.Database.Name))"
     					}
     
     					#build menu
@@ -172,7 +172,7 @@ SharedFields:
     							$menuItem."Display name" = $itemScript.Name;
     							$menuItem.__Sortorder = $itemScript.__Sortorder;
     							# Leave the id value empty so Sitecore will properly determine the context item.
-    							$menuItem.Message = "item:executescript(id=,script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
+    							$menuItem.Message = "item:executescript(script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
     
     						}
     					}
@@ -198,7 +198,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20131001T173321
+      Value: 20131001T153321Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "117d13f1-4a43-4e80-b6a4-7f4c0f090fb5"
+      Value: "21f0663f-d10e-44b4-a773-097ef9ed16fd"

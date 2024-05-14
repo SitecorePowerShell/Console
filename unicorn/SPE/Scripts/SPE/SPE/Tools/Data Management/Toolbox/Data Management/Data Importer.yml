@@ -48,9 +48,9 @@ SharedFields:
     }
     
     $scriptId = "{EF72970A-DECC-420C-8DC5-155C673ED3F0}"
-    $item = Get-Item -Path "."
+    $item = $SitecoreContextItem
     $script = Get-Item -Path "master:" -ID $scriptId
-    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
     
     $options = [ordered]@{"Download Sample"=$command;}
     
@@ -376,4 +376,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "2e813528-d977-4101-9190-ffd26bb21563"
+      Value: "1bcc48fa-1825-49ff-8054-79e3e5555251"

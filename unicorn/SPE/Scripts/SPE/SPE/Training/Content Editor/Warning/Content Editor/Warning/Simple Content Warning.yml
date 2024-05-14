@@ -23,9 +23,9 @@ SharedFields:
     
     # Be sure to update this ID to whichever script you want to execute when the link is clicked.
     $scriptId = "{9D596493-A2A2-449A-B279-63807BBB5A5E}"
-    $item = Get-Item -Path "."
+    $item = $SitecoreContextItem
     $script = Get-Item -Path "master:" -ID $scriptId
-    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
     $warning.AddOption("Click Me", $command)
     $warning.HideFields = $false
 Languages:
@@ -42,4 +42,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "a81c9945-c056-43a7-98fe-e6652f38a8a5"
+      Value: "cefeb935-9a08-46e8-b73a-e1c2d8b7dade"

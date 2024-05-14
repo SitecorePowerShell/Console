@@ -11,7 +11,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $item = Get-Item -Path .
+    $item = $SitecoreContextItem
     if(-not $item) {
         return
     }
@@ -29,7 +29,7 @@ SharedFields:
     
     $scriptId = "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
     $script = Get-Item -Path "master:" -ID $scriptId
-    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
     $gutter.Click = $command
     $gutter
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
@@ -135,4 +135,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "a67437dc-b40e-4b6f-866d-45742dcec6df"
+      Value: "1e2c1a76-6db3-4538-919c-04ac304eb207"

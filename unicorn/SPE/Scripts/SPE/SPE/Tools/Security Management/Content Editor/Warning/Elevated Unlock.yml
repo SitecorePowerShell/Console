@@ -15,7 +15,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $item = Get-Item -Path "."
+    $item = $SitecoreContextItem
     
     $icon = $PSScript.Appearance.Icon -replace "32x32","16x16"
     $source = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
@@ -28,7 +28,7 @@ SharedFields:
     $warning.Text = $text
     
     $script = Get-Item -Path "master:" -ID "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
-    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
     $warning.AddOption("Unlock", $command)
     $warning.HideFields = $false
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
@@ -126,4 +126,4 @@ Languages:
       Value: 20180914T182205Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7faf7def-62bb-49e1-9bd3-908537ba03b1"
+      Value: "d20bfbfd-a970-42ed-8fd9-6bb6f3817ebf"
