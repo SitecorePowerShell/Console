@@ -41,26 +41,34 @@ namespace Spe.Commands.Data
         [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
         public override string[] Language { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path, return ItemLink", Mandatory = true)]
-        [Parameter(ParameterSetName = "Item from ID, return ItemLink", Mandatory = true)]
-        [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink", Mandatory = true)]
+        [Alias("Deep", "Recursive", "WithStandardValues", "WithFallback")]
+        [Parameter(ParameterSetName = "Item from Path, return Item")]
+        [Parameter(ParameterSetName = "Item from ID, return Item")]
+        [Parameter(ParameterSetName = "Item from Path, return ItemLink")]
+        [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
+        [Parameter(ParameterSetName = "Item from Pipeline, return Item")]
+        [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink")]
+        public SwitchParameter Recurse { get; set; }
+
+        [Parameter(ParameterSetName = "Item from Path, return ItemLink")]
+        [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
+        [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink")]
         public SwitchParameter ItemLink { get; set; }
 
         protected override void ProcessItem(Item linkedItem)
         {
             var linkDb = Globals.LinkDatabase;
-            if (linkDb.GetReferrerCount(linkedItem) <= 0) return;
 
             if (ItemLink)
             {
                 linkDb
-                    .GetReferrers(linkedItem)
+                    .GetItemReferrers(linkedItem, Recurse)
                     .ToList()
                     .ForEach(WriteObject);
             }
             else
             {
-                linkDb.GetReferrers(linkedItem)
+                linkDb.GetItemReferrers(linkedItem, Recurse)
                     .Select(link => link.GetSourceItem())
                     .Distinct(ItemEqualityComparer.Instance)
                     .ToList()
