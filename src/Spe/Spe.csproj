@@ -226,6 +226,7 @@
     <Compile Include="Commands\Presentation\AddPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\NewPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Security\Accounts\BaseSecurityCommand.cs" />
+    <Compile Include="Core\Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="Core\Rules\PowerShellDelegatedAccess.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />

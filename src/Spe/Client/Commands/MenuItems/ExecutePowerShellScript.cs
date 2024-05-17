@@ -7,6 +7,7 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using Spe.Core.Extensions;
 
 namespace Spe.Client.Commands.MenuItems
 {
@@ -46,6 +47,13 @@ namespace Spe.Client.Commands.MenuItems
                 itemLang = null;
                 itemVer = null;
             }
+            
+            itemId =  context.Parameters.TryGetValue(NameValueCollectionExtensions.ItemId, itemId);
+            itemDb = context.Parameters.TryGetValue(NameValueCollectionExtensions.ItemDb, itemDb);
+            itemLang = context.Parameters.TryGetValue(NameValueCollectionExtensions.ItemLang, itemLang);
+            itemVer = context.Parameters.TryGetValue(NameValueCollectionExtensions.ItemVer, itemVer);
+            scriptId = context.Parameters.TryGetValue(NameValueCollectionExtensions.ScriptId, itemVer);
+            
 
             SheerResponse.CheckModified(false);
             Context.ClientPage.Start(this, "Process");
