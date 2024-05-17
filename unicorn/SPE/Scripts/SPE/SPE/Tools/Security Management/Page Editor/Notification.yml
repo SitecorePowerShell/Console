@@ -1,0 +1,21 @@
+﻿---
+ID: "1d62d36e-a164-4b54-9882-0315cd87b2c8"
+Parent: "9d842505-1720-45e3-a5a7-787ddd88c3fb"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Page Editor/Notification
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240517T144749Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "28e25080-6dfa-4378-9e27-0e502e54434b"
