@@ -30,6 +30,7 @@ namespace Spe.Core.Settings
         private const string LastScriptSettingFieldName = "LastScript";
         private const string SaveLastScriptSettingFieldName = "SaveLastScript";
         private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
+        private const string PerTabOutputSettingFieldName = "PerTabOutput"; 
         private const string HostWidthSettingFieldName = "HostWidth";
         private const string ForegroundColorSettingFieldName = "ForegroundColor";
         private const string BackgroundColorSettingFieldName = "BackgroundColor";
@@ -105,6 +106,7 @@ namespace Spe.Core.Settings
         }
 
         public bool LiveAutocompletion { get; set; }
+        public bool PerTabOutput { get; set; }
 
         private string AppSettingsPath => SettingsItemPath + ApplicationName + "/";
         private string CurrentUserSettingsPath => AppSettingsPath + CurrentDomain + "/" + CurrentUserName;
@@ -229,7 +231,8 @@ namespace Spe.Core.Settings
                     {
                         configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
                         ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
-                        ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;                            
+                        ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;
+                        ((CheckboxField)configuration.Fields[PerTabOutputSettingFieldName]).Checked = PerTabOutput;
                         configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
                         configuration[ForegroundColorSettingFieldName] = ForegroundColor.ToString();
                         configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
@@ -257,6 +260,9 @@ namespace Spe.Core.Settings
                     LiveAutocompletion =
                         TryGetSettingValue(LiveAutocompletionSettingFieldName, false,
                             () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
+                    PerTabOutput = 
+                    TryGetSettingValue(PerTabOutputSettingFieldName, false,
+                        () => ((CheckboxField) configuration.Fields[PerTabOutputSettingFieldName]).Checked);
                     HostWidth =
                         TryGetSettingValue(HostWidthSettingFieldName,150,
                             () => int.TryParse(configuration[HostWidthSettingFieldName], out var hostWidth) ? hostWidth : 150);
@@ -297,6 +303,7 @@ namespace Spe.Core.Settings
             LastScript = string.Empty;
             SaveLastScript = true;
             LiveAutocompletion = false;
+            PerTabOutput = false;
             HostWidth = 150;
             ForegroundColor = ConsoleColor.White;
             BackgroundColor = ConsoleColor.DarkBlue;

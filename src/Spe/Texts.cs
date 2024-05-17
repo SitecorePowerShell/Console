@@ -26,7 +26,8 @@ namespace Spe
         public const string PowerShellIse_JobExecuteScript_Working = "Working";
         public const string PowerShellIse_LoadItem_The_item_is_not_a_script_ = "The item is not a script.";
         public const string PowerShellIse_Open_Open_Script = "Open Script";
-
+        public const string PowerShellIse_The_script_is_modified_Do_you_want_to_close_it_without_saving_the_changes = "The script is modified. Do you want to close it without saving the changes?";
+            
         public const string PowerShellIse_Open_Select_the_script_item_that_you_want_to_open_ =
             "Select the script item that you want to open.";
 

@@ -13,7 +13,7 @@ SharedFields:
   Value: 200
 - ID: "cf738220-908d-4c3f-9482-32e625daf13c"
   Hint: Fields
-  Value: FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor|SaveLastScript|LiveAutocompletion
+  Value: FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor|SaveLastScript|LiveAutocompletion|PerTabOutput
 Languages:
 - Language: da
   Fields:
@@ -46,14 +46,14 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20090528T094300
+      Value: 20090528T074300Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "5e8783c0-22a5-4016-8fc7-bb89272a6485"
+      Value: "76e07e71-259f-4afe-8ba4-bce99247a128"
 - Language: "ja-JP"
   Fields:
   - ID: "108d3a63-baaa-4560-86d8-3a112ed84717"
