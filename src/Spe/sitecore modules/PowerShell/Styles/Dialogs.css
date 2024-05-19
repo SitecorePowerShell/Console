@@ -135,3 +135,17 @@ textarea[disabled] {
     #StatusBar #RefreshHint {
         float: right;
     }
+
+    .scRibbonNavigatorButtonsGroupHeader {
+        display: none;
+    }
+    
+    .scRibbon {
+        position: relative;
+        height:100%;
+    }
+    
+    .scRibbonToolbar {
+        height: 100%;
+        background: #f7f7f7;
+    }

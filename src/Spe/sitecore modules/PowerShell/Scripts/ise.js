@@ -148,6 +148,14 @@
             typingTimer = setTimeout(spe.updateRibbon, timeout);
         };
 
+        scContent.toggleRibbon = function (animationTime) {
+            jQuery("#PowerShellRibbon_Toolbar").slideToggle(animationTime, function () {
+                var button = document.getElementById('scRibbonToggle');
+                button.className = this.style.display == "none" ? 'scRibbonOpen' : "scRibbonClose";
+                spe.resizeEditor();
+            });
+        }
+
         var posx = $("#PosX");
         var posy = $("#PosY");
 
@@ -155,8 +163,7 @@
 
             if (currentEditorSession.initialAssignment) {
                 currentEditorSession.initialAssignment = false;
-            } else
-            if (clear === currentEditorSession.isModified) {
+            } else if (clear === currentEditorSession.isModified) {
                 currentEditorSession.isModified = !clear;
                 spe.applyWindowTitle(currentEditorIndex);
             }
@@ -188,11 +195,11 @@
                 }
             });
 
-            if(perTabResults) {
+            if (perTabResults) {
                 $("#ScriptResultCode").text("");
                 $("#ScriptResultCode").append(currentEditorSession.results);
                 $("#Result").scrollTop($("#Result")[0].scrollHeight);
-            }            
+            }
         }
 
         spe.createEditor = function (index) {
@@ -442,6 +449,7 @@
             clipboard.copy(spe.getOutput());
         });
 
+
         spe.getOutput = function () {
             return $("#ScriptResultCode")[0].innerText;
         };
@@ -619,9 +627,7 @@
             var windowCaption = $("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
                 windowCaption[0].innerHTML =
-                    editorSession.windowTitleInnerHTML.
-                    replace("#tabindex#", editorSession.index).
-                    replace("#styles#", editorSession.isModified ? "display:inline;" : "display:none;");
+                    editorSession.windowTitleInnerHTML.replace("#tabindex#", editorSession.index).replace("#styles#", editorSession.isModified ? "display:inline;" : "display:none;");
 
             }
 
@@ -917,6 +923,7 @@
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
             scForm.postRequest("", "", "", "ise:loadinitialscript");
+            spe.resizeEditor();
         }, 100);
 
     });

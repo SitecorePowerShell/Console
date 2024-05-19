@@ -101,3 +101,7 @@
 .scEditorWarningHelp {
     padding-top: 5px;
 }
+
+#scRibbonToggle {
+    display : none;
+}
