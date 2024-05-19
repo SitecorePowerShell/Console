@@ -320,6 +320,11 @@ namespace Spe.Client.Applications
                 printResults += $"<pre style='background:red;'>{error}</pre>";
             }
             Result.Value = printResults;
+            if(!(result?.DialogResult).IsEmptyOrWhitespace())
+            {
+                SheerResponse.SetDialogValue(result?.DialogResult);
+            }
+                
             PsProgress.Text = string.Empty;
             SitecoreVersion.V80
                 .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")

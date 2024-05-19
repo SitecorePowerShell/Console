@@ -11,6 +11,11 @@ namespace Spe.Core.Extensions
             return String.Compare(value, compare, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
+        public static bool IsOneOf(this string value, params string[] compare)
+        {
+            return compare.Any(compareValue => Is(value, compareValue));
+        }
+
         public static bool IsNot(this string value, string compare)
         {
             return !Is(value, compare);
@@ -38,6 +43,12 @@ namespace Spe.Core.Extensions
         public static string IfNullOrEmpty(this string value, string useIfEmpty) =>
             string.IsNullOrEmpty(value) ? useIfEmpty : value;
 
+        public static bool IsNotEmpty(this string value) =>
+            !string.IsNullOrEmpty(value);
+        
+        public static bool IsEmptyOrWhitespace(this string value) =>
+            string.IsNullOrWhiteSpace(value);
+        
         public static string EllipsisString(this string rawString, int maxLength = 30, char delimiter = '\\')
         {
             maxLength -= 3; //account for delimiter spacing

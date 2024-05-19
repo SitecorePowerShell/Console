@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sitecore.Buckets.Extensions;
 using Spe.Core.Settings.Authorization;
 
 namespace Spe.Core.Host
@@ -93,6 +94,11 @@ namespace Spe.Core.Host
             return output.ToString();
         }
 
+        public string GetDialogRessult()
+        {
+            return this.AsEnumerable().Reverse().FirstOrDefault(x => !x.Text.IsNullOrEmpty())?.Text;
+        }
+        
         public string ToJsTerminalString()
         {
             var output = new StringBuilder(10240);
