@@ -37,6 +37,10 @@ namespace Spe.Commands.Data.Clones
                 switch (Action)
                 {
                     case (NotificationAction.Accept):
+                        if(notification is VersionAddedNotification versionAddedNotification)
+                        {
+                            versionAddedNotification.ForceAccept = true;
+                        }
                         notification.Accept(clone);
                         break;
                     case (NotificationAction.Reject):
