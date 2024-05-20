@@ -542,7 +542,7 @@ namespace Spe.Core.Provider
                 AuditFormatter.FormatItem(destinationItem));
             if (transferredItem.Name != leafName)
             {
-                transferredItem.Edit(args => transferredItem.Name = leafName);
+                transferredItem.FirstExistingVersion().Edit(args => args.Item.Name = leafName);
             }
 
             return transferredItem;
@@ -664,8 +664,8 @@ namespace Spe.Core.Provider
 
                 if (sourceItem.Name != leafName)
                 {
-                    sourceItem.Edit(
-                        args => { sourceItem.Name = leafName; });
+                    sourceItem.FirstExistingVersion().Edit(
+                        args => { args.Item.Name = leafName; });
                 }
             }
             catch (Exception ex)
@@ -689,8 +689,8 @@ namespace Spe.Core.Provider
                     CheckOperationAllowed("rename", item.Access.CanRename(), item.Uri.ToString());
                     if (ShouldProcess(item.Paths.Path, "Rename to '" + newName + "'"))
                     {
-                        item.Edit(
-                            args => { item.Name = newName; });
+                        item.FirstExistingVersion().Edit(
+                            args => { args.Item.Name = newName; });
                     }
                 }
             }

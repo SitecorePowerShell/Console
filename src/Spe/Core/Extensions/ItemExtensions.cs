@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
@@ -42,7 +43,7 @@ namespace Spe.Core.Extensions
 
         public static void Edit(this Item item, Action<ItemEditArgs> action)
         {
-            var args = new ItemEditArgs();
+            var args = new ItemEditArgs() { Item = item };
             try
             {
                 var wasEditing = item.Editing.IsEditing;
@@ -102,6 +103,12 @@ namespace Spe.Core.Extensions
             ///     default: false
             /// </summary>
             public bool SaveOnError { get; set; }
+
+            /// <summary>
+            ///     Edited Item
+            ///     default: false
+            /// </summary>
+            public Item Item { get; set; }
         }
 
         public static bool IsVersioned(this Item item)
@@ -114,6 +121,20 @@ namespace Spe.Core.Extensions
             }
 
             return false;
+        }
+        
+        public static Item FirstExistingVersion(this Item item)
+        {
+            if (item != null && item.Versions.Count == 0)
+            {
+                var allVersions = item.Versions.GetVersions(true);
+                if (allVersions.Any())
+                {
+                    return allVersions.FirstOrDefault();
+                }
+            }
+
+            return item;
         }
     }
 }
