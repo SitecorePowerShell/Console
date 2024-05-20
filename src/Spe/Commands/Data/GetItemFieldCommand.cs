@@ -12,7 +12,7 @@ namespace Spe.Commands.Data
     [Cmdlet(VerbsCommon.Get, "ItemField")]
     [OutputType(typeof (TemplateField), typeof (string), typeof (Field),
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class GetItemFieldCommand : BaseItemCommand
+    public class GetItemFieldCommand : BaseLanguageAgnosticItemCommand
     {
         public enum ReturnValue
         {
@@ -35,7 +35,6 @@ namespace Spe.Commands.Data
 
         protected override void BeginProcessing()
         {
-            Language = null;
             base.BeginProcessing();
 
             if (Name != null && Name.Any())
