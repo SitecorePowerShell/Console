@@ -87,6 +87,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\Windows\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files\root\bb3a725f\1a866d6a\assembly\dl3\5275b215\00f4dad7_9cb8d901\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Rainbow, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Rainbow.Core.2.1.4\lib\net452\Rainbow.dll</HintPath>
     </Reference>
@@ -226,7 +229,9 @@
     <Compile Include="Commands\Presentation\AddPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Presentation\NewPlaceholderSettingCommand.cs" />
     <Compile Include="Commands\Security\Accounts\BaseSecurityCommand.cs" />
+    <Compile Include="Core\Extensions\MessageExtensions.cs" />
     <Compile Include="Core\Extensions\NameValueCollectionExtensions.cs" />
+    <Compile Include="Core\Host\ScriptExecutionResult.cs" />
     <Compile Include="Core\Rules\PowerShellDelegatedAccess.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />

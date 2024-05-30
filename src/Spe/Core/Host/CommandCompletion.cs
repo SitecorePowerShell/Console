@@ -394,8 +394,11 @@ namespace Spe.Core.Host
                 if (session.TryInvokeInRunningSession(teCmd, out psResult))
                 {
                     var teResult = psResult.Cast<int>().FirstOrDefault();
-                    lastToken = command.Substring(teResult);
-                    return command.Substring(0, teResult);
+                    if (teResult >= 0)
+                    {
+                        lastToken = command.Substring(teResult);
+                        return command.Substring(0, teResult);
+                    }
                 }
             }
             lastToken = string.Empty;

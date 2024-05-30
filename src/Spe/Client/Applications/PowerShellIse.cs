@@ -66,25 +66,25 @@ namespace Spe.Client.Applications
 
         protected bool ScriptRunning
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptRunning"]) == "1"; }
-            set { Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptRunning"]) == "1";
+            set => Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty;
         }
 
         protected bool WasElevated
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1"; }
-            set { Context.ClientPage.ServerProperties["WasElevated"] = value ? "1" : string.Empty; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1";
+            set => Context.ClientPage.ServerProperties["WasElevated"] = value ? "1" : string.Empty;
         }
 
         public string ParentFrameName
         {
-            get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
-            set { ServerProperties["ParentFrameName"] = value; }
+            get => StringUtil.GetString(ServerProperties["ParentFrameName"]);
+            set => ServerProperties["ParentFrameName"] = value;
         }
 
         public string ScriptItemId
         {
-            get { return ScriptItemIdMemo.Value; }
+            get => ScriptItemIdMemo.Value;
             set
             {
                 if (value.IsWhiteSpaceOrNull())
@@ -98,7 +98,7 @@ namespace Spe.Client.Applications
 
         public string ScriptItemDb
         {
-            get { return ScriptItemDbMemo.Value; }
+            get => ScriptItemDbMemo.Value;
             set
             {
                 if (value.IsWhiteSpaceOrNull())
@@ -112,35 +112,32 @@ namespace Spe.Client.Applications
 
         public static string ContextItemId
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemID"]); }
-            set { Context.ClientPage.ServerProperties["ContextItemID"] = value; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemID"]);
+            set => Context.ClientPage.ServerProperties["ContextItemID"] = value;
         }
 
         public static string ContextItemDb
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemDb"]); }
-            set { Context.ClientPage.ServerProperties["ContextItemDb"] = value; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemDb"]);
+            set => Context.ClientPage.ServerProperties["ContextItemDb"] = value;
         }
 
         public static bool ScriptModified
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptModified"]) == "1"; }
-            set { Context.ClientPage.ServerProperties["ScriptModified"] = value ? "1" : string.Empty; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptModified"]) == "1";
+            set => Context.ClientPage.ServerProperties["ScriptModified"] = value ? "1" : string.Empty;
         }
 
         public static int TabSequencer
         {
-            get { return (int)(Context.ClientPage.ServerProperties["TabSequencer"] ?? 0); }
-            set { Context.ClientPage.ServerProperties["TabSequencer"] = value; }
+            get => (int)(Context.ClientPage.ServerProperties["TabSequencer"] ?? 0);
+            set => Context.ClientPage.ServerProperties["TabSequencer"] = value;
         }
 
         public static bool UseContext
         {
-            get
-            {
-                return string.IsNullOrEmpty(StringUtil.GetString(Context.ClientPage.ServerProperties["UseContext"]));
-            }
-            set { Context.ClientPage.ServerProperties["UseContext"] = value ? string.Empty : "0"; }
+            get => string.IsNullOrEmpty(StringUtil.GetString(Context.ClientPage.ServerProperties["UseContext"]));
+            set => Context.ClientPage.ServerProperties["UseContext"] = value ? string.Empty : "0";
         }
 
         public Item ScriptItem
@@ -167,20 +164,20 @@ namespace Spe.Client.Applications
 
         public static string CurrentSessionId
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentSessionId"]); }
-            set { Context.ClientPage.ServerProperties["CurrentSessionId"] = value; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentSessionId"]);
+            set => Context.ClientPage.ServerProperties["CurrentSessionId"] = value;
         }
 
         public static string CurrentUser
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentUser"]); }
-            set { Context.ClientPage.ServerProperties["CurrentUser"] = value; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentUser"]);
+            set => Context.ClientPage.ServerProperties["CurrentUser"] = value;
         }
 
         public static string CurrentLanguage
         {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentLanguage"]); }
-            set { Context.ClientPage.ServerProperties["CurrentLanguage"] = value; }
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentLanguage"]);
+            set => Context.ClientPage.ServerProperties["CurrentLanguage"] = value;
         }
 
         public SpeJobMonitor Monitor { get; private set; }
@@ -195,8 +192,8 @@ namespace Spe.Client.Applications
 
         public bool MonitorActive
         {
-            get { return Monitor.Active; }
-            set { Monitor.Active = value; }
+            get => Monitor.Active;
+            set => Monitor.Active = value;
         }
 
         private static bool IsHackedParameter(string parameter)
@@ -302,7 +299,7 @@ namespace Spe.Client.Applications
 
             Dispatcher.Dispatch(message, context);
         }
-
+        
         [HandleMessage("ise:open", true)]
         protected void Open(ClientPipelineArgs args)
         {
@@ -683,6 +680,7 @@ namespace Spe.Client.Applications
         {
             args.Parameters.Add("message", "ise:execute");
             JobExecuteScript(args, Editor.Value, false);
+            ClearOutput();
         }
 
         [HandleMessage("ise:debug", true)]
@@ -928,6 +926,9 @@ namespace Spe.Client.Applications
                 PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
             }
 
+            var executionResult = new ScriptExecutionResult(result);
+            executionResult.GetIseResult(result.CloseRunner).ForEach(PrintSessionUpdate);
+            
             SheerResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptRunning = false;

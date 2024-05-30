@@ -48,7 +48,7 @@ namespace Spe.Client.Applications
                     DialogResult = Session.Output.GetDialogRessult(),
                     HasErrors = Session.Output.HasErrors,
                     CloseRunner = Session.CloseRunner,
-                    CloseMessages = Session.CloseMessages
+                    DeferredMessages = Session.DeferredMessages
                 };
                 
                 job.StatusResult = output;
@@ -76,7 +76,7 @@ namespace Spe.Client.Applications
                         DialogResult = Session.Output.GetDialogRessult(),
                         HasErrors = true,
                         CloseRunner = Session.CloseRunner,
-                        CloseMessages = Session.CloseMessages
+                        DeferredMessages = Session.DeferredMessages
                     };
 
                     job.StatusResult = output;

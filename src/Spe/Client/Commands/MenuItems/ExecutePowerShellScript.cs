@@ -3,11 +3,16 @@ using System.Globalization;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
+using Sitecore.Shell.Applications.ContentManager;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
 using Sitecore.Text;
+using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Spe.Core.Extensions;
+using Spe.Core.Host;
+using Version = Sitecore.Data.Version;
 
 namespace Spe.Client.Commands.MenuItems
 {
@@ -59,19 +64,20 @@ namespace Spe.Client.Commands.MenuItems
             Context.ClientPage.Start(this, "Process");
         }
 
+        protected void Test()
+        {
+            
+        }
         protected void Process(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
             if (args.IsPostBack)
             {
-                Context.ClientPage.SendMessage(this, $"item:refresh(id={itemId})");
-                Context.ClientPage.SendMessage(this, $"item:refreshchildren(id={itemId})");
+                var item1 = ContentEditorForm.GetContextItem();
+                var item = Database.GetDatabase(itemDb).GetItem(itemId, Language.Parse(itemLang), Version.Parse(itemVer));
                 if (!args.HasResult || args.Result.IsNullOrEmpty()) return;
-
-                foreach (var closeMessage in args.Result.Split('\n'))
-                {
-                    Context.ClientPage.ClientResponse.Timer(closeMessage, 2);
-                }
+                ScriptExecutionResult result = ScriptExecutionResult.Parse(args.Result);
+                result.ExecuteResults();
             }
             else
             {

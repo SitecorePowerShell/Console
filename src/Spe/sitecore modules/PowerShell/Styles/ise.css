@@ -476,3 +476,35 @@ a.ps-link {
     padding: 0 4px 0 4px;
     margin: 0 -10px 0 10px;
 }
+
+#ScriptResultCode .deferred {
+    padding: 1px;
+    border-radius: 6px;
+    margin: 1px;
+    display: inline-block;
+}
+
+#ScriptResultCode .script{
+    background: #E34C24;
+}
+
+#ScriptResultCode .message{
+    background: darkcyan;
+}
+
+#ScriptResultCode .close{
+    background: darkred;
+    padding: 3px;
+}
+
+#ScriptResultCode .deferred .label {
+    margin:4px;
+}
+
+#ScriptResultCode .deferred .content {
+    margin:0px 1px;
+    padding: 3px;
+    border-radius: 6px;
+    background-color: rgb(1, 36, 86);
+    display: inline-block;
+}

@@ -142,7 +142,7 @@ namespace Spe.Core.Host
 
         internal bool IsRunning => powerShell != null && powerShell.InvocationStateInfo.State == PSInvocationState.Running;
 
-        internal System.Management.Automation.PowerShell NewPowerShell()
+        private System.Management.Automation.PowerShell NewPowerShell()
         {
             if (IsRunning)
                 return powerShell.CreateNestedPowerShell();
@@ -177,57 +177,53 @@ namespace Spe.Core.Host
             }
         }
 
-        public static Version PsVersion { get; private set; }
+        public static Version PsVersion { get; }
 
         public bool AutoDispose
         {
-            get { return host.AutoDispose; }
-            internal set { host.AutoDispose = value; }
+            get => host.AutoDispose;
+            internal set => host.AutoDispose = value;
         }
 
         public bool CloseRunner
         {
-            get { return host.CloseRunner; }
-            internal set { host.CloseRunner = value; }
+            get => host.CloseRunner;
+            internal set => host.CloseRunner = value;
         }
 
-        public List<string> CloseMessages
-        {
-            get { return host.CloseMessages; }
-            internal set { host.CloseMessages = value; }
-        }
+        public List<string> DeferredMessages => host.DeferredMessages;
 
         public string ID
         {
-            get { return host.SessionId; }
-            internal set { host.SessionId = value; }
+            get => host.SessionId;
+            internal set => host.SessionId = value;
         }
 
         public bool Interactive
         {
-            get { return host.Interactive; }
-            internal set { host.Interactive = value; }
+            get => host.Interactive;
+            set => host.Interactive = value;
         }
 
 
         public string UserName
         {
-            get { return host.User; }
-            internal set { host.User = value; }
+            get => host.User;
+            private set => host.User = value;
         }
 
         public string JobName
         {
-            get { return host.JobName; }
-            internal set { host.JobName = value; }
+            get => host.JobName;
+            internal set => host.JobName = value;
         }
 
         public List<ErrorRecord> LastErrors { get; set; }
 
         public string Key
         {
-            get { return host.SessionKey; }
-            internal set { host.SessionKey = value; }
+            get => host.SessionKey;
+            internal set => host.SessionKey = value;
         }
 
         public ApplicationSettings Settings { get; }
@@ -375,7 +371,7 @@ namespace Spe.Core.Host
                         position = args.InvocationInfo.GetType()
                             .GetProperty("ScriptPosition",
                                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty)
-                            .GetValue(args.InvocationInfo) as IScriptExtent;
+                            ?.GetValue(args.InvocationInfo) as IScriptExtent;
                     }
                     catch (Exception)
                     {
@@ -499,7 +495,7 @@ namespace Spe.Core.Host
             OutNone
         }
 
-        public Collection<PSObject> InvokeInNewPowerShell(Command command, OutTarget target)
+        private Collection<PSObject> InvokeInNewPowerShell(Command command, OutTarget target)
         {
             return InvokeInNewPowerShell(ps => ps.Commands.AddCommand(command), target);
         }
@@ -588,6 +584,7 @@ namespace Spe.Core.Host
 
         public List<object> ExecuteScriptPart(string script)
         {
+            PrivateData.DeferredMessages.Clear();
             return ExecuteScriptPart(script, true, false);
         }
 
@@ -718,6 +715,7 @@ namespace Spe.Core.Host
                 MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
             };
 
+        
         private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
         {
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();

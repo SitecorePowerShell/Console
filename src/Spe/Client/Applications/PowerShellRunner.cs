@@ -3,6 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -320,10 +321,6 @@ namespace Spe.Client.Applications
                 printResults += $"<pre style='background:red;'>{error}</pre>";
             }
             Result.Value = printResults;
-            if(!(result?.DialogResult).IsEmptyOrWhitespace())
-            {
-                SheerResponse.SetDialogValue(result?.DialogResult);
-            }
                 
             PsProgress.Text = string.Empty;
             SitecoreVersion.V80
@@ -337,10 +334,10 @@ namespace Spe.Client.Applications
             OkButton.Visible = true;
             AbortButton.Visible = false;
             Monitor.SessionID = string.Empty;
-            if (result.CloseMessages.Any())
+            if (result.DeferredMessages.Any() || result.DialogResult != null)
             {
-                SheerResponse.SetDialogValue(
-                    result.CloseMessages.Aggregate((serialized, message) => serialized + "\n" + message));
+                ScriptExecutionResult dialogResult = new ScriptExecutionResult(result);
+                SheerResponse.SetDialogValue(dialogResult.ToString());
             }
             if (result.CloseRunner)
             {

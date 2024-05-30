@@ -3,6 +3,9 @@ using System.Management.Automation;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Commands.Interactive.Messages;
+using Spe.Core.Extensions;
+using Spe.Core.Host;
 using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Interactive
@@ -13,15 +16,18 @@ namespace Spe.Commands.Interactive
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]
         public string Name { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "InRunner")]
         public SwitchParameter GetResult { get; set; }
 
         [Parameter]
         public Hashtable Parameters { get; set; }
 
+        [Parameter(ParameterSetName = "OnScriptEnd")]
+        public SwitchParameter OnScriptEnd { get; set; }
+        
         protected override void ProcessRecord()
         {
-            if (!CheckSessionCanDoInteractiveAction()) return;
+            if (!OnScriptEnd && !CheckSessionCanDoInteractiveAction()) return;
 
             var message = Message.Parse(null, Name);
             message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
@@ -29,16 +35,23 @@ namespace Spe.Commands.Interactive
             {
                 foreach (var key in Parameters.Keys)
                 {
-                    message.Arguments.Add(key.ToString(), Parameters[key].ToString());
+                    message.Arguments.Add(key.ToString(), Parameters[key]?.ToString());
                 }
             }
             var msgHandler = new SendMessageMessage(message, GetResult.IsPresent);
-            LogErrors(() => PutMessage(msgHandler));
-            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-            var job = jobManager.GetContextJob();
-            if (job != null && GetResult.IsPresent)
+            if (OnScriptEnd)
             {
-                WriteObject(job.MessageQueue.GetResult());
+                HostData.DeferredMessages.Add($"message:{message.Serialize()}");
+            }
+            else
+            {
+                LogErrors(() => PutMessage(msgHandler));
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
+                var job = jobManager.GetContextJob();
+                if (job != null && GetResult.IsPresent)
+                {
+                    WriteObject(job.MessageQueue.GetResult());
+                }
             }
         }
     }

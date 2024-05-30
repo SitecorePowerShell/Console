@@ -30,13 +30,12 @@ namespace Spe.Core.Host
             internal set { ScriptingHost.CloseRunner = value; }
         }
 
-        public List<string> CloseMessages
+        public List<string> DeferredMessages
         {
-            get { return ScriptingHost.CloseMessages; }
-            internal set { ScriptingHost.CloseMessages = value; }
+            get { return ScriptingHost.DeferredMessages; }
         }
 
-
+       
         public ConsoleColor BackgroundColor
         {
             get

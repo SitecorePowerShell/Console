@@ -36,7 +36,7 @@ namespace Spe.Core.Host
             privateData = new ScriptingHostPrivateData(this);
             sessionState = initialState;
             CloseRunner = false;
-            CloseMessages = new List<string>();
+            DeferredMessages = new List<string>();
         }
 
         /// <summary>
@@ -72,7 +72,9 @@ namespace Spe.Core.Host
         public string SessionKey { get; internal set; }
 
         public bool CloseRunner { get; internal set; }
-        public List<string> CloseMessages { get; internal set; }
+        [Obsolete("Use DeferredMessages instead." )]
+        public List<string> CloseMessages => DeferredMessages;
+        public List<string> DeferredMessages { get; }
         public string User { get; internal set; }
         public string JobName { get; internal set; }
         public bool Interactive { get; internal set; }

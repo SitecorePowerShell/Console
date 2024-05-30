@@ -244,6 +244,13 @@ namespace Spe.Client.Applications
         {
             var args = eventArgs as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
+
+            if(result != null)
+            {
+                var resultActions = new ScriptExecutionResult(result);
+                resultActions.ExecuteResults();
+            }
+            
             if (result?.CloseRunner ?? false)
             {
                 Sitecore.Shell.Framework.Windows.Close();
@@ -505,6 +512,7 @@ namespace Spe.Client.Applications
             scriptSession.SetExecutedScript(scriptItem);
             scriptSession.Interactive = true;
             ScriptSessionId = scriptSession.ID;
+            scriptSession.PrivateData.DeferredMessages.Clear();
 
             var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
             PowerShellLog.Info($"[Report] Running script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
