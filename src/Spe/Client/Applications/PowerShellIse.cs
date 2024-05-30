@@ -12,6 +12,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.IO;
 using Sitecore.Mvc.Extensions;
 using Sitecore.Resources;
@@ -158,7 +159,7 @@ namespace Spe.Client.Applications
                 var contextItemId = ContextItemId;
                 return string.IsNullOrEmpty(contextItemId)
                     ? null
-                    : Factory.GetDatabase(ContextItemDb).GetItem(new ID(contextItemId));
+                    : Factory.GetDatabase(ContextItemDb).GetItem(new ID(contextItemId),Language.Parse(CurrentLanguage));
             }
         }
 
