@@ -251,7 +251,7 @@ namespace Spe.Client.Controls
                             break;
                         default:
                             val = xssCleanup.Replace(val, "<div title='Script tag removed'>&#9888;</div>");
-                            val = val.Replace("  ", " &nbsp;");
+                            val = val.Replace("  ", "&nbsp; ");
                             break;
                     }
                     lvi.ColumnValues.Add(column, val);
