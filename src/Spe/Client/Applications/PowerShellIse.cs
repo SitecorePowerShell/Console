@@ -159,7 +159,8 @@ namespace Spe.Client.Applications
                 var contextItemId = ContextItemId;
                 return string.IsNullOrEmpty(contextItemId)
                     ? null
-                    : Factory.GetDatabase(ContextItemDb).GetItem(new ID(contextItemId),Language.Parse(CurrentLanguage));
+                    : Factory.GetDatabase(ContextItemDb).GetItem(new ID(contextItemId),
+                        CurrentLanguage == DefaultLanguage ? Sitecore.Context.Language : Language.Parse(CurrentLanguage));
             }
         }
 
