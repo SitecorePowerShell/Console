@@ -22,6 +22,7 @@ namespace Spe.Client.Controls
         private static readonly object locker = new object();
         private List<BaseListViewCommand.DataObject> _filteredItems;
         private const string ExpirationSetting = "Spe.HttpCacheExpirationMinutes";
+        private static readonly Regex xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>",RegexOptions.Compiled);
 
         public int CurrentPage
         {
@@ -249,8 +250,8 @@ namespace Spe.Client.Controls
                             val = $"<div class='checked'><img src='{checkedSource}'/></div>";
                             break;
                         default:
-                            var xssCleanup = new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
                             val = xssCleanup.Replace(val, "<div title='Script tag removed'>&#9888;</div>");
+                            val = val.Replace("  ", " &nbsp;");
                             break;
                     }
                     lvi.ColumnValues.Add(column, val);
