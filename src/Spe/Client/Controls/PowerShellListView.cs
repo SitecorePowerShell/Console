@@ -7,7 +7,9 @@ using System.Web;
 using System.Web.Caching;
 using Sitecore;
 using Sitecore.Data.Items;
+using Sitecore.Resources;
 using Sitecore.StringExtensions;
+using Sitecore.Web.UI;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Spe.Commands.Interactive;
@@ -158,6 +160,8 @@ namespace Spe.Client.Controls
             {
                 item.Selected = !item.Selected;
             }
+
+            SelectionChanged();
         }
 
         protected void Sort(int columnIndex)
@@ -201,7 +205,12 @@ namespace Spe.Client.Controls
 
             Controls.Clear();
             ColumnNames.Clear();
-            ColumnNames.Add("Icon", "Icon");
+            var builder = new ImageBuilder
+            {
+                Src = Images.GetThemedImageSource("OfficeWhite/32x32/checkbox_group.png", ImageDimension.id16x16),
+                Alt = "Click to invert the selection"
+            };
+            ColumnNames.Add("Icon", $"{builder}");
 
             if (Data == null)
             {

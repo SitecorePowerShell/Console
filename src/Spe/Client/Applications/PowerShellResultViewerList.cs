@@ -38,6 +38,7 @@ namespace Spe.Client.Applications
         protected Literal InfoTitle;
         protected Literal ItemCount;
         protected Literal ReportContextUser;
+        protected Literal SelectedResults;
         protected PowerShellListView ListViewer;
         protected Border LvProgressOverlay;
         protected Literal PageCount;
@@ -162,6 +163,7 @@ namespace Spe.Client.Applications
                 }
             }
             Monitor.JobFinished += MonitorOnJobFinished;
+            ListViewer.OnSelectionChanged += SelectionChanged;
 
             if (Context.ClientPage.IsEvent)
                 return;
@@ -526,5 +528,14 @@ namespace Spe.Client.Applications
         {
             scriptSession.ExecuteScriptPart(script);
         }
+
+        private void SelectionChanged(object sender, EventArgs e)
+        {
+
+            var selectedItemsCount = ListViewer.SelectedItems.Length;
+            SelectedResults.Text = selectedItemsCount.ToString();
+            UpdateRibbon();            
+        }
+
     }
 }
