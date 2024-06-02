@@ -73,8 +73,6 @@ namespace Spe.Client.Commands.MenuItems
             Assert.ArgumentNotNull(args, "args");
             if (args.IsPostBack)
             {
-                var item1 = ContentEditorForm.GetContextItem();
-                var item = Database.GetDatabase(itemDb).GetItem(itemId, Language.Parse(itemLang), Version.Parse(itemVer));
                 if (!args.HasResult || args.Result.IsNullOrEmpty()) return;
                 ScriptExecutionResult result = ScriptExecutionResult.Parse(args.Result);
                 result.ExecuteResults();

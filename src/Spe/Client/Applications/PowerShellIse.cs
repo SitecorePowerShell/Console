@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Runspaces;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -682,7 +683,6 @@ namespace Spe.Client.Applications
         {
             args.Parameters.Add("message", "ise:execute");
             JobExecuteScript(args, Editor.Value, false);
-            ClearOutput();
         }
 
         [HandleMessage("ise:debug", true)]
@@ -719,6 +719,16 @@ namespace Spe.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.ISE, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.ISE, true);
 
+            ClearOutput();
+            if (scriptSession.State == RunspaceAvailability.AvailableForNestedCommand || scriptSession.State == RunspaceAvailability.Busy)
+            { 
+                var errorMessage =
+                    "A Script is already executing in this script session. Use another session or wait for the other script to finish.";
+                PrintSessionUpdate($"<span style='background:red; color:white'>{errorMessage}</span>");
+                SheerResponse.Eval(
+                    "spe.showSessionIDGallery();");
+                return;
+            }
             if (debug)
             {
                 scriptSession.DebugFile = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +

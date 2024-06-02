@@ -547,7 +547,7 @@ namespace Spe.Core.Host
             Initialize(false);
         }
 
-        public void Initialize(bool reinitialize)
+        private void Initialize(bool reinitialize)
         {
             lock (this)
             {
@@ -685,7 +685,7 @@ namespace Spe.Core.Host
             abortRequested = true;
         }
 
-        public static Command OutDefaultCommand
+        private static Command OutDefaultCommand
             => new Command("Out-Default")
             {
                 MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
@@ -709,7 +709,7 @@ namespace Spe.Core.Host
         /// <remarks>
         /// "Out-Default" is not suitable for external apps, output goes to console.
         /// </remarks>
-        public static Command OutNullCommand
+        private static Command OutNullCommand
             => new Command("Out-Null")
             {
                 MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
@@ -882,7 +882,7 @@ namespace Spe.Core.Host
             GC.SuppressFinalize(this);
         }
 
-        public void Close()
+        private void Close()
         {
             Runspace.DefaultRunspace = null;
             host.Runspace.Dispose();

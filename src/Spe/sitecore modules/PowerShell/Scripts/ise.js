@@ -138,6 +138,11 @@
                 registerEventListenersForRibbonButtons();
             }
         };
+        
+        spe.showSessionIDGallery = function () {
+            contextGalery = jQuery("#B0C784F542B464EE2B0BA72384125E123")
+            contextGalery.click();
+        };
 
         spe.updateRibbonNeeded = function () {
             clearTimeout(typingTimer);
