@@ -55,9 +55,9 @@ namespace Spe.Commands.Data
         [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink")]
         public SwitchParameter Recurse { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path, return ItemLink")]
-        [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
-        [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink")]
+        [Parameter(ParameterSetName = "Item from Path, return ItemLink", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from ID, return ItemLink", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from Pipeline, return ItemLink", Mandatory = true)]
         public SwitchParameter ItemLink { get; set; }
 
         protected override void ProcessItem(Item linkedItem)
