@@ -778,6 +778,16 @@
             }
         };
 
+        var ctrlPressed = false;
+        $(window).keydown(function(evt) {
+            if (evt.which == 17) { // ctrl
+                ctrlPressed = true;
+            }
+        }).keyup(function(evt) {
+            if (evt.which == 17) { // ctrl
+                ctrlPressed = false;
+            }
+        });
         spe.variableValue = function (variableName) {
             var data;
             var sessionId = debugSessionId;
@@ -786,9 +796,11 @@
             }
 
             var storageKey = speVariablesCacheKey + sessionId;
-            var cachedValue = getCachedVariableValue(storageKey, variableName)
-            if (cachedValue) {
-                return cachedValue;
+            if(ctrlPressed === false) {
+                var cachedValue = getCachedVariableValue(storageKey, variableName)
+                if (cachedValue) {
+                    return cachedValue;
+                }
             }
 
             getPowerShellResponse({"guid": sessionId, "variableName": variableName}, "GetVariableValue",
