@@ -19,6 +19,7 @@ using Sitecore.Mvc.Extensions;
 using Sitecore.Resources;
 using Sitecore.Security;
 using Sitecore.Security.Accounts;
+using Sitecore.Shell.Controls.Splitters;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
@@ -63,6 +64,10 @@ namespace Spe.Client.Applications
         protected Border InfoPanel;
         protected Tabstrip Tabs;
         protected Border TabsPanel;
+        protected TreeviewEx ContentTreeview;
+        protected DataContext ContentDataContext;
+        protected VSplitterXmlControl VSplitter;
+
         public bool Debugging { get; set; }
         public bool InBreakpoint { get; set; }
 
@@ -241,7 +246,7 @@ namespace Spe.Client.Applications
             Tabs.OnChange += TabsOnChange;
             if (Context.ClientPage.IsEvent)
                 return;
-
+            
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
 
             if (settings.SaveLastScript)
@@ -268,12 +273,51 @@ namespace Spe.Client.Applications
             CurrentLanguage = DefaultLanguage;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
+            
+            if(itemDb.IsWhiteSpaceOrNull())
+            {
+                itemDb = Context.ContentDatabase.Name;
+            }
+            ContentDataContext.GetFromQueryString();
+            ContentDataContext.BeginUpdate();
+            ContentDataContext.Parameters = $"databasename={itemDb}";
+            ContentDataContext.Database = itemDb;
+            ContentTreeview.RefreshRoot();
+            ContentDataContext.Root = ApplicationSettings.ScriptLibraryRoot.ID.ToString();
+
+            if (!ScriptItemId.IsNullOrEmpty() && !ScriptItemDb.IsNullOrEmpty())
+            {
+                ContentDataContext.SetFolder(ScriptItem.Uri);
+            }
+
+            ContentDataContext.EndUpdate();
+            ContentTreeview.RefreshRoot();
         }
 
         private void TabsOnChange(object sender, EventArgs e)
         {
             var tab = Tabs.Controls.OfType<Tab>().Skip(Tabs.Active).FirstOrDefault();
             SelectTabByIndex(Tabs.Active + 1);
+            var openedScript = OpenedScripts.Value.Split('\n')[Tabs.Active].Split(':')[0];
+
+            if (openedScript.IndexOf("/") > 0)
+            {
+                var scriptItem = Sitecore.Client.ContentDatabase.GetItem(ApplicationSettings.ScriptLibraryPath+openedScript);
+
+                ContentDataContext.BeginUpdate();
+                ContentDataContext.SetFolder(scriptItem.Uri);
+                ContentDataContext.EndUpdate();
+                ContentTreeview.SetSelectedItem(scriptItem);
+                ContentTreeview.RefreshRoot();
+                ContentTreeview.RefreshSelected();
+            }
+            else
+            {
+                Item selectionItem = ContentTreeview.GetSelectionItem();
+                ContentTreeview.SelectedIDs.Clear();
+                if (selectionItem != null)
+                    ContentTreeview.Refresh(selectionItem);
+            }
         }
 
         public override void HandleMessage(Message message)
@@ -347,9 +391,23 @@ namespace Spe.Client.Applications
         protected void MruOpen(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            LoadItem(args.Parameters["db"], args.Parameters["id"]);
+            var db = args.Parameters["db"];
+            var id = args.Parameters["id"];
+            var item = Database.GetDatabase(db).GetItem(id);
+            if(item.IsPowerShellScript()){
+                LoadItem(db, id);
+            }
+            TabsOnChange(this, EventArgs.Empty);
         }
 
+        protected void ContentTreeview_Click()
+        {
+            var folder = ContentDataContext.GetFolder();
+            if (folder.IsPowerShellScript() || folder.IsPowerShellModule())
+            {
+                LoadItem(folder.Database.Name, folder.ID.ToString());
+            }
+        }
 
         [HandleMessage("ise:changecontextaccount", true)]
         protected void SecurityChangeContextAccount(ClientPipelineArgs args)
@@ -551,7 +609,6 @@ namespace Spe.Client.Applications
 
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
-                SelectTabByIndex(Tabs.Controls.Count);
                 MruUpdate(scriptItem);
                 UpdateRibbon();
             }
@@ -588,7 +645,10 @@ namespace Spe.Client.Applications
             }
 
             SelectTabByIndex(tabIndex);
-            SheerResponse.Eval("spe.updateEditor();");
+            if (!scriptAlreadyOpened)
+            {
+                SheerResponse.Eval("spe.updateEditor();");
+            }
             return !scriptAlreadyOpened;
         }
 

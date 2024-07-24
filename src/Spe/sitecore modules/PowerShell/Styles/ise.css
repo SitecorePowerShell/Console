@@ -121,19 +121,22 @@ a.ps-link {
 }
 
 .ui-state-highlight .ui-icon.ui-icon-info {
-    background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;
-    background-size: 16px;
+    /*background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;*/
+    /*background-size: 16px;*/
+    display: none;
 }
 
 .ui-state-highlight {
     margin-bottom: 6px;
     margin-top: 20px;
     padding: 0.7em;
+    background: #FCE99C;
+    color: #897B2F;
 }
 
 #TipOfTheSession {
     float: left;
-    padding-left: 40px;
+    padding-left: 30px;
     padding-right: 30px;
     width: 400px;
 }
@@ -218,8 +221,6 @@ a.ps-link {
 }
 
 #ScriptName { display: none; }
-
-.ui-state-highlight { background: white; }
 
 .progressActivity { font-weight: bold; }
 
@@ -451,8 +452,9 @@ a.ps-link {
 }
 
 #TabsPanel {
-    width: 100%;
+    width: calc(100% - 40px);
     height: 35px;
+    pointer-events: none;
 }
 
 #EditingArea {
@@ -508,3 +510,43 @@ a.ps-link {
     background-color: rgb(1, 36, 86);
     display: inline-block;
 }
+
+.scRibbon {
+    height: auto;
+}
+
+.scRibbonToolbar {
+    height: auto;
+} 
+
+#RibbonPanel {
+    background: #f7f7f7;
+}
+
+#TreeView {
+    padding: 6px 6px 6px 0;
+}
+
+#TreeViewToggle {
+    position: absolute;
+}
+#TreePane {
+    display: none;
+}
+
+nobr:first-child > .scTabActive,
+nobr:first-child > .scTabActive_Hover,
+nobr:first-child > .scTab,
+nobr:first-child > .scTab_Hover {
+    margin-left: 30px;
+    pointer-events: all;
+
+}
+nobr > .scTabActive,
+nobr > .scTabActive_Hover,
+nobr > .scTab,
+nobr > .scTab_Hover {
+    pointer-events: all;
+
+}
+

@@ -704,7 +704,13 @@
             var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
             $("#Result").height(resultsHeight);
             $("#Result").width($(window).width() - $("#Result").offset().left * 2);
+            $("#Result").width($("#ResultsPane").width());
             $("#ProgressOverlay").css("top", ($("#Result").offset().top + 4) + "px");
+            $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
+            $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
+            if ($("#TreeView").is(":visible")) {
+                    
+            }
 
         };
 
@@ -788,6 +794,7 @@
                 ctrlPressed = false;
             }
         });
+        
         spe.variableValue = function (variableName) {
             var data;
             var sessionId = debugSessionId;
@@ -858,16 +865,16 @@
 
         $("#TipOfTheSession").position({
             my: "left bottom",
-            at: "left bottom-30px",
+            at: "left bottom-20px",
             within: $("#Result"),
             of: $("#Result")
         }).css({
             right: 0,
             left: 0
         }).hide()
-            .show("drop", {direction: "down"}, "400")
+            .show("drop", {direction: "down"}, "200")
             .delay(5000)
-            .hide("drop", {direction: "down"}, "400",
+            .hide("drop", {direction: "down"}, "200",
                 function () {
                     $(".status-bar-text").animate({backgroundColor: "#fcefa1"}).animate({backgroundColor: "#fff"});
                 });
@@ -896,7 +903,18 @@
                 spe.restoreResults();
             }
         });
-
+        $("#TreeViewToggle").click(function () {
+            if ($("#TreeViewPanel").is(":visible")) {
+                $("#TreeViewPanel").hide();
+                $("#TreeSplitterPanel").hide();
+                spe.resizeEditor();
+            } else {
+                $("#TreeViewPanel").show();
+                $("#TreeSplitterPanel").show();
+                spe.resizeEditor();
+            }
+        });
+        
         function _getCommandHelp(str) {
             getPowerShellResponse({"guid": guid, "command": str}, "GetHelpForCommand",
                 function (json) {
@@ -935,13 +953,16 @@
         $(window).on('resize', function () {
             spe.resizeEditor();
         }).trigger('resize');
-
-
+        
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
             scForm.postRequest("", "", "", "ise:loadinitialscript");
             spe.resizeEditor();
         }, 100);
 
+        const resizeObserver = new ResizeObserver((entries) => {
+            spe.resizeEditor();
+        })
+        resizeObserver.observe(document.getElementById("EditingPanel"));        
     });
 }(jQuery, window, window.spe = window.spe || {}, window.ace = window.ace || {}));

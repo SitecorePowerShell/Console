@@ -38,6 +38,7 @@
             <Memo ID="OpenedScripts" Style="display:none;"/>
             <Memo ID="ScriptItemIdMemo" Style="display:none;"/>
             <Memo ID="ScriptItemDbMemo" Style="display:none;"/>
+            <DataContext ID="ContentDataContext"/>
 
             <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master"/>
             <div class="scFlexColumnContainer scHeight100 spe-secured-app"
@@ -95,13 +96,26 @@
                         </Border>
                     </GridPanel>
                 </Border>
-                <GridPanel ID="Content" CellPadding="4" GridPanel.Height="100%">
-                    <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
+                <GridPanel ID="Content" CellPadding="4" GridPanel.Height="100%" Columns="3">
+                    <Scrollbox Width="100%" ID="TreeView" Height="100%" Class="scScrollbox scFixSize scFixSize4"
+                               style="border-right: 2px solid #474747;" Background="white" Padding="0px"
+                               GridPanel.Width="200px" GridPanel.Height="100%"  GridPanel.ID="TreeViewPanel">
+                        <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"
+                                    Click="ContentTreeview_Click"/>
+                    </Scrollbox>
+                    <VSplitter ID="TreeSplitter" GridPanel.Class="scThinSplitter" Target="left"
+                               GridPanel.ID="TreeSplitterPanel"/>
+                    <!--                    <Scrollbox ID="ExecutionArea" Width="100%" Height="100%" Class="scScrollbox scFixSize scFixSize4" Background="white" Padding="0px" GridPanel.Height="100%">-->
+                    <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4"
+                               Class="scScrollbox scFixSize scFixSize4"  GridPanel.ID="EditingPanel">
                         <Border ID="EditingArea" GridPanel.Height="200px" GridPanel.ID="ScriptPane">
                             <Border ID="TabsPanel">
                                 <Tabstrip ID="Tabs" class="scFlexContent">
                                 </Tabstrip>
                             </Border>
+                            <Image ID="TreeViewToggle" src="/~/icon/office/16x16/elements_tree.png"
+                                   Alt="Toggle Tree View"
+                                   Title="Toggle Tree View"/>
                             <Border ID="CodeEditors"/>
                         </Border>
                         <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top"
@@ -124,7 +138,8 @@
                             </Border>
                         </Border>
                     </GridPanel>
-                    <Border ID="StatusBar">
+                    <!--                    </Scrollbox>-->
+                    <Border ID="StatusBar" GridPanel.ColSpan="3">
                         <Border class="status-bar-panel status-bar-right">
                             Col:
                             <Literal ID="PosX" Text=""/>

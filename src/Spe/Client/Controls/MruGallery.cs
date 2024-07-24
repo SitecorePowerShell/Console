@@ -54,7 +54,7 @@ namespace Spe.Client.Controls
         protected void ContentTreeview_Click()
         {
             var folder = ContentDataContext.GetFolder();
-            if (folder.IsPowerShellScript())
+            if (folder.IsPowerShellScript() || folder.IsPowerShellModule())
             {
                 Load(folder.Uri.ToString());
             }
