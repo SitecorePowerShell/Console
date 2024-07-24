@@ -41,7 +41,7 @@ Please include the following with each issue:
 
 * Version of Sitecore PowerShell Extensions
 
-* Reproducible steps (1... 2... 3...) that cause the issue
+* Reproducible steps (1... 2... 3...) that cause the issue on a clean Sitecore instance.
 
 * What you expected to see, versus what you actually saw
 
