@@ -121,8 +121,7 @@ namespace Spe.Core.Provider
                 }
                 parent = escapedPath.ToString();
             }
-            var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
-                $"/sitecore{parent}/*[startswith(@@Name, '{name}')] ");
+            var items = Factory.GetDatabase(PSDriveInfo.Name).GetItem($"/sitecore{parent}").Children.Where(child => child.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase));
             var results = items.Select(
                 item => $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}").ToArray();
             return results;
