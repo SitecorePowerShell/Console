@@ -103,8 +103,10 @@ namespace Spe.Core.Host
                 Initialize();
             }
 
-            Runspace.DefaultRunspace = host.Runspace;
-
+            
+            if (Runspace.DefaultRunspace == null)
+                Runspace.DefaultRunspace = host.Runspace;
+            
             // complete opening
             if (Runspace.DefaultRunspace == null)
             {
@@ -116,6 +118,7 @@ namespace Spe.Core.Host
                 //! it has to be done in main thread
                 Runspace.DefaultRunspace = host.Runspace;
             }
+
             Output.Clear();
         }
 
@@ -770,7 +773,8 @@ namespace Spe.Core.Host
             }
 
             JobName = string.Empty;
-            Runspace.DefaultRunspace = null;
+            if(Runspace.DefaultRunspace == host.Runspace)
+                Runspace.DefaultRunspace = null;
             return marshallResults
                 ? execResults?.Select(p => p?.BaseObject).ToList()
                 : execResults?.Cast<object>().ToList();
@@ -884,7 +888,8 @@ namespace Spe.Core.Host
 
         private void Close()
         {
-            Runspace.DefaultRunspace = null;
+            if(Runspace.DefaultRunspace == host.Runspace)
+                Runspace.DefaultRunspace = null;
             host.Runspace.Dispose();
             disposed = true;
         }
