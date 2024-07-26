@@ -5,10 +5,16 @@
     <script src="/sitecore modules/PowerShell/Scripts/typed.min.js"></script>
     <script src="/sitecore modules/PowerShell/Scripts/purl.js"></script>
     <script>
-        $(function () {
-            var version = "^2000\n^100\n^2000Sitecore PowerShell Extensions^500 " + $.url().param("spe") + "^1000\n^900Sitecore^500 " + $.url().param("sc") + "^1000\n^900Windows PowerShell^500 " + $.url().param("ps");
+
+	$(function () {
+	    $("#speVer")[0].innerHTML = $.url().param("spe");
+	    $("#scVer")[0].innerHTML = $.url().param("sc") 
+	    $("#psVer")[0].innerHTML = $.url().param("ps");
+            $("#ver1").delay(500).fadeIn("slow", function () {
+                $("#ver2").fadeIn("slow", function () {
+                    $("#ver3").fadeIn("slow", function () {
             $(".element1").typed({
-                strings: [version + "^1000\n^1000\n^500\n^500------ ^300The Team ^300------^1000\n^500\n^500Adam Najmanowicz ^500 - ^500Lead Developer^1000\n^500Michael West^500 - ^500Development &amp; Documentation"],
+                strings: ["^1000\n^1000\n^500\n^500------ ^300The Team ^300------^1000\n^500\n^500Adam Najmanowicz ^500 - ^500Lead Developer^1000\n^500Michael West^500 - ^500Development &amp; Documentation"],
                 typeSpeed: 0,
                 callback: function () {
                     $("#link1").delay(2000).fadeIn("slow", function () {
@@ -19,6 +25,9 @@
                         });
                     });
                 }
+            });
+                    });
+                });
             });
         });
 
@@ -80,9 +89,9 @@
             margin-top: 4px;
         }
 
-        #link1, #link2, #link3, #link4 {
+        #ver1, #ver2, #ver3, #link1, #link2, #link3, #link4 {
             display: none;
-            margin-top: 4px;
+            padding-top: 4px;
         }
     </style>
 
@@ -137,10 +146,12 @@
         <font color="white">werShellExtensionsSitecorePowerShellExtensionsSitecorePowerShellExtens</font>
 </pre>
     </font>
-<pre class="right-col"> <span class="element1"></span></pre>
+<pre class="right-col"><br/><span id="ver1">Sitecore PowerShell Extensions <span id="speVer">1</span></span><br/><span id="ver2">Sitecore <span id="scVer">2</span></span><br/><span id="ver3">Windows PowerShell <span id="psVer">3</span></span></pre>
+<pre class="right-col"><span class="element1"></span></pre>
 <pre class="right-col"> 
 <a id="link1" target="_blank" href="https://doc.sitecorepowershell.com/">Documentation</a>
 <a id="link2" target="_blank" href="https://github.com/SitecorePowerShell/Console/releases">Releases</a>
-</pre>
+<a id="link3" target="_blank" href="https://github.com/SitecorePowerShell/Console">GitHub Repository</a>
+<a id="link4" target="_blank" href="https://sitecorepowershell.com/">Project Website</a></pre>
 </body>
 </html>
