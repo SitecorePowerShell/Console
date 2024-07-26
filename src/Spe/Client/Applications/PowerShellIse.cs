@@ -403,7 +403,7 @@ namespace Spe.Client.Applications
         protected void ContentTreeview_Click()
         {
             var folder = ContentDataContext.GetFolder();
-            if (folder.IsPowerShellScript() || folder.IsPowerShellModule())
+            if (folder.IsPowerShellScript())
             {
                 LoadItem(folder.Database.Name, folder.ID.ToString());
             }
