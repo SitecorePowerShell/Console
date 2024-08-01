@@ -643,6 +643,7 @@
     </EmbeddedResource>
     <Content Include="sitecore modules\PowerShell\Assets\spe-32.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\TabClose.png" />
     <Content Include="sitecore modules\PowerShell\Assets\version.html" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
