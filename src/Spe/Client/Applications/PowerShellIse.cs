@@ -397,7 +397,6 @@ namespace Spe.Client.Applications
             if(item.IsPowerShellScript()){
                 LoadItem(db, id);
             }
-            TabsOnChange(this, EventArgs.Empty);
         }
 
         protected void ContentTreeview_Click()
