@@ -52,7 +52,7 @@ Stop-ScriptSession -Session $session
 Write-Host "Swap out IAR files"
 
 Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-$file = "C:\Projects\Spe\releases\Sitecore.PowerShell.Extensions-6.4-IAR.zip"
+$file = Get-ChildItem -Path $releases -Filter "Sitecore.PowerShell.Extensions-*-IAR.zip" | Select-Object -ExpandProperty FullName
 $zip = [System.IO.Compression.ZipFile]::Open($file, [System.IO.Compression.ZipArchiveMode]::Update)
 $packageZipEntry = $zip.Entries | Where-Object { $_.Name -eq "package.zip" }
 
