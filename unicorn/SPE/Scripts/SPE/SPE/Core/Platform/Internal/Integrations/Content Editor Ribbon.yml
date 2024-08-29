@@ -81,6 +81,9 @@ SharedFields:
     			Write-Host " - Adding Strip '$($scriptLibrary.Name)'." -f Green
     			$strip = New-Item -Path $stripsPath -Name $scriptLibrary.Name -ItemType "System/Ribbon/Strip"
     			$strip.Header = $scriptLibrary.Name
+    			$strip.Editing.BeginEdit()
+    			$strip.Fields["ID"].Value = $scriptLibrary.ID
+    			$strip.Editing.EndEdit()
     			
     			Write-Host " - Adding Strip Reference '$($scriptLibrary.Name)'." -f Green
     			$stripReference = New-Item -Path $ribbonPath -Name $scriptLibrary.Name -ItemType "System/Reference"
