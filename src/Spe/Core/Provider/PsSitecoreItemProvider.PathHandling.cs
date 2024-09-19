@@ -16,6 +16,8 @@ namespace Spe.Core.Provider
 
         private Item GetItemForPath(string path)
         {
+            if (PSDriveInfo == null) return null;
+
             var colonIndex = path.IndexOf(':');
             var relativePath = path.Substring(colonIndex + 1).Replace('\\', '/');
             var databaseName = colonIndex < 0 ? PSDriveInfo.Name : path.Substring(0, colonIndex);
