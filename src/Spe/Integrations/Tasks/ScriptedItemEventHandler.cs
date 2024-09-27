@@ -61,7 +61,7 @@ namespace Spe.Integrations.Tasks
                 var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
                 if (applicableScriptItems == null || !applicableScriptItems.Any())
                 {
-                    return;
+                    continue;
                 }
 
                 using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
