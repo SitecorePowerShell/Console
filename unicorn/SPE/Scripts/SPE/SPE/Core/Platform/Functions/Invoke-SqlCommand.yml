@@ -88,9 +88,10 @@ SharedFields:
             [string]$Database,
     
             [Parameter(Mandatory=$false, Position=2,ParameterSetName="Server")]
+            [Parameter(Mandatory=$false, ParameterSetName="Connection")]
             [int]$Timeout=30,
             
-            [Parameter(Mandatory=$true,ParameterSetName="Connection")]
+            [Parameter(Mandatory=$true, ParameterSetName="Connection")]
             [System.Data.SqlClient.SQLConnection]$Connection,
     
             [string]$Username,
@@ -236,4 +237,4 @@ Languages:
       Value: 20150703T004942
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "1dce6d45-28a5-4c03-ae85-c120d686f07a"
+      Value: "25d766ad-14bc-4c2a-85a7-644530a9b6c3"
