@@ -11,8 +11,33 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    $indexOptions = @{}
+    foreach($index in Get-SearchIndex) {
+        $indexOptions[$index.Name] = $index.Name
+    }
+    
+    $index="sitecore_master_index";
+    
     $props = @{
-        Index = "sitecore_master_index"
+        Parameters = @(
+            @{Name="index"; Title="Choose the report index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
+        )
+        Title = "Items with duplicate names"
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        Description = "Choose the filtering criteria for the report."
+        Width = 450
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+        
+    if($result -eq "cancel"){
+        exit
+    }
+    
+    $props = @{
+        Index = $index
         Where = 'Paths.Contains(@0) Or Paths.Contains(@1)'
         WhereValues = [ID]::Parse("{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}"), [ID]::Parse("{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}")
         FacetOn = "Path"
@@ -70,4 +95,4 @@ Languages:
       Value: 20200303T025824Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "4aac4332-0692-4046-9aa7-598cae13b7f2"
+      Value: "83699b9e-fb07-4c92-9c7e-2ff7de349182"
