@@ -3,6 +3,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
 using Spe.Core.Diagnostics;
 using System;
 using System.Collections.Concurrent;
@@ -20,28 +21,35 @@ namespace Spe.Core.Settings
 
         public const string DelegatedItemPath = "/sitecore/system/Modules/PowerShell/Delegated Access";
 
+        private static bool _isInitialized = false;
+
         public static void Invalidate()
         {
             PowerShellLog.Audit($"Clearing {nameof(DelegatedAccessEntry)} entries.");
             _accessEntries.Clear();
             _delegatedItems.Clear();
+            _isInitialized = false;
         }
 
         private static IEnumerable<Item> GetDelegatedItems()
         {
-            if (_delegatedItems.Any())
+            if (_isInitialized)
             {
                 return _delegatedItems;
             }
 
-            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-            var delegatedItems = db.GetItem(DelegatedItemPath)
-                .Axes.GetDescendants()
-                .Where(d => d.TemplateID == Templates.DelegatedAccess.Id);
+            using (new SecurityDisabler())
+            {
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                var delegatedItems = db.GetItem(DelegatedItemPath)
+                    .Axes.GetDescendants()
+                    .Where(d => d.TemplateID == Templates.DelegatedAccess.Id);
 
-            _delegatedItems.AddRange(delegatedItems);
+                _delegatedItems.AddRange(delegatedItems);
+            }
 
-            return delegatedItems;
+            _isInitialized = true;
+            return _delegatedItems;
         }
 
         private static DelegatedAccessEntry GetDelegatedAccessEntry(User currentUser, Item scriptItem)
