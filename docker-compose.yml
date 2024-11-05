@@ -48,7 +48,13 @@ services:
       SITECORE_ADMIN_PASSWORD: ${SITECORE_ADMIN_PASSWORD}
       POST_DEPLOYMENT_WAIT_PERIOD: 300
     healthcheck:
-      test: ["CMD", "powershell", "-command", "if ([System.Environment]::GetEnvironmentVariable('DatabasesDeploymentStatus', 'Machine') -eq 'Complete') { exit 0 } else { exit 1}"]
+      test:
+        [
+          "CMD",
+          "powershell",
+          "-command",
+          "if ([System.Environment]::GetEnvironmentVariable('DatabasesDeploymentStatus', 'Machine') -eq 'Complete') { exit 0 } else { exit 1}",
+        ]
       start_period: 300s
       interval: 5s
     depends_on:
@@ -67,7 +73,13 @@ services:
     environment:
       SOLR_MODE: solrcloud
     healthcheck:
-      test: ["CMD", "powershell", "-command", "try { $$statusCode = (iwr http://solr:8983/solr/admin/cores?action=STATUS -UseBasicParsing).StatusCode; if ($$statusCode -eq 200) { exit 0 } else { exit 1} } catch { exit 1 }"]
+      test:
+        [
+          "CMD",
+          "powershell",
+          "-command",
+          "try { $$statusCode = (iwr http://solr:8983/solr/admin/cores?action=STATUS -UseBasicParsing).StatusCode; if ($$statusCode -eq 200) { exit 0 } else { exit 1} } catch { exit 1 }",
+        ]
   solr-init:
     isolation: ${ISOLATION}
     image: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-solr-init:${SITECORE_VERSION}
@@ -103,7 +115,12 @@ services:
       - "traefik.http.routers.id-secure.tls=true"
   cm:
     isolation: ${ISOLATION}
-    image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}  
+    image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
+    build:
+      context: ./docker/build/cm
+      args:
+        BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-cm:${SITECORE_VERSION}
+        MANAGEMENT_SERVICES_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-management-services-xm1-assets:${MANAGEMENT_SERVICES_VERSION}
     depends_on:
       mssql-init:
         condition: service_healthy

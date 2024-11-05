@@ -1,10 +1,7 @@
-version: "3.9"
-
 services:
-  cm:
-    image: ${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}  
+  spe-assets:
+    image: ${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
     build:
-      context: ./docker/build/cm
+      context: ./docker/build/spe-assets
       args:
         BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-cm:${SITECORE_VERSION}
-        MANAGEMENT_SERVICES_IMAGE: ${SITECORE_MODULE_REGISTRY}sitecore-management-services-xm1-assets:${MANAGEMENT_SERVICES_VERSION}

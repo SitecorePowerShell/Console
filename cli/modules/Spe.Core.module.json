@@ -16,6 +16,10 @@
                 "scope": "ItemAndDescendants",
                 "rules": [
                     {
+                        "path": "/Delegated Access",
+                        "scope": "SingleItem"
+                    },
+                    {
                         "path": "/Script Library",
                         "scope": "SingleItem"
                     }
