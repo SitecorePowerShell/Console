@@ -9,6 +9,7 @@ using Sitecore.Pipelines.Upload;
 using Sitecore.Shell.Web.UI;
 using Sitecore.Web;
 using Sitecore.Web.UI.XmlControls;
+using Spe.Client.Applications.UploadFile.Validation;
 using Spe.Core.Diagnostics;
 
 namespace Spe.Client.Applications.UploadFile
@@ -39,6 +40,16 @@ namespace Spe.Client.Applications.UploadFile
                     return;
                 try
                 {
+                    string[] patterns = Factory.GetStringSet("powershell/uploadFile/allowedFileTypes/pattern")?.ToArray() ?? new string[] { "image/*" };
+                    var contentTypeValidator = new ContentTypeValidator(patterns);
+                    var result = contentTypeValidator.Validate(Request.Files);
+                    if (!result.Valid)
+                    {
+                        CancelResult();
+                        Sitecore.Diagnostics.Log.Warn($"[SPE] {result.Message}", this);
+                        return;
+                    }
+
                     var pathOrId = Sitecore.Context.ClientPage.ClientRequest.Form["ItemUri"];
                     var langStr = Sitecore.Context.ClientPage.ClientRequest.Form["LanguageName"];
                     var language = langStr.Length > 0
@@ -57,6 +68,15 @@ namespace Spe.Client.Applications.UploadFile
                     {
                         uploadArgs.Destination = UploadDestination.File;
                         uploadArgs.FileOnly = true;
+                        string[] allowedLocations = Factory.GetStringSet("powershell/uploadFile/allowedLocations/path").ToArray();
+                        var validator = new UploadLocationValidator(allowedLocations);
+                        pathOrId = validator.GetFullPath(pathOrId);
+                        if (!validator.Validate(pathOrId))
+                        {
+                            CancelResult();
+                            Sitecore.Diagnostics.Log.Warn($"[SPE] Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.", this);
+                            return;
+                        }
                     }
                     uploadArgs.Files = Request.Files;
                     uploadArgs.Folder = pathOrId;
@@ -124,6 +144,11 @@ namespace Spe.Client.Applications.UploadFile
                     }
                 }
             }
+        }
+
+        private static void CancelResult()
+        {
+            HttpContext.Current.Response.Write("<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'EndUploading(\"\")')</script></head><body>Done</body></html>");
         }
     }
 }

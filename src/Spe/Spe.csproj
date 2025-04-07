@@ -178,6 +178,10 @@
     <Compile Include="Client\Applications\PowerShellReports.cs" />
     <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
     <Compile Include="Client\Applications\SessionElevationWindowLauncher.cs" />
+    <Compile Include="Client\Applications\UploadFile\Validation\UploadLocationValidator.cs" />
+    <Compile Include="Client\Applications\UploadFile\Validation\FileTypeValidator.cs" />
+    <Compile Include="Client\Applications\UploadFile\Validation\ContentTypeValidator.cs" />
+    <Compile Include="Client\Applications\UploadFile\Validation\ValidationResult.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
     <Compile Include="Client\Commands\MenuItems\AddMaster.cs" />
