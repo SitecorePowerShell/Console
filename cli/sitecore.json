@@ -6,21 +6,25 @@
     "modules/*/*/*.module.json"
   ],
   "plugins": [
-    "Sitecore.DevEx.Extensibility.Database@5.1.25",
-    "Sitecore.DevEx.Extensibility.Serialization@5.1.25",
-    "Sitecore.DevEx.Extensibility.Publishing@5.1.25",
-    "Sitecore.DevEx.Extensibility.Indexing@5.1.25",
-    "Sitecore.DevEx.Extensibility.ResourcePackage@5.1.25"
+    "Sitecore.DevEx.Extensibility.Serialization@6.0.23",
+    "Sitecore.DevEx.Extensibility.Publishing@6.0.23",
+    "Sitecore.DevEx.Extensibility.Indexing@6.0.23",
+    "Sitecore.DevEx.Extensibility.ResourcePackage@6.0.23",
+    "Sitecore.DevEx.Extensibility.Database@6.0.23"
   ],
   "serialization": {
     "defaultMaxRelativeItemPathLength": 100,
     "defaultModuleRelativeSerializationPath": "serialization",
     "removeOrphansForRoles": true,
+    "removeOrphansForUsers": true,
     "continueOnItemFailure": false,
-    "excludedFields": []
+    "excludedFields": [],
+    "progressiveMetadataPull": false
   },
   "settings": {
     "telemetryEnabled": false,
-    "versionComparingEnabled": true
+    "cacheAuthenticationToken": true,
+    "versionComparisonEnabled": true,
+    "apiClientTimeoutInMinutes": 5
   }
 }

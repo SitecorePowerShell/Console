@@ -1,7 +1,0 @@
-services:
-  spe-assets:
-    image: ${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
-    build:
-      context: ./docker/build/spe-assets
-      args:
-        BASE_IMAGE: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-cm:${SITECORE_VERSION}
