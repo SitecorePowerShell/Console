@@ -8,20 +8,6 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/dude3.png
-- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
-  Hint: ShowRule
-  Type: Rules
-  Value: |
-    <ruleset>
-      <rule
-        uid="{30AEE4DF-8E20-401D-BE20-D56CAC75E332}">
-        <conditions>
-          <condition
-            id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
-            uid="B6ABBAB83F85409B841A234ED4FF8E44" />
-        </conditions>
-      </rule>
-    </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
