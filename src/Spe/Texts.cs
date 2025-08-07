@@ -22,7 +22,6 @@ namespace Spe
 
         public const string PowerShellResultViewerList_datamissing =
             "The data for the dialog is not available. Either your server was restarted or the server cache was flushed. If this is a recurring problem, contact your system administrator.";
-        public const string PowerShellIse_JobExecuteScript_Please_wait___0_ = "Please wait, {0}";
         public const string PowerShellIse_JobExecuteScript_Working = "Working";
         public const string PowerShellIse_LoadItem_The_item_is_not_a_script_ = "The item is not a script.";
         public const string PowerShellIse_Open_Open_Script = "Open Script";

@@ -835,11 +835,7 @@ namespace Spe.Client.Applications
                     "<div id='PleaseWait'>" +
                     "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
                     Texts.PowerShellIse_JobExecuteScript_Working +
-                    "' />" +
-                    "<div>" +
-                    Texts.PowerShellIse_JobExecuteScript_Please_wait___0_ +
-                    "</div>" +
-                    "</div>" +
+                    "' /><div>{0}</div></div>" +
                     "<pre ID='ScriptResultCode'></pre>", executionMessage));
 
             Context.ClientPage.ClientResponse.Eval(
