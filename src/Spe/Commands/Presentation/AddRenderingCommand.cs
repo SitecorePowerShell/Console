@@ -57,10 +57,10 @@ namespace Spe.Commands.Presentation
             if (Parameter != null && Parameter.Keys.Count > 0)
             {
                 var parameters = new UrlString(rendering.Parameters ?? string.Empty);
-                var renderingItem = Sitecore.Client.ContentDatabase.GetItem(Instance.ItemID);
+                var renderingItem = item.Database.GetItem(Instance.ItemID);
                 if(renderingItem == null)
                 {
-                    WriteError(new ItemNotFoundException($"The rendering with Id {Instance.ItemID} could not be found in the ContentDatabase."), ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, this);
+                    WriteError(new ItemNotFoundException($"The rendering with Id {Instance.ItemID} could not be found in context database."), ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, this);
                     return;
                 }
 
