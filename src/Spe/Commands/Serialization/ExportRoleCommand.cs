@@ -72,7 +72,8 @@ namespace Spe.Commands.Serialization
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
                     Manager.DumpRole(role.Name);
-                    WriteObject(PathUtils.GetFilePath(new RoleReference(role.Name)));
+                    var roleReference = new RoleReference(role.Name);
+                    WriteObject(PathUtils.GetDirectoryPath(roleReference.ToString()) + PathUtils.RoleExtension);
                 }
             }
             else

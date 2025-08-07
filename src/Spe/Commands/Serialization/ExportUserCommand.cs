@@ -84,7 +84,8 @@ namespace Spe.Commands.Serialization
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
                     Manager.DumpUser(user.Name);
-                    WriteObject(PathUtils.GetFilePath(new UserReference(user.Name)));
+                    var userReference = new UserReference(user.Name);
+                    WriteObject(PathUtils.GetDirectoryPath(userReference.ToString()) + PathUtils.UserExtension);
                 }
             }
             else
