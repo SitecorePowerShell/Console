@@ -711,6 +711,7 @@
             if ($("#TreeView").is(":visible")) {
                     
             }
+            $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
 
         };
 

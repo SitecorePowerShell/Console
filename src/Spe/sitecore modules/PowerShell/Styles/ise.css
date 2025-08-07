@@ -438,7 +438,7 @@ a.ps-link {
 
 .ff .scTabstrip {
     margin-top: 4px;
-    height: 33px;
+    height: auto;
 }
 
 .scTabs {
@@ -453,7 +453,7 @@ a.ps-link {
 
 #TabsPanel {
     width: calc(100% - 40px);
-    height: 35px;
+    height: auto;
     pointer-events: none;
 }
 
