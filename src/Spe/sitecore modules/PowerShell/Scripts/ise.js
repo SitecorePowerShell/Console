@@ -18,7 +18,8 @@
             "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
-            "You can find more documentation in the Sitecore PowerShell Extensions <a href='https://doc.sitecorepowershell.com/' target='_blank'>book</a>."
+            "You can find more documentation in the <br/><a href='https://doc.sitecorepowershell.com/' target='_blank'>Sitecore PowerShell Extensions book</a>.",
+            "You can contribute code and ideas to the project at <br/><a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>Sitecore PowerShell Extensions GitHub repository</a>."
         ];
 
         class EditorSession {
@@ -866,9 +867,9 @@
 
         $("#TipOfTheSession").position({
             my: "left bottom",
-            at: "left bottom-20px",
-            within: $("#Result"),
-            of: $("#Result")
+            at: "left bottom-30px",
+            within: $("body"),
+            of: $("body")
         }).css({
             right: 0,
             left: 0

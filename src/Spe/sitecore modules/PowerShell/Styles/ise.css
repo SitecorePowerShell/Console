@@ -136,9 +136,14 @@ a.ps-link {
 
 #TipOfTheSession {
     float: left;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
     width: 400px;
+    z-index: 1000;
+}
+
+#TipOfTheSession a {
+    text-decoration: underline;
 }
 
 .tip-title { margin: 0 0 8px 0; }
