@@ -30,8 +30,9 @@ namespace Spe.Client.Commands.MenuItems
                 {
                     var param =
                         context.Parameters[key]
-                            .Replace("{spe}", CurrentVersion.SpeVersion.ToString())
+                            .Replace("{spe}", CurrentVersion.SpeVersionFull)
                             .Replace("{ps}", ScriptSession.PsVersion.Major + "." + ScriptSession.PsVersion.Minor)
+                            .Replace("{cn}", CurrentVersion.CodeName)
                             .Replace("{sc}",
                                 SitecoreVersion.Current.Major + "." +
                                 SitecoreVersion.Current.Minor);

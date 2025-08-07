@@ -19,6 +19,11 @@ SharedFields:
     if($currentVersion.Build -gt 0) {
         $Version += ".$($currentVersion.Build)"
     }
+    
+    if([Spe.Core.VersionDecoupling.CurrentVersion]::BetaVersion){
+        $Version += "-$([Spe.Core.VersionDecoupling.CurrentVersion]::BetaVersion)"
+    }
+    
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -48,7 +53,8 @@ SharedFields:
     variety of samples for you to explore.
     
     Documentation: https://doc.sitecorepowershell.com
-    Project Website: https://github.com/SitecorePowerShell/Console
+    Detailed release notes: https://bit.ly/speReleaseNotes
+    Issue tracker: https://bit.ly/ScPsIss
     
     Thank you for using Sitecore PowerShell Extensions!
     
@@ -97,7 +103,6 @@ SharedFields:
     $packageName = "$($package.Name)-$Version" -replace " ",".";
     
     # Package without items
-    Export-Package -Project $package -Path "$packageName-IAR.xml"
     Export-Package -Project $package -Path "$packageName-IAR.zip" -Zip
     $package.Sources.Remove($iarSource) > $null
     
@@ -107,7 +112,6 @@ SharedFields:
     Get-UnicornConfiguration -Filter "Spe.Scripts" | New-UnicornItemSource -Name "Spe.Scripts" -Project $package -InstallMode Overwrite
     
     # Package with items
-    Export-Package -Project $package -Path "$packageName.xml"
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     
     # Build Minimal Package
@@ -136,4 +140,4 @@ Languages:
       Value: 20130510T150325
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "ca20703e-f973-493b-a2e0-bb4e7c6cdb27"
+      Value: "6fdf4f67-0b60-4cdd-a3dd-8dd97363ecbd"

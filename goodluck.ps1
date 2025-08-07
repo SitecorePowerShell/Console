@@ -1,6 +1,26 @@
+# CONFIGURATION START
+
+# URl to your Sitecore instance
+$hostname = "https://sc103cm.dev.local"
+
+# If you have the packages folder mapped to ProjectPath\releases comment out the next line
+$releases = "C:\inetpub\wwwroot\sc103cm.dev.local\App_Data\packages\"
+
+# Make sure Admin is part of the Sitecore Remoting group inside sitecore
+$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
+$userName = 'sitecore\admin'
+
+$projectPath = $PSScriptRoot
+
+
+# EXECUTION START
+
 Clear-Host
 
-$releases = Join-Path -Path $PSScriptRoot -ChildPath "releases"
+if(!$releases)
+{
+    $releases = Join-Path -Path $projectPath -ChildPath "releases"
+}
 
 $sat = Join-Path -Path $releases -ChildPath "sat"
 if(-not (Test-Path -Path $sat)) {
@@ -26,7 +46,7 @@ if(-not (Test-Path -Path $satPackage)) {
 
 Write-Host "Generate dat files"
 
-$cli = Join-Path -Path $PSScriptRoot -ChildPath "cli"
+$cli = Join-Path -Path $projectPath -ChildPath "cli"
 & $cli\generate.bat
 
 Write-Host "Remove old packages from $releases"
@@ -37,12 +57,8 @@ Write-Host "Generate packages from running Sitecore instance."
 
 Import-Module -Name SPE
 
-$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
-$name = 'sitecore\admin'
-$hostname = "https://spe.dev.local"
-
 # TODO: Generate normal package with dat files instead of items. Maybe use a temporary file name like Sitecore.PowerShell.Extensions-6.3-IAR.temp.zip
-$session = New-ScriptSession -Username $name -SharedSecret $sharedSecret -ConnectionUri $hostname
+$session = New-ScriptSession -Username $userName -SharedSecret $sharedSecret -ConnectionUri $hostname
 Invoke-RemoteScript -ScriptBlock {
     # Prepare Console Distribution
     Invoke-Script -Path "master:{AC05422C-A1B1-41BA-A1FD-4EC7E944DE3B}"
@@ -52,12 +68,14 @@ Stop-ScriptSession -Session $session
 Write-Host "Swap out IAR files"
 
 Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-$file = Get-ChildItem -Path $releases -Filter "Sitecore.PowerShell.Extensions-*-IAR.zip" | Select-Object -ExpandProperty FullName
-$zip = [System.IO.Compression.ZipFile]::Open($file, [System.IO.Compression.ZipArchiveMode]::Update)
+$archiveMode = [System.IO.Compression.ZipArchiveMode]::Update
+$iarPackageFileGlob = "$releases\Sitecore.PowerShell.Extensions-*-IAR.zip"
+$iarfileName = (Get-Item $iarPackageFileGlob | Select-Object -First 1).FullName
+$zip = [System.IO.Compression.ZipFile]::Open($iarfileName, $archiveMode)
 $packageZipEntry = $zip.Entries | Where-Object { $_.Name -eq "package.zip" }
 
 $stream = $packageZipEntry.Open()
-$packageArchive = New-Object System.IO.Compression.ZipArchive($stream, [System.IO.Compression.ZipArchiveMode]::Update)
+$packageArchive = New-Object System.IO.Compression.ZipArchive($stream, $archiveMode)
 $iarEntries = $packageArchive.Entries | Where-Object { $_.Name -like "*spe.dat*" }
 foreach($iarEntry in $iarEntries) {
     $fullname = $iarEntry.FullName.Replace(".tmp", "")
@@ -65,8 +83,8 @@ foreach($iarEntry in $iarEntries) {
     $iarEntry = $packageArchive.CreateEntry($fullname)
 
     if($fullname.StartsWith("files")) {
-        $name = [System.IO.Path]::GetFileName($fullname)
-        $content = [System.IO.File]::ReadAllBytes((Join-Path -Path ".\cli\_out" -ChildPath $name))
+        $fileName = [System.IO.Path]::GetFileName($fullname)
+        $content = [System.IO.File]::ReadAllBytes((Join-Path -Path "$projectPath\cli\_out" -ChildPath $fileName))
         $ms = New-Object System.IO.MemoryStream(,$content)
         $zipStream = $iarEntry.Open()
         $ms.CopyTo($zipStream)

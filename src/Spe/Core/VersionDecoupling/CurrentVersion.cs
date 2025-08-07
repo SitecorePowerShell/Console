@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reflection;
 using Spe.Commands;
 
 namespace Spe.Core.VersionDecoupling
@@ -7,6 +10,19 @@ namespace Spe.Core.VersionDecoupling
     {
         public static Version SpeVersion => typeof(CurrentVersion).Assembly.GetName().Version;
 
+        public static string SpeVersionFull =>
+            typeof(CurrentVersion).Assembly.GetName().Version + (string.IsNullOrEmpty(BetaVersion)
+                ? string.Empty
+                : $" ({BetaVersion})");
+        
+        public static string BetaVersion  { get { return GetAssemblyMetadataAttribute("BetaVersion"); } }
+        public static string CodeName  { get { return GetAssemblyMetadataAttribute("CodeName"); } }
+        
+        private static string GetAssemblyMetadataAttribute(string key)
+        {
+            AssemblyMetadataAttribute[] attributes = (AssemblyMetadataAttribute[])Attribute.GetCustomAttributes(Assembly.GetExecutingAssembly(), typeof(AssemblyMetadataAttribute));
+            return attributes.Where(a => a.Key == key).Select(a => a.Value).FirstOrDefault() ?? string.Empty;
+        }
         public static bool IsAtLeast(Version version)
         {
             return version <= SitecoreVersion.Current;

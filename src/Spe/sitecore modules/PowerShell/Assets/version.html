@@ -8,6 +8,7 @@
 
 	$(function () {
 	    $("#speVer")[0].innerHTML = $.url().param("spe");
+	    $("#speCodename")[0].innerHTML = $.url().param("cn");
 	    $("#scVer")[0].innerHTML = $.url().param("sc") 
 	    $("#psVer")[0].innerHTML = $.url().param("ps");
             $("#ver1").delay(500).fadeIn("slow", function () {
@@ -83,14 +84,14 @@
         }
 
         pre {
-            width: 60%;
+            width: 55%;
             display: block;
             float: left;
             margin-top: 4px;
         }
 
         pre.right-col {
-            width: 40%;
+            width: 45%;
         }
 
         #ver1, #ver2, #ver3, #link1, #link2, #link3, #link4 {
@@ -149,8 +150,8 @@
         <font color="white">tecorePowerShellExt</font><font color="#fffcfc">e</font><font color="#fef8f8">n</font><font color="#fbdcda">s</font><font color="#f8bbb6">i</font><font color="#f69c97">o</font><font color="#f4817a">n</font><font color="#f26960">s</font><font color="#f1544a">S</font><font color="#f0483d">i</font><font color="#f04338">t</font><font color="#f04035">e</font><font color="#f03d31">c</font><font color="#ef3b2f">o</font><font color="#ef392e">r</font><font color="#ef392d">eP</font><font color="#ef3a2f">o</font><font color="#ef3c30">w</font><font color="#f03e33">e</font><font color="#f04237">r</font><font color="#f0463b">S</font><font color="#f04d43">h</font><font color="#f16057">e</font><font color="#f3776f">l</font><font color="#f5918b">l</font><font color="#f7afaa">E</font><font color="#facfcc">x</font><font color="#fdf1f0">t</font><font color="#fffbfb">e</font><font color="#fffefe">n</font><font color="white">sionsSitecorePowerShe</font>
         <font color="white">tensionsSitecorePowerShellE</font><font color="#fef9f8">x</font><font color="#fdeeed">t</font><font color="#fce5e3">e</font><font color="#fcdedc">n</font><font color="#fbd9d7">s</font><font color="#fbd5d2">i</font><font color="#fbd4d1">on</font><font color="#fbd7d5">s</font><font color="#fbdbd9">S</font><font color="#fce1e0">i</font><font color="#fceae8">t</font><font color="#fdf4f3">e</font><font color="#fffefe">c</font><font color="white">orePowerShellExtensionsSiteco</font>
       </pre>
-    </font>
-<pre class="right-col"><br/><span id="ver1">Sitecore PowerShell Extensions <span id="speVer">1</span></span><br/><span id="ver2">Sitecore <span id="scVer">2</span></span><br/><span id="ver3">Windows PowerShell <span id="psVer">3</span></span></pre>
+    </font> 
+<pre class="right-col"><br/><span id="ver1">Sitecore PowerShell Extensions <br/><span id="speVer">1</span> - <span id="speCodename">CodeName</span> </span><br/><span id="ver2">Sitecore <span id="scVer">2</span></span><br/><span id="ver3">Windows PowerShell <span id="psVer">3</span></span></pre>
 <pre class="right-col"><span class="element1"></span></pre>
 <pre class="right-col"> 
 <a id="link1" target="_blank" href="https://doc.sitecorepowershell.com/">Documentation</a>

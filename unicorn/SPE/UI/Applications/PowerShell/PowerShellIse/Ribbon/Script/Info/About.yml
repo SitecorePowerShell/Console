@@ -25,7 +25,7 @@ SharedFields:
   Value: Office/32x32/information.png
 - ID: "dbbf9ee3-c30e-4456-a81f-ed8c2e8df91b"
   Hint: Click
-  Value: "ise:iframe(spe_url=/sitecore%20modules/PowerShell/Assets/version.html,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
+  Value: "ise:iframe(spe_url=/sitecore%20modules/PowerShell/Assets/version.html,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc},cn={cn})"
 Languages:
 - Language: da
   Versions:
@@ -66,7 +66,7 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "1624aa0f-14c9-4824-8ffc-e0b3b34f3f8d"
+      Value: "3d059535-f917-4330-9369-54ea72e5b6e8"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: About the module and environment.
