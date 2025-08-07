@@ -5,10 +5,12 @@ using System.IO.Compression;
 using System.Linq;
 using System.Web;
 using Sitecore;
+using Sitecore.ContentSearch.Linq.Nodes;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Pipelines.Upload;
 using Sitecore.StringExtensions;
+using Spe.Core.Settings;
 
 namespace Spe.Client.Applications.UploadFile.Validation
 {
@@ -23,6 +25,18 @@ namespace Spe.Client.Applications.UploadFile.Validation
 
             // Convert relative paths to absolute paths
             _allowedLocations = allowedLocations
+                .Select(path => 
+                    path.StartsWith("$Sitecore", StringComparison.OrdinalIgnoreCase) && 
+                    path.EndsWith("Folder", StringComparison.OrdinalIgnoreCase) &&
+                    PredefinedVariables.Variables.ContainsKey(path.Substring(1))
+                        ? PredefinedVariables.Variables[path.Substring(1)] as string
+                        : path)
+                .Where(path => !string.IsNullOrEmpty(path))
+                .Select(path => 
+                        "$tempPath".Equals(path, StringComparison.OrdinalIgnoreCase) || 
+                        "$tmpPath".Equals(path, StringComparison.OrdinalIgnoreCase) 
+                        ? PredefinedVariables.Variables["tmpPath"] as string
+                        : path)
                 .Select(path => Path.GetFullPath(Path.IsPathRooted(path) ? path : Path.Combine(_webRootPath, path)))
                 .ToList();
         }
