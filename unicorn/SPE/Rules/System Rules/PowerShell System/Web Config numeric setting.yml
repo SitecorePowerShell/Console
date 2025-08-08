@@ -1,0 +1,28 @@
+﻿---
+ID: "358ecc39-eff7-46e4-9535-c5a285688df2"
+Parent: "6fde73da-c29d-4850-a724-1e49f8b9e846"
+Template: "f0d16eee-3a05-4e43-a082-795a32b873c0"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System/Web Config numeric setting
+DB: master
+SharedFields:
+- ID: "ab51c8b2-f0e1-4471-9aae-cc080d774923"
+  Hint: Type
+  Value: Spe.Core.Rules.WebConfigIntSettingValueCondition,Spe
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20080923T083800
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "20671811-f5c7-4a54-b7cf-671a733716dc"
+    - ID: "af321234-4eb9-4ef5-9197-65903351939c"
+      Hint: Text
+      Value: "where the Web.config numeric AppSetting [Setting,,,name] [operatorid,Operator,,compares to] [value,Integer,,number]"

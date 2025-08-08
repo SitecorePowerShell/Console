@@ -1,0 +1,28 @@
+﻿---
+ID: "6fde73da-c29d-4850-a724-1e49f8b9e846"
+Parent: "e7cbefe8-9112-4b95-a978-4e470d94c54a"
+Template: "54dae7cd-bfd8-4e69-9679-75f2ae9f9034"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System
+DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+- ID: "f6d8a61c-2f84-4401-bd24-52d2068172bc"
+  Hint: __Originator
+  Value: "{8D1DB71C-9ACF-4192-8384-5F9B6D533F95}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180920T004848Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "64b7ae06-da98-4405-a9fc-e8a4c7901eab"

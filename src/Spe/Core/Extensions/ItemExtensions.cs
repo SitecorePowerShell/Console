@@ -136,5 +136,25 @@ namespace Spe.Core.Extensions
 
             return item;
         }
+        
+        public static Item GetAncestorOfTemplate(this Item item, ID templateId)
+        {
+            if (item == null)
+                return (Item) null;
+            Template template = TemplateManager.GetTemplate(templateId, item.Database);
+            if (template == null)
+                return (Item) null;
+            ID id = item.ID;
+            for (; item != null; item = item.Parent)
+            {
+                Template parentTemplate = TemplateManager.GetTemplate(item);
+                if (parentTemplate != null && parentTemplate.DescendsFromOrEquals(template.ID))
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+        
     }
 }

@@ -8,6 +8,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
   <PropertyGroup>
@@ -236,7 +237,12 @@
     <Compile Include="Core\Extensions\MessageExtensions.cs" />
     <Compile Include="Core\Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="Core\Host\ScriptExecutionResult.cs" />
+    <Compile Include="Core\Rules\HasAncestorInheritingFromTemplateCondition.cs" />
     <Compile Include="Core\Rules\PowerShellDelegatedAccess.cs" />
+    <Compile Include="Core\Rules\SitecoreConfigIntSettingValueCondition.cs" />
+    <Compile Include="Core\Rules\SitecoreConfigSettingValueCondition.cs" />
+    <Compile Include="Core\Rules\WebConfigIntSettingValueCondition.cs" />
+    <Compile Include="Core\Rules\WebConfigSettingValueCondition.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
     <Compile Include="Core\Data\DisablePropertyExpander.cs" />
