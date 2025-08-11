@@ -72,6 +72,7 @@ SharedFields:
     	)
     	
     	if(!$Item) { return }
+        Write-Progress -Activity "Testing $($item.Paths.ContentPath)"  -Status "Testing Links"
     	if($linksToCheck.Contains("internal")) {
     		$brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
     		if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
@@ -155,7 +156,8 @@ SharedFields:
     				$urls | ForEach-Object {
     					$url = $_
     					try{ 
-    						$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method head
+                            Write-Progress -Activity "Testing $($item.Paths.ContentPath)"  -CurrentOperation $url -Status "Testing External URL"
+    						$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method head -TimeoutSec 10
     					} 
     					catch {
     						$statuscode = $_.Exception.Response.StatusCode.Value__
@@ -252,4 +254,4 @@ Languages:
       Value: 20140411T022339Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "c426cb23-a958-4ed4-bfd9-e1acce843478"
+      Value: "71420c3b-b8c8-4acd-a7e1-8a541e1b6cd5"
