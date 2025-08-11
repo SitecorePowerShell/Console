@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sitecore.Buckets.Extensions;
@@ -109,7 +110,7 @@ namespace Spe.Core.Host
             return output.ToString();
         }
 
-        public new void AddRange(IEnumerable<OutputLine> collection)
+        public new void AddRange(IEnumerable<OutputLine> collection, int maxHeight = Int32.MaxValue)
         {
             if (SilenceOutput)
             {
@@ -117,6 +118,7 @@ namespace Spe.Core.Host
                 {
                     SilencedOutput = new OutputBuffer();
                 }
+
                 SilencedOutput.AddRange(collection);
             }
             else
@@ -124,6 +126,29 @@ namespace Spe.Core.Host
                 lock (this)
                 {
                     base.AddRange(collection);
+                }
+            }
+
+            EnsureMaxHeight(maxHeight);
+        }
+
+        private void EnsureMaxHeight(int maxHeight)
+        {
+            if (maxHeight < Count)
+            {
+                var outCount = 0;
+                foreach (var line in this)
+                {
+                    if (line.Terminated && maxHeight > 0)
+                    {
+                        outCount++;
+                        maxHeight--;
+                    }
+                }
+
+                if (outCount < Count)
+                {
+                    this.RemoveRange(0,Count - outCount);  
                 }
             }
         }

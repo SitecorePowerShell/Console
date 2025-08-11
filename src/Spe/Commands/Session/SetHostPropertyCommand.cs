@@ -18,6 +18,9 @@ namespace Spe.Commands.Session
         public int HostWidth { get; set; }
 
         [Parameter]
+        public int HostHeight { get; set; }
+
+        [Parameter]
         public SwitchParameter Persist { get; set; }
 
         protected override void ProcessRecord()
@@ -47,12 +50,21 @@ namespace Spe.Commands.Session
                 }
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("HostWidth"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(HostWidth)))
             {
-                Host.UI.RawUI.BufferSize = new Size(HostWidth, Int32.MaxValue);
+                Host.UI.RawUI.BufferSize = new Size(HostWidth, Host.UI.RawUI.BufferSize.Height);
                 if (Persist)
                 {
                     settings.HostWidth = HostWidth;
+                }
+            }
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(HostHeight)))
+            {
+                Host.UI.RawUI.BufferSize = new Size(Host.UI.RawUI.BufferSize.Width, HostHeight);
+                if (Persist)
+                {
+                    settings.HostHeight = HostHeight;
                 }
             }
 

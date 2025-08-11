@@ -23,7 +23,7 @@ namespace Spe.Core.Host
             cursorPosition = new Coordinates(0, 0);
             windowPosition = new Coordinates(0, 0);
             cursorSize = 1;
-            bufferSize = new Size(settings.HostWidth, Int32.MaxValue);
+            bufferSize = new Size(settings.HostWidth, settings.HostHeight);
             windowSize = bufferSize;
         }
 

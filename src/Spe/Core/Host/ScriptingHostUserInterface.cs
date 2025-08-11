@@ -132,7 +132,7 @@ namespace Spe.Core.Host
             else
             {
                 var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, false);
-                Output.AddRange(splitter);
+                Output.AddRange(splitter,RawUI.BufferSize.Height);
             }
         }
 
@@ -141,13 +141,13 @@ namespace Spe.Core.Host
             var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI.BufferSize.Width,
                 foregroundColor,
                 backgroundColor, false);
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
         }
 
         public override void WriteLine(string value)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, true);
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Info);
         }
 
@@ -158,7 +158,7 @@ namespace Spe.Core.Host
                 PrivateData.ErrorForegroundColor,
                 PrivateData.ErrorBackgroundColor, true);
             Output.HasErrors = true;
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Error);
         }
 
@@ -167,7 +167,7 @@ namespace Spe.Core.Host
             var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + value,
                 RawUI.WindowSize.Width,
                 PrivateData.DebugForegroundColor, PrivateData.DebugBackgroundColor, true);
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Debug);
         }
 
@@ -202,7 +202,7 @@ namespace Spe.Core.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Verbose, "VERBOSE: " + value, RawUI.WindowSize.Width,
                 PrivateData.VerboseForegroundColor, PrivateData.VerboseBackgroundColor, true);
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Info);
         }
 
@@ -210,7 +210,7 @@ namespace Spe.Core.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + value, RawUI.BufferSize.Width,
                 PrivateData.WarningForegroundColor, PrivateData.WarningBackgroundColor, true);
-            Output.AddRange(splitter);
+            Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Warning);
         }
 

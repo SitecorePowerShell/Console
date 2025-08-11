@@ -8,6 +8,9 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/users3.png
+- ID: "588f422b-72f4-415a-a182-343b0015bf21"
+  Hint: HostHeight
+  Value: 2147483647
 - ID: "6f442ac9-7001-4124-9bc3-589875876c27"
   Hint: FontSize
   Value: 20
@@ -59,7 +62,7 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "576d72fa-f8c8-437c-b20f-2470784def40"
+      Value: "d6a9081a-88f8-4647-8f26-5b07f5834876"
 - Language: "ja-JP"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

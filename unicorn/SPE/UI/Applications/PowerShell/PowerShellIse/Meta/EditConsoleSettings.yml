@@ -13,7 +13,7 @@ SharedFields:
   Value: 200
 - ID: "cf738220-908d-4c3f-9482-32e625daf13c"
   Hint: Fields
-  Value: FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor
+  Value: FontSize|FontFamily|HostWidth|HostHeight|ForegroundColor|BackgroundColor
 Languages:
 - Language: da
   Fields:
@@ -53,7 +53,7 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "9041a91d-200f-4885-9a17-82c817891acf"
+      Value: "35aad4c1-afa2-4733-8d95-f64226416c34"
 - Language: "ja-JP"
   Fields:
   - ID: "108d3a63-baaa-4560-86d8-3a112ed84717"

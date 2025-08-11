@@ -32,6 +32,7 @@ namespace Spe.Core.Settings
         private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
         private const string PerTabOutputSettingFieldName = "PerTabOutput"; 
         private const string HostWidthSettingFieldName = "HostWidth";
+        private const string HostHeightSettingFieldName = "HostHeight";
         private const string ForegroundColorSettingFieldName = "ForegroundColor";
         private const string BackgroundColorSettingFieldName = "BackgroundColor";
         private const string FontSizeSettingFieldName = "FontSize";
@@ -83,6 +84,7 @@ namespace Spe.Core.Settings
         public string LastScript { get; set; }
         public bool SaveLastScript { get; private set; }
         public int HostWidth { get; set; }
+        public int HostHeight { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
         public string ApplicationName { get; }
@@ -234,6 +236,7 @@ namespace Spe.Core.Settings
                         ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;
                         ((CheckboxField)configuration.Fields[PerTabOutputSettingFieldName]).Checked = PerTabOutput;
                         configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
+                        configuration[HostHeightSettingFieldName] = HostHeight.ToString(CultureInfo.InvariantCulture);
                         configuration[ForegroundColorSettingFieldName] = ForegroundColor.ToString();
                         configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
                         configuration[FontSizeSettingFieldName] = FontSize.ToString();
@@ -266,6 +269,9 @@ namespace Spe.Core.Settings
                     HostWidth =
                         TryGetSettingValue(HostWidthSettingFieldName,150,
                             () => int.TryParse(configuration[HostWidthSettingFieldName], out var hostWidth) ? hostWidth : 150);
+                    HostHeight =
+                        TryGetSettingValue(HostHeightSettingFieldName,int.MaxValue,
+                            () => int.TryParse(configuration[HostHeightSettingFieldName], out var hostHeight) ? hostHeight : int.MaxValue);
                     ForegroundColor =
                         TryGetSettingValue(ForegroundColorSettingFieldName, ConsoleColor.White,
                             () =>
@@ -305,6 +311,7 @@ namespace Spe.Core.Settings
             LiveAutocompletion = false;
             PerTabOutput = false;
             HostWidth = 150;
+            HostHeight = int.MaxValue;
             ForegroundColor = ConsoleColor.White;
             BackgroundColor = ConsoleColor.DarkBlue;
             FontSize = 12;
