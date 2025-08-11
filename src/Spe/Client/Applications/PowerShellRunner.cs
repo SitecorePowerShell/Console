@@ -459,9 +459,7 @@ namespace Spe.Client.Applications
 
                 if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
                 {
-                    sb.AppendFormat("<span class='operation'><span class='label'>" +
-                                    Texts.PowerShellRunner_UpdateProgress_Operation_.Translate() + 
-                                    "</span> {0}</span>",
+                    sb.AppendFormat("<span class='operation'>{0}</span>",
                         args.Parameters["CurrentOperation"]);
                 }
 
