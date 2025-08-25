@@ -38,7 +38,7 @@
             "All the elves are on break right now. Please hold.",
             "Just a sec, I know your data is here somewhere.",
             "Measuring the cable length to fetch your data...",
-            "while I do things you dont really wanna know about.",
+            "Please wait, while I do things you dont really wanna know about.",
             "Please wait, while we oil the clockworks",
             "Hitting your keyboard won't make me run it any faster.",
             "Please wait, while I'm ensuring everything works perfectly.",

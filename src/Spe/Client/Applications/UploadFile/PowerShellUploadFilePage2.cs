@@ -4,6 +4,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Managers;
+using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Sitecore.Pipelines.Upload;
 using Sitecore.Shell.Web.UI;
@@ -45,7 +46,7 @@ namespace Spe.Client.Applications.UploadFile
                     var result = contentTypeValidator.Validate(Request.Files);
                     if (!result.Valid)
                     {
-                        CancelResult();
+                        CancelFailedValidation("The file type is not on the configured list of approved file types.");
                         Sitecore.Diagnostics.Log.Warn($"[SPE] {result.Message}", this);
                         return;
                     }
@@ -73,7 +74,8 @@ namespace Spe.Client.Applications.UploadFile
                         pathOrId = validator.GetFullPath(pathOrId);
                         if (!validator.Validate(pathOrId))
                         {
-                            CancelResult();
+
+                            CancelFailedValidation("The upload folder is not on the the list of allowed upload locations.");
                             Sitecore.Diagnostics.Log.Warn($"[SPE] Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.", this);
                             return;
                         }
@@ -81,10 +83,8 @@ namespace Spe.Client.Applications.UploadFile
                     uploadArgs.Files = Request.Files;
                     uploadArgs.Folder = pathOrId;
                     uploadArgs.Overwrite = Sitecore.Context.ClientPage.ClientRequest.Form["Overwrite"].Length > 0;
-                    //uploadArgs.Overwrite = Settings.Upload.SimpleUploadOverwriting;
                     uploadArgs.Unpack = Sitecore.Context.ClientPage.ClientRequest.Form["Unpack"].Length > 0;
                     uploadArgs.Versioned = Sitecore.Context.ClientPage.ClientRequest.Form["Versioned"].Length > 0;
-                    //uploadArgs.Versioned = Settings.Media.UploadAsVersionableByDefault;
                     uploadArgs.Language = language;
                     uploadArgs.CloseDialogOnEnd = false;
                     PipelineFactory.GetPipeline("uiUpload").Start(uploadArgs);
@@ -145,10 +145,14 @@ namespace Spe.Client.Applications.UploadFile
                 }
             }
         }
-
-        private static void CancelResult()
-        {
-            HttpContext.Current.Response.Write("<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'EndUploading(\"\")')</script></head><body>Done</body></html>");
+        
+        private static void CancelFailedValidation(string errorText)
+        { 
+            HttpContext.Current.Response.Write(
+                "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'ShowValidationError(" +
+                StringUtil.EscapeJavascriptString(Translate.Text(errorText)) +
+                ")')</script></head><body>Done</body></html>");
         }
+
     }
 }

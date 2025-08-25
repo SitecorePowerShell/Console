@@ -147,6 +147,12 @@ namespace Spe.Client.Applications.UploadFile
                 MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
         }
 
+        protected void ShowValidationError(string errorText)
+        {
+            Assert.ArgumentNotNullOrEmpty(errorText, "errorText");
+            ShowError(errorText);
+        }
+
         protected void StartUploading()
         {
             Context.ClientPage.ClientResponse.Eval("submit()");
