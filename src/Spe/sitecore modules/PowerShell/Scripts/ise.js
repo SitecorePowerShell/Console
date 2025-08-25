@@ -239,14 +239,14 @@
                 spe.updateRibbon();
             });
 
-            $("#CodeEditor" + currentEditorIndex).on("keyup mousedown", function () {
+            $("#" + editorContainerId).on("keyup mousedown", function () {
                 var position = currentAceEditor.getCursorPosition();
                 posx.text(position.column);
                 posy.text((position.row + 1));
                 spe.updateRibbonNeeded();
             });
 
-            $("#CodeEditor" + currentEditorIndex).on("keyup mouseup", function () {
+            $("#" + editorContainerId).on("keyup mouseup", function () {
                 var range = currentAceEditor.getSelectionRange();
                 currentEditorSession.selectedText = currentAceEditor.session.getTextRange(range);
                 selectionTextMemo.val(currentEditorSession.selectedText);
