@@ -6,7 +6,6 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using Sitecore.Collections;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Spe.Commands.Interactive;

@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data.Items;
-using Spe.Core.Extensions;
 
 namespace Spe.Commands.Data.Search
 {

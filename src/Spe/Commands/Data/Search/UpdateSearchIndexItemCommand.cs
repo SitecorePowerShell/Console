@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
-using Sitecore.ContentSearch.Maintenance;
-using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data.Items;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Extensions;

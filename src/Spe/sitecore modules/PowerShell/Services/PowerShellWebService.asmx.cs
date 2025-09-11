@@ -7,7 +7,6 @@ using System.Threading;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
-using System.Web.Security;
 using System.Web.Services;
 using Sitecore.Data;
 using Sitecore.Diagnostics;

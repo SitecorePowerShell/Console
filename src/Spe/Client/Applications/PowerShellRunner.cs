@@ -3,7 +3,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
-using Newtonsoft.Json;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;

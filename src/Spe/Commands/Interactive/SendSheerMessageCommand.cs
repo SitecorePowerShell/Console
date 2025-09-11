@@ -3,9 +3,7 @@ using System.Management.Automation;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
-using Spe.Commands.Interactive.Messages;
 using Spe.Core.Extensions;
-using Spe.Core.Host;
 using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Interactive

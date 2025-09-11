@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
@@ -15,8 +14,7 @@ namespace Spe.Core.Host
     {
         public static IEnumerable<string> GetHelp(ScriptSession session, string command)
         {
-            Collection<PSParseError> errors;
-            var tokens = PSParser.Tokenize(command, out errors);
+            var tokens = PSParser.Tokenize(command, out _);
             var lastPsToken = tokens.LastOrDefault(t => t.Type == PSTokenType.Command);
             if (lastPsToken != null)
             {

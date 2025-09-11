@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using Sitecore;
-using Sitecore.Data;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
-using Sitecore.Shell.Applications.ContentManager;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
 using Sitecore.Text;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
-using Version = Sitecore.Data.Version;
 
 namespace Spe.Client.Commands.MenuItems
 {

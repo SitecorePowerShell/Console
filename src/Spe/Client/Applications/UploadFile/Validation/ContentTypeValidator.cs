@@ -7,8 +7,6 @@ using System.Web;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
-using Sitecore.Pipelines.Upload;
-using Sitecore.StringExtensions;
 
 namespace Spe.Client.Applications.UploadFile.Validation
 {

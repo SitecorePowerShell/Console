@@ -1,5 +1,4 @@
-﻿using Sitecore.Globalization;
-using Sitecore.Publishing;
+﻿using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.Publish;
 
 namespace Spe.Abstractions.VersionDecoupling.Interfaces

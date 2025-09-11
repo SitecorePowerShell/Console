@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using Sitecore.Security.AccessControl;
-using Sitecore.Security.Accounts;
 using Spe.Core.Extensions;
 using Spe.Core.Validation;
 

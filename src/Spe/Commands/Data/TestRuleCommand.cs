@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
 using Spe.Core.Extensions;

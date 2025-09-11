@@ -4,7 +4,6 @@ using System.Management.Automation;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
-using Sitecore.Mvc.Devices;
 using Spe.Core.Extensions;
 
 namespace Spe.Commands.Presentation

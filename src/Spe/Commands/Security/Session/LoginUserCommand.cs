@@ -3,7 +3,6 @@ using System.Data;
 using System.Management.Automation;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Security;
 using Sitecore;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel.License;

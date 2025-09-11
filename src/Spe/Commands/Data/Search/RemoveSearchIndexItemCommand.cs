@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using Sitecore.ContentSearch;
-using Sitecore.ContentSearch.Maintenance;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.VersionDecoupling;
 

@@ -4,7 +4,6 @@ using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Spe.Core.Settings;
 
 namespace Spe.Client.Applications
 {

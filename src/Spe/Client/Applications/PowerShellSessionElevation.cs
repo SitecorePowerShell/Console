@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web;
-using System.Web.Security;
 using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Globalization;

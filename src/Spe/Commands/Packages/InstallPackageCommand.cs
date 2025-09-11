@@ -7,8 +7,6 @@ using Sitecore.Install.Metadata;
 using Sitecore.Install.Utils;
 using Sitecore.Install.Zip;
 using Sitecore.IO;
-using Spe.Abstractions.VersionDecoupling.Interfaces;
-using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Packages
 {

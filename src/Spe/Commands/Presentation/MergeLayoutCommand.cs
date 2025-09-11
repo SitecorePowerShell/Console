@@ -4,7 +4,6 @@ using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Spe.Core.Extensions;
 using Spe.Core.Utility;
-using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Presentation
 {

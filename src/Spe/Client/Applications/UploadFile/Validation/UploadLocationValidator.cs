@@ -1,15 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Web;
-using Sitecore;
-using Sitecore.ContentSearch.Linq.Nodes;
-using Sitecore.Diagnostics;
-using Sitecore.Globalization;
-using Sitecore.Pipelines.Upload;
-using Sitecore.StringExtensions;
 using Spe.Core.Settings;
 
 namespace Spe.Client.Applications.UploadFile.Validation

@@ -7,7 +7,6 @@ using Sitecore.Diagnostics;
 using Sitecore.IO;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
-using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Pages;
 using Sitecore.Web.UI.Sheer;
