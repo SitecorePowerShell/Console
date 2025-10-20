@@ -15,8 +15,8 @@ public class WebConfigSettingValueCondition<T> : StringOperatorCondition<T> wher
     {
         Assert.ArgumentNotNull((object)ruleContext, nameof(ruleContext));
         string str = Value ?? string.Empty;
-        var currentEnvironment = WebConfigurationManager.AppSettings[Setting] ?? string.Empty;
-        return Compare(currentEnvironment, str);
+        var settingValue = WebConfigurationManager.AppSettings[Setting] ?? string.Empty;
+        return Compare(settingValue, str);
     }
 
 }        

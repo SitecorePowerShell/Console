@@ -6,7 +6,7 @@ namespace Spe.Core.Utility
 {
     public static class SpeTimer
     {
-        public static T Measure<T>(string message, bool log, Func<T> action) where T : class
+        public static T Measure<T>(string message, bool log, Func<T> action)
         {
             var stopWatch = new Stopwatch();
             try

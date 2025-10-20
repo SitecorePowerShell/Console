@@ -13,8 +13,8 @@ public class SitecoreConfigSettingValueCondition<T> : StringOperatorCondition<T>
     protected override bool Execute(T ruleContext)
     {
         Assert.ArgumentNotNull((object)ruleContext, nameof(ruleContext));
-        var currentEnvironment = Sitecore.Configuration.Settings.GetSetting(Setting ?? string.Empty) ?? string.Empty;
-        return Compare(currentEnvironment, Value ?? string.Empty);
+        var settingValue = Sitecore.Configuration.Settings.GetSetting(Setting ?? string.Empty) ?? string.Empty;
+        return Compare(settingValue, Value ?? string.Empty);
     }
 
 }        

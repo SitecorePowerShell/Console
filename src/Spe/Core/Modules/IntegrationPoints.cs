@@ -29,6 +29,7 @@ namespace Spe.Core.Modules
         public const string PageEditorNotificationFeature = "pageEditorNotification";
         public const string IsePluginFeature = "isePlugin";
         public const string PageEditorExperienceButtonFeature = "pageEditorExperienceButton";
+        public const string ScriptInRuleFeature = "scriptInRule";
 
         private static SortedList<string, IntegrationPoint> libraries;
 

@@ -1,0 +1,28 @@
+﻿---
+ID: "a1328fd1-a90c-47c7-b6c5-9e3c1f0bd724"
+Parent: "c84f4255-cf8a-455d-9c11-94a774773aba"
+Template: "f0d16eee-3a05-4e43-a082-795a32b873c0"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Script execution result
+DB: master
+SharedFields:
+- ID: "ab51c8b2-f0e1-4471-9aae-cc080d774923"
+  Hint: Type
+  Value: Spe.Core.Rules.ScriptResultValueCondition,Spe
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20080923T063922Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "afa2cc2d-5182-4a1e-bd6f-34744975f261"
+    - ID: "af321234-4eb9-4ef5-9197-65903351939c"
+      Hint: Text
+      Value: "where calling the [scriptid,Tree,root={A3572733-5062-43E9-A447-54698BC1C637}&setRootAsSearchRoot=true&selection={DD22F1B3-BD87-4DB2-9E7D-F7A496888D43},specific] PowerShell script returns value that [operatorid,StringOperator,,compares to] [value,,,value]"
