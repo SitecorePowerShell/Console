@@ -12,10 +12,14 @@ namespace Spe.Core.Utility
 {
     public static class PathUtilities
     {
+        static string[] databaseNames = Factory.GetDatabases().Where(db=> !db.ReadOnly).Select(db=> db.Name).ToArray();
+        
         public static Item GetItem(string drive, string itemPath)
         {
+            if (!databaseNames.Contains(drive, StringComparer.OrdinalIgnoreCase))
+                return null;
             var currentDb = Factory.GetDatabase(drive);
-            return currentDb.GetItem(EnsureItemPath(itemPath));
+            return currentDb?.GetItem(EnsureItemPath(itemPath));
         }
 
         public static string GetDrive(string path, string currentDb)
