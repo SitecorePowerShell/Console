@@ -52,16 +52,7 @@ namespace Spe.Commands
         protected string CurrentSessionKey => HostData == null ? string.Empty : HostData.ScriptingHost.SessionKey;
 
         protected ClientPage ClientPage => (GetVariableValue("ClientPage") as ClientPage);
-
-        protected void RecoverHttpContext()
-        {
-            var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-            var job = jobManager.GetContextJob();
-
-            HttpContext.Current = SessionState.PSVariable.Get("HttpContext").Value as HttpContext;
-            jobManager.SetContextJob(job);
-        }
-
+        
         protected void WildcardWrite<T>(string filter, IEnumerable<T> items, Func<T, string> propertyName)
         {
             WriteObject(WildcardFilter(filter, items, propertyName), true);

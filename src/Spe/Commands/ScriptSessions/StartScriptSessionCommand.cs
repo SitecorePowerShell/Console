@@ -134,7 +134,6 @@ namespace Spe.Commands.ScriptSessions
         {
             if (Interactive && !HostData.ScriptingHost.Interactive)
             {
-                RecoverHttpContext();
                 WriteError(typeof(CmdletInvocationException),
                     "An interactive script session cannot be started from non-interactive script session.",
                     ErrorIds.OriginatingScriptSessionNotInteractive, ErrorCategory.InvalidOperation, HostData.ScriptingHost.SessionId);

@@ -12,6 +12,7 @@ using Spe.Core.VersionDecoupling;
 namespace Spe.Commands.Security.Session
 {
     [Cmdlet("Login", "User", SupportsShouldProcess = true)]
+    [Obsolete("This Cmdlet is deprecated and defunct. It will be removed in the subsequent version of SPE.")]
     public class LoginUserCommand : BaseCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -24,46 +25,9 @@ namespace Spe.Commands.Security.Session
 
         protected override void ProcessRecord()
         {
-            RecoverHttpContext();
-
-            var username = Identity.Name;
-
-            if (!username.Contains(@"\") && !String.IsNullOrEmpty(username))
-            {
-                username = @"sitecore\" + username;
-            }
-
-            if (!User.Exists(username))
-            {
-                WriteError(new ErrorRecord(
-                    new ObjectNotFoundException("User '" + username + "' could not be found"),
-                    "user not found", ErrorCategory.ObjectNotFound, null));
-            }
-
-            if (ShouldProcess(username, "Login as user"))
-            {
-                var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
-                if (Context.IsLoggedIn)
-                {
-                    if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;                    
-                    authenticationManager.Logout();
-                }
-                if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
-                {
-                    WriteError(new ErrorRecord(new LicenseException("A required license is missing"),
-                        "sitecore_license_missing", ErrorCategory.ResourceUnavailable, null));
-                }
-                if (!authenticationManager.ValidateUser(username, Password))
-                {
-                    WriteError(new ErrorRecord(new LicenseException("Unknown username or password."),
-                        "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
-                }
-                var user = User.FromName(username, true);
-
-                UserSwitcher.Enter(user);
-
-                SessionState.PSVariable.Set("me", HttpContext.Current.User.Identity.Name);
-            }
+            // this functionality is deprecated and will be removed in the subsequent version of SPE.
+            // it was broken since 2015: https://github.com/SitecorePowerShell/Console/issues/557
+            // If you need this functionality use AuthenticationManager directly
         }
     }
 }
