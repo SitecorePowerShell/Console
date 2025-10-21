@@ -8,16 +8,20 @@ using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Interactive
 {
-    [Cmdlet(VerbsCommunications.Send, "SheerMessage")]
+    [Cmdlet(VerbsCommunications.Send, "SheerMessage", DefaultParameterSetName = "InRunner")]
     public class SendSheerMessageCommand : BaseShellCommand
     {
-        [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [Parameter(ParameterSetName = "OnScriptEnd", ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [Parameter(ParameterSetName = "InRunner",    ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [Parameter(ParameterSetName = "GetResults",    ValueFromPipeline = true, Position = 0, Mandatory = true)]
         public string Name { get; set; }
 
-        [Parameter(ParameterSetName = "InRunner")]
+        [Parameter(ParameterSetName = "GetResults")]
         public SwitchParameter GetResult { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "InRunner")]
+        [Parameter(ParameterSetName = "OnScriptEnd")]
+        [Parameter(ParameterSetName = "GetResults")]
         public Hashtable Parameters { get; set; }
 
         [Parameter(ParameterSetName = "OnScriptEnd")]
