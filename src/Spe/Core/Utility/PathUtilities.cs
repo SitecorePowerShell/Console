@@ -12,7 +12,8 @@ namespace Spe.Core.Utility
 {
     public static class PathUtilities
     {
-        static string[] databaseNames = Factory.GetDatabases().Where(db=> !db.ReadOnly).Select(db=> db.Name).ToArray();
+        private static string[] databaseNames = Factory.GetDatabases().Where(db=> !db.ReadOnly).Select(db=> db.Name).ToArray();
+        public static string OrphanPath = "[orphan]";
         
         public static Item GetItem(string drive, string itemPath)
         {
@@ -107,8 +108,18 @@ namespace Spe.Core.Utility
             {
                 return String.Empty;
             }
-            var psPath = $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}";
-            return psPath;
+
+            var path = item.Paths.Path;
+            if (path.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            {
+                var psPath = $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}";
+                return psPath;
+            }
+            else
+            {
+                var psPath = $"{item.Database.Name}:{OrphanPath}{item.Paths.Path.Replace('/', '\\')}";
+                return psPath;
+            }
         }
 
         public static string GetProviderPaths(this IEnumerable<Item> items)

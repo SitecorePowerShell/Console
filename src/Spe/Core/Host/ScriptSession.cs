@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using Sitecore.Data.Items;
+using Sitecore.Exceptions;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.Sheer;
@@ -837,7 +838,14 @@ namespace Spe.Core.Host
             var psObject = ItemShellExtensions.GetPsObject(Engine.SessionState, item);
             SetVariable("SitecoreContextItem", psObject);
 
-            Engine.SessionState.Path.SetLocation(item.GetProviderPath());
+            var path = item.GetProviderPath();
+            if (path.Contains(PathUtilities.OrphanPath))
+            {
+                PowerShellLog.Error($"Cannot set location to: {path} - the item with id {item.ID} is an orphan. Setting location to drive root.");
+                path = $"{item.Database}:\\";
+            }
+            
+            Engine.SessionState.Path.SetLocation(path);
         }
 
         public void SetItemContextFromLocation()
