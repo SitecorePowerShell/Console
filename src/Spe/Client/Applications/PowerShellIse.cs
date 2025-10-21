@@ -57,9 +57,9 @@ namespace Spe.Client.Applications
         protected Border ScriptResult;
         protected Memo SelectionText;
         protected Memo Breakpoints;
-        protected GridPanel ElevationRequiredPanel;
-        protected GridPanel ElevatedPanel;
-        protected GridPanel ElevationBlockedPanel;
+        protected Border ElevationRequiredPanel;
+        protected Border ElevatedPanel;
+        protected Border ElevationBlockedPanel;
         protected Border InfoPanel;
         protected Tabstrip Tabs;
         protected Border TabsPanel;
@@ -1237,7 +1237,7 @@ namespace Spe.Client.Applications
             }
 
             InfoPanel.InnerHtml = controlContent;
-            InfoPanel.Visible = !hidePanel;
+            InfoPanel.CssClass = hidePanel ? "scEditorWarningHidden" : "scEditorWarning";
             SheerResponse.Eval($"spe.showInfoPanel({(!hidePanel).ToString().ToLower()}, '{updateFromMessage}');");
         }
 

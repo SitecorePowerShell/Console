@@ -558,3 +558,12 @@ nobr > .scTab_Hover {
 #TreeSplitterPanel, #TreeViewPanel  {
     display: none;
 }
+
+.scEditorWarning {
+    padding: 0;
+    display: inline-table;
+}
+
+.scEditorWarningHidden {
+    display: none;
+}

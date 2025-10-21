@@ -23,9 +23,9 @@ textarea[disabled] {
     min-height: 33px;
 }
 
-    .scEditorWarning td, .scEditorInformation td {
-        padding: 7px;
-    }
+.scEditorWarning td, .scEditorInformation td {
+    padding: 7px;
+}
 
 .scEditorWarningHelp, .scEditorInformationHelp {
     float: left;
@@ -55,8 +55,9 @@ textarea[disabled] {
 }
 
 .spe-secured-app .scEditorWarningOption {
-    color: black;
-    font-weight: bold;
+    color: #897B2F;
+    font-weight: 600;
+    text-decoration: underline;
 }
 
 .spe-secured-app .scDialogHeader {

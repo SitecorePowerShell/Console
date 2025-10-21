@@ -722,9 +722,9 @@
 
         spe.showInfoPanel = function (showPanel, updateFromMessage) {
             if (showPanel) {
-                $("#InfoPanel").css("display", "block");
+                $("#InfoPanel").removeClass("scEditorWarningHidden");
             } else {
-                $("#InfoPanel").css("display", "none");
+                $("#InfoPanel").addClass("scEditorWarningHidden");
             }
             spe.resizeEditor();
             if (!isEmpty(updateFromMessage)) {
