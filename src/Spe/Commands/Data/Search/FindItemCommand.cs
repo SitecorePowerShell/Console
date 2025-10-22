@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
@@ -6,6 +7,7 @@ using Sitecore.ContentSearch.Linq.Extensions;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 using Spe.Core.Extensions;
+using Spe.Core.Utility;
 using Spe.Core.Validation;
 
 namespace Spe.Commands.Data.Search
@@ -20,8 +22,11 @@ namespace Spe.Commands.Data.Search
         }
 
         [AutocompleteSet(nameof(Indexes))]
-        [Parameter(Mandatory = true, Position = 0)]
+        [Parameter(Position = 0)]
         public string Index { get; set; }
+
+        [Parameter]
+        public string Path { get; set; }
 
         [Parameter(ParameterSetName = "Criteria")]
         public SearchCriteria[] Criteria { get; set; }
@@ -82,10 +87,65 @@ namespace Spe.Commands.Data.Search
 
         [Parameter]
         public string[] Property { get; set; }
+        
+        [Parameter]
+        [AutocompleteSet(nameof(Templates))]
+        public virtual string[] Template { get; set; }
 
+        public static string[] Templates => MiscAutocompleteSets.Templates;
+        
+        [Parameter]
+        public virtual SwitchParameter LatestVersion { get; set; }
+        
+        private List<SearchCriteria> helperCriteria = new List<SearchCriteria>();
+        
+        protected override void BeginProcessing()
+        {
+            var drive = Path.IsNullOrWhiteSpace() ? "master" : PathUtilities.GetDrive(Path, SessionState?.Drive?.Current?.Name ?? "master");
+            if (Template != null && Template.Any())
+            {
+                var templateIds = Template.Select(templateName => TemplateUtils.GetFromPath(templateName, drive).ID);
+                foreach (var templateId in templateIds)
+                {
+                    helperCriteria.Add(new SearchCriteria()
+                    {
+                        Field = "_templates",
+                        Filter = FilterType.Contains,
+                        Value = templateId
+                    });
+                }
+            }
+            
+            if (!Path.IsNullOrWhiteSpace())
+            {
+                var rootItem = PathUtilities.GetItem(Path, SessionState?.Drive?.Current?.Name, SessionState?.Drive?.Current?.CurrentLocation);
+                if (rootItem != null)
+                {
+                    helperCriteria.Add(new SearchCriteria()
+                    {
+                        Field = "_path",
+                        Filter = FilterType.Contains,
+                        Value = rootItem.ID
+                    });
+                }
+            }
+
+            if (LatestVersion)
+            {
+                helperCriteria.Add(new SearchCriteria()
+                {
+                    Field = "_latestversion",
+                    Filter = FilterType.Equals,
+                    Value = "1"
+                });
+                
+            }
+        }
+        
         protected override void EndProcessing()
         {
-            var index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
+            var drive = Path.IsNullOrWhiteSpace() ? "master" : PathUtilities.GetDrive(Path, SessionState?.Drive?.Current?.Name ?? "master");
+            var index = !Index.IsNullOrWhiteSpace() ? Index : $"sitecore_{drive}_index";
 
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
@@ -124,13 +184,23 @@ namespace Spe.Commands.Data.Search
                     }
                 }
                 // Dynamic End
+                
                 // Criteria
                 if (Criteria != null)
                 {
-                    var criteriaPredicate = ProcessCriteria(objType, Criteria, SearchOperation.And);
+                    var criteriaPredicate = ProcessCriteria(objType, Criteria.ToArray(), SearchOperation.And);
                     query = ApplyWhere(query, criteriaPredicate);
                 }
                 // Criteria End
+                
+                // HelperCriteria
+                if(helperCriteria.Any())
+                {
+                    var criteriaPredicate = ProcessCriteria(objType, helperCriteria.ToArray(), SearchOperation.And);
+                    query = ApplyWhere(query, criteriaPredicate);
+                }
+                // HelperCriteria End
+                
                 // Predicate
                 if (WherePredicate != null)
                 {
@@ -176,7 +246,7 @@ namespace Spe.Commands.Data.Search
                 {
                     query = ApplyOrderBy(query, OrderBy);
                 }
-
+                
                 if (Property != null)
                 {
                     // The use of Last is not supported because it requires Concat. Concat is not supported by Sitecore.
@@ -194,7 +264,9 @@ namespace Spe.Commands.Data.Search
                     var sortScore = Last > 0 && (string.IsNullOrEmpty(OrderBy) || OrderBy.Is("score"));
                     WriteObject(ApplySkipAndTakeByPosition(query, First, Last, Skip, sortScore), true);
                 }
+                
             }
         }
+
     }
 }
