@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
 using Sitecore.Configuration;
@@ -97,33 +99,47 @@ namespace Spe.Core.Provider
         protected override string[] ExpandPath(string path)
         {
             path = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            var parent = PathUtilities.GetParentFromPath(path);
-            var name = PathUtilities.GetLeafFromPath(path);
-            //try get literal path
-            var literalName = $"/sitecore{parent}/{name}";
-            if (parent.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            var pathParent = PathUtilities.GetParentFromPath(path);
+            var dbName = PSDriveInfo.Name;
+            var results = ExpandSitecorePath(path)
+                .Select(p => $"{dbName}:{p.Replace('/', '\\')}")
+                .ToArray();
+            return results;
+        }
+
+        protected List<string> ExpandSitecorePath(string path)
+        {
+            var pathParent = PathUtilities.GetParentFromPath(path);
+            var parents = new List<string> { pathParent };
+            if (WildcardPattern.ContainsWildcardCharacters(pathParent))
             {
-                literalName = $"{parent}/{name}";
+                parents = ExpandSitecorePath(pathParent);
             }
-            var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem(literalName);
-            if (literalItem != null && literalName.Is(literalItem.Paths.Path))
+
+            var results = new List<string>();
+            foreach (var parent in parents)
             {
-                return new[] {$"{literalItem.Database.Name}:{literalItem.Paths.Path.Substring(9).Replace('/', '\\')}"};
-            }
-            name = name.Trim(Convert.ToChar("*"));
-            if (parent.Contains("-") || parent.Contains(" "))
-            {
-                var segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-                var escapedPath = new StringBuilder(path.Length + segments.Length*2 + 4);
-                foreach (var segment in segments)
+                var name = PathUtilities.GetLeafFromPath(path);
+                var dbName = PSDriveInfo.Name;
+                //try get literal path
+                var literalName = $"/sitecore{parent}/{name}";
+                if (parent.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
                 {
-                    escapedPath.AppendFormat("/#{0}#", segment);
+                    literalName = $"{parent}/{name}";
                 }
-                parent = escapedPath.ToString();
+
+                var literalItem = Factory.GetDatabase(dbName).GetItem(literalName);
+                if (literalItem != null && literalName.Is(literalItem.Paths.Path))
+                {
+                    results.Add(literalName);
+                    continue;
+                }
+
+                var parentItem = Factory.GetDatabase(dbName).GetItem($"/sitecore{parent}");
+                var items = WildcardUtils.WildcardFilter($"{name}", parentItem.Children, item => item.Name);
+                var paths = items.Select(item => $"{parent}/{item.Name}");
+                results.AddRange(paths);
             }
-            var items = Factory.GetDatabase(PSDriveInfo.Name).GetItem($"/sitecore{parent}").Children.Where(child => child.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase));
-            var results = items.Select(
-                item => $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}").ToArray();
             return results;
         }
 
