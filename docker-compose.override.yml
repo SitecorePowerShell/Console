@@ -11,4 +11,4 @@ services:
       - .\releases:C:\inetpub\wwwroot\App_Data\packages
       - .\modules:C:\modules:ro
       - .\docker\tools:C:\tools:ro
-    entrypoint: powershell -Command "& C:/tools/entrypoints/iis/Development.ps1"
+    entrypoint: powershell -Command "& C:/tools/entrypoints/iis/Development.ps1 -WatchDirectoryParameters @{ 'Path' = 'C:/deploy'; 'Destination' = 'C:/inetpub/wwwroot'; 'DefaultExcludedFiles'= @('*.user', '*.cs', '*.csproj', 'packages.config', '*ncrunch*', '.gitignore', '.gitkeep', '.dockerignore', '*.example');}"
