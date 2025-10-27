@@ -17,7 +17,7 @@ $projectPath = $PSScriptRoot
 
 Clear-Host
 
-if(!$releases)
+if(!$releases -or !(Test-Path -Path $releases))
 {
     $releases = Join-Path -Path $projectPath -ChildPath "releases"
 }
@@ -30,17 +30,20 @@ if(-not (Test-Path -Path $sat)) {
 $satConfig = Get-ChildItem -Path $releases -Filter "configuration.json" | 
     Get-Content | ConvertFrom-Json | Select-Object -ExpandProperty "SitecoreAzureToolkit"
 
-$satPackage = Join-Path -Path $sat -ChildPath $satConfig.Filename
-if(-not (Test-Path -Path $satPackage)) {
-    Get-ChildItem -Path $sat -Recurse | Remove-Item -Recurse
+$satModuleLibrary = Join-Path -Path $sat -ChildPath "tools\Sitecore.Cloud.Cmdlets.dll"
+if(-not (Test-Path -Path $satModuleLibrary)) {
+    $satPackage = Join-Path -Path $sat -ChildPath $satConfig.Filename
+    if(-not (Test-Path -Path $satPackage)) {
+        Get-ChildItem -Path $sat -Recurse | Remove-Item -Recurse
 
     Write-Host "Downloading $($satConfig.Filename)"
     $webClient = New-Object System.Net.WebClient
     $webClient.Downloadfile($satConfig.Url, $satPackage)
+        
+        Write-Host "Unblocking $($satConfig.Filename)"
+        Unblock-File -Path $satPackage
+    }
     
-    Write-Host "Unblocking $($satConfig.Filename)"
-    Unblock-File -Path $satPackage
-
     Expand-Archive -Path $satPackage -DestinationPath $sat
 }
 
