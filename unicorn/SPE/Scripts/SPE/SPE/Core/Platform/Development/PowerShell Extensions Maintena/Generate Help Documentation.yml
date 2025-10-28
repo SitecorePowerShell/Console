@@ -15,10 +15,10 @@ SharedFields:
     
     $summaryUrl = "https://github.com/SitecorePowerShell/Book/blob/master/SUMMARY.md"
     $response = Invoke-WebRequest -UseBasicParsing -Uri $summaryUrl
-    $pages = $response.Links | 
-        Where-Object { $_.href.StartsWith("/SitecorePowerShell/Book/blob/master/appendix/") } |
-        Where-Object { !$_.href.EndsWith("README.md") } |
-        ForEach-Object { "https://raw.githubusercontent.com$($_.href)".Replace("blob/","") }
+    $matchedLinks = [regex]::Matches($response.Content, "((?<link>appendix[A-Za-z/\-]+\.md))")
+    $pages = $matchedLinks |
+        Where-Object { $_.Success -and !$_.Value.EndsWith("README.md") } |
+        ForEach-Object { "https://raw.githubusercontent.com/SitecorePowerShell/Book/refs/heads/master/$($_.Value)".Replace("blob/","") }
     
     function ConvertPage {
         param(
@@ -65,8 +65,10 @@ SharedFields:
         $r = $r.Replace("\[","[").Replace("\]","]")
         $r = $r.Replace("\_","_")
         $r = $r.Replace("&copy;","(c)")
-        $r = $r.Replace("2010-2018","2010-$([datetime]::Today.Year)")
-        $r = $r.Replace("2010-2017","2010-$([datetime]::Today.Year)")
+        $r = [regex]::new("^(© 2010-).+Sitecore PowerShell Extensions", $options).Replace($r, "")
+        #$r = $r.Replace("2010-2019","2010-$([datetime]::Today.Year)")
+        #$r = $r.Replace("2010-2018","2010-$([datetime]::Today.Year)")
+        #$r = $r.Replace("2010-2017","2010-$([datetime]::Today.Year)")
         $r = [regex]::new("\.SYNTAX[\s\S]*(?=\.DESCRIPTION)", $options).Replace($r, "")
         
         $linkSection = [regex]::new("\.LINK[\r\n]*([\*\s\w\W])*(?=\.[\w])", $options).Match($r).Value
@@ -119,4 +121,4 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "5c74bb21-f5f4-4672-9d41-852e7357c8aa"
+      Value: "6de2e1ec-9548-4116-b2b8-0a140ed61731"
