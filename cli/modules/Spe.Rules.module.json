@@ -46,6 +46,18 @@
                 "scope": "ItemAndDescendants"
             },
             {
+                "name": "System Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Item Hierarchy Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/Item Hierarchy/Has Ancestor Of Template",
+                "scope": "ItemAndDescendants"
+            },            
+            {
                 "name": "Definition",
                 "database": "master",
                 "path": "/sitecore/system/Settings/Rules/PowerShell",
