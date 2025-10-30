@@ -914,6 +914,7 @@
             } else {
                 $("#TreeViewPanel").show();
                 $("#TreeSplitterPanel").show();
+                scForm.postRequest("", "", "", "ise:updatetreeview");
                 spe.resizeEditor();
             }
         });

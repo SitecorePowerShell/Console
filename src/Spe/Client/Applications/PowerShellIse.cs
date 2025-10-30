@@ -66,7 +66,7 @@ namespace Spe.Client.Applications
         protected TreeviewEx ContentTreeview;
         protected DataContext ContentDataContext;
         protected VSplitterXmlControl VSplitter;
-
+ 
         public bool Debugging { get; set; }
         public bool InBreakpoint { get; set; }
 
@@ -345,7 +345,13 @@ namespace Spe.Client.Applications
 
             Dispatcher.Dispatch(message, context);
         }
-        
+
+        [HandleMessage("ise:updatetreeview", true)]
+        protected void UpdateTreeView(ClientPipelineArgs args)
+        {
+            TabsOnChange(null,null);
+        }
+
         [HandleMessage("ise:open", true)]
         protected void Open(ClientPipelineArgs args)
         {
@@ -609,6 +615,7 @@ namespace Spe.Client.Applications
                 ScriptItemDb = scriptItem.Database.Name;
                 MruUpdate(scriptItem);
                 UpdateRibbon();
+                SheerResponse.Eval("scForm.postRequest(\"\", \"\", \"\", \"ise:updatetreeview\");");
             }
             else
             {
