@@ -696,6 +696,9 @@
             editorSessions.forEach((session, i) => {
                 session.index = i + 1;
             });
+            var openedScripts = editorSessions.map(session => session.path + ":" + session.index).join('\n');
+            openedScriptsMemo.val(openedScripts);
+            
         }
 
         spe.resizeEditor = function () {
