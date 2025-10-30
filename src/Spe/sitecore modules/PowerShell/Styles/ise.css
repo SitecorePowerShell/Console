@@ -235,8 +235,8 @@ a.ps-link {
 }
 
 #ProgressOverlay {
-    left: 4px;
-    right:44px;
+    left: 8px;
+    right: 8px;
     border-radius: 15px;
 }
 

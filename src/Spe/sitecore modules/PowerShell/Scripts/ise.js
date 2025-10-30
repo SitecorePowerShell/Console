@@ -706,7 +706,8 @@
             $("#Result").height(resultsHeight);
             $("#Result").width($(window).width() - $("#Result").offset().left * 2);
             $("#Result").width($("#ResultsPane").width());
-            $("#ProgressOverlay").css("top", ($("#Result").offset().top + 4) + "px");
+            $("#ProgressOverlay").css("top", ($("#Result").offset().top + 8) + "px");
+            $("#ProgressOverlay").css("left", ($("#Result").offset().left + 8) + "px");
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
             if ($("#TreeView").is(":visible")) {
