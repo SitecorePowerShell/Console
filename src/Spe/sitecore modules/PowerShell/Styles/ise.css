@@ -571,3 +571,7 @@ nobr > .scTab_Hover {
 .scRibbonOpen {
     bottom: -22px;
 }
+
+#Content, #Wrapper, #Result {
+    width: 100% !important;
+}
