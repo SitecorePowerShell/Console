@@ -2,15 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using Sitecore;
 using Sitecore.Text;
+using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
+using Spe.Core.Extensions;
 using Spe.Core.Settings;
 using Spe.Core.VersionDecoupling;
 
@@ -21,6 +24,10 @@ namespace Spe.Core.Host
         private readonly ScriptingHostPrivateData privateData;
         private readonly ScriptingHostUserInterface ui;
         private readonly InitialSessionState sessionState;
+        private List<string> deferredMessages = new();
+        [Obsolete("Use DeferredMessages instead.")]
+        private List<string> closeMessages = new();
+        
         private Runspace runspace;
         public int NestedLevel { get; private set; }
         public int UiNestedLevel { get; private set; }
@@ -36,7 +43,6 @@ namespace Spe.Core.Host
             privateData = new ScriptingHostPrivateData(this);
             sessionState = initialState;
             CloseRunner = false;
-            DeferredMessages = new List<string>();
         }
 
         /// <summary>
@@ -65,16 +71,35 @@ namespace Spe.Core.Host
         public override Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        ///     This implementation always returns the GUID allocated at
+        ///     This implementation always returns the GUID allocated at    
         ///     instantiation time.
         /// </summary>
         public string SessionId { get; internal set; }
         public string SessionKey { get; internal set; }
 
         public bool CloseRunner { get; internal set; }
+        
         [Obsolete("Use DeferredMessages instead." )]
-        public List<string> CloseMessages => DeferredMessages;
-        public List<string> DeferredMessages { get; }
+        public List<string> CloseMessages => closeMessages;
+
+        public List<string> DeferredMessages
+        {
+            get
+            {
+                if (CloseMessages.Any())
+                {
+                    CloseMessages.ForEach(msg =>
+                    {
+                        Message message = Message.Parse(null, msg);
+                        message.Arguments.Add("ScriptSession.Id", SessionId);
+                        deferredMessages.Add($"message:{message.Serialize()}");
+                    });
+                    CloseMessages.Clear();
+                }
+                return deferredMessages;
+            }
+        }
+
         public string User { get; internal set; }
         public string JobName { get; internal set; }
         public bool Interactive { get; internal set; }

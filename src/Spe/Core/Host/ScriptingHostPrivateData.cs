@@ -30,6 +30,12 @@ namespace Spe.Core.Host
             internal set { ScriptingHost.CloseRunner = value; }
         }
 
+        [Obsolete("Use DeferredMessages instead." )]
+        public List<string> CloseMessages
+        {
+            get { return ScriptingHost.CloseMessages; }
+        }
+        
         public List<string> DeferredMessages
         {
             get { return ScriptingHost.DeferredMessages; }

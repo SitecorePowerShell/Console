@@ -75,3 +75,4 @@ node_modules/
 
 # Jetbrains Rider
 .idea
+src/Spe/App_Config/Include/z.Spe/z.Spe.Development.User.config
