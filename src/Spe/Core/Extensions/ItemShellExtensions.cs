@@ -18,20 +18,88 @@ namespace Spe.Core.Extensions
 {
     public class ItemShellExtensions
     {
-        private static readonly ConcurrentDictionary<ID, Dictionary<ID, string>> AllPropertySets =
-            new ConcurrentDictionary<ID, Dictionary<ID, string>>();
+        private static readonly ConcurrentDictionary<ID, Dictionary<ID, string>> AllPropertySets = new();
 
-        private static readonly string HelperClassName = typeof(ItemShellExtensions).FullName;
-
-        private static readonly Dictionary<string, string> CustomGetters = new Dictionary<string, string>
-        {
-            {"ItemPath", "$this.Paths.Path"},
-            {"FullPath", "$this.Paths.FullPath"},
-            {"MediaPath", "$this.Paths.MediaPath"},
-            {"ContentPath", "$this.Paths.ContentPath"},
-            {"ProviderPath", "[Spe.Core.Utility.PathUtilities]::GetProviderPath($this)"},
-            {"BaseTemplate", "[Sitecore.Data.Managers.TemplateManager]::GetTemplate($this).GetBaseTemplates()"}
-        };
+        private static readonly HashSet<ID> StandardFields =
+        [
+            Sitecore.FieldIDs.ArchiveDate,
+            Sitecore.FieldIDs.ArchiveVersionDate,
+            Sitecore.FieldIDs.BaseTemplate,
+            Sitecore.FieldIDs.SubitemsSorting,
+            Sitecore.FieldIDs.Command,
+            Sitecore.FieldIDs.CommentDialogHeight,
+            Sitecore.FieldIDs.CommentTemplate,
+            Sitecore.FieldIDs.ContextMenu,
+            Sitecore.FieldIDs.Created,
+            Sitecore.FieldIDs.CreatedBy,
+            Sitecore.FieldIDs.DefaultDomain,
+            Sitecore.FieldIDs.DefaultWorkflow,
+            Sitecore.FieldIDs.DefaultCommentDialogHeight,
+            Sitecore.FieldIDs.DefaultCommentTemplate,
+            Sitecore.FieldIDs.DictionaryKey,
+            Sitecore.FieldIDs.DictionaryPhrase,
+            Sitecore.FieldIDs.DisplayName,
+            Sitecore.FieldIDs.DomainRoleNameTemplate,
+            Sitecore.FieldIDs.DomainUserNameTemplate,
+            Sitecore.FieldIDs.DomainMembershipProvider,
+            Sitecore.FieldIDs.DomainUniqueName,
+            Sitecore.FieldIDs.EditorPath,
+            Sitecore.FieldIDs.EnableLanguageFallback,
+            Sitecore.FieldIDs.EnableSharedLanguageFallback,
+            Sitecore.FieldIDs.EnforceVersionPresence,
+            Sitecore.FieldIDs.EnableItemFallback,
+            Sitecore.FieldIDs.FallbackDomain,
+            Sitecore.FieldIDs.FallbackLanguage,
+            Sitecore.FieldIDs.Hidden,
+            Sitecore.FieldIDs.HideVersion,
+            Sitecore.FieldIDs.Icon,
+            Sitecore.FieldIDs.InheritSecurity, 
+            Sitecore.FieldIDs.LanguageIso,
+            Sitecore.FieldIDs.Lock,
+            Sitecore.FieldIDs.Branches,
+            Sitecore.FieldIDs.NextState,
+            Sitecore.FieldIDs.NeverPublish,
+            Sitecore.FieldIDs.Originator,
+            Sitecore.FieldIDs.PageDefinition,
+            Sitecore.FieldIDs.Presentation,
+            Sitecore.FieldIDs.Preview,
+            Sitecore.FieldIDs.PublishDate,
+            Sitecore.FieldIDs.PublishingTargets,
+            Sitecore.FieldIDs.PublishingTargetDatabase,
+            Sitecore.FieldIDs.ReminderDate,
+            Sitecore.FieldIDs.ReminderRecipients,
+            Sitecore.FieldIDs.ReminderText,
+            Sitecore.FieldIDs.Renderers,
+            Sitecore.FieldIDs.Ribbon,
+            Sitecore.FieldIDs.LayoutField,
+            Sitecore.FieldIDs.ReadOnly,
+            Sitecore.FieldIDs.Reference,
+            Sitecore.FieldIDs.Revision,
+            Sitecore.FieldIDs.Owner,
+            Sitecore.FieldIDs.Security,
+            Sitecore.FieldIDs.Skin,
+            Sitecore.FieldIDs.Sortorder,
+            Sitecore.FieldIDs.StandardValues,
+            Sitecore.FieldIDs.StandardValueHolderId,
+            Sitecore.FieldIDs.State,
+            Sitecore.FieldIDs.AppearanceEvaluatorType,
+            Sitecore.FieldIDs.Style,
+            Sitecore.FieldIDs.Thumbnail,
+            Sitecore.FieldIDs.UnpublishDate,
+            Sitecore.FieldIDs.Updated,
+            Sitecore.FieldIDs.UpdatedBy,
+            Sitecore.FieldIDs.UserMembership,
+            Sitecore.FieldIDs.ValidFrom,
+            Sitecore.FieldIDs.ValidTo,
+            Sitecore.FieldIDs.FinalLayoutField,
+            Sitecore.FieldIDs.Workflow,
+            Sitecore.FieldIDs.WorkflowState,
+            Sitecore.FieldIDs.Source,
+            Sitecore.FieldIDs.SourceItem,
+            Sitecore.FieldIDs.UIStaticItem,
+            Sitecore.FieldIDs.StandardFieldsID
+        ];
+        
 
         internal static PSObject GetPsObject(SessionState provider, Item item)
         {
@@ -45,7 +113,7 @@ namespace Spe.Core.Extensions
                 propertySet = new Dictionary<ID, string>(item.Fields.Count);
                 foreach (Field field in item.Fields)
                 {
-                    if (field.Name != "ID") // don't map - native property
+                    if (field.Name != "ID"&& !StandardFields.Contains(field.ID)) // don't map - native property
                     {
                         propertySet.Add(field.ID, field.Name);
                     }
@@ -54,8 +122,8 @@ namespace Spe.Core.Extensions
             }
 
             var typedFieldGetter = new CustomFieldAccessor(item);
-            psObject.Properties.Add(new PSNoteProperty("_", typedFieldGetter));
-            psObject.Properties.Add(new PSNoteProperty("PSFields", typedFieldGetter));
+            psObject.Members.Add(new PSNoteProperty("_", typedFieldGetter));
+            psObject.Members.Add(new PSNoteProperty("PSFields", typedFieldGetter));
 
             foreach (var fieldKey in propertySet.Keys)
             {
@@ -64,39 +132,16 @@ namespace Spe.Core.Extensions
 
                 if (string.IsNullOrEmpty(fieldName)) continue;
 
-                while (psObject.Properties[fieldName] != null)
+                while (psObject.Members[fieldName] != null)
                 {
                     fieldName = "_" + fieldName;
                 }
-
-                var getter = $"$this[\"{fieldId}\"]";
+                
                 if (item.Fields[fieldId] != null)
                 {
-                    if (item.Fields[fieldId].TypeKey == "datetime")
-                    {
-                        getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
-                    }
-                }
-                var setter =
-                    $"[{HelperClassName}]::Modify($this, \"{fieldId}\", $Args );";
-
-                psObject.Properties.Add(new PSScriptProperty(
-                    fieldName,
-                    provider.InvokeCommand.NewScriptBlock(getter),
-                    provider.InvokeCommand.NewScriptBlock(setter)));
-            }
-
-            foreach (var customGetter in CustomGetters.Keys)
-            {
-                if (psObject.Properties[customGetter] == null)
-                {
-                    psObject.Properties.Add(new PSScriptProperty(
-                        customGetter,
-                        provider.InvokeCommand.NewScriptBlock(CustomGetters[customGetter])));
+                    psObject.Members.Add(new PsItemProperty(item, fieldName, item.Fields[fieldId]));
                 }
             }
-
-
             return psObject;
         }
 
@@ -107,11 +152,19 @@ namespace Spe.Core.Extensions
 
         public static void ModifyProperty(Item item, string propertyName, object value)
         {
+            if (item != null)
+            {
+                ModifyProperty(item, item.Fields[propertyName].ID, value);
+            }
+        }
+        
+        public static void ModifyProperty(Item item, ID fieldId, object value)
+        {
             item?.Edit(
                 args =>
                 {
                     var newValue = value.BaseObject();
-                    var field = FieldTypeManager.GetField(item.Fields[propertyName]);
+                    var field = FieldTypeManager.GetField(item.Fields[fieldId]);
 
                     if ((newValue as object[])?[0].BaseObject() is Item)
                     {
@@ -187,13 +240,13 @@ namespace Spe.Core.Extensions
                                 break;
                             }
                         case DateTime time:
-                            item[propertyName] = time.ToString("yyyyMMddTHHmmss");
+                            item[fieldId] = time.ToString("yyyyMMddTHHmmss");
                             break;
                         case bool b:
-                            item[propertyName] = b ? "1" : "";
+                            item[fieldId] = b ? "1" : "";
                             break;
                         default:
-                            item[propertyName] = newValue?.ToString();
+                            item[fieldId] = newValue?.ToString();
                             break;
                     }
                 });

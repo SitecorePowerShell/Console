@@ -88,7 +88,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Rainbow, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Rainbow.Core.2.1.4\lib\net452\Rainbow.dll</HintPath>
     </Reference>
@@ -234,6 +236,7 @@
     <Compile Include="Commands\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\MessageExtensions.cs" />
     <Compile Include="Core\Extensions\NameValueCollectionExtensions.cs" />
+    <Compile Include="Core\Extensions\PSItemProperty.cs" />
     <Compile Include="Core\Host\ScriptExecutionResult.cs" />
     <Compile Include="Core\Rules\HasAncestorInheritingFromTemplateCondition.cs" />
     <Compile Include="Core\Rules\PowerShellDelegatedAccess.cs" />
