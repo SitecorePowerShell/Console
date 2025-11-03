@@ -575,3 +575,9 @@ nobr > .scTab_Hover {
 #Content, #Wrapper, #Result {
     width: 100% !important;
 }
+
+.scRibbonNavigator {
+    background-color: #474747;
+    width: 100%;
+    display: flex;
+}
