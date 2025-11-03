@@ -11,7 +11,9 @@
 
 #ResultsSplitter + tr > td { 
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
+    padding-right: 3px;
+    padding-bottom: 2px;
 }
 
 #Databases {

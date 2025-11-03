@@ -127,8 +127,7 @@
                                      GridPanel.Row.ID="ResultsSplitter"
                                      Height="10px"/>
                         <Border ID="Result" GridPanel.Height="100%" class="console pre results"
-                                GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow"
-                                GridPanel.Style="padding:0 0 2px 0">
+                                GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow">
                             <Border Id="ProgressOverlay" Visible="false">
                                 <Border>
                                     <p>
