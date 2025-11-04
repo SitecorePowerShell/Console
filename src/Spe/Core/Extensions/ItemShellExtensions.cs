@@ -20,52 +20,28 @@ namespace Spe.Core.Extensions
     {
         private static readonly ConcurrentDictionary<ID, Dictionary<ID, string>> AllPropertySets = new();
 
-        private static readonly HashSet<ID> StandardFields =
+        public static readonly HashSet<ID> StandardFields =
         [
             Sitecore.FieldIDs.ArchiveDate,
             Sitecore.FieldIDs.ArchiveVersionDate,
-            Sitecore.FieldIDs.BaseTemplate,
             Sitecore.FieldIDs.SubitemsSorting,
-            Sitecore.FieldIDs.Command,
-            Sitecore.FieldIDs.CommentDialogHeight,
-            Sitecore.FieldIDs.CommentTemplate,
             Sitecore.FieldIDs.ContextMenu,
             Sitecore.FieldIDs.Created,
             Sitecore.FieldIDs.CreatedBy,
-            Sitecore.FieldIDs.DefaultDomain,
             Sitecore.FieldIDs.DefaultWorkflow,
-            Sitecore.FieldIDs.DefaultCommentDialogHeight,
-            Sitecore.FieldIDs.DefaultCommentTemplate,
-            Sitecore.FieldIDs.DictionaryKey,
-            Sitecore.FieldIDs.DictionaryPhrase,
             Sitecore.FieldIDs.DisplayName,
-            Sitecore.FieldIDs.DomainRoleNameTemplate,
-            Sitecore.FieldIDs.DomainUserNameTemplate,
-            Sitecore.FieldIDs.DomainMembershipProvider,
-            Sitecore.FieldIDs.DomainUniqueName,
-            Sitecore.FieldIDs.EditorPath,
-            Sitecore.FieldIDs.EnableLanguageFallback,
-            Sitecore.FieldIDs.EnableSharedLanguageFallback,
             Sitecore.FieldIDs.EnforceVersionPresence,
             Sitecore.FieldIDs.EnableItemFallback,
-            Sitecore.FieldIDs.FallbackDomain,
-            Sitecore.FieldIDs.FallbackLanguage,
             Sitecore.FieldIDs.Hidden,
             Sitecore.FieldIDs.HideVersion,
             Sitecore.FieldIDs.Icon,
-            Sitecore.FieldIDs.InheritSecurity, 
-            Sitecore.FieldIDs.LanguageIso,
             Sitecore.FieldIDs.Lock,
             Sitecore.FieldIDs.Branches,
-            Sitecore.FieldIDs.NextState,
             Sitecore.FieldIDs.NeverPublish,
             Sitecore.FieldIDs.Originator,
-            Sitecore.FieldIDs.PageDefinition,
-            Sitecore.FieldIDs.Presentation,
             Sitecore.FieldIDs.Preview,
             Sitecore.FieldIDs.PublishDate,
             Sitecore.FieldIDs.PublishingTargets,
-            Sitecore.FieldIDs.PublishingTargetDatabase,
             Sitecore.FieldIDs.ReminderDate,
             Sitecore.FieldIDs.ReminderRecipients,
             Sitecore.FieldIDs.ReminderText,
@@ -73,22 +49,18 @@ namespace Spe.Core.Extensions
             Sitecore.FieldIDs.Ribbon,
             Sitecore.FieldIDs.LayoutField,
             Sitecore.FieldIDs.ReadOnly,
-            Sitecore.FieldIDs.Reference,
             Sitecore.FieldIDs.Revision,
             Sitecore.FieldIDs.Owner,
             Sitecore.FieldIDs.Security,
             Sitecore.FieldIDs.Skin,
             Sitecore.FieldIDs.Sortorder,
             Sitecore.FieldIDs.StandardValues,
-            Sitecore.FieldIDs.StandardValueHolderId,
             Sitecore.FieldIDs.State,
-            Sitecore.FieldIDs.AppearanceEvaluatorType,
             Sitecore.FieldIDs.Style,
             Sitecore.FieldIDs.Thumbnail,
             Sitecore.FieldIDs.UnpublishDate,
             Sitecore.FieldIDs.Updated,
             Sitecore.FieldIDs.UpdatedBy,
-            Sitecore.FieldIDs.UserMembership,
             Sitecore.FieldIDs.ValidFrom,
             Sitecore.FieldIDs.ValidTo,
             Sitecore.FieldIDs.FinalLayoutField,
@@ -96,10 +68,36 @@ namespace Spe.Core.Extensions
             Sitecore.FieldIDs.WorkflowState,
             Sitecore.FieldIDs.Source,
             Sitecore.FieldIDs.SourceItem,
-            Sitecore.FieldIDs.UIStaticItem,
-            Sitecore.FieldIDs.StandardFieldsID
+            new("{3607F9C7-DDA3-43C3-9720-39A7A5B3A4C3}"), // __Default View
+            new("{C7815F60-96E1-40CB-BB06-B5F833F73B61}"), // __Persistent Bucket Filter
+            new("{9541E67D-CE8C-4225-803D-33F7F29F09EF}"), // __Short description
+            new("{C9283D9E-7C29-4419-9C28-5A5C8FF53E84}"), // __Bucketable
+            new("{8C181989-2794-4B28-8EE4-6BB5CB928DC2}"), // __Boosting Rules
+            new("{83798D75-DF25-4C28-9327-E8BAC2B75292}"), // __Insert Rules
+            new("{B7E5B151-B145-4CED-85C5-FBDB566DFA4D}"), // __Validator Bar Validation Rules
+            new("{93D1B217-B8F4-462E-BABF-68298C9CE667}"), // __Boost
+            new("{57CBCA4C-8C94-446C-B8CA-7D8DC54F4285}"), // __Validate Button Validation Rules
+            new("{4C9312A5-2E4E-42F8-AB6F-B8DB8B82BF22}"), // __Controller
+            new("{D312103C-B36C-4CA5-864A-C85F9ABDA503}"), // __Is Bucket
+            new("{A14F1B0C-4384-49EC-8790-28A440F3670C}"), // __Semantics
+            new("{86B52EEF-078E-4D9E-80BF-888287070E6C}"), // __Workflow Validation Rules
+            new("{F7B94D8C-A842-49F8-AB7A-2169D00426B0}"), // __Should Not Organize In Bucket
+            new("{9DAFCA1D-D618-4616-86B8-A8ACD6B28A63}"), // __Bucket Parent Reference
+            new("{21F74F6E-42D4-42A2-A4B4-4CEFBCFBD2BB}"), // __Facets
+            new("{C2F5B2B5-71C1-431E-BF7F-DBDC1E5A2F83}"), // __Quick Action Bar Validation Rules
+            new("{56776EDF-261C-4ABC-9FE7-70C618795239}"), // __Help link
+            new("{577F1689-7DE4-4AD2-A15F-7FDC1759285F}"), // __Long description
+            new("{9857F526-390F-48DF-B6D1-1A97CC328E8F}"), // __Version Name
+            new("{F2DB8BA1-E477-41F5-8EF5-22EEFA8D2F6E}"), // __Enabled Views
+            new("{A0CB3965-8884-4C7A-8815-B6B2E5CED162}"), // __Editors
+            new("{9FB734CC-8952-4072-A2D4-40F890E16F56}"), // __Controller Action
+            new("{4A749557-242B-4372-8A20-B2DB9D406301}"), // __AutoThumbnails
+            new("{F47C0D78-61F9-479C-96DF-1159727D32C6}"), // __Suppressed Validation Rules
+            new("{C0E276BB-8807-40AA-8138-E5C38B0C5DAB}"), // __Quick Actions
+            new("{AC51462C-8A8D-493B-9492-34D1F26F20F1}"), // __Default Bucket Query
+            new("{A4879E42-0270-458D-9C19-A20AF3C2B765}"), // __Presets
+            new("{D85DB4EC-FF89-4F9C-9E7C-A9E0654797FC}"), // __Editor            
         ];
-        
 
         internal static PSObject GetPsObject(SessionState provider, Item item)
         {
