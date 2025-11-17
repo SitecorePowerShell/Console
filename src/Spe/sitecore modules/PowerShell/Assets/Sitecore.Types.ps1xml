@@ -113,6 +113,7 @@
       <ScriptProperty><Name>__Workflow</Name><GetScriptBlock>$this["{A4F985D9-98B3-4B52-AAAF-4344F6E747C6}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{A4F985D9-98B3-4B52-AAAF-4344F6E747C6}", $Args );</SetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>__Workflow state</Name><GetScriptBlock>$this["{3E431DE1-525E-47A3-B6B0-1CCBEC3A8C98}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{3E431DE1-525E-47A3-B6B0-1CCBEC3A8C98}", $Args );</SetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>__Workflow Validation Rules</Name><GetScriptBlock>$this["{86B52EEF-078E-4D9E-80BF-888287070E6C}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{86B52EEF-078E-4D9E-80BF-888287070E6C}", $Args );</SetScriptBlock></ScriptProperty>      
+      <ScriptProperty><Name>___Standard values</Name><GetScriptBlock>$this["{F7D48A55-2158-4F02-9356-756654404F73}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{F7D48A55-2158-4F02-9356-756654404F73}", $Args );</SetScriptBlock></ScriptProperty>
       <PropertySet>
         <Name>PSImage</Name>
         <ReferencedProperties>
