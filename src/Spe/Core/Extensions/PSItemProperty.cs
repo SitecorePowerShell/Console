@@ -11,7 +11,7 @@ public class PsItemProperty: PSPropertyInfo
 {
   //private readonly string name;
   private readonly Item item;
-  private readonly Field field;
+  private readonly Field innerField;
 
   /// <summary>Returns the string representation of this property</summary>
   /// <returns>This property as a string</returns>
@@ -23,7 +23,7 @@ public class PsItemProperty: PSPropertyInfo
   /// <summary>
   /// Used from TypeTable to delay setting getter and setter
   /// </summary>
-  internal PsItemProperty(Item propertyItem, string propertyName, Field field)
+  internal PsItemProperty(Item propertyItem, string propertyName, Field innerField)
   {
     var type = typeof(PSMemberInfo);
     // Get the internal field
@@ -35,12 +35,12 @@ public class PsItemProperty: PSPropertyInfo
     // Set the value on this instance
     fieldInfo.SetValue(this, propertyName);    
     item = propertyItem;
-    this.field = field;
+    this.innerField = innerField;
   }
 
   public override PSMemberInfo Copy()
   {
-    return new PsItemProperty(item, Name, field);
+    return new PsItemProperty(item, Name, innerField);
   }
 
   public override PSMemberTypes MemberType => PSMemberTypes.CodeProperty;
@@ -52,16 +52,16 @@ public class PsItemProperty: PSPropertyInfo
   {
     get
     {
-      if (field.TypeKey == "datetime")
+      if (innerField.TypeKey == "datetime")
       {
-        return Sitecore.DateUtil.IsoDateToDateTime(field.Value);
+        return Sitecore.DateUtil.IsoDateToDateTime(innerField.Value);
       }
       else
       {
-        return field?.Value ?? "";
+        return innerField?.Value ?? "";
       }
       
     }
-    set => ItemShellExtensions.ModifyProperty(item, field.ID, value);
+    set => ItemShellExtensions.ModifyProperty(item, innerField.ID, value);
   }
 }
