@@ -16,7 +16,6 @@ namespace Spe.Core.Settings
             ["tmpPath"] = Environment.GetEnvironmentVariable("tmp"),
             ["SitecoreDataFolder"] = MapPath(Sitecore.Configuration.Settings.DataFolder),
             ["SitecoreDebugFolder"] = MapPath(Sitecore.Configuration.Settings.DebugFolder),
-            ["SitecoreIndexFolder"] = MapPath(FileUtil.MakePath(Sitecore.Configuration.Settings.DataFolder, "/indexes")),
             ["SitecoreLayoutFolder"] = MapPath(Sitecore.Configuration.Settings.LayoutFolder),
             ["SitecoreLogFolder"] = MapPath(Sitecore.Configuration.Settings.LogFolder),
             ["SitecoreMediaFolder"] = MapPath(Sitecore.Configuration.Settings.MediaFolder),
