@@ -9,8 +9,11 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Web;
+using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
+using Sitecore.Install.Serialization;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.Sheer;
@@ -85,6 +88,13 @@ namespace Spe.Core.Host
                 var psVersionTable = ps.Runspace.SessionStateProxy.GetVariable("PSVersionTable") as Hashtable;
                 PsVersion = (Version)psVersionTable["PSVersion"];
             }
+
+            // Ensure IOUtils created by touching IOUtils.SerializationContext
+            using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+            {
+                var context = IOUtils.SerializationContext;
+            }
+            
         }
 
         internal ScriptSession(string applianceType, bool personalizedSettings)
