@@ -75,7 +75,7 @@ namespace Spe.Client.Applications.UploadFile
                         if (!validator.Validate(pathOrId))
                         {
 
-                            CancelFailedValidation("The upload folder is not on the the list of allowed upload locations.");
+                            CancelFailedValidation("The upload folder is not on the list of allowed upload locations.");
                             Sitecore.Diagnostics.Log.Warn($"[SPE] Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.", this);
                             return;
                         }
