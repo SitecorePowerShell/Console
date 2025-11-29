@@ -46,8 +46,9 @@ namespace Spe.Client.Applications.UploadFile
                     var result = contentTypeValidator.Validate(Request.Files);
                     if (!result.Valid)
                     {
-                        CancelFailedValidation("The file type is not on the configured list of approved file types.");
-                        Sitecore.Diagnostics.Log.Warn($"[SPE] {result.Message}", this);
+                        var failedValidationMessage = "The file type is not on the configured list of approved file types.";
+                        CancelFailedValidation(failedValidationMessage);
+                        PowerShellLog.Warn($"{result.Message}");
                         return;
                     }
 
@@ -74,9 +75,9 @@ namespace Spe.Client.Applications.UploadFile
                         pathOrId = validator.GetFullPath(pathOrId);
                         if (!validator.Validate(pathOrId))
                         {
-
-                            CancelFailedValidation("The upload folder is not on the list of allowed upload locations.");
-                            Sitecore.Diagnostics.Log.Warn($"[SPE] Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.", this);
+                            var failedValidationMessage = "The upload folder is not on the list of allowed upload locations.";
+                            CancelFailedValidation(failedValidationMessage);
+                            PowerShellLog.Warn($"Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.");
                             return;
                         }
                     }
