@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell:*)",
+      "Bash(mkdir:*)",
+      "Bash(pwsh:*)"
+    ]
+  }
+}

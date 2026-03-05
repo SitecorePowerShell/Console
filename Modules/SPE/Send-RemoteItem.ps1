@@ -1,5 +1,7 @@
 ﻿#Requires -Version 3
 
+Add-Type -AssemblyName System.Net.Http
+
 function Send-RemoteItem {
     <#
         .SYNOPSIS
@@ -82,6 +84,12 @@ function Send-RemoteItem {
         [System.Management.Automation.PSCredential]
         $Credential,
 
+        [Parameter(ParameterSetName='Uri')]
+        [string]$SharedSecret,
+
+        [Parameter(ParameterSetName='Uri')]
+        [switch]$UseDefaultCredentials,
+
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
         [Alias("FullName")]
@@ -140,12 +148,16 @@ function Send-RemoteItem {
         }
 
         if($Session) {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $clientCache          = $sd.HttpClients
+        } else {
+            $clientCache = @{}
         }
 
         $serviceUrl = "/-/script"
@@ -162,33 +174,15 @@ function Send-RemoteItem {
         if($PSBoundParameters.SkipExisting.IsPresent) {
             $serviceUrl += "&skipexisting=true"
         }
-        
+
         foreach($uri in $ConnectionUri) {
-            
+
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
             Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-            
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
-
-            if($Credential) {
-                $client.Credentials = $Credential
-            }
-
-            if($UseDefaultCredentials) {
-                $client.UseDefaultCredentials = $UseDefaultCredentials
-            }
+            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
 
             try {
                 Write-Verbose -Message "Uploading $($Path)"

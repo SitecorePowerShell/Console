@@ -1,5 +1,7 @@
 ﻿#Requires -Version 3
 
+Add-Type -AssemblyName System.Net.Http
+
 function Receive-RemoteItem {
     <#
         .SYNOPSIS
@@ -134,12 +136,16 @@ function Receive-RemoteItem {
         $Path = $Path.TrimEnd('\','/')
 
         if($Session) {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $clientCache          = $sd.HttpClients
+        } else {
+            $clientCache = @{}
         }
 
         $itemType = "undetermined"
@@ -155,45 +161,25 @@ function Receive-RemoteItem {
         }
 
         foreach($uri in $ConnectionUri) {
-            
+
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
             Write-Verbose -Message "Preparing to download remote item from the url $($url)"
             Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
+            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
 
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
-                      
-            if($Credential) {
-                $handler.Credentials = $Credential
-            }
-
-            if($UseDefaultCredentials) {
-                $handler.UseDefaultCredentials = $UseDefaultCredentials
-            }
-
-            [System.Net.HttpWebResponse]$script:errorResponse = $null
+            $errorResponse = $null
+            $ex = $null
             [System.Net.Http.HttpResponseMessage]$responseMessage = $null
-           
-            try {
-                $script:errorResponse = $null
-                $script:ex = $null
 
+            try {
                 $responseMessage = $client.GetAsync($url).Result
-                [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result                   
+                [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result
             } catch [System.Net.WebException] {
-                [System.Net.WebException]$script:ex = $_.Exception
-                [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response
+                [System.Net.WebException]$ex = $_.Exception
+                [System.Net.HttpWebResponse]$errorResponse = $ex.Response
                 Write-Verbose -Message "Response exception message: $($ex.Message)"
                 Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
                 if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
@@ -205,7 +191,7 @@ function Receive-RemoteItem {
 
             if($errorResponse){
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
-                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
 
             if($response -and $response.Length -gt 0 -or $responseMessage.Content.Headers.Count -gt 0) {

@@ -87,7 +87,7 @@ function Parse-Response {
         }
     } elseif ($response -eq "login failed") {
         Write-Verbose "Login with the specified account failed."
-        break            
+        return
     } else {
         Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the account has access. A common cause for this is an application pool recycling."
     }
@@ -252,37 +252,10 @@ function Invoke-RemoteScript {
         $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } -ArgumentList `$params | Select-Object -ExpandProperty ID")
     }
 
-    $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
-        Group-Object -Property SubExpression | 
-        ForEach-Object {
-        $_.Group | Select-Object -First 1
-    })
-    
-    $invokeWithArguments = $false        
-    if ($usingVariables.count -gt 0) {
-        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach-Object {$_.Group | Select-Object -First 1}  
-        Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
-        $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
-        $invokeWithArguments = $true
-    }
-
-    if ($invokeWithArguments) {
-        if(!$Arguments) { $Arguments = @{} }
-
-        $paramsPrefix = "`$params."
-        if($AsJob.IsPresent) {
-            $paramsPrefix = "$"
-        }
-        $command = $ScriptBlock.ToString()
-        foreach($usingVarValue in $usingVariableValues) {
-            $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $command = $command.Replace($usingVarValue.Name, "$($paramsPrefix)$($usingVarValue.NewName.TrimStart('$'))")
-        }
-
-        $newScriptBlock = $command
-    } else {
-        $newScriptBlock = $scriptBlock.ToString()
-    }
+    $paramsPrefix = if ($AsJob.IsPresent) { '$' } else { '$params.' }
+    $resolved = Resolve-UsingVariables -ScriptBlock $ScriptBlock -Arguments $Arguments -ParamsPrefix $paramsPrefix
+    $newScriptBlock = $resolved.ScriptText
+    $Arguments = $resolved.Arguments
 
 
     if($Arguments) {
@@ -295,110 +268,94 @@ function Invoke-RemoteScript {
         [scriptblock]::Create($newScriptBlock).Invoke()
     } else {
         if($PSCmdlet.ParameterSetName -eq "Session") {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $SessionId = $Session.SessionId
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
-            $PersistentSession = $Session.PersistentSession
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $SessionId            = $sd.SessionId
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $PersistentSession    = $sd.PersistentSession
+            $clientCache          = $sd.HttpClients
         } else {
             $SessionId = [guid]::NewGuid()
             $PersistentSession = $false
+            $clientCache = @{}
         }
-        
+
         $serviceUrl = "/-/script/script/?"
         $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-        foreach ($uri in $ConnectionUri) {            
+        foreach ($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
-            $localParams = $parameters | Out-String
-            
+            $localParams = if ($parameters) { $parameters } else { '' }
+
             #creating a psuedo file split on a special comment rather than trying to pass a potentially enormous set of data to the handler
             #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
             $body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
-            
+
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
-                 
-            if ($Credential) {
-                $handler.Credentials = $Credential
-            }
-
-            if ($UseDefaultCredentials) {
-                $handler.UseDefaultCredentials = $UseDefaultCredentials
-            }
+            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
             
-            [System.Net.HttpWebResponse]$script:errorResponse = $null 
-            $script:encounteredError = $false
+            $errorResponse = $null
+            $encounteredError = $false
+            $response = $null
 
-            $response = & {
-                try {
-                    Write-Verbose -Message "Transferring script to server"                 
-                    $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
-                    $ms = New-Object System.IO.MemoryStream
-                    $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
-                    $gzip.Write($messageBytes, 0, $messageBytes.Length)
-                    $gzip.Close()
-                    $ms.Position = 0
-                    $content = New-Object System.Net.Http.ByteArrayContent(@(, $ms.ToArray()))
-                    $ms.Close()
-                    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
-                    $content.Headers.ContentEncoding.Add("gzip")
-                   
-                    $postResponse = $client.PostAsync($url, $content)
-                    $taskResult = $postResponse.Result
-                    if($taskResult) {
-                        $taskResult.EnsureSuccessStatusCode() > $null
-                        $taskResult.Content.ReadAsStringAsync().Result
-                        Write-Verbose -Message "Script transfer complete."
-                    } else {
-                        $script:ex = $postResponse.Exception
-                        $reason = $postResponse.Exception.Message
-                        $innerException = $postResponse.Exception
-                        while(($innerException = $innerException.InnerException)) {
-                            $reason += " " + $innerException.Message                            
-                        }
-                        $script:encounteredError = $true
-                        Write-Error -Message "Server response: $($reason)" -Category ConnectionError `
-                            -CategoryActivity "Post" -CategoryTargetName $uri -CategoryReason "$($postResponse.Status)" -CategoryTargetType $RootPath -ErrorAction SilentlyContinue
-                        $Host.UI.WriteErrorLine($reason)
+            try {
+                Write-Verbose -Message "Transferring script to server"
+                $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+                $ms = New-Object System.IO.MemoryStream
+                $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
+                $gzip.Write($messageBytes, 0, $messageBytes.Length)
+                $gzip.Close()
+                $ms.Position = 0
+                $content = New-Object System.Net.Http.ByteArrayContent(@(, $ms.ToArray()))
+                $ms.Close()
+                $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
+                $content.Headers.ContentEncoding.Add("gzip")
+
+                $postResponse = $client.PostAsync($url, $content)
+                $taskResult = $postResponse.Result
+                if($taskResult) {
+                    $taskResult.EnsureSuccessStatusCode() > $null
+                    $response = $taskResult.Content.ReadAsStringAsync().Result
+                    Write-Verbose -Message "Script transfer complete."
+                } else {
+                    $ex = $postResponse.Exception
+                    $reason = $postResponse.Exception.Message
+                    $innerException = $postResponse.Exception
+                    while(($innerException = $innerException.InnerException)) {
+                        $reason += " " + $innerException.Message
                     }
-                }
-                catch [System.Net.Http.HttpRequestException] {
-                    $script:ex = $_.Exception
-                    [System.Net.Http.HttpResponseMessage]$script:errorResponse = $taskResult
-                    if ($errorResponse) {
-                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                        }
-                        elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                            Write-Verbose -Message "Check that the service files are properly configured."
-                        }
-                    }
-                    else {
-                        Write-Verbose -Message $ex.Message
-                    }
+                    $encounteredError = $true
+                    Write-Error -Message "Server response: $($reason)" -Category ConnectionError `
+                        -CategoryActivity "Post" -CategoryTargetName $uri -CategoryReason "$($postResponse.Status)" -CategoryTargetType $RootPath -ErrorAction SilentlyContinue
+                    $Host.UI.WriteErrorLine($reason)
                 }
             }
-            
+            catch [System.Net.Http.HttpRequestException] {
+                $ex = $_.Exception
+                [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
+                if ($errorResponse) {
+                    if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                    }
+                    elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                        Write-Verbose -Message "Check that the service files are properly configured."
+                    }
+                }
+                else {
+                    Write-Verbose -Message $ex.Message
+                }
+            }
+
             if ($errorResponse) {
-                $script:encounteredError = $true
+                $encounteredError = $true
                 Write-Error -Message "Server response: $($errorResponse.ReasonPhrase)" -Category ConnectionError `
-                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
-            
+
             if(!$encounteredError) {
                 Write-Verbose -Message "Parsing response from server."
                 Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
@@ -437,70 +394,30 @@ function Invoke-RemoteScriptAsync {
         $ScriptBlock = [scriptblock]::Create($writeStreamOverridesScript.ToString() + $ScriptBlock.ToString());
     }
 
-    $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
-        Group-Object -Property SubExpression | 
-        ForEach {
-        $_.Group | Select -First 1
-    })
-    
-    $invokeWithArguments = $false        
-    if ($usingVariables.count -gt 0) {
-        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach {$_.Group | Select -First 1}  
-        Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
-        $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
-        $invokeWithArguments = $true
-    }
-
-    if ($invokeWithArguments) {
-        if(!$Arguments) { $Arguments = @{} }
-
-        $paramsPrefix = "`$params."
-        if($AsJob.IsPresent) {
-            $paramsPrefix = "$"
-        }
-        $command = $ScriptBlock.ToString()
-        foreach($usingVarValue in $usingVariableValues) {
-            $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $command = $command.Replace($usingVarValue.Name, "$($paramsPrefix)$($usingVarValue.NewName.TrimStart('$'))")
-        }
-
-        $newScriptBlock = $command
-    } else {
-        $newScriptBlock = $scriptBlock.ToString()
-    }
+    $resolved = Resolve-UsingVariables -ScriptBlock $ScriptBlock -Arguments $Arguments -ParamsPrefix '$params.'
+    $newScriptBlock = $resolved.ScriptText
+    $Arguments = $resolved.Arguments
 
     if($Arguments) {
         #This is still needed in order to pass types
         $parameters = ConvertTo-CliXml -InputObject $Arguments
     }
 
-    $newScriptBlock = $scriptBlock.ToString()
-    $Username = $Session.Username
-    $Password = $Session.Password
-    $SessionId = $Session.SessionId
-    $Credential = $Session.Credential
-    $UseDefaultCredentials = $Session.UseDefaultCredentials
-    $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
-    $PersistentSession = $Session.PersistentSession
+    $sd = Expand-ScriptSession -Session $Session
+    $Username             = $sd.Username
+    $Password             = $sd.Password
+    $SharedSecret         = $sd.SharedSecret
+    $SessionId            = $sd.SessionId
+    $Credential           = $sd.Credential
+    $UseDefaultCredentials = $sd.UseDefaultCredentials
+    $ConnectionUri        = $sd.ConnectionUri
+    $PersistentSession    = $sd.PersistentSession
+    $clientCache          = $sd.HttpClients
 
     $serviceUrl = "/-/script/script/?"
     $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
 
-    $handler = New-Object System.Net.Http.HttpClientHandler
-    $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-    $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-    $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-    $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-       
-    if ($Credential) {
-        $handler.Credentials = $Credential
-    }
-
-    if($UseDefaultCredentials) {
-        $handler.UseDefaultCredentials = $UseDefaultCredentials
-    }
-   
-    $localParams = $parameters | Out-String
+    $localParams = if ($parameters) { $parameters } else { '' }
 
     $messageBytes = [System.Text.Encoding]::UTF8.GetBytes("$($newScriptBlock.ToString())<#$($SessionId)#>$($localParams)")
 
@@ -516,6 +433,9 @@ function Invoke-RemoteScriptAsync {
 
     foreach($uri in $ConnectionUri) {
         $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
+
+        $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+            -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
 
         $taskPost = $client.PostAsync($url, $content)
 

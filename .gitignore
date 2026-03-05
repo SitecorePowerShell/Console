@@ -40,7 +40,7 @@ deploy/*
 /Data/serialization/security/
 web.Debug.config
 web.Release.config
-Tests/
+/Tests/
 /releases/
 
 # Project Split

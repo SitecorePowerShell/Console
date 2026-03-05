@@ -89,6 +89,7 @@ function New-ScriptSession {
             "UseDefaultCredentials" = [bool]$UseDefaultCredentials
             "Connection" = @()
             "PersistentSession" = $false
+            "_HttpClients" = @{}
         }
     }
 
