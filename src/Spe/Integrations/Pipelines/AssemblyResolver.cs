@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Sitecore.Pipelines;
+using Spe.Core.VersionDecoupling;
+
 namespace Spe.Integrations.Pipelines
 {
     public class AssemblyResolver

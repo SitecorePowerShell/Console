@@ -9,9 +9,6 @@ namespace Spe.Core.VersionDecoupling
     {
         public static Version Current = GetVersionNumber();
 
-        public static Version V80 = new Version(8, 0);
-        public static Version V81 = new Version(8, 1);
-        public static Version V82 = new Version(8, 2);
         public static Version V92 = new Version(9, 2);
 
         public static Version GetVersionNumber()
@@ -38,7 +35,7 @@ namespace Spe.Core.VersionDecoupling
                 var fvi = FileVersionInfo.GetVersionInfo(kernel.Location);
                 if (!Version.TryParse(fvi.FileVersion, out version))
                 {
-                    version = new Version(8, 0);
+                    version = new Version(9, 2);
                 }
             }
             else

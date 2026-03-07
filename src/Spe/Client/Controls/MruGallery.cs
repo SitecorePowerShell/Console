@@ -21,7 +21,6 @@ using Sitecore.Web.UI.XmlControls;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Settings;
-using Spe.Core.VersionDecoupling;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
@@ -127,11 +126,7 @@ namespace Spe.Client.Controls
             var placeholderText = Translate.Text(
                 Texts
                     .MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
-            SitecoreVersion.V80.OrNewer(() =>
-                SearchPhrase.Placeholder = placeholderText
-            ).Else(() =>
-                SheerResponse.SetAttribute(SearchPhrase.ClientID, "placeholder", placeholderText)
-            );
+            SearchPhrase.Placeholder = placeholderText;
         }
 
         private void BuildDatabases()

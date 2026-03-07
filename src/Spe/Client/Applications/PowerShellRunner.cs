@@ -22,7 +22,6 @@ using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
-using Spe.Core.VersionDecoupling;
 using Version = Sitecore.Data.Version;
 
 namespace Spe.Client.Applications
@@ -322,9 +321,7 @@ namespace Spe.Client.Applications
             Result.Value = printResults;
                 
             PsProgress.Text = string.Empty;
-            SitecoreVersion.V80
-                .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
-                .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
+            PsProgressStatus.Text = "<span class='status'> </span><br/>";
 
             SheerResponse.Eval(
                 $"spe.scriptFinished('#progressbar',{(!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant()},{result.HasErrors.ToString().ToLowerInvariant()});");
@@ -409,22 +406,11 @@ namespace Spe.Client.Applications
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
 
-            var isSitecore8 = CurrentVersion.IsAtLeast(SitecoreVersion.V80);
-            PsProgressStatus.Visible = showStatus && isSitecore8;
-            Subtitle.Visible = showStatus && !isSitecore8;
+            PsProgressStatus.Visible = showStatus;
 
-            if (isSitecore8)
-            {
-                PsProgressStatus.Text = showStatus
+            PsProgressStatus.Text = showStatus
                 ? $"<span class='status'>{status}   </span><br/>"
-                    : "<span class='status'> </span><br/>";
-            }
-            else
-            {
-                Subtitle.Text = showStatus
-                ? $"<span class=\'status\'>{Texts.PowerShellRunner_UpdateProgress_Status_.Translate()} {status}</span>"
-                    : "<span class='status'> </span>";
-            }
+                : "<span class='status'> </span><br/>";
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {
                 PsProgress.Text = string.Empty;
