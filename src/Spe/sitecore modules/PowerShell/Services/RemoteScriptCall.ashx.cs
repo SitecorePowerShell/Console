@@ -45,7 +45,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
     {
         private const string ApiScriptsKey = "Spe.ApiScriptsKey";
         private const string ExpirationSetting = "Spe.WebApiCacheExpirationSecs";
+
+        private const string ParamUser = "user";
+        private const string ParamPassword = "password";
+        private const string ParamApiVersion = "apiVersion";
+        private const string ParamScript = "script";
+        private const string ParamPath = "path";
+        private const string ParamScriptDb = "scriptDb";
+        private const string ParamSessionId = "sessionId";
+        private const string ParamPersistentSession = "persistentSession";
+        private const string ParamRawOutput = "rawOutput";
+        private const string ParamSkipUnpack = "skipunpack";
+        private const string ParamSkipExisting = "skipexisting";
+        private const string ParamScDatabase = "sc_database";
         private static readonly Regex GuidRegex = new Regex(@"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly object ApiScriptsLock = new object();
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
@@ -64,9 +78,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         public void ProcessRequest(HttpContext context)
         {
             var request = context.Request;
-            var requestParameters = request.Params;
-
-            var apiVersion = requestParameters.Get("apiVersion");
+            var apiVersion = request.Params.Get(ParamApiVersion);
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
                 ? ApiVersionToServiceMapping[serviceMappingKey]
@@ -75,31 +87,44 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
             PowerShellLog.Debug($"'{request.Url}'");
 
-            // verify that the service is enabled
             if (!CheckServiceEnabled(context, serviceName))
             {
                 return;
             }
 
+            if (!AuthenticateRequest(context, serviceName, out var identity, out var isAuthenticated))
+            {
+                return;
+            }
+
+            DispatchRequest(context, request, apiVersion, serviceMappingKey, identity, isAuthenticated);
+        }
+
+        private static bool AuthenticateRequest(HttpContext context, string serviceName, out AccountIdentity identity, out bool isAuthenticated)
+        {
+            var request = context.Request;
+            var requestParameters = request.Params;
             var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
-            var username = requestParameters.Get("user");
-            var password = requestParameters.Get("password");
+            var username = requestParameters.Get(ParamUser);
+            var password = requestParameters.Get(ParamPassword);
             var authHeader = request.Headers["Authorization"];
 
-            if (!string.IsNullOrEmpty(request.QueryString["user"]) || !string.IsNullOrEmpty(request.QueryString["password"]))
+            identity = null;
+            isAuthenticated = false;
+
+            if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
             {
                 PowerShellLog.Warn($"Credentials passed via query string from IP {GetIp(request)}. Query string authentication is deprecated — use the Authorization header instead.");
             }
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
-                if (authHeader.StartsWith("Basic")) {
+                if (authHeader.StartsWith("Basic"))
+                {
                     var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
                     var encoding = Encoding.GetEncoding("iso-8859-1");
                     var usernamePassword = encoding.GetString(System.Convert.FromBase64String(encodedUsernamePassword));
-                    
                     var separatorIndex = usernamePassword.IndexOf(':');
-
                     username = usernamePassword.Substring(0, separatorIndex);
                     password = usernamePassword.Substring(separatorIndex + 1);
                 }
@@ -116,13 +141,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         else
                         {
                             RejectAuthenticationMethod(context, serviceName);
-                            return;
+                            return false;
                         }
                     }
                     catch (SecurityException ex)
                     {
                         RejectAuthenticationMethod(context, serviceName, ex);
-                        return;
+                        return false;
                     }
                 }
             }
@@ -132,10 +157,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (string.IsNullOrEmpty(authUserName))
             {
                 RejectAuthenticationMethod(context, serviceName);
-                return;
+                return false;
             }
 
-            var identity = new AccountIdentity(authUserName);
+            identity = new AccountIdentity(authUserName);
             if (!string.IsNullOrEmpty(password))
             {
                 try
@@ -147,44 +172,48 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     else
                     {
                         RejectAuthenticationMethod(context, serviceName);
-                        return;
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     RejectAuthenticationMethod(context, serviceName, ex);
-                    return;
+                    return false;
                 }
             }
 
-            // verify that the user is authorized to access the end point
             if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
             {
-                return;
+                return false;
             }
 
-            var isAuthenticated = authenticationManager.IsAuthenticated;
+            isAuthenticated = authenticationManager.IsAuthenticated;
 
             if (identity.Name != authenticationManager.CurrentUsername && !CheckServiceAuthentication(context, serviceName, isAuthenticated))
             {
-                return;
+                return false;
             }
 
-            var itemParam = requestParameters.Get("script");
-            var pathParam = requestParameters.Get("path");
-            var originParam = requestParameters.Get("scriptDb");
-            var sessionId = requestParameters.Get("sessionId");
-            var persistentSession = requestParameters.Get("persistentSession").Is("true");
-            var rawOutput = requestParameters.Get("rawOutput").Is("true");
+            return true;
+        }
+
+        private static void DispatchRequest(HttpContext context, HttpRequest request, string apiVersion, string serviceMappingKey, AccountIdentity identity, bool isAuthenticated)
+        {
+            var requestParameters = request.Params;
+            var itemParam = requestParameters.Get(ParamScript);
+            var pathParam = requestParameters.Get(ParamPath);
+            var originParam = requestParameters.Get(ParamScriptDb);
+            var sessionId = requestParameters.Get(ParamSessionId);
+            var persistentSession = requestParameters.Get(ParamPersistentSession).Is("true");
+            var rawOutput = requestParameters.Get(ParamRawOutput).Is("true");
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
-            var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
-            var skipExisting = requestParameters.Get("skipexisting").Is("true");
-            var scDb = requestParameters.Get("sc_database");
-            
+            var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
+            var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
+            var scDb = requestParameters.Get(ParamScDatabase);
+
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");
 
-            // in some cases we need to set the database as it's still set to web after authentication
             if (!scDb.IsNullOrEmpty())
             {
                 Context.Database = Database.GetDatabase(scDb);
@@ -229,8 +258,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     if (scriptItem == null)
                     {
-                        context.Response.StatusCode = 404;
-                        context.Response.StatusDescription = "The specified script is invalid.";
+                        SetErrorResponse(context, 404, "The specified script is invalid.");
                         return;
                     }
                     break;
@@ -259,15 +287,25 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         public bool IsReusable => true;
 
+        private static void SetErrorResponse(HttpContext context, int statusCode, string message, bool suppressFormsAuth = false)
+        {
+            context.Response.StatusCode = statusCode;
+            context.Response.StatusDescription = message;
+            if (suppressFormsAuth)
+            {
+                context.Response.SuppressFormsAuthenticationRedirect = true;
+                context.Response.TrySkipIisCustomErrors = true;
+                context.Response.ContentType = "text/plain";
+            }
+        }
+
         private static bool CheckServiceEnabled(HttpContext context, string serviceName)
         {
             var isEnabled = WebServiceSettings.IsEnabled(serviceName);
             if (isEnabled) return true;
 
             var errorMessage = $"The request could not be completed because the {serviceName} service is disabled.";
-
-            context.Response.StatusCode = 403;
-            context.Response.StatusDescription = errorMessage;
+            SetErrorResponse(context, 403, errorMessage);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -279,12 +317,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var errorMessage =
                 $"The request could not be completed because the {serviceName} service requires authentication. Either the user is not logged in, authentication failed, or no credentials provided.";
-
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -293,14 +326,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static void RejectAuthenticationMethod(HttpContext context, string serviceName, Exception ex = null)
         {
             var errorMessage = $"A request to the {serviceName} service could not be completed because the provided credentials are invalid.";
-            
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
-
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
+
             if (ex != null)
             {
                 context.Response.StatusDescription += $" {ex.Message}";
@@ -314,12 +342,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (isAuthorized) return true;
 
             var errorMessage = $"The specified user {authUserName} is not authorized for the {serviceName} service.";
-
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -379,8 +402,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
             {
                 PowerShellLog.Error($"Rejected file path with traversal attempt: '{pathParam}'");
-                context.Response.StatusCode = 403;
-                context.Response.StatusDescription = "Path traversal is not allowed.";
+                SetErrorResponse(context, 403, "Path traversal is not allowed.");
                 return;
             }
 
@@ -417,15 +439,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (string.IsNullOrEmpty(file))
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified path is invalid.";
+                SetErrorResponse(context, 404, "The specified path is invalid.");
             }
             else
             {
                 if (!File.Exists(file))
                 {
-                    context.Response.StatusCode = 404;
-                    context.Response.StatusDescription = "The specified path is invalid.";
+                    SetErrorResponse(context, 404, "The specified path is invalid.");
                     return;
                 }
 
@@ -568,16 +588,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified media is invalid.";
+                SetErrorResponse(context, 404, "The specified media is invalid.");
                 return;
             }
 
             var mediaStream = mediaItem.GetMediaStream();
             if (mediaStream == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified media is invalid.";
+                SetErrorResponse(context, 404, "The specified media is invalid.");
                 return;
             }
 
@@ -641,8 +659,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified script is invalid.";
+                SetErrorResponse(context, 404, "The specified script is invalid.");
                 return;
             }
 
@@ -669,8 +686,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (string.IsNullOrEmpty(script))
             {
-                context.Response.StatusCode = 400;
-                context.Response.StatusDescription = "The specified script is invalid.";
+                SetErrorResponse(context, 400, "The specified script is invalid.");
                 return;
             }
 
@@ -847,28 +863,33 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
-            if(HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
-            
-            apiScripts = new ApiScriptCollection();
+            if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection cachedScripts) return cachedScripts;
 
-            if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
+            lock (ApiScriptsLock)
             {
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
-                GetAvailableScripts(roots, apiScripts);
-            } 
-            else if (!apiScripts.ContainsKey(dbName))
-            {
-                var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
-                GetAvailableScripts(roots, apiScripts);
+                if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection doubleCheckScripts) return doubleCheckScripts;
+
+                var apiScripts = new ApiScriptCollection();
+
+                if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
+                {
+                    var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
+                    GetAvailableScripts(roots, apiScripts);
+                }
+                else if (!apiScripts.ContainsKey(dbName))
+                {
+                    var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
+                    apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
+                    var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
+                    GetAvailableScripts(roots, apiScripts);
+                }
+
+                var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
+                HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
+                    new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
+
+                return apiScripts;
             }
-
-            var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
-            HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
-                new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
-
-            return apiScripts;
         }
 
         private static void GetAvailableScripts(IEnumerable<Item> roots, ApiScriptCollection apiScripts)
