@@ -86,6 +86,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var password = requestParameters.Get("password");
             var authHeader = request.Headers["Authorization"];
 
+            if (!string.IsNullOrEmpty(request.QueryString["user"]) || !string.IsNullOrEmpty(request.QueryString["password"]))
+            {
+                PowerShellLog.Warn($"Credentials passed via query string from IP {GetIp(request)}. Query string authentication is deprecated — use the Authorization header instead.");
+            }
+
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
                 if (authHeader.StartsWith("Basic")) {
@@ -815,7 +820,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 WebUtil.RemoveSessionValue(originParam);
                 var response = context.Response;
                 response.Clear();
-                response.AddHeader("Content-Disposition", "attachment; filename=\"" + message.Name + "\"");
+                response.AddHeader("Content-Disposition", "attachment; filename=\"" + SanitizeContentDispositionFilename(message.Name) + "\"");
                 response.ContentType = message.ContentType;
                 switch (message.Content)
                 {
@@ -900,13 +905,28 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
+        private static string SanitizeContentDispositionFilename(string filename)
+        {
+            if (string.IsNullOrEmpty(filename)) return filename;
+
+            var sanitized = new StringBuilder(filename.Length);
+            foreach (var c in filename)
+            {
+                if (c != '"' && c != '\\' && c != '\r' && c != '\n' && c != ';')
+                {
+                    sanitized.Append(c);
+                }
+            }
+            return sanitized.ToString();
+        }
+
         private static void AddContentHeaders(HttpContext context, string filename, long length)
         {
             Assert.ArgumentNotNull(filename, "filename");
             var response = context.Response;
             response.ClearHeaders();
             response.AddHeader("Content-Type", MimeMapping.GetMimeMapping(filename));
-            response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            response.AddHeader("Content-Disposition", "attachment; filename=\"" + SanitizeContentDispositionFilename(filename) + "\"");
             response.AddHeader("Content-Length", length.ToString());
             response.AddHeader("Content-Transfer-Encoding", "binary");
         }
