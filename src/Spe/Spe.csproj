@@ -648,9 +648,6 @@
     <Content Include="sitecore modules\items\master\items.master.spe.dat.tmp" />
     <Content Include="sitecore modules\items\web\items.web.spe.dat.tmp" />
     <None Include="sitecore modules\PowerShell\Assets\Spe.dll-Help.maml" />
-    <EmbeddedResource Include="..\Spe.Sitecore8\bin\$(Configuration)\Spe.VersionSpecific.dll">
-      <Link>Resources\Version8\Spe.VersionSpecific.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Spe.Sitecore92\bin\$(Configuration)\Spe.VersionSpecific.dll">
       <Link>Resources\Version92\Spe.VersionSpecific.dll</Link>
     </EmbeddedResource>
