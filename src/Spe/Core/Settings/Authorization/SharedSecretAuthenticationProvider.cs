@@ -173,14 +173,15 @@ namespace Spe.Core.Settings.Authorization
         private static byte[] ComputeHash(string algorithm, string secret, string toBeSigned)
         {
             var secretBytes = Encoding.UTF8.GetBytes(secret);
+            var dataBytes = Encoding.UTF8.GetBytes(toBeSigned);
             switch (algorithm)
             {
                 case "HS256":
-                    return new HMACSHA256(secretBytes).ComputeHash(Encoding.UTF8.GetBytes(toBeSigned));
+                    using (var hmac = new HMACSHA256(secretBytes)) { return hmac.ComputeHash(dataBytes); }
                 case "HS384":
-                    return new HMACSHA384(secretBytes).ComputeHash(Encoding.UTF8.GetBytes(toBeSigned));
+                    using (var hmac = new HMACSHA384(secretBytes)) { return hmac.ComputeHash(dataBytes); }
                 case "HS512":
-                    return new HMACSHA512(secretBytes).ComputeHash(Encoding.UTF8.GetBytes(toBeSigned));
+                    using (var hmac = new HMACSHA512(secretBytes)) { return hmac.ComputeHash(dataBytes); }
                 default:
                     return null;
             }
