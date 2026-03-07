@@ -93,9 +93,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     result.Add(new NameValue
                     {
                         Name = "output",
-                        Value =
-                            scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
-                                (current, next) => current + next)
+                        Value = string.Join("", scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text))
                     });
                 }
                 result.AddRange(
@@ -174,7 +172,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             Sitecore.Context.SetActiveSite(siteName);
 
-            if (!String.IsNullOrEmpty(cliXmlArgs))
+            if (!string.IsNullOrEmpty(cliXmlArgs))
             {
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
@@ -188,9 +186,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             scriptSession.SetVariable("results", outObjects);
             scriptSession.Output.Clear();
             scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-            var result = scriptSession.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
+            var result = string.Join("", scriptSession.Output.Select(p => p.Text));
 
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 ScriptSessionManager.RemoveSession(scriptSession);
             }
@@ -210,6 +208,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (!Login(userName, password))
                 {
+                    return false;
+                }
+
+                if (filePath.Contains(".."))
+                {
+                    PowerShellLog.Error($"Rejected file path with traversal attempt: '{filePath}'");
                     return false;
                 }
 
@@ -256,6 +260,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (!Login(userName, password))
                 {
                     return Encoding.ASCII.GetBytes("login failed");
+                }
+
+                if (filePath.Contains(".."))
+                {
+                    PowerShellLog.Error($"Rejected file path with traversal attempt: '{filePath}'");
+                    return new byte[0];
                 }
 
                 PowerShellLog.Info($"File '{filePath}' downloaded through remoting by user: '{userName}'");
