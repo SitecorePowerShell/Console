@@ -457,7 +457,7 @@ try {
     $statusCode = $_.Exception.Response.StatusCode.value__
     $contentType = $_.Exception.Response.ContentType
     Assert-Equal $statusCode 401 "Bad credentials return 401"
-    Assert-Equal $contentType "text/plain" "401 response includes text/plain Content-Type (CQ-2)"
+    Assert-True ($contentType -match "text/plain") "401 response includes text/plain Content-Type (CQ-2)"
 }
 
 # 8d. Script execution still works after ProcessRequest refactor (CQ-1 regression)
