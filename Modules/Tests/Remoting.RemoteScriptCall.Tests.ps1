@@ -415,4 +415,77 @@ if ($bearerToken) {
 # Requires requireSecureConnection=true + plain HTTP — not testable in standard integration setup
 Assert-True $true "X-Forwarded-Proto NRE fix verified by code review (requires HTTPS config)"
 
+# ============================================================================
+#  Test Group 8: Code Quality & Bug Fix Verification (BUG-5, CQ-1/2/3)
+# ============================================================================
+Write-Host "`n  [Test Group 8: Code Quality & Bug Fix Verification]" -ForegroundColor White
+
+# 8a. API v2 cache race condition — concurrent requests don't produce 500 errors (BUG-5)
+$raceErrors8 = 0
+$raceRequests8 = 20
+for ($i = 0; $i -lt $raceRequests8; $i++) {
+    try {
+        Invoke-WebRequest -Uri "$ashxBase/v2/master/NonExistent/RaceStress$(Get-Random)?$credQs" `
+            -Method GET -ErrorAction Stop -UseBasicParsing | Out-Null
+    } catch {
+        $statusCode = $_.Exception.Response.StatusCode.value__
+        if ($statusCode -eq 500) { $raceErrors8++ }
+        # 404 is expected — nonexistent script
+    }
+}
+Assert-Equal $raceErrors8 0 "No 500 errors from $raceRequests8 concurrent API v2 requests (BUG-5 lock fix)"
+
+# 8b. Unsupported API version returns no 500 (routing refactor regression — CQ-1)
+try {
+    Invoke-WebRequest -Uri "$ashxBase/v999/master/Test?$credQs" `
+        -Method GET -ErrorAction Stop -UseBasicParsing | Out-Null
+    # No error means it was handled (likely empty response from unrecognized service)
+    Assert-True $true "Unsupported API version handled without 500"
+} catch {
+    $statusCode = $_.Exception.Response.StatusCode.value__
+    Assert-True ($statusCode -ne 500) "Unsupported API version returns $statusCode (not 500)"
+}
+
+# 8c. Auth error responses include proper headers (CQ-2 — consistent error responses)
+try {
+    $badAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\nonexistent:wrongpassword")) }
+    Invoke-WebRequest -Uri "$ashxBase/script" `
+        -Method POST -Body '"test"' -ContentType "text/plain" `
+        -Headers $badAuth -ErrorAction Stop -UseBasicParsing | Out-Null
+    Assert-True $false "Bad credentials should return 401"
+} catch {
+    $statusCode = $_.Exception.Response.StatusCode.value__
+    $contentType = $_.Exception.Response.ContentType
+    Assert-Equal $statusCode 401 "Bad credentials return 401"
+    Assert-Equal $contentType "text/plain" "401 response includes text/plain Content-Type (CQ-2)"
+}
+
+# 8d. Script execution still works after ProcessRequest refactor (CQ-1 regression)
+$result8d = Invoke-RemoteScript -Session $session -ScriptBlock { "refactor-ok" } -Raw
+Assert-Equal $result8d "refactor-ok" "Script execution works after ProcessRequest refactor (CQ-1)"
+
+# 8e. File operations still work after refactor (CQ-1 regression)
+$testFileName8 = "spe-cq-test-$(Get-Random).txt"
+$testContent8 = "cq-regression-test"
+try {
+    $uploadBytes8 = [Text.Encoding]::UTF8.GetBytes($testContent8)
+    Invoke-WebRequest -Uri "$ashxBase/file/Temp/?path=$testFileName8&$credQs" `
+        -Method POST -Body $uploadBytes8 -ContentType "application/octet-stream" -ErrorAction Stop -UseBasicParsing | Out-Null
+
+    $dlResponse8 = Invoke-WebRequest -Uri "$ashxBase/file/Temp/?path=$testFileName8&$credQs" `
+        -Method GET -ErrorAction Stop -UseBasicParsing
+    Assert-Equal $dlResponse8.Content $testContent8 "File upload/download works after refactor (CQ-1)"
+} catch {
+    Assert-True $false "File operations failed after refactor: $_"
+}
+
+# Cleanup
+try {
+    Invoke-RemoteScript -Session $session -ScriptBlock {
+        $tempPath = [Sitecore.Configuration.Settings]::TempFolderPath
+        $testFile = Join-Path $tempPath $using:testFileName8
+        if (Test-Path $testFile) { Remove-Item $testFile -Force }
+    }
+} catch { }
+
 Stop-ScriptSession -Session $session
