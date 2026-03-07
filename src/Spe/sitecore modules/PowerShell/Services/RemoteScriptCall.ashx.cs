@@ -43,9 +43,23 @@ namespace Spe.sitecore_modules.PowerShell.Services
     /// </summary>
     public class RemoteScriptCall : IHttpHandler, IRequiresSessionState
     {
-        private static readonly object LoginLock = new object();
         private const string ApiScriptsKey = "Spe.ApiScriptsKey";
         private const string ExpirationSetting = "Spe.WebApiCacheExpirationSecs";
+
+        private const string ParamUser = "user";
+        private const string ParamPassword = "password";
+        private const string ParamApiVersion = "apiVersion";
+        private const string ParamScript = "script";
+        private const string ParamPath = "path";
+        private const string ParamScriptDb = "scriptDb";
+        private const string ParamSessionId = "sessionId";
+        private const string ParamPersistentSession = "persistentSession";
+        private const string ParamRawOutput = "rawOutput";
+        private const string ParamSkipUnpack = "skipunpack";
+        private const string ParamSkipExisting = "skipexisting";
+        private const string ParamScDatabase = "sc_database";
+        private static readonly Regex GuidRegex = new Regex(@"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly object ApiScriptsLock = new object();
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
@@ -64,9 +78,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         public void ProcessRequest(HttpContext context)
         {
             var request = context.Request;
-            var requestParameters = request.Params;
-
-            var apiVersion = requestParameters.Get("apiVersion");
+            var apiVersion = request.Params.Get(ParamApiVersion);
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
                 ? ApiVersionToServiceMapping[serviceMappingKey]
@@ -75,26 +87,44 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
             PowerShellLog.Debug($"'{request.Url}'");
 
-            // verify that the service is enabled
             if (!CheckServiceEnabled(context, serviceName))
             {
                 return;
             }
 
+            if (!AuthenticateRequest(context, serviceName, out var identity, out var isAuthenticated))
+            {
+                return;
+            }
+
+            DispatchRequest(context, request, apiVersion, serviceMappingKey, identity, isAuthenticated);
+        }
+
+        private static bool AuthenticateRequest(HttpContext context, string serviceName, out AccountIdentity identity, out bool isAuthenticated)
+        {
+            var request = context.Request;
+            var requestParameters = request.Params;
             var authenticationManager = TypeResolver.ResolveFromCache<IAuthenticationManager>();
-            var username = requestParameters.Get("user");
-            var password = requestParameters.Get("password");
+            var username = requestParameters.Get(ParamUser);
+            var password = requestParameters.Get(ParamPassword);
             var authHeader = request.Headers["Authorization"];
+
+            identity = null;
+            isAuthenticated = false;
+
+            if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
+            {
+                PowerShellLog.Warn($"Credentials passed via query string from IP {GetIp(request)}. Query string authentication is deprecated — use the Authorization header instead.");
+            }
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
             {
-                if (authHeader.StartsWith("Basic")) {
+                if (authHeader.StartsWith("Basic"))
+                {
                     var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
                     var encoding = Encoding.GetEncoding("iso-8859-1");
                     var usernamePassword = encoding.GetString(System.Convert.FromBase64String(encodedUsernamePassword));
-                    
                     var separatorIndex = usernamePassword.IndexOf(':');
-
                     username = usernamePassword.Substring(0, separatorIndex);
                     password = usernamePassword.Substring(separatorIndex + 1);
                 }
@@ -111,13 +141,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         else
                         {
                             RejectAuthenticationMethod(context, serviceName);
-                            return;
+                            return false;
                         }
                     }
                     catch (SecurityException ex)
                     {
                         RejectAuthenticationMethod(context, serviceName, ex);
-                        return;
+                        return false;
                     }
                 }
             }
@@ -127,10 +157,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (string.IsNullOrEmpty(authUserName))
             {
                 RejectAuthenticationMethod(context, serviceName);
-                return;
+                return false;
             }
 
-            var identity = new AccountIdentity(authUserName);
+            identity = new AccountIdentity(authUserName);
             if (!string.IsNullOrEmpty(password))
             {
                 try
@@ -142,44 +172,48 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     else
                     {
                         RejectAuthenticationMethod(context, serviceName);
-                        return;
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     RejectAuthenticationMethod(context, serviceName, ex);
-                    return;
+                    return false;
                 }
             }
 
-            // verify that the user is authorized to access the end point
             if (!CheckIsUserAuthorized(context, identity.Name, serviceName))
             {
-                return;
+                return false;
             }
 
-            var isAuthenticated = authenticationManager.IsAuthenticated;
+            isAuthenticated = authenticationManager.IsAuthenticated;
 
             if (identity.Name != authenticationManager.CurrentUsername && !CheckServiceAuthentication(context, serviceName, isAuthenticated))
             {
-                return;
+                return false;
             }
 
-            var itemParam = requestParameters.Get("script");
-            var pathParam = requestParameters.Get("path");
-            var originParam = requestParameters.Get("scriptDb");
-            var sessionId = requestParameters.Get("sessionId");
-            var persistentSession = requestParameters.Get("persistentSession").Is("true");
-            var rawOutput = requestParameters.Get("rawOutput").Is("true");
+            return true;
+        }
+
+        private static void DispatchRequest(HttpContext context, HttpRequest request, string apiVersion, string serviceMappingKey, AccountIdentity identity, bool isAuthenticated)
+        {
+            var requestParameters = request.Params;
+            var itemParam = requestParameters.Get(ParamScript);
+            var pathParam = requestParameters.Get(ParamPath);
+            var originParam = requestParameters.Get(ParamScriptDb);
+            var sessionId = requestParameters.Get(ParamSessionId);
+            var persistentSession = requestParameters.Get(ParamPersistentSession).Is("true");
+            var rawOutput = requestParameters.Get(ParamRawOutput).Is("true");
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
-            var unpackZip = requestParameters.Get("skipunpack").IsNot("true");
-            var skipExisting = requestParameters.Get("skipexisting").Is("true");
-            var scDb = requestParameters.Get("sc_database");
-            
+            var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
+            var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
+            var scDb = requestParameters.Get(ParamScDatabase);
+
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");
 
-            // in some cases we need to set the database as it's still set to web after authentication
             if (!scDb.IsNullOrEmpty())
             {
                 Context.Database = Database.GetDatabase(scDb);
@@ -224,8 +258,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     if (scriptItem == null)
                     {
-                        context.Response.StatusCode = 404;
-                        context.Response.StatusDescription = "The specified script is invalid.";
+                        SetErrorResponse(context, 404, "The specified script is invalid.");
                         return;
                     }
                     break;
@@ -254,15 +287,25 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         public bool IsReusable => true;
 
+        private static void SetErrorResponse(HttpContext context, int statusCode, string message, bool suppressFormsAuth = false)
+        {
+            context.Response.StatusCode = statusCode;
+            context.Response.StatusDescription = message;
+            if (suppressFormsAuth)
+            {
+                context.Response.SuppressFormsAuthenticationRedirect = true;
+                context.Response.TrySkipIisCustomErrors = true;
+                context.Response.ContentType = "text/plain";
+            }
+        }
+
         private static bool CheckServiceEnabled(HttpContext context, string serviceName)
         {
             var isEnabled = WebServiceSettings.IsEnabled(serviceName);
             if (isEnabled) return true;
 
             var errorMessage = $"The request could not be completed because the {serviceName} service is disabled.";
-
-            context.Response.StatusCode = 403;
-            context.Response.StatusDescription = errorMessage;
+            SetErrorResponse(context, 403, errorMessage);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -274,12 +317,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var errorMessage =
                 $"The request could not be completed because the {serviceName} service requires authentication. Either the user is not logged in, authentication failed, or no credentials provided.";
-
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -288,14 +326,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static void RejectAuthenticationMethod(HttpContext context, string serviceName, Exception ex = null)
         {
             var errorMessage = $"A request to the {serviceName} service could not be completed because the provided credentials are invalid.";
-            
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
-
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
+
             if (ex != null)
             {
                 context.Response.StatusDescription += $" {ex.Message}";
@@ -309,12 +342,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (isAuthorized) return true;
 
             var errorMessage = $"The specified user {authUserName} is not authorized for the {serviceName} service.";
-
-            context.Response.StatusCode = 401;
-            context.Response.StatusDescription = errorMessage;
-            context.Response.SuppressFormsAuthenticationRedirect = true;
-            context.Response.TrySkipIisCustomErrors = true;
-            context.Response.ContentType = "text/plain";
+            SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
             return false;
@@ -371,6 +399,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessFile(HttpContext context, bool isUpload, string originParam, string pathParam)
         {
+            if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
+            {
+                PowerShellLog.Error($"Rejected file path with traversal attempt: '{pathParam}'");
+                SetErrorResponse(context, 403, "Path traversal is not allowed.");
+                return;
+            }
+
             if (isUpload)
             {
                 ProcessFileUpload(context.Request.InputStream, originParam, pathParam);
@@ -384,7 +419,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static void ProcessFileUpload(Stream content, string originParam, string pathParam)
         {
             var file = GetPathFromParameters(originParam, pathParam.Replace('/', '\\'));
-            file = FileUtil.MapPath(file);
             var fileInfo = new FileInfo(file);
             if (!fileInfo.Exists)
             {
@@ -405,16 +439,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (string.IsNullOrEmpty(file))
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified path is invalid.";
+                SetErrorResponse(context, 404, "The specified path is invalid.");
             }
             else
             {
-                file = FileUtil.MapPath(file);
                 if (!File.Exists(file))
                 {
-                    context.Response.StatusCode = 404;
-                    context.Response.StatusDescription = "The specified path is invalid.";
+                    SetErrorResponse(context, 404, "The specified path is invalid.");
                     return;
                 }
 
@@ -477,8 +508,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessMediaUpload(Stream content, Database db, string path, bool skipExisting = false)
         {
-            var guidPattern = @"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})";
-
             path = path.Replace('\\', '/').TrimEnd('/');
             path = (path.StartsWith("/") ? path : "/" + path);
             var originalPath = path;
@@ -495,9 +524,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var mediaItem = (MediaItem)db.GetItem(path);
 
-            if (mediaItem == null && Regex.IsMatch(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            if (mediaItem == null && GuidRegex.IsMatch(originalPath))
             {
-                var id = Regex.Match(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
+                var id = GuidRegex.Match(originalPath).Value;
                 mediaItem = db.GetItem(id);
             }
 
@@ -559,16 +588,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified media is invalid.";
+                SetErrorResponse(context, 404, "The specified media is invalid.");
                 return;
             }
 
             var mediaStream = mediaItem.GetMediaStream();
             if (mediaStream == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified media is invalid.";
+                SetErrorResponse(context, 404, "The specified media is invalid.");
                 return;
             }
 
@@ -632,8 +659,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
-                context.Response.StatusCode = 404;
-                context.Response.StatusDescription = "The specified script is invalid.";
+                SetErrorResponse(context, 404, "The specified script is invalid.");
                 return;
             }
 
@@ -660,126 +686,136 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (string.IsNullOrEmpty(script))
             {
-                context.Response.StatusCode = 400;
-                context.Response.StatusDescription = "The specified script is invalid.";
+                SetErrorResponse(context, 400, "The specified script is invalid.");
                 return;
             }
 
             var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
-            if (Context.Database != null)
+            try
             {
-                var item = Context.Database.GetRootItem();
-                if (item != null)
-                    session.SetItemLocationContext(item);
-            }
-
-            context.Response.ContentType = "text/plain";
-
-            if (streams != null)
-            {
-                var scriptArguments = new Hashtable();
-                foreach (var param in context.Request.QueryString.AllKeys)
+                if (Context.Database != null)
                 {
-                    var paramValue = HttpContext.Current.Request.QueryString[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
-
-                    scriptArguments[param] = paramValue;
+                    var item = Context.Database.GetRootItem();
+                    if (item != null)
+                        session.SetItemLocationContext(item);
                 }
 
-                foreach (var param in context.Request.Params.AllKeys)
-                {
-                    var paramValue = context.Request.Params[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
+                context.Response.ContentType = "text/plain";
 
-                    if (session.GetVariable(param) == null)
+                if (streams != null)
+                {
+                    var scriptArguments = new Hashtable();
+                    foreach (var param in context.Request.QueryString.AllKeys)
                     {
-                        session.SetVariable(param, paramValue);
+                        var paramValue = HttpContext.Current.Request.QueryString[param];
+                        if (string.IsNullOrEmpty(param)) continue;
+                        if (string.IsNullOrEmpty(paramValue)) continue;
+
+                        scriptArguments[param] = paramValue;
                     }
-                }
 
-                session.SetVariable("requestStreams", streams);
-                session.SetVariable("scriptArguments", scriptArguments);
-                session.ExecuteScriptPart(script, true);
-                context.Response.Write(session.Output.ToString());
-            }
-            else
-            {
-                // Duplicate the behaviors of the original RemoteAutomation service.
-                var requestUri = WebUtil.GetRequestUri();
-                var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath,
-                    requestUri.Port);
-                Context.SetActiveSite(site.Name);
-
-                if (!string.IsNullOrEmpty(cliXmlArgs))
-                {
-                    session.SetVariable("cliXmlArgs", cliXmlArgs);
-                    session.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
-                    script = script.TrimEnd(' ', '\t', '\n');
-                }
-
-                var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
-                var response = context.Response;
-                if (rawOutput)
-                {
-                    // In this output we want to give raw output data. No type information is needed. Error streams are lost.                       
-                    if (outObjects.Any())
+                    foreach (var param in context.Request.Params.AllKeys)
                     {
-                        foreach (var outObject in outObjects)
+                        var paramValue = context.Request.Params[param];
+                        if (string.IsNullOrEmpty(param)) continue;
+                        if (string.IsNullOrEmpty(paramValue)) continue;
+
+                        if (session.GetVariable(param) == null)
                         {
-                            response.Write(outObject.ToString());
+                            session.SetVariable(param, paramValue);
                         }
                     }
 
-                    if (session.LastErrors != null && session.LastErrors.Any())
-                    {
-                        var convertedObjects = new List<object>();
-                        convertedObjects.AddRange(session.LastErrors);
-
-                        session.SetVariable("results", convertedObjects);
-                        session.Output.Clear();
-                        session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-
-                        response.Write("<#messages#>");
-                        foreach (var outputBuffer in session.Output)
-                        {
-                            response.Write(outputBuffer.Text);
-                        }
-                    }
+                    session.SetVariable("requestStreams", streams);
+                    session.SetVariable("scriptArguments", scriptArguments);
+                    session.ExecuteScriptPart(script, true);
+                    context.Response.Write(session.Output.ToString());
                 }
                 else
                 {
-                    // In this output we want to preserve type information. Ideal for objects with a small output content.
-                    if (session.LastErrors != null && session.LastErrors.Any())
+                    // Duplicate the behaviors of the original RemoteAutomation service.
+                    var requestUri = WebUtil.GetRequestUri();
+                    var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath,
+                        requestUri.Port);
+                    Context.SetActiveSite(site.Name);
+
+                    if (!string.IsNullOrEmpty(cliXmlArgs))
                     {
-                        outObjects.AddRange(session.LastErrors);
+                        session.SetVariable("cliXmlArgs", cliXmlArgs);
+                        session.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
+                        script = script.TrimEnd(' ', '\t', '\n');
                     }
 
-                    if (outObjects.Any())
+                    var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
+                    var response = context.Response;
+                    if (rawOutput)
                     {
-                        session.SetVariable("results", outObjects);
-                        session.Output.Clear();
-                        session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-
-                        foreach (var outputBuffer in session.Output)
+                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.
+                        if (outObjects.Any())
                         {
-                            response.Write(outputBuffer.Text);
+                            foreach (var outObject in outObjects)
+                            {
+                                response.Write(outObject.ToString());
+                            }
+                        }
+
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            var convertedObjects = new List<object>();
+                            convertedObjects.AddRange(session.LastErrors);
+
+                            session.SetVariable("results", convertedObjects);
+                            session.Output.Clear();
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+
+                            response.Write("<#messages#>");
+                            foreach (var outputBuffer in session.Output)
+                            {
+                                response.Write(outputBuffer.Text);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // In this output we want to preserve type information. Ideal for objects with a small output content.
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            outObjects.AddRange(session.LastErrors);
+                        }
+
+                        if (outObjects.Any())
+                        {
+                            session.SetVariable("results", outObjects);
+                            session.Output.Clear();
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+
+                            foreach (var outputBuffer in session.Output)
+                            {
+                                response.Write(outputBuffer.Text);
+                            }
                         }
                     }
                 }
-            }
 
-            if (session.Output.HasErrors)
+                if (session.Output.HasErrors)
+                {
+                    context.Response.StatusCode = 424;
+                    context.Response.StatusDescription = "Method Failure";
+                }
+            }
+            catch (Exception ex)
             {
+                PowerShellLog.Error("Error during script execution via RemoteScriptCall", ex);
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";
             }
-
-            if (string.IsNullOrEmpty(sessionId) || !persistentSession)
+            finally
             {
-                ScriptSessionManager.RemoveSession(session);
+                if (string.IsNullOrEmpty(sessionId) || !persistentSession)
+                {
+                    ScriptSessionManager.RemoveSession(session);
+                }
             }
         }
 
@@ -800,7 +836,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 WebUtil.RemoveSessionValue(originParam);
                 var response = context.Response;
                 response.Clear();
-                response.AddHeader("Content-Disposition", "attachment; filename=" + message.Name);
+                response.AddHeader("Content-Disposition", "attachment; filename=\"" + SanitizeContentDispositionFilename(message.Name) + "\"");
                 response.ContentType = message.ContentType;
                 switch (message.Content)
                 {
@@ -827,28 +863,33 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
-            if(HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection apiScripts) return apiScripts;
-            
-            apiScripts = new ApiScriptCollection();
+            if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection cachedScripts) return cachedScripts;
 
-            if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
+            lock (ApiScriptsLock)
             {
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
-                GetAvailableScripts(roots, apiScripts);
-            } 
-            else if (!apiScripts.ContainsKey(dbName))
-            {
-                var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
-                var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
-                GetAvailableScripts(roots, apiScripts);
+                if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection doubleCheckScripts) return doubleCheckScripts;
+
+                var apiScripts = new ApiScriptCollection();
+
+                if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
+                {
+                    var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
+                    GetAvailableScripts(roots, apiScripts);
+                }
+                else if (!apiScripts.ContainsKey(dbName))
+                {
+                    var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
+                    apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
+                    var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
+                    GetAvailableScripts(roots, apiScripts);
+                }
+
+                var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
+                HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
+                    new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
+
+                return apiScripts;
             }
-
-            var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
-            HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
-                new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
-
-            return apiScripts;
         }
 
         private static void GetAvailableScripts(IEnumerable<Item> roots, ApiScriptCollection apiScripts)
@@ -870,12 +911,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
                             apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
                         }
-                        apiScripts[dbName].Add(scriptPath, new ApiScript
+                        apiScripts[dbName][scriptPath] = new ApiScript
                         {
                             Database = result.Database.Name,
                             Id = result.ID,
                             Path = scriptPath
-                        });
+                        };
                     }
                 }
                 catch (Exception ex)
@@ -885,13 +926,28 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
+        private static string SanitizeContentDispositionFilename(string filename)
+        {
+            if (string.IsNullOrEmpty(filename)) return filename;
+
+            var sanitized = new StringBuilder(filename.Length);
+            foreach (var c in filename)
+            {
+                if (c != '"' && c != '\\' && c != '\r' && c != '\n' && c != ';')
+                {
+                    sanitized.Append(c);
+                }
+            }
+            return sanitized.ToString();
+        }
+
         private static void AddContentHeaders(HttpContext context, string filename, long length)
         {
             Assert.ArgumentNotNull(filename, "filename");
             var response = context.Response;
             response.ClearHeaders();
             response.AddHeader("Content-Type", MimeMapping.GetMimeMapping(filename));
-            response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            response.AddHeader("Content-Disposition", "attachment; filename=\"" + SanitizeContentDispositionFilename(filename) + "\"");
             response.AddHeader("Content-Length", length.ToString());
             response.AddHeader("Content-Transfer-Encoding", "binary");
         }

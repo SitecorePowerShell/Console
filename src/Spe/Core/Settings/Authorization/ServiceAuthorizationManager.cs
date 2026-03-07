@@ -115,11 +115,23 @@ namespace Spe.Core.Settings.Authorization
         {
             if (_authorizationCache.Count > 1000)
             {
-                _authorizationCache.Clear();
+                EvictExpiredEntries();
             }
 
             return _authorizationCache.TryGetValue(cacheKey, out entry) &&
                    entry.ExpirationDate > DateTime.Now;
+        }
+
+        private static void EvictExpiredEntries()
+        {
+            var now = DateTime.Now;
+            foreach (var kvp in _authorizationCache)
+            {
+                if (kvp.Value.ExpirationDate <= now)
+                {
+                    _authorizationCache.TryRemove(kvp.Key, out _);
+                }
+            }
         }
 
         private static string GetAuthorizationCacheKey(string serviceName, string userName)

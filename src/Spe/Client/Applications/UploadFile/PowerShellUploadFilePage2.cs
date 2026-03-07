@@ -115,7 +115,7 @@ namespace Spe.Client.Applications.UploadFile
                         return;
                     HttpContext.Current.Response.Write(
                         "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'EndUploading(\"" +
-                        fileName + "\")')</script></head><body>Done</body></html>");
+                        StringUtil.EscapeJavascriptString(fileName) + "\")')</script></head><body>Done</body></html>");
                 }
                 catch (OutOfMemoryException)
                 {

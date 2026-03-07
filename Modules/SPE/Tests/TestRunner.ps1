@@ -19,6 +19,16 @@ function Write-TestResult {
 
 function Assert-Equal {
     param($Actual, $Expected, [string]$Message)
+    if ($null -eq $Actual -and $null -eq $Expected) {
+        Write-TestResult -Pass $true -Message $Message
+        return
+    }
+    if ($null -eq $Actual -or $null -eq $Expected) {
+        Write-TestResult -Pass $false -Message $Message
+        Write-Host "         Expected: $Expected" -ForegroundColor Yellow
+        Write-Host "         Actual:   $Actual" -ForegroundColor Yellow
+        return
+    }
     $pass = -not (Compare-Object @($Actual) @($Expected) -SyncWindow 0)
     Write-TestResult -Pass $pass -Message $Message
     if (-not $pass) {
