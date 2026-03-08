@@ -1,4 +1,4 @@
-﻿---
+---
 ID: "ac05422c-a1b1-41ba-a1fd-4ec7e944de3b"
 Parent: "01bb164c-5e8e-4c9b-941f-e5340bdd520c"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -100,10 +100,51 @@ SharedFields:
     Export-Package -Project $package -Path "$packageName-IAR.zip" -Zip
     $package.Sources.Remove($iarSource) > $null
     
-    Get-UnicornConfiguration -Filter "Spe.Core" | New-UnicornItemSource -Name "Spe.Core" -Project $package -InstallMode Merge -MergeMode Clear
-    Get-UnicornConfiguration -Filter "Spe.UI" | New-UnicornItemSource -Name "Spe.UI" -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter "Spe.Rules" | New-UnicornItemSource -Name "Spe.Rules" -Project $package -InstallMode Overwrite
-    Get-UnicornConfiguration -Filter "Spe.Scripts" | New-UnicornItemSource -Name "Spe.Scripts" -Project $package -InstallMode Overwrite
+    # Spe.Core items
+    $coreItems = @()
+    $coreItems += Get-Item "master:/sitecore/templates/Modules"
+    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Console" -Recurse
+    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Authorable Reports" -Recurse
+    $coreItems += Get-ChildItem "master:/sitecore/system/Modules/PowerShell" -Recurse
+    $coreItems | New-ExplicitItemSource -Name "Spe.Core" -InstallMode Merge -MergeMode Clear | ForEach-Object { $package.Sources.Add($_) }
+    
+    # Spe.UI items
+    $uiItems = @()
+    @(
+        "core:/sitecore/content/Applications/PowerShell",
+        "core:/sitecore/system/Dictionary/PowerShell",
+        "core:/sitecore/layout/Layouts/Applications/PowerShell",
+        "core:/sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE",
+        "core:/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Console",
+        "core:/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Toolbox",
+        "core:/sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports",
+        "core:/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script",
+        "core:/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console",
+        "core:/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts",
+        "core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE",
+        "core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports",
+        "master:/sitecore/system/Tasks/Commands/PowerShellScriptCommand"
+    ) | ForEach-Object { $uiItems += Get-ChildItem $_ -Recurse }
+    $uiItems | New-ExplicitItemSource -Name "Spe.UI" -InstallMode Overwrite | ForEach-Object { $package.Sources.Add($_) }
+    
+    # Spe.Rules items
+    $rulesItems = @()
+    @(
+        "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell",
+        "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell Experience Buttons",
+        "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell ISE",
+        "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell",
+        "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons",
+        "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE",
+        "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
+        "/sitecore/system/Settings/Rules/PowerShell"
+    ) | ForEach-Object { $rulesItems += Get-ChildItem "master:$_" -Recurse }
+    $rulesItems | New-ExplicitItemSource -Name "Spe.Rules" -InstallMode Overwrite | ForEach-Object { $package.Sources.Add($_) }
+    
+    # Spe.Scripts items
+    Get-ChildItem "master:/sitecore/system/Modules/PowerShell/Script Library/SPE" -Recurse |
+        New-ExplicitItemSource -Name "Spe.Scripts" -InstallMode Overwrite |
+        ForEach-Object { $package.Sources.Add($_) }
     
     # Package with items
     Export-Package -Project $package -Path "$packageName.xml"
@@ -122,7 +163,7 @@ SharedFields:
     $modulePath = "C:\Modules\SPE"
     if(Test-Path -Path $modulePath) {
         $remotingPackageName = "$($SitecorePackageFolder)\SPE.Remoting-$($Version).zip"
-        
+    
         Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
 Languages:

@@ -1,4 +1,4 @@
-﻿---
+---
 ID: "504fdcc3-df2d-4bd7-b456-9f9a33cd9fd0"
 Parent: "01bb164c-5e8e-4c9b-941f-e5340bdd520c"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -9,8 +9,8 @@ SharedFields:
   Value: |
     <#
         .SYNOPSIS
-            Creates Sitecore XML language exports for Sitecore PowerShell items. Items are sourced via the Unicorn serialization configurations.
-        
+            Creates Sitecore XML language exports for Sitecore PowerShell items. Items are sourced via direct Sitecore path queries matching SCS module definitions.
+    
         .NOTES
     		Adam Najmanowicz, Alex Washtell
     #>
@@ -223,36 +223,50 @@ SharedFields:
     	}
     }
     
-    function Get-ItemsFromUnicornConfiguration {
+    function Get-ItemsFromPaths {
     	[CmdletBinding()]
     	param(
-    		[Parameter(Mandatory = $true,Position = 0)]
-    		[ValidateNotNullOrEmpty()]
-    		[string]$ConfigurationName
+    		[Parameter(Mandatory = $true, Position = 0)]
+    		[string[]]$Paths,
+    		[Parameter(Position = 1)]
+    		[string]$Database = "master"
     	)
-    
-    	$source = Get-UnicornConfiguration $ConfigurationName | New-UnicornItemSource
-    
-    	return $source.Entries | % { [Sitecore.Install.Items.ItemKeyUtils]::Resolve($_) | Wrap-Item }
+    	$items = @()
+    	foreach ($path in $Paths) {
+    		$items += Get-ChildItem "$($Database):$path" -Recurse
+    	}
+    	return $items
     }
     
     #
     # Base translation file
     #
     
-    $configurations = @(
-    	"Spe.Core",
-    	"Spe.Rules"
+    $corePaths = @(
+    	"/sitecore/templates/Modules/PowerShell Console",
+    	"/sitecore/templates/Modules/PowerShell Authorable Reports",
+    	"/sitecore/system/Modules/PowerShell"
+    )
+    $rulesPaths = @(
+    	"/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell",
+    	"/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell Experience Buttons",
+    	"/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell ISE",
+    	"/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell",
+    	"/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons",
+    	"/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE",
+    	"/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
+    	"/sitecore/system/Settings/Rules/PowerShell"
     )
     
     $allItems = @()
-    foreach ($configName in $configurations)
-    {
-    	$items = Get-ItemsFromUnicornConfiguration $configName
-    	$allItems += $items
     
-    	Write-Host Added $configName with $($items.Count) items
-    }
+    $coreItems = Get-ItemsFromPaths $corePaths
+    $allItems += $coreItems
+    Write-Host Added "Spe.Core" with $($coreItems.Count) items
+    
+    $rulesItems = Get-ItemsFromPaths $rulesPaths
+    $allItems += $rulesItems
+    Write-Host Added "Spe.Rules" with $($rulesItems.Count) items
     
     $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation"
     
@@ -260,7 +274,7 @@ SharedFields:
     # Scripts translation file
     #
     
-    $allItems = Get-ItemsFromUnicornConfiguration "Spe.Scripts"
+    $allItems = Get-ItemsFromPaths @("/sitecore/system/Modules/PowerShell/Script Library/SPE")
     Write-Host Added "Spe.Scripts" with $($allItems.Count) items
     $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation-scripts"
     
@@ -268,7 +282,7 @@ SharedFields:
     # Authorable Reports translation file
     #
     
-    $allItems = Get-ItemsFromUnicornConfiguration "Spe.AuthorableReports"
+    $allItems = Get-ItemsFromPaths @("/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports")
     Write-Host Added "Spe.AuthorableReports" with $($allItems.Count) items
     $allItems | Write-TranslationFile -Path $translationsFolder -Prefix "spe-translation-authorable-reports"
     
