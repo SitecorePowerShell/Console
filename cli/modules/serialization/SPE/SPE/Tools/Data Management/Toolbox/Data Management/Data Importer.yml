@@ -1,0 +1,392 @@
+﻿---
+ID: "469faeb8-6fd3-42e8-b44f-4d4acda869e5"
+Parent: "44c09e51-9d3e-42ff-9690-682a97ddf94c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Data Importer
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/server_from_client.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Data Import Wizard provides a way to generate or update content from an external file.
+            
+        .DESCRIPTION
+            The import file uses the properties "Name" and "Id" to help match existing items.
+            
+        .NOTES
+            Michael West
+    #>
+    
+    function Write-LogExtended {
+        param(
+            [string]$Message,
+            [System.ConsoleColor]$ForegroundColor = $host.UI.RawUI.ForegroundColor,
+            [System.ConsoleColor]$BackgroundColor = $host.UI.RawUI.BackgroundColor
+        )
+        
+        Write-Log -Object $message
+        Write-Host -Object $message -ForegroundColor $ForegroundColor -BackgroundColor $backgroundColor
+    }
+    
+    Write-LogExtended "Warming up wizard."
+    
+    $defaultProps = @{
+        "Title" = "Data Import Wizard"
+        "Icon" = "OfficeWhite/32x32/server_from_client.png"
+        "ShowHints" = $true
+    }
+    
+    $selection = [ordered]@{
+        "<b>Import</b> and update items using a specified Template."=1;
+        "<b>Update</b> existing items based on the item <b>Id</b>, item <b>Name</b>, or field name."=2;
+        "<b>Export</b> existing items based on a specified Template."=3;
+    }
+    
+    $scriptId = "{EF72970A-DECC-420C-8DC5-155C673ED3F0}"
+    $item = $SitecoreContextItem
+    $script = Get-Item -Path "master:" -ID $scriptId
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name),vs=$($item.version),la=$($item.Language))"
+    
+    $options = [ordered]@{"Download Sample"=$command;}
+    
+    $props = @{
+        "Parameters" = @(
+            @{ Name = "info"; Title = "Getting Started"; Value = "The <b>Data Import Wizard</b> provides two modes of operation to help you avoid manual data entry."; Editor = "info" },
+            @{ Name = "wizardMode"; Title = "Wizard Mode"; Value = "2"; Options=$selection; Editor="radio" },
+            @{ Name = "sample"; Title = "Sample File"; Value = "The sample file provides the basic format required for the import."; Options = $options; Editor = "link"; }
+        )
+        "Description" = "Get started with the Data Import Wizard by choosing the mode below."
+        "OkButtonName" = "Next"
+    }
+    $result = Read-Variable @props @defaultProps
+    
+    if($result -ne "ok") { exit }
+    
+    # Used to determine where queries should start.
+    $database = "master"
+    $destinationNode = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    
+    # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
+    $standardTemplate = Get-Item -Path "master:" -ID "$([Sitecore.TemplateIDs]::StandardTemplate)"
+    $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
+    $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+    
+    if($wizardMode -ne 3) {
+        Write-LogExtended "Requesting a file for upload."
+        $uploadDirectory = Join-Path -Path $SitecoreDataFolder -ChildPath "temp"
+        $importFilePath = Receive-File -Overwrite -Title $defaultProps.Title -Description "Choose a valid CSV file to import." -Icon $defaultProps.Icon -Path $uploadDirectory -OkButtonName "Next"
+        
+        if(-not(Test-Path -Path $importFilePath)) { exit }
+        
+        $importData = Import-CSV $importFilePath
+        if(!$importData) {
+            Write-LogExtended "> The imported file contains no data." -ForegroundColor White -BackgroundColor Red
+            exit
+        }
+        $columnNames = $importData | Get-Member -MemberType NoteProperty | Where-Object { "Name","Id" -notcontains $_.Name } | Select-Object -ExpandProperty Name
+        $sourceFieldNames = $columnNames | ForEach-Object { $mappings = [ordered]@{} } { $mappings[$_] = $_ } { $mappings }
+        $fieldMappings = $sourceFieldNames
+        
+        # Create a list of field names used as an alternative to Id and Name.
+        $customKeyOptions = [ordered]@{"-- Skip --" = ""} + $sourceFieldNames
+    }
+    if($wizardMode -eq 1) {
+        $isMissingName = $importData[0].PSObject.Properties.Name -notcontains "Name"
+        if($isMissingName) {
+            Write-LogExtended "> Item name missing from import data." -ForegroundColor White -BackgroundColor Red
+            exit
+        }
+        $props = @{
+            "Parameters" = @(
+                @{ Name = "info"; Title = ""; Value = "Import new items matched with the specified Template. You can avoid creating duplicates by providing the item <b>Id</b>, item <b>Name</b>, or field name."; Editor = "info" },
+                @{ Name = "destinationNode"; Title = "Destination Node"; Value = $destinationNode; Tooltip = "Represents the parent node in the tree where new items should be created."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/content" },
+                @{ Name = "templateItem"; Title = "Item Type"; Value = (Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"); Tooltip = "Represents the Template used for new item creation and allows for automatic field matching."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/templates"},
+                @{ Name = "customKey"; Title = "Field Name"; Value = ""; Tooltip = "Alternative to using the <b>Id</b> choose a field name as the unique identifier for matching items; typically a field found in an external system."; Options = $customKeyOptions; Editor = "combo" }
+            )
+            "Description" = "Add new items at the specified location."
+            "OkButtonName" = "Next"
+            "Height" = 450
+        }
+        $result = Read-Variable @props @defaultProps
+        
+        if($result -ne "ok") { exit }
+        
+        if($templateItem -eq $null) { exit }
+        
+        $selectedTemplateItem = [Sitecore.Data.Items.TemplateItem]$templateItem
+        $selectedTemplateFields = $selectedTemplateItem.OwnFields + $selectedTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+        
+        $filterFields = $selectedTemplateFields | Where-Object { $standardFields -notcontains $_ } | Sort-Object
+        $lookupNames = @{}
+        $templateFieldNames = [ordered]@{"-- Skip --"=""}
+        $filterFields | ForEach-Object { 
+            $templateFieldNames[$_] = $_
+            $compressedName = $_.Replace("-","").Replace("_","").Replace(".","").Replace(" ","")
+            $lookupNames[$compressedName] = $_
+        }
+        
+        $fieldMappingPrefix = "fieldMapping-"
+        
+        $parameters = @()
+        $parameters += @{ Name = "info"; Title = "Field Mapping"; Value = "Each label indicates a field in the CSV. Choose from the dropdown the appropriate <b>$($selectedTemplateItem.Name)</b> Template field."; Editor = "info" }
+        foreach($sourceFieldName in $sourceFieldNames.Keys) {
+            $compressedImportName = $sourceFieldNames[$sourceFieldName].Replace("-","").Replace("_","").Replace(".","").Replace(" ","")
+            $destinationFieldName = $lookupNames[$compressedImportName]
+            if(!$destinationFieldName) { $destinationFieldName = "" }
+            $parameters += @{ Name = "$($fieldMappingPrefix)$($sourceFieldName)"; Title="$($sourceFieldName)"; Options=$templateFieldNames; Value=$destinationFieldName; Columns=6;}
+        }
+        
+        $props = @{
+            "Parameters" = $parameters
+            "Description" = "Map fields from CSV to $($selectedTemplateItem.Name) Template."
+            "OkButtonName" = "Next"
+        }
+        $result = Read-Variable @props @defaultProps
+        
+        if($result -ne "ok") { exit }
+        
+        $fieldMappings = Get-Variable -Name "$($fieldMappingPrefix)*" | 
+            Where-Object { $_.Value } | ForEach-Object { $mappings = [ordered]@{} } { $mappings[$_.Name.Replace($fieldMappingPrefix,"")] = $_.Value } { $mappings }
+    } elseif ($wizardMode -eq 2) {
+        
+        $stopOptions = @{
+            "Item not found" = 1
+            "Item missing field" = 2
+            "Item has a duplicate" = 3
+        }
+        $props = @{
+            "Parameters" = @(
+                @{ Name = "info"; Title = ""; Value = "The import relies on the <b>Id</b> to match items. Optionally, an item <b>Name</b> or field name can be used as a fallback if the <b>Id</b> is missing or unknown. Using the item <b>Id</b> should dramatically reduce update times and the risk of updating the wrong items."; Editor="info" },
+                @{ Name = "destinationNode"; Title = "Destination Node"; Value = $destinationNode; Tooltip = "Narrow the updates to a specific part of the tree when using the item <b>Name</b> or field name."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/content" },
+                @{ Name = "customKey"; Title = "Field Name"; Value = ""; Tooltip = "Choose a field name used as the unique identifier for matching items. This is typically a field found in an external system."; Options = $customKeyOptions; Editor = "combo" },
+                @{ Name = "stopConditions"; Title="Stop Conditions"; Options=$stopOptions; Tooltip="Choose the conditions that should halt the updates."; Editor="checklist"}
+            )
+            "Description" = "Choose where to scope the updates."
+            "OkButtonName" = "Run"
+        }
+        $result = Read-Variable @props @defaultProps
+        
+        if($result -ne "ok") { exit }
+    } elseif ($wizardMode -eq 3) {
+        
+        $rootOptions = [ordered]@{
+            "Root and descendants" = "RootAndDescendants"
+            "Root and children" = "RootAndChildren"
+            "Descendants only" = "DescendantsOnly"
+            "Children only" = "ChildrenOnly"
+        }
+        
+        $rootOptionTooltips = [ordered]@{
+            "RootAndDescendants" = "The selected item and everything beneath it will be added."
+            "RootAndChildren" = "The selected item and immediate children will be added."
+            "DescendantsOnly" = "Everything beneath the selected item will be added."
+            "ChildrenOnly" = "Immediate children beneath the selected item will be added."
+        }
+        
+        $props = @{
+            "Parameters" = @(
+                @{ Name = "info"; Title = ""; Value = "The export allows you to choose existing items. The <b>Id</b> and <b>Template</b> will be included to help when running in the update mode."; Editor="info" },
+                @{ Name = "destinationNode"; Title = "Destination Node"; Value = $destinationNode; Tooltip = "Narrow the updates to a specific part of the tree when using the item <b>Name</b> or field name."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/content" },
+                @{ Name = "templateItem"; Title = "Item Type"; Value = (Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"); Tooltip = "Represents the Template used for matching items."; Editor = "droptree"; Mandatory = $true; Source = "datasource=/sitecore/templates"},
+                @{ Name = "includeItems"; Title="Items to include in the export"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Editor="combo" }
+            )
+            "Description" = "Choose where to start the export."
+            "OkButtonName" = "Run"
+        }
+        $result = Read-Variable @props @defaultProps
+        
+        if($result -ne "ok") { exit }
+        
+        if($templateItem -eq $null) { exit }
+    }
+    
+    function Check-Condition {
+        param(
+            [int]$Condition
+        )
+        
+        if($stopConditions -contains $Condition) {
+            $reason = $stopOptions.GetEnumerator()| Where-Object { $_.Value -eq $Condition } | Select-Object -First 1
+            Write-Host "Stop condition: $($reason.Name)"; exit 
+        }
+    }
+    
+    Write-LogExtended "Running wizard in powerful ways."
+    
+    if($wizardMode -eq 3) {
+        $items = [System.Collections.ArrayList]@()
+        if ($includeItems -eq "RootAndDescendants") {
+            $queriedItems = @($destinationNode) + @(($destinationNode.Axes.GetDescendants() | Initialize-Item))
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "RootAndChildren") {
+            $queriedItems = @($destinationNode) + @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "DescendantsOnly") {
+            $queriedItems = @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        } elseif($includeItems -eq "ChildrenOnly") {
+            $queriedItems = @($destinationNode.Children)
+            $items.AddRange($queriedItems) > $null
+        }
+        
+        
+        $selectedTemplateItem = [Sitecore.Data.Items.TemplateItem]$templateItem
+        $selectedTemplateFields = $selectedTemplateItem.OwnFields + $selectedTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+        
+        $filterFields = @("Id") +  @(($selectedTemplateFields | Where-Object { $standardFields -notcontains $_ } | Sort-Object))
+    
+        $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+        $items | Where-Object { $_.TemplateId -eq $selectedTemplateItem.ID } | Select-Object -Property $filterFields | ConvertTo-Csv -NoTypeInformation | Out-String | Out-Download -Name "dataimport-exported$($datetime).csv" > $null
+        
+        exit
+    }
+    
+    $watch = [System.Diagnostics.Stopwatch]::StartNew()
+    
+    $buc = New-Object Sitecore.Data.BulkUpdateContext
+    
+    $rowIndex = 0
+    $useCustomKey = ![string]::IsNullOrEmpty($customKey)
+    $db = Get-Database -Name "master"
+    
+    foreach ($row in $importData) {
+        Write-Host ""
+        $rowIndex++
+        $lookupKey = @{$true=$row.Id;$false=$row.Name}[![string]::IsNullOrEmpty($row.Id)]
+    
+        $item = $null
+        if([Sitecore.Data.ID]::IsID($lookupKey)) {
+            Write-LogExtended "> Find item by Id: $($lookupKey)"
+            $item = $db.GetItem($lookupKey)
+        } else {
+            $queryKey = ""
+            $queryValue = ""
+            if($useCustomKey -and $row.$customKey) {
+                Write-LogExtended "> Find item by $($customKey): $($row.$customKey)"
+                $queryKey = $customKey.Trim()
+                $queryValue = [regex]::Replace(($row.$customKey).Trim(), "[^/]*[-][^/]*", "#`$0#")
+            } else {
+                if(![string]::IsNullOrEmpty($lookupKey)) {
+                    Write-LogExtended "> Find item by Name: $($lookupKey)"
+                    $queryKey = "@name"
+                    $queryValue = [regex]::Replace($lookupKey.Trim(), "[^/]*[-][^/]*", "#`$0#")
+                }
+            }
+            
+            if(![string]::IsNullOrEmpty($queryKey) -and ![string]::IsNullOrEmpty($queryValue)) {
+                $itemPath = "$($destinationNode.ItemPath)//*[@$($queryKey) ='$($queryValue)']"
+                $item = Get-Item -Path "master:" -Query $itemPath
+            }
+        }
+        
+        if($item -eq $null) {
+            if($wizardMode -eq 1) {
+    
+                $itemPath = "$($destinationNode.ProviderPath)\$($row.Name.Trim())"
+                Write-LogExtended "[A] $($itemPath)" -ForegroundColor Green
+                if([Sitecore.Data.ID]::IsID($lookupKey)) {
+                    $item = New-Item -Path $itemPath -ItemType $templateItem.ID -ForceId $row.Id
+                } else {
+                    $item = New-Item -Path $itemPath -ItemType $templateItem.ID
+                }
+            } else {
+                Check-Condition -Condition 1
+                Write-LogExtended "> Item Path $($itemPath) not found. If searching by a custom field perhaps the field name is mismatched." -ForegroundColor White -BackgroundColor Red
+            }
+        } else {
+            if(($item).Count -gt 1) {
+                $item = $item | Select-Object -First 1
+                Check-Condition -Condition 3
+                Write-LogExtended "> Found duplicate items when matching. Taking the first item $($item.Paths.Path) with Id $($item.Id)" -ForegroundColor Yellow
+            }
+            
+            Write-LogExtended "[U] $($item.Paths.Path)"
+            $item.Editing.BeginEdit()
+            foreach($fieldKey in $fieldMappings.Keys) {
+                $fieldName = $fieldMappings[$fieldKey]
+                
+                if($item.Fields[$fieldName]) {
+                    $item.Fields[$fieldName].Value = $row.$fieldKey
+                } else {
+                    $compressedName = $fieldName.Replace("-","").Replace("_","").Replace(".","").Replace(" ","")
+                    if($item.Fields[$compressedName]) {
+                        Write-LogExtended "> Matched field '$($fieldName)' to '$($compressedName)'. Consider updating CSV to match template field names." -ForegroundColor Yellow
+                        $item.Fields[$compressedName].Value = $row.$fieldKey
+                    } else {
+                        Check-Condition -Condition 2
+                        Write-LogExtended "> Skipped missing field $($fieldKey)." -ForegroundColor Yellow
+                    }
+                }
+            }
+            $item.Editing.EndEdit() > $null
+        }
+    }
+    $buc.Dispose()
+    
+    $watch.Stop()
+    $time = $watch.ElapsedMilliseconds / 1000
+    Write-LogExtended "Finished in $($time) seconds"
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+Languages:
+- Language: da
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Importer en fil for at tilføje eller opdatere elementer i en arbejdsgang.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Importer data
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152235Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c5273a62-8396-4641-bd4a-236460970a68"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240726T205040Z
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Import a file to add or updated items in bulk.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Data Importer
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170809T014249Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1bcc48fa-1825-49ff-8054-79e3e5555251"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240726T205040Z

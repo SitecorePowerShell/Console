@@ -1,7 +1,6 @@
 {
     "namespace": "Spe.UI",
     "items": {
-        "path": "~/../Unicorn/SPE/UI",
         "includes": [
             {
                 "name": "Applications",

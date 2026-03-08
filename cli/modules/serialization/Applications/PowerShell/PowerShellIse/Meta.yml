@@ -1,0 +1,84 @@
+﻿---
+ID: "bb48d97a-3b30-4ec2-9f2b-88ce27970983"
+Parent: "6857d035-ab70-4dac-8e7f-c6534bb8141f"
+Template: "b0666cfe-8c7b-4cc1-8e32-8253742ebfa9"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Meta
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {3EFFA15A-C432-493E-A3E4-C6DD5F79CC16}
+    {1AB4F9AD-B004-413C-8924-3E07143A614B}
+Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151814Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
+      Hint: Default Title
+      Value: Meta
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ade99dd4-70c9-4a1d-b27e-dc6ee297a5d6"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214556Z
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20081224T114349
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
+      Hint: Default Title
+      Value: Meta
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3f2eeb8e-bfb9-4764-bf03-e87d7d77c960"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214557Z
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160825T104818
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "80d9e45b-deaf-4f9e-835b-62b43b715bfb"
+      Hint: Default Title
+      Value: メタ
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ce208f24-05be-4dc8-aeb1-dd748b5c32f5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214557Z

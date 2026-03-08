@@ -1,0 +1,27 @@
+﻿---
+ID: "8f1afa0f-bb67-4f3d-a6e2-1960a34194a9"
+Parent: "9a49571c-d574-4525-b37e-f519fa1eaa1e"
+Template: "267d9ac7-5d85-4e9d-af89-99ab296cc218"
+Path: /sitecore/system/Dictionary/PowerShell/U
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190103T150906Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1f7d49a5-2d92-4d79-9173-7130507caa62"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214607Z

@@ -1,0 +1,60 @@
+﻿---
+ID: "1ced8e94-0458-4e3a-8cee-38f7efa93e15"
+Parent: "36657c88-3f10-4b16-a3c7-03e011b0f6c2"
+Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+Languages:
+- Language: da
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: En samling af rapporter, som hjælper dig med at lære dig mere om det styrede indhold.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152025Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "56702a9c-09ed-496e-92f1-83f82e522ec5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214459Z
+- Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Bundle of reports to help you learn more about the content being managed.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20171231T222850Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "cf153661-09b2-4e9e-a962-7de42f6becfc"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214459Z

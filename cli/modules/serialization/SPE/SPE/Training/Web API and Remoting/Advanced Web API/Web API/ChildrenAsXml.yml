@@ -1,0 +1,60 @@
+﻿---
+ID: "4cf65bef-c2d9-426d-b117-c16e5bab8245"
+Parent: "dae8aa29-4f42-4479-91a0-fb3d4a5949f5"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Web API and Remoting/Advanced Web API/Web API/ChildrenAsXml
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Provides an XML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
+        http://hostname/-/script/v2/master/ChildrenAsXml?user=admin&password=b&item=content
+        
+        If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
+        http://hostname/-/script/v2/master/ChildrenAsXml?item=content
+    #>
+    
+    #if the location is not Sitecore tree, switch to root of Master Database
+    $HttpContext = [System.Web.HttpContext]::Current;
+    
+    if((Get-Location).Provider.Name -ne "CmsItemProvider"){
+        Set-Location master:\
+    }
+    
+    if(!$item){
+        $item = "/"
+    }
+    
+    Set-Location $item
+    
+    if ($HttpContext -ne $null){
+        $HttpContext.Response.ContentType = "text/xml";
+    }
+    
+    Set-HostProperty -HostWidth ([System.Int32]::MaxValue)
+    
+    #return some of the children's properties as XML
+    Get-ChildItem -Path . | 
+        Select-Object Name, DisplayName, TemplateName, Language, Version, @{Name="Path"; Expression={ $_.Paths.Path}} | 
+        ConvertTo-Xml | 
+        Select-Object -ExpandProperty OuterXml
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130913T041828
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a8ad23ab-638b-4216-aaea-537b0a585a85"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214513Z

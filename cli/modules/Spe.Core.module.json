@@ -1,12 +1,23 @@
 {
     "namespace": "Spe.Core",
     "items": {
-        "path": "~/../Unicorn/SPE/Core",
         "includes": [
             {
                 "name": "Templates",
                 "database": "master",
                 "path": "/sitecore/templates/Modules",
+                "scope": "SingleItem"
+            },
+            {
+                "name": "Templates-PowerShellConsole",
+                "database": "master",
+                "path": "/sitecore/templates/Modules/PowerShell Console",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Templates-PowerShellAuthReports",
+                "database": "master",
+                "path": "/sitecore/templates/Modules/PowerShell Authorable Reports",
                 "scope": "ItemAndDescendants"
             },
             {
@@ -22,6 +33,26 @@
                     {
                         "path": "/Script Library",
                         "scope": "SingleItem"
+                    },
+                    {
+                        "path": "/Settings/Console/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/Context/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/Default/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/ISE/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/RemoteAutomation/Sitecore",
+                        "scope": "ignored"
                     }
                 ]
             }

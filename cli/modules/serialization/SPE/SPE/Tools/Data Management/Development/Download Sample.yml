@@ -1,0 +1,42 @@
+﻿---
+ID: "ef72970a-decc-420c-8dc5-155c673ed3f0"
+Parent: "ff2c9ed2-06f4-4602-9811-d30198be94ef"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Development/Download Sample
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $data = [PSCustomObject]@{
+        "Id" = "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+        "Name" = "Home"
+        "Title" = "Sitecore Experience Platform Updated"
+        "Content" = "Content updated from Data Importer"
+    }
+    
+    $data |
+        ConvertTo-Csv -NoTypeInformation | 
+        Out-String | 
+        Out-Download -Name "dataimport-sample.csv"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181007T025039Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "af60e3ab-c478-431b-b266-6752622283ff"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214506Z

@@ -92,15 +92,6 @@
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Rainbow, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Core.2.1.4\lib\net452\Rainbow.dll</HintPath>
-    </Reference>
-    <Reference Include="Rainbow.Storage.Sc, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Storage.Sc.2.1.4\lib\net452\Rainbow.Storage.Sc.dll</HintPath>
-    </Reference>
-    <Reference Include="Rainbow.Storage.Yaml, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rainbow.Storage.Yaml.2.1.4\lib\net452\Rainbow.Storage.Yaml.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Buckets, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Buckets.9.2.0\lib\net471\Sitecore.Buckets.dll</HintPath>
       <Private>False</Private>
@@ -161,15 +152,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Unicorn, Version=4.1.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Core.4.1.6\lib\net452\Unicorn.dll</HintPath>
-    </Reference>
-    <Reference Include="Unicorn.Roles, Version=4.1.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Roles.Core.4.1.6\lib\net452\Unicorn.Roles.dll</HintPath>
-    </Reference>
-    <Reference Include="Unicorn.Users, Version=4.1.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unicorn.Users.Core.4.1.6\lib\net452\Unicorn.Users.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Applications\Administration\AdminPage.cs">
@@ -626,29 +608,6 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
-    <Content Include="App_Config\Include\Rainbow.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.UI.IdentityServer.config.disabled" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.UI.DeployedContentEditorWarnings.config.disabled" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.UI.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Remote.config.disabled" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.PowerShell.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Dilithium.config.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.10.1.config.disabled" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.CustomSerializationFolder.config.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.NewItemsOnly.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Dependency.config.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.AutoPublish.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.DataProvider.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Users.DataProvider.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Users.config" />
-    <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Users.config.example" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <Content Include="sitecore modules\items\core\items.core.spe.dat.tmp" />

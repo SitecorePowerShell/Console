@@ -1,0 +1,101 @@
+﻿---
+ID: "10052e00-df82-4271-93c4-994f9d4d6b80"
+Parent: "6b72e616-1173-4a0d-b773-c2132d7aa71a"
+Template: "72450c9c-98c4-4117-88b7-573110c7e0c0"
+Path: /sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: powershell/32x32/ise8.png
+- ID: "238a40da-15f2-4412-b720-8f192ffa7491"
+  Hint: Icon
+  Value: powershell/32x32/ise8.png
+- ID: "8a1ac797-0304-4c50-aaac-4d9dbbff435f"
+  Hint: Application
+  Value: |
+    <link id="{6857D035-AB70-4DAC-8E7F-C6534BB8141F}" querystring="" url="/Applications/PowerShell/PowerShellIse" target="" linktype="internal" />
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 0
+Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151812Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9a222765-6ec4-4402-b5c5-0b38218ffd12"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
+      Hint: Tool tip
+      Value: Værktøj til at skrive PowerShell scripts.
+    - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
+      Hint: Display name
+      Value: PowerShell ISE
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214617Z
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130722T002226
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "badb4f62-b227-48ad-803d-5d02757a0fcb"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
+      Hint: Tool tip
+      Value: Tool for writing PowerShell scripts.
+    - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
+      Hint: Display name
+      Value: PowerShell ISE
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214617Z
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160825T094819Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "dab5dba4-55ce-4574-9bd1-8e903a39d84f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
+      Hint: Tool tip
+      Value: ** Tool for writing PowerShell scripts. **
+    - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
+      Hint: Display name
+      Value: PowerShell ISE
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214617Z

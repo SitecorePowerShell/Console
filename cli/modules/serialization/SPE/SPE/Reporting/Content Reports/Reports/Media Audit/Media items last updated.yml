@@ -1,0 +1,178 @@
+﻿---
+ID: "649aa26d-8532-4caf-94dc-3daa4980811a"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/history.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all media items last updated by the date selected.
+        
+        .NOTES
+            Michael West
+    #>
+    $periodOptions = [ordered]@{Before=1;After=2;}
+    $maxDaysOptions = [ordered]@{"-- Skip --"=[int]::MaxValue;30=30;90=90;120=120;365=365;}
+    $settings = @{
+        Title = "Report Filter"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter the results for items updated on or before/after the specified date"
+        Parameters = @{ 
+            Name = "selectedDate"
+            Value = [System.DateTime]::Now
+            Title = "Date"
+            Tooltip = "Filter the results for items updated on or before/after the specified date"
+            Editor = "date time"
+        },
+        @{
+            Name = "selectedPeriod"
+            Title = "Period"
+            Value = 1
+            Options = $periodOptions
+            Tooltip = "Pick whether the items should have been last updated before or after the specified date"
+            Editor = "radio"
+        },
+        @{
+            Name = "selectedMaxDays"
+            Title = "Max Days"
+            Value = [int]::MaxValue
+            Options = $maxDaysOptions
+            Tooltip = "Pick the maximum number of days to include starting with the specified date"
+            Editor = "combo"
+        }
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    filter Where-LastUpdated {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$Item,
+            
+            [datetime]$Date=([datetime]::Today),
+            [switch]$IsBefore,
+            
+            [int]$MaxDays
+        )
+        
+        $convertedDate = [Sitecore.DateUtil]::IsoDateToDateTime($item.Fields[[Sitecore.FieldIDs]::Updated].Value)
+        $isWithinDate = $false
+        if($IsBefore.IsPresent) {
+            if($convertedDate -le $Date) {
+                $isWithinDate = $true
+            }
+        } else {
+            if($convertedDate -ge $Date) {
+                $isWithinDate = $true
+            }
+        }
+        
+        if($isWithinDate) {
+            if($MaxDays -lt [int]::MaxValue) {
+                if([math]::Abs(($convertedDate - $Date).Days) -le $MaxDays) {
+                    $item
+                }
+            } else {
+                $item
+            }
+        }
+    }
+    
+    $ignoredPaths = "/sitecore/media library/Default website|/sitecore/media library/Experience Explorer|/sitecore/media library/Images/Social|/sitecore/media library/System"
+    $root = Get-Item -Path "master:\media library"
+    $items = @(($root.Axes.GetDescendants())) | 
+            Where-Object { $_.Paths.Path -notmatch $ignoredPaths } |
+            Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | 
+            Where-LastUpdated -Date $selectedDate -IsBefore:($selectedPeriod -eq 1) -MaxDays $selectedMaxDays | Initialize-Item
+    
+    $message = "before"
+    if($selectedPeriod -ne 1) {
+        $message = "after"
+    }
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no media items updated on or $($message) the specified date."
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "Media items last updated $($message) date"
+            InfoDescription = "Lists all media items last updated on or $($message) the date selected."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Size"; Expression={$_.Size}},
+                @{Label="Extension"; Expression={$_.Extension}},
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+    }
+    Close-Window
+Languages:
+- Language: da
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Rapporter på mediaelementer uden en opdateringen indenfor et antal dage.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Medieelementer sidst opdateret
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152028Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a9ce524f-7d59-40ea-8f41-5e12c4f3503d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214518Z
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on media items without an update within a certain number of days.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Media items last updated
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140408T140203Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9a83d9cd-0226-4404-aafe-7b72b4841788"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214518Z

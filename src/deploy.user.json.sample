@@ -1,13 +1,8 @@
 {
     "sites": [],
     "files": {
-        "remove": [
-            "App_Config/Include/Unicorn/Unicorn.DataProvider.config"
-        ],
         "enable": [
-            "App_Config/Include/Spe/Spe.IdentityServer.config",
-            "App_Config/Include/Unicorn/Unicorn.DataProvider.10.1.config",
-            "App_Config/Include/Unicorn/Unicorn.UI.IdentityServer.config"
+            "App_Config/Include/Spe/Spe.IdentityServer.config"
         ]
     }
 }

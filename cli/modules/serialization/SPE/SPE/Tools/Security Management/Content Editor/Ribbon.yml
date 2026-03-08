@@ -1,0 +1,23 @@
+﻿---
+ID: "f66e6a44-3e5c-4517-b733-0dfc0da3db84"
+Parent: "c58c8fa9-4e15-420e-84e3-5a3c0241ecbd"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Security Management/Content Editor/Ribbon
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180212T182316Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d753da1d-7dc3-4a72-bd8e-57802e0a1ad8"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20211124T190958Z

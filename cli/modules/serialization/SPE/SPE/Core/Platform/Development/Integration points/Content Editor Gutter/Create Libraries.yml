@@ -1,0 +1,31 @@
+﻿---
+ID: "7705a482-62ce-4170-8ee7-1e735fac9ff4"
+Parent: "ffd1c46f-d75c-4b7b-afe4-be2fa52651a8"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development/Integration points/Content Editor Gutter/Create Libraries
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $integrationPoint = [Spe.Core.Modules.IntegrationPoints]::ContentEditorGuttersFeature;
+    Import-Function -Name Create-IntegrationPoint
+    CreateIntegrationPoint($integrationPoint)
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T011506
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "984699e3-6a46-47ea-841f-e09c0fc133c9"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214525Z
