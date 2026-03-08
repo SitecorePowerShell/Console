@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.2.1.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Client, Version=13.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Client.9.2.0\lib\net471\Sitecore.Client.dll</HintPath>
       <Private>False</Private>
@@ -53,6 +50,7 @@
     </Reference>
     <Reference Include="Sitecore.Owin.Authentication, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Owin.Authentication.9.2.0\lib\net471\Sitecore.Owin.Authentication.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="sysglobl" />
     <Reference Include="System" />
