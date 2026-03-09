@@ -8,6 +8,9 @@ tasks:
 
   up:
     desc: Start Docker environment
+    preconditions:
+      - sh: test -f .env
+        msg: "Missing .env file. Run 'task init' first."
     cmds:
       - docker compose up -d
 
@@ -23,31 +26,50 @@ tasks:
 
   build:
     desc: Build the solution
+    preconditions:
+      - sh: test -f Spe.sln
+        msg: "Spe.sln not found. Are you in the repository root?"
     cmds:
       - powershell -Command "& 'C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/MSBuild.exe' Spe.sln -t:Build -p:Configuration=Debug"
 
   deploy:
     desc: Deploy build output to Docker container
+    deps: [build]
+    preconditions:
+      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File src/Post_Build.ps1
 
   generate:
     desc: Generate .dat files from serialized content
+    preconditions:
+      - sh: test -d serialization/modules
+        msg: "Serialization modules not found in serialization/modules/."
     cmds:
       - powershell -File scripts/generate-dat.ps1
 
   release:
     desc: Build release packages
+    preconditions:
+      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File scripts/build-release.ps1
 
   verify:
     desc: Validate packages against serialized items
+    preconditions:
+      - sh: test -d _output
+        msg: "No packages found in _output/. Run 'task release' first."
     cmds:
       - powershell -File scripts/verify-packages.ps1
 
   test:
     desc: Run integration tests
+    preconditions:
+      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File tests/integration/Run-RemotingTests.ps1
 
