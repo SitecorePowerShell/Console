@@ -33,9 +33,7 @@ namespace Spe.Integrations.Pipelines
 
         private static Assembly LoadVersionAssembly(string assemblyNamespace, string assemblyName)
         {
-            var resourceName = CurrentVersion.IsAtLeast(SitecoreVersion.V92) ? 
-                $"{assemblyNamespace}.Resources.Version92." + assemblyName + ".dll" : 
-                $"{assemblyNamespace}.Resources.Version8." + assemblyName + ".dll";
+            var resourceName = $"{assemblyNamespace}.Resources.Version92." + assemblyName + ".dll";
 
             var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
             if (stream == null) return null;

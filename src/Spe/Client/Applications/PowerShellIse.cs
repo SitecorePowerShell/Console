@@ -1327,7 +1327,7 @@ namespace Spe.Client.Applications
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
-            var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
+            var bottomPadding = 0;
             SheerResponse.Eval(
                 $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, " +
                 $"'{backgroundColor}', {bottomPadding}," +

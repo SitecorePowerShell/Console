@@ -162,9 +162,7 @@ namespace Spe.Client.Applications
                        next + "," + accumulated);
             }
             AddControls(variables);
-            SitecoreVersion.V82.OrNewer(() =>
-                        CustomStyles.Text = "<style>.scContentButton { color: rgb(38, 148, 192);}</style>"
-            );
+            CustomStyles.Text = "<style>.scContentButton { color: rgb(38, 148, 192);}</style>";
         }
 
         private void AddControls(object[] variables)
@@ -316,9 +314,6 @@ namespace Spe.Client.Applications
 
         public void Tabstrip_OnChange(object sender, EventArgs e)
         {
-            SitecoreVersion.V81.OrOlder(() =>
-                        SheerResponse.Eval("ResizeDialogControls();")
-            );
         }
 
         private WebControl GetContainer(IDictionary<string, Border> tabs, string tabName)
