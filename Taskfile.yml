@@ -1,0 +1,57 @@
+version: "3"
+
+tasks:
+  init:
+    desc: Set up local dev environment (license, certs, .env)
+    cmds:
+      - powershell -File scripts/init.ps1 {{.CLI_ARGS}}
+
+  up:
+    desc: Start Docker environment
+    cmds:
+      - docker compose up -d
+
+  down:
+    desc: Stop Docker environment
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Tail CM container logs
+    cmds:
+      - docker compose logs -f cm
+
+  build:
+    desc: Build the solution
+    cmds:
+      - powershell -Command "& 'C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/MSBuild.exe' Spe.sln -t:Build -p:Configuration=Debug"
+
+  deploy:
+    desc: Deploy build output to Docker container
+    cmds:
+      - powershell -File src/Post_Build.ps1
+
+  generate:
+    desc: Generate .dat files from serialized content
+    cmds:
+      - powershell -File scripts/generate-dat.ps1
+
+  release:
+    desc: Build release packages
+    cmds:
+      - powershell -File scripts/build-release.ps1
+
+  verify:
+    desc: Validate packages against serialized items
+    cmds:
+      - powershell -File scripts/verify-packages.ps1
+
+  test:
+    desc: Run integration tests
+    cmds:
+      - powershell -File tests/integration/Run-RemotingTests.ps1
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - powershell -Command "Get-ChildItem docker/deploy -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force _output/Sitecore.PowerShell.Extensions-*, _output/SPE.*, _output/extracted-module, _output/docker-module, src/*/bin, src/*/obj -ErrorAction SilentlyContinue"

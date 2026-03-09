@@ -1,7 +1,7 @@
 ﻿
 # Adds the SPE Modules path to the PSModulePath Environment Variable, for use with SPE Remoting.
 
-$speModulePath = Join-Path $PSScriptRoot "Modules"
+$speModulePath = Join-Path (Resolve-Path "$PSScriptRoot/..").Path "modules"
 
 $envModulePath = [Environment]::GetEnvironmentVariable("PSModulePath", "Machine")
 
