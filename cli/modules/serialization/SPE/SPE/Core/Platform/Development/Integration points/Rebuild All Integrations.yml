@@ -1,0 +1,46 @@
+﻿---
+ID: "07c20f9f-7c76-4c13-8166-427a57002ff8"
+Parent: "5398f7ea-3ecb-4c84-946e-49c63ecd8dcd"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development/Integration points/Rebuild All Integrations
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    param(
+        [bool]$HideResults = $false
+    )
+    $integrations = Get-ChildItem -Path "master:{9BE73650-A188-4802-A68E-E720DB54C5E9}" # |% { "$($_.Message)" }
+    
+    $i = 0;
+    foreach($integration in $integrations){
+      $i++
+      $integrationName = "Rebuilding $($integration.Name)"
+      Write-Host "`n$("-" * ($integrationName.Length+2))`n $integrationName `n$("-" * ($integrationName.Length+2))" -ForegroundColor Green
+      Write-Progress -Activity "Rebuilding all integrations" -CurrentOperation "Rebuilding $($integration.Name)" -PercentComplete ($i*100/$integrations.Length)
+      Execute-Script -Item $integration
+    }
+    Write-Progress -Completed -Activity "Completed rebuilding all integrations"
+    
+    if(!$hideResults) {
+        Show-Result -Text
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130714T114833
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "31a141f7-4cac-40f2-b9bf-e27f54ae214b"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214516Z

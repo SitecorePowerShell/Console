@@ -1,0 +1,58 @@
+﻿---
+ID: "fcb2f509-85da-4fb9-a8a5-abfdb1943d18"
+Parent: "f11bdaf8-bc3d-4d9f-87ac-306e03035552"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Authorable Reports/Web API/Get-AvailableReport"
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Invoke-ApiScript
+    
+    $script = {
+        $integrationPoint = [Spe.Core.Modules.IntegrationPoints]::WebApi
+        $roots = [Spe.Core.Modules.ModuleManager]::GetFeatureRoots($integrationPoint)
+        
+        $reportNames = [System.Collections.ArrayList]@()
+        foreach($root in $roots) {
+            $reportsLibrary = $root.Children["Reports"]
+            if($reportsLibrary) {
+            $isEnabled = [Spe.Core.Utility.RulesUtils]::EvaluateRules($reportsLibrary[[Spe.Templates+Script+Fields]::EnableRule], $root)
+                if($isEnabled -and $reportsLibrary.HasChildren) {
+                    $reports = $reportsLibrary.GetChildren()
+                    foreach($report in $reports) {
+                        $isEnabled = [Spe.Core.Utility.RulesUtils]::EvaluateRules($report[[Spe.Templates+Script+Fields]::EnableRule], $report)
+                        if($isEnabled) {
+                            $reportNames.Add(("reports/$($report.Name)")) > $null
+                        }
+                    }
+                }
+            }
+        }
+    
+        ,$reportNames
+    }
+    
+    Invoke-ApiScript -ScriptBlock $script -Arguments $scriptArguments
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180418T202942Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "06992715-039a-43a3-b152-d0781b104d8c"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214510Z

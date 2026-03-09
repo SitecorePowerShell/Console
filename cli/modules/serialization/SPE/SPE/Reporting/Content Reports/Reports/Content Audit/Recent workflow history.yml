@@ -1,0 +1,133 @@
+﻿---
+ID: "53402cf4-bcff-437d-83e6-b7a6d1be2bad"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/arrow_fork2.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Invoke-SqlCommand
+    
+    $database = Get-Database -Name "master"
+    
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString($database.Name)
+    
+    $historyDays = [datetime]::Now.AddDays(-14)
+    $parameters = @{
+        "date" = $historyDays
+    }
+    
+    $query = "SELECT DISTINCT ItemID, Language FROM WorkflowHistory WHERE Date > @date"
+    $itemIds = Invoke-SqlCommand -Connection $connection -Query $query -Parameters $parameters | Select-Object -ExpandProperty "ItemId"
+    
+    $reportItems = @()
+    foreach($itemId in $itemIds) {
+        if($itemId) {
+            $selectedItem = Get-Item -Path "master:" -ID ([Sitecore.Data.ID]::Parse($itemId))
+            $workflowEvents = $selectedItem | Get-ItemWorkflowEvent | Where-Object { $_.Date -gt $historyDays -and $_.OldState -ne $_.NewState }
+            
+            foreach($workflowEvent in $workflowEvents) {
+            
+                $previousState = $null
+                $currentState = $null
+                if($workflowEvent.OldState) {
+                    $previousState = Get-Item -Path "master:" -ID $workflowEvent.OldState
+                }
+                
+                if($workflowEvent.NewState) {
+                    $currentState = Get-Item -Path "master:" -ID $workflowEvent.NewState
+                }
+                $user = Get-User -Id $workflowEvent.User
+                
+                $comments = $null
+                if($workflowEvent.CommentFields) {
+                    $comments = $workflowEvent.CommentFields["Comments"]
+                }
+                
+                $reportItem = [pscustomobject]@{
+                    "User" = "$($user.Name)"
+                    "Date" = $workflowEvent.Date
+                    "OldState" = $previousState.Name
+                    "NewState" = $currentState.Name
+                    "Comments" = $comments
+                    "ID" = $selectedItem.ID
+                    "Name" = $selectedItem.Name
+                    "Icon" = $selectedItem.Appearance.Icon
+                }
+    
+                $reportItems += $reportItem
+            }
+        }
+    }
+    
+    $reportProperties = @{
+        Property = @("Icon","Name","Date","OldState","NewState","User","Comments")
+        Title = "Recent workflow history"
+        InfoTitle = "Recent workflow history"
+        InfoDescription = "View the most recent workflow history."
+    }
+    
+    $reportItems | Show-ListView @reportProperties
+    
+    Close-Window
+Languages:
+- Language: da
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Rapporter på workflow historikken indenfor de sidste to uger.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Nylig workflow historie
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152028Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a4a8d130-8678-4c0c-83cf-fd0c7870b2d8"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214520Z
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Report on all workflow history within the last two weeks.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Recent workflow history
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180102T055937Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9660e38c-9419-438a-a622-b3fe3c52c711"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214520Z

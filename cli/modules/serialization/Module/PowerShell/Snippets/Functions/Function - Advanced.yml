@@ -1,0 +1,65 @@
+﻿---
+ID: "39dac1c3-c059-471f-867f-9e2b2a56ad42"
+Parent: "56666c57-4a63-408f-bcbb-3768a6bb6421"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Functions/Function - Advanced"
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    <#
+        .Synopsis
+            Short description
+        
+        .DESCRIPTION
+            Long description
+        
+        .Notes
+            Michael West
+        
+        .EXAMPLE
+            Another example of how to use this cmdlet
+    #>
+    function Verb-Noun {
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory=$true)]
+            [Item]$Item,
+            
+            [Parameter()]
+            [string]$Text,
+            
+            [ValidateSet("Option1","Option2")]
+            [string]$Option
+        )
+    
+        begin {
+            # Setup variables and do something once
+        }
+        
+        process {
+            # Handle each object passed through the pipeline
+        }
+        
+        end {
+            # Final processing
+        }
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180107T024626Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2565da6b-18a8-408c-8e14-aabb5fa826aa"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214549Z

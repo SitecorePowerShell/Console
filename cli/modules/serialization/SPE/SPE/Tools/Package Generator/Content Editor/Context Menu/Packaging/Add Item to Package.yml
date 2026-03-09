@@ -1,0 +1,162 @@
+﻿---
+ID: "a6d3ce99-9bde-4344-911d-cfb3fb742de6"
+Parent: "c83cc1ee-a860-4e64-9715-e9c3bbb885f0"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/element.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Value: <ruleset />
+- ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
+  Hint: PersistentSessionId
+  Value: packageBuilder
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $selectedItem = Get-Item -Path .
+    $includeLinkedItems = 0
+    
+    $parameters = @(
+        @{ Name = "Mode"; Title="Installation Options"; Value = "Merge-Merge"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?<br/><br/>Item : $($selectedItem.ProviderPath)"; Editor="combo"})
+    
+    $parameters += @{ Name = "IncludeLinkOptions"; Title = "Include linked Items"; Value=0; Tooltip = "Define how linked items will be included in the package"; Options = $linkOptions; OptionTooltips = $linkOptionsTooltips; Editor = "radio" }
+    
+    $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
+    
+    Resolve-Error
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+    $MergeMode = [Sitecore.Install.Utils.MergeMode]::Undefined
+    switch ($Mode) {
+        "Overwrite" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Overwrite
+        }
+        
+        "Merge-Merge" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Merge
+        }
+        
+        "Merge-Clear" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Clear
+        }
+        
+        "Merge-Append" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Append
+        }
+        
+        "Skip" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Skip
+        }
+        
+        "SideBySide" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::SideBySide
+        }
+        
+        "AskUser" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+        }
+    }
+    
+    # Linked items dialog
+    $itemsToPack = @($selectedItem)
+    $linkedItems = @()
+    $linkedItems += Get-LinkedItems $selectedItem $itemsToPack $IncludeLinkOptions
+    
+    if ($linkedItems.Count -gt 0){
+        $selectedLinks = Get-SelectedLinks $linkedItems
+    }
+    
+    # Add selected linked items to package
+    if ($selectedLinks -AND $selectedLinks.Count -gt 0){
+        foreach ($linkId in $selectedLinks) {
+            $itemsToPack += $linkedItems | Where-Object -FilterScript { $_.ID.ToString() -like $linkId }
+        }
+    }
+    
+    # Adding items to package
+    foreach ($itemToPack in $itemsToPack) {
+        $package = Add-ItemToPackage -Package $package -Item $itemToPack -IncludeDescendants $false
+    }
+    
+    Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{54A4A57F-713F-47B7-9038-AD97EF87D0D5}">
+        <conditions>
+          <condition
+            id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}"
+            uid="C413ABE8553E479092A909DB95E47F35"
+            persistentsessionid="packageBuilder" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: da
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Tilføj det valgte element til pakken.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Tilføj element til pakken
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T152341Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1d55fd23-3b31-45f8-b38f-400bd84ed05d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214521Z
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Add the selected item to the package.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Add Item to Package
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130919T174300Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4590e096-a713-4517-a601-f086ced5699b"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T221642Z

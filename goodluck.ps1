@@ -1,16 +1,20 @@
 # CONFIGURATION START
 
-# URl to your Sitecore instance
-$hostname = "https://sc103cm.dev.local"
+$projectPath = $PSScriptRoot
 
-# If you have the packages folder mapped to ProjectPath\releases comment out the next line
-$releases = "C:\inetpub\wwwroot\sc103cm.dev.local\App_Data\packages\"
+# Read CM_HOST from docker/.env
+$envFile = Join-Path $projectPath "docker\.env"
+$cmHost = (Get-Content $envFile | Where-Object { $_ -match "^CM_HOST=" }) -replace "CM_HOST=",""
+$hostname = "https://$cmHost"
+
+# Packages output folder
+# Docker: uses $projectPath\releases (default)
+# IIS:    uncomment and set your instance path
+# $releases = "C:\inetpub\wwwroot\$cmHost\App_Data\packages\"
 
 # Make sure Admin is part of the Sitecore Remoting group inside sitecore
 $sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
 $userName = 'sitecore\admin'
-
-$projectPath = $PSScriptRoot
 
 
 # EXECUTION START

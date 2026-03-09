@@ -1,0 +1,31 @@
+﻿---
+ID: "24f865b6-130f-4fb2-b6c9-1be5c4712bf0"
+Parent: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160709T155213
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e3783f3b-33a7-4806-beec-cff4aeb74f89"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214550Z
