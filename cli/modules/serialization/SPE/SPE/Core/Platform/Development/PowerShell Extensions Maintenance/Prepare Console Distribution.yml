@@ -105,7 +105,8 @@ SharedFields:
     $coreItems += Get-Item "master:/sitecore/templates/Modules"
     $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Console" -Recurse
     $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Authorable Reports" -Recurse
-    $coreItems += Get-ChildItem "master:/sitecore/system/Modules/PowerShell" -Recurse
+    $coreItems += Get-ChildItem "master:/sitecore/system/Modules/PowerShell" -Recurse |
+        Where-Object { -not $_.ItemPath.StartsWith("/sitecore/system/Modules/PowerShell/Script Library/SPE/") }
     $coreItems | New-ExplicitItemSource -Name "Spe.Core" -InstallMode Merge -MergeMode Clear | ForEach-Object { $package.Sources.Add($_) }
     
     # Spe.UI items
