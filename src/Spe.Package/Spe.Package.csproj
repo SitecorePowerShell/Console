@@ -80,11 +80,7 @@
       <Visible>false</Visible>
     </ProjectDeployPathFiles>
   </ItemGroup>
-  <PropertyGroup>
-    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
-  </PropertyGroup>
   <Target Name="AfterBuild">
     <Copy SourceFiles="@(AssemblyFiles)" DestinationFolder="$(ProjectDeployPath)\bin" ContinueOnError="true" />
-    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
   </Target>
 </Project>
