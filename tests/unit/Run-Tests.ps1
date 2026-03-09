@@ -1,7 +1,7 @@
 # Entry point: load module, expose private functions, run all unit tests
 $ErrorActionPreference = "Stop"
 
-$moduleRoot = Split-Path $PSScriptRoot -Parent
+$moduleRoot = "$PSScriptRoot\..\..\modules\SPE"
 
 # Import the module
 Import-Module "$moduleRoot\SPE.psd1" -Force

@@ -36,7 +36,7 @@ tasks:
     desc: Deploy build output to Docker container
     deps: [build]
     preconditions:
-      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | findstr /C:"healthy"
         msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File src/Post_Build.ps1
@@ -52,7 +52,7 @@ tasks:
   release:
     desc: Build release packages
     preconditions:
-      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
         msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File scripts/build-release.ps1
@@ -68,9 +68,10 @@ tasks:
   test:
     desc: Run integration tests
     preconditions:
-      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | grep -q healthy
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
         msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
+      - powershell -File tests/unit/Run-Tests.ps1
       - powershell -File tests/integration/Run-RemotingTests.ps1
 
   clean:

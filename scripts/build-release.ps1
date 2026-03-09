@@ -6,12 +6,7 @@ Assert-SpePrerequisites
 
 $projectPath = (Resolve-Path "$PSScriptRoot/..").Path
 
-# Read CM_HOST from root .env (falls back to docker/.env.template)
-$envFile = Join-Path $projectPath ".env"
-if (-not (Test-Path $envFile)) {
-    $envFile = Join-Path $projectPath "docker\.env.template"
-}
-$cmHost = (Get-Content $envFile | Where-Object { $_ -match "^CM_HOST=" }) -replace "CM_HOST=",""
+$cmHost = Get-CmHost
 $hostname = "https://$cmHost"
 
 # Packages output folder
@@ -19,8 +14,7 @@ $hostname = "https://$cmHost"
 # IIS:    uncomment and set your instance path
 # $releases = "C:\inetpub\wwwroot\$cmHost\App_Data\packages\"
 
-# Make sure Admin is part of the Sitecore Remoting group inside sitecore
-$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
+$sharedSecret = Get-EnvValue "SPE_SHARED_SECRET"
 $userName = 'sitecore\admin'
 
 
@@ -43,7 +37,8 @@ Get-ChildItem -Path $releases -Filter "SPE.*" | Remove-Item
 
 Write-Host "Generate packages from running Sitecore instance."
 
-Import-Module -Name SPE
+$moduleRoot = "$PSScriptRoot\..\modules\SPE"
+Import-Module "$moduleRoot\SPE.psd1" -Force
 
 # TODO: Generate normal package with dat files instead of items. Maybe use a temporary file name like Sitecore.PowerShell.Extensions-6.3-IAR.temp.zip
 $session = New-ScriptSession -Username $userName -SharedSecret $sharedSecret -ConnectionUri $hostname

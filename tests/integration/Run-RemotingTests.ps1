@@ -9,7 +9,8 @@ $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\..\..\scripts\assert-prerequisites.ps1"
 Assert-SpePrerequisites
 
-Import-Module -Name SPE -Force
+$moduleRoot = "$PSScriptRoot\..\..\modules\SPE"
+Import-Module "$moduleRoot\SPE.psd1" -Force
 
 # Load test framework (reuse from SPE/Tests/)
 . "$PSScriptRoot\..\unit\TestRunner.ps1"
