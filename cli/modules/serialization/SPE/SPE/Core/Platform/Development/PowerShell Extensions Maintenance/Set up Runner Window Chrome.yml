@@ -16,7 +16,7 @@ SharedFields:
             Adam Najmanowicz
     #>
     
-    if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
+    if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V92)){
         (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowHeaderlessChrome"
     
     } else {
@@ -33,11 +33,11 @@ Languages:
       Value: 20160531T084747
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "4dce2fbe-762d-4aef-b37b-069c814a9853"
+      Value: "484b5044-4271-47b9-bb25-ffe7d26fb518"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214515Z
+      Value: 20260308T235646Z
