@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 Import-Module -Name SPE -Force
 
 # Load test framework (reuse from SPE/Tests/)
-. "$PSScriptRoot\..\SPE\Tests\TestRunner.ps1"
+. "$PSScriptRoot\..\unit\TestRunner.ps1"
 
 $protocolHost = $ConnectionUri
 

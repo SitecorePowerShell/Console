@@ -20,6 +20,7 @@ Param (
 )
 
 $ErrorActionPreference = "Stop";
+$projectPath = Resolve-Path "$PSScriptRoot/.."
 
 if (-not (Test-Path $LicenseXmlPath)) {
     throw "Did not find $LicenseXmlPath"
@@ -27,9 +28,9 @@ if (-not (Test-Path $LicenseXmlPath)) {
 if (-not (Test-Path $LicenseXmlPath -PathType Leaf)) {
     throw "$LicenseXmlPath is not a file"
 }
-if (-not (Test-Path ".env")) {
+if (-not (Test-Path "$projectPath\.env")) {
     Write-Host "Copying new .env" -ForegroundColor Green
-    Copy-Item ".\docker\.env" ".env"
+    Copy-Item "$projectPath\docker\.env.template" "$projectPath\.env"
 }
 
 # Check for Sitecore Gallery
@@ -54,7 +55,7 @@ Write-SitecoreDockerWelcome
 ###############################
 # Populate the environment file
 ###############################
-$envPath = Join-Path -Path $PSScriptRoot -ChildPath ".env"
+$envPath = Join-Path -Path $projectPath -ChildPath ".env"
 
 Write-Host "Populating required .env file variables..." -ForegroundColor Green
 
@@ -105,7 +106,7 @@ if([string]::IsNullOrEmpty($licenseLocation)) {
 # Configure TLS/HTTPS certificates
 ##################################
 
-Push-Location docker\traefik\certs
+Push-Location "$projectPath\docker\traefik\certs"
 try {
     $mkcert = ".\mkcert.exe"
     if ($null -ne (Get-Command mkcert.exe -ErrorAction SilentlyContinue)) {

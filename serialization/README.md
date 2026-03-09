@@ -4,12 +4,12 @@ SPE uses Sitecore Content Serialization (SCS) via the Sitecore CLI for item seri
 
 ## Prerequisites
 
-- .NET SDK (version matching `cli/.config/dotnet-tools.json`)
+- .NET SDK (version matching `serialization/.config/dotnet-tools.json`)
 - A running Sitecore instance (10.1+) with SPE installed
 
 ## Initial Setup
 
-Set the working directory to the `cli/` folder before running any commands.
+Set the working directory to the `serialization/` folder before running any commands.
 
 ```bash
 # Install the Sitecore CLI (pinned version from dotnet-tools.json)
@@ -35,7 +35,7 @@ dotnet sitecore login --authority https://<identity-server> --cm https://<cm-hos
 ## Directory Layout
 
 ```
-cli/
+serialization/
   sitecore.json                    # Plugin config + defaultModuleRelativeSerializationPath
   modules/
     Spe.Core.module.json           # Module definitions (source of truth for item paths)
@@ -55,6 +55,6 @@ cli/
 
 ## Key Notes
 
-- **Module files are the source of truth** for item paths and scopes (`cli/modules/*.module.json`).
+- **Module files are the source of truth** for item paths and scopes (`serialization/modules/*.module.json`).
 - **No transparent sync** — SCS does not auto-sync changes. You must explicitly `ser pull` / `ser push`.
 - **YAML format** — SCS YAML is not compatible with Rainbow (Unicorn) YAML. Do not mix them.

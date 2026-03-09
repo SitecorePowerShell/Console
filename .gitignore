@@ -29,52 +29,31 @@ data/*
 deploy/*
 .env
 
-# Sitecore
-/Website/
-/Database/
-/Databases/
-/Data/*/
-/Data/*
-!/Data/packages/
-/Data/serialization/
-/Data/serialization/security/
-web.Debug.config
-web.Release.config
-/Tests/
-/releases/
-
-# Project Split
-Spe/bin/
-Spe.Sitecore8/bin/
-Spe/obj/
-Spe.Sitecore8/obj/
-Spe.Sitecore92/obj/
-Data/serialization/
-.vs/config/applicationhost.config
-
 # Temporary build folder
 _Deploy
-
-# Ignore top-level packages folder, but not others.
-packages
-!*/**/packages
 
 # User files
 deploy.user.json
 !deploy.user.json.sample
 UserConfiguration/**/*.config
-.vs/
-Spe/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo/
-Spe/Data/Unicorn/SPE/Scripts/Script Library/Script Library/X-Demo\.yml
 
-Spe/Data/Translations/**/*.csv
 node_modules/
 
-# Ephemeral index caches used by serialization, do not commit
+# Serialization ephemeral files
 *.scindex
+*.dat
+serialization/_out/
+
+# Build output (release artifacts)
+_output/*
+!_output/.gitkeep
+!_output/configs/
+!_output/scwdp-template/
+!_output/Dockerfile
+!_output/.dockerignore
 
 # Jetbrains Rider
 .idea
-src/Spe/App_Config/Include/z.Spe/z.Spe.Development.User.config
 
+# Claude Code
 .claude/settings.local.json

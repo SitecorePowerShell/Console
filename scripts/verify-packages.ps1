@@ -15,8 +15,8 @@ param()
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$projectRoot = $PSScriptRoot
-$modulesDir = Join-Path $projectRoot "cli/modules"
+$projectRoot = (Resolve-Path "$PSScriptRoot/..").Path
+$modulesDir = Join-Path $projectRoot "serialization/modules"
 $serializationDir = Join-Path $modulesDir "serialization"
 
 # ── Step 1: Parse module.json files ──────────────────────────────────────────
@@ -121,11 +121,11 @@ if ($yamlErrors.Count -gt 0) {
 
 Write-Host "`n=== Step 3: Parsing package XML ===" -ForegroundColor Cyan
 
-$packageXmlFiles = @(Get-ChildItem -Path (Join-Path $projectRoot "releases") -Filter "Sitecore.PowerShell.Extensions-*.xml" |
+$packageXmlFiles = @(Get-ChildItem -Path (Join-Path $projectRoot "_output") -Filter "Sitecore.PowerShell.Extensions-*.xml" |
     Where-Object { $_.Name -notmatch "-IAR" })
 
 if ($packageXmlFiles.Count -eq 0) {
-    Write-Host "ERROR: No package XML found in releases/" -ForegroundColor Red
+    Write-Host "ERROR: No package XML found in _output/" -ForegroundColor Red
     exit 1
 }
 
