@@ -21,6 +21,66 @@ Param (
 
 $ErrorActionPreference = "Stop";
 $projectPath = Resolve-Path "$PSScriptRoot/.."
+$envPath = Join-Path -Path $projectPath -ChildPath ".env"
+
+function Get-EnvFileVariable {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Variable,
+        [string]$Path = $script:envPath
+    )
+    if (-not (Test-Path $Path)) { return $null }
+    foreach ($line in Get-Content $Path) {
+        if ($line -match "^$Variable=(.*)$") {
+            return $Matches[1]
+        }
+    }
+    return $null
+}
+
+function Set-EnvFileVariable {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [string]$Variable,
+        [Parameter(Mandatory)]
+        [string]$Value,
+        [string]$Path = $script:envPath
+    )
+    $line = "$Variable=$Value"
+    if (-not (Test-Path $Path)) {
+        Set-Content $Path $line
+        return
+    }
+    $content = Get-Content $Path
+    $found = $false
+    $content = $content | ForEach-Object {
+        if ($_ -match "^$Variable=") {
+            $found = $true
+            $line
+        } else {
+            $_
+        }
+    }
+    if (-not $found) {
+        $content = @($content) + $line
+    }
+    Set-Content $Path $content
+}
+
+function Get-RandomString {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [int]$Length
+    )
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    $bytes = [byte[]]::new($Length)
+    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    $result = [char[]]::new($Length)
+    for ($i = 0; $i -lt $Length; $i++) {
+        $result[$i] = $chars[$bytes[$i] % $chars.Length]
+    }
+    return -join $result
+}
 
 if (-not (Test-Path $LicenseXmlPath)) {
     throw "Did not find $LicenseXmlPath"
@@ -33,29 +93,9 @@ if (-not (Test-Path "$projectPath\.env")) {
     Copy-Item "$projectPath\docker\.env.template" "$projectPath\.env"
 }
 
-# Check for Sitecore Gallery
-Import-Module PowerShellGet
-$SitecoreGallery = Get-PSRepository | Where-Object { $_.SourceLocation -eq "https://sitecore.myget.org/F/sc-powershell/api/v2" }
-if (-not $SitecoreGallery) {
-    Write-Host "Adding Sitecore PowerShell Gallery..." -ForegroundColor Green 
-    Register-PSRepository -Name SitecoreGallery -SourceLocation https://sitecore.myget.org/F/sc-powershell/api/v2 -InstallationPolicy Trusted
-    $SitecoreGallery = Get-PSRepository -Name SitecoreGallery
-}
-# Install and Import SitecoreDockerTools 
-$dockerToolsVersion = "10.2.7"
-Remove-Module SitecoreDockerTools -ErrorAction SilentlyContinue
-if (-not (Get-InstalledModule -Name SitecoreDockerTools -RequiredVersion $dockerToolsVersion -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing SitecoreDockerTools..." -ForegroundColor Green
-    Install-Module SitecoreDockerTools -RequiredVersion $dockerToolsVersion -Scope CurrentUser -Repository $SitecoreGallery.Name
-}
-Write-Host "Importing SitecoreDockerTools..." -ForegroundColor Green
-Import-Module SitecoreDockerTools -RequiredVersion $dockerToolsVersion
-Write-SitecoreDockerWelcome
-
 ###############################
 # Populate the environment file
 ###############################
-$envPath = Join-Path -Path $projectPath -ChildPath ".env"
 
 Write-Host "Populating required .env file variables..." -ForegroundColor Green
 
@@ -79,21 +119,20 @@ if([string]::IsNullOrEmpty($idHost)) {
     Set-EnvFileVariable "ID_HOST" -Value $idHost
 }
 
-# TELERIK_ENCRYPTION_KEY = random 64-128 chars
-Set-EnvFileVariable "TELERIK_ENCRYPTION_KEY" -Value (Get-SitecoreRandomString 128)
+# TELERIK_ENCRYPTION_KEY = random 64-128 chars (preserve across re-runs)
+if ([string]::IsNullOrEmpty((Get-EnvFileVariable "TELERIK_ENCRYPTION_KEY"))) {
+    Set-EnvFileVariable "TELERIK_ENCRYPTION_KEY" -Value (Get-RandomString 128)
+}
 
-# MEDIA_REQUEST_PROTECTION_SHARED_SECRET
-Set-EnvFileVariable "MEDIA_REQUEST_PROTECTION_SHARED_SECRET" -Value (Get-SitecoreRandomString 64)
+# MEDIA_REQUEST_PROTECTION_SHARED_SECRET (preserve across re-runs)
+if ([string]::IsNullOrEmpty((Get-EnvFileVariable "MEDIA_REQUEST_PROTECTION_SHARED_SECRET"))) {
+    Set-EnvFileVariable "MEDIA_REQUEST_PROTECTION_SHARED_SECRET" -Value (Get-RandomString 64)
+}
 
-# SITECORE_IDSECRET = random 64 chars
-Set-EnvFileVariable "SITECORE_IDSECRET" -Value (Get-SitecoreRandomString 64 -DisallowSpecial)
-
-# SITECORE_ID_CERTIFICATE
-$idCertPassword = Get-SitecoreRandomString 12 -DisallowSpecial
-Set-EnvFileVariable "SITECORE_ID_CERTIFICATE" -Value (Get-SitecoreCertificateAsBase64String -DnsName "localhost" -Password (ConvertTo-SecureString -String $idCertPassword -Force -AsPlainText))
-
-# SITECORE_ID_CERTIFICATE_PASSWORD
-Set-EnvFileVariable "SITECORE_ID_CERTIFICATE_PASSWORD" -Value $idCertPassword
+# SITECORE_IDSECRET = random 64 chars (preserve across re-runs)
+if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SITECORE_IDSECRET"))) {
+    Set-EnvFileVariable "SITECORE_IDSECRET" -Value (Get-RandomString 64)
+}
 
 # SITECORE_LICENSE_LOCATION and SITECORE_LICENSE_PATH
 $licenseLocation = Get-EnvFileVariable -Variable "SITECORE_LICENSE_LOCATION" -Path $envPath
@@ -106,29 +145,13 @@ if([string]::IsNullOrEmpty($licenseLocation)) {
 # Configure TLS/HTTPS certificates
 ##################################
 
-Push-Location "$projectPath\docker\traefik\certs"
-try {
-    $mkcert = ".\mkcert.exe"
-    if ($null -ne (Get-Command mkcert.exe -ErrorAction SilentlyContinue)) {
-        # mkcert installed in PATH
-        $mkcert = "mkcert"
-    } elseif (-not (Test-Path $mkcert)) {
-        Write-Host "Downloading and installing mkcert certificate tool..." -ForegroundColor Green 
-        Invoke-WebRequest "https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-windows-amd64.exe" -UseBasicParsing -OutFile mkcert.exe
-        if ((Get-FileHash mkcert.exe).Hash -ne "9DC25F7D1AE0BE93DB81AA42F3ABFD62D13725DFD48969C9FE94B6AF57E5573C") {
-            Remove-Item mkcert.exe -Force
-            throw "Invalid mkcert.exe file"
-        }
-    }
-    Write-Host "Generating Traefik TLS certificate..." -ForegroundColor Green
-    & $mkcert -install
-    & $mkcert -key-file key.pem -cert-file cert.pem "*.$($HostName)"
-}
-catch {
-    Write-Host "An error occurred while attempting to generate TLS certificate: $_" -ForegroundColor Red
-}
-finally {
-    Pop-Location
-}
+& "$PSScriptRoot\cert.ps1" -HostName $HostName
+
+# SITECORE_ID_CERTIFICATE — reuse the Traefik PFX
+$certsDir = Join-Path $projectPath "docker\traefik\certs"
+$certificatePath = Join-Path $certsDir "devcert.pfx"
+$certificatePassword = (Get-Content (Join-Path $certsDir "devcert.password.txt") -Raw).Trim()
+Set-EnvFileVariable "SITECORE_ID_CERTIFICATE" -Value ([Convert]::ToBase64String([IO.File]::ReadAllBytes($certificatePath)))
+Set-EnvFileVariable "SITECORE_ID_CERTIFICATE_PASSWORD" -Value $certificatePassword
 
 Write-Host "Done!" -ForegroundColor Green

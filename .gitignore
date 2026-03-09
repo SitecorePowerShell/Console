@@ -55,5 +55,13 @@ _output/*
 # Jetbrains Rider
 .idea
 
+# Generated certificates
+docker/traefik/certs/*.pfx
+docker/traefik/certs/*.cer
+docker/traefik/certs/*.key
+docker/traefik/certs/*.pem
+docker/traefik/certs/*.txt
+docker/traefik/certs/certz.exe
+
 # Claude Code
 .claude/settings.local.json

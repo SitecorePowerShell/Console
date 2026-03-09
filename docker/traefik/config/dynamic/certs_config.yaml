@@ -1,4 +1,4 @@
 tls:
   certificates:
-    - certFile: C:\etc\traefik\certs\cert.pem
-      keyFile: C:\etc\traefik\certs\key.pem
+    - certFile: C:\etc\traefik\certs\devcert.cer
+      keyFile: C:\etc\traefik\certs\devcert.key
