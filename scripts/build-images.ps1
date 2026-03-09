@@ -32,6 +32,7 @@ Copy-Item -Path "$($extractedModule)\core.dacpac" -Destination (Join-Path -Path 
 
 $dockerVersion = [System.IO.Path]::GetFileName($dockermodulepackage).Replace("Sitecore.PowerShell.Extensions-", "").Replace("-IAR.scwdp.zip", "")
 
+$Env:DOCKER_CLI_HINTS = "false"
 docker build --no-cache -t "sitecorepowershell/sitecore-powershell-extensions:$($dockerVersion)-1809" --build-arg BASE_IMAGE=mcr.microsoft.com/windows/nanoserver:1809 $releases
 docker build --no-cache -t "sitecorepowershell/sitecore-powershell-extensions:$($dockerVersion)-ltsc2019" --build-arg BASE_IMAGE=mcr.microsoft.com/windows/nanoserver:ltsc2019 $releases
 docker build --no-cache -t "sitecorepowershell/sitecore-powershell-extensions:$($dockerVersion)-ltsc2022" --build-arg BASE_IMAGE=mcr.microsoft.com/windows/nanoserver:ltsc2022 $releases

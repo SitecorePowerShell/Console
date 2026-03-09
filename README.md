@@ -39,7 +39,7 @@ task down            # Stop Docker environment
 task logs            # Tail CM container logs
 task build           # Build the solution
 task deploy          # Deploy build output to Docker container
-task generate-dat    # Generate .dat files from serialized content
+task generate        # Generate .dat files from serialized content
 task release         # Build release packages
 task verify          # Validate packages against serialized items
 task test            # Run integration tests
