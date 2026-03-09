@@ -3,6 +3,10 @@
 #
 Param([string]$projectfilter)
 
+# Prerequisites: ensure the CM instance is reachable
+. "$PSScriptRoot\..\scripts\assert-prerequisites.ps1"
+Assert-CmAvailable
+
 # Load dependents scripts
 . "$PSScriptRoot\Deploy_Functions.ps1"
 

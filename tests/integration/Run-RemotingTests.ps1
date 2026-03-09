@@ -4,6 +4,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# Prerequisites: ensure Sitecore CM is running and SPE Remoting is enabled
+. "$PSScriptRoot\..\..\scripts\assert-prerequisites.ps1"
+Assert-SpePrerequisites
+
 Import-Module -Name SPE -Force
 
 # Load test framework (reuse from SPE/Tests/)

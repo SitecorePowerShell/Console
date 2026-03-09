@@ -1,3 +1,7 @@
+# PREREQUISITES CHECK
+. "$PSScriptRoot\assert-prerequisites.ps1"
+Assert-SpePrerequisites
+
 # CONFIGURATION START
 
 $projectPath = (Resolve-Path "$PSScriptRoot/..").Path
