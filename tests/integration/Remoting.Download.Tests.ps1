@@ -9,11 +9,10 @@ if(Test-Path -Path $destinationMediaPath) {
 }
 New-Item -Path $destinationMediaPath -ItemType Directory | Out-Null
 
-$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
 #$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
-$rootPaths = @("App", "Data", "Debug", "Index", "Layout", "Log", "Media", "Package", "Serialization", "Temp")
+$rootPaths = @("App", "Data", "Debug", "Layout", "Log", "Media", "Package", "Serialization", "Temp")
 $filenames = @{
     App           = "default.js"
     Data          = "items\master\items.master.dat"
@@ -38,7 +37,7 @@ foreach ($rootPath in $rootPaths) {
 Write-Host "`n  [Download with RemoteScriptCall - Single fully qualified file]" -ForegroundColor White
 
 $filename = "kitten.jpg"
-$pathFolder = Join-Path -Path $PSScriptRoot -ChildPath "..\spe-test"
+$pathFolder = Join-Path -Path $PSScriptRoot -ChildPath "..\fixtures"
 $path = Join-Path -Path $pathFolder -ChildPath $filename
 $destination = Join-Path -Path $destinationMediaPath -ChildPath $filename
 Receive-RemoteItem -Session $session -Path $path -Destination $destination

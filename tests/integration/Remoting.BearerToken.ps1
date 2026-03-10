@@ -1,6 +1,7 @@
 ﻿Clear-Host
 
-$sharedSecret = '7AF6F59C14A05786E97012F054D1FB98AC756A2E54E5C9ACBAEE147D9ED0E0DB'
+. "$PSScriptRoot\..\..\scripts\assert-prerequisites.ps1"
+$sharedSecret = Get-EnvValue "SPE_SHARED_SECRET"
 #$name = 'sitecore\PowerShellExtensionsAPI'
 $name = 'sitecore\admin'
 $hostname = "https://spe.dev.local"

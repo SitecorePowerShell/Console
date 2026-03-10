@@ -8,7 +8,7 @@ Write-Host "`n  [Bug Fix #1: Aggregate on empty output — ExecuteScriptBlockinS
 # This test calls the SOAP service directly to exercise ExecuteScriptBlockinSite2
 # with a script that produces NO output. Before the fix, this threw InvalidOperationException.
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
 # Script that produces no output — before fix this crashed with Aggregate on empty sequence
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { $null }
