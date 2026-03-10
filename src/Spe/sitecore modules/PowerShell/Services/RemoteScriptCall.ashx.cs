@@ -80,9 +80,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var request = context.Request;
             var apiVersion = request.Params.Get(ParamApiVersion);
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
-            var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
-                ? ApiVersionToServiceMapping[serviceMappingKey]
-                : string.Empty;
+            if (!ApiVersionToServiceMapping.TryGetValue(serviceMappingKey, out var serviceName))
+            {
+                serviceName = string.Empty;
+            }
 
             PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
             PowerShellLog.Debug($"'{request.Url}'");
@@ -247,13 +248,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     return;
                 case "2":
                     var apiScripts = GetApiScripts(dbName);
-                    if (apiScripts.ContainsKey(dbName))
+                    if (apiScripts.TryGetValue(dbName, out var dbScripts) &&
+                        dbScripts.TryGetValue(itemParam, out var apiScript))
                     {
-                        var dbScripts = apiScripts[dbName];
-                        if (dbScripts.ContainsKey(itemParam))
-                        {
-                            scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
-                        }
+                        scriptItem = scriptDb.GetItem(apiScript.Id);
                     }
 
                     if (scriptItem == null)
@@ -616,23 +614,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static byte[] ConvertFromGzipBytes(byte[] gzip)
         {
             using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            using (var memory = new MemoryStream())
             {
-                const int size = 4096;
-                var buffer = new byte[size];
-                using (var memory = new MemoryStream())
-                {
-                    int count;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, size);
-                        if (count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    }
-                    while (count > 0);
-                    return memory.ToArray();
-                }
+                stream.CopyTo(memory);
+                return memory.ToArray();
             }
         }
 
@@ -724,8 +709,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     foreach (var param in context.Request.Params.AllKeys)
                     {
-                        var paramValue = context.Request.Params[param];
                         if (string.IsNullOrEmpty(param)) continue;
+                        if (param.StartsWith("ALL_") || param.StartsWith("HTTP_") ||
+                            param.StartsWith("SERVER_") || param.StartsWith("REMOTE_") ||
+                            param.StartsWith("LOCAL_") || param.StartsWith("CERT_") ||
+                            param.StartsWith("HTTPS") || param.StartsWith("APP_") ||
+                            param.StartsWith("AUTH_") || param.StartsWith("CONTENT_") ||
+                            param.StartsWith("APPL_") || param.StartsWith("INSTANCE_") ||
+                            param.StartsWith("GATEWAY_") || param.StartsWith("PATH_") ||
+                            param.StartsWith("SCRIPT_") || param.StartsWith("URL") ||
+                            param.StartsWith("CACHE_") || param.StartsWith("LOGON_") ||
+                            param.StartsWith("REQUEST_") || param.StartsWith("UNENCODED_") ||
+                            param.StartsWith("UNMAPPED_"))
+                            continue;
+
+                        var paramValue = context.Request.Params[param];
                         if (string.IsNullOrEmpty(paramValue)) continue;
 
                         if (session.GetVariable(param) == null)
@@ -883,10 +881,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
                     GetAvailableScripts(roots, apiScripts);
                 }
-                else if (!apiScripts.ContainsKey(dbName))
+                else
                 {
-                    var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                    apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
+                    apiScripts.GetOrAdd(dbName, _ => new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
                     var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
                     GetAvailableScripts(roots, apiScripts);
                 }
@@ -913,12 +910,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         var scriptPath = result.Paths.Path.Substring(rootPath.Length);
                         var dbName = result.Database.Name;
-                        if (!apiScripts.ContainsKey(dbName))
-                        {
-                            var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                            apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
-                        }
-                        apiScripts[dbName][scriptPath] = new ApiScript
+                        var scripts = apiScripts.GetOrAdd(dbName, _ => new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
+                        scripts[scriptPath] = new ApiScript
                         {
                             Database = result.Database.Name,
                             Id = result.ID,
