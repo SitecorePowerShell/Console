@@ -1,4 +1,10 @@
-﻿!function(n,r){"object"==typeof exports&&"undefined"!=typeof module?module.exports=r():"function"==typeof define&&define.amd?define("underscore",r):(n="undefined"!=typeof globalThis?globalThis:n||self,function(){var t=n._,e=n._=r();e.noConflict=function(){return n._=t,e}}())}(this,(function(){
+﻿/**
+ * Underscore.js 1.13.8
+ * source: https://github.com/jashkenas/underscore/blob/1.13.8/underscore-min.js
+ * updated: 2026-03-10
+ * reference: SXA-xxxx
+ */
+!function(n,r){"object"==typeof exports&&"undefined"!=typeof module?module.exports=r():"function"==typeof define&&define.amd?define("underscore",r):(n="undefined"!=typeof globalThis?globalThis:n||self,function(){var t=n._,e=n._=r();e.noConflict=function(){return n._=t,e}}())}(this,(function(){
 //     Underscore.js 1.13.8
 //     https://underscorejs.org
 //     (c) 2009-2026 Jeremy Ashkenas, Julian Gonggrijp, and DocumentCloud and Investigative Reporters & Editors
