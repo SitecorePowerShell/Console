@@ -134,6 +134,13 @@ if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SITECORE_IDSECRET"))) {
     Set-EnvFileVariable "SITECORE_IDSECRET" -Value (Get-RandomString 64)
 }
 
+# SPE_SHARED_SECRET = random 64-char hex string (preserve across re-runs)
+if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SPE_SHARED_SECRET"))) {
+    $bytes = [byte[]]::new(32)
+    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    Set-EnvFileVariable "SPE_SHARED_SECRET" -Value ([BitConverter]::ToString($bytes) -replace '-','')
+}
+
 # SITECORE_LICENSE_LOCATION and SITECORE_LICENSE_PATH
 $licenseLocation = Get-EnvFileVariable -Variable "SITECORE_LICENSE_LOCATION" -Path $envPath
 if([string]::IsNullOrEmpty($licenseLocation)) {

@@ -586,6 +586,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
             itemParam = itemParam.StartsWith(ApplicationSettings.MediaLibraryPath, StringComparison.OrdinalIgnoreCase) ? itemParam : $"{ApplicationSettings.MediaLibraryPath}{itemParam}";
 
             var mediaItem = (MediaItem)db.GetItem(itemParam);
+
+            if (mediaItem == null && GuidRegex.IsMatch(itemParam))
+            {
+                var id = GuidRegex.Match(itemParam).Value;
+                mediaItem = (MediaItem)db.GetItem(id);
+            }
+
             if (mediaItem == null)
             {
                 SetErrorResponse(context, 404, "The specified media is invalid.");

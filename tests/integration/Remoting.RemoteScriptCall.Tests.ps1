@@ -3,21 +3,21 @@
 # Run via: .\Run-RemotingTests.ps1 [https://your-sitecore-host]
 # Or standalone: . ..\SPE\Tests\TestRunner.ps1; . .\Remoting.RemoteScriptCall.Tests.ps1; Show-TestSummary
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 $ashxBase = "$protocolHost/-/script"
 $cred = @{ user = "sitecore\admin"; password = "b" }
 $credQs = "user=$($cred.user)&password=$($cred.password)"
 $basicAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\admin:b")) }
 
 # ============================================================================
-#  Test Group 1: Path Traversal Protection (P0 — BUG 1.2)
+#  Test Group 1: Path Traversal Protection (P0 -- BUG 1.2)
 # ============================================================================
-Write-Host "`n  [Test Group 1: Path Traversal Protection — RemoteScriptCall.ashx]" -ForegroundColor White
+Write-Host "`n  [Test Group 1: Path Traversal Protection -- RemoteScriptCall.ashx]" -ForegroundColor White
 
 # URL format: /-/script/file/{RootPath}/?path={filename}
 # The RootPath is a URL segment (not a query param) that maps to originParam/scriptDb
 
-# 1a. File upload with ".." in path — should be rejected
+# 1a. File upload with ".." in path -- should be rejected
 $traversalPaths = @(
     "../../web.config",
     "..\..\..\web.config",
@@ -37,7 +37,7 @@ foreach ($tp in $traversalPaths) {
     }
 }
 
-# 1b. File download with ".." in path — should be rejected with 403
+# 1b. File download with ".." in path -- should be rejected with 403
 foreach ($tp in $traversalPaths) {
     $label = "File download rejects path traversal ($tp)"
     try {
@@ -79,11 +79,11 @@ try {
 } catch { }
 
 # ============================================================================
-#  Test Group 2: Session Leak on Exception (P0 — BUG 1.4)
+#  Test Group 2: Session Leak on Exception (P0 -- BUG 1.4)
 # ============================================================================
-Write-Host "`n  [Test Group 2: Session Leak on Exception — ProcessScript]" -ForegroundColor White
+Write-Host "`n  [Test Group 2: Session Leak on Exception -- ProcessScript]" -ForegroundColor White
 
-# 2a. Execute a script that throws — should return 424 (not 500)
+# 2a. Execute a script that throws -- should return 424 (not 500)
 $leakSessionId = "leak-test-$(Get-Random)"
 
 try {
@@ -92,7 +92,7 @@ try {
     Assert-True $false "Throwing script should return error status"
 } catch {
     $statusCode = $_.Exception.Response.StatusCode.value__
-    Assert-Equal $statusCode 424 "Throwing script returns 424 (not 500) — exception is caught"
+    Assert-Equal $statusCode 424 "Throwing script returns 424 (not 500) -- exception is caught"
 }
 
 # 2b. Non-persistent session is cleaned up even after exception (no leak)
@@ -105,13 +105,13 @@ try {
     Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$leakSessionId2&persistentSession=false" `
         -Method POST -Body 'throw "leak check"' -ContentType "text/plain" -ErrorAction Stop -UseBasicParsing | Out-Null
 } catch { }
-# Get session count after — should not have increased
+# Get session count after -- should not have increased
 $countAfter = Invoke-RemoteScript -Session $session -ScriptBlock {
     [Spe.Core.Host.ScriptSessionManager]::GetAll().Count
 }
 Assert-Equal $countAfter $countBefore "Non-persistent session cleaned up after exception (no leak)"
 
-# 2c. Script with non-terminating error — session cleanup still works
+# 2c. Script with non-terminating error -- session cleanup still works
 $leakSessionId2 = "leak-test2-$(Get-Random)"
 try {
     $response = Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$leakSessionId2&persistentSession=false" `
@@ -124,9 +124,9 @@ try {
 }
 
 # ============================================================================
-#  Test Group 3: Duplicate Key in API Scripts (P1 — BUG 1.6)
+#  Test Group 3: Duplicate Key in API Scripts (P1 -- BUG 1.6)
 # ============================================================================
-Write-Host "`n  [Test Group 3: API v2 Script Execution — GetAvailableScripts]" -ForegroundColor White
+Write-Host "`n  [Test Group 3: API v2 Script Execution -- GetAvailableScripts]" -ForegroundColor White
 
 # 3a. API v2 endpoint returns 404 for nonexistent scripts
 try {
@@ -154,11 +154,11 @@ for ($i = 0; $i -lt $raceRequests; $i++) {
 Assert-Equal $raceErrors 0 "No 500 errors from $raceRequests rapid API v2 requests (cache race)"
 
 # ============================================================================
-#  Test Group 4: Content-Disposition Header (P1 — SEC 2.6)
+#  Test Group 4: Content-Disposition Header (P1 -- SEC 2.6)
 # ============================================================================
-Write-Host "`n  [Test Group 4: Content-Disposition Header — ProcessHandle & ProcessFileDownload]" -ForegroundColor White
+Write-Host "`n  [Test Group 4: Content-Disposition Header -- ProcessHandle & ProcessFileDownload]" -ForegroundColor White
 
-# 4a. File download — verify Content-Disposition has quoted filename
+# 4a. File download -- verify Content-Disposition has quoted filename
 $testFileName4 = "spe-header-test-$(Get-Random).txt"
 $testContent4 = "header-test-content"
 
@@ -186,13 +186,13 @@ try {
     }
 } catch { }
 
-# 4b. ProcessHandle — Content-Disposition should have quoted filename
+# 4b. ProcessHandle -- Content-Disposition should have quoted filename
 # Out-Download works through the session message pipeline and requires ISE/Console context
 # We verify indirectly that AddContentHeaders (which properly quotes) is used for file downloads
-Assert-True $true "ProcessHandle Content-Disposition test (requires manual verification — see SEC 2.6)"
+Assert-True $true "ProcessHandle Content-Disposition test (requires manual verification -- see SEC 2.6)"
 
 # ============================================================================
-#  Test Group 5: Credentials in Query String (P1 — SEC 2.1)
+#  Test Group 5: Credentials in Query String (P1 -- SEC 2.1)
 # ============================================================================
 Write-Host "`n  [Test Group 5: Credentials in Query String vs Authorization Header]" -ForegroundColor White
 
@@ -207,14 +207,14 @@ try {
 }
 
 # 5b. Query string credentials currently work (this documents current behavior)
-# After a fix, these should be rejected — flip the assertion when fix is applied
+# After a fix, these should be rejected -- flip the assertion when fix is applied
 try {
     $response = Invoke-WebRequest -Uri "$ashxBase/script?$credQs" `
         -Method POST -Body '"query-string-cred-test"' -ContentType "text/plain" `
         -ErrorAction Stop -UseBasicParsing
     # BEFORE FIX: This passes (credentials in query string accepted)
-    # AFTER FIX: This should fail with 401 — change assertion accordingly
-    Assert-True ($response.StatusCode -eq 200) "Query string credentials accepted (BEFORE FIX — should be rejected after)"
+    # AFTER FIX: This should fail with 401 -- change assertion accordingly
+    Assert-True ($response.StatusCode -eq 200) "Query string credentials accepted (BEFORE FIX -- should be rejected after)"
 } catch {
     # AFTER FIX: uncomment the line below
     # Assert-True $true "Query string credentials correctly rejected"
@@ -243,7 +243,7 @@ try {
 # ============================================================================
 #  Test Group 6: Existing Functionality Regression
 # ============================================================================
-Write-Host "`n  [Test Group 6: Regression — Existing Functionality]" -ForegroundColor White
+Write-Host "`n  [Test Group 6: Regression -- Existing Functionality]" -ForegroundColor White
 
 # 6a. File upload/download round-trip via SPE module (Temp root)
 $regTestFile = Join-Path $env:TEMP "spe-regression-$(Get-Random).txt"
@@ -289,12 +289,12 @@ Assert-Equal $result[4] 5 "Last element is 5"
 # 6d. Persistent session preserves state
 $persistSessionId = "persist-test-$(Get-Random)"
 try {
-    # First call — create persistent session
+    # First call -- create persistent session
     $response1 = Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$persistSessionId&persistentSession=true&rawOutput=true" `
         -Method POST -Body '"first-call"' -ContentType "text/plain" -ErrorAction Stop -UseBasicParsing
     Assert-Equal $response1.Content "first-call" "Persistent session first call succeeds"
 
-    # Second call — reuse same session (proves it wasn't removed)
+    # Second call -- reuse same session (proves it wasn't removed)
     $response2 = Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$persistSessionId&persistentSession=true&rawOutput=true" `
         -Method POST -Body '"second-call"' -ContentType "text/plain" -ErrorAction Stop -UseBasicParsing
     Assert-Equal $response2.Content "second-call" "Persistent session second call succeeds (session reused)"
@@ -346,7 +346,7 @@ try {
     $contentDisp7 = $dlResponse7.Headers["Content-Disposition"]
     Assert-True ($contentDisp7 -notmatch '[^\\]"[^$]') "Content-Disposition does not contain unescaped quote in filename"
 } catch {
-    # File may not round-trip with dangerous chars — that's acceptable
+    # File may not round-trip with dangerous chars -- that's acceptable
     Assert-True $true "Dangerous filename rejected or sanitized: $_"
 }
 
@@ -412,7 +412,7 @@ if ($bearerToken) {
 }
 
 # 7d. HTTPS check doesn't crash without X-Forwarded-Proto (1.4/1.5)
-# Requires requireSecureConnection=true + plain HTTP — not testable in standard integration setup
+# Requires requireSecureConnection=true + plain HTTP -- not testable in standard integration setup
 Assert-True $true "X-Forwarded-Proto NRE fix verified by code review (requires HTTPS config)"
 
 # ============================================================================
@@ -420,7 +420,7 @@ Assert-True $true "X-Forwarded-Proto NRE fix verified by code review (requires H
 # ============================================================================
 Write-Host "`n  [Test Group 8: Code Quality & Bug Fix Verification]" -ForegroundColor White
 
-# 8a. API v2 cache race condition — concurrent requests don't produce 500 errors (BUG-5)
+# 8a. API v2 cache race condition -- concurrent requests don't produce 500 errors (BUG-5)
 $raceErrors8 = 0
 $raceRequests8 = 20
 for ($i = 0; $i -lt $raceRequests8; $i++) {
@@ -430,12 +430,12 @@ for ($i = 0; $i -lt $raceRequests8; $i++) {
     } catch {
         $statusCode = $_.Exception.Response.StatusCode.value__
         if ($statusCode -eq 500) { $raceErrors8++ }
-        # 404 is expected — nonexistent script
+        # 404 is expected -- nonexistent script
     }
 }
 Assert-Equal $raceErrors8 0 "No 500 errors from $raceRequests8 concurrent API v2 requests (BUG-5 lock fix)"
 
-# 8b. Unsupported API version returns no 500 (routing refactor regression — CQ-1)
+# 8b. Unsupported API version returns no 500 (routing refactor regression -- CQ-1)
 try {
     Invoke-WebRequest -Uri "$ashxBase/v999/master/Test?$credQs" `
         -Method GET -ErrorAction Stop -UseBasicParsing | Out-Null
@@ -446,7 +446,7 @@ try {
     Assert-True ($statusCode -ne 500) "Unsupported API version returns $statusCode (not 500)"
 }
 
-# 8c. Auth error responses reject bad credentials (CQ-2 — consistent error responses)
+# 8c. Auth error responses reject bad credentials (CQ-2 -- consistent error responses)
 try {
     $badAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\nonexistent:wrongpassword")) }
     Invoke-WebRequest -Uri "$ashxBase/script" `

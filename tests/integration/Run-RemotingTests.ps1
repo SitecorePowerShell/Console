@@ -9,12 +9,14 @@ $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\..\..\scripts\assert-prerequisites.ps1"
 Assert-SpePrerequisites
 
-Import-Module -Name SPE -Force
+$moduleRoot = "$PSScriptRoot\..\..\modules\SPE"
+Import-Module "$moduleRoot\SPE.psd1" -Force
 
 # Load test framework (reuse from SPE/Tests/)
 . "$PSScriptRoot\..\unit\TestRunner.ps1"
 
 $global:protocolHost = $ConnectionUri
+$global:sharedSecret = Get-EnvValue "SPE_SHARED_SECRET"
 
 if ($TestFile) {
     $path = Resolve-Path -Path (Join-Path $PSScriptRoot $TestFile) -ErrorAction SilentlyContinue
