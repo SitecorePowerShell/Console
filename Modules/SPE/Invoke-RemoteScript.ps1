@@ -81,7 +81,7 @@ function Parse-Response {
                 }
             }
             else {
-                Write-Verbose -Message "Deserializing the response message from the server."                     
+                Write-Verbose -Message "Deserializing the response message from the server."
                 ConvertFrom-CliXml -InputObject $responseMessages
             }
         }
@@ -366,89 +366,3 @@ function Invoke-RemoteScript {
     }
 }
 
-function Invoke-RemoteScriptAsync {
-    param(
-        [Parameter()]
-        [pscustomobject]$Session,
-
-        [Parameter()]
-        [scriptblock]$ScriptBlock,
-
-        [Parameter()]
-        [Alias("ArgumentList")]
-        [hashtable]$Arguments,
-
-        [Parameter()]
-        [switch]$Raw
-    )
-
-    if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
-        $functionScriptBlock = {
-            $WhatIfPreference = $true
-        }
-        $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
-    }
-    $hasRedirectedMessages = $false
-    if($PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent -or $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $hasRedirectedMessages = $true
-        $ScriptBlock = [scriptblock]::Create($writeStreamOverridesScript.ToString() + $ScriptBlock.ToString());
-    }
-
-    $resolved = Resolve-UsingVariables -ScriptBlock $ScriptBlock -Arguments $Arguments -ParamsPrefix '$params.'
-    $newScriptBlock = $resolved.ScriptText
-    $Arguments = $resolved.Arguments
-
-    if($Arguments) {
-        #This is still needed in order to pass types
-        $parameters = ConvertTo-CliXml -InputObject $Arguments
-    }
-
-    $sd = Expand-ScriptSession -Session $Session
-    $Username             = $sd.Username
-    $Password             = $sd.Password
-    $SharedSecret         = $sd.SharedSecret
-    $SessionId            = $sd.SessionId
-    $Credential           = $sd.Credential
-    $UseDefaultCredentials = $sd.UseDefaultCredentials
-    $ConnectionUri        = $sd.ConnectionUri
-    $PersistentSession    = $sd.PersistentSession
-    $clientCache          = $sd.HttpClients
-
-    $serviceUrl = "/-/script/script/?"
-    $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-
-    $localParams = if ($parameters) { $parameters } else { '' }
-
-    $messageBytes = [System.Text.Encoding]::UTF8.GetBytes("$($newScriptBlock.ToString())<#$($SessionId)#>$($localParams)")
-
-    $ms = New-Object System.IO.MemoryStream
-    $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
-    $gzip.Write($messageBytes, 0, $messageBytes.Length)
-    $gzip.Close()
-    $ms.Position = 0
-    $content = New-Object System.Net.Http.ByteArrayContent(@(,$ms.ToArray()))
-    $ms.Close()
-    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
-    $content.Headers.ContentEncoding.Add("gzip")
-
-    foreach($uri in $ConnectionUri) {
-        $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
-
-        $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-            -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
-
-        $taskPost = $client.PostAsync($url, $content)
-
-        $localProps = @{
-            Raw = $Raw.IsPresent
-        }
-        $continuation = New-RunspacedDelegate ([Func[System.Threading.Tasks.Task[System.Net.Http.HttpResponseMessage],object, PSObject]] { 
-            param($t,$props)
-
-            $contentTask = $t.Result.Content.ReadAsStringAsync()
-            $response = $contentTask.GetAwaiter().GetResult()
-            Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
-        })
-        Invoke-GenericMethod -InputObject $taskPost -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation,$localProps
-    }    
-}
