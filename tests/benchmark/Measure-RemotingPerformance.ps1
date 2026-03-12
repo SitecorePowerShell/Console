@@ -132,13 +132,32 @@ $results += Measure-Scenario -Name "Raw output" -Iterations $Iterations -WarmupI
 }
 
 # 4. Larger payload — returns more data, exercises serialization
-$results += Measure-Scenario -Name "Large result (100 objects)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
-    Invoke-RemoteScript -Session $session -ScriptBlock {
-        1..100 | ForEach-Object { [PSCustomObject]@{ Index = $_; Name = "Item_$_"; Value = [guid]::NewGuid().ToString() } }
+$heavyScript = {
+    1..500 | ForEach-Object {
+        [PSCustomObject]@{
+            Index = $_; Name = "Item_$_"; Path = "/sitecore/content/Home/Item_$_"
+            ID = [guid]::NewGuid(); Template = "Sample Item"; Language = "en"
+            Version = 1; Created = [datetime]::Now; Updated = [datetime]::Now
+            Fields = @{ Title = "Title_$_"; Body = "Lorem ipsum dolor sit amet " * 10 }
+        }
     }
 }
 
-# 5. API v2 endpoint — exercises the dictionary lookup path (GetApiScripts)
+$results += Measure-Scenario -Name "Heavy result (500 objects, CliXml)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
+    Invoke-RemoteScript -Session $session -ScriptBlock $heavyScript
+}
+
+# 5. JSON output mode — exercises the JSON serialization path
+$results += Measure-Scenario -Name "Heavy result (500 objects, JSON)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
+    Invoke-RemoteScript -Session $session -OutputFormat Json -ScriptBlock $heavyScript
+}
+
+# 6. Raw output mode with heavy payload for comparison
+$results += Measure-Scenario -Name "Heavy result (500 objects, Raw)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
+    Invoke-RemoteScript -Session $session -OutputFormat Raw -ScriptBlock $heavyScript
+}
+
+# 7. API v2 endpoint — exercises the dictionary lookup path (GetApiScripts)
 #    This requires a script registered in the Web API integration point.
 #    If none exist, this scenario is skipped.
 Write-Host "`n--- API v2 lookup (GetApiScripts cache) ---" -ForegroundColor Cyan
@@ -154,7 +173,7 @@ try {
     Write-Host "  Skipped — could not probe API v2 endpoint" -ForegroundColor Yellow
 }
 
-# 6. Persistent session — measures without session teardown overhead
+# 8. Persistent session — measures without session teardown overhead
 $persistentSession = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $ConnectionUri
 
 $results += Measure-Scenario -Name "Persistent session (no teardown)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {

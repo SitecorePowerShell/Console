@@ -55,6 +55,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string ParamSessionId = "sessionId";
         private const string ParamPersistentSession = "persistentSession";
         private const string ParamRawOutput = "rawOutput";
+        private const string ParamOutputFormat = "outputFormat";
         private const string ParamSkipUnpack = "skipunpack";
         private const string ParamSkipExisting = "skipexisting";
         private const string ParamScDatabase = "sc_database";
@@ -207,6 +208,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var sessionId = requestParameters.Get(ParamSessionId);
             var persistentSession = requestParameters.Get(ParamPersistentSession).Is("true");
             var rawOutput = requestParameters.Get(ParamRawOutput).Is("true");
+            var outputFormat = requestParameters.Get(ParamOutputFormat) ?? string.Empty;
+            if (rawOutput && string.IsNullOrEmpty(outputFormat))
+                outputFormat = "raw";
+            else if (string.IsNullOrEmpty(outputFormat))
+                outputFormat = "clixml";
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
             var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
@@ -261,7 +267,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                     break;
                 case "script":
-                    ProcessScript(context, request, rawOutput, sessionId, persistentSession);
+                    ProcessScript(context, request, outputFormat, sessionId, persistentSession);
                     return;
                 default:
                     PowerShellLog.Error($"Requested API/Version ({serviceMappingKey}) is not supported.");
@@ -621,7 +627,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
-        private static void ProcessScript(HttpContext context, HttpRequest request, bool rawOutput, string sessionId, bool persistentSession)
+        private static void ProcessScript(HttpContext context, HttpRequest request, string outputFormat, string sessionId, bool persistentSession)
         {
             if (request?.InputStream == null) return;
 
@@ -644,7 +650,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
-            ProcessScript(context, script, null, cliXmlArgs, rawOutput, sessionId, persistentSession);
+            ProcessScript(context, script, null, cliXmlArgs, outputFormat, sessionId, persistentSession);
         }
 
         private static void ProcessScript(HttpContext context, Item scriptItem)
@@ -674,7 +680,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             ProcessScript(context, script, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, bool rawOutput = false, string sessionId = null, bool persistentSession = false)
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -754,9 +760,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
                     var response = context.Response;
-                    if (rawOutput)
+                    if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))
                     {
-                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.
+                        // Raw output: no type information. Error streams use CliXml after delimiter.
                         if (outObjects.Any())
                         {
                             foreach (var outObject in outObjects)
@@ -781,9 +787,31 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
                         }
                     }
+                    else if (outputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // JSON output: fast serialization preserving property names/values.
+                        response.ContentType = "application/json";
+                        session.SetVariable("outObjects", outObjects);
+
+                        var errorObjects = new List<object>();
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            errorObjects.AddRange(session.LastErrors);
+                        }
+                        session.SetVariable("errorObjects", errorObjects);
+
+                        session.Output.Clear();
+                        session.ExecuteScriptPart(
+                            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress");
+
+                        foreach (var outputBuffer in session.Output)
+                        {
+                            response.Write(outputBuffer.Text);
+                        }
+                    }
                     else
                     {
-                        // In this output we want to preserve type information. Ideal for objects with a small output content.
+                        // CliXml output: full type-preserving serialization.
                         if (session.LastErrors != null && session.LastErrors.Any())
                         {
                             outObjects.AddRange(session.LastErrors);

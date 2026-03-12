@@ -34,9 +34,29 @@ function Parse-Response {
     param(
         [string]$Response,
         [bool]$HasRedirectedMessages,
-        [bool]$Raw
+        [bool]$Raw,
+        [string]$OutputFormat = 'CliXml'
     )
     if($response) {
+        if($OutputFormat -eq 'Json') {
+            Write-Verbose -Message "Parsing JSON response from server."
+            try {
+                $parsed = $response | ConvertFrom-Json
+                if($parsed.errors -and $parsed.errors.Count -gt 0) {
+                    foreach($err in $parsed.errors) {
+                        Write-Error -Message $err
+                    }
+                }
+                if($parsed.output) {
+                    $parsed.output
+                }
+                return
+            } catch {
+                Write-Warning "JSON parsing failed — the server may not support OutputFormat 'Json'. Falling back to CliXml deserialization. Upgrade the server to use JSON output."
+                # Fall through to CliXml parsing below
+            }
+        }
+
         $parsedResponse = $response
         $responseMessages = ""
         if($Raw) {
@@ -230,10 +250,19 @@ function Invoke-RemoteScript {
 
         [Parameter(ParameterSetName='Session')]
         [switch]$AsJob,
-        
+
         [Parameter()]
-        [switch]$Raw
+        [switch]$Raw,
+
+        [Parameter()]
+        [ValidateSet('CliXml', 'Json', 'Raw')]
+        [string]$OutputFormat = 'CliXml'
     )
+
+    # Map -Raw switch to OutputFormat for backwards compat
+    if($Raw.IsPresent -and $OutputFormat -eq 'CliXml') {
+        $OutputFormat = 'Raw'
+    }
 
     if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
         $functionScriptBlock = {
@@ -285,7 +314,8 @@ function Invoke-RemoteScript {
         }
 
         $serviceUrl = "/-/script/script/?"
-        $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
+        $isRawFormat = $OutputFormat -eq 'Raw'
+        $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $isRawFormat + "&outputFormat=" + $OutputFormat + "&persistentSession=" + $PersistentSession
         foreach ($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
             $localParams = if ($parameters) { $parameters } else { '' }
@@ -358,7 +388,7 @@ function Invoke-RemoteScript {
 
             if(!$encounteredError) {
                 Write-Verbose -Message "Parsing response from server."
-                Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
+                Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw ($OutputFormat -eq 'Raw') -OutputFormat $OutputFormat
             } else {
                 Write-Verbose -Message "Stopping from further execution."
             }
