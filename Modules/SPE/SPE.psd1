@@ -65,11 +65,9 @@
     NestedModules = @(
         '.\ConvertFrom-CliXml.ps1'
         '.\ConvertTo-CliXml.ps1',
-        '.\Invoke-GenericMethod.ps1',
         '.\Invoke-RemoteScript.ps1',
         '.\MediaSyncWatcher.ps1',
         '.\New-Jwt.ps1',
-        '.\New-RunspacedDelegate.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
         '.\Send-RemoteItem.ps1',
@@ -83,11 +81,8 @@
     FunctionsToExport = @(
         'ConvertFrom-CliXml'
         'ConvertTo-CliXml',
-        'Invoke-GenericMethod',
         'Invoke-RemoteScript',
-        'Invoke-RemoteScriptAsync',
         'New-Jwt',
-        'New-RunspacedDelegate',
         'New-ScriptSession',
         'Receive-RemoteItem',
         'Send-RemoteItem',

@@ -55,6 +55,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string ParamSessionId = "sessionId";
         private const string ParamPersistentSession = "persistentSession";
         private const string ParamRawOutput = "rawOutput";
+        private const string ParamOutputFormat = "outputFormat";
         private const string ParamSkipUnpack = "skipunpack";
         private const string ParamSkipExisting = "skipexisting";
         private const string ParamScDatabase = "sc_database";
@@ -80,9 +81,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var request = context.Request;
             var apiVersion = request.Params.Get(ParamApiVersion);
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
-            var serviceName = ApiVersionToServiceMapping.ContainsKey(serviceMappingKey)
-                ? ApiVersionToServiceMapping[serviceMappingKey]
-                : string.Empty;
+            if (!ApiVersionToServiceMapping.TryGetValue(serviceMappingKey, out var serviceName))
+            {
+                serviceName = string.Empty;
+            }
 
             PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
             PowerShellLog.Debug($"'{request.Url}'");
@@ -206,6 +208,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var sessionId = requestParameters.Get(ParamSessionId);
             var persistentSession = requestParameters.Get(ParamPersistentSession).Is("true");
             var rawOutput = requestParameters.Get(ParamRawOutput).Is("true");
+            var outputFormat = requestParameters.Get(ParamOutputFormat) ?? string.Empty;
+            if (rawOutput && string.IsNullOrEmpty(outputFormat))
+                outputFormat = "raw";
+            else if (string.IsNullOrEmpty(outputFormat))
+                outputFormat = "clixml";
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
             var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
@@ -247,13 +254,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     return;
                 case "2":
                     var apiScripts = GetApiScripts(dbName);
-                    if (apiScripts.ContainsKey(dbName))
+                    if (apiScripts.TryGetValue(dbName, out var dbScripts) &&
+                        dbScripts.TryGetValue(itemParam, out var apiScript))
                     {
-                        var dbScripts = apiScripts[dbName];
-                        if (dbScripts.ContainsKey(itemParam))
-                        {
-                            scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
-                        }
+                        scriptItem = scriptDb.GetItem(apiScript.Id);
                     }
 
                     if (scriptItem == null)
@@ -263,7 +267,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                     break;
                 case "script":
-                    ProcessScript(context, request, rawOutput, sessionId, persistentSession);
+                    ProcessScript(context, request, outputFormat, sessionId, persistentSession);
                     return;
                 default:
                     PowerShellLog.Error($"Requested API/Version ({serviceMappingKey}) is not supported.");
@@ -616,27 +620,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static byte[] ConvertFromGzipBytes(byte[] gzip)
         {
             using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            using (var memory = new MemoryStream())
             {
-                const int size = 4096;
-                var buffer = new byte[size];
-                using (var memory = new MemoryStream())
-                {
-                    int count;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, size);
-                        if (count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    }
-                    while (count > 0);
-                    return memory.ToArray();
-                }
+                stream.CopyTo(memory);
+                return memory.ToArray();
             }
         }
 
-        private static void ProcessScript(HttpContext context, HttpRequest request, bool rawOutput, string sessionId, bool persistentSession)
+        private static void ProcessScript(HttpContext context, HttpRequest request, string outputFormat, string sessionId, bool persistentSession)
         {
             if (request?.InputStream == null) return;
 
@@ -659,7 +650,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
-            ProcessScript(context, script, null, cliXmlArgs, rawOutput, sessionId, persistentSession);
+            ProcessScript(context, script, null, cliXmlArgs, outputFormat, sessionId, persistentSession);
         }
 
         private static void ProcessScript(HttpContext context, Item scriptItem)
@@ -689,7 +680,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             ProcessScript(context, script, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, bool rawOutput = false, string sessionId = null, bool persistentSession = false)
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -724,8 +715,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     foreach (var param in context.Request.Params.AllKeys)
                     {
-                        var paramValue = context.Request.Params[param];
                         if (string.IsNullOrEmpty(param)) continue;
+                        if (param.StartsWith("ALL_") || param.StartsWith("HTTP_") ||
+                            param.StartsWith("SERVER_") || param.StartsWith("REMOTE_") ||
+                            param.StartsWith("LOCAL_") || param.StartsWith("CERT_") ||
+                            param.StartsWith("HTTPS") || param.StartsWith("APP_") ||
+                            param.StartsWith("AUTH_") || param.StartsWith("CONTENT_") ||
+                            param.StartsWith("APPL_") || param.StartsWith("INSTANCE_") ||
+                            param.StartsWith("GATEWAY_") || param.StartsWith("PATH_") ||
+                            param.StartsWith("SCRIPT_") || param.StartsWith("URL") ||
+                            param.StartsWith("CACHE_") || param.StartsWith("LOGON_") ||
+                            param.StartsWith("REQUEST_") || param.StartsWith("UNENCODED_") ||
+                            param.StartsWith("UNMAPPED_"))
+                            continue;
+
+                        var paramValue = context.Request.Params[param];
                         if (string.IsNullOrEmpty(paramValue)) continue;
 
                         if (session.GetVariable(param) == null)
@@ -756,9 +760,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
                     var response = context.Response;
-                    if (rawOutput)
+                    if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))
                     {
-                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.
+                        // Raw output: no type information. Error streams use CliXml after delimiter.
                         if (outObjects.Any())
                         {
                             foreach (var outObject in outObjects)
@@ -783,9 +787,31 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
                         }
                     }
+                    else if (outputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // JSON output: fast serialization preserving property names/values.
+                        response.ContentType = "application/json";
+                        session.SetVariable("outObjects", outObjects);
+
+                        var errorObjects = new List<object>();
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            errorObjects.AddRange(session.LastErrors);
+                        }
+                        session.SetVariable("errorObjects", errorObjects);
+
+                        session.Output.Clear();
+                        session.ExecuteScriptPart(
+                            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress");
+
+                        foreach (var outputBuffer in session.Output)
+                        {
+                            response.Write(outputBuffer.Text);
+                        }
+                    }
                     else
                     {
-                        // In this output we want to preserve type information. Ideal for objects with a small output content.
+                        // CliXml output: full type-preserving serialization.
                         if (session.LastErrors != null && session.LastErrors.Any())
                         {
                             outObjects.AddRange(session.LastErrors);
@@ -883,10 +909,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
                     GetAvailableScripts(roots, apiScripts);
                 }
-                else if (!apiScripts.ContainsKey(dbName))
+                else
                 {
-                    var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                    apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
+                    apiScripts.GetOrAdd(dbName, _ => new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
                     var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
                     GetAvailableScripts(roots, apiScripts);
                 }
@@ -913,12 +938,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         var scriptPath = result.Paths.Path.Substring(rootPath.Length);
                         var dbName = result.Database.Name;
-                        if (!apiScripts.ContainsKey(dbName))
-                        {
-                            var newValue = new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase);
-                            apiScripts.AddOrUpdate(dbName, newValue, (s, scripts) => newValue);
-                        }
-                        apiScripts[dbName][scriptPath] = new ApiScript
+                        var scripts = apiScripts.GetOrAdd(dbName, _ => new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
+                        scripts[scriptPath] = new ApiScript
                         {
                             Database = result.Database.Name,
                             Id = result.ID,

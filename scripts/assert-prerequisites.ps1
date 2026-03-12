@@ -20,30 +20,41 @@ function Invoke-HttpCheck {
         [int]$TimeoutMs = 15000
     )
 
-    $request = [System.Net.HttpWebRequest]::Create($Uri)
-    $request.Method = $Method
-    $request.Timeout = $TimeoutMs
-    $request.ServerCertificateValidationCallback = { $true }
-
-    # Set TLS 1.2 on this specific request's service point
-    $sp = $request.ServicePoint
-    $sp.GetType().GetProperty("HttpBehaviour",
-        [System.Reflection.BindingFlags]::Instance -bor
-        [System.Reflection.BindingFlags]::NonPublic) | Out-Null
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
     try {
-        $response = $request.GetResponse()
-        $status = [int]$response.StatusCode
-        $response.Close()
-        return $status
-    }
-    catch [System.Net.WebException] {
-        if ($_.Exception.Response) {
-            $status = [int]$_.Exception.Response.StatusCode
-            $_.Exception.Response.Close()
-            return $status
+        $ProgressPreference = 'SilentlyContinue'
+        $params = @{
+            Uri             = $Uri
+            Method          = $Method
+            TimeoutSec      = [math]::Ceiling($TimeoutMs / 1000)
+            UseBasicParsing = $true
+            ErrorAction     = 'Stop'
         }
+
+        if ($PSVersionTable.PSVersion.Major -ge 6) {
+            # PowerShell 7+ has -SkipCertificateCheck
+            $params['SkipCertificateCheck'] = $true
+        } else {
+            # PowerShell 5.1: use ICertificatePolicy (available on .NET Framework)
+            if (-not ([System.Management.Automation.PSTypeName]'TrustAllCertsPolicy').Type) {
+                Add-Type @"
+public class TrustAllCertsPolicy : System.Net.ICertificatePolicy {
+    public bool CheckValidationResult(System.Net.ServicePoint sp,
+        System.Security.Cryptography.X509Certificates.X509Certificate cert,
+        System.Net.WebRequest req, int problem) { return true; }
+}
+"@
+            }
+            [System.Net.ServicePointManager]::CertificatePolicy = [TrustAllCertsPolicy]::new()
+        }
+
+        $response = Invoke-WebRequest @params
+        return [int]$response.StatusCode
+    }
+    catch {
+        if ($_.Exception.Response) {
+            return [int]$_.Exception.Response.StatusCode
+        }
+        Write-Host $_.Exception.InnerException -ForegroundColor Red
         return $null
     }
 }
