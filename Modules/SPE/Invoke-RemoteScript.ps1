@@ -52,7 +52,7 @@ function Parse-Response {
                 }
                 return
             } catch {
-                Write-Warning "JSON parsing failed — the server may not support OutputFormat 'Json'. Falling back to CliXml deserialization. Upgrade the server to use JSON output."
+                Write-Warning "JSON parsing failed - the server may not support OutputFormat 'Json'. Falling back to CliXml deserialization. Upgrade the server to use JSON output."
                 # Fall through to CliXml parsing below
             }
         }
