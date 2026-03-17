@@ -81,7 +81,7 @@ if ($Renew) {
     & $certz renew $PfxFile --password $password --days $Days --out $PfxFile
 } else {
     Write-Host "Generating TLS certificate..." -ForegroundColor Green
-    & $certz create dev $HostName --san "*.$HostName" --san "localhost" --file $PfxFile --password-file $PasswordFile --cert $CerFile --key $KeyFile --days $Days
+    & $certz create dev $HostName --san "*.$HostName" --san "localhost" --key-type RSA --pfx-encryption legacy --file $PfxFile --password-file $PasswordFile --cert $CerFile --key $KeyFile --days $Days
 }
 
 # Trust the certificate

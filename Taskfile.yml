@@ -7,12 +7,9 @@ tasks:
       - powershell -File scripts/init.ps1 {{.CLI_ARGS}}
 
   up:
-    desc: Start Docker environment
-    preconditions:
-      - sh: test -f .env
-        msg: "Missing .env file. Run 'task init' first."
+    desc: Start Docker environment and open Sitecore login
     cmds:
-      - docker compose up -d
+      - powershell -File scripts/up.ps1
 
   down:
     desc: Stop Docker environment
@@ -40,6 +37,21 @@ tasks:
         msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File src/Post_Build.ps1
+
+  pull:
+    desc: Pull serialized items from Sitecore to disk
+    cmds:
+      - powershell -File scripts/ser.ps1 -Command pull
+
+  push:
+    desc: Push serialized items from disk to Sitecore
+    cmds:
+      - powershell -File scripts/ser.ps1 -Command push
+
+  watch:
+    desc: Watch for item changes in Sitecore and serialize automatically
+    cmds:
+      - powershell -File scripts/ser.ps1 -Command watch
 
   generate:
     desc: Generate .dat files from serialized content
