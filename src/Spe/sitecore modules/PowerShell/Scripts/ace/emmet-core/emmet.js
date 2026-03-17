@@ -2,7 +2,7 @@
  * Underscore.js 1.13.8
  * source: https://github.com/jashkenas/underscore/blob/1.13.8/underscore-min.js
  * updated: 2026-03-15
- * reference: https://github.com/SitecorePowerShell/Console/issues/1413
+ * reference: t.b.d.
  */
 !function(n,r){"object"==typeof exports&&"undefined"!=typeof module?module.exports=r():"function"==typeof define&&define.amd?define("underscore",r):(n="undefined"!=typeof globalThis?globalThis:n||self,function(){var t=n._,e=n._=r();e.noConflict=function(){return n._=t,e}}())}(this,(function(){
 //     Underscore.js 1.13.8
