@@ -86,7 +86,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 serviceName = string.Empty;
             }
 
-            PowerShellLog.Info($"A request to the {serviceName} service was made from IP {GetIp(request)}");
+            PowerShellLog.Info($"[{serviceName}] A request to the {serviceName} service was made from IP {GetIp(request)}");
             PowerShellLog.Debug($"'{request.Url}'");
 
             if (!CheckServiceEnabled(context, serviceName))
@@ -99,7 +99,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            DispatchRequest(context, request, apiVersion, serviceMappingKey, identity, isAuthenticated);
+            PowerShellLog.Info($"[{serviceName}] Authenticated request from IP {GetIp(request)}, user: {identity.Name}");
+
+            DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
         }
 
         private static bool AuthenticateRequest(HttpContext context, string serviceName, out AccountIdentity identity, out bool isAuthenticated)
@@ -116,7 +118,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
             {
-                PowerShellLog.Warn($"Credentials passed via query string from IP {GetIp(request)}. Query string authentication is deprecated — use the Authorization header instead.");
+                PowerShellLog.Warn($"[{serviceName}] Credentials passed via query string from IP {GetIp(request)}, user: {username}. Query string authentication is deprecated — use the Authorization header instead.");
             }
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
@@ -142,13 +144,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            RejectAuthenticationMethod(context, serviceName);
+                            RejectAuthenticationMethod(context, serviceName, username);
                             return false;
                         }
                     }
                     catch (SecurityException ex)
                     {
-                        RejectAuthenticationMethod(context, serviceName, ex);
+                        RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;
                     }
                 }
@@ -158,7 +160,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (string.IsNullOrEmpty(authUserName))
             {
-                RejectAuthenticationMethod(context, serviceName);
+                RejectAuthenticationMethod(context, serviceName, username);
                 return false;
             }
 
@@ -173,13 +175,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                     else
                     {
-                        RejectAuthenticationMethod(context, serviceName);
+                        RejectAuthenticationMethod(context, serviceName, identity.Name);
                         return false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    RejectAuthenticationMethod(context, serviceName, ex);
+                    RejectAuthenticationMethod(context, serviceName, identity.Name, ex);
                     return false;
                 }
             }
@@ -199,7 +201,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return true;
         }
 
-        private static void DispatchRequest(HttpContext context, HttpRequest request, string apiVersion, string serviceMappingKey, AccountIdentity identity, bool isAuthenticated)
+        private static void DispatchRequest(HttpContext context, HttpRequest request, string apiVersion, string serviceMappingKey, string serviceName, AccountIdentity identity, bool isAuthenticated)
         {
             var requestParameters = request.Params;
             var itemParam = requestParameters.Get(ParamScript);
@@ -231,7 +233,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (scriptDb == null && !apiVersion.Is("file") && !apiVersion.Is("handle"))
             {
-                PowerShellLog.Error($"The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
+                PowerShellLog.Error($"[{serviceMappingKey}] The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
                 return;
             }
 
@@ -244,10 +246,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    ProcessMedia(context, isUpload, scriptDb, itemParam, unpackZip, skipExisting);
+                    ProcessMedia(context, serviceName, isUpload, scriptDb, itemParam, unpackZip, skipExisting);
                     return;
                 case "file":
-                    ProcessFile(context, isUpload, originParam, pathParam);
+                    ProcessFile(context, serviceName, isUpload, originParam, pathParam);
                     return;
                 case "handle":
                     ProcessHandle(context, originParam);
@@ -270,7 +272,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     ProcessScript(context, request, outputFormat, sessionId, persistentSession);
                     return;
                 default:
-                    PowerShellLog.Error($"Requested API/Version ({serviceMappingKey}) is not supported.");
+                    PowerShellLog.Error($"[{serviceMappingKey}] Requested API/Version ({serviceMappingKey}) is not supported.");
                     return;
             }
 
@@ -308,7 +310,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var isEnabled = WebServiceSettings.IsEnabled(serviceName);
             if (isEnabled) return true;
 
-            var errorMessage = $"The request could not be completed because the {serviceName} service is disabled.";
+            var ip = GetIp(context.Request);
+            var errorMessage = $"[{serviceName}] The request could not be completed because the {serviceName} service is disabled. IP: {ip}";
             SetErrorResponse(context, 403, errorMessage);
             PowerShellLog.Warn(errorMessage);
 
@@ -319,17 +322,19 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (isAuthenticated) return true;
 
+            var ip = GetIp(context.Request);
             var errorMessage =
-                $"The request could not be completed because the {serviceName} service requires authentication. Either the user is not logged in, authentication failed, or no credentials provided.";
+                $"[{serviceName}] The request could not be completed because the {serviceName} service requires authentication. IP: {ip}";
             SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
             return false;
         }
 
-        private static void RejectAuthenticationMethod(HttpContext context, string serviceName, Exception ex = null)
+        private static void RejectAuthenticationMethod(HttpContext context, string serviceName, string username = null, Exception ex = null)
         {
-            var errorMessage = $"A request to the {serviceName} service could not be completed because the provided credentials are invalid.";
+            var ip = GetIp(context.Request);
+            var errorMessage = $"[{serviceName}] Unauthorized request to the {serviceName} service from IP {ip}, user: {username ?? "unknown"}, invalid credentials provided.";
             SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
@@ -345,7 +350,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName);
             if (isAuthorized) return true;
 
-            var errorMessage = $"The specified user {authUserName} is not authorized for the {serviceName} service.";
+            var ip = GetIp(context.Request);
+            var errorMessage = $"[{serviceName}] The specified user {authUserName} is not authorized for the {serviceName} service. IP: {ip}";
             SetErrorResponse(context, 401, errorMessage, true);
             PowerShellLog.Warn(errorMessage);
 
@@ -401,26 +407,27 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return folder;
         }
 
-        private static void ProcessFile(HttpContext context, bool isUpload, string originParam, string pathParam)
+        private static void ProcessFile(HttpContext context, string serviceName, bool isUpload, string originParam, string pathParam)
         {
             if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
             {
-                PowerShellLog.Error($"Rejected file path with traversal attempt: '{pathParam}'");
+                var ip = GetIp(context.Request);
+                PowerShellLog.Error($"[{serviceName}] Rejected file path with traversal attempt: '{pathParam}', IP: {ip}");
                 SetErrorResponse(context, 403, "Path traversal is not allowed.");
                 return;
             }
 
             if (isUpload)
             {
-                ProcessFileUpload(context.Request.InputStream, originParam, pathParam);
+                ProcessFileUpload(context, serviceName, originParam, pathParam);
             }
             else
             {
-                ProcessFileDownload(context, originParam, pathParam);
+                ProcessFileDownload(context, serviceName, originParam, pathParam);
             }
         }
 
-        private static void ProcessFileUpload(Stream content, string originParam, string pathParam)
+        private static void ProcessFileUpload(HttpContext context, string serviceName, string originParam, string pathParam)
         {
             var file = GetPathFromParameters(originParam, pathParam.Replace('/', '\\'));
             var fileInfo = new FileInfo(file);
@@ -430,14 +437,17 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             using (var output = fileInfo.OpenWrite())
             {
-                using (var input = content)
+                using (var input = context.Request.InputStream)
                 {
                     input.CopyTo(output);
                 }
             }
+
+            fileInfo.Refresh();
+            PowerShellLog.Info($"[{serviceName}] File uploaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
         }
 
-        private static void ProcessFileDownload(HttpContext context, string originParam, string pathParam)
+        private static void ProcessFileDownload(HttpContext context, string serviceName, string originParam, string pathParam)
         {
             var file = GetPathFromParameters(originParam, pathParam);
 
@@ -455,6 +465,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 var fileInfo = new FileInfo(file);
                 AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
+                PowerShellLog.Info($"[{serviceName}] File downloaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
                 try
                 {
                     context.Response.TransmitFile(file);
@@ -467,7 +478,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
-        private static void ProcessMedia(HttpContext context, bool isUpload, Database scriptDb, string itemParam, bool unpackZip, bool skipExisting)
+        private static void ProcessMedia(HttpContext context, string serviceName, bool isUpload, Database scriptDb, string itemParam, bool unpackZip, bool skipExisting)
         {
             var request = context.Request;
             if (isUpload)
@@ -483,7 +494,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             // ZipEntry does not provide an IsDirectory or IsFile property.
                             if (!(zipEntry.FullName.EndsWith("/") && zipEntry.Name == "") && zipEntry.Length > 0)
                             {
-                                ProcessMediaUpload(zipEntry.Open(), scriptDb, $"{itemParam}/{zipEntry.FullName}",
+                                ProcessMediaUpload(zipEntry.Open(), serviceName, scriptDb, $"{itemParam}/{zipEntry.FullName}",
                                     skipExisting);
                             }
                         }
@@ -495,22 +506,22 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         var file = request.Files[fileName];
                         if (file != null)
-                            ProcessMediaUpload(file.InputStream, scriptDb, $"{itemParam}/{file.FileName}",
+                            ProcessMediaUpload(file.InputStream, serviceName, scriptDb, $"{itemParam}/{file.FileName}",
                                 skipExisting);
                     }
                 }
                 else
                 {
-                    ProcessMediaUpload(request.InputStream, scriptDb, itemParam, skipExisting);
+                    ProcessMediaUpload(request.InputStream, serviceName, scriptDb, itemParam, skipExisting);
                 }
             }
             else
             {
-                ProcessMediaDownload(context, scriptDb, itemParam);
+                ProcessMediaDownload(context, serviceName, scriptDb, itemParam);
             }
         }
 
-        private static void ProcessMediaUpload(Stream content, Database db, string path, bool skipExisting = false)
+        private static void ProcessMediaUpload(Stream content, string serviceName, Database db, string path, bool skipExisting = false)
         {
             path = path.Replace('\\', '/').TrimEnd('/');
             path = (path.StartsWith("/") ? path : "/" + path);
@@ -558,6 +569,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 {
                     content.CopyTo(ms);
                     mc.CreateFromStream(ms, fileName, mco);
+                    PowerShellLog.Info($"[{serviceName}] Media uploaded: {fileName}, size: {ms.Length} bytes, destination: {mco.Destination}");
                 }
             }
             else
@@ -577,11 +589,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             media.SetStream(mediaStream);
                         }
                     }
+                    PowerShellLog.Info($"[{serviceName}] Media updated: {mediaItem.Name}, size: {ms.Length} bytes, item: {mediaItem.ID}");
                 }
             }
         }
 
-        private static void ProcessMediaDownload(HttpContext context, Database db, string itemParam)
+        private static void ProcessMediaDownload(HttpContext context, string serviceName, Database db, string itemParam)
         {
             var indexOfDot = itemParam.IndexOf(".", StringComparison.Ordinal);
             itemParam = indexOfDot == -1 ? itemParam : itemParam.Substring(0, indexOfDot);
@@ -614,6 +627,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!str.StartsWith(".", StringComparison.InvariantCulture))
                 str = "." + str;
             AddContentHeaders(context, mediaItem.Name + str, mediaItem.Size);
+            PowerShellLog.Info($"[{serviceName}] Media downloaded: {mediaItem.Name}{str}, size: {mediaItem.Size} bytes, item: {mediaItem.ID}");
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
