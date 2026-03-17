@@ -55,6 +55,40 @@ task build
 task deploy
 ```
 
+## Troubleshooting: Docker
+
+### Identity Server crashes with `NullReferenceException` on JWKS endpoint
+
+**Symptom:** The Identity Server container logs show:
+
+```
+Duende.IdentityServer.Hosting.IdentityServerMiddleware [Fatal]
+Unhandled exception: "Object reference not set to an instance of an object."
+```
+
+Requests to `https://speid.dev.local/.well-known/openid-configuration/jwks` return `500 Internal Server Error`.
+
+**Cause:** The `SITECORE_ID_CERTIFICATE` in `.env` contains an **ECC (Elliptic Curve)** certificate. Sitecore Identity Server (Duende IdentityServer) requires an **RSA** certificate for JWT token signing. When it tries to extract the RSA key from an ECC cert, it throws a `NullReferenceException`.
+
+**Fix:** Regenerate the certificate and restart the containers:
+
+```powershell
+task init -- -LicenseXmlPath "C:\path\to\license.xml"
+docker compose down
+task up
+```
+
+The `cert.ps1` script generates `devcert.pfx` as an RSA certificate with legacy PFX encryption, which is compatible with both Traefik (TLS) and Identity Server (JWT signing).
+
+### Identity Server container is not healthy
+
+**Symptom:** `docker compose ps` shows the `id` container as unhealthy, and other services that depend on it fail to start or authenticate.
+
+**Common causes:**
+- **Database not ready** — the `mssql-init` container hasn't finished seeding the Core database. Wait and check `docker compose logs mssql-init`.
+- **Certificate issues** — see the JWKS error above.
+- **Missing `.env` values** — ensure `SITECORE_ID_CERTIFICATE`, `SITECORE_ID_CERTIFICATE_PASSWORD`, and `SITECORE_IDSECRET` are set. Run `task init` to regenerate them.
+
 ## Directory Layout
 
 ```
