@@ -191,41 +191,53 @@ namespace Spe.Core.Settings.Authorization
         {
             username = null;
             if (string.IsNullOrEmpty(token)) return false;
-            if (!IsValidSharedSecret()) return false;
 
-            var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 3) return false;
+            try
+            {
+                if (!IsValidSharedSecret()) return false;
 
-            var serializer = new JavaScriptSerializer();
+                var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 3) return false;
 
-            var headerJsonBase64 = parts[0];
-            var decodedHeader = Decode(headerJsonBase64);
-            var header = Encoding.UTF8.GetString(decodedHeader);
-            var tokenHeader = serializer.Deserialize<TokenHeader>(header);
+                var serializer = new JavaScriptSerializer();
 
-            if (!IsValidTokenType(tokenHeader.Typ)) return false;
+                var headerJsonBase64 = parts[0];
+                var decodedHeader = Decode(headerJsonBase64);
+                var header = Encoding.UTF8.GetString(decodedHeader);
+                var tokenHeader = serializer.Deserialize<TokenHeader>(header);
 
-            var payloadJsonBase64 = parts[1];
-            var decodedPayload = Decode(payloadJsonBase64);
-            var payload = Encoding.UTF8.GetString(decodedPayload);
-            var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
+                if (!IsValidTokenType(tokenHeader.Typ)) return false;
 
-            if (!IsValidExpiration(tokenPayload.Exp)) return false;
-            if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
-            if (!IsValidIssuer(tokenPayload.Iss)) return false;
+                var payloadJsonBase64 = parts[1];
+                var decodedPayload = Decode(payloadJsonBase64);
+                var payload = Encoding.UTF8.GetString(decodedPayload);
+                var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
 
-            var signature = parts[2];
+                if (!IsValidExpiration(tokenPayload.Exp)) return false;
+                if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
+                if (!IsValidIssuer(tokenPayload.Iss)) return false;
 
-            var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
+                var signature = parts[2];
 
-            var hash = ComputeHash(tokenHeader.Alg, SharedSecret, toBeSigned);
-            var testSignature = Convert.ToBase64String(hash).Split('=')[0]
-                .Replace('+', '-').Replace('/', '_');
+                var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
 
-            if (!IsValidSignature(signature, testSignature)) return false;
-            if (!IsValidUsername(tokenPayload.Name)) return false;
-            username = tokenPayload.Name;
-            return true;
+                var hash = ComputeHash(tokenHeader.Alg, SharedSecret, toBeSigned);
+                var testSignature = Convert.ToBase64String(hash).Split('=')[0]
+                    .Replace('+', '-').Replace('/', '_');
+
+                if (!IsValidSignature(signature, testSignature)) return false;
+                if (!IsValidUsername(tokenPayload.Name)) return false;
+                username = tokenPayload.Name;
+                return true;
+            }
+            catch (SecurityException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
