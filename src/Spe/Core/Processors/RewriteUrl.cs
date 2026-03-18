@@ -18,7 +18,6 @@ namespace Spe.Core.Processors
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "script", WebServiceSettings.ServiceRemoting },
-            { "1", WebServiceSettings.ServiceRestfulv1 },
             { "2", WebServiceSettings.ServiceRestfulv2 },
             { "file", WebServiceSettings.ServiceFileDownload },
             { "media", WebServiceSettings.ServiceMediaDownload },
