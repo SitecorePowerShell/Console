@@ -41,17 +41,39 @@ tasks:
   pull:
     desc: Pull serialized items from Sitecore to disk
     cmds:
-      - powershell -File scripts/ser.ps1 -Command pull
+      - powershell -File scripts/ser.ps1 -Category ser -Command pull
 
   push:
     desc: Push serialized items from disk to Sitecore
     cmds:
-      - powershell -File scripts/ser.ps1 -Command push
+      - powershell -File scripts/ser.ps1 -Category ser -Command push
 
   watch:
     desc: Watch for item changes in Sitecore and serialize automatically
     cmds:
-      - powershell -File scripts/ser.ps1 -Command watch
+      - powershell -File scripts/ser.ps1 -Category ser -Command watch
+
+  index:list:
+    desc: List all search indexes and their status
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command list
+
+  index:rebuild:
+    desc: Rebuild all search indexes
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command rebuild
+
+  index:schema-populate:
+    desc: Populate managed schema for search indexes
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command schema-populate
+
+  maintenance:
+    desc: Run full index maintenance (list, schema-populate, rebuild)
+    cmds:
+      - task: index:list
+      - task: index:schema-populate
+      - task: index:rebuild
 
   generate:
     desc: Generate .dat files from serialized content
@@ -89,4 +111,4 @@ tasks:
   clean:
     desc: Clean build artifacts
     cmds:
-      - powershell -Command "Get-ChildItem docker/deploy -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force _output/Sitecore.PowerShell.Extensions-*, _output/SPE.*, _output/extracted-module, _output/docker-module, src/*/bin, src/*/obj -ErrorAction SilentlyContinue"
+      - powershell -File scripts/clean.ps1
