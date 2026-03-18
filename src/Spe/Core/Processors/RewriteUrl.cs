@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Web;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.PreprocessRequest;
 using Sitecore.Text;
@@ -6,12 +8,23 @@ using Sitecore.Web;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
+using Spe.Core.Settings.Authorization;
 using Spe.Core.VersionDecoupling;
 
 namespace Spe.Core.Processors
 {
     public class RewriteUrl : PreprocessRequestProcessor
     {
+        private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "script", WebServiceSettings.ServiceRemoting },
+            { "1", WebServiceSettings.ServiceRestfulv1 },
+            { "2", WebServiceSettings.ServiceRestfulv2 },
+            { "file", WebServiceSettings.ServiceFileDownload },
+            { "media", WebServiceSettings.ServiceMediaDownload },
+            { "handle", WebServiceSettings.ServiceHandleDownload },
+        };
+
         public override void Process(PreprocessRequestArgs arguments)
         {
             Assert.ArgumentNotNull(arguments, "arguments");
@@ -19,6 +32,19 @@ namespace Spe.Core.Processors
             {
                 var url = TypeResolver.Resolve<IObsoletor>().GetRequestUrl(arguments);
                 var localPath = url.LocalPath;
+
+                if (!localPath.StartsWith("/-/script/", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                var httpContext = HttpContext.Current;
+                if (httpContext != null &&
+                    string.Equals(httpContext.Request.HttpMethod, "OPTIONS", StringComparison.OrdinalIgnoreCase))
+                {
+                    HandleCorsPreflight(httpContext, localPath);
+                    return;
+                }
 
                 if (localPath.StartsWith("/-/script/v1", StringComparison.OrdinalIgnoreCase))
                 {
@@ -79,6 +105,59 @@ namespace Spe.Core.Processors
             {
                 PowerShellLog.Error("Error during the SPE API call", exception);
             }
+        }
+
+        private static void HandleCorsPreflight(HttpContext httpContext, string localPath)
+        {
+            var sourceArray = localPath.TrimStart('/').Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            if (sourceArray.Length < 3)
+            {
+                return;
+            }
+
+            var apiSegment = sourceArray[2];
+            var apiVersion = apiSegment.Is("v1") ? "1" : apiSegment.Is("v2") ? "2" : apiSegment;
+
+            if (!ApiVersionToServiceMapping.TryGetValue(apiVersion, out var serviceName))
+            {
+                return;
+            }
+
+            var cors = WebServiceSettings.GetCorsSettings(serviceName);
+            if (cors == null)
+            {
+                return;
+            }
+
+            var origin = httpContext.Request.Headers["Origin"];
+            if (!IsOriginAllowed(cors, origin))
+            {
+                return;
+            }
+
+            var response = httpContext.Response;
+            response.StatusCode = 204;
+            response.Headers["Access-Control-Allow-Origin"] = cors.AllowAnyOrigin ? "*" : origin;
+            response.Headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
+            response.Headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Content-Encoding";
+            response.Headers["Access-Control-Max-Age"] = cors.MaxAge.ToString();
+
+            if (cors.AllowCredentials)
+            {
+                response.Headers["Access-Control-Allow-Credentials"] = "true";
+            }
+
+            response.End();
+        }
+
+        private static bool IsOriginAllowed(WebServiceSettings.CorsSettings cors, string origin)
+        {
+            if (cors.AllowAnyOrigin)
+            {
+                return true;
+            }
+
+            return !string.IsNullOrEmpty(origin) && cors.AllowedOrigins != null && cors.AllowedOrigins.Contains(origin);
         }
     }
 }
