@@ -7,6 +7,7 @@
       <services>
         <restfulv2>
           <patch:attribute name="enabled">true</patch:attribute>
+          <cors allowedOrigins="*" allowCredentials="false" maxAge="3600" />
         </restfulv2>
         <mediaUpload>
           <patch:attribute name="enabled">true</patch:attribute>
@@ -22,6 +23,7 @@
         </fileUpload>
         <remoting>
           <patch:attribute name="enabled">true</patch:attribute>
+          <cors allowedOrigins="*" allowCredentials="false" maxAge="3600" />
         </remoting>
       </services>
       <authenticationProvider>

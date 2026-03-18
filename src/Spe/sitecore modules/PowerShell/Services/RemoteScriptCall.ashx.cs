@@ -79,6 +79,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         public void ProcessRequest(HttpContext context)
         {
             var request = context.Request;
+            var origin = request.Headers["Origin"];
             var apiVersion = request.Params.Get(ParamApiVersion);
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             if (!ApiVersionToServiceMapping.TryGetValue(serviceMappingKey, out var serviceName))
@@ -102,6 +103,45 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Info($"[{serviceName}] Authenticated request from IP {GetIp(request)}, user: {identity.Name}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
+
+            AddCorsHeaders(context, serviceName, origin);
+        }
+
+        private static void AddCorsHeaders(HttpContext context, string serviceName, string origin)
+        {
+            if (string.IsNullOrEmpty(origin))
+            {
+                return;
+            }
+
+            var cors = WebServiceSettings.GetCorsSettings(serviceName);
+            if (cors == null)
+            {
+                return;
+            }
+
+            if (!IsOriginAllowed(cors, origin))
+            {
+                return;
+            }
+
+            var response = context.Response;
+            response.Headers["Access-Control-Allow-Origin"] = cors.AllowAnyOrigin ? "*" : origin;
+
+            if (cors.AllowCredentials)
+            {
+                response.Headers["Access-Control-Allow-Credentials"] = "true";
+            }
+        }
+
+        private static bool IsOriginAllowed(WebServiceSettings.CorsSettings cors, string origin)
+        {
+            if (cors.AllowAnyOrigin)
+            {
+                return true;
+            }
+
+            return !string.IsNullOrEmpty(origin) && cors.AllowedOrigins != null && cors.AllowedOrigins.Contains(origin);
         }
 
         private static bool AuthenticateRequest(HttpContext context, string serviceName, out AccountIdentity identity, out bool isAuthenticated)

@@ -10,10 +10,19 @@ namespace Spe.Core.Settings.Authorization
 {
     public static class WebServiceSettings
     {
+        internal class CorsSettings
+        {
+            public HashSet<string> AllowedOrigins { get; set; }
+            public bool AllowAnyOrigin { get; set; }
+            public bool AllowCredentials { get; set; }
+            public int MaxAge { get; set; }
+        }
+
         private class ServiceState
         {
             public bool Enabled { get; set; }
             public bool RequireSecureConnection { get; set; }
+            public CorsSettings Cors { get; set; }
         }
 
         private static readonly Dictionary<string, ServiceState> services = new Dictionary<string, ServiceState>();
@@ -44,6 +53,35 @@ namespace Spe.Core.Settings.Authorization
                     Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
                     RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true
                 };
+
+                var corsNode = xmlDefinition.SelectSingleNode("cors") as XmlElement;
+                if (corsNode != null)
+                {
+                    var origins = corsNode.GetAttribute("allowedOrigins");
+                    if (!string.IsNullOrEmpty(origins))
+                    {
+                        var allowCredentials = corsNode.GetAttribute("allowCredentials").Is("true");
+                        var allowAnyOrigin = origins == "*";
+
+                        if (allowCredentials && allowAnyOrigin)
+                        {
+                            Sitecore.Diagnostics.Log.Warn(
+                                "[SPE] CORS misconfiguration: allowCredentials cannot be used with wildcard allowedOrigins. Credentials will not be allowed.", typeof(WebServiceSettings));
+                            allowCredentials = false;
+                        }
+
+                        service.Cors = new CorsSettings
+                        {
+                            AllowAnyOrigin = allowAnyOrigin,
+                            AllowedOrigins = allowAnyOrigin
+                                ? null
+                                : new HashSet<string>(origins.Split('|'), StringComparer.OrdinalIgnoreCase),
+                            AllowCredentials = allowCredentials,
+                            MaxAge = int.TryParse(corsNode.GetAttribute("maxAge"), out var m) ? m : 3600
+                        };
+                    }
+                }
+
                 services.Add(xmlDefinition.Name, service);
             }
 
@@ -61,6 +99,15 @@ namespace Spe.Core.Settings.Authorization
         public static int MaxmimumPollMillis { get; private set; }
         public static int SerializationSizeBuffer { get; private set; }
         public static int AuthorizationCacheExpirationSecs { get; set; }
+
+        internal static CorsSettings GetCorsSettings(string serviceName)
+        {
+            if (services.ContainsKey(serviceName))
+            {
+                return services[serviceName].Cors;
+            }
+            return null;
+        }
 
         public static bool IsEnabled(string serviceName)
         {
