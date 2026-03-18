@@ -111,4 +111,4 @@ tasks:
   clean:
     desc: Clean build artifacts
     cmds:
-      - powershell -Command "Get-ChildItem docker/deploy -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force _output/Sitecore.PowerShell.Extensions-*, _output/SPE.*, _output/extracted-module, _output/docker-module, src/*/bin, src/*/obj -ErrorAction SilentlyContinue"
+      - powershell -File scripts/clean.ps1
