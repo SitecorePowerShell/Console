@@ -28,8 +28,13 @@ SharedFields:
     
     $item = Get-Item -Path .
     if($item) {
-      Edit-TaskSchedule $item
-      Close-Window
+        Edit-TaskSchedule $item
+        Send-SheerMessage -OnScriptEnd -Name "item:refresh" -Parameters @{
+            id=$item.ID;
+            language=$item.Language;
+            version=$item.Version
+        }
+        Close-Window
     }
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
@@ -79,11 +84,11 @@ Languages:
       Value: 20140520T051200Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "8e86051b-7a03-4ae2-9dc7-ea3443a5dc39"
+      Value: "c5229ed3-ea91-425d-85ce-f3aa5271d6d1"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214518Z
+      Value: 20260320T150213Z

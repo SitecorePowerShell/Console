@@ -100,7 +100,19 @@ try {
 
     # Run the CLI command
     Write-Host "Running: dotnet sitecore $Category $Command" -ForegroundColor Cyan
-    dotnet sitecore $Category $Command
+    $output = dotnet sitecore $Category $Command 2>&1
+    $outputStr = $output | Out-String
+
+    # Detect invalid_grant (expired/revoked refresh token) and retry after re-login
+    if ($outputStr -match "invalid_grant") {
+        Write-Host "Refresh token expired. Re-authenticating..." -ForegroundColor Yellow
+        dotnet sitecore login --authority "https://$idHost" --cm "https://$cmHost" --allow-write true
+        Write-Host "Retrying: dotnet sitecore $Category $Command" -ForegroundColor Cyan
+        dotnet sitecore $Category $Command
+    } else {
+        Write-Output $output
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    }
 } finally {
     Pop-Location
 }
