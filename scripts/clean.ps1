@@ -17,6 +17,12 @@ if (Test-Path $solrDir) {
     Get-ChildItem $solrDir -Exclude .gitkeep | Remove-Item -Recurse -Force
 }
 
+# Clean cm folder (keep .gitkeep)
+$cmDir = Join-Path $projectRoot "docker\data\cm"
+if (Test-Path $cmDir) {
+    Get-ChildItem $cmDir -Exclude .gitkeep | Remove-Item -Recurse -Force
+}
+
 # Clean build artifacts
 $paths = @(
     "_output\Sitecore.PowerShell.Extensions-*"

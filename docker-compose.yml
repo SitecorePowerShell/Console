@@ -149,6 +149,7 @@ services:
       MEDIA_REQUEST_PROTECTION_SHARED_SECRET: ${MEDIA_REQUEST_PROTECTION_SHARED_SECRET}
     volumes:
       - ${SITECORE_LICENSE_PATH}:${SITECORE_LICENSE_PATH}:ro
+      - .\docker\data\cm\:C:\inetpub\wwwroot\App_Data\logs
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
