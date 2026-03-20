@@ -9,27 +9,27 @@ $localFilePath = Join-Path -Path $PSScriptRoot -ChildPath "..\fixtures"
 
 $filename = "data.xml"
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath App
+    Send-RemoteItem -Session $session -RootPath App -ErrorAction SilentlyContinue
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($AppPath)\$($using:filename)" }
 Assert-Equal $result $true "upload to the App root path"
 
 $filename = "data.xml"
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath Package -Destination "\"
+    Send-RemoteItem -Session $session -RootPath Package -Destination "\" -ErrorAction SilentlyContinue
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($SitecorePackageFolder)\$($using:filename)" }
 Assert-Equal $result $true "upload to the Package root path"
 
 $filename = "kitten.jpg"
 $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+    Send-RemoteItem -Session $session -RootPath Media -ErrorAction SilentlyContinue -Destination "Images/spe-test"
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" }
 Assert-Equal $result $true "upload to the Media Library"
 
 $filename = "kitten.jpg"
 $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/kitten1.jpg"
+    Send-RemoteItem -Session $session -RootPath Media -ErrorAction SilentlyContinue -Destination "Images/spe-test/kitten1.jpg"
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)1" }
 Assert-Equal $result $true "upload to the Media Library with different name"
 
@@ -37,7 +37,7 @@ $filename = "kitten.jpg"
 $filenameReplacement = "kitten-replacement.jpg"
 $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/"
+    Send-RemoteItem -Session $session -RootPath Media -ErrorAction SilentlyContinue -Destination "Images/spe-test/"
 # Verify the file was uploaded
 $result = Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" }
 Assert-Equal $result $true "upload to the Media Library and replace using a guid - initial upload"
@@ -64,7 +64,7 @@ Assert-NotEqual $details.Size $details2.Size "upload to the Media Library and re
 
 $filename = "kittens.zip"
 Get-Item -Path "$($localFilePath)\$($filename)" |
-    Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+    Send-RemoteItem -Session $session -RootPath Media -ErrorAction SilentlyContinue -Destination "Images/spe-test"
 $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     Get-ChildItem -Path "master:\media library\images\spe-test\" -Recurse | Measure-Object | Select-Object -ExpandProperty Count
 }

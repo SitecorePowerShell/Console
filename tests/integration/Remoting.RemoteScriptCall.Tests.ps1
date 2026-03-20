@@ -96,20 +96,24 @@ try {
 }
 
 # 2b. Non-persistent session is cleaned up even after exception (no leak)
-# Get session count before
-$countBefore = Invoke-RemoteScript -Session $session -ScriptBlock {
-    [Spe.Core.Host.ScriptSessionManager]::GetAll().Count
+if ($global:isConstrainedLanguage) {
+    Skip-Test "Non-persistent session cleaned up after exception (no leak)" "CLM blocks .NET type access for ScriptSessionManager"
+} else {
+    # Get session count before
+    $countBefore = Invoke-RemoteScript -Session $session -ScriptBlock {
+        [Spe.Core.Host.ScriptSessionManager]::GetAll().Count
+    }
+    $leakSessionId2 = "leak-test2-$(Get-Random)"
+    try {
+        Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$leakSessionId2&persistentSession=false" `
+            -Method POST -Body 'throw "leak check"' -ContentType "text/plain" -ErrorAction Stop -UseBasicParsing | Out-Null
+    } catch { }
+    # Get session count after -- should not have increased
+    $countAfter = Invoke-RemoteScript -Session $session -ScriptBlock {
+        [Spe.Core.Host.ScriptSessionManager]::GetAll().Count
+    }
+    Assert-Equal $countAfter $countBefore "Non-persistent session cleaned up after exception (no leak)"
 }
-$leakSessionId2 = "leak-test2-$(Get-Random)"
-try {
-    Invoke-WebRequest -Uri "$ashxBase/script?$credQs&sessionId=$leakSessionId2&persistentSession=false" `
-        -Method POST -Body 'throw "leak check"' -ContentType "text/plain" -ErrorAction Stop -UseBasicParsing | Out-Null
-} catch { }
-# Get session count after -- should not have increased
-$countAfter = Invoke-RemoteScript -Session $session -ScriptBlock {
-    [Spe.Core.Host.ScriptSessionManager]::GetAll().Count
-}
-Assert-Equal $countAfter $countBefore "Non-persistent session cleaned up after exception (no leak)"
 
 # 2c. Script with non-terminating error -- session cleanup still works
 $leakSessionId2 = "leak-test2-$(Get-Random)"

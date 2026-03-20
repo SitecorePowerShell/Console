@@ -6,6 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Management.Automation.Language;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -176,20 +178,42 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (authHeader.StartsWith("Bearer"))
                 {
                     var token = authHeader.Substring("Bearer ".Length).Trim();
+                    var ip = GetIp(request);
                     try
                     {
-                        if (ServiceAuthenticationManager.AuthenticationProvider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username))
+                        var provider = ServiceAuthenticationManager.AuthenticationProvider;
+                        TokenValidationResult tokenResult = null;
+
+                        bool isValid;
+                        if (provider is ISpeAuthenticationProviderEx providerEx)
                         {
-                            authenticationManager.SwitchToUser(username, true);
+                            isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
                         }
                         else
                         {
+                            isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                        }
+
+                        if (isValid)
+                        {
+                            authenticationManager.SwitchToUser(username, true);
+                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}",
+                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none");
+                            if (tokenResult != null)
+                            {
+                                HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
+                            }
+                        }
+                        else
+                        {
+                            PowerShellLog.Audit("Remoting: Bearer auth failed, user={0}, ip={1}", username ?? "unknown", ip);
                             RejectAuthenticationMethod(context, serviceName, username);
                             return false;
                         }
                     }
                     catch (SecurityException ex)
                     {
+                        PowerShellLog.Audit("Remoting: Bearer auth error, user={0}, ip={1}, error={2}", username ?? "unknown", ip, ex.Message);
                         RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;
                     }
@@ -309,14 +333,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                     break;
                 case "script":
-                    ProcessScript(context, request, outputFormat, sessionId, persistentSession);
+                    ProcessScript(context, request, serviceName, outputFormat, sessionId, persistentSession);
                     return;
                 default:
                     PowerShellLog.Error($"[{serviceMappingKey}] Requested API/Version ({serviceMappingKey}) is not supported.");
                     return;
             }
 
-            ProcessScript(context, scriptItem);
+            ProcessScript(context, scriptItem, serviceName);
         }
 
         private static string GetIp(HttpRequest request)
@@ -329,6 +353,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             return ip;
+        }
+
+        private static string ComputeScriptHash(string script)
+        {
+            if (string.IsNullOrEmpty(script)) return "empty";
+            using (var sha = SHA256.Create())
+            {
+                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(script));
+                return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant().Substring(0, 16);
+            }
         }
 
         public bool IsReusable => true;
@@ -681,7 +715,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
-        private static void ProcessScript(HttpContext context, HttpRequest request, string outputFormat, string sessionId, bool persistentSession)
+        private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession)
         {
             if (request?.InputStream == null) return;
 
@@ -704,10 +738,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
-            ProcessScript(context, script, null, cliXmlArgs, outputFormat, sessionId, persistentSession);
+            ProcessScript(context, script, serviceName, null, cliXmlArgs, outputFormat, sessionId, persistentSession);
         }
 
-        private static void ProcessScript(HttpContext context, Item scriptItem)
+        private static void ProcessScript(HttpContext context, Item scriptItem, string serviceName)
         {
             if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
@@ -731,10 +765,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 streams.Add("stream", request.InputStream);
             }
 
-            ProcessScript(context, script, streams);
+            ProcessScript(context, script, serviceName, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false)
+        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -743,6 +777,27 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
+            var user = Sitecore.Context.User?.Name ?? "unknown";
+            var ip = GetIp(context.Request);
+            var scriptHash = ComputeScriptHash(script);
+            var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
+            var clientSession = tokenResult?.ClientSessionId ?? "none";
+
+            PowerShellLog.Audit("Remoting: script starting, user={0}, ip={1}, session={2}, scriptHash={3}, clientSession={4}",
+                user, ip, session.ID, scriptHash, clientSession);
+
+            // Determine language mode restriction for user scripts (applied just before execution, restored after)
+            var languageMode = WebServiceSettings.GetLanguageMode(serviceName);
+
+            // Validate script against command restrictions
+            var scope = tokenResult?.Scope;
+            if (!ScriptValidator.ValidateScript(serviceName, script, scope, out var blockedCommand))
+            {
+                PowerShellLog.Audit("Remoting: script rejected, user={0}, ip={1}, blockedCommand={2}, clientSession={3}",
+                    user, ip, blockedCommand, clientSession);
+                SetErrorResponse(context, 403, $"Script contains blocked command: {blockedCommand}");
+                return;
+            }
 
             try
             {
@@ -794,7 +849,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     session.SetVariable("requestStreams", streams);
                     session.SetVariable("scriptArguments", scriptArguments);
+
+                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                        session.SetLanguageMode(languageMode);
                     session.ExecuteScriptPart(script, true);
+                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                        session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+
                     context.Response.Write(session.Output.ToString());
                 }
                 else
@@ -812,7 +873,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         script = script.TrimEnd(' ', '\t', '\n');
                     }
 
+                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                        session.SetLanguageMode(languageMode);
                     var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
+                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                        session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
                     var response = context.Response;
                     if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))
                     {
@@ -890,9 +955,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     context.Response.StatusCode = 424;
                     context.Response.StatusDescription = "Method Failure";
                 }
+
+                PowerShellLog.Audit("Remoting: script completed, user={0}, ip={1}, session={2}, scriptHash={3}, hasErrors={4}, clientSession={5}",
+                    user, ip, session.ID, scriptHash, session.Output.HasErrors, clientSession);
             }
             catch (Exception ex)
             {
+                PowerShellLog.Audit("Remoting: script failed, user={0}, ip={1}, session={2}, scriptHash={3}, error={4}, clientSession={5}",
+                    user, ip, session.ID, scriptHash, ex.GetType().Name, clientSession);
                 PowerShellLog.Error("Error during script execution via RemoteScriptCall", ex);
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";

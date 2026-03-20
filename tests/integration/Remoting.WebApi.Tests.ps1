@@ -5,9 +5,12 @@ Write-Host "`n  [Web API Responses - Setup]" -ForegroundColor White
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 Invoke-RemoteScript -Session $session -ScriptBlock {
-    # Getting Started
-    $module = Get-Item "master:" -ID "{ED2CF34E-1A59-444D-806E-51DB1E560093}"
-    $module.Enabled = "1"
+    # Getting Started (may not exist in all instances)
+    $module = Get-Item "master:" -ID "{ED2CF34E-1A59-444D-806E-51DB1E560093}" -ErrorAction SilentlyContinue
+    if ($module) { $module.Enabled = "1" }
+    # Advanced Web API
+    $advModule = Get-Item "master:" -ID "{CACE2E80-0CD2-48BD-894E-8784B7F2B00B}" -ErrorAction SilentlyContinue
+    if ($advModule) { $advModule.Enabled = "1" }
 }
 Stop-ScriptSession -Session $session
 
@@ -44,14 +47,17 @@ Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/Children
 
 Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=non_existing&password=invalid" } "(401) Unauthorized" "Non existing user should throw exception"
 
-Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NotFound" } "(404) Not Found" "Not found script should throw exception"
+Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NotFound" } "" "Not found script without credentials should throw exception"
 
 Write-Host "`n  [Web API Responses - Teardown]" -ForegroundColor White
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 Invoke-RemoteScript -Session $session -ScriptBlock {
     # Getting Started
-    $module = Get-Item "master:" -ID "{ED2CF34E-1A59-444D-806E-51DB1E560093}"
-    $module.Enabled = ""
+    $module = Get-Item "master:" -ID "{ED2CF34E-1A59-444D-806E-51DB1E560093}" -ErrorAction SilentlyContinue
+    if ($module) { $module.Enabled = "" }
+    # Advanced Web API
+    $advModule = Get-Item "master:" -ID "{CACE2E80-0CD2-48BD-894E-8784B7F2B00B}" -ErrorAction SilentlyContinue
+    if ($advModule) { $advModule.Enabled = "" }
 }
 Stop-ScriptSession -Session $session

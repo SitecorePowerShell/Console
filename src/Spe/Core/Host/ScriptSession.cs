@@ -265,6 +265,11 @@ namespace Spe.Core.Host
             }
         }
 
+        public void SetLanguageMode(PSLanguageMode mode)
+        {
+            host.Runspace.SessionStateProxy.LanguageMode = mode;
+        }
+
         public void RemoveVariable(string varName)
         {
             lock (this)

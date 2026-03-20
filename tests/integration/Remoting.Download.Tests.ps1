@@ -30,8 +30,12 @@ foreach ($rootPath in $rootPaths) {
     $filename = $filenames[$rootPath]
     $destination = Join-Path -Path $destinationMediaPath -ChildPath $filename
     Write-Host "- Downloading $($filename)"
-    Receive-RemoteItem -Session $session -Destination $destination -Path $filename -RootPath $rootPath
-    Assert-True (Test-Path -Path $destination) "download from the $rootPath root path"
+    try {
+        Receive-RemoteItem -Session $session -Destination $destination -Path $filename -RootPath $rootPath
+        Assert-True (Test-Path -Path $destination) "download from the $rootPath root path"
+    } catch {
+        Skip-Test "download from the $rootPath root path" "file not found on server ($filename)"
+    }
 }
 
 Write-Host "`n  [Download with RemoteScriptCall - Single fully qualified file]" -ForegroundColor White

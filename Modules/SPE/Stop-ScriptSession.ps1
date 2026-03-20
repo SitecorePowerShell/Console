@@ -85,7 +85,7 @@ function Stop-ScriptSession {
     Invoke-RemoteScript -Session $newSession -ScriptBlock {
         $startTime = [datetime]::Now
         $sleepInMs = 20
-        $timeoutInSec = [math]::Max(0, ($using:Timeout))
+        $timeoutInSec = if (($using:Timeout) -gt 0) { $using:Timeout } else { 0 }
         while($currentSessions = (Get-ScriptSession -Id $using:id -ErrorAction 0 | Where-Object { $_.ApplianceType -eq "RemoteAutomation" -and $_.Id -ne $scriptSession.Id })) {
             if(!$currentSessions) { break }
             $shouldSleep = $false

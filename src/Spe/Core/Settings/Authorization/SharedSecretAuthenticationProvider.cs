@@ -11,7 +11,7 @@ using Spe.Core.Extensions;
 
 namespace Spe.Core.Settings.Authorization
 {
-    public class SharedSecretAuthenticationProvider : ISpeAuthenticationProvider
+    public class SharedSecretAuthenticationProvider : ISpeAuthenticationProviderEx
     {
         public string SharedSecret { get; set; }
         public List<string> AllowedIssuers { get; set; }
@@ -26,7 +26,12 @@ namespace Spe.Core.Settings.Authorization
 
         public bool Validate(string token, string authority, out string username)
         {
-            return ValidateToken(token, authority, out username);
+            return ValidateToken(token, authority, out username, out _);
+        }
+
+        public bool Validate(string token, string authority, out string username, out TokenValidationResult result)
+        {
+            return ValidateToken(token, authority, out username, out result);
         }
 
         public class TokenHeader
@@ -41,6 +46,9 @@ namespace Spe.Core.Settings.Authorization
             public string Aud { get; set; }
             public long Exp { get; set; }
             public string Name { get; set; }
+            public string Scope { get; set; }
+            // ReSharper disable once InconsistentNaming -- must match JWT claim name "client_session"
+            public string Client_Session { get; set; }
         }
 
         private bool IsValidSharedSecret()
@@ -187,9 +195,10 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        public bool ValidateToken(string token, string authority, out string username)
+        public bool ValidateToken(string token, string authority, out string username, out TokenValidationResult result)
         {
             username = null;
+            result = null;
             if (string.IsNullOrEmpty(token)) return false;
 
             try
@@ -228,6 +237,13 @@ namespace Spe.Core.Settings.Authorization
                 if (!IsValidSignature(signature, testSignature)) return false;
                 if (!IsValidUsername(tokenPayload.Name)) return false;
                 username = tokenPayload.Name;
+
+                result = new TokenValidationResult
+                {
+                    Scope = tokenPayload.Scope,
+                    ClientSessionId = tokenPayload.Client_Session
+                };
+
                 return true;
             }
             catch (SecurityException)

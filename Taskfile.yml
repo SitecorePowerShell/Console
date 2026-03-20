@@ -32,9 +32,9 @@ tasks:
   deploy:
     desc: Deploy build output to Docker container
     deps: [build]
-    preconditions:
-      - sh: docker compose ps cm --format '{{"{{"}}.Health{{"}}"}}' | findstr /C:"healthy"
-        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    #preconditions:
+    #  - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+    #    msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
       - powershell -File src/Post_Build.ps1
 
@@ -99,8 +99,19 @@ tasks:
     cmds:
       - powershell -File scripts/verify-packages.ps1
 
+  test:deploy-configs:
+    desc: Deploy test config patches to CM container
+    preconditions:
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    vars:
+      CM_CONTAINER: "spe-cm-1" # adjust if your container name is different
+    cmds:
+      - for f in tests/configs/*.config; do docker cp "$f" "{{.CM_CONTAINER}}:C:/inetpub/wwwroot/App_Config/Include/z.Spe"; done
+
   test:
     desc: Run integration tests
+    deps: [test:deploy-configs]
     preconditions:
       - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
         msg: "CM container is not healthy. Run 'task up' and wait for startup."

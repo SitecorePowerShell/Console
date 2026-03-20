@@ -6,14 +6,18 @@ Write-Host "`n  [Long running server jobs]" -ForegroundColor White
 $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
 Test-RemoteConnection -Session $session -Quiet
 
-$jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-        "master", "web" | Get-Database |
-            ForEach-Object {
-                [Sitecore.Globals]::LinkDatabase.Rebuild($_)
-            }
-} -AsJob
-Wait-RemoteScriptSession -Session $session -Id $jobId -Delay 5 -Verbose
-Assert-True $true "Rebuild link databases"
+if ($global:isConstrainedLanguage) {
+    Skip-Test "Rebuild link databases" "CLM blocks .NET type access for [Sitecore.Globals]"
+} else {
+    $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
+            "master", "web" | Get-Database |
+                ForEach-Object {
+                    [Sitecore.Globals]::LinkDatabase.Rebuild($_)
+                }
+    } -AsJob
+    Wait-RemoteScriptSession -Session $session -Id $jobId -Delay 5 -Verbose
+    Assert-True $true "Rebuild link databases"
+}
 
 $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
         (Rebuild-SearchIndex -Name sitecore_master_index -AsJob).Handle.ToString()

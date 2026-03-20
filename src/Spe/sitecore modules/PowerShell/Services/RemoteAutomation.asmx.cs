@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
+using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using System.Web.Services;
 using Sitecore;
 using Sitecore.Configuration;
@@ -32,6 +35,52 @@ namespace Spe.sitecore_modules.PowerShell.Services
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
+        private static string ComputeScriptHash(string script)
+        {
+            if (string.IsNullOrEmpty(script)) return "empty";
+            using (var sha = SHA256.Create())
+            {
+                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(script));
+                return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant().Substring(0, 16);
+            }
+        }
+
+        private static string GetIp()
+        {
+            var request = HttpContext.Current?.Request;
+            if (request == null) return "unknown";
+            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            return string.IsNullOrEmpty(ip) ? request.ServerVariables["REMOTE_ADDR"] : ip;
+        }
+
+        private static void ValidateScript(string script, string userName)
+        {
+            if (!ScriptValidator.ValidateScript(WebServiceSettings.ServiceRemoting, script, null, out var blockedCommand))
+            {
+                PowerShellLog.Audit("Remoting(SOAP): script rejected, user={0}, ip={1}, blockedCommand={2}",
+                    userName, GetIp(), blockedCommand);
+                throw new InvalidOperationException($"Script contains blocked command: {blockedCommand}");
+            }
+        }
+
+        private static PSLanguageMode ApplyLanguageMode(ScriptSession session)
+        {
+            var languageMode = WebServiceSettings.GetLanguageMode(WebServiceSettings.ServiceRemoting);
+            if (languageMode != PSLanguageMode.FullLanguage)
+            {
+                session.SetLanguageMode(languageMode);
+            }
+            return languageMode;
+        }
+
+        private static void RestoreLanguageMode(ScriptSession session, PSLanguageMode appliedMode)
+        {
+            if (appliedMode != PSLanguageMode.FullLanguage)
+            {
+                session.SetLanguageMode(PSLanguageMode.FullLanguage);
+            }
+        }
+
         private bool Login(string userName, string password)
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
@@ -84,7 +133,18 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
+                ValidateScript(script, userName);
+
+                var scriptHash = ComputeScriptHash(script);
+                PowerShellLog.Audit("Remoting(SOAP): script starting, user={0}, ip={1}, session={2}, scriptHash={3}",
+                    userName, GetIp(), scriptSession.ID, scriptHash);
+
+                var appliedMode = ApplyLanguageMode(scriptSession);
                 scriptSession.ExecuteScriptPart(script);
+                RestoreLanguageMode(scriptSession, appliedMode);
+
+                PowerShellLog.Audit("Remoting(SOAP): script completed, user={0}, ip={1}, session={2}, scriptHash={3}",
+                    userName, GetIp(), scriptSession.ID, scriptHash);
 
                 var result = new List<NameValue>();
 
@@ -170,6 +230,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
+            ValidateScript(script, userName);
+
+            var scriptHash = ComputeScriptHash(script);
+            PowerShellLog.Audit("Remoting(SOAP): script starting, user={0}, ip={1}, session={2}, scriptHash={3}",
+                userName, GetIp(), scriptSession.ID, scriptHash);
+
             Sitecore.Context.SetActiveSite(siteName);
 
             if (!string.IsNullOrEmpty(cliXmlArgs))
@@ -178,7 +244,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
                 script = script.TrimEnd(' ', '\t', '\n');
             }
+
+            var appliedMode = ApplyLanguageMode(scriptSession);
             var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
+            RestoreLanguageMode(scriptSession, appliedMode);
             if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
                 outObjects.AddRange(scriptSession.LastErrors);
