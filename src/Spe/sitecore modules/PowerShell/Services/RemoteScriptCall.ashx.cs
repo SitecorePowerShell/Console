@@ -83,6 +83,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var request = context.Request;
             var origin = request.Headers["Origin"];
             var apiVersion = request.Params.Get(ParamApiVersion);
+
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             if (!ApiVersionToServiceMapping.TryGetValue(serviceMappingKey, out var serviceName))
             {
