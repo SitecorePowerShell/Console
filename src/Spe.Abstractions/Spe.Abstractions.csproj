@@ -81,7 +81,9 @@
     <Compile Include="VersionDecoupling\Interfaces\IPublishManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISpeAuthenticationProvider.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\ISpeAuthenticationProviderEx.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\TokenValidationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

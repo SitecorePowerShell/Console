@@ -3,6 +3,7 @@
 
 $script:Passed = 0
 $script:Failed = 0
+$script:Skipped = 0
 $script:Errors = @()
 
 function Write-TestResult {
@@ -128,10 +129,17 @@ function Invoke-TestFile {
     }
 }
 
+function Skip-Test {
+    param([string]$Message, [string]$Reason)
+    $script:Skipped++
+    Write-Host "  [SKIP] $Message -- $Reason" -ForegroundColor Yellow
+}
+
 function Show-TestSummary {
-    $total = $script:Passed + $script:Failed
+    $total = $script:Passed + $script:Failed + $script:Skipped
+    $skipInfo = if ($script:Skipped -gt 0) { "  |  Skipped: $($script:Skipped)" } else { "" }
     Write-Host "`n========================================" -ForegroundColor Cyan
-    Write-Host "  Total: $total  |  Passed: $script:Passed  |  Failed: $script:Failed" -ForegroundColor $(if ($script:Failed -gt 0) { 'Red' } else { 'Green' })
+    Write-Host "  Total: $total  |  Passed: $($script:Passed)  |  Failed: $($script:Failed)$skipInfo" -ForegroundColor $(if ($script:Failed -gt 0) { 'Red' } else { 'Green' })
     Write-Host "========================================`n" -ForegroundColor Cyan
     if ($script:Errors.Count -gt 0) {
         Write-Host "Failures:" -ForegroundColor Red

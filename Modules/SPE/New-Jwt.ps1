@@ -16,12 +16,18 @@ function New-Jwt {
         [Parameter()]
         [int]$ValidForSeconds = 30,
         [Parameter(Mandatory = $true)]
-        [string]$SecretKey
+        [string]$SecretKey,
+        [Parameter()]
+        [string]$Scope,
+        [Parameter()]
+        [string]$ClientSessionId
     )
 
     $exp = [datetimeoffset]::UtcNow.AddSeconds($ValidForSeconds).ToUnixTimeSeconds()
     $header = [ordered]@{alg = $Algorithm; typ = $type}
     $payload = [ordered]@{iss = $Issuer; exp = $exp; aud = $Audience; name = $Name}
+    if ($Scope) { $payload['scope'] = $Scope }
+    if ($ClientSessionId) { $payload['client_session'] = $ClientSessionId }
 
     $headerjson = $header | ConvertTo-Json -Compress
     $payloadjson = $payload | ConvertTo-Json -Compress

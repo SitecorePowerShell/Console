@@ -235,6 +235,7 @@
     <Compile Include="Core\Rules\SitecoreConfigSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigIntSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigSettingValueCondition.cs" />
+    <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
     <Compile Include="Core\Data\DisablePropertyExpander.cs" />

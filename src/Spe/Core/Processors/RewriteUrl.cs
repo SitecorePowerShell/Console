@@ -111,6 +111,8 @@ namespace Spe.Core.Processors
             var sourceArray = localPath.TrimStart('/').Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
             if (sourceArray.Length < 3)
             {
+                // End the response to prevent fallthrough to the handler.
+                httpContext.Response.End();
                 return;
             }
 
@@ -119,18 +121,24 @@ namespace Spe.Core.Processors
 
             if (!ApiVersionToServiceMapping.TryGetValue(apiVersion, out var serviceName))
             {
+                // Unknown service -- end without CORS headers.
+                httpContext.Response.End();
                 return;
             }
 
             var cors = WebServiceSettings.GetCorsSettings(serviceName);
             if (cors == null)
             {
+                // Service has no CORS config -- end without CORS headers.
+                httpContext.Response.End();
                 return;
             }
 
             var origin = httpContext.Request.Headers["Origin"];
-            if (!IsOriginAllowed(cors, origin))
+            if (string.IsNullOrEmpty(origin) || !IsOriginAllowed(cors, origin))
             {
+                // No Origin or disallowed origin -- end without CORS headers.
+                httpContext.Response.End();
                 return;
             }
 
