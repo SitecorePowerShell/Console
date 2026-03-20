@@ -21,24 +21,24 @@ SharedFields:
     
     .EXAMPLE
         Import-Function -Name DialogBuilder
-
+    
         $dialog = New-DialogBuilder -Title "Content Editor" -Description "Select options" -ShowHints
         $dialog | Add-TextField -Name "userName" -Title "User Name" -Mandatory
         $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
         $dialog | Add-Checkbox -Name "publish" -Title "Publish after save"
-
+    
         $result = Show-Dialog -DialogBuilder $dialog
         if ($result -eq "ok") {
             Write-Host "User: $userName, Root: $($rootItem.FullPath), Publish: $publish"
         }
-
+    
     .NOTES
         Usage: You must call Import-Function -Name DialogBuilder before using any of these functions.
-
+    
         Version: 2.1.0
         Date: 2025-12-16
         Author: SPE Community
-
+    
         Changelog:
         - v2.1.0: Refactored Add-TextField with parameter sets (-IsPassword, -IsEmail, -IsNumber)
                   Added Add-LinkField, Add-TristateCheckbox, Add-RuleField, Add-RuleActionField
@@ -1778,3 +1778,4 @@ Languages:
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20260312T120000Z
+    
