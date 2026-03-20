@@ -64,7 +64,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { " +
             "$err = $_; $h = @{ " +
             "message = $err.ToString(); " +
-            "errorCategory = $err.CategoryInfo.Category.ToString(); " +
+            "errorCategory = \"$($err.CategoryInfo.Category)\"; " +
             "categoryReason = $err.CategoryInfo.Reason; " +
             "categoryTargetName = $err.CategoryInfo.TargetName; " +
             "categoryTargetType = $err.CategoryInfo.TargetType; " +
