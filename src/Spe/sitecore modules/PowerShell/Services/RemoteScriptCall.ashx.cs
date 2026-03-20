@@ -476,7 +476,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (folder != pathParam && !string.IsNullOrEmpty(pathParam))
             {
-                folder = FileUtil.MapPath(StringUtil.EnsurePostfix('\\', folder) + pathParam);
+                var relativePath = pathParam.TrimStart('/', '\\');
+                if (Path.IsPathRooted(folder))
+                {
+                    folder = Path.GetFullPath(Path.Combine(folder, relativePath));
+                }
+                else
+                {
+                    folder = FileUtil.MapPath(StringUtil.EnsurePostfix('/', folder) + relativePath);
+                }
             }
 
             return folder;
@@ -504,22 +512,41 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessFileUpload(HttpContext context, string serviceName, string originParam, string pathParam)
         {
-            var file = GetPathFromParameters(originParam, pathParam.Replace('/', '\\'));
-            var fileInfo = new FileInfo(file);
-            if (!fileInfo.Exists)
+            var file = GetPathFromParameters(originParam, pathParam);
+            if (string.IsNullOrEmpty(file))
             {
-                fileInfo.Directory?.Create();
-            }
-            using (var output = fileInfo.OpenWrite())
-            {
-                using (var input = context.Request.InputStream)
-                {
-                    input.CopyTo(output);
-                }
+                SetErrorResponse(context, 400, "Unable to resolve the upload path.");
+                return;
             }
 
-            fileInfo.Refresh();
-            PowerShellLog.Info($"[{serviceName}] File uploaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
+            try
+            {
+                var fileInfo = new FileInfo(file);
+                if (!fileInfo.Exists)
+                {
+                    fileInfo.Directory?.Create();
+                }
+                using (var output = fileInfo.OpenWrite())
+                {
+                    using (var input = context.Request.InputStream)
+                    {
+                        input.CopyTo(output);
+                    }
+                }
+
+                fileInfo.Refresh();
+                PowerShellLog.Info($"[{serviceName}] File uploaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                PowerShellLog.Error($"[{serviceName}] Write permission denied for path: {file}", ex);
+                SetErrorResponse(context, 403, "Write access denied to the target path.");
+            }
+            catch (ArgumentException ex)
+            {
+                PowerShellLog.Error($"[{serviceName}] Invalid file path: {file}", ex);
+                SetErrorResponse(context, 400, "The specified path contains invalid characters.");
+            }
         }
 
         private static void ProcessFileDownload(HttpContext context, string serviceName, string originParam, string pathParam)
@@ -587,7 +614,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
                 else
                 {
-                    ProcessMediaUpload(request.InputStream, serviceName, scriptDb, itemParam, skipExisting);
+                    // Buffer the input stream into a MemoryStream to ensure it is fully
+                    // readable regardless of the request stream's state after IsZipContent.
+                    using (var buffered = new MemoryStream())
+                    {
+                        request.InputStream.CopyTo(buffered);
+                        buffered.Seek(0, SeekOrigin.Begin);
+                        ProcessMediaUpload(buffered, serviceName, scriptDb, itemParam, skipExisting);
+                    }
                 }
             }
             else
@@ -643,6 +677,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 using (var ms = new MemoryStream())
                 {
                     content.CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
                     mc.CreateFromStream(ms, fileName, mco);
                     PowerShellLog.Info($"[{serviceName}] Media uploaded: {fileName}, size: {ms.Length} bytes, destination: {mco.Destination}");
                 }
@@ -657,6 +692,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 using (var ms = new MemoryStream())
                 {
                     content.CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var size = ms.Length;
                     using (new EditContext(mediaItem, SecurityCheck.Disable))
                     {
                         using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
@@ -664,7 +701,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             media.SetStream(mediaStream);
                         }
                     }
-                    PowerShellLog.Info($"[{serviceName}] Media updated: {mediaItem.Name}, size: {ms.Length} bytes, item: {mediaItem.ID}");
+                    PowerShellLog.Info($"[{serviceName}] Media updated: {mediaItem.Name}, size: {size} bytes, item: {mediaItem.ID}");
                 }
             }
         }

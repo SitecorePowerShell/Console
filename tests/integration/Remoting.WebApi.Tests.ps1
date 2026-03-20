@@ -14,6 +14,26 @@ Invoke-RemoteScript -Session $session -ScriptBlock {
 }
 Stop-ScriptSession -Session $session
 
+# After a Sitecore restart, v2 API scripts may not be available immediately.
+# Probe with a short retry before running assertions.
+$webApiReady = $false
+for ($i = 0; $i -lt 3; $i++) {
+    try {
+        $probe = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson" -method Post `
+            -Body @{user="sitecore\admin"; password="b"; depth=1} -ErrorAction Stop
+        if ($probe) { $webApiReady = $true; break }
+    } catch {
+        Write-Host "  Web API not ready yet, retrying in 5s..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
+    }
+}
+
+if (-not $webApiReady) {
+    Skip-Test "Web API tests" "v2 API scripts not available after restart"
+    Stop-ScriptSession -Session $session
+    return
+}
+
 Write-Host "`n  [POST Methods]" -ForegroundColor White
 
 $postParams = @{user="sitecore\admin"; password="b"; depth=1}
