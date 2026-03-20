@@ -12,14 +12,14 @@ SharedFields:
         param(
             [Parameter(Mandatory=$true, Position=0)]
             [Sitecore.Data.Items.Item]$Script,
-            
+    
             [Parameter(Mandatory=$true, Position=1)]
             [hashtable]$Property,
-            
+    
             [Parameter(Position=2)]
             [string]$Text = "Execute"
             )
-            
+    
         $result = "<a href='#' style='color:#f00' onclick=`"javascript:return scForm.postEvent(this,event,'listview:action(scriptDb=$($Script.Database.Name),scriptID=$($Script.ID),"
         foreach($key in $Property.Keys){
             $result += "$key=$([System.Web.HttpUtility]::UrlEncode($($Property[$key]))),"
@@ -34,18 +34,21 @@ SharedFields:
         param(
             [Parameter(Mandatory=$true, Position=0)]
             [Sitecore.Data.Items.Item]$item,
-            
+    
             [Parameter(Mandatory=$true, Position=1)]
             [string]$fieldName,
-            
+    
             [Parameter(Position=2)]
             [int]$MaxWidth = 64,
     
             [Parameter(Position=3)]
-            [int]$MaxHeight = 64
+            [int]$MaxHeight = 64,
+    
+            [Parameter()]
+            [switch]$RawValues
             )
     
-        if($rawValues){
+        if($RawValues){
             return [System.Web.HttpUtility]::HtmlEncode($item.$fieldName);
         }
         $field = $item.Fields[$fieldName];
@@ -92,3 +95,4 @@ Languages:
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20230122T214509Z
+    

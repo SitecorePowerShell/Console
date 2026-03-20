@@ -22,7 +22,7 @@ SharedFields:
             Sort-Object LastWriteTime -Descending 
         
         # Confirm the user has provided start and end dates. 
-        if ($selectedEndDate -ne "01/01/0001 00:00:00" -and $selectedStartDate.Year -ne "01/01/0001 00:00:00") {
+        if ($selectedEndDate -ne "01/01/0001 00:00:00" -and $selectedStartDate -ne "01/01/0001 00:00:00") {
             # Filter the log files further to only those within range.
             $filteredFiles = $files | Where-Object {$_.LastWriteTime -ge $selectedEndDate -and $_.LastWriteTime -le $selectedStartDate  }
         } else {

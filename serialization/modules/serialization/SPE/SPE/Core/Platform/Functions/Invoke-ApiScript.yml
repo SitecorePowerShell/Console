@@ -133,7 +133,7 @@ SharedFields:
             $error = "Error at line:$($_.InvocationInfo.ScriptLineNumber), char:$($_.InvocationInfo.OffsetInLine). " + $_.Exception.Message
         }
     
-        if($fields -gt 0) {
+        if($fields -ne "*") {
             $items = $items | Select-Object -Property $fields
         }
         
