@@ -50,12 +50,15 @@ SharedFields:
         }
     
         end {
-            $items | Export-Worksheet -WorkSheetXmlDoc $workSheetXmlDoc
-            $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace(" xmlns=`"`"", "")
-            $workSheetXmlDoc.PreserveWhitespace = $true
-            $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
-    		$exPkg.Close()
-    		
+            try {
+                $items | Export-Worksheet -WorkSheetXmlDoc $workSheetXmlDoc
+                $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace(" xmlns=`"`"", "")
+                $workSheetXmlDoc.PreserveWhitespace = $true
+                $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
+            } finally {
+                $exPkg.Close()
+            }
+
             $workbook.ToArray()
         }
     }

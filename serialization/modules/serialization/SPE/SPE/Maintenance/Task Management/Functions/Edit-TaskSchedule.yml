@@ -79,7 +79,7 @@ SharedFields:
     		$fromStr = $([Sitecore.DateUtil]::ToIsoDate($from));
     	}
     
-    	if (($from -eq [datetime]0) -or ($from -eq [datetime]::MaxValue) -or ($from -eq [datetime]::MinValue)) {
+    	if (($to -eq [datetime]0) -or ($to -eq [datetime]::MaxValue) -or ($to -eq [datetime]::MinValue)) {
     		$toStr = [string]::Empty;
     	} else {
     		$toStr = $([Sitecore.DateUtil]::ToIsoDate($to));

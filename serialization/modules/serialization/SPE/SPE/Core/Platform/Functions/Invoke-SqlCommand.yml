@@ -75,7 +75,7 @@ SharedFields:
         .EXAMPLE
             PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT COUNT(*) FROM Test.Sample" -As Scalar
     
-            9544            
+            9544
     #>
     function Invoke-SqlCommand {
         [CmdletBinding(DefaultParameterSetName="Default")]
@@ -89,7 +89,7 @@ SharedFields:
             [Parameter(Mandatory=$false, Position=2,ParameterSetName="Server")]
             [Parameter(Mandatory=$false, ParameterSetName="Connection")]
             [int]$Timeout=30,
-            
+    
             [Parameter(Mandatory=$true, ParameterSetName="Connection")]
             [System.Data.SqlClient.SQLConnection]$Connection,
     
@@ -133,10 +133,10 @@ SharedFields:
                     $Connection.Add_InfoMessage([System.Data.SqlClient.SqlInfoMessageEventHandler] { Write-Verbose "$($_)"} )
                 }
             }
-            
+    
             $closeConnection = $false
-            if(-not ($Connection.State -like "Open")) { 
-                try { 
+            if(-not ($Connection.State -like "Open")) {
+                try {
                     $Connection.Open()
                     $closeConnection = $true
                 } catch [Exception] { throw $_ }
@@ -145,75 +145,87 @@ SharedFields:
     
         process {
             $command = New-Object System.Data.SqlClient.SqlCommand ($query, $Connection)
-            $command.CommandTimeout = $Timeout
-            $command.CommandType = $CommandType
-            if($Parameters) {
-                foreach ($p in $Parameters.Keys) {
-                    $command.Parameters.AddWithValue($p, $Parameters[$p]) > $null
-                }
-            }
-    
-            $scriptBlock = {
-                $watch = [System.Diagnostics.StopWatch]::StartNew()
-                $result = [System.Collections.ArrayList]@()
-                $reader = $command.ExecuteReader()
-                if($reader) {
-                    $fieldCount = $reader.FieldCount
-                    $columns = [System.Collections.ArrayList]@()
-                    for ($i = 0; $i -lt $fieldCount; $i++) {
-                        $columns.Add($reader.GetName($i)) > $null
+            try {
+                $command.CommandTimeout = $Timeout
+                $command.CommandType = $CommandType
+                if($Parameters) {
+                    foreach ($p in $Parameters.Keys) {
+                        $command.Parameters.AddWithValue($p, $Parameters[$p]) > $null
                     }
+                }
     
-                    if($reader.HasRows) {
-                        while ($reader.Read()) {
-                            $row = [ordered]@{}
+                $scriptBlock = {
+                    $watch = [System.Diagnostics.StopWatch]::StartNew()
+                    $result = [System.Collections.ArrayList]@()
+                    $reader = $command.ExecuteReader()
+                    try {
+                        if($reader) {
+                            $fieldCount = $reader.FieldCount
+                            $columns = [System.Collections.ArrayList]@()
                             for ($i = 0; $i -lt $fieldCount; $i++) {
-                                $row[$columns[$i]] = $reader.GetValue($i)
+                                $columns.Add($reader.GetName($i)) > $null
                             }
-                            $result.Add([PSCustomObject]$row) > $null
-                        }
-                    }
-                }
-                $watch.Stop()
-                Write-Verbose "ExecuteReader completed in $([math]::Round($watch.ElapsedMilliseconds / 1000, 3)) seconds"
-                $result
-            }
     
-            if($As) {
-                switch($As) {
-                    "Scalar" {
-                        $scriptBlock = {
-                            $result = $command.ExecuteScalar()
-                            $result
+                            if($reader.HasRows) {
+                                while ($reader.Read()) {
+                                    $row = [ordered]@{}
+                                    for ($i = 0; $i -lt $fieldCount; $i++) {
+                                        $row[$columns[$i]] = $reader.GetValue($i)
+                                    }
+                                    $result.Add([PSCustomObject]$row) > $null
+                                }
+                            }
                         }
+                    } finally {
+                        if($reader) { $reader.Close() }
                     }
-                    "NonQuery" {
-                        $scriptBlock = {
-                            $result = $command.ExecuteNonQuery()
-                            $result
-                        }
-                    }
-                    default {
-                        if("DataSet", "DataTable", "DataRow" -contains $As) {
+                    $watch.Stop()
+                    Write-Verbose "ExecuteReader completed in $([math]::Round($watch.ElapsedMilliseconds / 1000, 3)) seconds"
+                    $result
+                }
+    
+                if($As) {
+                    switch($As) {
+                        "Scalar" {
                             $scriptBlock = {
-                                $ds = New-Object System.Data.DataSet
-                                $da = New-Object System.Data.SqlClient.SqlDataAdapter($command)
-                                $da.Fill($ds) > $null
-                                switch($As) {
-                                    "DataSet" { $result = $ds }
-                                    "DataTable" { $result = $ds.Tables }
-                                    default { $result = $ds.Tables | ForEach-Object -Process { $_.Rows } }
-                                }                            
+                                $result = $command.ExecuteScalar()
                                 $result
                             }
                         }
+                        "NonQuery" {
+                            $scriptBlock = {
+                                $result = $command.ExecuteNonQuery()
+                                $result
+                            }
+                        }
+                        default {
+                            if("DataSet", "DataTable", "DataRow" -contains $As) {
+                                $scriptBlock = {
+                                    $ds = New-Object System.Data.DataSet
+                                    $da = New-Object System.Data.SqlClient.SqlDataAdapter($command)
+                                    try {
+                                        $da.Fill($ds) > $null
+                                    } finally {
+                                        $da.Dispose()
+                                    }
+                                    switch($As) {
+                                        "DataSet" { $result = $ds }
+                                        "DataTable" { $result = $ds.Tables }
+                                        default { $result = $ds.Tables | ForEach-Object -Process { $_.Rows } }
+                                    }
+                                    $result
+                                }
+                            }
+                        }
                     }
                 }
-            }
     
-            Write-Verbose "Executing database query"
-            $result = Invoke-Command -ScriptBlock $ScriptBlock
-            $command.Parameters.Clear()
+                Write-Verbose "Executing database query"
+                $result = Invoke-Command -ScriptBlock $ScriptBlock
+                $command.Parameters.Clear()
+            } finally {
+                if($command) { $command.Dispose() }
+            }
         }
     
         end {
@@ -244,3 +256,4 @@ Languages:
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20241002T144014Z
+    
