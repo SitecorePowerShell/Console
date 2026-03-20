@@ -13,10 +13,13 @@ namespace Spe.Core.Settings.Authorization
 {
     public class SharedSecretAuthenticationProvider : ISpeAuthenticationProviderEx
     {
+        private const int ClockSkewSeconds = 30;
+
         public string SharedSecret { get; set; }
         public List<string> AllowedIssuers { get; set; }
         public List<string> AllowedAudiences { get; set; }
         public bool DetailedAuthenticationErrors { get; set; }
+        public int MaxTokenLifetimeSeconds { get; set; }
 
         public SharedSecretAuthenticationProvider()
         {
@@ -47,6 +50,8 @@ namespace Spe.Core.Settings.Authorization
             public long Exp { get; set; }
             public string Name { get; set; }
             public string Scope { get; set; }
+            public long Iat { get; set; }
+            public long Nbf { get; set; }
             // ReSharper disable once InconsistentNaming -- must match JWT claim name "client_session"
             public string Client_Session { get; set; }
         }
@@ -67,6 +72,7 @@ namespace Spe.Core.Settings.Authorization
             if (error != null)
             {
                 isValid = false;
+                PowerShellLog.Warn($"JWT validation failed: {error.Message}");
             }
 
             if (DetailedAuthenticationErrors && error != null)
@@ -84,6 +90,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = !string.IsNullOrEmpty(type) && type.Is("JWT");
             if (isValid) return true;
 
+            PowerShellLog.Warn($"JWT validation failed: token type '{type}' is not JWT.");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Type is incorrect.");
 
@@ -99,6 +106,7 @@ namespace Spe.Core.Settings.Authorization
                            AllowedAudiences.Contains(audience));
             if (isValid) return true;
 
+            PowerShellLog.Warn($"JWT validation failed: audience '{audience}' is not allowed (authority: '{authority}').");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Audience is not allowed.");
 
@@ -112,6 +120,7 @@ namespace Spe.Core.Settings.Authorization
                           AllowedIssuers.Contains(issuer);
             if (isValid) return true;
 
+            PowerShellLog.Warn($"JWT validation failed: issuer '{issuer}' is not allowed.");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Issuer is not allowed.");
 
@@ -125,6 +134,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = nowUtc < expireUtc;
             if (isValid) return true;
 
+            PowerShellLog.Warn($"JWT validation failed: token expired at {expireUtc:O}.");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Expiration has passed.");
 
@@ -136,6 +146,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = providedSignature == testSignature;
             if (isValid) return true;
 
+            PowerShellLog.Warn("JWT validation failed: token signature does not match.");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token signatures do not match.");
 
@@ -147,8 +158,50 @@ namespace Spe.Core.Settings.Authorization
             var isValid = !string.IsNullOrEmpty(name);
             if (isValid) return true;
 
+            PowerShellLog.Warn("JWT validation failed: token does not contain a valid username.");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The name provided must be a valid username.");
+
+            return false;
+        }
+
+        private bool IsValidNotBefore(long nbf)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var nbfUtc = epoch.AddSeconds(nbf);
+            var isValid = DateTime.UtcNow >= nbfUtc.AddSeconds(-ClockSkewSeconds);
+            if (isValid) return true;
+
+            PowerShellLog.Warn($"JWT validation failed: token is not yet valid (nbf: {nbfUtc:O}).");
+            if (DetailedAuthenticationErrors)
+                throw new SecurityException("The Token is not yet valid (nbf claim).");
+
+            return false;
+        }
+
+        private bool IsValidIssuedAt(long iat)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var iatUtc = epoch.AddSeconds(iat);
+            var isValid = DateTime.UtcNow >= iatUtc.AddSeconds(-ClockSkewSeconds);
+            if (isValid) return true;
+
+            PowerShellLog.Warn($"JWT validation failed: token issued-at is in the future (iat: {iatUtc:O}).");
+            if (DetailedAuthenticationErrors)
+                throw new SecurityException("The Token issued-at time is in the future (iat claim).");
+
+            return false;
+        }
+
+        private bool IsValidTokenLifetime(long exp, long iat)
+        {
+            var lifetime = exp - iat;
+            var isValid = lifetime <= MaxTokenLifetimeSeconds;
+            if (isValid) return true;
+
+            PowerShellLog.Warn($"JWT validation failed: token lifetime {lifetime}s exceeds maximum {MaxTokenLifetimeSeconds}s.");
+            if (DetailedAuthenticationErrors)
+                throw new SecurityException($"The Token lifetime ({lifetime}s) exceeds the maximum allowed ({MaxTokenLifetimeSeconds}s).");
 
             return false;
         }
@@ -222,7 +275,12 @@ namespace Spe.Core.Settings.Authorization
                 var payload = Encoding.UTF8.GetString(decodedPayload);
                 var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
 
+                PowerShellLog.Debug($"JWT validation: issuer='{tokenPayload.Iss}', audience='{tokenPayload.Aud}', algorithm='{tokenHeader.Alg}'.");
+
                 if (!IsValidExpiration(tokenPayload.Exp)) return false;
+                if (tokenPayload.Nbf > 0 && !IsValidNotBefore(tokenPayload.Nbf)) return false;
+                if (tokenPayload.Iat > 0 && !IsValidIssuedAt(tokenPayload.Iat)) return false;
+                if (MaxTokenLifetimeSeconds > 0 && tokenPayload.Iat > 0 && !IsValidTokenLifetime(tokenPayload.Exp, tokenPayload.Iat)) return false;
                 if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
                 if (!IsValidIssuer(tokenPayload.Iss)) return false;
 

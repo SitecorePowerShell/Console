@@ -20,7 +20,13 @@ function New-Jwt {
         [Parameter()]
         [string]$Scope,
         [Parameter()]
-        [string]$ClientSessionId
+        [string]$ClientSessionId,
+        [Parameter()]
+        [switch]$IncludeIssuedAt,
+        [Parameter()]
+        [long]$NotBefore = 0,
+        [Parameter()]
+        [long]$IssuedAt = 0
     )
 
     $exp = [datetimeoffset]::UtcNow.AddSeconds($ValidForSeconds).ToUnixTimeSeconds()
@@ -28,6 +34,12 @@ function New-Jwt {
     $payload = [ordered]@{iss = $Issuer; exp = $exp; aud = $Audience; name = $Name}
     if ($Scope) { $payload['scope'] = $Scope }
     if ($ClientSessionId) { $payload['client_session'] = $ClientSessionId }
+    if ($IncludeIssuedAt -and $IssuedAt -eq 0) {
+        $payload['iat'] = [datetimeoffset]::UtcNow.ToUnixTimeSeconds()
+    } elseif ($IssuedAt -ne 0) {
+        $payload['iat'] = $IssuedAt
+    }
+    if ($NotBefore -ne 0) { $payload['nbf'] = $NotBefore }
 
     $headerjson = $header | ConvertTo-Json -Compress
     $payloadjson = $payload | ConvertTo-Json -Compress
