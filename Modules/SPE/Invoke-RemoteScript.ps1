@@ -43,8 +43,33 @@ function Parse-Response {
             try {
                 $parsed = $response | ConvertFrom-Json
                 if($parsed.errors -and $parsed.errors.Count -gt 0) {
-                    foreach($err in $parsed.errors) {
-                        Write-Error -Message $err
+                    foreach($errObj in $parsed.errors) {
+                        if($errObj -is [PSCustomObject] -and $errObj.PSObject.Properties['errorCategory']) {
+                            # Structured error from enhanced server (errorFormat=structured)
+                            $category = [System.Management.Automation.ErrorCategory]::NotSpecified
+                            try {
+                                $category = [System.Management.Automation.ErrorCategory]$errObj.errorCategory
+                            } catch { }
+
+                            $exceptionMsg = if ($errObj.exceptionMessage) { $errObj.exceptionMessage } else { $errObj.message }
+                            $errRecord = New-Object System.Management.Automation.ErrorRecord(
+                                (New-Object System.Exception($exceptionMsg)),
+                                $errObj.fullyQualifiedErrorId,
+                                $category,
+                                $errObj.categoryTargetName
+                            )
+                            if ($errObj.scriptStackTrace) {
+                                $errRecord | Add-Member -NotePropertyName 'RemoteScriptStackTrace' -NotePropertyValue $errObj.scriptStackTrace
+                            }
+                            if ($errObj.invocationInfo) {
+                                $errRecord | Add-Member -NotePropertyName 'RemoteInvocationInfo' -NotePropertyValue $errObj.invocationInfo
+                            }
+                            Write-Error -ErrorRecord $errRecord
+                        }
+                        else {
+                            # Legacy flat string from older server or non-structured format
+                            Write-Error -Message ([string]$errObj)
+                        }
                     }
                 }
                 if($parsed.output) {
@@ -256,7 +281,10 @@ function Invoke-RemoteScript {
 
         [Parameter()]
         [ValidateSet('CliXml', 'Json', 'Raw')]
-        [string]$OutputFormat = 'CliXml'
+        [string]$OutputFormat = 'CliXml',
+
+        [Parameter()]
+        [switch]$StructuredErrors
     )
 
     # Map -Raw switch to OutputFormat for backwards compat
@@ -316,6 +344,9 @@ function Invoke-RemoteScript {
         $serviceUrl = "/-/script/script/?"
         $isRawFormat = $OutputFormat -eq 'Raw'
         $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $isRawFormat + "&outputFormat=" + $OutputFormat + "&persistentSession=" + $PersistentSession
+        if($StructuredErrors.IsPresent) {
+            $serviceUrl += "&errorFormat=structured"
+        }
         foreach ($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
             $localParams = if ($parameters) { $parameters } else { '' }
@@ -368,11 +399,25 @@ function Invoke-RemoteScript {
                 $ex = $_.Exception
                 [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
                 if ($errorResponse) {
-                    if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                    # Try to parse structured error body for JSON format
+                    if ($OutputFormat -eq 'Json') {
+                        try {
+                            $errorBody = $errorResponse.Content.ReadAsStringAsync().Result
+                            if ($errorBody) {
+                                Parse-Response -Response $errorBody -HasRedirectedMessages $false -Raw $false -OutputFormat 'Json'
+                                $encounteredError = $true
+                                $errorResponse = $null
+                            }
+                        } catch { }
                     }
-                    elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                        Write-Verbose -Message "Check that the service files are properly configured."
+
+                    if ($errorResponse) {
+                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                        }
+                        elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                            Write-Verbose -Message "Check that the service files are properly configured."
+                        }
                     }
                 }
                 else {

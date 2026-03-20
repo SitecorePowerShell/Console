@@ -58,6 +58,32 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string ParamPersistentSession = "persistentSession";
         private const string ParamRawOutput = "rawOutput";
         private const string ParamOutputFormat = "outputFormat";
+        private const string ParamErrorFormat = "errorFormat";
+
+        private const string StructuredErrorScript =
+            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { " +
+            "$err = $_; $h = @{ " +
+            "message = $err.ToString(); " +
+            "errorCategory = \"$($err.CategoryInfo.Category)\"; " +
+            "categoryReason = $err.CategoryInfo.Reason; " +
+            "categoryTargetName = $err.CategoryInfo.TargetName; " +
+            "categoryTargetType = $err.CategoryInfo.TargetType; " +
+            "fullyQualifiedErrorId = $err.FullyQualifiedErrorId; " +
+            "exceptionType = $(if ($err.Exception) { $err.Exception.GetType().FullName } else { $null }); " +
+            "exceptionMessage = $(if ($err.Exception) { $err.Exception.Message } else { $null }); " +
+            "scriptStackTrace = $err.ScriptStackTrace " +
+            "}; " +
+            "if ($err.InvocationInfo) { " +
+            "$h['invocationInfo'] = @{ " +
+            "scriptName = $err.InvocationInfo.ScriptName; " +
+            "scriptLineNumber = $err.InvocationInfo.ScriptLineNumber; " +
+            "offsetInLine = $err.InvocationInfo.OffsetInLine; " +
+            "line = $err.InvocationInfo.Line; " +
+            "positionMessage = $err.InvocationInfo.PositionMessage " +
+            "} }; $h }) } | ConvertTo-Json -Depth 4 -Compress";
+
+        private const string FlatErrorScript =
+            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress";
         private const string ParamSkipUnpack = "skipunpack";
         private const string ParamSkipExisting = "skipexisting";
         private const string ParamScDatabase = "sc_database";
@@ -280,6 +306,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 outputFormat = "raw";
             else if (string.IsNullOrEmpty(outputFormat))
                 outputFormat = "clixml";
+            var useStructuredErrors = requestParameters.Get(ParamErrorFormat).Is("structured");
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
             var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
@@ -334,7 +361,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                     break;
                 case "script":
-                    ProcessScript(context, request, serviceName, outputFormat, sessionId, persistentSession);
+                    ProcessScript(context, request, serviceName, outputFormat, sessionId, persistentSession, useStructuredErrors);
                     return;
                 default:
                     PowerShellLog.Error($"[{serviceMappingKey}] Requested API/Version ({serviceMappingKey}) is not supported.");
@@ -372,11 +399,49 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             context.Response.StatusCode = statusCode;
             context.Response.StatusDescription = message;
+
+            var outputFormat = context.Request.QueryString[ParamOutputFormat];
+            if (!string.IsNullOrEmpty(outputFormat) && outputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.ContentType = "application/json";
+                var useStructured = context.Request.QueryString[ParamErrorFormat].Is("structured");
+                if (useStructured)
+                {
+                    var errorBody = new Hashtable
+                    {
+                        ["output"] = new object[0],
+                        ["errors"] = new[]
+                        {
+                            new Hashtable
+                            {
+                                ["message"] = message,
+                                ["errorCategory"] = statusCode == 401 || statusCode == 403 ? "SecurityError" : "ConnectionError",
+                                ["exceptionType"] = "System.Web.HttpException",
+                                ["exceptionMessage"] = message
+                            }
+                        }
+                    };
+                    context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                }
+                else
+                {
+                    var errorBody = new Hashtable
+                    {
+                        ["output"] = new object[0],
+                        ["errors"] = new[] { message }
+                    };
+                    context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                }
+            }
+
             if (suppressFormsAuth)
             {
                 context.Response.SuppressFormsAuthenticationRedirect = true;
                 context.Response.TrySkipIisCustomErrors = true;
-                context.Response.ContentType = "text/plain";
+                if (context.Response.ContentType != "application/json")
+                {
+                    context.Response.ContentType = "text/plain";
+                }
             }
         }
 
@@ -753,7 +818,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
-        private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession)
+        private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession, bool useStructuredErrors = false)
         {
             if (request?.InputStream == null) return;
 
@@ -776,7 +841,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
-            ProcessScript(context, script, serviceName, null, cliXmlArgs, outputFormat, sessionId, persistentSession);
+            ProcessScript(context, script, serviceName, null, cliXmlArgs, outputFormat, sessionId, persistentSession, useStructuredErrors);
         }
 
         private static void ProcessScript(HttpContext context, Item scriptItem, string serviceName)
@@ -806,7 +871,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             ProcessScript(context, script, serviceName, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false)
+        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -971,8 +1036,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         session.SetVariable("errorObjects", errorObjects);
 
                         session.Output.Clear();
-                        session.ExecuteScriptPart(
-                            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress");
+                        session.ExecuteScriptPart(useStructuredErrors ? StructuredErrorScript : FlatErrorScript);
 
                         foreach (var outputBuffer in session.Output)
                         {
@@ -1017,6 +1081,39 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 PowerShellLog.Error("Error during script execution via RemoteScriptCall", ex);
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";
+
+                if (outputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Response.ContentType = "application/json";
+                    if (useStructuredErrors)
+                    {
+                        var errorBody = new Hashtable
+                        {
+                            ["output"] = new object[0],
+                            ["errors"] = new[]
+                            {
+                                new Hashtable
+                                {
+                                    ["message"] = ex.Message,
+                                    ["errorCategory"] = "NotSpecified",
+                                    ["exceptionType"] = ex.GetType().FullName,
+                                    ["exceptionMessage"] = ex.Message,
+                                    ["scriptStackTrace"] = ex.StackTrace
+                                }
+                            }
+                        };
+                        context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                    }
+                    else
+                    {
+                        var errorBody = new Hashtable
+                        {
+                            ["output"] = new object[0],
+                            ["errors"] = new[] { ex.Message }
+                        };
+                        context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                    }
+                }
             }
             finally
             {
