@@ -4,38 +4,63 @@ using System.Linq;
 using System.Management.Automation.Language;
 using System.Xml;
 using Sitecore.Configuration;
+using Spe.Core.Diagnostics;
 
 namespace Spe.Core.Settings.Authorization
 {
     public class ScriptValidator
     {
-        private readonly Dictionary<string, HashSet<string>> _scopeRestrictions = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, ScopeRestriction> _scopeRestrictions = new Dictionary<string, ScopeRestriction>(StringComparer.OrdinalIgnoreCase);
 
         private static ScriptValidator _instance;
 
-        private static ScriptValidator Instance =>
-            _instance ?? (_instance = (ScriptValidator)Factory.CreateObject("powershell/scopeRestrictions", true));
-
-        // Called by Sitecore config factory via hint="raw:AddScopeRestriction"
-        public void AddScopeRestriction(XmlNode node)
+        private static ScriptValidator Instance
         {
-            var element = node as XmlElement;
-            if (element == null) return;
-
-            var scopeName = element.GetAttribute("name");
-            if (string.IsNullOrEmpty(scopeName)) return;
-
-            var commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (XmlNode commandNode in element.SelectNodes("command"))
+            get
             {
-                var cmd = commandNode.InnerText?.Trim();
-                if (!string.IsNullOrEmpty(cmd))
-                {
-                    commands.Add(cmd);
-                }
-            }
+                if (_instance != null) return _instance;
 
-            _scopeRestrictions[scopeName] = commands;
+                var instance = new ScriptValidator();
+                var configNode = Factory.GetConfigNode("powershell/scopeRestrictions");
+                if (configNode != null)
+                {
+                    foreach (XmlNode child in configNode.ChildNodes)
+                    {
+                        var element = child as XmlElement;
+                        if (element == null) continue;
+
+                        var scopeName = element.GetAttribute("name");
+                        if (string.IsNullOrEmpty(scopeName)) continue;
+
+                        var mode = element.GetAttribute("mode");
+                        if (string.IsNullOrEmpty(mode)) mode = "blocklist";
+
+                        var commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        foreach (XmlNode commandNode in element.SelectNodes("command"))
+                        {
+                            var cmd = commandNode.InnerText?.Trim();
+                            if (!string.IsNullOrEmpty(cmd))
+                            {
+                                commands.Add(cmd);
+                            }
+                        }
+
+                        if (commands.Count > 0)
+                        {
+                            instance._scopeRestrictions[scopeName] = new ScopeRestriction { Commands = commands, Mode = mode };
+                        }
+                    }
+                }
+
+                _instance = instance;
+                return _instance;
+            }
+        }
+
+        private class ScopeRestriction
+        {
+            public HashSet<string> Commands { get; set; }
+            public string Mode { get; set; }
         }
 
         private bool ValidateScriptInternal(string serviceName, string script, string scope, out string blockedCommand)
@@ -44,8 +69,22 @@ namespace Spe.Core.Settings.Authorization
             if (string.IsNullOrEmpty(script)) return true;
 
             var serviceRestrictions = WebServiceSettings.GetCommandRestrictions(serviceName);
-            HashSet<string> scopeBlocked = null;
-            var hasScopeRestrictions = !string.IsNullOrEmpty(scope) && _scopeRestrictions.TryGetValue(scope, out scopeBlocked);
+
+            ScopeRestriction scopeRestriction = null;
+            var hasScopeRestrictions = false;
+            if (!string.IsNullOrEmpty(scope))
+            {
+                if (_scopeRestrictions.TryGetValue(scope, out scopeRestriction))
+                {
+                    hasScopeRestrictions = true;
+                }
+                else if (_scopeRestrictions.Count > 0)
+                {
+                    // Scope restrictions are configured but the requested scope is unknown.
+                    // Log a warning -- this could indicate a typo or misconfiguration.
+                    PowerShellLog.Warn($"ScriptValidator: unknown scope '{scope}' requested; no matching scopeRestriction configured. Script will not have scope-level restrictions applied.");
+                }
+            }
 
             // No restrictions configured at all -- skip parsing
             if (serviceRestrictions == null && !hasScopeRestrictions) return true;
@@ -81,16 +120,30 @@ namespace Spe.Core.Settings.Authorization
                 }
             }
 
-            // Check scope-level restrictions
+            // Check scope-level restrictions (supports both blocklist and allowlist modes)
             if (hasScopeRestrictions)
             {
+                var isScopeAllowlist = scopeRestriction.Mode.Equals("allowlist", StringComparison.OrdinalIgnoreCase);
+
                 foreach (var commandAst in commandAsts)
                 {
                     var commandName = commandAst.GetCommandName();
-                    if (commandName != null && scopeBlocked.Contains(commandName))
+
+                    if (isScopeAllowlist)
                     {
-                        blockedCommand = commandName;
-                        return false;
+                        if (commandName == null || !scopeRestriction.Commands.Contains(commandName))
+                        {
+                            blockedCommand = commandName ?? "(dynamic invocation)";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (commandName != null && scopeRestriction.Commands.Contains(commandName))
+                        {
+                            blockedCommand = commandName;
+                            return false;
+                        }
                     }
                 }
             }

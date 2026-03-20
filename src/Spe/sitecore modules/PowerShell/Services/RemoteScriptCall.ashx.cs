@@ -211,7 +211,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             return false;
                         }
                     }
-                    catch (SecurityException ex)
+                    catch (Exception ex)
                     {
                         PowerShellLog.Audit("Remoting: Bearer auth error, user={0}, ip={1}, error={2}", username ?? "unknown", ip, ex.Message);
                         RejectAuthenticationMethod(context, serviceName, username, ex);
@@ -852,9 +852,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
-                    session.ExecuteScriptPart(script, true);
-                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
-                        session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                    try
+                    {
+                        session.ExecuteScriptPart(script, true);
+                    }
+                    finally
+                    {
+                        if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                            session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                    }
 
                     context.Response.Write(session.Output.ToString());
                 }
@@ -875,9 +881,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
-                    var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
-                    if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
-                        session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                    List<object> outObjects;
+                    try
+                    {
+                        outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
+                    }
+                    finally
+                    {
+                        if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                            session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                    }
                     var response = context.Response;
                     if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))
                     {

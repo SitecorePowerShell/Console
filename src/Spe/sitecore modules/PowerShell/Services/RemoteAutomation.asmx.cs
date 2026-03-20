@@ -53,11 +53,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return string.IsNullOrEmpty(ip) ? request.ServerVariables["REMOTE_ADDR"] : ip;
         }
 
+        // SOAP uses basic auth (username/password), not Bearer tokens, so there is no JWT
+        // to extract scope from. Scope-based restrictions only apply to REST (Bearer) endpoints.
+        // Pass null for scope -- only service-level command restrictions are enforced here.
         private static void ValidateScript(string script, string userName)
         {
             if (!ScriptValidator.ValidateScript(WebServiceSettings.ServiceRemoting, script, null, out var blockedCommand))
             {
-                PowerShellLog.Audit("Remoting(SOAP): script rejected, user={0}, ip={1}, blockedCommand={2}",
+                PowerShellLog.Audit("Remoting(SOAP): script rejected, user={0}, ip={1}, blockedCommand={2}, clientSession=none",
                     userName, GetIp(), blockedCommand);
                 throw new InvalidOperationException($"Script contains blocked command: {blockedCommand}");
             }
@@ -140,8 +143,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     userName, GetIp(), scriptSession.ID, scriptHash);
 
                 var appliedMode = ApplyLanguageMode(scriptSession);
-                scriptSession.ExecuteScriptPart(script);
-                RestoreLanguageMode(scriptSession, appliedMode);
+                try
+                {
+                    scriptSession.ExecuteScriptPart(script);
+                }
+                finally
+                {
+                    RestoreLanguageMode(scriptSession, appliedMode);
+                }
 
                 PowerShellLog.Audit("Remoting(SOAP): script completed, user={0}, ip={1}, session={2}, scriptHash={3}",
                     userName, GetIp(), scriptSession.ID, scriptHash);
@@ -246,8 +255,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             var appliedMode = ApplyLanguageMode(scriptSession);
-            var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
-            RestoreLanguageMode(scriptSession, appliedMode);
+            List<object> outObjects;
+            try
+            {
+                outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
+            }
+            finally
+            {
+                RestoreLanguageMode(scriptSession, appliedMode);
+            }
             if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
                 outObjects.AddRange(scriptSession.LastErrors);
