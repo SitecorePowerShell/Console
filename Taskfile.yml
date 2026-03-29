@@ -107,7 +107,8 @@ tasks:
     vars:
       CM_CONTAINER: "spe-cm-1"
     cmds:
-      - for f in tests/configs/deploy/*.config; do docker cp "$f" "{{.CM_CONTAINER}}:C:/inetpub/wwwroot/App_Config/Include/z.Spe"; done
+      - docker exec {{.CM_CONTAINER}} powershell -Command "New-Item -Path 'C:/inetpub/wwwroot/App_Config/Include/z.Spe' -ItemType Directory -Force | Out-Null"
+      - for f in tests/configs/deploy/*.config; do docker cp "$f" "{{.CM_CONTAINER}}:C:/inetpub/wwwroot/App_Config/Include/z.Spe/"; done
 
   test:
     desc: Run unit and integration tests

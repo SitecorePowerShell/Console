@@ -166,8 +166,8 @@ if ($global:isConstrainedLanguage) {
     Write-Host "`n  Server is in ConstrainedLanguage mode -- tests requiring FullLanguage will be skipped" -ForegroundColor Yellow
 }
 
-# Run all test files EXCEPT enforced (those need security config) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1" |
+# Run all test files EXCEPT enforced/profiles (those need security config) and maintenance
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 2: Security enforcement tests (requires security config)
@@ -179,8 +179,21 @@ if ($deployedSecurity) {
 
 Invoke-TestFile "$PSScriptRoot\Remoting.Security.Enforced.Tests.ps1"
 
-# Cleanup: remove security test configs so we don't leave the instance in a restricted state
+# Cleanup Phase 2: remove security test configs before Phase 3
 Remove-TestConfigs -ConfigDir $testConfigDir
-Write-Host "`n  Security test configs removed. App domain will recycle on next request." -ForegroundColor Cyan
+
+# Phase 3: Restriction profile tests (requires profile config)
+Write-Host "`n=== Phase 3: Restriction Profile Tests (deploying profile config) ===" -ForegroundColor Magenta
+$profileConfigDir = Join-Path $configRoot "profiles"
+$deployedProfiles = Deploy-TestConfigs -ConfigDir $profileConfigDir
+if ($deployedProfiles) {
+    Wait-SitecoreRestart -ExpectedLanguageMode "ConstrainedLanguage"
+}
+
+Invoke-TestFile "$PSScriptRoot\Remoting.RestrictionProfiles.Tests.ps1"
+
+# Cleanup: remove profile test configs so we don't leave the instance in a restricted state
+Remove-TestConfigs -ConfigDir $profileConfigDir
+Write-Host "`n  Test configs removed. App domain will recycle on next request." -ForegroundColor Cyan
 
 Show-TestSummary

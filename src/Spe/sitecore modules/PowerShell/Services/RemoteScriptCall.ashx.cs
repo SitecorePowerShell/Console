@@ -902,6 +902,33 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
+            // Resolve restriction profile (service default + JWT scope override)
+            var profile = RestrictionProfileManager.ResolveProfile(serviceName, scope);
+
+            // Profile-based validation (supports audit-only enforcement)
+            if (profile != null && profile != RestrictionProfile.Unrestricted)
+            {
+                if (!ScriptValidator.ValidateScriptAgainstProfile(profile, script, user, serviceName, out var profileBlockedCommand))
+                {
+                    PowerShellLog.Audit("Remoting: script rejected by profile, user={0}, ip={1}, profile={2}, blockedCommand={3}, clientSession={4}",
+                        user, ip, profile.Name, profileBlockedCommand, clientSession);
+                    SetErrorResponse(context, 403, $"Script blocked by restriction profile '{profile.Name}': {profileBlockedCommand}");
+                    return;
+                }
+
+                // Profile's language mode overrides the service-level setting when more restrictive
+                if (profile.LanguageMode > languageMode)
+                {
+                    languageMode = profile.LanguageMode;
+                }
+
+                if (profile.AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("SPE.Security [EXECUTION] User={0} Service={1} Profile={2} ScriptHash={3} ClientSession={4}",
+                        user, serviceName, profile.Name, scriptHash, clientSession);
+                }
+            }
+
             try
             {
                 if (Context.Database != null)
@@ -953,6 +980,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     session.SetVariable("requestStreams", streams);
                     session.SetVariable("scriptArguments", scriptArguments);
 
+                    // Apply module autoload restriction if profile requires it
+                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                    {
+                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
+                    }
+
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
                     try
@@ -963,6 +996,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
 
                     context.Response.Write(session.Output.ToString());
@@ -982,6 +1017,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         script = script.TrimEnd(' ', '\t', '\n');
                     }
 
+                    // Apply module autoload restriction if profile requires it
+                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                    {
+                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
+                    }
+
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
                     List<object> outObjects;
@@ -993,6 +1034,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
                     var response = context.Response;
                     if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))

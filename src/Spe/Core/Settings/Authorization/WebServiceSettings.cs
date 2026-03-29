@@ -32,6 +32,7 @@ namespace Spe.Core.Settings.Authorization
             public CorsSettings Cors { get; set; }
             public PSLanguageMode LanguageMode { get; set; }
             public CommandRestrictionSettings CommandRestrictions { get; set; }
+            public string ProfileName { get; set; }
         }
 
         private static readonly Dictionary<string, ServiceState> services = new Dictionary<string, ServiceState>();
@@ -64,11 +65,14 @@ namespace Spe.Core.Settings.Authorization
                     Enum.TryParse(langModeAttr, true, out langMode);
                 }
 
+                var profileName = xmlDefinition.Attributes["profile"]?.Value;
+
                 var service = new ServiceState()
                 {
                     Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
                     RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true,
-                    LanguageMode = langMode
+                    LanguageMode = langMode,
+                    ProfileName = profileName
                 };
 
                 var corsNode = xmlDefinition.SelectSingleNode("cors") as XmlElement;
@@ -171,6 +175,18 @@ namespace Spe.Core.Settings.Authorization
             if (services.ContainsKey(serviceName))
             {
                 return services[serviceName].CommandRestrictions;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the restriction profile name configured for the given service, or null if none.
+        /// </summary>
+        public static string GetProfileName(string serviceName)
+        {
+            if (services.ContainsKey(serviceName))
+            {
+                return services[serviceName].ProfileName;
             }
             return null;
         }
