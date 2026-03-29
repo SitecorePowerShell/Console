@@ -83,6 +83,14 @@ tasks:
     cmds:
       - powershell -File scripts/generate-dat.ps1
 
+  generate:trust:
+    desc: Generate trusted scripts config from serialized YAML
+    preconditions:
+      - sh: test -d serialization/modules/serialization/SPE
+        msg: "Serialization SPE folder not found."
+    cmds:
+      - powershell -File scripts/Generate-TrustedScripts.ps1
+
   release:
     desc: Build release packages
     preconditions:
