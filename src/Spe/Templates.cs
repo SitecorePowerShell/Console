@@ -65,12 +65,13 @@ namespace Spe
             }
         }
 
-        public readonly struct RestrictionProfileOverride
+        public readonly struct RestrictionProfile
         {
             public static readonly ID Id = new ID("{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}");
 
             public struct Fields
             {
+                public static readonly ID Enabled = new ID("{4DA86B82-4784-44E9-9491-DE6DE80E8145}");
                 public static readonly ID BaseProfile = new ID("{89C20525-01B0-456D-BFFA-7317A3BFE88A}");
                 public static readonly ID AdditionalBlockedCommands = new ID("{5F4BC217-69A2-4019-8631-761349A100CB}");
                 public static readonly ID AdditionalAllowedCommands = new ID("{2F56DDAD-73F7-4E05-9A61-2C8C1FD97779}");
@@ -78,14 +79,14 @@ namespace Spe
             }
         }
 
-        public readonly struct TrustedScriptRegistration
+        public readonly struct TrustedScript
         {
             public static readonly ID Id = new ID("{C30C6FF9-EEF9-49C5-9787-44AAAAB70563}");
 
             public struct Fields
             {
+                public static readonly ID Enabled = new ID("{9A64EEB5-EF6E-4F00-B26E-7DCEDDCE48B2}");
                 public static readonly ID Script = new ID("{01F26B2A-C396-4B06-A826-A625B62721B5}");
-                public static readonly ID TrustLevel = new ID("{820D9ABA-310A-4AA5-82B2-09C00DC8E206}");
                 public static readonly ID AllowedProfiles = new ID("{ADBD8BBE-2C9C-41C8-935A-D43D3C8474DD}");
             }
         }

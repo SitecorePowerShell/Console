@@ -6,7 +6,7 @@ Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: office/32x32/keys.png
+  Value: 
 Languages:
 - Language: en
   Versions:
@@ -17,11 +17,11 @@ Languages:
       Value: 20260323T210000Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "7768bc09-2fb3-44d1-ba53-af7653076ea4"
+      Value: "4ab00a19-8785-44c5-8bb6-b7d2f8a23492"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260323T230125Z
+      Value: 20260324T162221Z

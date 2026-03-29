@@ -168,7 +168,7 @@ if ($global:isConstrainedLanguage) {
 }
 
 # Run all test files EXCEPT enforced/profiles (those need security config) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1" |
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1","Remoting.SoapProfiles.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 2: Security enforcement tests (requires security config)
@@ -200,6 +200,7 @@ if ($deployedProfiles) {
 }
 
 Invoke-TestFile "$PSScriptRoot\Remoting.RestrictionProfiles.Tests.ps1"
+Invoke-TestFile "$PSScriptRoot\Remoting.SoapProfiles.Tests.ps1"
 
 # Cleanup: remove profile test configs first
 Remove-TestConfigs -ConfigDir $profileConfigDir

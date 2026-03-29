@@ -1,0 +1,23 @@
+﻿---
+ID: "d1a2b3c4-1001-4000-a001-000000000001"
+Parent: "d1a2b3c4-0001-4000-a000-000000000001"
+Template: "80fd8ec9-dc70-4ba0-97c2-fa45bdfbbd6c"
+Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/Trusted Scripts/SPE/Core
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260327T000000Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d1a2b3c4-1001-4000-a001-000000000001"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260327T000000Z

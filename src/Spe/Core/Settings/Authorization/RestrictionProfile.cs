@@ -6,7 +6,7 @@ namespace Spe.Core.Settings.Authorization
 {
     /// <summary>
     /// Represents a named restriction profile that combines language mode, command restrictions,
-    /// module restrictions, standard field restrictions, audit level, and enforcement mode.
+    /// module restrictions, audit level, and enforcement mode.
     /// Profiles are loaded flat from Spe.config (no inheritance) and customized via Sitecore config patching.
     /// </summary>
     public class RestrictionProfile
@@ -16,7 +16,6 @@ namespace Spe.Core.Settings.Authorization
         public CommandRestrictionMode CommandMode { get; }
         public HashSet<string> Commands { get; }
         public ModuleRestrictions Modules { get; }
-        public StandardFieldRestrictions StandardFields { get; }
         public AuditLevel AuditLevel { get; }
         public EnforcementMode Enforcement { get; }
 
@@ -26,7 +25,6 @@ namespace Spe.Core.Settings.Authorization
             CommandRestrictionMode commandMode,
             HashSet<string> commands,
             ModuleRestrictions modules,
-            StandardFieldRestrictions standardFields,
             AuditLevel auditLevel,
             EnforcementMode enforcement)
         {
@@ -35,7 +33,6 @@ namespace Spe.Core.Settings.Authorization
             CommandMode = commandMode;
             Commands = commands ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             Modules = modules;
-            StandardFields = standardFields;
             AuditLevel = auditLevel;
             Enforcement = enforcement;
         }
@@ -69,19 +66,6 @@ namespace Spe.Core.Settings.Authorization
         }
 
         /// <summary>
-        /// Returns true if the given standard field name is allowed for writing under this profile.
-        /// Only relevant for the content-editor profile.
-        /// </summary>
-        public bool IsStandardFieldWriteAllowed(string fieldName)
-        {
-            if (StandardFields == null) return true;
-            if (string.IsNullOrEmpty(fieldName)) return true;
-            if (!fieldName.StartsWith("__")) return true; // Not a standard field
-
-            return StandardFields.IsFieldAllowed(fieldName);
-        }
-
-        /// <summary>
         /// The unrestricted profile used as default when no profile is configured.
         /// </summary>
         public static readonly RestrictionProfile Unrestricted = new RestrictionProfile(
@@ -90,8 +74,20 @@ namespace Spe.Core.Settings.Authorization
             CommandRestrictionMode.None,
             null,
             null,
-            null,
             AuditLevel.None,
+            EnforcementMode.Enforce);
+
+        /// <summary>
+        /// A deny-all profile used when a referenced profile name is invalid.
+        /// Uses an empty allowlist so all commands are rejected.
+        /// </summary>
+        public static readonly RestrictionProfile DenyAll = new RestrictionProfile(
+            "deny-all",
+            PSLanguageMode.RestrictedLanguage,
+            CommandRestrictionMode.Allowlist,
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase),
+            null,
+            AuditLevel.Violations,
             EnforcementMode.Enforce);
     }
 
@@ -130,27 +126,4 @@ namespace Spe.Core.Settings.Authorization
         }
     }
 
-    public class StandardFieldRestrictions
-    {
-        private readonly HashSet<string> _allowedFields;
-        private readonly HashSet<string> _blockedFields;
-
-        public StandardFieldRestrictions(HashSet<string> allowedFields, HashSet<string> blockedFields)
-        {
-            _allowedFields = allowedFields ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            _blockedFields = blockedFields ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Returns true if the standard field is allowed for writing.
-        /// Blocked fields take precedence over allowed fields.
-        /// If neither list contains the field, it is blocked by default (standard fields are opt-in).
-        /// </summary>
-        public bool IsFieldAllowed(string fieldName)
-        {
-            if (_blockedFields.Contains(fieldName)) return false;
-            if (_allowedFields.Contains(fieldName)) return true;
-            return false; // Standard fields blocked by default
-        }
-    }
 }

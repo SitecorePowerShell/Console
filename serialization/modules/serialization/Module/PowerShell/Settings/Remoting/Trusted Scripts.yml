@@ -1,4 +1,4 @@
----
+﻿---
 ID: "92019bd6-38b9-4f48-b521-28cac112ab66"
 Parent: "1fb4bdec-b064-4bf5-8d5b-b78978c2245b"
 Template: "80fd8ec9-dc70-4ba0-97c2-fa45bdfbbd6c"
@@ -6,7 +6,7 @@ Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/Trusted Scripts
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/shield.png
+  Value: 
 Languages:
 - Language: en
   Versions:
@@ -17,11 +17,11 @@ Languages:
       Value: 20260323T210000Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "92019bd6-0001-0001-0001-000000000001"
+      Value: "6eb5a18f-704b-4dfc-ad34-58646929d1b4"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260323T210000Z
+      Value: 20260324T162217Z

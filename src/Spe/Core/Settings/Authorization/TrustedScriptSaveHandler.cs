@@ -21,7 +21,7 @@ namespace Spe.Core.Settings.Authorization
             var item = Event.ExtractParameter<Item>(args, 0);
             if (item == null) return;
 
-            if (item.TemplateID == Templates.TrustedScriptRegistration.Id)
+            if (item.TemplateID == Templates.TrustedScript.Id)
             {
                 ScriptTrustRegistry.Invalidate();
             }

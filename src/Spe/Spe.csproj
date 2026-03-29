@@ -243,6 +243,7 @@
     <Compile Include="Core\Settings\Authorization\RemotingApiKey.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingApiKeyProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
+    <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
     <Compile Include="Core\Settings\Authorization\TrustedScriptEntry.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
@@ -708,7 +709,6 @@
     <Content Include="App_Config\Include\Spe\Spe.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Spe\Spe.TrustedScripts.config" />
     <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml" />
     <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx" />

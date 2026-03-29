@@ -143,7 +143,7 @@ namespace Spe.Core.Settings.Authorization
 
         private bool IsValidSignature(string providedSignature, string testSignature)
         {
-            var isValid = providedSignature == testSignature;
+            var isValid = SecureCompare.FixedTimeEquals(providedSignature, testSignature);
             if (isValid) return true;
 
             PowerShellLog.Warn("JWT validation failed: token signature does not match.");

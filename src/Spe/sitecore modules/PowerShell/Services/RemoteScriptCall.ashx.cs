@@ -1000,10 +1000,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 streams.Add("stream", request.InputStream);
             }
 
-            ProcessScript(context, script, serviceName, streams);
+            ProcessScript(context, script, serviceName, streams, scriptItemId: scriptItem.ID);
         }
 
-        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false)
+        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false, ID scriptItemId = null)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -1059,6 +1059,19 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (profile.LanguageMode > languageMode)
                 {
                     languageMode = profile.LanguageMode;
+                }
+
+                // Trusted scripts can bypass language mode restrictions for their profile
+                if (scriptItemId != (ID)null && languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                {
+                    var trustResult = ScriptTrustRegistry.EvaluateTrust(scriptItemId, script, profile.Name);
+                    if (trustResult.EffectiveTrustLevel == ScriptTrustLevel.Trusted)
+                    {
+                        PowerShellLog.Audit(
+                            "SPE.Security [TRUST] Script '{0}' (ItemId={1}) trusted for profile '{2}', restoring FullLanguage mode. User={3}",
+                            trustResult.Entry?.Name ?? "unknown", scriptItemId, profile.Name, user);
+                        languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
+                    }
                 }
 
                 if (profile.AuditLevel >= AuditLevel.Standard)

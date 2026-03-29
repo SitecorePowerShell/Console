@@ -8,16 +8,17 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 Write-Host "`n  [Profile Override Setup: creating test items]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-    $folder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Restriction Profiles"
+    $folder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Remoting/Restriction Profiles"
     if (-not $folder) { return "FOLDER_NOT_FOUND" }
 
-    # Clean up any leftover from a previous test run
-    $existing = Get-ChildItem -Path $folder.Paths.FullPath | Where-Object { $_.Name -eq "Test-BlockGetDatabase" }
+    # Clean up any leftover from a previous test run (search recursively for nested folders)
+    $existing = Get-ChildItem -Path "master:$($folder.Paths.FullPath)" -Recurse | Where-Object { $_.Name -eq "Test-BlockGetDatabase" }
     if ($existing) { $existing | Remove-Item -Force }
 
-    $override = New-Item -Path "$($folder.Paths.FullPath)/Test-BlockGetDatabase" `
-        -ItemType "/sitecore/templates/Modules/PowerShell Console/Restriction Profile Override"
+    $override = New-Item -Path "master:$($folder.Paths.FullPath)/Test-BlockGetDatabase" `
+        -ItemType "/sitecore/templates/Modules/PowerShell Console/Remoting/Restriction Profile"
     $override.Editing.BeginEdit()
+    $override["Enabled"] = "1"
     $override["Base Profile"] = "read-only"
     $override["Additional Blocked Commands"] = "Get-Database"
     $override.Editing.EndEdit() | Out-Null

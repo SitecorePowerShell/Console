@@ -60,14 +60,9 @@ namespace Spe.Core.Settings.Authorization
         Untrusted,
 
         /// <summary>
-        /// Can use .NET types and CLM bypass. No reflection access.
+        /// Can use .NET types and CLM bypass.
         /// </summary>
-        Trusted,
-
-        /// <summary>
-        /// Reflection and private member access allowed. Config-only assignment.
-        /// </summary>
-        System
+        Trusted
     }
 
     public enum HashMismatchAction

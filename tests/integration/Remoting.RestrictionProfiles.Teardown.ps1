@@ -8,10 +8,10 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 Write-Host "`n  [Profile Override Teardown: removing test items]" -ForegroundColor Cyan
 
 $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-    $folder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Restriction Profiles"
+    $folder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Remoting/Restriction Profiles"
     if (-not $folder) { return "FOLDER_NOT_FOUND" }
 
-    $item = Get-ChildItem -Path $folder.Paths.FullPath | Where-Object { $_.Name -eq "Test-BlockGetDatabase" }
+    $item = Get-ChildItem -Path "master:$($folder.Paths.FullPath)" -Recurse | Where-Object { $_.Name -eq "Test-BlockGetDatabase" }
     if ($item) {
         $item | Remove-Item -Force
         "DELETED"

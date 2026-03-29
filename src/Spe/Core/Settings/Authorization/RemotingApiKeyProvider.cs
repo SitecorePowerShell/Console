@@ -57,7 +57,7 @@ namespace Spe.Core.Settings.Authorization
 
             foreach (var key in keys)
             {
-                if (key.Enabled && string.Equals(key.SharedSecret, sharedSecret, StringComparison.Ordinal))
+                if (key.Enabled && SecureCompare.FixedTimeEquals(key.SharedSecret, sharedSecret))
                 {
                     return key;
                 }
@@ -186,26 +186,7 @@ namespace Spe.Core.Settings.Authorization
                 var keys = new List<RemotingApiKey>();
                 using (new SecurityDisabler())
                 {
-                    foreach (Item child in settingsFolder.GetChildren())
-                    {
-                        if (child.TemplateID != Templates.RemotingApiKey.Id) continue;
-
-                        try
-                        {
-                            var key = ParseApiKey(child);
-                            if (key != null)
-                            {
-                                keys.Add(key);
-                                PowerShellLog.Debug(
-                                    $"RemotingApiKeyProvider: loaded API Key '{key.Name}' " +
-                                    $"(Enabled={key.Enabled}, Profile={key.Profile ?? "none"}).");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            PowerShellLog.Error($"RemotingApiKeyProvider: failed to parse API Key '{child.Name}'.", ex);
-                        }
-                    }
+                    CollectApiKeysRecursive(settingsFolder, keys);
                 }
 
                 // Warn about duplicate shared secrets
@@ -233,6 +214,35 @@ namespace Spe.Core.Settings.Authorization
             {
                 PowerShellLog.Error("RemotingApiKeyProvider: failed to load API Keys.", ex);
                 return null;
+            }
+        }
+
+        private static void CollectApiKeysRecursive(Item folder, List<RemotingApiKey> keys)
+        {
+            foreach (Item child in folder.GetChildren())
+            {
+                if (child.TemplateID == Templates.RemotingApiKey.Id)
+                {
+                    try
+                    {
+                        var key = ParseApiKey(child);
+                        if (key != null)
+                        {
+                            keys.Add(key);
+                            PowerShellLog.Debug(
+                                $"RemotingApiKeyProvider: loaded API Key '{key.Name}' " +
+                                $"(Enabled={key.Enabled}, Profile={key.Profile ?? "none"}).");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PowerShellLog.Error($"RemotingApiKeyProvider: failed to parse API Key '{child.Name}'.", ex);
+                    }
+                }
+                else if (child.HasChildren)
+                {
+                    CollectApiKeysRecursive(child, keys);
+                }
             }
         }
 

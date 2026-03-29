@@ -111,7 +111,15 @@ namespace Spe.Core.Settings.Authorization
                     }
                     else
                     {
-                        if (commandName != null && serviceRestrictions.Commands.Contains(commandName))
+                        // In blocklist mode, reject dynamic invocations (null command name)
+                        // since the actual command cannot be verified against the blocklist.
+                        if (commandName == null)
+                        {
+                            blockedCommand = "(dynamic invocation)";
+                            return false;
+                        }
+
+                        if (serviceRestrictions.Commands.Contains(commandName))
                         {
                             blockedCommand = commandName;
                             return false;
@@ -139,7 +147,13 @@ namespace Spe.Core.Settings.Authorization
                     }
                     else
                     {
-                        if (commandName != null && scopeRestriction.Commands.Contains(commandName))
+                        if (commandName == null)
+                        {
+                            blockedCommand = "(dynamic invocation)";
+                            return false;
+                        }
+
+                        if (scopeRestriction.Commands.Contains(commandName))
                         {
                             blockedCommand = commandName;
                             return false;
@@ -168,7 +182,10 @@ namespace Spe.Core.Settings.Authorization
             {
                 var commandName = commandAst.GetCommandName();
 
-                if (!profile.IsCommandAllowed(commandName ?? string.Empty))
+                // Reject dynamic invocations (null command name) since the actual
+                // command cannot be verified against the profile's restrictions.
+                var isAllowed = commandName != null && profile.IsCommandAllowed(commandName);
+                if (!isAllowed)
                 {
                     blockedCommand = commandName ?? "(dynamic invocation)";
 

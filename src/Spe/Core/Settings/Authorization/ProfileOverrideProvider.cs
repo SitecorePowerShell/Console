@@ -119,7 +119,6 @@ namespace Spe.Core.Settings.Authorization
                 configProfile.CommandMode,
                 mergedCommands,
                 configProfile.Modules,
-                configProfile.StandardFields,
                 auditLevel,
                 configProfile.Enforcement);
         }
@@ -148,24 +147,37 @@ namespace Spe.Core.Settings.Authorization
             var results = new List<Item>();
             using (new SecurityDisabler())
             {
-                foreach (Item child in settingsFolder.GetChildren())
-                {
-                    PowerShellLog.Debug($"ProfileOverrideProvider: examining child '{child.Name}' (Template={child.TemplateID})");
+                CollectOverridesRecursive(settingsFolder, profileName, results);
+            }
 
-                    if (child.TemplateID != Templates.RestrictionProfileOverride.Id) continue;
+            PowerShellLog.Debug($"ProfileOverrideProvider: found {results.Count} override(s) for profile '{profileName}'.");
+            return results;
+        }
+
+        private static void CollectOverridesRecursive(Item folder, string profileName, List<Item> results)
+        {
+            foreach (Item child in folder.GetChildren())
+            {
+                if (child.TemplateID == Templates.RestrictionProfile.Id)
+                {
+                    var enabledField = child.Fields[Templates.RestrictionProfile.Fields.Enabled];
+                    if (enabledField != null && enabledField.Value != "1")
+                    {
+                        PowerShellLog.Debug($"ProfileOverrideProvider: skipping disabled override '{child.Name}'.");
+                        continue;
+                    }
 
                     var baseProfile = child.Fields["Base Profile"]?.Value?.Trim();
-                    PowerShellLog.Debug($"ProfileOverrideProvider: override item '{child.Name}' has BaseProfile='{baseProfile}'");
-
                     if (string.Equals(baseProfile, profileName, StringComparison.OrdinalIgnoreCase))
                     {
                         results.Add(child);
                     }
                 }
+                else if (child.HasChildren)
+                {
+                    CollectOverridesRecursive(child, profileName, results);
+                }
             }
-
-            PowerShellLog.Debug($"ProfileOverrideProvider: found {results.Count} override(s) for profile '{profileName}'.");
-            return results;
         }
 
         private static IEnumerable<string> ParseMultiLineField(Item item, string fieldName)

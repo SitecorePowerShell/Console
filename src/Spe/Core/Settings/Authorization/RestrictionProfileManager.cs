@@ -61,8 +61,9 @@ namespace Spe.Core.Settings.Authorization
                     return ProfileOverrideProvider.GetMergedProfile(keyProfile);
                 }
 
-                PowerShellLog.Warn(
-                    $"RestrictionProfileManager: API Key references unknown profile '{apiKeyProfile}', falling back to service profile.");
+                PowerShellLog.Error(
+                    $"RestrictionProfileManager: API Key references unknown profile '{apiKeyProfile}'. Denying access.");
+                return RestrictionProfile.DenyAll;
             }
 
             // 3. Service-level profile > unrestricted
@@ -197,38 +198,7 @@ namespace Spe.Core.Settings.Authorization
                 modules = new ModuleRestrictions(autoload, allowedModules);
             }
 
-            // Standard field restrictions
-            StandardFieldRestrictions standardFields = null;
-            var sfNode = element.SelectSingleNode("standardFieldRestrictions") as XmlElement;
-            if (sfNode != null)
-            {
-                var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var blocked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (XmlNode tierNode in sfNode.SelectNodes("tier"))
-                {
-                    var tierElement = tierNode as XmlElement;
-                    if (tierElement == null) continue;
-
-                    var tierDefault = tierElement.GetAttribute("default");
-                    var isAllowed = "allow".Equals(tierDefault, StringComparison.OrdinalIgnoreCase);
-
-                    foreach (XmlNode fieldNode in tierElement.SelectNodes("field"))
-                    {
-                        var fieldName = fieldNode.InnerText?.Trim();
-                        if (string.IsNullOrEmpty(fieldName)) continue;
-
-                        if (isAllowed)
-                            allowed.Add(fieldName);
-                        else
-                            blocked.Add(fieldName);
-                    }
-                }
-
-                standardFields = new StandardFieldRestrictions(allowed, blocked);
-            }
-
-            return new RestrictionProfile(name, langMode, commandMode, commands, modules, standardFields, auditLevel, enforcement);
+            return new RestrictionProfile(name, langMode, commandMode, commands, modules, auditLevel, enforcement);
         }
 
         private static void ParseCommandList(XmlElement parent, string xpath, HashSet<string> commands)
