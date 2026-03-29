@@ -1,0 +1,33 @@
+# Remoting.RestrictionProfiles.Setup.ps1
+# Creates test override items BEFORE the profile config is deployed.
+# Called by Run-RemotingTests.ps1 in the unrestricted phase.
+# Requires: SPE Remoting enabled, shared secret configured, NO profile config deployed
+
+$session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
+
+Write-Host "`n  [Profile Override Setup: creating test items]" -ForegroundColor Cyan
+
+$createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
+    $folder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Restriction Profiles"
+    if (-not $folder) { return "FOLDER_NOT_FOUND" }
+
+    # Clean up any leftover from a previous test run
+    $existing = Get-ChildItem -Path $folder.Paths.FullPath | Where-Object { $_.Name -eq "Test-BlockGetDatabase" }
+    if ($existing) { $existing | Remove-Item -Force }
+
+    $override = New-Item -Path "$($folder.Paths.FullPath)/Test-BlockGetDatabase" `
+        -ItemType "/sitecore/templates/Modules/PowerShell Console/Restriction Profile Override"
+    $override.Editing.BeginEdit()
+    $override["Base Profile"] = "read-only"
+    $override["Additional Blocked Commands"] = "Get-Database"
+    $override.Editing.EndEdit() | Out-Null
+    "CREATED:$($override.ID)"
+} -Raw
+
+if ($createResult -like "CREATED:*") {
+    Write-Host "    Override item created: $createResult" -ForegroundColor Green
+} else {
+    Write-Host "    ERROR creating override item: $createResult" -ForegroundColor Red
+}
+
+Stop-ScriptSession -Session $session

@@ -53,6 +53,10 @@
                     {
                         "path": "/Settings/RemoteAutomation/Sitecore",
                         "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/Restriction Profiles",
+                        "scope": "SingleItem"
                     }
                 ]
             }

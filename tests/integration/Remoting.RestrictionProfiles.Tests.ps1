@@ -198,6 +198,31 @@ $postErrorLang = Invoke-RemoteScript -Session $session -ScriptBlock {
 } -Raw
 Assert-Equal $postErrorLang "ConstrainedLanguage" "Language mode restored after exception under profile"
 
+# ============================================================================
+#  Test Group 9: Item-Based Profile Overrides
+#  NOTE: Override items are created by Remoting.RestrictionProfiles.Setup.ps1
+#  BEFORE the profile config is deployed (because New-Item/Remove-Item are
+#  blocked by the read-only profile). Teardown is handled by
+#  Remoting.RestrictionProfiles.Teardown.ps1 AFTER the profile config is removed.
+# ============================================================================
+Write-Host "`n  [Test Group 9: Item-Based Profile Overrides]" -ForegroundColor White
+
+# 9a. Get-Database should be blocked (override item adds it to the read-only blocklist)
+$overrideBlockResponse = Invoke-ProfileBearerRequest -Script 'Get-Database -Name "master"'
+Assert-Equal ([int]$overrideBlockResponse.StatusCode) 403 "Get-Database blocked by item-based override"
+
+# 9b. Blocked command name is in the response
+$overrideBlockBody = $overrideBlockResponse.Content.ReadAsStringAsync().Result
+Assert-Like $overrideBlockBody "*Get-Database*" "Response includes overridden blocked command name"
+
+# 9c. Other read commands still work (override is additive, doesn't affect existing allows)
+$stillAllowedResponse = Invoke-ProfileBearerRequest -Script 'Get-Item -Path "master:/"'
+Assert-Equal ([int]$stillAllowedResponse.StatusCode) 200 "Get-Item still allowed (override is additive)"
+
+# 9d. Commands already blocked by config profile remain blocked
+$configBlockResponse = Invoke-ProfileBearerRequest -Script 'Remove-Item -Path "master:/content/nonexistent"'
+Assert-Equal ([int]$configBlockResponse.StatusCode) 403 "Remove-Item still blocked (config profile unchanged)"
+
 # Cleanup
 $httpClient.Dispose()
 Stop-ScriptSession -Session $session

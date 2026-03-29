@@ -73,7 +73,7 @@ SharedFields:
     	if(!$Item) { return }
     	if($linksToCheck.Contains("internal")) {
     		$brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
-    		if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
+    		if($null -ne $brokenlinks -and $brokenlinks.Length -gt 0) {
     			$finalRenderings = Get-Rendering -Item $Item -FinalLayout
     			$sharedRenderings = Get-Rendering -Item $Item
     			$uniqueIdLookup = New-Object System.Collections.Generic.HashSet[string]
@@ -92,29 +92,46 @@ SharedFields:
     					}
     				}
     				$brokenRendering = $renderings | Where-Object { $_.Datasource -eq $brokenLink.TargetPath -and !$uniqueIdLookup.Contains($_.UniqueId) } | Select-Object -First 1
-    				if(!$brokenRendering -or !$linksToCheck.Contains("renderings")) { continue }
-    				$uniqueIdLookup.Add($brokenRendering.UniqueId) > $null
-    				$brokenRenderingItem = Get-Item -Path "master:" -ID $brokenRendering.ItemId
-    				$brokenItem = [pscustomobject]@{
-    					"ID"=$Item.ID
-    					"Icon"=$Item.__Icon
-    					"DisplayName"=$Item.DisplayName
-    					"ItemPath"=$Item.ItemPath
-    					"Version"=$Item.Version
-    					"Language"=$Item.Language
-    					"__Updated"=$Item.__Updated
-    					"__Updated by"=$Item."__Updated by"
-    					"Link Field"=$fieldItem.Name
-    					"Rendering" = $brokenRenderingItem.Name
-    					"Placeholder" = $brokenRendering.Placeholder
-    					"Target Path"=$brokenLink.TargetPath
-    					"Status Code"="Missing Target Item"
-    					"BrokenLink"=$brokenLink
-    					"Link Type" = "Internal"
+    				if($brokenRendering) {
+    					# This is a rendering datasource link - only report if renderings checked
+    					if(!$linksToCheck.Contains("renderings")) { continue }
+    					$uniqueIdLookup.Add($brokenRendering.UniqueId) > $null
+    					$brokenRenderingItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenRendering.ItemId
+    					[pscustomobject]@{
+    						"ID"=$Item.ID
+    						"Icon"=$Item.__Icon
+    						"DisplayName"=$Item.DisplayName
+    						"ItemPath"=$Item.ItemPath
+    						"Version"=$Item.Version
+    						"Language"=$Item.Language
+    						"__Updated"=$Item.__Updated
+    						"__Updated by"=$Item."__Updated by"
+    						"Link Field"=$fieldItem.Name
+    						"Rendering"=$brokenRenderingItem.Name
+    						"Placeholder"=$brokenRendering.Placeholder
+    						"Target Path"=$brokenLink.TargetPath
+    						"Status Code"="Missing Target Item"
+    						"BrokenLink"=$brokenLink
+    						"Link Type"="Internal"
+    					}
+    				} else {
+    					# Standard internal broken link - always report
+    					[pscustomobject]@{
+    						"ID"=$Item.ID
+    						"Icon"=$Item.__Icon
+    						"DisplayName"=$Item.DisplayName
+    						"ItemPath"=$Item.ItemPath
+    						"Version"=$Item.Version
+    						"Language"=$Item.Language
+    						"__Updated"=$Item.__Updated
+    						"__Updated by"=$Item."__Updated by"
+    						"Link Field"=$fieldItem.Name
+    						"Target Path"=$brokenLink.TargetPath
+    						"Status Code"="Missing Target Item"
+    						"BrokenLink"=$brokenLink
+    						"Link Type"="Internal"
+    					}
     				}
-    
-    				$brokenItem
-    				
     			}
     		}
     	}
@@ -194,7 +211,7 @@ SharedFields:
     	$props = @{
     		Title = "Broken Links Report"
     		InfoTitle = "Found $($items.Count) items with broken links!"
-    		InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
+    		InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion -eq '1')]) of items."
     		MissingDataMessage = "There are no items found which have broken links in the current language."
     		PageSize = 25
     		ViewName = "BrokenLinks"

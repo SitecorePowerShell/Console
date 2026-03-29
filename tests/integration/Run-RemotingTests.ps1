@@ -149,6 +149,7 @@ if ($TestFile) {
 # Here we only ensure leftover security test configs from a previous run are removed.
 Write-Host "`n=== Phase 1: Baseline Tests (no security enforcement config) ===" -ForegroundColor Magenta
 Remove-TestConfigs -ConfigDir $testConfigDir
+Remove-TestConfigs -ConfigDir (Join-Path $configRoot "profiles")
 
 # Wait for SPE to be ready with FullLanguage (no security enforcement config present).
 # Covers both fresh starts and removal of leftover security configs from previous runs.
@@ -184,6 +185,14 @@ Remove-TestConfigs -ConfigDir $testConfigDir
 
 # Phase 3: Restriction profile tests (requires profile config)
 Write-Host "`n=== Phase 3: Restriction Profile Tests (deploying profile config) ===" -ForegroundColor Magenta
+
+# Wait for Phase 2 cleanup to take effect (FullLanguage restored)
+Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+
+# Setup: create override test items while remoting is still unrestricted
+. "$PSScriptRoot\Remoting.RestrictionProfiles.Setup.ps1"
+
+# Deploy profile config and wait for restart
 $profileConfigDir = Join-Path $configRoot "profiles"
 $deployedProfiles = Deploy-TestConfigs -ConfigDir $profileConfigDir
 if ($deployedProfiles) {
@@ -192,8 +201,15 @@ if ($deployedProfiles) {
 
 Invoke-TestFile "$PSScriptRoot\Remoting.RestrictionProfiles.Tests.ps1"
 
-# Cleanup: remove profile test configs so we don't leave the instance in a restricted state
+# Cleanup: remove profile test configs first
 Remove-TestConfigs -ConfigDir $profileConfigDir
-Write-Host "`n  Test configs removed. App domain will recycle on next request." -ForegroundColor Cyan
+
+# Wait for unrestricted mode to restore before teardown
+Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+
+# Teardown: remove override test items (requires unrestricted remoting)
+. "$PSScriptRoot\Remoting.RestrictionProfiles.Teardown.ps1"
+
+Write-Host "`n  Profile test cleanup complete." -ForegroundColor Cyan
 
 Show-TestSummary

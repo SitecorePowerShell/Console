@@ -31,8 +31,9 @@ namespace Spe.Core.Settings.Authorization
 
             if (string.IsNullOrEmpty(profileName)) return null;
 
-            _profiles.TryGetValue(profileName, out var profile);
-            return profile;
+            if (!_profiles.TryGetValue(profileName, out var profile)) return null;
+
+            return ProfileOverrideProvider.GetMergedProfile(profile);
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace Spe.Core.Settings.Authorization
             {
                 if (_profiles.TryGetValue(scope, out var scopeProfile))
                 {
-                    return scopeProfile;
+                    return ProfileOverrideProvider.GetMergedProfile(scopeProfile);
                 }
             }
 
@@ -70,7 +71,7 @@ namespace Spe.Core.Settings.Authorization
             {
                 if (_profiles.TryGetValue(profileName, out var profile))
                 {
-                    return profile;
+                    return ProfileOverrideProvider.GetMergedProfile(profile);
                 }
                 PowerShellLog.Warn($"Service '{serviceName}' references unknown profile '{profileName}'. Falling back to unrestricted.");
             }

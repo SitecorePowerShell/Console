@@ -3,8 +3,9 @@ services:
     isolation: ${TRAEFIK_ISOLATION}
     image: ${TRAEFIK_IMAGE}
     command:
-      - "--ping"
+      - "--api.dashboard=true"
       - "--api.insecure=true"
+      - "--ping"
       - "--providers.docker.endpoint=npipe:////./pipe/docker_engine"
       - "--providers.docker.exposedByDefault=false"
       - "--providers.file.directory=C:/etc/traefik/config/dynamic"
@@ -113,6 +114,7 @@ services:
       - "traefik.http.routers.id-secure.entrypoints=websecure"
       - "traefik.http.routers.id-secure.rule=Host(`${ID_HOST}`)"
       - "traefik.http.routers.id-secure.tls=true"
+      - "traefik.http.services.id-spe.loadbalancer.server.port=80"
   cm:
     isolation: ${ISOLATION}
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
@@ -161,3 +163,4 @@ services:
       - "traefik.http.routers.cm-secure.rule=Host(`${CM_HOST}`)"
       - "traefik.http.routers.cm-secure.tls=true"
       - "traefik.http.routers.cm-secure.middlewares=force-STS-Header"
+      - "traefik.http.services.cm-spe.loadbalancer.server.port=80"
