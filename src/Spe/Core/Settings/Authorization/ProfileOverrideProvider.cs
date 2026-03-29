@@ -24,7 +24,7 @@ namespace Spe.Core.Settings.Authorization
     /// </summary>
     public static class ProfileOverrideProvider
     {
-        private const string SettingsPath = "/sitecore/system/Modules/PowerShell/Settings/Restriction Profiles";
+        private const string SettingsPath = "/sitecore/system/Modules/PowerShell/Settings/Remoting/Restriction Profiles";
         private const string CacheKeyPrefix = "Spe.ProfileOverride.";
 
         /// <summary>

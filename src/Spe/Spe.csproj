@@ -240,6 +240,8 @@
     <Compile Include="Core\Settings\Authorization\RestrictionProfileManager.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptTrustRegistry.cs" />
     <Compile Include="Core\Settings\Authorization\TrustedScriptSaveHandler.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingApiKey.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingApiKeyProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
     <Compile Include="Core\Settings\Authorization\TrustedScriptEntry.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />

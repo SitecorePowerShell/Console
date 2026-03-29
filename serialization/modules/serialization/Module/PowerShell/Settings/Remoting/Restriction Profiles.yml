@@ -1,12 +1,12 @@
-﻿---
-ID: "0a2df220-5478-4758-a929-bf6fe3d59d46"
-Parent: "83b665cb-de30-453e-ad18-338c851bba46"
-Template: "a87a00b1-e6db-45ab-8b54-636fec3b5523"
-Path: /sitecore/system/Modules/PowerShell/Settings/Restriction Profiles
+---
+ID: "59b24247-999c-4298-b297-53c548e6d6e9"
+Parent: "1fb4bdec-b064-4bf5-8d5b-b78978c2245b"
+Template: "d54b33a4-12fa-4b5e-b18e-b9aa27c33e43"
+Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/Restriction Profiles
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/folder.png
+  Value: Office/32x32/brickwall.png
 Languages:
 - Language: en
   Versions:
@@ -14,14 +14,14 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20260322T202504Z
+      Value: 20260323T210000Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "59ba3c63-0b8a-4ffc-941a-15783911c417"
+      Value: "59b24247-0001-0001-0001-000000000001"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260322T203116Z
+      Value: 20260323T210000Z

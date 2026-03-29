@@ -55,12 +55,12 @@
                         "scope": "ignored"
                     },
                     {
-                        "path": "/Settings/Restriction Profiles",
-                        "scope": "SingleItem"
+                        "path": "/Settings/Remoting/Options",
+                        "scope": "ItemAndDescendants"
                     },
                     {
-                        "path": "/Settings/Trusted Scripts",
-                        "scope": "SingleItem"
+                        "path": "/Settings/Remoting",
+                        "scope": "ItemAndChildren"
                     }
                 ]
             }

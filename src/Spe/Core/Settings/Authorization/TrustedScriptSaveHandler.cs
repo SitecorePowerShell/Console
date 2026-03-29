@@ -1,4 +1,5 @@
 using System;
+using System.Web;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -7,8 +8,8 @@ using Sitecore.Events;
 namespace Spe.Core.Settings.Authorization
 {
     /// <summary>
-    /// Event handler for item:saved that invalidates the ScriptTrustRegistry
-    /// cache when Trusted Script Registration items are created or modified.
+    /// Event handler for item:saved that invalidates security caches
+    /// when remoting security items are created or modified.
     /// </summary>
     public class TrustedScriptSaveHandler
     {
@@ -23,6 +24,11 @@ namespace Spe.Core.Settings.Authorization
             if (item.TemplateID == Templates.TrustedScriptRegistration.Id)
             {
                 ScriptTrustRegistry.Invalidate();
+            }
+            else if (item.TemplateID == Templates.RemotingApiKey.Id)
+            {
+                // Clear the cached API Key list so changes take effect immediately
+                HttpRuntime.Cache.Remove("Spe.RemotingApiKeys");
             }
         }
     }

@@ -90,6 +90,21 @@ namespace Spe
             }
         }
 
+        public readonly struct RemotingApiKey
+        {
+            public static readonly ID Id = new ID("{55AB1AA8-890E-401E-AF06-094CA21E0E2D}");
+
+            public struct Fields
+            {
+                public static readonly ID SharedSecret = new ID("{BBF52C26-7825-4F7B-88FF-2DB2785C5954}");
+                public static readonly ID Enabled = new ID("{8D158FCA-E8F3-4D94-8469-C782B099EC07}");
+                public static readonly ID Profile = new ID("{ECB2A0C9-3AC3-4FF8-A66C-6D4AE4AA2C21}");
+                public static readonly ID ImpersonateUser = new ID("{5EB16BF4-605A-457C-8588-5D9833FF4DD9}");
+                public static readonly ID RequestLimit = new ID("{33D88116-A954-4954-A94C-A7AE083BC983}");
+                public static readonly ID ThrottleWindow = new ID("{9F12735C-65C2-401E-A499-3C3597452440}");
+            }
+        }
+
         public readonly struct DelegatedAccess
         {
             public static readonly ID Id = new ID("{6111D5BE-EC09-4A5C-AD27-7D8005E91216}");

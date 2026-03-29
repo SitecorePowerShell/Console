@@ -136,6 +136,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
             AddCorsHeaders(context, serviceName, origin);
         }
 
+        private static void AddThrottleHeaders(HttpResponse response, RemotingApiKeyProvider.ThrottleResult throttle)
+        {
+            if (!throttle.HasLimit) return;
+
+            response.Headers["X-RateLimit-Limit"] = throttle.Limit.ToString();
+            response.Headers["X-RateLimit-Remaining"] = throttle.Remaining.ToString();
+            response.Headers["X-RateLimit-Reset"] = throttle.ResetUnixTimestamp.ToString();
+
+            if (!throttle.Allowed)
+            {
+                response.Headers["Retry-After"] = throttle.RetryAfterSeconds.ToString();
+            }
+        }
+
         private static void AddCorsHeaders(HttpContext context, string serviceName, string origin)
         {
             if (string.IsNullOrEmpty(origin))
@@ -210,25 +224,82 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         var provider = ServiceAuthenticationManager.AuthenticationProvider;
                         TokenValidationResult tokenResult = null;
+                        RemotingApiKey matchedApiKey = null;
+                        var isValid = false;
 
-                        bool isValid;
-                        if (provider is ISpeAuthenticationProviderEx providerEx)
+                        // Step 1: Try API Key items first (if any exist)
+                        var apiKeyResult = TryApiKeyAuthentication(token, request, provider, out username, out tokenResult);
+                        if (apiKeyResult != null)
                         {
-                            isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
+                            isValid = true;
+                            matchedApiKey = apiKeyResult;
                         }
-                        else
+
+                        // Step 2: No API Key matched -- try legacy config shared secret
+                        if (!isValid)
                         {
-                            isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                            try
+                            {
+                                if (provider is ISpeAuthenticationProviderEx providerEx)
+                                {
+                                    isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
+                                }
+                                else
+                                {
+                                    isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                                }
+                            }
+                            catch (SecurityException)
+                            {
+                                // Legacy secret validation failed with DetailedAuthenticationErrors enabled.
+                                PowerShellLog.Debug("Remoting: legacy secret validation failed.");
+                            }
+
+                            // Step 3: Legacy secret matched -- check if it also matches an API Key
+                            if (isValid)
+                            {
+                                var configSecret = (provider as SharedSecretAuthenticationProvider)?.SharedSecret;
+                                if (!string.IsNullOrEmpty(configSecret))
+                                {
+                                    matchedApiKey = RemotingApiKeyProvider.FindBySecret(configSecret);
+                                }
+                            }
                         }
 
                         if (isValid)
                         {
+                            // Apply API Key impersonation if configured
+                            if (matchedApiKey != null && matchedApiKey.HasImpersonation)
+                            {
+                                username = matchedApiKey.ImpersonateUser;
+                            }
+
+                            // Throttle check
+                            if (matchedApiKey != null)
+                            {
+                                var throttle = RemotingApiKeyProvider.CheckThrottle(matchedApiKey);
+                                AddThrottleHeaders(context.Response, throttle);
+
+                                if (!throttle.Allowed)
+                                {
+                                    PowerShellLog.Audit("Remoting: throttled, apiKey={0}, ip={1}",
+                                        matchedApiKey.Name, ip);
+                                    SetErrorResponse(context, 429, "Rate limit exceeded.");
+                                    return false;
+                                }
+                            }
+
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}",
-                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none");
+                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}, apiKey={4}",
+                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none",
+                                matchedApiKey?.Name ?? "none");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
+                            }
+                            if (matchedApiKey != null)
+                            {
+                                HttpContext.Current.Items["SpeApiKey"] = matchedApiKey;
                             }
                         }
                         else
@@ -456,6 +527,67 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Warn(errorMessage);
 
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to validate a Bearer token against each enabled API Key item's shared secret.
+        /// Returns the matched API Key on success, or null if no key matches.
+        /// </summary>
+        private static RemotingApiKey TryApiKeyAuthentication(
+            string token, HttpRequest request, ISpeAuthenticationProvider provider,
+            out string username, out TokenValidationResult tokenResult)
+        {
+            username = null;
+            tokenResult = null;
+
+            var allKeys = RemotingApiKeyProvider.FindAllEnabled();
+            if (allKeys == null) return null;
+
+            var authority = request.Url.GetLeftPart(UriPartial.Authority);
+            var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
+            if (sharedSecretProvider == null) return null;
+
+            // Save original secret
+            var originalSecret = sharedSecretProvider.SharedSecret;
+
+            try
+            {
+                foreach (var apiKey in allKeys)
+                {
+                    // Temporarily set the provider's secret to this API Key's secret
+                    sharedSecretProvider.SharedSecret = apiKey.SharedSecret;
+
+                    try
+                    {
+                        bool isValid;
+                        if (provider is ISpeAuthenticationProviderEx providerEx)
+                        {
+                            isValid = providerEx.Validate(token, authority, out username, out tokenResult);
+                        }
+                        else
+                        {
+                            isValid = provider.Validate(token, authority, out username);
+                        }
+
+                        if (isValid)
+                        {
+                            PowerShellLog.Debug($"Remoting: token validated against API Key '{apiKey.Name}'.");
+                            return apiKey;
+                        }
+                    }
+                    catch (SecurityException)
+                    {
+                        // This key's secret didn't match -- try the next one
+                    }
+                }
+            }
+            finally
+            {
+                // Restore original secret
+                sharedSecretProvider.SharedSecret = originalSecret;
+            }
+
+            return null;
         }
 
         private static bool CheckServiceAuthentication(HttpContext context, string serviceName, bool isAuthenticated)
@@ -898,12 +1030,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 PowerShellLog.Audit("Remoting: script rejected, user={0}, ip={1}, blockedCommand={2}, clientSession={3}",
                     user, ip, blockedCommand, clientSession);
+                context.Response.Headers["X-SPE-Restriction"] = "command-blocked";
+                context.Response.Headers["X-SPE-BlockedCommand"] = blockedCommand;
                 SetErrorResponse(context, 403, $"Script contains blocked command: {blockedCommand}");
                 return;
             }
 
-            // Resolve restriction profile (service default + JWT scope override)
-            var profile = RestrictionProfileManager.ResolveProfile(serviceName, scope);
+            // Resolve restriction profile (API Key > JWT scope > service default)
+            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            var apiKeyProfile = apiKey?.Profile;
+            var profile = RestrictionProfileManager.ResolveProfile(serviceName, scope, apiKeyProfile);
 
             // Profile-based validation (supports audit-only enforcement)
             if (profile != null && profile != RestrictionProfile.Unrestricted)
@@ -912,6 +1048,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 {
                     PowerShellLog.Audit("Remoting: script rejected by profile, user={0}, ip={1}, profile={2}, blockedCommand={3}, clientSession={4}",
                         user, ip, profile.Name, profileBlockedCommand, clientSession);
+                    context.Response.Headers["X-SPE-Restriction"] = "profile-blocked";
+                    context.Response.Headers["X-SPE-BlockedCommand"] = profileBlockedCommand;
+                    context.Response.Headers["X-SPE-Profile"] = profile.Name;
                     SetErrorResponse(context, 403, $"Script blocked by restriction profile '{profile.Name}': {profileBlockedCommand}");
                     return;
                 }

@@ -114,7 +114,7 @@ namespace Spe.Core.Settings.Authorization
         }
 
         private const string TrustedScriptsSettingsPath =
-            "/sitecore/system/Modules/PowerShell/Settings/Trusted Scripts";
+            "/sitecore/system/Modules/PowerShell/Settings/Remoting/Trusted Scripts";
 
         /// <summary>
         /// Invalidates the trust registry so it will be reloaded on next access.
@@ -260,12 +260,27 @@ namespace Spe.Core.Settings.Authorization
 
             var name = scriptItem.Name;
 
-            // Trust level
+            // Trust level (Droplink -- stored as item ID, resolve to item name)
             var trustLevel = ScriptTrustLevel.Trusted;
-            var trustLevelValue = trustItem.Fields[Templates.TrustedScriptRegistration.Fields.TrustLevel]?.Value?.Trim();
-            if (!string.IsNullOrEmpty(trustLevelValue))
+            var trustLevelFieldValue = trustItem.Fields[Templates.TrustedScriptRegistration.Fields.TrustLevel]?.Value?.Trim();
+            if (!string.IsNullOrEmpty(trustLevelFieldValue))
             {
-                Enum.TryParse(trustLevelValue, true, out trustLevel);
+                // Try as item ID first (Droplink), fall back to direct text
+                if (ID.TryParse(trustLevelFieldValue, out var trustLevelItemId))
+                {
+                    using (new SecurityDisabler())
+                    {
+                        var trustLevelItem = trustItem.Database.GetItem(trustLevelItemId);
+                        if (trustLevelItem != null)
+                        {
+                            Enum.TryParse(trustLevelItem.Name, true, out trustLevel);
+                        }
+                    }
+                }
+                else
+                {
+                    Enum.TryParse(trustLevelFieldValue, true, out trustLevel);
+                }
             }
 
             // System trust level is config-only

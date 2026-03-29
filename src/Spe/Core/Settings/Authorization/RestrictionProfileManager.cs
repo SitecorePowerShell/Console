@@ -37,16 +37,14 @@ namespace Spe.Core.Settings.Authorization
         }
 
         /// <summary>
-        /// Resolves the effective profile for a service + JWT scope combination.
-        /// If the scope maps to a known profile, returns it. Otherwise returns the service's default profile.
-        /// If the service has no profile configured, returns the Unrestricted profile.
+        /// Resolves the effective profile for a request.
+        /// Resolution order: JWT scope > API Key profile > service profile > unrestricted.
         /// </summary>
-        public static RestrictionProfile ResolveProfile(string serviceName, string scope)
+        public static RestrictionProfile ResolveProfile(string serviceName, string scope, string apiKeyProfile = null)
         {
             EnsureInitialized();
 
-            // If scope maps to a known profile name, it takes precedence.
-            // The scope is the caller's explicitly declared restriction level via JWT claim.
+            // 1. JWT scope claim takes highest precedence
             if (!string.IsNullOrEmpty(scope))
             {
                 if (_profiles.TryGetValue(scope, out var scopeProfile))
@@ -55,6 +53,19 @@ namespace Spe.Core.Settings.Authorization
                 }
             }
 
+            // 2. API Key item profile
+            if (!string.IsNullOrEmpty(apiKeyProfile))
+            {
+                if (_profiles.TryGetValue(apiKeyProfile, out var keyProfile))
+                {
+                    return ProfileOverrideProvider.GetMergedProfile(keyProfile);
+                }
+
+                PowerShellLog.Warn(
+                    $"RestrictionProfileManager: API Key references unknown profile '{apiKeyProfile}', falling back to service profile.");
+            }
+
+            // 3. Service-level profile > unrestricted
             return GetServiceProfile(serviceName) ?? RestrictionProfile.Unrestricted;
         }
 
