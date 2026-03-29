@@ -1,17 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Items;
+using Sitecore.SecurityModel;
 using Spe.Core.Diagnostics;
 
 namespace Spe.Core.Settings.Authorization
 {
     /// <summary>
-    /// Registry of trusted scripts loaded from Spe.config.
-    /// Provides O(1) lookup by Sitecore item GUID with content hash verification.
+    /// Registry of trusted scripts loaded from config and content tree items.
+    /// Config entries (Spe.TrustedScripts.config) take precedence over item-based
+    /// entries on conflict. Provides O(1) lookup by Sitecore item GUID with
+    /// content hash verification and profile-bound trust.
     /// </summary>
     public static class ScriptTrustRegistry
     {
@@ -52,13 +57,22 @@ namespace Spe.Core.Settings.Authorization
         /// Evaluates trust for a script item. Returns the trust level and whether
         /// the script's content hash matches.
         /// </summary>
-        public static ScriptTrustResult EvaluateTrust(ID itemId, string scriptBody)
+        public static ScriptTrustResult EvaluateTrust(ID itemId, string scriptBody, string activeProfileName = null)
         {
             EnsureInitialized();
 
             if (!_entriesById.TryGetValue(itemId, out var entry))
             {
                 return new ScriptTrustResult(ScriptTrustLevel.Untrusted, true, null);
+            }
+
+            // Check profile-bound trust
+            if (!entry.IsAllowedForProfile(activeProfileName))
+            {
+                PowerShellLog.Info(
+                    $"ScriptTrustRegistry: script '{entry.Name}' (ItemId={itemId}) is trusted but not allowed " +
+                    $"for profile '{activeProfileName}'. Running as Untrusted.");
+                return new ScriptTrustResult(ScriptTrustLevel.Untrusted, true, entry);
             }
 
             // Verify content hash if configured
@@ -99,18 +113,36 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
+        private const string TrustedScriptsSettingsPath =
+            "/sitecore/system/Modules/PowerShell/Settings/Trusted Scripts";
+
+        /// <summary>
+        /// Invalidates the trust registry so it will be reloaded on next access.
+        /// Called when trust-related items are saved or deleted.
+        /// </summary>
+        public static void Invalidate()
+        {
+            lock (_lock)
+            {
+                _entriesById.Clear();
+                _entriesByName.Clear();
+                _initialized = false;
+            }
+        }
+
         private static void EnsureInitialized()
         {
             if (_initialized) return;
             lock (_lock)
             {
                 if (_initialized) return;
-                LoadTrustedScripts();
+                LoadFromConfig();
+                LoadFromItems();
                 _initialized = true;
             }
         }
 
-        private static void LoadTrustedScripts()
+        private static void LoadFromConfig()
         {
             var configNode = Factory.GetConfigNode("powershell/trustedScripts");
             if (configNode == null) return;
@@ -125,12 +157,12 @@ namespace Spe.Core.Settings.Authorization
 
                 try
                 {
-                    var entry = ParseEntry(element, name);
+                    var entry = ParseConfigEntry(element, name);
                     if (entry != null)
                     {
                         _entriesById[entry.ItemId] = entry;
                         _entriesByName[entry.Name] = entry;
-                        PowerShellLog.Info($"Registered trusted script: {name} (ItemId={entry.ItemId}, Trust={entry.Trust})");
+                        PowerShellLog.Info($"Registered trusted script (config): {name} (ItemId={entry.ItemId}, Trust={entry.Trust})");
                     }
                 }
                 catch (Exception ex)
@@ -140,7 +172,140 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        private static TrustedScriptEntry ParseEntry(XmlElement element, string name)
+        private static void LoadFromItems()
+        {
+            try
+            {
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                if (db == null) return;
+
+                Item settingsFolder;
+                using (new SecurityDisabler())
+                {
+                    settingsFolder = db.GetItem(TrustedScriptsSettingsPath);
+                }
+
+                if (settingsFolder == null)
+                {
+                    PowerShellLog.Debug("ScriptTrustRegistry: Trusted Scripts settings folder not found.");
+                    return;
+                }
+
+                using (new SecurityDisabler())
+                {
+                    foreach (Item child in settingsFolder.GetChildren())
+                    {
+                        if (child.TemplateID != Templates.TrustedScriptRegistration.Id) continue;
+
+                        try
+                        {
+                            var entry = ParseItemEntry(child);
+                            if (entry == null) continue;
+
+                            // Config entries take precedence -- don't overwrite
+                            if (_entriesById.ContainsKey(entry.ItemId))
+                            {
+                                PowerShellLog.Info(
+                                    $"ScriptTrustRegistry: skipping item-based trust for '{entry.Name}' " +
+                                    $"(ItemId={entry.ItemId}) -- config entry takes precedence.");
+                                continue;
+                            }
+
+                            _entriesById[entry.ItemId] = entry;
+                            _entriesByName[entry.Name] = entry;
+                            PowerShellLog.Info(
+                                $"Registered trusted script (item): {entry.Name} (ItemId={entry.ItemId}, Trust={entry.Trust})");
+                        }
+                        catch (Exception ex)
+                        {
+                            PowerShellLog.Error($"Failed to load item-based trust entry '{child.Name}'.", ex);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error("ScriptTrustRegistry: failed to load item-based trust entries.", ex);
+            }
+        }
+
+        private static TrustedScriptEntry ParseItemEntry(Item trustItem)
+        {
+            // Script reference (droptree) - resolves to the target script item's ID
+            var scriptField = trustItem.Fields[Templates.TrustedScriptRegistration.Fields.Script];
+            if (scriptField == null || string.IsNullOrEmpty(scriptField.Value))
+            {
+                PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' has no Script reference.");
+                return null;
+            }
+
+            if (!ID.TryParse(scriptField.Value, out var scriptItemId))
+            {
+                PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' has invalid Script reference '{scriptField.Value}'.");
+                return null;
+            }
+
+            // Resolve the script item to get its name
+            Item scriptItem;
+            using (new SecurityDisabler())
+            {
+                scriptItem = trustItem.Database.GetItem(scriptItemId);
+            }
+
+            if (scriptItem == null)
+            {
+                PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' references non-existent script '{scriptItemId}'.");
+                return null;
+            }
+
+            var name = scriptItem.Name;
+
+            // Trust level
+            var trustLevel = ScriptTrustLevel.Trusted;
+            var trustLevelValue = trustItem.Fields[Templates.TrustedScriptRegistration.Fields.TrustLevel]?.Value?.Trim();
+            if (!string.IsNullOrEmpty(trustLevelValue))
+            {
+                Enum.TryParse(trustLevelValue, true, out trustLevel);
+            }
+
+            // System trust level is config-only
+            if (trustLevel == ScriptTrustLevel.System)
+            {
+                PowerShellLog.Warn(
+                    $"ScriptTrustRegistry: trust item '{trustItem.Name}' requests System trust level, " +
+                    "which is config-only. Downgrading to Trusted.");
+                trustLevel = ScriptTrustLevel.Trusted;
+            }
+
+            // Allowed profiles
+            var allowedProfiles = ParseAllowedProfiles(
+                trustItem.Fields[Templates.TrustedScriptRegistration.Fields.AllowedProfiles]?.Value);
+
+            // Item-based entries have no content hash (admin controls both script and trust)
+            // and no export manifest (AST parsing is build-time only for config entries)
+            return new TrustedScriptEntry(
+                name, scriptItemId, contentHash: null, trustLevel,
+                allowTopLevel: false, exports: null, HashMismatchAction.Constrain, allowedProfiles);
+        }
+
+        private static HashSet<string> ParseAllowedProfiles(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            var profiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var part in value.Split(new[] { ',', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var trimmed = part.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                {
+                    profiles.Add(trimmed);
+                }
+            }
+
+            return profiles.Count > 0 ? profiles : null;
+        }
+
+        private static TrustedScriptEntry ParseConfigEntry(XmlElement element, string name)
         {
             // Item ID (required)
             var itemIdStr = element.GetAttribute("itemId");
@@ -192,7 +357,10 @@ namespace Spe.Core.Settings.Authorization
                 }
             }
 
-            return new TrustedScriptEntry(name, itemId, contentHash, trustLevel, allowTopLevel, exports, onHashMismatch);
+            // Allowed profiles (optional)
+            var allowedProfiles = ParseAllowedProfiles(element.GetAttribute("allowedProfiles"));
+
+            return new TrustedScriptEntry(name, itemId, contentHash, trustLevel, allowTopLevel, exports, onHashMismatch, allowedProfiles);
         }
     }
 

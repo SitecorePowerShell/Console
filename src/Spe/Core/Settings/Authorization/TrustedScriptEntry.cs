@@ -18,6 +18,7 @@ namespace Spe.Core.Settings.Authorization
         public bool AllowTopLevel { get; }
         public HashSet<string> Exports { get; }
         public HashMismatchAction OnHashMismatch { get; }
+        public HashSet<string> AllowedProfiles { get; }
 
         public TrustedScriptEntry(
             string name,
@@ -26,7 +27,8 @@ namespace Spe.Core.Settings.Authorization
             ScriptTrustLevel trust,
             bool allowTopLevel,
             HashSet<string> exports,
-            HashMismatchAction onHashMismatch)
+            HashMismatchAction onHashMismatch,
+            HashSet<string> allowedProfiles = null)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             ItemId = itemId;
@@ -35,6 +37,18 @@ namespace Spe.Core.Settings.Authorization
             AllowTopLevel = allowTopLevel;
             Exports = exports ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             OnHashMismatch = onHashMismatch;
+            AllowedProfiles = allowedProfiles;
+        }
+
+        /// <summary>
+        /// Returns true if this trust entry applies to the given profile.
+        /// If AllowedProfiles is null or empty, the entry applies to all profiles.
+        /// </summary>
+        public bool IsAllowedForProfile(string profileName)
+        {
+            if (AllowedProfiles == null || AllowedProfiles.Count == 0) return true;
+            if (string.IsNullOrEmpty(profileName)) return false;
+            return AllowedProfiles.Contains(profileName);
         }
     }
 
