@@ -552,6 +552,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             try
             {
+                // Suppress per-key mismatch warnings during probing -- only the final
+                // outcome matters. Individual mismatches are expected when multiple keys exist.
+                sharedSecretProvider.SuppressWarnings = true;
+
                 foreach (var apiKey in allKeys)
                 {
                     // Temporarily set the provider's secret to this API Key's secret
@@ -571,7 +575,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                         if (isValid)
                         {
-                            PowerShellLog.Debug($"Remoting: token validated against API Key '{apiKey.Name}'.");
+                            PowerShellLog.Info($"Remoting: token validated against API Key '{apiKey.Name}'.");
                             return apiKey;
                         }
                     }
@@ -583,8 +587,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             finally
             {
-                // Restore original secret
+                // Restore original secret and re-enable warnings for legacy validation
                 sharedSecretProvider.SharedSecret = originalSecret;
+                sharedSecretProvider.SuppressWarnings = false;
             }
 
             return null;
