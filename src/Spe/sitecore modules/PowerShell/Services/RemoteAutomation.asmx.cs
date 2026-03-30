@@ -80,6 +80,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static PSLanguageMode ApplyRestrictions(ScriptSession session, RestrictionProfile profile)
         {
+            session.ActiveRestrictionProfile = profile;
             var languageMode = WebServiceSettings.GetLanguageMode(WebServiceSettings.ServiceRemoting);
 
             if (profile != null && profile != RestrictionProfile.Unrestricted)

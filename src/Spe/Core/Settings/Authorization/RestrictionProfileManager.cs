@@ -23,6 +23,16 @@ namespace Spe.Core.Settings.Authorization
         private static readonly object _lock = new object();
 
         /// <summary>
+        /// Returns true if a profile with the given name is defined in config.
+        /// Does not apply item-based overrides (safe to call from ProfileOverrideProvider).
+        /// </summary>
+        public static bool ProfileExists(string profileName)
+        {
+            EnsureInitialized();
+            return !string.IsNullOrEmpty(profileName) && _profiles.ContainsKey(profileName);
+        }
+
+        /// <summary>
         /// Gets a profile by name. Returns null if not found.
         /// </summary>
         public static RestrictionProfile GetProfile(string profileName)
@@ -198,7 +208,43 @@ namespace Spe.Core.Settings.Authorization
                 modules = new ModuleRestrictions(autoload, allowedModules);
             }
 
-            return new RestrictionProfile(name, langMode, commandMode, commands, modules, auditLevel, enforcement);
+            // Item path restrictions
+            ItemPathRestrictions itemPaths = null;
+            var pathsNode = element.SelectSingleNode("itemPathRestrictions") as XmlElement;
+            if (pathsNode != null)
+            {
+                var pathMode = CommandRestrictionMode.None;
+                var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var mode = pathsNode.GetAttribute("mode");
+                if ("allowlist".Equals(mode, StringComparison.OrdinalIgnoreCase))
+                {
+                    pathMode = CommandRestrictionMode.Allowlist;
+                    ParsePathList(pathsNode, "allowedPaths/path", paths);
+                }
+                else if ("blocklist".Equals(mode, StringComparison.OrdinalIgnoreCase))
+                {
+                    pathMode = CommandRestrictionMode.Blocklist;
+                    ParsePathList(pathsNode, "blockedPaths/path", paths);
+                }
+                itemPaths = new ItemPathRestrictions(pathMode, paths);
+            }
+
+            return new RestrictionProfile(name, langMode, commandMode, commands, modules, auditLevel, enforcement, itemPaths);
+        }
+
+        private static void ParsePathList(XmlElement parent, string xpath, HashSet<string> paths)
+        {
+            var nodes = parent.SelectNodes(xpath);
+            if (nodes == null) return;
+
+            foreach (XmlNode node in nodes)
+            {
+                var path = node.InnerText?.Trim();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    paths.Add(path);
+                }
+            }
         }
 
         private static void ParseCommandList(XmlElement parent, string xpath, HashSet<string> commands)

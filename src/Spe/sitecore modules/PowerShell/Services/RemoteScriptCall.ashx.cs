@@ -1091,6 +1091,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 context.Response.ContentType = "text/plain";
+                session.ActiveRestrictionProfile = profile;
 
                 if (streams != null)
                 {

@@ -2,8 +2,29 @@
 # Tests that restriction profiles are enforced on the SOAP RemoteAutomation.asmx endpoint.
 # These are run AFTER tests/configs/profiles/z.Spe.RestrictionProfiles.Tests.config is deployed.
 # Run via: .\Run-RemotingTests.ps1 (automatically deployed and run in the profile phase)
+#
+# TODO: SOAP profile enforcement is not working yet. The RemoteAutomation.asmx endpoint
+# does not apply restriction profiles (returns FullLanguage, does not block commands).
+# The endpoint is disabled by default and requires explicit opt-in, so this is not a
+# security risk -- but these tests will fail until the SOAP enforcement is fixed.
 
-$soapUrl = "$protocolHost/-/PowerShell/RemoteAutomation.asmx"
+$soapUrl = "$protocolHost/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+
+function Get-SoapFaultBody {
+    param([System.Management.Automation.ErrorRecord]$ErrorRecord)
+    try {
+        $response = $ErrorRecord.Exception.InnerException.Response
+        if (-not $response) { $response = $ErrorRecord.Exception.Response }
+        if (-not $response) { return $ErrorRecord.Exception.Message }
+        $stream = $response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($stream)
+        $body = $reader.ReadToEnd()
+        $reader.Close()
+        return $body
+    } catch {
+        return $ErrorRecord.Exception.Message
+    }
+}
 
 function Invoke-SoapExecuteScript {
     param(
@@ -34,6 +55,7 @@ function Invoke-SoapExecuteScript {
         ContentType = "text/xml; charset=utf-8"
         Headers     = @{ "SOAPAction" = '"http://sitecorepowershellextensions/ExecuteScriptBlockinSite2"' }
         ErrorAction = "Stop"
+        UseBasicParsing = $true
     }
     if ($PSVersionTable.PSVersion.Major -ge 6) {
         $params["SkipCertificateCheck"] = $true
@@ -53,9 +75,9 @@ try {
     $blocked = $response.Content -match "blocked command" -or $response.Content -match "Remove-Item"
     Assert-True $blocked "SOAP read-only profile blocks Remove-Item"
 } catch {
-    # SOAP throws on server errors - exception message should indicate blocking
-    $msg = $_.Exception.Message
-    $blocked = $msg -match "blocked" -or $msg -match "Remove-Item" -or $_.Exception.Response.StatusCode -eq 500
+    # SOAP throws on server errors - read the fault body for blocking details
+    $fault = Get-SoapFaultBody $_
+    $blocked = $fault -match "blocked" -or $fault -match "Remove-Item"
     Assert-True $blocked "SOAP read-only profile blocks Remove-Item (server error)"
 }
 
@@ -92,8 +114,8 @@ try {
     $blocked = $response.Content -match "blocked" -or $response.Content -match "Invoke-Expression"
     Assert-True $blocked "SOAP blocks Invoke-Expression under read-only profile"
 } catch {
-    $msg = $_.Exception.Message
-    $blocked = $msg -match "blocked" -or $msg -match "Invoke-Expression"
+    $fault = Get-SoapFaultBody $_
+    $blocked = $fault -match "blocked" -or $fault -match "Invoke-Expression"
     Assert-True $blocked "SOAP blocks Invoke-Expression (server error)"
 }
 
@@ -107,7 +129,7 @@ try {
     $blocked = $response.Content -match "blocked" -or $response.Content -match "Import-Module"
     Assert-True $blocked "SOAP blocks Import-Module under read-only profile"
 } catch {
-    $msg = $_.Exception.Message
-    $blocked = $msg -match "blocked" -or $msg -match "Import-Module"
+    $fault = Get-SoapFaultBody $_
+    $blocked = $fault -match "blocked" -or $fault -match "Import-Module"
     Assert-True $blocked "SOAP blocks Import-Module (server error)"
 }

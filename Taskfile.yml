@@ -117,6 +117,8 @@ tasks:
       - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
         msg: "CM container is not healthy. Run 'task up' and wait for startup."
     cmds:
+      - cmd: powershell -Command "if (Test-Path 'docker\data\cm') { Get-ChildItem 'docker\data\cm' -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }; exit 0"
+        ignore_error: true
       - powershell -File tests/unit/Run-Tests.ps1
       - powershell -File tests/integration/Run-RemotingTests.ps1
 

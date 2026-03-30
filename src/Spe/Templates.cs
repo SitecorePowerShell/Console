@@ -76,6 +76,8 @@ namespace Spe
                 public static readonly ID AdditionalBlockedCommands = new ID("{5F4BC217-69A2-4019-8631-761349A100CB}");
                 public static readonly ID AdditionalAllowedCommands = new ID("{2F56DDAD-73F7-4E05-9A61-2C8C1FD97779}");
                 public static readonly ID AuditLevelOverride = new ID("{C2508B30-7407-405B-A2A2-BCCE3A1E42B8}");
+                public static readonly ID AdditionalBlockedPaths = new ID("{B7E3A4D1-5C92-4F08-9D6E-1A3B8C5F2E74}");
+                public static readonly ID AdditionalAllowedPaths = new ID("{D4F1C8E6-3A7B-4D59-8E2C-6B9F0A4D7E31}");
             }
         }
 

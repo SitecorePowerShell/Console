@@ -67,8 +67,11 @@ namespace Spe.Core.Settings.Authorization
                 return configProfile;
             }
 
-            // Start with a copy of the config profile's commands
+            // Start with copies of the config profile's restrictions
             var mergedCommands = new HashSet<string>(configProfile.Commands, StringComparer.OrdinalIgnoreCase);
+            var mergedPaths = configProfile.ItemPaths != null
+                ? new HashSet<string>(configProfile.ItemPaths.Paths, StringComparer.OrdinalIgnoreCase)
+                : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var auditLevel = configProfile.AuditLevel;
 
             foreach (var item in overrideItems)
@@ -102,16 +105,48 @@ namespace Spe.Core.Settings.Authorization
                         auditLevel = parsed;
                     }
                 }
+
+                // Merge additional blocked paths (only for blocklist item path profiles)
+                if (configProfile.ItemPaths != null && configProfile.ItemPaths.Mode == CommandRestrictionMode.Blocklist)
+                {
+                    var blockedPaths = ResolveTreelistPaths(item, "Additional Blocked Paths");
+                    foreach (var path in blockedPaths)
+                    {
+                        mergedPaths.Add(path);
+                    }
+                }
+
+                // Merge additional allowed paths (only for allowlist item path profiles)
+                if (configProfile.ItemPaths != null && configProfile.ItemPaths.Mode == CommandRestrictionMode.Allowlist)
+                {
+                    var allowedPaths = ResolveTreelistPaths(item, "Additional Allowed Paths");
+                    foreach (var path in allowedPaths)
+                    {
+                        mergedPaths.Add(path);
+                    }
+                }
             }
 
             // Only create a new profile if something actually changed
-            if (mergedCommands.SetEquals(configProfile.Commands) && auditLevel == configProfile.AuditLevel)
+            var configPathCount = configProfile.ItemPaths?.Paths.Count ?? 0;
+            var commandsChanged = !mergedCommands.SetEquals(configProfile.Commands);
+            var pathsChanged = mergedPaths.Count != configPathCount ||
+                               (configProfile.ItemPaths != null && !mergedPaths.SetEquals(configProfile.ItemPaths.Paths));
+            var auditChanged = auditLevel != configProfile.AuditLevel;
+
+            if (!commandsChanged && !pathsChanged && !auditChanged)
             {
                 return configProfile;
             }
 
             PowerShellLog.Info($"ProfileOverrideProvider: merged {overrideItems.Count} override(s) into profile '{configProfile.Name}' " +
-                             $"(commands: {configProfile.Commands.Count} -> {mergedCommands.Count}, auditLevel: {configProfile.AuditLevel} -> {auditLevel})");
+                             $"(commands: {configProfile.Commands.Count} -> {mergedCommands.Count}, " +
+                             $"paths: {configPathCount} -> {mergedPaths.Count}, " +
+                             $"auditLevel: {configProfile.AuditLevel} -> {auditLevel})");
+
+            var mergedItemPaths = configProfile.ItemPaths != null
+                ? new ItemPathRestrictions(configProfile.ItemPaths.Mode, mergedPaths)
+                : null;
 
             return new RestrictionProfile(
                 configProfile.Name,
@@ -120,7 +155,8 @@ namespace Spe.Core.Settings.Authorization
                 mergedCommands,
                 configProfile.Modules,
                 auditLevel,
-                configProfile.Enforcement);
+                configProfile.Enforcement,
+                mergedItemPaths);
         }
 
         private static List<Item> GetOverrideItems(string profileName)
@@ -168,6 +204,19 @@ namespace Spe.Core.Settings.Authorization
                     }
 
                     var baseProfile = child.Fields["Base Profile"]?.Value?.Trim();
+                    if (string.IsNullOrEmpty(baseProfile))
+                    {
+                        PowerShellLog.Warn($"ProfileOverrideProvider: override item '{child.Name}' ({child.ID}) has an empty Base Profile field and will be ignored.");
+                        continue;
+                    }
+
+                    if (!RestrictionProfileManager.ProfileExists(baseProfile))
+                    {
+                        PowerShellLog.Warn($"ProfileOverrideProvider: override item '{child.Name}' ({child.ID}) references unknown profile '{baseProfile}'. " +
+                                           "Check that the Base Profile value matches a profile defined in Spe.config.");
+                        continue;
+                    }
+
                     if (string.Equals(baseProfile, profileName, StringComparison.OrdinalIgnoreCase))
                     {
                         results.Add(child);
@@ -178,6 +227,36 @@ namespace Spe.Core.Settings.Authorization
                     CollectOverridesRecursive(child, profileName, results);
                 }
             }
+        }
+
+        /// <summary>
+        /// Resolves a Treelist field (pipe-delimited GUIDs) to Sitecore item paths.
+        /// Skips GUIDs that cannot be resolved (deleted items).
+        /// </summary>
+        private static IEnumerable<string> ResolveTreelistPaths(Item item, string fieldName)
+        {
+            var value = item.Fields[fieldName]?.Value;
+            if (string.IsNullOrEmpty(value)) return Enumerable.Empty<string>();
+
+            var db = item.Database;
+            var paths = new List<string>();
+
+            foreach (var guidStr in value.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (!ID.TryParse(guidStr.Trim(), out var id)) continue;
+
+                var target = db.GetItem(id);
+                if (target != null)
+                {
+                    paths.Add(target.Paths.Path);
+                }
+                else
+                {
+                    PowerShellLog.Warn($"ProfileOverrideProvider: Treelist field '{fieldName}' on '{item.Name}' references item {guidStr} which could not be resolved.");
+                }
+            }
+
+            return paths;
         }
 
         private static IEnumerable<string> ParseMultiLineField(Item item, string fieldName)

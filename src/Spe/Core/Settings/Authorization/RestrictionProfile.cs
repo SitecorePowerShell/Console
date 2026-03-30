@@ -16,6 +16,7 @@ namespace Spe.Core.Settings.Authorization
         public CommandRestrictionMode CommandMode { get; }
         public HashSet<string> Commands { get; }
         public ModuleRestrictions Modules { get; }
+        public ItemPathRestrictions ItemPaths { get; }
         public AuditLevel AuditLevel { get; }
         public EnforcementMode Enforcement { get; }
 
@@ -26,13 +27,15 @@ namespace Spe.Core.Settings.Authorization
             HashSet<string> commands,
             ModuleRestrictions modules,
             AuditLevel auditLevel,
-            EnforcementMode enforcement)
+            EnforcementMode enforcement,
+            ItemPathRestrictions itemPaths = null)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             LanguageMode = languageMode;
             CommandMode = commandMode;
             Commands = commands ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             Modules = modules;
+            ItemPaths = itemPaths;
             AuditLevel = auditLevel;
             Enforcement = enforcement;
         }
@@ -66,6 +69,34 @@ namespace Spe.Core.Settings.Authorization
         }
 
         /// <summary>
+        /// Returns true if the given Sitecore item path is allowed under this profile's restrictions.
+        /// Uses prefix matching: denying /foo also denies /foo/bar/baz.
+        /// </summary>
+        public bool IsItemPathAllowed(string itemPath)
+        {
+            if (ItemPaths == null || ItemPaths.Mode == CommandRestrictionMode.None) return true;
+            if (string.IsNullOrEmpty(itemPath)) return ItemPaths.Mode != CommandRestrictionMode.Allowlist;
+
+            if (ItemPaths.Mode == CommandRestrictionMode.Allowlist)
+            {
+                foreach (var allowed in ItemPaths.Paths)
+                {
+                    if (itemPath.StartsWith(allowed, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+                return false;
+            }
+
+            // Blocklist mode
+            foreach (var blocked in ItemPaths.Paths)
+            {
+                if (itemPath.StartsWith(blocked, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// The unrestricted profile used as default when no profile is configured.
         /// </summary>
         public static readonly RestrictionProfile Unrestricted = new RestrictionProfile(
@@ -88,7 +119,8 @@ namespace Spe.Core.Settings.Authorization
             new HashSet<string>(StringComparer.OrdinalIgnoreCase),
             null,
             AuditLevel.Violations,
-            EnforcementMode.Enforce);
+            EnforcementMode.Enforce,
+            new ItemPathRestrictions(CommandRestrictionMode.Allowlist, new HashSet<string>(StringComparer.OrdinalIgnoreCase)));
     }
 
     public enum CommandRestrictionMode
@@ -123,6 +155,18 @@ namespace Spe.Core.Settings.Authorization
             AutoloadPreference = autoloadPreference ?? "None";
             AllowedModules = allowedModules ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             RestrictModules = true;
+        }
+    }
+
+    public class ItemPathRestrictions
+    {
+        public CommandRestrictionMode Mode { get; }
+        public HashSet<string> Paths { get; }
+
+        public ItemPathRestrictions(CommandRestrictionMode mode, HashSet<string> paths)
+        {
+            Mode = mode;
+            Paths = paths ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
     }
 

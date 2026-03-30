@@ -1,15 +1,18 @@
-﻿---
-ID: "ecb2a0c9-3ac3-4ff8-a66c-6d4ae4aa2c21"
-Parent: "bbbbbbbb-0002-0002-0002-000000000002"
+---
+ID: "d4f1c8e6-3a7b-4d59-8e2c-6b9f0a4d7e31"
+Parent: "09839331-7544-4431-95ba-3c7c27a0cbef"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key/Authorization/Profile
+Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Restriction Profile/Profile Settings/Additional Allowed Paths
 SharedFields:
+- ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
+  Hint: Source
+  Value: "Datasource=/sitecore"
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
-  Value: "Single-Line Text"
+  Value: Treelist
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 200
+  Value: 700
 - ID: "be351a73-fcb0-4213-93fa-c302d8ab4f51"
   Hint: Shared
   Value: 1
@@ -18,20 +21,20 @@ Languages:
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: "The name of a restriction profile defined in Spe.config (e.g. read-only, content-editor)."
+    Value: Sitecore items or folders to allow access to (prefix match). Applies to allowlist profiles.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20260323T210000Z
+      Value: 20260329T000000Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "a62b2cfb-2c64-40df-a42c-ce1dd2ef1666"
+      Value: "b2c3d4e5-f6a7-8901-bcde-f12345678901"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260323T224624Z
+      Value: 20260329T000000Z
