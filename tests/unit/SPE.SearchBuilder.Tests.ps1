@@ -306,6 +306,27 @@ Assert-Like $summary3 "*Article*" "Group shows first value"
 Assert-Like $summary3 "*Blog*" "Group shows second value"
 
 # ============================================================
+# New-SearchBuilder - Property, QueryType, FacetOn, LatestVersion
+# ============================================================
+Write-Host "`n  [New-SearchBuilder - advanced parameters]" -ForegroundColor White
+
+$builder = New-SearchBuilder -Index "test_index" -Property @("Name", "Path") -FacetOn @("TemplateName") -FacetMinCount 5 -LatestVersion
+Assert-Equal $builder._Property.Count 2 "Property has 2 entries"
+Assert-Equal $builder._Property[0] "Name" "Property[0] is Name"
+Assert-Equal $builder._Property[1] "Path" "Property[1] is Path"
+Assert-Equal $builder._FacetOn.Count 1 "FacetOn has 1 entry"
+Assert-Equal $builder._FacetOn[0] "TemplateName" "FacetOn[0] is TemplateName"
+Assert-Equal $builder._FacetMinCount 5 "FacetMinCount is 5"
+Assert-Equal $builder._LatestVersion $true "LatestVersion is true"
+
+$builder2 = New-SearchBuilder -Index "test_index"
+Assert-Null $builder2._Property "Property defaults to null"
+Assert-Null $builder2._FacetOn "FacetOn defaults to null"
+Assert-Null $builder2._QueryType "QueryType defaults to null"
+Assert-Equal $builder2._FacetMinCount 1 "FacetMinCount defaults to 1"
+Assert-Equal $builder2._LatestVersion $false "LatestVersion defaults to false"
+
+# ============================================================
 # Builder mutation (reference type verification)
 # ============================================================
 Write-Host "`n  [Builder mutation - reference semantics]" -ForegroundColor White
