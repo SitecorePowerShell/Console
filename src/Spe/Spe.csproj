@@ -358,6 +358,7 @@
     <Compile Include="Commands\Data\Clones\ConvertFromItemCloneCommand.cs" />
     <Compile Include="Commands\Data\DatabaseContextBaseCommand.cs" />
     <Compile Include="Commands\Data\ExpandTokensCommand.cs" />
+    <Compile Include="Commands\Data\NewPSObjectCommand.cs" />
     <Compile Include="Commands\Data\GetArchiveCommand.cs" />
     <Compile Include="Commands\Data\GetDatabaseCommand.cs" />
     <Compile Include="Commands\Data\Search\GetSearchIndexCommand.cs" />

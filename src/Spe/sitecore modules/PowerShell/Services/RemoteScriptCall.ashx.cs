@@ -1096,6 +1096,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 context.Response.ContentType = "text/plain";
+                context.Response.Headers["X-SPE-LanguageMode"] = languageMode.ToString();
                 session.ActiveRestrictionProfile = profile;
 
                 if (streams != null)
