@@ -206,6 +206,9 @@ SharedFields:
             [string]$Field,
     
             [Parameter(Mandatory = $true)]
+            [ValidateSet("Equals", "StartsWith", "Contains", "ContainsAll", "ContainsAny",
+                "EndsWith", "DescendantOf", "Fuzzy", "InclusiveRange", "ExclusiveRange",
+                "MatchesRegex", "MatchesWildcard", "GreaterThan", "LessThan")]
             [string]$Filter,
     
             [Parameter(Mandatory = $true)]
@@ -696,12 +699,10 @@ SharedFields:
         }
     
         # Add pagination - request one extra to detect HasMore
-        $requestCount = $effectiveFirst
         $detectMore = $false
         if ($effectiveFirst -gt 0) {
-            $requestCount = $effectiveFirst + 1
             $detectMore = $true
-            $findParams.First = $requestCount
+            $findParams.First = $effectiveFirst + 1
         }
     
         if ($effectiveSkip -gt 0) {
@@ -936,7 +937,7 @@ SharedFields:
     function ConvertTo-QuerySummary {
         <#
         .SYNOPSIS
-            Builds a human-readable summary of the search builder criteria.
+            Builds a human-readable summary of the search builder state.
         #>
         [CmdletBinding()]
         param(
@@ -961,9 +962,33 @@ SharedFields:
             }
         }
     
-        if ($parts.Count -eq 0) { return "(no criteria)" }
+        $criteria = if ($parts.Count -eq 0) { "(no criteria)" } else { $parts -join " AND " }
     
-        return $parts -join " AND "
+        # Add builder-level context
+        $context = [System.Collections.ArrayList]@()
+        if (-not [string]::IsNullOrEmpty($SearchBuilder._Path)) {
+            $context.Add("Path: $($SearchBuilder._Path)") > $null
+        }
+        if ($SearchBuilder._LatestVersion) {
+            $context.Add("LatestVersion") > $null
+        }
+        if (-not [string]::IsNullOrEmpty($SearchBuilder._OrderBy)) {
+            $context.Add("OrderBy: $($SearchBuilder._OrderBy)") > $null
+        }
+        if ($null -ne $SearchBuilder._Property -and $SearchBuilder._Property.Count -gt 0) {
+            $sep = ", "
+            $context.Add("Property: $($SearchBuilder._Property -join $sep)") > $null
+        }
+        if ($null -ne $SearchBuilder._FacetOn -and $SearchBuilder._FacetOn.Count -gt 0) {
+            $sep = ", "
+            $context.Add("FacetOn: $($SearchBuilder._FacetOn -join $sep)") > $null
+        }
+    
+        if ($context.Count -gt 0) {
+            $sep = " | "
+            return "$criteria [$($context -join $sep)]"
+        }
+        return $criteria
     }
 Languages:
 - Language: en

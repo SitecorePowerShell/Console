@@ -272,6 +272,169 @@ Assert-True ($result.PageCount -ge 1) "At least one page processed"
 Assert-True ($result.TotalItems -le 9) "Total items capped at MaxResults=9"
 
 # ============================================================
+# Property - select specific fields
+# ============================================================
+Write-Host "`n  [Invoke-Search - Property]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index" -First 3 -Property @("Name", "Path", "TemplateName")
+    $search | Add-TemplateFilter -Name "Template Folder"
+    $results = $search | Invoke-Search
+
+    @{
+        ItemCount = $results.Items.Count
+        HasMore   = $results.HasMore
+        HasName   = $null -ne $results.Items[0].Name
+        HasTemplateName = $null -ne $results.Items[0].TemplateName
+    }
+}
+
+Assert-True ($result.ItemCount -gt 0) "Property query returns items"
+Assert-True $result.HasName "Result has Name property"
+Assert-True $result.HasTemplateName "Result has TemplateName property"
+
+# ============================================================
+# FacetOn - faceted search
+# ============================================================
+Write-Host "`n  [Invoke-Search - FacetOn]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index" -FacetOn @("TemplateName") -FacetMinCount 50
+    $results = $search | Invoke-Search
+
+    @{
+        HasCategories = $null -ne $results.Categories
+        CategoryCount = $results.Categories.Count
+        HasValues     = $results.Categories[0].Values.Count -gt 0
+        IndexName     = $results.IndexName
+    }
+}
+
+Assert-True $result.HasCategories "Facet result has Categories"
+Assert-True ($result.CategoryCount -ge 1) "At least one facet category"
+Assert-True $result.HasValues "Facet category has values"
+Assert-Equal $result.IndexName "sitecore_master_index" "IndexName set on facet result"
+
+# ============================================================
+# LatestVersion
+# ============================================================
+Write-Host "`n  [Invoke-Search - LatestVersion]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index" -First 5 -LatestVersion
+    $search | Add-TemplateFilter -Name "Template Folder"
+    $results = $search | Invoke-Search
+
+    @{
+        ItemCount = $results.Items.Count
+        HasItems  = $results.Items.Count -gt 0
+    }
+}
+
+Assert-True $result.HasItems "LatestVersion query returns items"
+
+# ============================================================
+# Strict mode - valid fields pass, bogus fields throw
+# ============================================================
+Write-Host "`n  [Invoke-Search - Strict mode]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    # Valid fields should pass
+    $search = New-SearchBuilder -Index "sitecore_master_index" -First 1 -Strict
+    $search | Add-TemplateFilter -Name "Template Folder"
+    $search | Add-DateRangeFilter -Field "__Updated" -Last "1y"
+    try {
+        $r = $search | Invoke-Search
+        $validPass = $true
+    } catch {
+        $validPass = $false
+    }
+
+    # Bogus field should throw
+    $search2 = New-SearchBuilder -Index "sitecore_master_index" -First 1 -Strict
+    $search2 | Add-SearchFilter -Field "totally_bogus_field" -Filter "Equals" -Value "x"
+    try {
+        $r2 = $search2 | Invoke-Search
+        $bogusThrew = $false
+    } catch {
+        $bogusThrew = $true
+    }
+
+    @{
+        ValidPass  = $validPass
+        BogusThrew = $bogusThrew
+    }
+}
+
+Assert-True $result.ValidPass "Strict mode passes valid fields (__Updated, _templatename)"
+Assert-True $result.BogusThrew "Strict mode throws on bogus field"
+
+# ============================================================
+# Path scope
+# ============================================================
+Write-Host "`n  [Invoke-Search - Path scope]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index" -First 5 -Path "/sitecore/templates"
+    $search | Add-TemplateFilter -Name "Template Folder"
+    $results = $search | Invoke-Search
+
+    @{
+        ItemCount = $results.Items.Count
+        HasItems  = $results.Items.Count -gt 0
+    }
+}
+
+Assert-True $result.HasItems "Path-scoped query returns items"
+
+# ============================================================
+# Query summary with context
+# ============================================================
+Write-Host "`n  [Invoke-Search - Query summary with context]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index" -First 1 -LatestVersion -Path "/sitecore/templates" -OrderBy "score"
+    $search | Add-TemplateFilter -Name "Template Folder"
+    $results = $search | Invoke-Search
+    $results.Query
+} -Raw 2>$null
+
+Assert-Like $result "*LatestVersion*" "Query summary shows LatestVersion"
+Assert-Like $result "*Path:*" "Query summary shows Path"
+Assert-Like $result "*OrderBy:*" "Query summary shows OrderBy"
+
+# ============================================================
+# ValidateSet - invalid filter type
+# ============================================================
+Write-Host "`n  [Add-SearchFilter - ValidateSet]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name SearchBuilder
+
+    $search = New-SearchBuilder -Index "sitecore_master_index"
+    try {
+        $search | Add-SearchFilter -Field "f" -Filter "Contain" -Value "v"
+        "no_error"
+    } catch {
+        "threw"
+    }
+} -Raw 2>$null
+
+Assert-Equal $result "threw" "Invalid filter type 'Contain' throws via ValidateSet"
+
+# ============================================================
 # Cleanup
 # ============================================================
 Stop-ScriptSession -Session $session

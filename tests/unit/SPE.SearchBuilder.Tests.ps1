@@ -305,6 +305,39 @@ Assert-Like $summary3 "*Or*" "Group shows Or operation"
 Assert-Like $summary3 "*Article*" "Group shows first value"
 Assert-Like $summary3 "*Blog*" "Group shows second value"
 
+# Context: Path, LatestVersion, OrderBy, Property
+$builder4 = New-SearchBuilder -Index "test_index" -Path "/sitecore/content" -LatestVersion -OrderBy "score" -Property @("Name", "Path")
+$builder4 | Add-FieldEquals -Field "Title" -Value "Test"
+$summary4 = ConvertTo-QuerySummary -SearchBuilder $builder4
+Assert-Like $summary4 "*Path: /sitecore/content*" "Summary shows Path"
+Assert-Like $summary4 "*LatestVersion*" "Summary shows LatestVersion"
+Assert-Like $summary4 "*OrderBy: score*" "Summary shows OrderBy"
+Assert-Like $summary4 "*Property: Name*" "Summary shows Property"
+
+# Context: FacetOn
+$builder5 = New-SearchBuilder -Index "test_index" -FacetOn @("TemplateName")
+$summary5 = ConvertTo-QuerySummary -SearchBuilder $builder5
+Assert-Like $summary5 "*FacetOn: TemplateName*" "Summary shows FacetOn"
+Assert-Like $summary5 "*(no criteria)*" "Summary shows no criteria with FacetOn only"
+
+# ============================================================
+# Add-SearchFilter - ValidateSet
+# ============================================================
+Write-Host "`n  [Add-SearchFilter - ValidateSet]" -ForegroundColor White
+
+Assert-Throw { $b = New-SearchBuilder -Index "x"; $b | Add-SearchFilter -Field "f" -Filter "Contain" -Value "v" } $null "Rejects invalid filter type 'Contain'"
+# ValidateSet is case-insensitive in PowerShell -- "equals" is accepted and normalized
+$b2 = New-SearchBuilder -Index "x"
+$b2 | Add-SearchFilter -Field "f" -Filter "equals" -Value "v"
+Assert-Equal $b2._Criteria[0].Filter "equals" "Lowercase filter accepted (case-insensitive ValidateSet)"
+
+# Valid filters should not throw
+$b = New-SearchBuilder -Index "x"
+$b | Add-SearchFilter -Field "f" -Filter "Equals" -Value "v"
+Assert-Equal $b._Criteria.Count 1 "Valid filter 'Equals' accepted"
+$b | Add-SearchFilter -Field "f" -Filter "GreaterThan" -Value 5
+Assert-Equal $b._Criteria.Count 2 "Valid filter 'GreaterThan' accepted"
+
 # ============================================================
 # New-SearchBuilder - Property, QueryType, FacetOn, LatestVersion
 # ============================================================
