@@ -1,0 +1,35 @@
+﻿---
+ID: "d1a2b3c4-2001-4000-a002-000000000001"
+Parent: "d1a2b3c4-1001-4000-a002-000000000001"
+Template: "c30c6ff9-eef9-49c5-9787-44aaaab70563"
+Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/Trusted Scripts/SPE/Training/Web API
+SharedFields:
+- ID: "01f26b2a-c396-4b06-a826-a625b62721b5"
+  Hint: Script
+  Value: |
+    {81648EA7-09D5-479D-8E78-D540EEE29106}
+    {28CE9247-7245-424E-90D8-37B487E225FE}
+    {4CF65BEF-C2D9-426D-B117-C16E5BAB8245}
+    {A9284795-37F9-438F-B3EC-D1C8790620C9}
+    {129AB3DB-3B3A-41B7-9CFB-6B7587650C2E}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260327T000000Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d1a2b3c4-2001-4000-a002-000000000001"
+    - ID: "9a64eeb5-ef6e-4f00-b26e-7dceddce48b2"
+      Hint: Enabled
+      Value: 1
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260327T000000Z

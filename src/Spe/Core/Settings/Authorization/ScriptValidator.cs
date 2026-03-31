@@ -111,7 +111,15 @@ namespace Spe.Core.Settings.Authorization
                     }
                     else
                     {
-                        if (commandName != null && serviceRestrictions.Commands.Contains(commandName))
+                        // In blocklist mode, reject dynamic invocations (null command name)
+                        // since the actual command cannot be verified against the blocklist.
+                        if (commandName == null)
+                        {
+                            blockedCommand = "(dynamic invocation)";
+                            return false;
+                        }
+
+                        if (serviceRestrictions.Commands.Contains(commandName))
                         {
                             blockedCommand = commandName;
                             return false;
@@ -139,7 +147,13 @@ namespace Spe.Core.Settings.Authorization
                     }
                     else
                     {
-                        if (commandName != null && scopeRestriction.Commands.Contains(commandName))
+                        if (commandName == null)
+                        {
+                            blockedCommand = "(dynamic invocation)";
+                            return false;
+                        }
+
+                        if (scopeRestriction.Commands.Contains(commandName))
                         {
                             blockedCommand = commandName;
                             return false;
@@ -151,10 +165,74 @@ namespace Spe.Core.Settings.Authorization
             return true;
         }
 
-        // Static facade
+        /// <summary>
+        /// Validates a script against a restriction profile's command restrictions.
+        /// Supports audit-only enforcement mode -- logs violations but returns true when enforcement=audit.
+        /// </summary>
+        private static bool ValidateScriptAgainstProfileInternal(RestrictionProfile profile, string script, string userName, string serviceName, out string blockedCommand)
+        {
+            blockedCommand = null;
+            if (profile == null || string.IsNullOrEmpty(script)) return true;
+            if (profile.CommandMode == CommandRestrictionMode.None) return true;
+
+            var ast = Parser.ParseInput(script, out _, out _);
+            var commandAsts = ast.FindAll(node => node is CommandAst, true).Cast<CommandAst>().ToList();
+
+            foreach (var commandAst in commandAsts)
+            {
+                var commandName = commandAst.GetCommandName();
+
+                // Reject dynamic invocations (null command name) since the actual
+                // command cannot be verified against the profile's restrictions.
+                var isAllowed = commandName != null && profile.IsCommandAllowed(commandName);
+                if (!isAllowed)
+                {
+                    blockedCommand = commandName ?? "(dynamic invocation)";
+
+                    if (profile.AuditLevel >= AuditLevel.Violations)
+                    {
+                        if (profile.Enforcement == EnforcementMode.Audit)
+                        {
+                            PowerShellLog.Audit(
+                                "SPE.Security [AUDIT] User={0} Service={1} Profile={2} WouldBlock={3} (enforcement=audit, execution allowed)",
+                                userName ?? "unknown", serviceName ?? "unknown", profile.Name, blockedCommand);
+                        }
+                        else
+                        {
+                            PowerShellLog.Audit(
+                                "SPE.Security [VIOLATION] User={0} Service={1} Profile={2} BlockedCommand={3}",
+                                userName ?? "unknown", serviceName ?? "unknown", profile.Name, blockedCommand);
+                        }
+                    }
+
+                    if (profile.Enforcement == EnforcementMode.Audit)
+                    {
+                        blockedCommand = null; // Clear -- not actually blocking
+                        continue; // Check remaining commands for audit logging
+                    }
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Static facades
+
         public static bool ValidateScript(string serviceName, string script, string scope, out string blockedCommand)
         {
             return Instance.ValidateScriptInternal(serviceName, script, scope, out blockedCommand);
+        }
+
+        /// <summary>
+        /// Validates a script against a restriction profile.
+        /// Returns true if the script is allowed to execute.
+        /// In audit mode, always returns true but logs violations.
+        /// </summary>
+        public static bool ValidateScriptAgainstProfile(RestrictionProfile profile, string script, string userName, string serviceName, out string blockedCommand)
+        {
+            return ValidateScriptAgainstProfileInternal(profile, script, userName, serviceName, out blockedCommand);
         }
     }
 }

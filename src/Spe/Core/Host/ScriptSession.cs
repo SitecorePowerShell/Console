@@ -20,6 +20,7 @@ using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
+using Spe.Core.Settings.Authorization;
 using Spe.Core.Provider;
 using Spe.Core.Settings;
 using Spe.Core.Utility;
@@ -246,6 +247,7 @@ namespace Spe.Core.Host
         public string ApplianceType { get; set; }
         public bool Debugging { get; set; }
         public string DebugFile { get; set; }
+        public RestrictionProfile ActiveRestrictionProfile { get; set; }
         internal EngineIntrinsics Engine { get; set; }
         public bool DebuggingInBreakpoint { get; private set; }
         public int[] Breakpoints { get; set; } = new int[0];

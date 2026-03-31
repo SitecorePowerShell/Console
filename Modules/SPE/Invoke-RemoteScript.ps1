@@ -399,24 +399,94 @@ function Invoke-RemoteScript {
                 $ex = $_.Exception
                 [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
                 if ($errorResponse) {
-                    # Try to parse structured error body for JSON format
-                    if ($OutputFormat -eq 'Json') {
-                        try {
-                            $errorBody = $errorResponse.Content.ReadAsStringAsync().Result
-                            if ($errorBody) {
-                                Parse-Response -Response $errorBody -HasRedirectedMessages $false -Raw $false -OutputFormat 'Json'
-                                $encounteredError = $true
-                                $errorResponse = $null
-                            }
-                        } catch { }
-                    }
-
-                    if ($errorResponse) {
-                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                    # Handle rate limiting (429)
+                    if ([int]$errorResponse.StatusCode -eq 429) {
+                        $retryAfter = $null
+                        $rateLimit = $null
+                        $rateLimitReset = $null
+                        if ($errorResponse.Headers.Contains("Retry-After")) {
+                            $retryAfter = $errorResponse.Headers.GetValues("Retry-After") | Select-Object -First 1
                         }
-                        elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                            Write-Verbose -Message "Check that the service files are properly configured."
+                        if ($errorResponse.Headers.Contains("X-RateLimit-Limit")) {
+                            $rateLimit = $errorResponse.Headers.GetValues("X-RateLimit-Limit") | Select-Object -First 1
+                        }
+                        if ($errorResponse.Headers.Contains("X-RateLimit-Reset")) {
+                            $rateLimitReset = $errorResponse.Headers.GetValues("X-RateLimit-Reset") | Select-Object -First 1
+                        }
+
+                        $msg = "Rate limit exceeded."
+                        if ($rateLimit) { $msg += " Limit: $rateLimit requests per window." }
+                        if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
+
+                        $encounteredError = $true
+                        Write-Error -Message $msg -Category LimitsExceeded `
+                            -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "TooManyRequests"
+                        $errorResponse = $null
+                    }
+                    # Handle restriction/profile blocks (403)
+                    elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                        $restriction = $null
+                        $blockedCmd = $null
+                        $profileName = $null
+                        if ($errorResponse.Headers.Contains("X-SPE-Restriction")) {
+                            $restriction = $errorResponse.Headers.GetValues("X-SPE-Restriction") | Select-Object -First 1
+                        }
+                        if ($errorResponse.Headers.Contains("X-SPE-BlockedCommand")) {
+                            $blockedCmd = $errorResponse.Headers.GetValues("X-SPE-BlockedCommand") | Select-Object -First 1
+                        }
+                        if ($errorResponse.Headers.Contains("X-SPE-Profile")) {
+                            $profileName = $errorResponse.Headers.GetValues("X-SPE-Profile") | Select-Object -First 1
+                        }
+
+                        if ($restriction -eq "command-blocked") {
+                            $msg = "Script contains a blocked command: $blockedCmd"
+                            $encounteredError = $true
+                            Write-Error -Message $msg -Category SecurityError `
+                                -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "CommandBlocked"
+                            $errorResponse = $null
+                        }
+                        elseif ($restriction -eq "profile-blocked") {
+                            $msg = "Script blocked by restriction profile '$profileName': $blockedCmd"
+                            $encounteredError = $true
+                            Write-Error -Message $msg -Category SecurityError `
+                                -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "ProfileRestriction"
+                            $errorResponse = $null
+                        }
+                        else {
+                            # Try to parse structured error body for JSON format
+                            if ($OutputFormat -eq 'Json') {
+                                try {
+                                    $errorBody = $errorResponse.Content.ReadAsStringAsync().Result
+                                    if ($errorBody) {
+                                        Parse-Response -Response $errorBody -HasRedirectedMessages $false -Raw $false -OutputFormat 'Json'
+                                        $encounteredError = $true
+                                        $errorResponse = $null
+                                    }
+                                } catch { }
+                            }
+
+                            if ($errorResponse) {
+                                Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                            }
+                        }
+                    }
+                    else {
+                        # Try to parse structured error body for JSON format
+                        if ($OutputFormat -eq 'Json') {
+                            try {
+                                $errorBody = $errorResponse.Content.ReadAsStringAsync().Result
+                                if ($errorBody) {
+                                    Parse-Response -Response $errorBody -HasRedirectedMessages $false -Raw $false -OutputFormat 'Json'
+                                    $encounteredError = $true
+                                    $errorResponse = $null
+                                }
+                            } catch { }
+                        }
+
+                        if ($errorResponse) {
+                            if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                                Write-Verbose -Message "Check that the service files are properly configured."
+                            }
                         }
                     }
                 }

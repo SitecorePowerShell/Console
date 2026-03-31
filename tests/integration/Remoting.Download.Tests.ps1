@@ -1,5 +1,8 @@
 # Remoting Tests - Download with RemoteScriptCall
 # Converted from Pester to custom assert format
+#
+# TODO: Download test crashes with "Not Found" -- the fileDownload service endpoint
+# is not reachable in the current Docker environment. Investigate routing/deployment.
 
 Write-Host "`n  [Download with RemoteScriptCall - Single File]" -ForegroundColor White
 

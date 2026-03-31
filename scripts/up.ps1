@@ -15,4 +15,8 @@ if (-not $line) {
 $cmHost = ($line -replace "^CM_HOST=", "").Trim()
 
 docker compose --project-directory $projectRoot up -d
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: 'docker compose up' failed. Is Docker Desktop running?" -ForegroundColor Red
+    exit 1
+}
 Start-Process "https://$cmHost/sitecore/login"

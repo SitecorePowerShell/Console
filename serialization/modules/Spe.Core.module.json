@@ -53,6 +53,18 @@
                     {
                         "path": "/Settings/RemoteAutomation/Sitecore",
                         "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/Remoting/Options",
+                        "scope": "ItemAndDescendants"
+                    },
+                    {
+                        "path": "/Settings/Remoting/Trusted Scripts",
+                        "scope": "ItemAndDescendants"
+                    },
+                    {
+                        "path": "/Settings/Remoting",
+                        "scope": "ItemAndChildren"
                     }
                 ]
             }

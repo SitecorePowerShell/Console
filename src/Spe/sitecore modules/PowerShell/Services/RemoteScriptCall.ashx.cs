@@ -136,6 +136,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
             AddCorsHeaders(context, serviceName, origin);
         }
 
+        private static void AddThrottleHeaders(HttpResponse response, RemotingApiKeyProvider.ThrottleResult throttle)
+        {
+            if (!throttle.HasLimit) return;
+
+            response.Headers["X-RateLimit-Limit"] = throttle.Limit.ToString();
+            response.Headers["X-RateLimit-Remaining"] = throttle.Remaining.ToString();
+            response.Headers["X-RateLimit-Reset"] = throttle.ResetUnixTimestamp.ToString();
+
+            if (!throttle.Allowed)
+            {
+                response.Headers["Retry-After"] = throttle.RetryAfterSeconds.ToString();
+            }
+        }
+
         private static void AddCorsHeaders(HttpContext context, string serviceName, string origin)
         {
             if (string.IsNullOrEmpty(origin))
@@ -210,25 +224,82 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         var provider = ServiceAuthenticationManager.AuthenticationProvider;
                         TokenValidationResult tokenResult = null;
+                        RemotingApiKey matchedApiKey = null;
+                        var isValid = false;
 
-                        bool isValid;
-                        if (provider is ISpeAuthenticationProviderEx providerEx)
+                        // Step 1: Try API Key items first (if any exist)
+                        var apiKeyResult = TryApiKeyAuthentication(token, request, provider, out username, out tokenResult);
+                        if (apiKeyResult != null)
                         {
-                            isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
+                            isValid = true;
+                            matchedApiKey = apiKeyResult;
                         }
-                        else
+
+                        // Step 2: No API Key matched -- try legacy config shared secret
+                        if (!isValid)
                         {
-                            isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                            try
+                            {
+                                if (provider is ISpeAuthenticationProviderEx providerEx)
+                                {
+                                    isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
+                                }
+                                else
+                                {
+                                    isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                                }
+                            }
+                            catch (SecurityException)
+                            {
+                                // Legacy secret validation failed with DetailedAuthenticationErrors enabled.
+                                PowerShellLog.Debug("Remoting: legacy secret validation failed.");
+                            }
+
+                            // Step 3: Legacy secret matched -- check if it also matches an API Key
+                            if (isValid)
+                            {
+                                var configSecret = (provider as SharedSecretAuthenticationProvider)?.SharedSecret;
+                                if (!string.IsNullOrEmpty(configSecret))
+                                {
+                                    matchedApiKey = RemotingApiKeyProvider.FindBySecret(configSecret);
+                                }
+                            }
                         }
 
                         if (isValid)
                         {
+                            // Apply API Key impersonation if configured
+                            if (matchedApiKey != null && matchedApiKey.HasImpersonation)
+                            {
+                                username = matchedApiKey.ImpersonateUser;
+                            }
+
+                            // Throttle check
+                            if (matchedApiKey != null)
+                            {
+                                var throttle = RemotingApiKeyProvider.CheckThrottle(matchedApiKey);
+                                AddThrottleHeaders(context.Response, throttle);
+
+                                if (!throttle.Allowed)
+                                {
+                                    PowerShellLog.Audit("Remoting: throttled, apiKey={0}, ip={1}",
+                                        matchedApiKey.Name, ip);
+                                    SetErrorResponse(context, 429, "Rate limit exceeded.");
+                                    return false;
+                                }
+                            }
+
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}",
-                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none");
+                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}, apiKey={4}",
+                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none",
+                                matchedApiKey?.Name ?? "none");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
+                            }
+                            if (matchedApiKey != null)
+                            {
+                                HttpContext.Current.Items["SpeApiKey"] = matchedApiKey;
                             }
                         }
                         else
@@ -456,6 +527,72 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Warn(errorMessage);
 
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to validate a Bearer token against each enabled API Key item's shared secret.
+        /// Returns the matched API Key on success, or null if no key matches.
+        /// </summary>
+        private static RemotingApiKey TryApiKeyAuthentication(
+            string token, HttpRequest request, ISpeAuthenticationProvider provider,
+            out string username, out TokenValidationResult tokenResult)
+        {
+            username = null;
+            tokenResult = null;
+
+            var allKeys = RemotingApiKeyProvider.FindAllEnabled();
+            if (allKeys == null) return null;
+
+            var authority = request.Url.GetLeftPart(UriPartial.Authority);
+            var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
+            if (sharedSecretProvider == null) return null;
+
+            // Save original secret
+            var originalSecret = sharedSecretProvider.SharedSecret;
+
+            try
+            {
+                // Suppress per-key mismatch warnings during probing -- only the final
+                // outcome matters. Individual mismatches are expected when multiple keys exist.
+                sharedSecretProvider.SuppressWarnings = true;
+
+                foreach (var apiKey in allKeys)
+                {
+                    // Temporarily set the provider's secret to this API Key's secret
+                    sharedSecretProvider.SharedSecret = apiKey.SharedSecret;
+
+                    try
+                    {
+                        bool isValid;
+                        if (provider is ISpeAuthenticationProviderEx providerEx)
+                        {
+                            isValid = providerEx.Validate(token, authority, out username, out tokenResult);
+                        }
+                        else
+                        {
+                            isValid = provider.Validate(token, authority, out username);
+                        }
+
+                        if (isValid)
+                        {
+                            PowerShellLog.Info($"Remoting: token validated against API Key '{apiKey.Name}'.");
+                            return apiKey;
+                        }
+                    }
+                    catch (SecurityException)
+                    {
+                        // This key's secret didn't match -- try the next one
+                    }
+                }
+            }
+            finally
+            {
+                // Restore original secret and re-enable warnings for legacy validation
+                sharedSecretProvider.SharedSecret = originalSecret;
+                sharedSecretProvider.SuppressWarnings = false;
+            }
+
+            return null;
         }
 
         private static bool CheckServiceAuthentication(HttpContext context, string serviceName, bool isAuthenticated)
@@ -868,10 +1005,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 streams.Add("stream", request.InputStream);
             }
 
-            ProcessScript(context, script, serviceName, streams);
+            ProcessScript(context, script, serviceName, streams, scriptItemId: scriptItem.ID);
         }
 
-        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false)
+        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false, ID scriptItemId = null)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -898,8 +1035,55 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 PowerShellLog.Audit("Remoting: script rejected, user={0}, ip={1}, blockedCommand={2}, clientSession={3}",
                     user, ip, blockedCommand, clientSession);
+                context.Response.Headers["X-SPE-Restriction"] = "command-blocked";
+                context.Response.Headers["X-SPE-BlockedCommand"] = blockedCommand;
                 SetErrorResponse(context, 403, $"Script contains blocked command: {blockedCommand}");
                 return;
+            }
+
+            // Resolve restriction profile (API Key > JWT scope > service default)
+            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            var apiKeyProfile = apiKey?.Profile;
+            var profile = RestrictionProfileManager.ResolveProfile(serviceName, scope, apiKeyProfile);
+
+            // Profile-based validation (supports audit-only enforcement)
+            if (profile != null && profile != RestrictionProfile.Unrestricted)
+            {
+                if (!ScriptValidator.ValidateScriptAgainstProfile(profile, script, user, serviceName, out var profileBlockedCommand))
+                {
+                    PowerShellLog.Audit("Remoting: script rejected by profile, user={0}, ip={1}, profile={2}, blockedCommand={3}, clientSession={4}",
+                        user, ip, profile.Name, profileBlockedCommand, clientSession);
+                    context.Response.Headers["X-SPE-Restriction"] = "profile-blocked";
+                    context.Response.Headers["X-SPE-BlockedCommand"] = profileBlockedCommand;
+                    context.Response.Headers["X-SPE-Profile"] = profile.Name;
+                    SetErrorResponse(context, 403, $"Script blocked by restriction profile '{profile.Name}': {profileBlockedCommand}");
+                    return;
+                }
+
+                // Profile's language mode overrides the service-level setting when more restrictive
+                if (profile.LanguageMode > languageMode)
+                {
+                    languageMode = profile.LanguageMode;
+                }
+
+                // Trusted scripts can bypass language mode restrictions for their profile
+                if (scriptItemId != (ID)null && languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+                {
+                    var trustResult = ScriptTrustRegistry.EvaluateTrust(scriptItemId, script, profile.Name);
+                    if (trustResult.EffectiveTrustLevel == ScriptTrustLevel.Trusted)
+                    {
+                        PowerShellLog.Audit(
+                            "SPE.Security [TRUST] Script '{0}' (ItemId={1}) trusted for profile '{2}', restoring FullLanguage mode. User={3}",
+                            trustResult.Entry?.Name ?? "unknown", scriptItemId, profile.Name, user);
+                        languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
+                    }
+                }
+
+                if (profile.AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("SPE.Security [EXECUTION] User={0} Service={1} Profile={2} ScriptHash={3} ClientSession={4}",
+                        user, serviceName, profile.Name, scriptHash, clientSession);
+                }
             }
 
             try
@@ -912,6 +1096,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 context.Response.ContentType = "text/plain";
+                context.Response.Headers["X-SPE-LanguageMode"] = languageMode.ToString();
+                session.ActiveRestrictionProfile = profile;
 
                 if (streams != null)
                 {
@@ -953,6 +1139,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     session.SetVariable("requestStreams", streams);
                     session.SetVariable("scriptArguments", scriptArguments);
 
+                    // Apply module autoload restriction if profile requires it
+                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                    {
+                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
+                    }
+
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
                     try
@@ -963,6 +1155,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
 
                     context.Response.Write(session.Output.ToString());
@@ -982,6 +1176,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         script = script.TrimEnd(' ', '\t', '\n');
                     }
 
+                    // Apply module autoload restriction if profile requires it
+                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                    {
+                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
+                    }
+
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
                     List<object> outObjects;
@@ -993,6 +1193,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
                     var response = context.Response;
                     if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))

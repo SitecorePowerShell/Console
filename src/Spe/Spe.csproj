@@ -235,7 +235,16 @@
     <Compile Include="Core\Rules\SitecoreConfigSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigIntSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigSettingValueCondition.cs" />
+    <Compile Include="Core\Settings\Authorization\ProfileOverrideProvider.cs" />
+    <Compile Include="Core\Settings\Authorization\RestrictionProfile.cs" />
+    <Compile Include="Core\Settings\Authorization\RestrictionProfileManager.cs" />
+    <Compile Include="Core\Settings\Authorization\ScriptTrustRegistry.cs" />
+    <Compile Include="Core\Settings\Authorization\TrustedScriptSaveHandler.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingApiKey.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingApiKeyProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
+    <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
+    <Compile Include="Core\Settings\Authorization\TrustedScriptEntry.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
     <Compile Include="Core\Data\DisablePropertyExpander.cs" />
@@ -349,6 +358,7 @@
     <Compile Include="Commands\Data\Clones\ConvertFromItemCloneCommand.cs" />
     <Compile Include="Commands\Data\DatabaseContextBaseCommand.cs" />
     <Compile Include="Commands\Data\ExpandTokensCommand.cs" />
+    <Compile Include="Commands\Data\NewPSObjectCommand.cs" />
     <Compile Include="Commands\Data\GetArchiveCommand.cs" />
     <Compile Include="Commands\Data\GetDatabaseCommand.cs" />
     <Compile Include="Commands\Data\Search\GetSearchIndexCommand.cs" />

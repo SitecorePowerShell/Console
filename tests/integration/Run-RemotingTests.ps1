@@ -149,6 +149,7 @@ if ($TestFile) {
 # Here we only ensure leftover security test configs from a previous run are removed.
 Write-Host "`n=== Phase 1: Baseline Tests (no security enforcement config) ===" -ForegroundColor Magenta
 Remove-TestConfigs -ConfigDir $testConfigDir
+Remove-TestConfigs -ConfigDir (Join-Path $configRoot "profiles")
 
 # Wait for SPE to be ready with FullLanguage (no security enforcement config present).
 # Covers both fresh starts and removal of leftover security configs from previous runs.
@@ -166,8 +167,8 @@ if ($global:isConstrainedLanguage) {
     Write-Host "`n  Server is in ConstrainedLanguage mode -- tests requiring FullLanguage will be skipped" -ForegroundColor Yellow
 }
 
-# Run all test files EXCEPT enforced (those need security config) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1" |
+# Run all test files EXCEPT enforced/profiles (those need security config) and maintenance
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1","Remoting.ItemPathRestrictions.Tests.ps1","Remoting.SoapProfiles.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 2: Security enforcement tests (requires security config)
@@ -179,8 +180,38 @@ if ($deployedSecurity) {
 
 Invoke-TestFile "$PSScriptRoot\Remoting.Security.Enforced.Tests.ps1"
 
-# Cleanup: remove security test configs so we don't leave the instance in a restricted state
+# Cleanup Phase 2: remove security test configs before Phase 3
 Remove-TestConfigs -ConfigDir $testConfigDir
-Write-Host "`n  Security test configs removed. App domain will recycle on next request." -ForegroundColor Cyan
+
+# Phase 3: Restriction profile tests (requires profile config)
+Write-Host "`n=== Phase 3: Restriction Profile Tests (deploying profile config) ===" -ForegroundColor Magenta
+
+# Wait for Phase 2 cleanup to take effect (FullLanguage restored)
+Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+
+# Setup: create override test items while remoting is still unrestricted
+. "$PSScriptRoot\Remoting.RestrictionProfiles.Setup.ps1"
+
+# Deploy profile config and wait for restart
+$profileConfigDir = Join-Path $configRoot "profiles"
+$deployedProfiles = Deploy-TestConfigs -ConfigDir $profileConfigDir
+if ($deployedProfiles) {
+    Wait-SitecoreRestart -ExpectedLanguageMode "ConstrainedLanguage"
+}
+
+Invoke-TestFile "$PSScriptRoot\Remoting.RestrictionProfiles.Tests.ps1"
+Invoke-TestFile "$PSScriptRoot\Remoting.ItemPathRestrictions.Tests.ps1"
+Invoke-TestFile "$PSScriptRoot\Remoting.SoapProfiles.Tests.ps1"
+
+# Cleanup: remove profile test configs first
+Remove-TestConfigs -ConfigDir $profileConfigDir
+
+# Wait for unrestricted mode to restore before teardown
+Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+
+# Teardown: remove override test items (requires unrestricted remoting)
+. "$PSScriptRoot\Remoting.RestrictionProfiles.Teardown.ps1"
+
+Write-Host "`n  Profile test cleanup complete." -ForegroundColor Cyan
 
 Show-TestSummary
