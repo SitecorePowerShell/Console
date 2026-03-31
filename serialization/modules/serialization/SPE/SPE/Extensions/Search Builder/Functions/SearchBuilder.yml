@@ -803,21 +803,20 @@ SharedFields:
             [string]$Index
         )
     
-        $searchIndex = Get-SearchIndex -Name $Index -ErrorAction Stop
-        $config = $searchIndex.Configuration
+        $searchIndex = [Sitecore.ContentSearch.ContentSearchManager]::GetIndex($Index)
     
-        if ($null -eq $config) {
-            Write-Warning "Could not read configuration for index '$Index'."
+        if ($null -eq $searchIndex) {
+            Write-Warning "Index '$Index' not found."
             return
         }
     
-        $fieldMap = $config.FieldMap
-        if ($null -eq $fieldMap) {
-            Write-Warning "No field map available for index '$Index'."
+        $schema = $searchIndex.Schema
+        if ($null -eq $schema -or $null -eq $schema.AllFieldNames) {
+            Write-Warning "No schema available for index '$Index'."
             return
         }
     
-        $fieldMap.GetFieldNames() | Sort-Object | ForEach-Object {
+        $schema.AllFieldNames | Sort-Object | ForEach-Object {
             New-PSObject @{
                 FieldName = $_
                 IndexName = $Index
