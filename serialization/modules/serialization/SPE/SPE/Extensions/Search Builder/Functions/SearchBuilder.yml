@@ -72,11 +72,33 @@ SharedFields:
         .PARAMETER IncludeMetadata
             Include index metadata (IndexName, IndexLastUpdated) in results.
     
+        .PARAMETER Property
+            Select only specific fields from the index for performance. Returns
+            anonymous objects with only the requested properties instead of full
+            SearchResultItem objects. Note: -Last is not supported with -Property.
+    
+        .PARAMETER QueryType
+            A custom SearchResultItem subclass type for strongly-typed index fields.
+            The type must inherit from SearchResultItem or implement ISearchResult.
+    
+        .PARAMETER FacetOn
+            Field names to facet on. When specified, Invoke-Search returns facet
+            category results instead of items.
+    
+        .PARAMETER FacetMinCount
+            Minimum count for a facet value to be included (default: 1).
+    
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index"
     
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index" -First 50 -MaxResults 500
+    
+        .EXAMPLE
+            $search = New-SearchBuilder -Index "sitecore_master_index" -Property @("_name", "_path", "_templatename")
+    
+        .EXAMPLE
+            $search = New-SearchBuilder -Index "sitecore_master_index" -FacetOn @("_templatename")
         #>
         [CmdletBinding()]
         param(
@@ -97,7 +119,15 @@ SharedFields:
     
             [switch]$Strict,
     
-            [switch]$IncludeMetadata
+            [switch]$IncludeMetadata,
+    
+            [string[]]$Property = $null,
+    
+            [Type]$QueryType = $null,
+    
+            [string[]]$FacetOn = $null,
+    
+            [int]$FacetMinCount = 1
         )
     
         $builder = @{
@@ -110,6 +140,10 @@ SharedFields:
             _MaxResults      = $MaxResults
             _Strict          = $Strict.IsPresent
             _IncludeMetadata = $IncludeMetadata.IsPresent
+            _Property        = $Property
+            _QueryType       = $QueryType
+            _FacetOn         = $FacetOn
+            _FacetMinCount   = $FacetMinCount
             _PageNumber      = 0
             _Criteria        = [System.Collections.ArrayList]@()
             _IsSearchBuilder = $true
@@ -569,6 +603,24 @@ SharedFields:
             Index = $SearchBuilder._Index
         }
     
+        # Add QueryType if specified
+        if ($null -ne $SearchBuilder._QueryType) {
+            $findParams.QueryType = $SearchBuilder._QueryType
+        }
+    
+        # Add Property selection if specified
+        if ($null -ne $SearchBuilder._Property -and $SearchBuilder._Property.Count -gt 0) {
+            $findParams.Property = $SearchBuilder._Property
+        }
+    
+        # Add FacetOn if specified
+        if ($null -ne $SearchBuilder._FacetOn -and $SearchBuilder._FacetOn.Count -gt 0) {
+            $findParams.FacetOn = $SearchBuilder._FacetOn
+            if ($SearchBuilder._FacetMinCount -gt 1) {
+                $findParams.FacetMinCount = $SearchBuilder._FacetMinCount
+            }
+        }
+    
         # Build criteria from the builder tree
         $topLevelCriteria = [System.Collections.ArrayList]@()
         $predicates = [System.Collections.ArrayList]@()
@@ -659,7 +711,29 @@ SharedFields:
         }
     
         # Execute the search
-        $items = @(Find-Item @findParams)
+        $rawResults = @(Find-Item @findParams)
+    
+        # Handle FacetOn -- different return shape
+        if ($null -ne $SearchBuilder._FacetOn -and $SearchBuilder._FacetOn.Count -gt 0) {
+            # Find-Item returns a single FacetResults object; unwrap from array
+            $facetResults = if ($rawResults.Count -gt 0) { $rawResults[0] } else { $null }
+            $resultProps = @{
+                Facets      = $facetResults
+                Categories  = if ($null -ne $facetResults) { $facetResults.Categories } else { @() }
+                IndexName   = $SearchBuilder._Index
+                Query       = (ConvertTo-QuerySummary -SearchBuilder $SearchBuilder)
+            }
+            if ($includesMeta) {
+                $idx = Get-SearchIndex -Name $SearchBuilder._Index -ErrorAction SilentlyContinue
+                if ($null -ne $idx) {
+                    $resultProps.IndexLastUpdated = $idx.Summary.LastUpdated
+                }
+            }
+            $result = New-PSObject $resultProps
+            return $result
+        }
+    
+        $items = $rawResults
     
         # Determine HasMore and trim the extra probe item
         $hasMore = $false
