@@ -545,14 +545,19 @@ SharedFields:
     
         # Validate fields if Strict mode is enabled
         if ($SearchBuilder._Strict) {
-            $indexFields = Get-SearchIndexField -Index $SearchBuilder._Index
-            $fieldNames = $indexFields | ForEach-Object { $_.FieldName }
+            $searchIndex = [Sitecore.ContentSearch.ContentSearchManager]::GetIndex($SearchBuilder._Index)
+            $fnt = $searchIndex.FieldNameTranslator
+            $schemaFields = $searchIndex.Schema.AllFieldNames
             $invalidFields = [System.Collections.ArrayList]@()
     
             foreach ($criterion in $SearchBuilder._Criteria) {
                 if ($criterion.ContainsKey('Field') -and $criterion.Field -ne "_path") {
-                    if ($fieldNames -notcontains $criterion.Field) {
-                        $invalidFields.Add($criterion.Field) > $null
+                    $fieldName = $criterion.Field
+                    $resolved = $fnt.GetIndexFieldName($fieldName)
+                    $wasTranslated = $resolved -ne $fieldName
+                    $inSchema = $schemaFields -contains $fieldName -or $schemaFields -contains $resolved
+                    if (-not $wasTranslated -and -not $inSchema) {
+                        $invalidFields.Add($fieldName) > $null
                     }
                 }
             }
