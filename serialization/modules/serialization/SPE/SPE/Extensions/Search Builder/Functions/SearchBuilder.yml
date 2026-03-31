@@ -641,71 +641,53 @@ SharedFields:
             $findParams.LatestVersion = [switch]$true
         }
     
-        # Build criteria from the builder tree
-        $topLevelCriteria = [System.Collections.ArrayList]@()
-        $predicates = [System.Collections.ArrayList]@()
+        # Build a single predicate from all criteria (flat + groups + path scope)
+        $allCriteria = [System.Collections.ArrayList]@($SearchBuilder._Criteria)
     
-        foreach ($entry in $SearchBuilder._Criteria) {
-            if ($entry.ContainsKey('_Operation')) {
-                # This is a group - build a predicate
-                $groupCriteria = @($entry._Criteria | ForEach-Object {
-                    $c = @{ Filter = $_.Filter; Field = $_.Field; Value = $_.Value }
-                    if ($_.ContainsKey('Invert') -and $_.Invert) { $c.Invert = $true }
-                    if ($_.ContainsKey('Boost') -and $_.Boost -gt 0) { $c.Boost = $_.Boost }
-                    if ($_.ContainsKey('CaseSensitive') -and $_.CaseSensitive) { $c.CaseSensitive = $true }
-                    $c
-                })
-                $operation = if ($entry._Operation -eq "Or") { "Or" } else { "And" }
-                $predicate = New-SearchPredicate -Criteria $groupCriteria -Operation $operation
-                $predicates.Add($predicate) > $null
-            }
-            else {
-                # Flat criterion
-                $topLevelCriteria.Add($entry) > $null
-            }
-        }
-    
-        # Combine group predicates with AND
-        $combinedPredicate = $null
-        if ($predicates.Count -gt 0) {
-            $combinedPredicate = $predicates[0]
-            for ($i = 1; $i -lt $predicates.Count; $i++) {
-                $combinedPredicate = New-SearchPredicate -First $combinedPredicate -Second $predicates[$i] -Operation And
-            }
-        }
-    
-        # Add top-level criteria as another AND predicate
-        if ($topLevelCriteria.Count -gt 0) {
-            $topPredicate = New-SearchPredicate -Criteria @($topLevelCriteria) -Operation And
-            if ($null -ne $combinedPredicate) {
-                $combinedPredicate = New-SearchPredicate -First $combinedPredicate -Second $topPredicate -Operation And
-            }
-            else {
-                $combinedPredicate = $topPredicate
-            }
-        }
-    
-        # Set the predicate on Find-Item
-        if ($null -ne $combinedPredicate) {
-            $findParams.WherePredicate = $combinedPredicate
-        }
-    
-        # Add path scope
+        # Add path scope as a DescendantOf criterion
         if (-not [string]::IsNullOrEmpty($SearchBuilder._Path)) {
             $pathItem = Get-Item -Path "master:$($SearchBuilder._Path)" -ErrorAction SilentlyContinue
             if ($null -ne $pathItem) {
-                $pathCriteria = @(@{ Filter = "DescendantOf"; Value = $pathItem })
-                if ($findParams.ContainsKey('WherePredicate')) {
-                    $pathPredicate = New-SearchPredicate -Criteria $pathCriteria
-                    $findParams.WherePredicate = New-SearchPredicate -First $findParams.WherePredicate -Second $pathPredicate -Operation And
-                }
-                else {
-                    $findParams.Criteria = $pathCriteria
-                }
+                $allCriteria.Add(@{ Filter = "DescendantOf"; Value = $pathItem }) > $null
             }
             else {
                 Write-Warning "Path '$($SearchBuilder._Path)' not found. Search will not be scoped."
             }
+        }
+    
+        if ($allCriteria.Count -gt 0) {
+            $predicates = [System.Collections.ArrayList]@()
+            $flatCriteria = [System.Collections.ArrayList]@()
+    
+            foreach ($entry in $allCriteria) {
+                if ($entry.ContainsKey('_Operation')) {
+                    # Group -- build predicate with its operation
+                    $groupCriteria = @($entry._Criteria | ForEach-Object {
+                        $c = @{ Filter = $_.Filter; Field = $_.Field; Value = $_.Value }
+                        if ($_.ContainsKey('Invert') -and $_.Invert) { $c.Invert = $true }
+                        if ($_.ContainsKey('Boost') -and $_.Boost -gt 0) { $c.Boost = $_.Boost }
+                        if ($_.ContainsKey('CaseSensitive') -and $_.CaseSensitive) { $c.CaseSensitive = $true }
+                        $c
+                    })
+                    $operation = if ($entry._Operation -eq "Or") { "Or" } else { "And" }
+                    $predicates.Add((New-SearchPredicate -Criteria $groupCriteria -Operation $operation)) > $null
+                }
+                else {
+                    $flatCriteria.Add($entry) > $null
+                }
+            }
+    
+            # Convert flat criteria into a single AND predicate
+            if ($flatCriteria.Count -gt 0) {
+                $predicates.Add((New-SearchPredicate -Criteria @($flatCriteria) -Operation And)) > $null
+            }
+    
+            # Combine all predicates with AND
+            $combined = $predicates[0]
+            for ($i = 1; $i -lt $predicates.Count; $i++) {
+                $combined = New-SearchPredicate -First $combined -Second $predicates[$i] -Operation And
+            }
+            $findParams.WherePredicate = $combined
         }
     
         # Add ordering
