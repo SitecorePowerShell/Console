@@ -10,7 +10,7 @@ SharedFields:
     <#
     .SYNOPSIS
         Builder functions for constructing Find-Item search queries with less boilerplate.
-
+    
     .DESCRIPTION
         Provides a fluent API for building Sitecore ContentSearch queries that automatically handles:
         - Criteria construction and composition
@@ -19,62 +19,62 @@ SharedFields:
         - Date range shorthand with relative syntax
         - Filter type discovery
         - Result metadata (truncation, index info)
-
+    
     .EXAMPLE
         Import-Function -Name SearchBuilder
-
+    
         $search = New-SearchBuilder -Index "sitecore_master_index" -First 25
         $search | Add-TemplateFilter -Name "Sample Item"
         $search | Add-FieldContains -Field "Title" -Value "Welcome"
         $results = $search | Invoke-Search
-
+    
         $results.Items | ForEach-Object { Write-Host $_.Name }
-
+    
     .NOTES
         Usage: You must call Import-Function -Name SearchBuilder before using any of these functions.
-
+    
         Version: 1.0.0
         Date: 2026-03-30
         Author: SPE Community
     #>
-
+    
     function New-SearchBuilder {
         <#
         .SYNOPSIS
             Creates a new search builder instance.
-
+    
         .PARAMETER Index
             The name of the Sitecore search index to query.
-
+    
         .PARAMETER Path
             Scope the search to descendants of this item path.
-
+    
         .PARAMETER OrderBy
             Field name to sort results by. Use "score" for relevance sorting.
-
+    
         .PARAMETER First
             Number of results per page. Used for pagination.
-
+    
         .PARAMETER Skip
             Number of results to skip. Auto-managed when paginating with Invoke-Search.
-
+    
         .PARAMETER Last
             Take the last N results.
-
+    
         .PARAMETER MaxResults
             Safety cap on total results. When set, Invoke-Search marks results as
             Truncated if more matches exist. If First is not set, MaxResults acts as First.
-
+    
         .PARAMETER Strict
             Validate field names against the index schema before executing.
             Throws an error if a field is not indexed.
-
+    
         .PARAMETER IncludeMetadata
             Include index metadata (IndexName, IndexLastUpdated) in results.
-
+    
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index"
-
+    
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index" -First 50 -MaxResults 500
         #>
@@ -82,24 +82,24 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true)]
             [string]$Index,
-
+    
             [string]$Path = "",
-
+    
             [string]$OrderBy = "",
-
+    
             [int]$First = 0,
-
+    
             [int]$Skip = 0,
-
+    
             [int]$Last = 0,
-
+    
             [int]$MaxResults = 0,
-
+    
             [switch]$Strict,
-
+    
             [switch]$IncludeMetadata
         )
-
+    
         $builder = @{
             _Index           = $Index
             _Path            = $Path
@@ -114,42 +114,42 @@ SharedFields:
             _Criteria        = [System.Collections.ArrayList]@()
             _IsSearchBuilder = $true
         }
-
+    
         return $builder
     }
-
+    
     function Add-SearchFilter {
         <#
         .SYNOPSIS
             Adds a search filter criterion to the builder.
-
+    
         .PARAMETER SearchBuilder
             The search builder instance from New-SearchBuilder.
-
+    
         .PARAMETER Field
             The index field name to filter on (e.g., "_templatename", "Title", "__Updated").
-
+    
         .PARAMETER Filter
             The filter operation. Use Get-SearchFilter to see all valid values.
             Common values: Equals, Contains, StartsWith, EndsWith, Fuzzy,
             ContainsAll, ContainsAny, DescendantOf, InclusiveRange, ExclusiveRange,
             MatchesRegex, MatchesWildcard, GreaterThan, LessThan.
-
+    
         .PARAMETER Value
             The value to match against. For range filters, pass an array of two values.
-
+    
         .PARAMETER Invert
             Negate the filter (NOT logic).
-
+    
         .PARAMETER Boost
             Lucene relevance boost factor (default: 0 = no boost).
-
+    
         .PARAMETER CaseSensitive
             Enable case-sensitive matching.
-
+    
         .EXAMPLE
             $search | Add-SearchFilter -Field "_templatename" -Filter "Equals" -Value "Article"
-
+    
         .EXAMPLE
             $search | Add-SearchFilter -Field "Title" -Filter "Contains" -Value "Welcome" -Boost 10
         #>
@@ -157,54 +157,54 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [Parameter(Mandatory = $true)]
             [string]$Field,
-
+    
             [Parameter(Mandatory = $true)]
             [string]$Filter,
-
+    
             [Parameter(Mandatory = $true)]
             [object]$Value,
-
+    
             [switch]$Invert,
-
+    
             [float]$Boost = 0,
-
+    
             [switch]$CaseSensitive
         )
-
+    
         if (-not $SearchBuilder.ContainsKey('_IsSearchBuilder')) {
             throw "Invalid SearchBuilder object. Did you create it with New-SearchBuilder?"
         }
-
+    
         $criterion = @{
             Filter = $Filter
             Field  = $Field
             Value  = $Value
         }
-
+    
         if ($Invert.IsPresent) { $criterion.Invert = $true }
         if ($Boost -gt 0) { $criterion.Boost = $Boost }
         if ($CaseSensitive.IsPresent) { $criterion.CaseSensitive = $true }
-
+    
         $SearchBuilder._Criteria.Add($criterion) > $null
     }
-
+    
     function Add-TemplateFilter {
         <#
         .SYNOPSIS
             Adds a template name or ID filter.
-
+    
         .PARAMETER Name
             The template name to match (uses _templatename field with Equals filter).
-
+    
         .PARAMETER Id
             The template ID to match (uses _templates field with Contains filter).
-
+    
         .EXAMPLE
             $search | Add-TemplateFilter -Name "Article"
-
+    
         .EXAMPLE
             $search | Add-TemplateFilter -Id "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
         #>
@@ -212,14 +212,14 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [Parameter(Mandatory = $true, ParameterSetName = "ByName")]
             [string]$Name,
-
+    
             [Parameter(Mandatory = $true, ParameterSetName = "ById")]
             [string]$Id
         )
-
+    
         if ($PSCmdlet.ParameterSetName -eq "ByName") {
             Add-SearchFilter -SearchBuilder $SearchBuilder -Field "_templatename" -Filter "Equals" -Value $Name
         }
@@ -227,94 +227,94 @@ SharedFields:
             Add-SearchFilter -SearchBuilder $SearchBuilder -Field "_templates" -Filter "Contains" -Value $Id
         }
     }
-
+    
     function Add-FieldContains {
         <#
         .SYNOPSIS
             Adds a Contains filter for a field.
-
+    
         .EXAMPLE
             $search | Add-FieldContains -Field "Title" -Value "Welcome"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [Parameter(Mandatory = $true)]
             [string]$Field,
-
+    
             [Parameter(Mandatory = $true)]
             [object]$Value,
-
+    
             [switch]$Invert,
-
+    
             [float]$Boost = 0
         )
-
+    
         $PSBoundParameters.Remove("Field") > $null
         $PSBoundParameters.Remove("Value") > $null
         $PSBoundParameters.Remove("Invert") > $null
         $PSBoundParameters.Remove("Boost") > $null
-
+    
         Add-SearchFilter @PSBoundParameters -Field $Field -Filter "Contains" -Value $Value -Invert:$Invert -Boost $Boost
     }
-
+    
     function Add-FieldEquals {
         <#
         .SYNOPSIS
             Adds an Equals filter for a field.
-
+    
         .EXAMPLE
             $search | Add-FieldEquals -Field "Language" -Value "en"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [Parameter(Mandatory = $true)]
             [string]$Field,
-
+    
             [Parameter(Mandatory = $true)]
             [object]$Value,
-
+    
             [switch]$Invert,
-
+    
             [float]$Boost = 0,
-
+    
             [switch]$CaseSensitive
         )
-
+    
         $PSBoundParameters.Remove("Field") > $null
         $PSBoundParameters.Remove("Value") > $null
         $PSBoundParameters.Remove("Invert") > $null
         $PSBoundParameters.Remove("Boost") > $null
         $PSBoundParameters.Remove("CaseSensitive") > $null
-
+    
         Add-SearchFilter @PSBoundParameters -Field $Field -Filter "Equals" -Value $Value -Invert:$Invert -Boost $Boost -CaseSensitive:$CaseSensitive
     }
-
+    
     function Add-DateRangeFilter {
         <#
         .SYNOPSIS
             Adds a date range filter with support for relative date syntax.
-
+    
         .PARAMETER Field
             The date field to filter on (e.g., "__Updated", "__Created").
-
+    
         .PARAMETER From
             The start date (inclusive). Use with -To for absolute ranges.
-
+    
         .PARAMETER To
             The end date (inclusive). Defaults to now if not specified.
-
+    
         .PARAMETER Last
             Relative date shorthand. Supported suffixes:
             d = days, w = weeks, m = months, y = years.
             Examples: "7d" (last 7 days), "2w" (last 2 weeks), "3m" (last 3 months), "1y" (last year).
-
+    
         .EXAMPLE
             $search | Add-DateRangeFilter -Field "__Updated" -Last "7d"
-
+    
         .EXAMPLE
             $search | Add-DateRangeFilter -Field "__Created" -From "2025-01-01" -To "2025-06-30"
         #>
@@ -322,26 +322,26 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [Parameter(Mandatory = $true)]
             [string]$Field,
-
+    
             [Parameter(Mandatory = $true, ParameterSetName = "Absolute")]
             [DateTime]$From,
-
+    
             [Parameter(ParameterSetName = "Absolute")]
             [DateTime]$To,
-
+    
             [Parameter(Mandatory = $true, ParameterSetName = "Relative")]
             [string]$Last
         )
-
+    
         if (-not $SearchBuilder.ContainsKey('_IsSearchBuilder')) {
             throw "Invalid SearchBuilder object. Did you create it with New-SearchBuilder?"
         }
-
+    
         $now = [DateTime]::Now
-
+    
         if ($PSCmdlet.ParameterSetName -eq "Relative") {
             $parsed = ConvertFrom-RelativeDate -RelativeDate $Last
             $fromDate = $parsed
@@ -351,44 +351,44 @@ SharedFields:
             $fromDate = $From
             $toDate = if ($PSBoundParameters.ContainsKey('To')) { $To } else { $now }
         }
-
+    
         $criterion = @{
             Filter = "InclusiveRange"
             Field  = $Field
             Value  = @($fromDate, $toDate)
         }
-
+    
         $SearchBuilder._Criteria.Add($criterion) > $null
     }
-
+    
     function Add-SearchFilterGroup {
         <#
         .SYNOPSIS
             Adds a group of filters combined with AND or OR logic.
-
+    
         .DESCRIPTION
             Creates a nested predicate group within the search builder. Use this to
             compose complex queries such as "match any of these templates AND contain
             this text". The group is built using a separate sub-builder that collects
             criteria, then merged into the parent builder.
-
+    
         .PARAMETER SearchBuilder
             The parent search builder instance.
-
+    
         .PARAMETER Operation
             How to combine the filters within this group: "Or" or "And" (default: "Or").
-
+    
         .PARAMETER Group
             A pre-built filter group hashtable from New-SearchFilterGroup.
             Use this pattern for CLM compatibility or when scriptblocks are not available.
-
+    
         .EXAMPLE
             # Using the Group parameter (CLM-safe)
             $group = New-SearchFilterGroup -Operation Or
             $group | Add-TemplateFilter -Name "Article"
             $group | Add-TemplateFilter -Name "Blog Post"
             $search | Add-SearchFilterGroup -Group $group
-
+    
         .EXAMPLE
             # Inline composition
             $group = New-SearchFilterGroup -Operation Or
@@ -400,47 +400,47 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [string]$Operation = "Or",
-
+    
             [Parameter(Mandatory = $true)]
             [hashtable]$Group
         )
-
+    
         if (-not $SearchBuilder.ContainsKey('_IsSearchBuilder')) {
             throw "Invalid SearchBuilder object. Did you create it with New-SearchBuilder?"
         }
-
+    
         if (-not $Group.ContainsKey('_IsFilterGroup')) {
             throw "Invalid filter group. Did you create it with New-SearchFilterGroup?"
         }
-
+    
         if ($Group._Criteria.Count -eq 0) {
             Write-Warning "Filter group has no criteria. Did you forget to add filters?"
             return
         }
-
+    
         $groupEntry = @{
             _Operation = $Operation
             _Criteria  = $Group._Criteria
         }
-
+    
         $SearchBuilder._Criteria.Add($groupEntry) > $null
     }
-
+    
     function New-SearchFilterGroup {
         <#
         .SYNOPSIS
             Creates a new filter group for composing OR/AND predicate groups.
-
+    
         .DESCRIPTION
             Creates a lightweight group builder that accepts the same Add-* filter
             functions as a SearchBuilder. Pass the completed group to
             Add-SearchFilterGroup to merge it into the parent builder.
-
+    
         .PARAMETER Operation
             How to combine filters in this group: "Or" or "And" (default: "Or").
-
+    
         .EXAMPLE
             $group = New-SearchFilterGroup -Operation Or
             $group | Add-TemplateFilter -Name "Article"
@@ -451,37 +451,37 @@ SharedFields:
         param(
             [string]$Operation = "Or"
         )
-
+    
         $group = @{
             _Operation     = $Operation
             _Criteria      = [System.Collections.ArrayList]@()
             _IsSearchBuilder = $true
             _IsFilterGroup   = $true
         }
-
+    
         return $group
     }
-
+    
     function Invoke-Search {
         <#
         .SYNOPSIS
             Executes the search builder and returns results with metadata.
-
+    
         .DESCRIPTION
             Converts the builder criteria into Find-Item parameters, executes the
             search, and returns a result object with pagination state. Automatically
             advances the builder's skip position for paged iteration.
-
+    
         .PARAMETER SearchBuilder
             The search builder instance.
-
+    
         .PARAMETER IncludeMetadata
             Override the builder setting to include index metadata.
-
+    
         .EXAMPLE
             $results = $search | Invoke-Search
             $results.Items | ForEach-Object { Write-Host $_.Name }
-
+    
         .EXAMPLE
             # Paged iteration
             $search = New-SearchBuilder -Index "sitecore_master_index" -First 50
@@ -495,26 +495,26 @@ SharedFields:
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder,
-
+    
             [switch]$IncludeMetadata
         )
-
+    
         if (-not $SearchBuilder.ContainsKey('_IsSearchBuilder')) {
             throw "Invalid SearchBuilder object. Did you create it with New-SearchBuilder?"
         }
-
+    
         if ($SearchBuilder.ContainsKey('_IsFilterGroup')) {
             throw "Cannot invoke a filter group directly. Use Add-SearchFilterGroup to add it to a SearchBuilder, then invoke the SearchBuilder."
         }
-
+    
         $includesMeta = $IncludeMetadata.IsPresent -or $SearchBuilder._IncludeMetadata
-
+    
         # Validate fields if Strict mode is enabled
         if ($SearchBuilder._Strict) {
             $indexFields = Get-SearchIndexField -Index $SearchBuilder._Index
             $fieldNames = $indexFields | ForEach-Object { $_.FieldName }
             $invalidFields = [System.Collections.ArrayList]@()
-
+    
             foreach ($criterion in $SearchBuilder._Criteria) {
                 if ($criterion.ContainsKey('Field') -and $criterion.Field -ne "_path") {
                     if ($fieldNames -notcontains $criterion.Field) {
@@ -522,23 +522,23 @@ SharedFields:
                     }
                 }
             }
-
+    
             if ($invalidFields.Count -gt 0) {
                 $fieldList = $invalidFields -join "', '"
                 throw "Strict mode: The following fields are not indexed in '$($SearchBuilder._Index)': '$fieldList'. Use Get-SearchIndexField -Index '$($SearchBuilder._Index)' to see valid fields."
             }
         }
-
+    
         # Determine effective pagination
         $effectiveFirst = $SearchBuilder._First
         $effectiveSkip = $SearchBuilder._Skip
         $maxResults = $SearchBuilder._MaxResults
-
+    
         # If MaxResults is set but First is not, use MaxResults as First
         if ($effectiveFirst -eq 0 -and $maxResults -gt 0) {
             $effectiveFirst = $maxResults
         }
-
+    
         # Calculate cumulative count for MaxResults safety cap
         $cumulativeCount = $effectiveSkip
         if ($maxResults -gt 0 -and $effectiveFirst -gt 0) {
@@ -563,16 +563,16 @@ SharedFields:
                 $effectiveFirst = $remaining
             }
         }
-
+    
         # Build the Find-Item parameters
         $findParams = @{
             Index = $SearchBuilder._Index
         }
-
+    
         # Build criteria from the builder tree
         $topLevelCriteria = [System.Collections.ArrayList]@()
         $predicates = [System.Collections.ArrayList]@()
-
+    
         foreach ($entry in $SearchBuilder._Criteria) {
             if ($entry.ContainsKey('_Operation')) {
                 # This is a group - build a predicate
@@ -592,7 +592,7 @@ SharedFields:
                 $topLevelCriteria.Add($entry) > $null
             }
         }
-
+    
         # Combine group predicates with AND
         $combinedPredicate = $null
         if ($predicates.Count -gt 0) {
@@ -601,7 +601,7 @@ SharedFields:
                 $combinedPredicate = New-SearchPredicate -First $combinedPredicate -Second $predicates[$i] -Operation And
             }
         }
-
+    
         # Add top-level criteria as another AND predicate
         if ($topLevelCriteria.Count -gt 0) {
             $topPredicate = New-SearchPredicate -Criteria @($topLevelCriteria) -Operation And
@@ -612,12 +612,12 @@ SharedFields:
                 $combinedPredicate = $topPredicate
             }
         }
-
+    
         # Set the predicate on Find-Item
         if ($null -ne $combinedPredicate) {
             $findParams.WherePredicate = $combinedPredicate
         }
-
+    
         # Add path scope
         if (-not [string]::IsNullOrEmpty($SearchBuilder._Path)) {
             $pathItem = Get-Item -Path "master:$($SearchBuilder._Path)" -ErrorAction SilentlyContinue
@@ -635,12 +635,12 @@ SharedFields:
                 Write-Warning "Path '$($SearchBuilder._Path)' not found. Search will not be scoped."
             }
         }
-
+    
         # Add ordering
         if (-not [string]::IsNullOrEmpty($SearchBuilder._OrderBy)) {
             $findParams.OrderBy = $SearchBuilder._OrderBy
         }
-
+    
         # Add pagination - request one extra to detect HasMore
         $requestCount = $effectiveFirst
         $detectMore = $false
@@ -649,25 +649,25 @@ SharedFields:
             $detectMore = $true
             $findParams.First = $requestCount
         }
-
+    
         if ($effectiveSkip -gt 0) {
             $findParams.Skip = $effectiveSkip
         }
-
+    
         if ($SearchBuilder._Last -gt 0 -and $effectiveFirst -eq 0) {
             $findParams.Last = $SearchBuilder._Last
         }
-
+    
         # Execute the search
         $items = @(Find-Item @findParams)
-
+    
         # Determine HasMore and trim the extra probe item
         $hasMore = $false
         if ($detectMore -and $items.Count -gt $effectiveFirst) {
             $hasMore = $true
             $items = $items[0..($effectiveFirst - 1)]
         }
-
+    
         # Check MaxResults truncation
         $truncated = $false
         if ($maxResults -gt 0) {
@@ -677,7 +677,7 @@ SharedFields:
                 $hasMore = $false
             }
         }
-
+    
         # Auto-advance pagination
         if ($SearchBuilder._First -gt 0) {
             $SearchBuilder._Skip = $effectiveSkip + $items.Count
@@ -686,7 +686,7 @@ SharedFields:
         elseif ($items.Count -gt 0) {
             $SearchBuilder._PageNumber = 1
         }
-
+    
         # Build result object
         $resultProps = @{
             Items       = $items
@@ -699,27 +699,27 @@ SharedFields:
             IndexName   = $SearchBuilder._Index
             Query       = (ConvertTo-QuerySummary -SearchBuilder $SearchBuilder)
         }
-
+    
         if ($includesMeta) {
             $idx = Get-SearchIndex -Name $SearchBuilder._Index -ErrorAction SilentlyContinue
             if ($null -ne $idx) {
                 $resultProps.IndexLastUpdated = $idx.Summary.LastUpdated
             }
         }
-
+    
         $result = New-PSObject $resultProps
         return $result
     }
-
+    
     function Reset-SearchBuilder {
         <#
         .SYNOPSIS
             Resets the pagination state of a search builder for re-use.
-
+    
         .DESCRIPTION
             Sets Skip back to 0 and PageNumber back to 0, allowing you to
             re-run the same query from the beginning.
-
+    
         .EXAMPLE
             Reset-SearchBuilder -SearchBuilder $search
             # or
@@ -730,34 +730,34 @@ SharedFields:
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$SearchBuilder
         )
-
+    
         if (-not $SearchBuilder.ContainsKey('_IsSearchBuilder')) {
             throw "Invalid SearchBuilder object. Did you create it with New-SearchBuilder?"
         }
-
+    
         $SearchBuilder._Skip = 0
         $SearchBuilder._PageNumber = 0
     }
-
+    
     function Get-SearchFilter {
         <#
         .SYNOPSIS
             Lists all valid filter types for use with Add-SearchFilter.
-
+    
         .DESCRIPTION
             Returns all valid FilterType values with descriptions, making the
             filter vocabulary discoverable at runtime. Use this to see what
             filter operations are available for Find-Item criteria.
-
+    
         .EXAMPLE
             Get-SearchFilter
-
+    
         .EXAMPLE
             Get-SearchFilter | Where-Object { $_.Name -like "*Range*" }
         #>
         [CmdletBinding()]
         param()
-
+    
         $filters = @(
             @{ Name = "Equals";          Description = "Exact match on field value" }
             @{ Name = "StartsWith";      Description = "Field value starts with the specified text" }
@@ -774,26 +774,26 @@ SharedFields:
             @{ Name = "GreaterThan";     Description = "Field value is greater than the specified value (supports DateTime, int, double)" }
             @{ Name = "LessThan";        Description = "Field value is less than the specified value (supports DateTime, int, double)" }
         )
-
+    
         $filters | ForEach-Object { New-PSObject $_ }
     }
-
+    
     function Get-SearchIndexField {
         <#
         .SYNOPSIS
             Lists the fields available in a search index.
-
+    
         .DESCRIPTION
             Queries the specified search index configuration to return all indexed
             field names. Use this to verify field names before building queries,
             especially with the -Strict flag on New-SearchBuilder.
-
+    
         .PARAMETER Index
             The search index name to inspect.
-
+    
         .EXAMPLE
             Get-SearchIndexField -Index "sitecore_master_index"
-
+    
         .EXAMPLE
             Get-SearchIndexField -Index "sitecore_master_index" | Where-Object { $_.FieldName -like "*template*" }
         #>
@@ -802,21 +802,21 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Index
         )
-
+    
         $searchIndex = Get-SearchIndex -Name $Index -ErrorAction Stop
         $config = $searchIndex.Configuration
-
+    
         if ($null -eq $config) {
             Write-Warning "Could not read configuration for index '$Index'."
             return
         }
-
+    
         $fieldMap = $config.FieldMap
         if ($null -eq $fieldMap) {
             Write-Warning "No field map available for index '$Index'."
             return
         }
-
+    
         $fieldMap.GetFieldNames() | Sort-Object | ForEach-Object {
             New-PSObject @{
                 FieldName = $_
@@ -824,9 +824,9 @@ SharedFields:
             }
         }
     }
-
+    
     # --- Internal helper functions ---
-
+    
     function ConvertFrom-RelativeDate {
         <#
         .SYNOPSIS
@@ -837,15 +837,15 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$RelativeDate
         )
-
+    
         if ($RelativeDate -notmatch '^(\d+)([dwmy])$') {
             throw "Invalid relative date format: '$RelativeDate'. Use format like '7d', '2w', '3m', '1y' (d=days, w=weeks, m=months, y=years)."
         }
-
+    
         $amount = [int]$Matches[1]
         $unit = $Matches[2]
         $now = [DateTime]::Now
-
+    
         switch ($unit) {
             "d" { return $now.AddDays(-$amount) }
             "w" { return $now.AddDays(-($amount * 7)) }
@@ -853,7 +853,7 @@ SharedFields:
             "y" { return $now.AddYears(-$amount) }
         }
     }
-
+    
     function ConvertTo-QuerySummary {
         <#
         .SYNOPSIS
@@ -864,9 +864,9 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [hashtable]$SearchBuilder
         )
-
+    
         $parts = [System.Collections.ArrayList]@()
-
+    
         foreach ($entry in $SearchBuilder._Criteria) {
             if ($entry.ContainsKey('_Operation')) {
                 $groupParts = @($entry._Criteria | ForEach-Object {
@@ -881,9 +881,9 @@ SharedFields:
                 $parts.Add("$prefix$($entry.Field) $($entry.Filter) '$val'") > $null
             }
         }
-
+    
         if ($parts.Count -eq 0) { return "(no criteria)" }
-
+    
         return $parts -join " AND "
     }
 Languages:
