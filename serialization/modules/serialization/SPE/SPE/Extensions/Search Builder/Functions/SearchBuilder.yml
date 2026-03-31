@@ -91,20 +91,6 @@ SharedFields:
         .PARAMETER LatestVersion
             Filter results to only the latest version of each item.
     
-        .PARAMETER Where
-            Dynamic LINQ where clause string (e.g., 'Name.Contains("test")').
-            Use -WhereValues for parameterized values.
-    
-        .PARAMETER WhereValues
-            Parameter values for the -Where dynamic LINQ expression.
-    
-        .PARAMETER DynamicFilter
-            Dynamic LINQ filter clause string (Sitecore filter semantics).
-            Use -DynamicFilterValues for parameterized values.
-    
-        .PARAMETER DynamicFilterValues
-            Parameter values for the -DynamicFilter dynamic LINQ expression.
-    
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index"
     
@@ -116,9 +102,6 @@ SharedFields:
     
         .EXAMPLE
             $search = New-SearchBuilder -Index "sitecore_master_index" -FacetOn @("TemplateName")
-    
-        .EXAMPLE
-            $search = New-SearchBuilder -Index "sitecore_master_index" -Where 'TemplateName = @0' -WhereValues @("Sample Item")
         #>
         [CmdletBinding()]
         param(
@@ -153,15 +136,7 @@ SharedFields:
     
             [int]$FacetMinCount = 1,
     
-            [switch]$LatestVersion,
-    
-            [string]$Where = "",
-    
-            [object[]]$WhereValues = $null,
-    
-            [string]$DynamicFilter = "",
-    
-            [object[]]$DynamicFilterValues = $null
+            [switch]$LatestVersion
         )
     
         $builder = @{
@@ -179,10 +154,6 @@ SharedFields:
             _FacetOn            = $FacetOn
             _FacetMinCount      = $FacetMinCount
             _LatestVersion      = $LatestVersion.IsPresent
-            _Where              = $Where
-            _WhereValues        = $WhereValues
-            _DynamicFilter      = $DynamicFilter
-            _DynamicFilterValues = $DynamicFilterValues
             _PageNumber         = 0
             _Criteria           = [System.Collections.ArrayList]@()
             _IsSearchBuilder    = $true
@@ -670,29 +641,7 @@ SharedFields:
             $findParams.LatestVersion = [switch]$true
         }
     
-        # Dynamic LINQ vs builder criteria are mutually exclusive (Find-Item parameter sets)
-        $useDynamicLinq = -not [string]::IsNullOrEmpty($SearchBuilder._Where) -or -not [string]::IsNullOrEmpty($SearchBuilder._DynamicFilter)
-    
-        if ($useDynamicLinq) {
-            if ($SearchBuilder._Criteria.Count -gt 0) {
-                Write-Warning "Builder criteria (Add-SearchFilter, etc.) are ignored when -Where or -DynamicFilter is set. These use different Find-Item parameter sets."
-            }
-            if (-not [string]::IsNullOrEmpty($SearchBuilder._Where)) {
-                $findParams.Where = $SearchBuilder._Where
-                if ($null -ne $SearchBuilder._WhereValues) {
-                    $findParams.WhereValues = $SearchBuilder._WhereValues
-                }
-            }
-            if (-not [string]::IsNullOrEmpty($SearchBuilder._DynamicFilter)) {
-                $findParams.Filter = $SearchBuilder._DynamicFilter
-                if ($null -ne $SearchBuilder._DynamicFilterValues) {
-                    $findParams.FilterValues = $SearchBuilder._DynamicFilterValues
-                }
-            }
-        }
-    
-        # Build criteria from the builder tree (skipped when using dynamic LINQ)
-        if (-not $useDynamicLinq) {
+        # Build criteria from the builder tree
         $topLevelCriteria = [System.Collections.ArrayList]@()
         $predicates = [System.Collections.ArrayList]@()
     
@@ -758,7 +707,6 @@ SharedFields:
                 Write-Warning "Path '$($SearchBuilder._Path)' not found. Search will not be scoped."
             }
         }
-        } # end if (-not $useDynamicLinq)
     
         # Add ordering
         if (-not [string]::IsNullOrEmpty($SearchBuilder._OrderBy)) {
