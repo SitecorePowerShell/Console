@@ -1,4 +1,4 @@
----
+﻿---
 ID: "39e4873a-afb7-41a7-a451-a9fb8f8ff61c"
 Parent: "67b5e3af-75c1-4e0e-9947-f51106122be5"
 Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
@@ -6,7 +6,7 @@ Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Search B
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/magnifying_glass.png
+  Value: Office/32x32/jar_coffee_bean.png
 - ID: "218ca464-cb77-4c97-b141-34871ecae00b"
   Hint: Enabled
   Value: 1
@@ -24,11 +24,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "39e4873a-afb7-41a7-a451-a9fb8f8ff61c"
+      Value: "3d0cd5a0-e210-4b09-bc5e-8fbf2b407511"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260330T120000Z
+      Value: 20260401T014904Z
