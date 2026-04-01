@@ -8,6 +8,13 @@
     };
 
     var settings = defaults;
+
+    function escapeHtml(str) {
+        var div = document.createElement("div");
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     var tabCompletions = null;
     var lastUpdate = 0;
     var attempts = 0;
@@ -216,7 +223,7 @@
                     var isSignature = hint.indexOf("Signature|") === 0;
                     if (isSignature) {
                         var hintParts = hint.split("|");
-                        sigHint += hintParts[1] + "<br/>";
+                        sigHint += escapeHtml(hintParts[1]) + "<br/>";
                     }
                     return !isSignature;
                 }).map(function (hint) {

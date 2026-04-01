@@ -11,7 +11,7 @@
                         if (!chartData && !chartData.Results) return;
 
                         if (chartData.Results.title) {
-                            $(`#chart-${index}-container`).append(`<h2 class="title">${chartData.Results.title}</h2>`);
+                            $("<h2>", { "class": "title" }).text(chartData.Results.title).appendTo(`#chart-${index}-container`);
                         }
                         $(`#chart-${index}-container`).append(`<div id="chart-${index}" />`);
                         $(`#chart-${index}-container .spinner`).hide();
