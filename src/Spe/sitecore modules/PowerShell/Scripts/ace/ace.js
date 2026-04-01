@@ -1735,9 +1735,13 @@ ace.define("ace/lib/event", ["require", "exports", "module", "ace/lib/keys", "ac
 
     if (window.postMessage && !useragent.isOldIE) {
         var postMessageId = 1;
+        // [SPE patch #1401] Use explicit origin instead of wildcard "*" to prevent
+        // potential cross-origin message interception. This is ACE's internal nextTick
+        // mechanism that posts to itself; window.location.origin is always correct here.
         exports.nextTick = function(callback, win) {
             win = win || window;
             var messageName = "zero-timeout-message-" + postMessageId;
+            var targetOrigin = win.location.origin || window.location.origin;
             exports.addListener(win, "message", function listener(e) {
                 if (e.data == messageName) {
                     exports.stopPropagation(e);
@@ -1745,7 +1749,7 @@ ace.define("ace/lib/event", ["require", "exports", "module", "ace/lib/keys", "ac
                     callback();
                 }
             });
-            win.postMessage(messageName, "*");
+            win.postMessage(messageName, targetOrigin);
         };
     }
 
