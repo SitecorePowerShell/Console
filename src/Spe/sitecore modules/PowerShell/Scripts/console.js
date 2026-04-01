@@ -183,7 +183,21 @@
             }
         }
 
-        term.echo(data["result"]);
+        var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
+        term.echo(data["result"], {
+            finalize: function (div) {
+                div.find("span").each(function () {
+                    var span = $(this);
+                    var html = span.html();
+                    if (guidRegex.test(html)) {
+                        guidRegex.lastIndex = 0;
+                        span.html(html.replace(guidRegex, function (match) {
+                            return "<a href='#' onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={" + match + "})')\">" + match + "</a>";
+                        }));
+                    }
+                });
+            }
+        });
         $("html").animate({ scrollTop: $(document).height() }, "slow");
     }
 
