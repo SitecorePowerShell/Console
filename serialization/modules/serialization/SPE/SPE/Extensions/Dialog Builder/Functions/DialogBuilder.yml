@@ -1,4 +1,4 @@
----
+﻿---
 ID: "9d311b90-0de4-42fd-b150-cf1591597394"
 Parent: "a0371a90-d4b0-4e07-9245-c9f07f86d0d6"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -9,7 +9,7 @@ SharedFields:
   Value: |
     <#
     .SYNOPSIS
-        Helper functions for building Read-Variable dialogs with less boilerplate.
+        Builder functions for constructing Read-Variable dialogs with less boilerplate.
     
     .DESCRIPTION
         Provides a fluent API for constructing SPE dialogs that automatically handles:
@@ -17,7 +17,7 @@ SharedFields:
         - Type inference for editor selection
         - Parameter hashtable construction
         - Validation and mandatory fields
-        - Enhanced error messages and debugging capabilities
+        - Structured result metadata
     
     .EXAMPLE
         Import-Function -Name DialogBuilder
@@ -27,19 +27,26 @@ SharedFields:
         $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
         $dialog | Add-Checkbox -Name "publish" -Title "Publish after save"
     
-        $result = Show-Dialog -DialogBuilder $dialog
-        if ($result -eq "ok") {
+        $result = $dialog | Invoke-Dialog
+        if ($result.Result -eq "ok") {
             Write-Host "User: $userName, Root: $($rootItem.FullPath), Publish: $publish"
         }
     
     .NOTES
         Usage: You must call Import-Function -Name DialogBuilder before using any of these functions.
     
-        Version: 2.1.0
-        Date: 2025-12-16
+        Version: 3.0.0
+        Date: 2026-03-31
         Author: SPE Community
     
         Changelog:
+        - v3.0.0: Breaking changes to align with SearchBuilder conventions (#1429):
+                  Renamed Show-Dialog to Invoke-Dialog (returns structured PSObject)
+                  Merged Debug-DialogBuilder into Test-DialogBuilder (-ShowDetails)
+                  Renamed Export-DialogBuilderConfig to ConvertTo-DialogBuilderJson
+                  Internal keys underscore-prefixed for diff-friendly state
+                  ArrayList for mutable parameter collection
+                  Added _IsDialogBuilder type guard
         - v2.1.0: Refactored Add-TextField with parameter sets (-IsPassword, -IsEmail, -IsNumber)
                   Added Add-LinkField, Add-TristateCheckbox, Add-RuleField, Add-RuleActionField
                   Removed redundant Add-NumberField and Add-EmailField functions
@@ -109,16 +116,17 @@ SharedFields:
         }
     
         $builder = @{
-            Title = $Title
-            Description = $Description
-            Width = $Width
-            Height = $Height
-            OkButtonName = $OkButtonName
-            CancelButtonName = $CancelButtonName
-            ShowHints = $ShowHints.IsPresent
-            Icon = $Icon
-            Parameters = @()
-            _Variables = @{}  # Internal tracking of variables
+            _Title            = $Title
+            _Description      = $Description
+            _Width            = $Width
+            _Height           = $Height
+            _OkButtonName     = $OkButtonName
+            _CancelButtonName = $CancelButtonName
+            _ShowHints        = $ShowHints.IsPresent
+            _Icon             = $Icon
+            _Parameters       = [System.Collections.ArrayList]@()
+            _Variables        = @{}
+            _IsDialogBuilder  = $true
         }
     
         return $builder
@@ -252,8 +260,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
         }
     
@@ -332,7 +339,7 @@ SharedFields:
         # Value is required for proper variable initialization in Read-Variable
         $param.Value = $Value
     
-        # Track variable for Show-Dialog to initialize in caller scope
+        # Track variable for Invoke-Dialog to initialize in caller scope
         $DialogBuilder._Variables[$Name] = $Value
     
         # Add optional parameters only if specified
@@ -354,16 +361,22 @@ SharedFields:
         if (-not [string]::IsNullOrEmpty($ShowOnValue)) { $param.ShowOnValue = $ShowOnValue }
     
         # Add parameter to builder
-        $DialogBuilder.Parameters += $param
-    
-        # Return builder for chaining
-        return $DialogBuilder
+        $DialogBuilder._Parameters.Add($param) > $null
     }
     
-    function Show-Dialog {
+    function Invoke-Dialog {
         <#
         .SYNOPSIS
-            Displays the dialog and returns the result.
+            Executes the dialog builder and returns a structured result.
+    
+        .DESCRIPTION
+            Converts the builder state into Read-Variable parameters, displays the
+            dialog, and returns a result object with metadata. Variables are
+            initialized in the caller's scope.
+    
+            Note: The Validator parameter uses a scriptblock, which is not
+            supported under Constrained Language Mode (CLM). If your script
+            runs under CLM, omit the Validator parameter.
     
         .PARAMETER DialogBuilder
             The dialog builder instance.
@@ -374,12 +387,9 @@ SharedFields:
         .PARAMETER ValidatorParameters
             Optional hashtable of parameters to pass to the validator scriptblock.
     
-        .RETURNS
-            "ok" if user clicked OK, "cancel" if cancelled.
-    
         .EXAMPLE
-            $result = Show-Dialog -DialogBuilder $dialog
-            if ($result -eq "ok") {
+            $result = $dialog | Invoke-Dialog
+            if ($result.Result -eq "ok") {
                 Write-Host "Accepted"
             }
     
@@ -391,7 +401,7 @@ SharedFields:
                     $variables.password.Error = "Too short"
                 }
             }
-            $result = Show-Dialog -DialogBuilder $dialog -Validator $validator -ValidatorParameters @{ minLength = $minLen }
+            $result = $dialog | Invoke-Dialog -Validator $validator -ValidatorParameters @{ minLength = $minLen }
         #>
         [CmdletBinding()]
         param(
@@ -403,13 +413,12 @@ SharedFields:
             [hashtable]$ValidatorParameters = $null
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
         }
     
         # Warn if no fields were added
-        if ($DialogBuilder.Parameters.Count -eq 0) {
+        if ($DialogBuilder._Parameters.Count -eq 0) {
             Write-Warning "Dialog has no fields. Did you forget to add fields with Add-DialogField or convenience functions?"
         }
     
@@ -425,21 +434,21 @@ SharedFields:
     
         # Build Read-Variable parameters
         $readVarParams = @{
-            Title = $DialogBuilder.Title
-            Description = $DialogBuilder.Description
-            Width = $DialogBuilder.Width
-            Height = $DialogBuilder.Height
-            OkButtonName = $DialogBuilder.OkButtonName
-            CancelButtonName = $DialogBuilder.CancelButtonName
-            Parameters = $DialogBuilder.Parameters
+            Title            = $DialogBuilder._Title
+            Description      = $DialogBuilder._Description
+            Width            = $DialogBuilder._Width
+            Height           = $DialogBuilder._Height
+            OkButtonName     = $DialogBuilder._OkButtonName
+            CancelButtonName = $DialogBuilder._CancelButtonName
+            Parameters       = @($DialogBuilder._Parameters)
         }
     
-        if ($DialogBuilder.ShowHints) {
+        if ($DialogBuilder._ShowHints) {
             $readVarParams.ShowHints = $true
         }
     
-        if (-not [string]::IsNullOrEmpty($DialogBuilder.Icon)) {
-            $readVarParams.Icon = $DialogBuilder.Icon
+        if (-not [string]::IsNullOrEmpty($DialogBuilder._Icon)) {
+            $readVarParams.Icon = $DialogBuilder._Icon
         }
     
         if ($null -ne $Validator) {
@@ -452,10 +461,10 @@ SharedFields:
     
         # Call Read-Variable
         try {
-            $result = Read-Variable @readVarParams
+            $rawResult = Read-Variable @readVarParams
         }
         catch {
-            throw "Failed to display dialog '$($DialogBuilder.Title)'. Error: $($_.Exception.Message)"
+            throw "Failed to display dialog '$($DialogBuilder._Title)'. Error: $($_.Exception.Message)"
         }
     
         # Update variable values in caller scope
@@ -468,121 +477,228 @@ SharedFields:
             }
         }
     
+        # Build structured result
+        $result = New-PSObject @{
+            Result     = $rawResult
+            Title      = $DialogBuilder._Title
+            FieldCount = $DialogBuilder._Parameters.Count
+        }
+    
         return $result
     }
     
-    function Debug-DialogBuilder {
+    function Test-DialogBuilder {
         <#
         .SYNOPSIS
-            Displays debug information about a dialog builder instance.
+            Validates a dialog builder configuration without showing the dialog.
     
         .DESCRIPTION
-            Outputs a formatted summary of the dialog configuration including all fields,
-            their types, and configuration details. Useful for troubleshooting dialog issues
-            before calling Show-Dialog.
+            Checks for common configuration issues such as:
+            - Duplicate field names
+            - Invalid conditional visibility chains
+            - Orphaned ParentGroupIds
+            - Missing required parameters
+            - Performance concerns (too many fields)
+    
+            When -ShowDetails is specified, also outputs a formatted summary of
+            the dialog configuration including all fields, their types, and
+            configuration details (formerly Debug-DialogBuilder).
     
         .PARAMETER DialogBuilder
-            The dialog builder instance to inspect.
+            The dialog builder instance to validate.
+    
+        .PARAMETER ShowDetails
+            Display detailed field-by-field configuration info.
     
         .PARAMETER ShowValues
-            Include the current values of variables in the output.
+            Include the current values of variables in the output. Implies -ShowDetails.
     
         .PARAMETER ShowFullParameters
-            Display all parameter details for each field (verbose output).
+            Display all parameter details for each field. Implies -ShowDetails.
+    
+        .PARAMETER WarningsOnly
+            Only show warnings, don't throw errors for critical issues.
     
         .EXAMPLE
-            $dialog = New-DialogBuilder -Title "Test"
-            $dialog | Add-TextField -Name "userName"
-            Debug-DialogBuilder -DialogBuilder $dialog
+            $dialog | Test-DialogBuilder
     
         .EXAMPLE
-            # Inspect with values
-            Debug-DialogBuilder -DialogBuilder $dialog -ShowValues
+            $dialog | Test-DialogBuilder -ShowDetails
     
         .EXAMPLE
-            # Full detailed output
-            Debug-DialogBuilder -DialogBuilder $dialog -ShowFullParameters
+            $dialog | Test-DialogBuilder -ShowValues -ShowFullParameters
+    
+        .RETURNS
+            $true if validation passes, $false otherwise.
         #>
         [CmdletBinding()]
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [hashtable]$DialogBuilder,
     
+            [switch]$ShowDetails,
+    
             [switch]$ShowValues,
     
-            [switch]$ShowFullParameters
+            [switch]$ShowFullParameters,
+    
+            [switch]$WarningsOnly
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             Write-Error "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
-            return
+            return $false
         }
     
-        Write-Host ("=" * 80) -ForegroundColor Cyan
-        Write-Host "DIALOG BUILDER DEBUG INFO" -ForegroundColor Cyan
-        Write-Host ("=" * 80) -ForegroundColor Cyan
-        Write-Host ""
+        $hasErrors = $false
+        $hasWarnings = $false
     
-        # Dialog Properties
-        Write-Host "Dialog Properties:" -ForegroundColor Green
-        Write-Host "  Title       : $($DialogBuilder.Title)"
-        Write-Host "  Description : $($DialogBuilder.Description)"
-        Write-Host "  Dimensions  : $($DialogBuilder.Width) x $($DialogBuilder.Height)"
-        Write-Host "  OK Button   : $($DialogBuilder.OkButtonName)"
-        Write-Host "  Cancel Button: $($DialogBuilder.CancelButtonName)"
-        Write-Host "  Show Hints  : $($DialogBuilder.ShowHints)"
-        if (-not [string]::IsNullOrEmpty($DialogBuilder.Icon)) {
-            Write-Host "  Icon        : $($DialogBuilder.Icon)"
+        # Infer ShowDetails from ShowValues or ShowFullParameters
+        if ($ShowValues.IsPresent -or $ShowFullParameters.IsPresent) {
+            $ShowDetails = [switch]$true
         }
-        Write-Host ""
     
-        # Field Summary
-        $fieldCount = $DialogBuilder.Parameters.Count
-        Write-Host "Fields: $fieldCount" -ForegroundColor Green
-    
-        if ($fieldCount -eq 0) {
-            Write-Host "  WARNING: No fields defined!" -ForegroundColor Yellow
+        # --- Detail output (formerly Debug-DialogBuilder) ---
+        if ($ShowDetails) {
+            Write-Host ("=" * 80) -ForegroundColor Cyan
+            Write-Host "DIALOG BUILDER DETAILS" -ForegroundColor Cyan
+            Write-Host ("=" * 80) -ForegroundColor Cyan
             Write-Host ""
-            return
-        }
     
-        # Group fields by tab
-        $fieldsByTab = @{}
-        $noTabFields = @()
+            Write-Host "Dialog Properties:" -ForegroundColor Green
+            Write-Host "  Title       : $($DialogBuilder._Title)"
+            Write-Host "  Description : $($DialogBuilder._Description)"
+            Write-Host "  Dimensions  : $($DialogBuilder._Width) x $($DialogBuilder._Height)"
+            Write-Host "  OK Button   : $($DialogBuilder._OkButtonName)"
+            Write-Host "  Cancel Button: $($DialogBuilder._CancelButtonName)"
+            Write-Host "  Show Hints  : $($DialogBuilder._ShowHints)"
+            if (-not [string]::IsNullOrEmpty($DialogBuilder._Icon)) {
+                Write-Host "  Icon        : $($DialogBuilder._Icon)"
+            }
+            Write-Host ""
     
-        foreach ($param in $DialogBuilder.Parameters) {
-            if ([string]::IsNullOrEmpty($param.Tab)) {
-                $noTabFields += $param
+            $fieldCount = $DialogBuilder._Parameters.Count
+            Write-Host "Fields: $fieldCount" -ForegroundColor Green
+    
+            if ($fieldCount -eq 0) {
+                Write-Host "  WARNING: No fields defined!" -ForegroundColor Yellow
             }
             else {
-                if (-not $fieldsByTab.ContainsKey($param.Tab)) {
-                    $fieldsByTab[$param.Tab] = @()
+                # Group fields by tab
+                $fieldsByTab = @{}
+                $noTabFields = [System.Collections.ArrayList]@()
+    
+                foreach ($param in $DialogBuilder._Parameters) {
+                    if ([string]::IsNullOrEmpty($param.Tab)) {
+                        $noTabFields.Add($param) > $null
+                    }
+                    else {
+                        if (-not $fieldsByTab.ContainsKey($param.Tab)) {
+                            $fieldsByTab[$param.Tab] = [System.Collections.ArrayList]@()
+                        }
+                        $fieldsByTab[$param.Tab].Add($param) > $null
+                    }
                 }
-                $fieldsByTab[$param.Tab] += $param
-            }
-        }
     
-        # Display fields without tabs
-        if ($noTabFields.Count -gt 0) {
+                # Display fields without tabs
+                if ($noTabFields.Count -gt 0) {
+                    Write-Host ""
+                    Write-Host "  [No Tab]" -ForegroundColor Magenta
+                    foreach ($param in $noTabFields) {
+                        Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
+                    }
+                }
+    
+                # Display fields grouped by tab
+                foreach ($tab in ($fieldsByTab.Keys | Sort-Object)) {
+                    Write-Host ""
+                    Write-Host "  [Tab: $tab]" -ForegroundColor Magenta
+                    foreach ($param in $fieldsByTab[$tab]) {
+                        Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
+                    }
+                }
+            }
+    
             Write-Host ""
-            Write-Host "  [No Tab]" -ForegroundColor Magenta
-            foreach ($param in $noTabFields) {
-                Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
-            }
-        }
-    
-        # Display fields grouped by tab
-        foreach ($tab in ($fieldsByTab.Keys | Sort-Object)) {
+            Write-Host ("=" * 80) -ForegroundColor Cyan
             Write-Host ""
-            Write-Host "  [Tab: $tab]" -ForegroundColor Magenta
-            foreach ($param in $fieldsByTab[$tab]) {
-                Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
-            }
         }
     
+        # --- Validation ---
+        Write-Host "Validating dialog: $($DialogBuilder._Title)" -ForegroundColor Cyan
         Write-Host ""
-        Write-Host ("=" * 80) -ForegroundColor Cyan
+    
+        # Check for fields
+        if ($DialogBuilder._Parameters.Count -eq 0) {
+            Write-Warning "Dialog has no fields defined."
+            $hasWarnings = $true
+        }
+    
+        # Check for too many fields (performance)
+        if ($DialogBuilder._Parameters.Count -gt 50) {
+            Write-Warning "Dialog has $($DialogBuilder._Parameters.Count) fields. Consider splitting into multiple dialogs or tabs for better performance."
+            $hasWarnings = $true
+        }
+    
+        # Check for duplicate field names
+        $fieldNames = @{}
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($fieldNames.ContainsKey($param.Name)) {
+                Write-Error "Duplicate field name detected: '$($param.Name)'"
+                $hasErrors = $true
+            }
+            $fieldNames[$param.Name] = $true
+        }
+    
+        # Check conditional visibility configuration
+        $groupIds = @{}
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('GroupId') -and $param.GroupId -gt 0) {
+                $groupIds[$param.GroupId] = $param.Name
+            }
+        }
+    
+        # Validate ParentGroupId references
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('ParentGroupId') -and $param.ParentGroupId -gt 0) {
+                if (-not $groupIds.ContainsKey($param.ParentGroupId)) {
+                    Write-Error "Field '$($param.Name)' references ParentGroupId $($param.ParentGroupId) but no field defines this GroupId."
+                    $hasErrors = $true
+                }
+    
+                # Check that HideOnValue or ShowOnValue is specified
+                if (([string]::IsNullOrEmpty($param.HideOnValue) -and [string]::IsNullOrEmpty($param.ShowOnValue))) {
+                    Write-Warning "Field '$($param.Name)' has ParentGroupId but no HideOnValue or ShowOnValue specified."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
+        # Check for mandatory fields without editors that support it
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('Mandatory') -and $param.Mandatory) {
+                $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "auto" }
+                if ($editor -eq "info" -or $editor -eq "marquee") {
+                    Write-Warning "Field '$($param.Name)' is marked Mandatory but uses editor '$editor' which doesn't support validation."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
+        # Summary
+        Write-Host ""
+        if ($hasErrors) {
+            Write-Host "Validation FAILED with errors." -ForegroundColor Red
+            if (-not $WarningsOnly) {
+                return $false
+            }
+        } elseif ($hasWarnings) {
+            Write-Host "Validation completed with warnings." -ForegroundColor Yellow
+        } else {
+            Write-Host "Validation PASSED." -ForegroundColor Green
+        }
+    
+        return -not $hasErrors
     }
     
     function Show-FieldDebugInfo {
@@ -683,16 +799,16 @@ SharedFields:
             When specified, restricts input to numeric values (integer or decimal).
     
         .EXAMPLE
-            Add-TextField -Name "username" -Title "Username"
+            $dialog | Add-TextField -Name "username" -Title "Username"
     
         .EXAMPLE
-            Add-TextField -Name "password" -Title "Password" -IsPassword
+            $dialog | Add-TextField -Name "password" -Title "Password" -IsPassword
     
         .EXAMPLE
-            Add-TextField -Name "email" -Title "Email" -IsEmail -Placeholder "user@example.com"
+            $dialog | Add-TextField -Name "email" -Title "Email" -IsEmail -Placeholder "user@example.com"
     
         .EXAMPLE
-            Add-TextField -Name "age" -Title "Age" -IsNumber -Value 0
+            $dialog | Add-TextField -Name "age" -Title "Age" -IsNumber -Value 0
         #>
         [CmdletBinding(DefaultParameterSetName = "Text")]
         param(
@@ -758,6 +874,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a multi-line text field.
+    
+        .EXAMPLE
+            $dialog | Add-MultiLineTextField -Name "notes" -Title "Notes" -Lines 5
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -785,6 +904,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a checkbox field.
+    
+        .EXAMPLE
+            $dialog | Add-Checkbox -Name "publish" -Title "Publish after save"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -812,6 +934,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a date/time picker field.
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "startDate" -Title "Start Date" -DateOnly
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -840,6 +965,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds an item picker field.
+    
+        .EXAMPLE
+            $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -879,6 +1007,9 @@ SharedFields:
             Returns the selected Sitecore Item object. Items are displayed in a flat dropdown list.
             This is a simpler alternative to the tree-based item picker for scenarios where you
             want a compact dropdown interface.
+    
+        .EXAMPLE
+            $dialog | Add-Droplink -Name "template" -Title "Template" -Source "DataSource=/sitecore/templates"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -918,6 +1049,9 @@ SharedFields:
         .DESCRIPTION
             Returns the selected Sitecore Item object. Displays a tree structure within a dropdown
             control, allowing navigation through the content hierarchy in a compact interface.
+    
+        .EXAMPLE
+            $dialog | Add-Droptree -Name "parent" -Title "Parent Item" -Source "DataSource=/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -950,6 +1084,9 @@ SharedFields:
             Returns a string representation (path or ID) of the selected item. Items are displayed
             in a flat dropdown list. Use this when you only need the item path/ID rather than the
             full Item object.
+    
+        .EXAMPLE
+            $dialog | Add-Droplist -Name "layout" -Title "Layout" -Source "DataSource=/sitecore/layout"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -982,8 +1119,8 @@ SharedFields:
             Returns the selected Sitecore Item object. Items are grouped by their parent folders
             making it easier to navigate large item sets.
     
-            This is the grouped UI variant of droplink - same functionality but items are
-            organized hierarchically in the dropdown instead of a flat list.
+        .EXAMPLE
+            $dialog | Add-GroupedDroplink -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1016,8 +1153,8 @@ SharedFields:
             Returns a string representation (path or ID) of the selected item. Items are grouped
             by their parent folders making it easier to navigate large item sets.
     
-            This is the grouped UI variant of droplist - same functionality but items are
-            organized hierarchically in the dropdown instead of a flat list.
+        .EXAMPLE
+            $dialog | Add-GroupedDroplist -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1045,6 +1182,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a dropdown/combo field.
+    
+        .EXAMPLE
+            $dialog | Add-Dropdown -Name "color" -Title "Color" -Options @{ "Red" = "red"; "Blue" = "blue" }
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1073,6 +1213,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds radio button field.
+    
+        .EXAMPLE
+            $dialog | Add-RadioButtons -Name "priority" -Title "Priority" -Options @{ "High" = 1; "Low" = 2 }
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1098,6 +1241,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a checklist field for multiple selections.
+    
+        .EXAMPLE
+            $dialog | Add-Checklist -Name "tags" -Title "Tags" -Options @{ "News" = 1; "Blog" = 2 }
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1124,6 +1270,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a user picker field.
+    
+        .EXAMPLE
+            $dialog | Add-UserPicker -Name "reviewer" -Title "Reviewer"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1154,6 +1303,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a role picker field.
+    
+        .EXAMPLE
+            $dialog | Add-RolePicker -Name "role" -Title "Role" -Domain "sitecore"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1185,6 +1337,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a combined user and role picker field.
+    
+        .EXAMPLE
+            $dialog | Add-UserRolePicker -Name "assignee" -Title "Assignee" -Multiple
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1216,6 +1371,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds read-only informational text.
+    
+        .EXAMPLE
+            $dialog | Add-InfoText -Name "notice" -Title "Important" -Value "Read carefully."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1239,6 +1397,9 @@ SharedFields:
         <#
         .SYNOPSIS
             Adds a scrolling marquee text display.
+    
+        .EXAMPLE
+            $dialog | Add-Marquee -Name "banner" -Value "Breaking news..."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1270,6 +1431,9 @@ SharedFields:
         .PARAMETER WithSearch
             When specified, uses "treelist search" editor which includes a search box for filtering items.
             Best for large datasets (100+ items).
+    
+        .EXAMPLE
+            $dialog | Add-TreeList -Name "items" -Title "Select Items" -Root "/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1312,6 +1476,9 @@ SharedFields:
         .PARAMETER WithSearch
             When specified, uses "multilist search" editor which includes a search box for filtering items.
             Best for large datasets (100+ items).
+    
+        .EXAMPLE
+            $dialog | Add-MultiList -Name "categories" -Title "Categories" -Root "/sitecore/content"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1350,6 +1517,9 @@ SharedFields:
         .DESCRIPTION
             Provides a text field optimized for entering URLs and links.
             Supports both internal Sitecore links and external URLs.
+    
+        .EXAMPLE
+            $dialog | Add-LinkField -Name "url" -Title "URL" -Placeholder "https://example.com"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1381,6 +1551,9 @@ SharedFields:
             Provides a checkbox with three states: checked, unchecked, and indeterminate.
             Useful for nullable boolean values or optional settings.
             Returns: 1 (checked), 0 (unchecked), or null (indeterminate).
+    
+        .EXAMPLE
+            $dialog | Add-TristateCheckbox -Name "override" -Title "Override Default"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1414,6 +1587,9 @@ SharedFields:
     
         .PARAMETER Source
             The rules context path (e.g., "Rules.ConditionalRenderings" or custom rule definitions).
+    
+        .EXAMPLE
+            $dialog | Add-RuleField -Name "rules" -Title "Conditions"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1448,6 +1624,9 @@ SharedFields:
     
         .PARAMETER Source
             The rule actions context path (e.g., action definitions in the rules engine).
+    
+        .EXAMPLE
+            $dialog | Add-RuleActionField -Name "actions" -Title "Actions"
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1472,125 +1651,6 @@ SharedFields:
     
     # Helper utility functions
     
-    function Test-DialogBuilder {
-        <#
-        .SYNOPSIS
-            Validates a dialog builder configuration without showing the dialog.
-    
-        .DESCRIPTION
-            Checks for common configuration issues such as:
-            - Duplicate field names
-            - Invalid conditional visibility chains
-            - Orphaned ParentGroupIds
-            - Missing required parameters
-            - Performance concerns (too many fields)
-    
-        .PARAMETER DialogBuilder
-            The dialog builder instance to validate.
-    
-        .PARAMETER WarningsOnly
-            Only show warnings, don't throw errors for critical issues.
-    
-        .EXAMPLE
-            $dialog = New-DialogBuilder -Title "Test"
-            Test-DialogBuilder -DialogBuilder $dialog
-    
-        .RETURNS
-            $true if validation passes, $false otherwise.
-        #>
-        [CmdletBinding()]
-        param(
-            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-            [hashtable]$DialogBuilder,
-    
-            [switch]$WarningsOnly
-        )
-    
-        $hasErrors = $false
-        $hasWarnings = $false
-    
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
-            Write-Error "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
-            return $false
-        }
-    
-        Write-Host "Validating dialog: $($DialogBuilder.Title)" -ForegroundColor Cyan
-        Write-Host ""
-    
-        # Check for fields
-        if ($DialogBuilder.Parameters.Count -eq 0) {
-            Write-Warning "Dialog has no fields defined."
-            $hasWarnings = $true
-        }
-    
-        # Check for too many fields (performance)
-        if ($DialogBuilder.Parameters.Count -gt 50) {
-            Write-Warning "Dialog has $($DialogBuilder.Parameters.Count) fields. Consider splitting into multiple dialogs or tabs for better performance."
-            $hasWarnings = $true
-        }
-    
-        # Check for duplicate field names
-        $fieldNames = @{}
-        foreach ($param in $DialogBuilder.Parameters) {
-            if ($fieldNames.ContainsKey($param.Name)) {
-                Write-Error "Duplicate field name detected: '$($param.Name)'"
-                $hasErrors = $true
-            }
-            $fieldNames[$param.Name] = $true
-        }
-    
-        # Check conditional visibility configuration
-        $groupIds = @{}
-        foreach ($param in $DialogBuilder.Parameters) {
-            if ($param.ContainsKey('GroupId') -and $param.GroupId -gt 0) {
-                $groupIds[$param.GroupId] = $param.Name
-            }
-        }
-    
-        # Validate ParentGroupId references
-        foreach ($param in $DialogBuilder.Parameters) {
-            if ($param.ContainsKey('ParentGroupId') -and $param.ParentGroupId -gt 0) {
-                if (-not $groupIds.ContainsKey($param.ParentGroupId)) {
-                    Write-Error "Field '$($param.Name)' references ParentGroupId $($param.ParentGroupId) but no field defines this GroupId."
-                    $hasErrors = $true
-                }
-    
-                # Check that HideOnValue or ShowOnValue is specified
-                if (([string]::IsNullOrEmpty($param.HideOnValue) -and [string]::IsNullOrEmpty($param.ShowOnValue))) {
-                    Write-Warning "Field '$($param.Name)' has ParentGroupId but no HideOnValue or ShowOnValue specified."
-                    $hasWarnings = $true
-                }
-            }
-        }
-    
-        # Check for mandatory fields without editors that support it
-        foreach ($param in $DialogBuilder.Parameters) {
-            if ($param.ContainsKey('Mandatory') -and $param.Mandatory) {
-                $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "auto" }
-                if ($editor -eq "info" -or $editor -eq "marquee") {
-                    Write-Warning "Field '$($param.Name)' is marked Mandatory but uses editor '$editor' which doesn't support validation."
-                    $hasWarnings = $true
-                }
-            }
-        }
-    
-        # Summary
-        Write-Host ""
-        if ($hasErrors) {
-            Write-Host "Validation FAILED with errors." -ForegroundColor Red
-            if (-not $WarningsOnly) {
-                return $false
-            }
-        } elseif ($hasWarnings) {
-            Write-Host "Validation completed with warnings." -ForegroundColor Yellow
-        } else {
-            Write-Host "Validation PASSED." -ForegroundColor Green
-        }
-    
-        return -not $hasErrors
-    }
-    
     function Copy-DialogBuilder {
         <#
         .SYNOPSIS
@@ -1600,12 +1660,8 @@ SharedFields:
             Useful for creating variations of a dialog configuration without
             modifying the original. All parameters and settings are cloned.
     
-        .PARAMETER DialogBuilder
-            The dialog builder instance to copy.
-    
         .EXAMPLE
-            $dialog1 = New-DialogBuilder -Title "Original"
-            $dialog2 = Copy-DialogBuilder -DialogBuilder $dialog1
+            $dialog2 = $dialog | Copy-DialogBuilder
     
         .RETURNS
             A new dialog builder instance with copied configuration.
@@ -1616,32 +1672,32 @@ SharedFields:
             [hashtable]$DialogBuilder
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
         }
     
         # Create new builder with same properties
         $newBuilder = @{
-            Title = $DialogBuilder.Title
-            Description = $DialogBuilder.Description
-            Width = $DialogBuilder.Width
-            Height = $DialogBuilder.Height
-            OkButtonName = $DialogBuilder.OkButtonName
-            CancelButtonName = $DialogBuilder.CancelButtonName
-            ShowHints = $DialogBuilder.ShowHints
-            Icon = $DialogBuilder.Icon
-            Parameters = @()
-            _Variables = @{}
+            _Title            = $DialogBuilder._Title
+            _Description      = $DialogBuilder._Description
+            _Width            = $DialogBuilder._Width
+            _Height           = $DialogBuilder._Height
+            _OkButtonName     = $DialogBuilder._OkButtonName
+            _CancelButtonName = $DialogBuilder._CancelButtonName
+            _ShowHints        = $DialogBuilder._ShowHints
+            _Icon             = $DialogBuilder._Icon
+            _Parameters       = [System.Collections.ArrayList]@()
+            _Variables        = @{}
+            _IsDialogBuilder  = $true
         }
     
         # Deep copy parameters
-        foreach ($param in $DialogBuilder.Parameters) {
+        foreach ($param in $DialogBuilder._Parameters) {
             $newParam = @{}
             foreach ($key in $param.Keys) {
                 $newParam[$key] = $param[$key]
             }
-            $newBuilder.Parameters += $newParam
+            $newBuilder._Parameters.Add($newParam) > $null
         }
     
         # Copy variables
@@ -1661,17 +1717,8 @@ SharedFields:
             Allows removal of previously added fields from the dialog configuration.
             This is useful when building dialogs dynamically based on conditions.
     
-        .PARAMETER DialogBuilder
-            The dialog builder instance.
-    
-        .PARAMETER Name
-            The name of the field to remove.
-    
         .EXAMPLE
             $dialog | Remove-DialogField -Name "optionalField"
-    
-        .RETURNS
-            The dialog builder instance (for chaining).
         #>
         [CmdletBinding()]
         param(
@@ -1682,44 +1729,45 @@ SharedFields:
             [string]$Name
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
         }
     
-        # Remove from Parameters array
-        $DialogBuilder.Parameters = @($DialogBuilder.Parameters | Where-Object { $_.Name -ne $Name })
+        # Rebuild the ArrayList without the named field
+        $remaining = [System.Collections.ArrayList]@()
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.Name -ne $Name) {
+                $remaining.Add($param) > $null
+            }
+        }
+        $DialogBuilder._Parameters = $remaining
     
         # Remove from _Variables
         if ($DialogBuilder._Variables.ContainsKey($Name)) {
             $DialogBuilder._Variables.Remove($Name)
         }
-    
-        return $DialogBuilder
     }
     
-    function Export-DialogBuilderConfig {
+    function ConvertTo-DialogBuilderJson {
         <#
         .SYNOPSIS
-            Exports dialog builder configuration to JSON format.
+            Converts dialog builder configuration to JSON format.
     
         .DESCRIPTION
             Exports the dialog structure to JSON for documentation, debugging,
-            or sharing dialog configurations. The exported JSON can be used
-            for analysis or regenerating dialogs.
+            or sharing dialog configurations.
     
         .PARAMETER DialogBuilder
-            The dialog builder instance to export.
+            The dialog builder instance to convert.
     
         .PARAMETER FilePath
             Optional file path to save the JSON. If not specified, returns JSON string.
     
         .EXAMPLE
-            $json = Export-DialogBuilderConfig -DialogBuilder $dialog
-            $json | Out-File "dialog-config.json"
+            $json = $dialog | ConvertTo-DialogBuilderJson
     
         .EXAMPLE
-            Export-DialogBuilderConfig -DialogBuilder $dialog -FilePath "C:\temp\dialog.json"
+            $dialog | ConvertTo-DialogBuilderJson -FilePath "C:\temp\dialog.json"
         #>
         [CmdletBinding()]
         param(
@@ -1729,22 +1777,21 @@ SharedFields:
             [string]$FilePath = ""
         )
     
-        # Validate DialogBuilder structure
-        if (-not $DialogBuilder.ContainsKey('Parameters') -or -not $DialogBuilder.ContainsKey('_Variables')) {
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
             throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
         }
     
-        # Create exportable structure (remove internal _Variables)
+        # Create exportable structure (public names, no internal state)
         $exportObj = @{
-            Title = $DialogBuilder.Title
-            Description = $DialogBuilder.Description
-            Width = $DialogBuilder.Width
-            Height = $DialogBuilder.Height
-            OkButtonName = $DialogBuilder.OkButtonName
-            CancelButtonName = $DialogBuilder.CancelButtonName
-            ShowHints = $DialogBuilder.ShowHints
-            Icon = $DialogBuilder.Icon
-            Parameters = $DialogBuilder.Parameters
+            Title            = $DialogBuilder._Title
+            Description      = $DialogBuilder._Description
+            Width            = $DialogBuilder._Width
+            Height           = $DialogBuilder._Height
+            OkButtonName     = $DialogBuilder._OkButtonName
+            CancelButtonName = $DialogBuilder._CancelButtonName
+            ShowHints        = $DialogBuilder._ShowHints
+            Icon             = $DialogBuilder._Icon
+            Parameters       = @($DialogBuilder._Parameters)
         }
     
         $json = $exportObj | ConvertTo-Json -Depth 10
@@ -1777,5 +1824,5 @@ Languages:
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260312T120000Z
+      Value: 20260331T120000Z
     
