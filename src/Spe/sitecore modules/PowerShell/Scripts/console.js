@@ -8,6 +8,13 @@
     };
 
     var settings = defaults;
+
+    function escapeHtml(str) {
+        var div = document.createElement("div");
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     var tabCompletions = null;
     var lastUpdate = 0;
     var attempts = 0;
@@ -176,30 +183,49 @@
             }
         }
 
-        term.echo(data["result"]);
+        var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
+        term.echo(data["result"], {
+            finalize: function (div) {
+                div.find("span").each(function () {
+                    var span = $(this);
+                    var html = span.html();
+                    if (guidRegex.test(html)) {
+                        guidRegex.lastIndex = 0;
+                        span.html(html.replace(guidRegex, function (match) {
+                            return "<a href='#' onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={" + match + "})')\">" + match + "</a>";
+                        }));
+                    }
+                });
+            }
+        });
         $("html").animate({ scrollTop: $(document).height() }, "slow");
     }
 
     var sigHint = "";
+    var tabCycleIndex = -1;
+    var tabCycleActive = false;
 
-    function completion(command, tab_count, callback) {
-        if (tab_count < 0 || !tabCompletions) {
-            tabCompletionInit(command, function () {
-                if (tabCompletions) {
-                    callback(tabCompletions[0]);
-
-                    if (tabCompletions.length === 0) {
-                        tabCompletionNoHints();
-                    }
-                }
-            });
-        } else if (tabCompletions) {
-            callback(tabCompletions[tab_count]);
-
-            if (tabCompletions.length === 0) { 
-                tabCompletionNoHints();
-            }
+    function completion(command, callback) {
+        var term = this;
+        var fullCommand = term.get_command();
+        if (tabCycleActive && tabCompletions && tabCompletions.length > 0) {
+            tabCycleIndex = (tabCycleIndex + 1) % tabCompletions.length;
+            term.set_command(tabCompletions[tabCycleIndex]);
+            return;
         }
+        tabCompletionInit(fullCommand, function () {
+            if (tabCompletions) {
+                if (tabCompletions.length === 0) {
+                    tabCompletionNoHints();
+                } else if (tabCompletions.length === 1) {
+                    term.set_command(tabCompletions[0]);
+                } else {
+                    tabCycleIndex = 0;
+                    tabCycleActive = true;
+                    term.set_command(tabCompletions[0]);
+                }
+            }
+        });
     }
 
     function tabCompletionInit(command, callback) {
@@ -211,7 +237,7 @@
                     var isSignature = hint.indexOf("Signature|") === 0;
                     if (isSignature) {
                         var hintParts = hint.split("|");
-                        sigHint += hintParts[1] + "<br/>";
+                        sigHint += escapeHtml(hintParts[1]) + "<br/>";
                     }
                     return !isSignature;
                 }).map(function (hint) {
@@ -286,7 +312,13 @@
                 greetings: greetings,
                 name: "mainConsole",
                 completion: completion,
-                caseSensitiveAutocomplete: false
+                caseSensitiveAutocomplete: false,
+                keydown: function (e) {
+                    if (e.which !== 9) {
+                        tabCycleActive = false;
+                        tabCompletions = null;
+                    }
+                }
                 });
         $.terminal.defaults.formatters.push(function (string) {
             return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {

@@ -607,19 +607,27 @@
             return string.replace(new RegExp(escapeRegExp(find), "g"), replace);
         }
 
+        function escapeHtml(str) {
+            var div = document.createElement("div");
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
         spe.changeTabDetails = function (codeEditorIndex, newTitle, startBarHtml, scriptId, scriptDb) {
 
             var editorSession = getSessionByIndex(codeEditorIndex);
             var itemName = newTitle.split("/").last();
-            editorSession.name = itemName
+            editorSession.name = itemName;
             editorSession.path = newTitle;
-            const newTabTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            editorSession.tabTitleInnerHTML = "<span title='" + editorSession.path + "'><span class=\"scriptModified ModifiedMark#tabindex#\">⬤</span> " + editorSession.name +
+            var safePath = escapeHtml(editorSession.path);
+            var safeName = escapeHtml(editorSession.name);
+            const newTabTitle = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.tabTitleInnerHTML = "<span title=\"" + safePath + "\"><span class=\"scriptModified ModifiedMark#tabindex#\">⬤</span> " + safeName +
                 "</i>" +
                 "<span class=\"closeTab\" onclick=\"javascript:spe.closeTab(event, #tabindex#)\">&nbsp;</span>";
-            const newWindowTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            const newWindowTitle = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
             editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span> <i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i> - ";
-            editorSession.tabTitleHtml = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.tabTitleHtml = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
             editorSession.scriptId = scriptId;
             editorSession.scriptDb = scriptDb;
             editorSession.startBarHtml = startBarHtml;
