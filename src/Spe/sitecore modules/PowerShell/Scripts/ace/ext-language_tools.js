@@ -1632,17 +1632,12 @@ ace.define("ace/autocomplete", ["require", "exports", "module", "ace/keyboard/ha
                 document.body.appendChild(tooltipNode);
             var popup = this.popup;
             var rect = popup.container.getBoundingClientRect();
-            tooltipNode.style.top = popup.container.style.top;
-            tooltipNode.style.bottom = popup.container.style.bottom;
-
-            if (window.innerWidth - rect.right < 320) {
-                tooltipNode.style.right = window.innerWidth - rect.left + "px";
-                tooltipNode.style.left = "";
-            } else {
-                tooltipNode.style.left = (rect.right + 1) + "px";
-                tooltipNode.style.right = "";
-            }
             tooltipNode.style.display = "block";
+            var tooltipHeight = tooltipNode.getBoundingClientRect().height;
+            tooltipNode.style.top = Math.max(0, rect.top - tooltipHeight - 2) + "px";
+            tooltipNode.style.bottom = "";
+            tooltipNode.style.left = rect.left + "px";
+            tooltipNode.style.right = "";
         };
 
         this.hideDocTooltip = function() {
