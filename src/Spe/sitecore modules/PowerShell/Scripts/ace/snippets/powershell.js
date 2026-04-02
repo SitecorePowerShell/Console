@@ -347,6 +347,89 @@ snippet sqlquery\n\
 	WHERE ${4:condition}\n\
 	\"@\n\
 	\\$results = Invoke-SqlCommand -Connection \\$connection -Query \\$query\n\
+\n\
+# Advanced Functions\n\
+\n\
+snippet advfunc\n\
+	function ${1:Verb-Noun} {\n\
+	    [CmdletBinding(SupportsShouldProcess)]\n\
+	    [OutputType([PSCustomObject])]\n\
+	    param(\n\
+	        [Parameter(Mandatory, Position = 0, ValueFromPipeline)]\n\
+	        [ValidateNotNullOrEmpty()]\n\
+	        [string]\\$${2:Name},\n\
+	\n\
+	        [Parameter()]\n\
+	        [ValidateRange(1, 100)]\n\
+	        [int]\\$${3:Count} = ${4:10},\n\
+	\n\
+	        [Parameter()]\n\
+	        [ValidateSet(\"${5:Option1}\", \"${6:Option2}\", \"${7:Option3}\")]\n\
+	        [string]\\$${8:Mode} = \"${5:Option1}\",\n\
+	\n\
+	        [Parameter()]\n\
+	        [ValidatePattern(\"${9:^[a-zA-Z]+\\$}\")]\n\
+	        [string]\\$${10:Filter},\n\
+	\n\
+	        [Parameter()]\n\
+	        [switch]\\$Force\n\
+	    )\n\
+	\n\
+	    begin {\n\
+	        ${11}\n\
+	    }\n\
+	\n\
+	    process {\n\
+	        if (\\$PSCmdlet.ShouldProcess(\\$${2:Name}, \"${12:action}\")) {\n\
+	            ${0}\n\
+	        }\n\
+	    }\n\
+	\n\
+	    end {\n\
+	    }\n\
+	}\n\
+\n\
+snippet itemfunc\n\
+	function ${1:Verb-SitecoreNoun} {\n\
+	    [CmdletBinding()]\n\
+	    param(\n\
+	        [Parameter(Mandatory, ValueFromPipeline)]\n\
+	        [Sitecore.Data.Items.Item]\\$Item,\n\
+	\n\
+	        [Parameter()]\n\
+	        [string]\\$${2:Database} = \"master\"\n\
+	    )\n\
+	\n\
+	    begin {\n\
+	        \\$count = 0\n\
+	    }\n\
+	\n\
+	    process {\n\
+	        \\$Item.Editing.BeginEdit()\n\
+	        ${0}\n\
+	        \\$Item.Editing.EndEdit() > \\$null\n\
+	        \\$count++\n\
+	    }\n\
+	\n\
+	    end {\n\
+	        Write-Host \"Processed \\$count items\"\n\
+	    }\n\
+	}\n\
+\n\
+snippet paramblock\n\
+	[CmdletBinding()]\n\
+	param(\n\
+	    [Parameter(Mandatory)]\n\
+	    [ValidateNotNullOrEmpty()]\n\
+	    [string]\\$${1:Name},\n\
+	\n\
+	    [Parameter()]\n\
+	    [ValidateScript({ Test-Path \\$_ })]\n\
+	    [string]\\$${2:Path},\n\
+	\n\
+	    [Parameter()]\n\
+	    [switch]\\$${3:Recurse}\n\
+	)\n\
 ";
     exports.scope = "powershell";
 
