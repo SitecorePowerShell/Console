@@ -19,7 +19,8 @@
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
             "You can find more documentation in the <br/><a href='https://doc.sitecorepowershell.com/' target='_blank'>Sitecore PowerShell Extensions book</a>.",
-            "You can contribute code and ideas to the project at <br/><a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>Sitecore PowerShell Extensions GitHub repository</a>."
+            "You can contribute code and ideas to the project at <br/><a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>Sitecore PowerShell Extensions GitHub repository</a>.",
+            "You can toggle the results pane between a <strong>horizontal</strong> and <strong>vertical</strong> split using the toggle icon in the status bar. Double-click the splitter to reset to 50/50."
         ];
 
         class EditorSession {
@@ -49,6 +50,9 @@
         var resultsBottomOffset = 10;
         var typingTimer;
         var resultsVisibilityIntent = true;
+        var splitOrientation = localStorage.getItem("spe::ise.splitOrientation") || "horizontal";
+        var splitPosition = JSON.parse(localStorage.getItem("spe::ise.splitPosition") || '{}');
+        var minPaneSize = 100;
         var editorSessions = [];
         var editorFontFamily = "Monaco";
         var editorFontSize = 12;
@@ -713,16 +717,20 @@
             if (currentAceEditor !== undefined) {
                 currentAceEditor.resize();
             }
-            var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
-            $("#Result").height(resultsHeight);
-            $("#Result").width($(window).width() - $("#Result").offset().left * 2);
-            $("#Result").width($("#ResultsPane").width());
+            if (splitOrientation === "vertical") {
+                $("#Result").css({ height: "100%", width: "100%" });
+            } else {
+                var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
+                $("#Result").height(resultsHeight);
+                $("#Result").width($(window).width() - $("#Result").offset().left * 2);
+                $("#Result").width($("#ResultsPane").width());
+            }
             $("#ProgressOverlay").css("top", ($("#Result").offset().top + 8) + "px");
             $("#ProgressOverlay").css("left", ($("#Result").offset().left + 8) + "px");
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
             if ($("#TreeView").is(":visible")) {
-                    
+
             }
             $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
 
@@ -749,18 +757,182 @@
         };
 
         spe.restoreResults = function () {
-            $("#ResultsSplitter").show();
-            $("#ResultsRow").show();
+            if (splitOrientation === "vertical") {
+                $("#VerticalSplitter").show();
+                $("#VerticalRightPane").show();
+            } else {
+                $("#ResultsSplitter").show();
+                $("#ResultsRow").show();
+            }
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
         };
 
         spe.closeResults = function () {
-            $("#ResultsSplitter").hide();
-            $("#ResultsRow").hide("slow", function () {
-                currentAceEditor.resize();
-            });
+            if (splitOrientation === "vertical") {
+                $("#VerticalSplitter").hide();
+                $("#VerticalRightPane").hide("slow", function () {
+                    if (currentAceEditor) currentAceEditor.resize();
+                });
+            } else {
+                $("#ResultsSplitter").hide();
+                $("#ResultsRow").hide("slow", function () {
+                    currentAceEditor.resize();
+                });
+            }
             $("#ResultsStatusBarAction").addClass("status-bar-results-hidden")
+        };
+
+        function applySplitOrientation(orientation) {
+            var editingPanel = document.getElementById("EditingPanel");
+            if (!editingPanel) return;
+            var table = editingPanel.querySelector("table");
+            var container = document.getElementById("VerticalSplitContainer");
+            var toggleBtn = document.getElementById("ToggleSplitOrientation");
+
+            if (orientation === "vertical") {
+                if (container) return;
+
+                var editingArea = document.getElementById("EditingArea");
+                var result = document.getElementById("Result");
+                if (!editingArea || !result) return;
+
+                // Save original inline height set by GridPanel
+                editingArea.dataset.originalHeight = editingArea.style.height;
+
+                // Create flex container with left pane, splitter, right pane
+                container = document.createElement("div");
+                container.id = "VerticalSplitContainer";
+
+                var leftPane = document.createElement("div");
+                leftPane.id = "VerticalLeftPane";
+
+                var splitter = document.createElement("div");
+                splitter.id = "VerticalSplitter";
+                splitter.title = "Drag to resize, double-click to reset";
+
+                var rightPane = document.createElement("div");
+                rightPane.id = "VerticalRightPane";
+
+                // Move content into panes
+                leftPane.appendChild(editingArea);
+                rightPane.appendChild(result);
+
+                container.appendChild(leftPane);
+                container.appendChild(splitter);
+                container.appendChild(rightPane);
+
+                // Hide table, insert container
+                table.style.display = "none";
+                editingPanel.appendChild(container);
+
+                // Override the GridPanel inline height
+                editingArea.style.height = "100%";
+
+                // Set up vertical splitter drag
+                initVerticalSplitter(splitter, leftPane);
+
+                if (toggleBtn) {
+                    toggleBtn.parentNode.classList.add("split-orientation-active");
+                    toggleBtn.src = "/~/icon/office/16x16/mirror_horizontally.png";
+                    toggleBtn.title = "Switch to horizontal split";
+                    toggleBtn.alt = "Switch to horizontal split";
+                }
+            } else {
+                if (!container) return;
+
+                var editingArea = document.getElementById("EditingArea");
+                var result = document.getElementById("Result");
+                var scriptPaneTd = document.getElementById("ScriptPane");
+                var resultsPaneTd = document.getElementById("ResultsPane");
+
+                // Restore original inline height
+                if (editingArea) {
+                    editingArea.style.height = editingArea.dataset.originalHeight || "";
+                }
+
+                // Move content back to original table positions
+                if (editingArea && scriptPaneTd) scriptPaneTd.appendChild(editingArea);
+                if (result && resultsPaneTd) resultsPaneTd.appendChild(result);
+
+                // Show table, remove container
+                table.style.display = "";
+                editingPanel.removeChild(container);
+
+                if (toggleBtn) {
+                    toggleBtn.parentNode.classList.remove("split-orientation-active");
+                    toggleBtn.src = "/~/icon/office/16x16/mirror_vertically.png";
+                    toggleBtn.title = "Switch to vertical split";
+                    toggleBtn.alt = "Switch to vertical split";
+                }
+            }
+        }
+
+        spe.saveSplitPosition = function (orientation, value) {
+            splitPosition[orientation] = value;
+            localStorage.setItem("spe::ise.splitPosition", JSON.stringify(splitPosition));
+        };
+
+        function initVerticalSplitter(splitter, leftPane) {
+            var dragging = false;
+            var startX, startWidth;
+
+            // Restore saved position
+            if (splitPosition.vertical) {
+                var containerWidth = leftPane.parentNode.offsetWidth;
+                var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
+                restoredWidth = Math.max(minPaneSize, Math.min(restoredWidth, containerWidth - minPaneSize - 10));
+                leftPane.style.flexBasis = restoredWidth + "px";
+                leftPane.style.flexGrow = "0";
+                leftPane.style.flexShrink = "0";
+            }
+
+            splitter.addEventListener("mousedown", function (e) {
+                dragging = true;
+                startX = e.clientX;
+                startWidth = leftPane.offsetWidth;
+                document.body.style.cursor = "col-resize";
+                document.body.style.userSelect = "none";
+                e.preventDefault();
+            });
+
+            splitter.addEventListener("dblclick", function (e) {
+                leftPane.style.flexBasis = "";
+                leftPane.style.flexGrow = "";
+                leftPane.style.flexShrink = "";
+                spe.saveSplitPosition("vertical", 0.5);
+                spe.resizeEditor();
+                e.preventDefault();
+            });
+
+            document.addEventListener("mousemove", function (e) {
+                if (!dragging) return;
+                var dx = e.clientX - startX;
+                var containerWidth = leftPane.parentNode.offsetWidth;
+                var maxWidth = containerWidth - minPaneSize - 10;
+                var newWidth = Math.max(minPaneSize, Math.min(startWidth + dx, maxWidth));
+                leftPane.style.flexBasis = newWidth + "px";
+                leftPane.style.flexGrow = "0";
+                leftPane.style.flexShrink = "0";
+                e.preventDefault();
+            });
+
+            document.addEventListener("mouseup", function (e) {
+                if (!dragging) return;
+                dragging = false;
+                document.body.style.cursor = "";
+                document.body.style.userSelect = "";
+                var containerWidth = leftPane.parentNode.offsetWidth;
+                spe.saveSplitPosition("vertical", leftPane.offsetWidth / containerWidth);
+                spe.resizeEditor();
+            });
+        }
+
+        spe.toggleSplitOrientation = function () {
+            splitOrientation = splitOrientation === "horizontal" ? "vertical" : "horizontal";
+            localStorage.setItem("spe::ise.splitOrientation", splitOrientation);
+            applySplitOrientation(splitOrientation);
+            spe.resizeEditor();
         };
 
         function getCachedVariableValue(storageKey, variableName) {
@@ -909,12 +1081,24 @@
 
 
         $("#ShowHideResults").click(function () {
-            if ($("#ResultsRow").is(":visible")) {
+            var resultsVisible = splitOrientation === "vertical"
+                ? $("#VerticalRightPane").is(":visible")
+                : $("#ResultsRow").is(":visible");
+            if (resultsVisible) {
                 resultsVisibilityIntent = false;
                 spe.closeResults();
             } else {
                 resultsVisibilityIntent = true;
                 spe.restoreResults();
+            }
+        });
+        $("#ToggleSplitOrientation").click(function () {
+            spe.toggleSplitOrientation();
+        });
+        $("#ResultsSplitter").on("dblclick", function (e) {
+            var img = $("#ResultsSplitter img")[0];
+            if (img) {
+                scHSplit.dblClick(img, e, "IDEXsltBottom", "top");
             }
         });
         $("#TreeViewToggle").click(function () {
@@ -963,6 +1147,16 @@
                 async: false
             }).done(doneFunction)
                 .fail(errorFunction);
+        }
+
+        applySplitOrientation(splitOrientation);
+
+        // Restore saved horizontal splitter position
+        if (splitPosition.horizontal && splitOrientation === "horizontal") {
+            var scriptPane = document.getElementById("ScriptPane");
+            if (scriptPane) {
+                scriptPane.style.height = splitPosition.horizontal + "px";
+            }
         }
 
         $(window).on('resize', function () {

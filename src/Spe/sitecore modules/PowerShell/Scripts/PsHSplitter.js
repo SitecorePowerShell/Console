@@ -1,5 +1,6 @@
 function scHSplitter() {
     this.dragging = false;
+    this.minPaneSize = 100;
 }
 
 scHSplitter.prototype.createOutline = function(bounds, tag) {
@@ -14,7 +15,7 @@ scHSplitter.prototype.createOutline = function(bounds, tag) {
     this.bounds.apply(result);
     /*
     var ctl = tag;
-  
+
     while (ctl != null && ctl.tagName != "TD") {
       ctl = ctl.parentNode;
     }
@@ -89,20 +90,47 @@ scHSplitter.prototype.mouseUp = function(tag, evt, id, target, nopost) {
 
             var top = prev.offsetHeight;
             var bottom = next.offsetHeight;
+            var total = top + bottom + this.minPaneSize;
 
             if (target == "top") {
-                prev.style.height = top + this.delta - 6 + "px";
+                var newHeight = Math.max(this.minPaneSize, Math.min(top + this.delta - 6, total - this.minPaneSize));
+                prev.style.height = newHeight + "px";
             }
 
             if (target == "bottom") {
-                next.style.height = bottom - this.delta + "px";
+                var newHeight = Math.max(this.minPaneSize, Math.min(bottom - this.delta, total - this.minPaneSize));
+                next.style.height = newHeight + "px";
             }
 
             if (nopost != "nopost") {
                 scForm.postEvent(tag, evt, id + ".Release(\"" + prev.offsetHeight.toString() + "\", \"" + next.offsetHeight.toString() + "\")");
             }
+            spe.saveSplitPosition("horizontal", prev.offsetHeight);
             spe.resizeEditor();
         }
     }
+};
+scHSplitter.prototype.dblClick = function(tag, evt, id, target) {
+    var ctl = tag;
+    while (ctl != null && ctl.tagName != "TD") {
+        ctl = ctl.parentNode;
+    }
+    if (ctl != null) {
+        var prev = scForm.browser.getPreviousSibling(ctl.parentNode).children[0];
+        var next = scForm.browser.getNextSibling(ctl.parentNode).children[0];
+        var total = prev.offsetHeight + next.offsetHeight;
+        var half = Math.round(total / 2);
+
+        if (target == "top") {
+            prev.style.height = half + "px";
+        }
+        if (target == "bottom") {
+            next.style.height = half + "px";
+        }
+
+        spe.saveSplitPosition("horizontal", half);
+        spe.resizeEditor();
+    }
+    scForm.browser.clearEvent(evt, true, false);
 };
 scHSplit = new scHSplitter();
