@@ -82,7 +82,7 @@ namespace Spe.Core.Settings.Authorization
                 {
                     // Scope restrictions are configured but the requested scope is unknown.
                     // Log a warning -- this could indicate a typo or misconfiguration.
-                    PowerShellLog.Warn($"ScriptValidator: unknown scope '{scope}' requested; no matching scopeRestriction configured. Script will not have scope-level restrictions applied.");
+                    PowerShellLog.Warn($"[Security] action=unknownScope scope={scope}");
                 }
             }
 
@@ -194,14 +194,14 @@ namespace Spe.Core.Settings.Authorization
                         if (profile.Enforcement == EnforcementMode.Audit)
                         {
                             PowerShellLog.Audit(
-                                "SPE.Security [AUDIT] User={0} Service={1} Profile={2} WouldBlock={3} (enforcement=audit, execution allowed)",
-                                userName ?? "unknown", serviceName ?? "unknown", profile.Name, blockedCommand);
+                                "[Profile] action=auditWouldBlock service={0} profile={1} command={2}",
+                                serviceName ?? "unknown", profile.Name, blockedCommand);
                         }
                         else
                         {
                             PowerShellLog.Audit(
-                                "SPE.Security [VIOLATION] User={0} Service={1} Profile={2} BlockedCommand={3}",
-                                userName ?? "unknown", serviceName ?? "unknown", profile.Name, blockedCommand);
+                                "[Profile] action=commandBlocked service={0} profile={1} command={2}",
+                                serviceName ?? "unknown", profile.Name, blockedCommand);
                         }
                     }
 

@@ -84,7 +84,7 @@ namespace Spe.Core.Host
 
                 var session = HttpRuntime.Cache.Remove(key) as ScriptSession;
                 session?.Dispose();
-                PowerShellLog.Debug($"Script Session '{key}' disposed.");
+                PowerShellLog.Debug($"[Session] action=disposed session={key}");
             }
         }
 
@@ -115,7 +115,7 @@ namespace Spe.Core.Host
                     ID = persistentId,
                 };
 
-                PowerShellLog.Debug($"New Script Session with key '{sessionKey}' created.");
+                PowerShellLog.Debug($"[Session] action=created session={sessionKey}");
 
                 if (autoDispose)
                 {

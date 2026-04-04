@@ -46,14 +46,14 @@ namespace Spe.Core.Rules
 
             if (!int.TryParse(lengthStr, out var length))
             {
-                PowerShellLog.Debug("Invalid script length: " + MeasuredLength);
+                PowerShellLog.Debug($"[Rule] action=invalidScriptLength measured={MeasuredLength}");
                 return false;
             }
 
             int desiredLength;
             if (!int.TryParse(DesiredLength, out desiredLength))
             {
-                PowerShellLog.Debug("Wrong script length definition: " + DesiredLength);
+                PowerShellLog.Debug($"[Rule] action=invalidLengthDefinition desired={DesiredLength}");
                 return false;
             }
 

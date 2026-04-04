@@ -69,8 +69,7 @@ namespace Spe.Core.Settings.Authorization
             if (!entry.IsAllowedForProfile(activeProfileName))
             {
                 PowerShellLog.Info(
-                    $"ScriptTrustRegistry: script '{entry.Name}' (ItemId={itemId}) is trusted but not allowed " +
-                    $"for profile '{activeProfileName}'. Running as Untrusted.");
+                    $"[Trust] action=profileMismatch entry={entry.Name} itemId={itemId} profile={activeProfileName}");
                 return new ScriptTrustResult(ScriptTrustLevel.Untrusted, true, entry);
             }
 
@@ -84,8 +83,7 @@ namespace Spe.Core.Settings.Authorization
                 if (!hashValid)
                 {
                     PowerShellLog.Warn(
-                        $"ScriptTrustRegistry: content hash mismatch for trusted script '{entry.Name}' (ItemId={itemId}). " +
-                        $"Expected={entry.ContentHash}, Actual={actualHash}, Action={entry.OnHashMismatch}");
+                        $"[Trust] action=hashMismatch entry={entry.Name} itemId={itemId} expected={entry.ContentHash} actual={actualHash} onMismatch={entry.OnHashMismatch}");
                 }
             }
 
@@ -155,7 +153,7 @@ namespace Spe.Core.Settings.Authorization
 
                 if (settingsFolder == null)
                 {
-                    PowerShellLog.Debug("ScriptTrustRegistry: Trusted Scripts settings folder not found.");
+                    PowerShellLog.Debug("[Trust] action=folderNotFound");
                     return;
                 }
 
@@ -166,7 +164,7 @@ namespace Spe.Core.Settings.Authorization
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("ScriptTrustRegistry: failed to load item-based trust entries.", ex);
+                PowerShellLog.Error("[Trust] action=loadFailed", ex);
             }
         }
 
@@ -187,12 +185,12 @@ namespace Spe.Core.Settings.Authorization
                             _entriesById[entry.ItemId] = entry;
                             _entriesByName[entry.Name] = entry;
                             PowerShellLog.Info(
-                                $"Registered trusted script: {entry.Name} (ItemId={entry.ItemId})");
+                                $"[Trust] action=entryLoaded entry={entry.Name} itemId={entry.ItemId}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Error($"Failed to load trust entry '{child.Name}'.", ex);
+                        PowerShellLog.Error($"[Trust] action=entryLoadFailed entry={child.Name}", ex);
                     }
                 }
                 else if (child.HasChildren)
@@ -215,7 +213,7 @@ namespace Spe.Core.Settings.Authorization
             var enabledField = trustItem.Fields[Templates.TrustedScript.Fields.Enabled];
             if (enabledField != null && enabledField.Value != "1")
             {
-                PowerShellLog.Debug($"ScriptTrustRegistry: skipping disabled trust item '{trustItem.Name}'.");
+                PowerShellLog.Debug($"[Trust] action=entryDisabled entry={trustItem.Name}");
                 return results;
             }
 
@@ -223,7 +221,7 @@ namespace Spe.Core.Settings.Authorization
             var scriptFieldValue = trustItem.Fields[Templates.TrustedScript.Fields.Script]?.Value;
             if (string.IsNullOrEmpty(scriptFieldValue))
             {
-                PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' has no Script references.");
+                PowerShellLog.Warn($"[Trust] action=noScriptReferences entry={trustItem.Name}");
                 return results;
             }
 
@@ -237,7 +235,7 @@ namespace Spe.Core.Settings.Authorization
             {
                 if (!ID.TryParse(idStr.Trim(), out var scriptItemId))
                 {
-                    PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' has invalid Script ID '{idStr}'.");
+                    PowerShellLog.Warn($"[Trust] action=invalidScriptId entry={trustItem.Name} id={idStr}");
                     continue;
                 }
 
@@ -249,7 +247,7 @@ namespace Spe.Core.Settings.Authorization
 
                 if (scriptItem == null)
                 {
-                    PowerShellLog.Warn($"ScriptTrustRegistry: trust item '{trustItem.Name}' references non-existent script '{scriptItemId}'.");
+                    PowerShellLog.Warn($"[Trust] action=scriptNotFound entry={trustItem.Name} scriptId={scriptItemId}");
                     continue;
                 }
 

@@ -60,14 +60,14 @@ namespace Spe.Integrations.Gutters
                 if(DelegatedAccessManager.IsElevated(Context.User, scriptItem))
                 {
                     var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-                    PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=Gutter");
+                    PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Gutter");
                     using (new UserSwitcher(jobUser))
                     {
                         return RunGutterScript(item, scriptItem);
                     }
                 }
 
-                PowerShellLog.Info($"Gutter: executing, user={Context.User.Name}, script={scriptItem.ID}");
+                PowerShellLog.Audit($"[Gutter] action=executing user={Context.User.Name} script={scriptItem.ID}");
                 return RunGutterScript(item, scriptItem);
             });
         }
@@ -98,7 +98,7 @@ namespace Spe.Integrations.Gutters
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' for rendering in Content Editor gutter.", ex);
+                PowerShellLog.Error($"[Gutter] action=invokeScript status=failed script=\"{scriptItem?.Paths.Path}\"", ex);
             }
 
             return null;

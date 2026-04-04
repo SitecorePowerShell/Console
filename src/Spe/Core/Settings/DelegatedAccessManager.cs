@@ -24,7 +24,7 @@ namespace Spe.Core.Settings
 
         public static void Invalidate()
         {
-            PowerShellLog.Debug($"DelegatedAccess: cache invalidated.");
+            PowerShellLog.Debug("[DelegatedAccess] action=cacheInvalidated");
             _accessEntries.Clear();
             lock (_initLock)
             {

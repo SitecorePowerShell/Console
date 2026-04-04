@@ -517,7 +517,7 @@ namespace Spe.Client.Applications
             scriptSession.PrivateData.DeferredMessages.Clear();
 
             var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-            PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=Report");
+            PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Report");
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
             Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
             LvProgressOverlay.Visible = false;

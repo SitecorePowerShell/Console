@@ -54,7 +54,7 @@ namespace Spe.Client.Applications
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
                 Context.User?.Name))
             {
-                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Download File dialog - denied.");
+                PowerShellLog.Audit($"[Upload] action=accessDenied target=DownloadFileDialog");
                 return;
             }
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
@@ -187,7 +187,7 @@ namespace Spe.Client.Applications
                     var str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    PowerShellLog.Audit("Download file: {0}", str.ToString());
+                    PowerShellLog.Audit("[Upload] action=downloadFile uri=\"{0}\"", str.ToString());
                 }
                 else
                 {

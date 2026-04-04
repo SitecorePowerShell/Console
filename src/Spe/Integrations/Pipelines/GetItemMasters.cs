@@ -33,7 +33,7 @@ namespace Spe.Integrations.Pipelines
             }
             catch (Exception e)
             {
-                PowerShellLog.Error("Exception while getting item Masters", e);
+                PowerShellLog.Error("[Pipeline] action=getItemMasters status=failed", e);
             }
         }
 

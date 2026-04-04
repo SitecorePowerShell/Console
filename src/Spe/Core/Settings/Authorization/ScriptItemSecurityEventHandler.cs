@@ -55,13 +55,13 @@ namespace Spe.Core.Settings.Authorization
                 if (itemCreatingEventArgs != null)
                 {
                     itemCreatingEventArgs.Cancel = true;
-                    PowerShellLog.Warn(
-                        $"ScriptSecurity: creation blocked, path={itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}, user={Context.User?.Name}");
+                    PowerShellLog.Audit(
+                        $"[Security] action=creationBlocked path=\"{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}\"");
                 }
                 else
                 {
-                    PowerShellLog.Warn(
-                        $"ScriptSecurity: save blocked, path={item?.Parent.Paths.Path}, user={Context.User?.Name}");
+                    PowerShellLog.Audit(
+                        $"[Security] action=saveBlocked path=\"{item?.Parent.Paths.Path}\"");
                 }
 
                 scArgs.Result.Cancel = true;
@@ -71,13 +71,13 @@ namespace Spe.Core.Settings.Authorization
 
             if (itemCreatingEventArgs != null)
             {
-                PowerShellLog.Info(
-                    $"ScriptSecurity: created, path={itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}, user={Context.User?.Name}");
+                PowerShellLog.Audit(
+                    $"[Security] action=scriptCreated path=\"{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}\"");
             }
             else
             {
-                PowerShellLog.Info(
-                    $"ScriptSecurity: saved, path={item?.Parent.Paths.Path}, user={Context.User?.Name}");
+                PowerShellLog.Audit(
+                    $"[Security] action=scriptSaved path=\"{item?.Parent.Paths.Path}\"");
                 if (item.IsPowerShellScript())
                 {
                     PowerShellLog.Debug(item[Templates.Script.Fields.ScriptBody]);

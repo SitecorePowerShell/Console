@@ -216,7 +216,7 @@ namespace Spe.Commands.Session
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error("Error while querying for items", ex);
+                    PowerShellLog.Error("[Command] action=importFunction status=failed reason=\"error querying items\"", ex);
                 }
             } 
 

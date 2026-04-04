@@ -193,7 +193,7 @@ namespace Spe.Client.Applications
 
                 if (fieldNames.Contains(name))
                 {
-                    PowerShellLog.Error($"Error while evaluating variable names in Read-Variable command. Duplicate name '{name}' encountered.");
+                    PowerShellLog.Error($"[Dialog] action=evaluateVariables status=failed reason=duplicateName name={name}");
                     throw new ArgumentException("A duplicate variable name encountered while calling Read-Variable.", "name");
                 }
 
@@ -233,7 +233,7 @@ namespace Spe.Client.Applications
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Error while rendering editor in Read-Variable command for variable '{title}'.", ex);
+                    PowerShellLog.Error($"[Dialog] action=renderEditor status=failed variable=\"{title}\"", ex);
                     variableEditor = new Literal
                     {
                         Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor,
@@ -1087,7 +1087,7 @@ namespace Spe.Client.Applications
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error("Error while running form validation script.", ex);
+                    PowerShellLog.Error("[Dialog] action=validateForm status=failed", ex);
                 }
 
             }
@@ -1111,7 +1111,7 @@ namespace Spe.Client.Applications
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Error($"Error while validating variable: {name}", ex);
+                        PowerShellLog.Error($"[Dialog] action=validateField status=failed name={name}", ex);
                     }
                 }
 

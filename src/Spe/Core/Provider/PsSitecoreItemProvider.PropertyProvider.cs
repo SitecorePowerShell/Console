@@ -98,7 +98,7 @@ namespace Spe.Core.Provider
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while executing GetProperty(string path='{path}', PSObject propertyValue)", ex);
+                PowerShellLog.Error($"[Provider] action=getProperty status=failed path=\"{path}\"", ex);
                 throw;
             }
         }

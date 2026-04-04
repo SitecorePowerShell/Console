@@ -178,7 +178,7 @@ namespace Spe.Client.Applications
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
                 Context.User?.Name))
             {
-                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Script Runner Dialog - denied.");
+                PowerShellLog.Audit($"[Runner] action=accessDenied target=ScriptRunnerDialog");
                 return;
             }
 
@@ -279,11 +279,11 @@ namespace Spe.Client.Applications
                 scriptSession.SetExecutedScript(scriptItem);
 
                 jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
-                PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=Runner");
+                PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Runner");
             }
             else
             {
-                PowerShellLog.Info($"Runner: executing, user={Context.User.Name}, script=arbitrary");
+                PowerShellLog.Audit($"[Runner] action=executing user={Context.User.Name} script=arbitrary");
             }
             if (scriptSession.JobOptions != null)
             {

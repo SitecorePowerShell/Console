@@ -461,7 +461,7 @@ namespace Spe.Core.Provider
                 if (profile.AuditLevel >= AuditLevel.Violations)
                 {
                     PowerShellLog.Audit(
-                        "ItemPathRestriction(audit): access to '{0}' denied by profile '{1}'",
+                        "[Provider] action=itemPathRestriction status=denied mode=audit path=\"{0}\" profile=\"{1}\"",
                         item.Paths.Path, profile.Name);
                 }
                 return true;
@@ -470,7 +470,7 @@ namespace Spe.Core.Provider
             if (profile.AuditLevel >= AuditLevel.Violations)
             {
                 PowerShellLog.Audit(
-                    "ItemPathRestriction: access to '{0}' denied by profile '{1}'",
+                    "[Provider] action=itemPathRestriction status=denied mode=enforce path=\"{0}\" profile=\"{1}\"",
                     item.Paths.Path, profile.Name);
             }
 
@@ -578,7 +578,7 @@ namespace Spe.Core.Provider
                 }
             }
             Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
-            PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+            PowerShellLog.Audit("[Provider] action=transferItem source=\"{0}\" destination=\"{1}\"", AuditFormatter.FormatItem(sourceItem),
                 AuditFormatter.FormatItem(destinationItem));
             if (transferredItem.Name != leafName)
             {

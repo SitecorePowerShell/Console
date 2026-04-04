@@ -58,7 +58,7 @@ namespace Spe.Core.Settings.Authorization
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("ProfileOverrideProvider: failed to read override items.", ex);
+                PowerShellLog.Error("[Profile] action=overrideReadFailed", ex);
                 return configProfile;
             }
 
@@ -139,10 +139,7 @@ namespace Spe.Core.Settings.Authorization
                 return configProfile;
             }
 
-            PowerShellLog.Info($"ProfileOverrideProvider: merged {overrideItems.Count} override(s) into profile '{configProfile.Name}' " +
-                             $"(commands: {configProfile.Commands.Count} -> {mergedCommands.Count}, " +
-                             $"paths: {configPathCount} -> {mergedPaths.Count}, " +
-                             $"auditLevel: {configProfile.AuditLevel} -> {auditLevel})");
+            PowerShellLog.Info($"[Profile] action=overrideMerged profile={configProfile.Name} overrides={overrideItems.Count} commands={configProfile.Commands.Count}->{mergedCommands.Count} paths={configPathCount}->{mergedPaths.Count} auditLevel={configProfile.AuditLevel}->{auditLevel}");
 
             var mergedItemPaths = configProfile.ItemPaths != null
                 ? new ItemPathRestrictions(configProfile.ItemPaths.Mode, mergedPaths)
@@ -164,7 +161,7 @@ namespace Spe.Core.Settings.Authorization
             var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
             if (db == null)
             {
-                PowerShellLog.Warn("ProfileOverrideProvider: database is null.");
+                PowerShellLog.Warn("[Profile] action=databaseNull");
                 return null;
             }
 
@@ -176,7 +173,7 @@ namespace Spe.Core.Settings.Authorization
 
             if (settingsFolder == null)
             {
-                PowerShellLog.Debug($"ProfileOverrideProvider: settings folder not found at '{SettingsPath}'.");
+                PowerShellLog.Debug($"[Profile] action=overrideFolderNotFound path=\"{SettingsPath}\"");
                 return null;
             }
 
@@ -186,7 +183,7 @@ namespace Spe.Core.Settings.Authorization
                 CollectOverridesRecursive(settingsFolder, profileName, results);
             }
 
-            PowerShellLog.Debug($"ProfileOverrideProvider: found {results.Count} override(s) for profile '{profileName}'.");
+            PowerShellLog.Debug($"[Profile] action=overridesFound profile={profileName} count={results.Count}");
             return results;
         }
 
@@ -199,21 +196,20 @@ namespace Spe.Core.Settings.Authorization
                     var enabledField = child.Fields[Templates.RestrictionProfile.Fields.Enabled];
                     if (enabledField != null && enabledField.Value != "1")
                     {
-                        PowerShellLog.Debug($"ProfileOverrideProvider: skipping disabled override '{child.Name}'.");
+                        PowerShellLog.Debug($"[Profile] action=overrideDisabled entry={child.Name}");
                         continue;
                     }
 
                     var baseProfile = child.Fields["Base Profile"]?.Value?.Trim();
                     if (string.IsNullOrEmpty(baseProfile))
                     {
-                        PowerShellLog.Warn($"ProfileOverrideProvider: override item '{child.Name}' ({child.ID}) has an empty Base Profile field and will be ignored.");
+                        PowerShellLog.Warn($"[Profile] action=overrideNoBaseProfile entry={child.Name} id={child.ID}");
                         continue;
                     }
 
                     if (!RestrictionProfileManager.ProfileExists(baseProfile))
                     {
-                        PowerShellLog.Warn($"ProfileOverrideProvider: override item '{child.Name}' ({child.ID}) references unknown profile '{baseProfile}'. " +
-                                           "Check that the Base Profile value matches a profile defined in Spe.config.");
+                        PowerShellLog.Warn($"[Profile] action=overrideUnknownProfile entry={child.Name} id={child.ID} profile={baseProfile}");
                         continue;
                     }
 
@@ -252,7 +248,7 @@ namespace Spe.Core.Settings.Authorization
                 }
                 else
                 {
-                    PowerShellLog.Warn($"ProfileOverrideProvider: Treelist field '{fieldName}' on '{item.Name}' references item {guidStr} which could not be resolved.");
+                    PowerShellLog.Warn($"[Profile] action=unresolvedTreelistItem entry={item.Name} field={fieldName} id={guidStr}");
                 }
             }
 

@@ -116,8 +116,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 serviceName = string.Empty;
             }
 
-            PowerShellLog.Info($"[{serviceName}] A request to the {serviceName} service was made from IP {GetIp(request)}");
-            PowerShellLog.Debug($"'{request.Url}'");
+            PowerShellLog.Audit($"[Remoting] action=requestReceived service={serviceName} ip={GetIp(request)}");
+            PowerShellLog.Debug($"[Remoting] action=requestUrl url={request.Url}");
 
             if (!CheckServiceEnabled(context, serviceName))
             {
@@ -129,7 +129,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            PowerShellLog.Info($"[{serviceName}] Authenticated request from IP {GetIp(request)}, user: {identity.Name}");
+            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
 
@@ -201,7 +201,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
             {
-                PowerShellLog.Warn($"[{serviceName}] Credentials passed via query string from IP {GetIp(request)}, user: {username}. Query string authentication is deprecated — use the Authorization header instead.");
+                PowerShellLog.Warn($"[Remoting] action=deprecatedAuth service={serviceName} ip={GetIp(request)} user={username} reason=queryStringCredentials");
             }
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
@@ -252,7 +252,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             catch (SecurityException)
                             {
                                 // Legacy secret validation failed with DetailedAuthenticationErrors enabled.
-                                PowerShellLog.Debug("Remoting: legacy secret validation failed.");
+                                PowerShellLog.Debug("[Remoting] action=legacySecretFailed");
                             }
 
                             // Step 3: Legacy secret matched -- check if it also matches an API Key
@@ -282,7 +282,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                                 if (!throttle.Allowed)
                                 {
-                                    PowerShellLog.Audit("Remoting: throttled, apiKey={0}, ip={1}",
+                                    PowerShellLog.Audit("[Remoting] action=throttled apiKey={0} ip={1}",
                                         matchedApiKey.Name, ip);
                                     SetErrorResponse(context, 429, "Rate limit exceeded.");
                                     return false;
@@ -290,7 +290,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Audit("Remoting: Bearer auth success, user={0}, ip={1}, scope={2}, clientSession={3}, apiKey={4}",
+                            PowerShellLog.Audit("[Remoting] action=bearerAuthSuccess user={0} ip={1} scope={2} clientSession={3} apiKey={4}",
                                 username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none",
                                 matchedApiKey?.Name ?? "none");
                             if (tokenResult != null)
@@ -304,14 +304,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            PowerShellLog.Audit("Remoting: Bearer auth failed, user={0}, ip={1}", username ?? "unknown", ip);
+                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed user={0} ip={1}", username ?? "unknown", ip);
                             RejectAuthenticationMethod(context, serviceName, username);
                             return false;
                         }
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Audit("Remoting: Bearer auth error, user={0}, ip={1}, error={2}", username ?? "unknown", ip, ex.Message);
+                        PowerShellLog.Audit("[Remoting] action=bearerAuthError user={0} ip={1} error={2}", username ?? "unknown", ip, ex.Message);
                         RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;
                     }
@@ -396,7 +396,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (scriptDb == null && !apiVersion.Is("file") && !apiVersion.Is("handle"))
             {
-                PowerShellLog.Error($"[{serviceMappingKey}] The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
+                PowerShellLog.Error($"[Remoting] action=databaseNotFound service={serviceMappingKey}");
                 return;
             }
 
@@ -435,7 +435,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     ProcessScript(context, request, serviceName, outputFormat, sessionId, persistentSession, useStructuredErrors);
                     return;
                 default:
-                    PowerShellLog.Error($"[{serviceMappingKey}] Requested API/Version ({serviceMappingKey}) is not supported.");
+                    PowerShellLog.Error($"[Remoting] action=unsupportedApiVersion service={serviceMappingKey}");
                     return;
             }
 
@@ -522,9 +522,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (isEnabled) return true;
 
             var ip = GetIp(context.Request);
-            var errorMessage = $"[{serviceName}] The request could not be completed because the {serviceName} service is disabled. IP: {ip}";
+            var errorMessage = $"The {serviceName} service is disabled.";
             SetErrorResponse(context, 403, errorMessage);
-            PowerShellLog.Warn(errorMessage);
+            PowerShellLog.Warn($"[Remoting] action=serviceDisabled service={serviceName} ip={ip}");
 
             return false;
         }
@@ -575,7 +575,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                         if (isValid)
                         {
-                            PowerShellLog.Info($"Remoting: token validated against API Key '{apiKey.Name}'.");
+                            PowerShellLog.Audit($"[Remoting] action=apiKeyValidated apiKey={apiKey.Name}");
                             return apiKey;
                         }
                     }
@@ -600,10 +600,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (isAuthenticated) return true;
 
             var ip = GetIp(context.Request);
-            var errorMessage =
-                $"[{serviceName}] The request could not be completed because the {serviceName} service requires authentication. IP: {ip}";
+            var errorMessage = $"The {serviceName} service requires authentication.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Warn(errorMessage);
+            PowerShellLog.Warn($"[Remoting] action=authRequired service={serviceName} ip={ip}");
 
             return false;
         }
@@ -611,14 +610,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static void RejectAuthenticationMethod(HttpContext context, string serviceName, string username = null, Exception ex = null)
         {
             var ip = GetIp(context.Request);
-            var errorMessage = $"[{serviceName}] Unauthorized request to the {serviceName} service from IP {ip}, user: {username ?? "unknown"}, invalid credentials provided.";
+            var errorMessage = $"Unauthorized request to the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Warn(errorMessage);
+            PowerShellLog.Audit($"[Remoting] action=authRejected service={serviceName} ip={ip} user={username ?? "unknown"}");
 
             if (ex != null)
             {
                 context.Response.StatusDescription += $" {ex.Message}";
-                PowerShellLog.Error(ex.Message);
+                PowerShellLog.Error($"[Remoting] action=authRejected error={ex.Message}");
             }
         }
 
@@ -628,9 +627,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (isAuthorized) return true;
 
             var ip = GetIp(context.Request);
-            var errorMessage = $"[{serviceName}] The specified user {authUserName} is not authorized for the {serviceName} service. IP: {ip}";
+            var errorMessage = $"The specified user is not authorized for the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Warn(errorMessage);
+            PowerShellLog.Audit($"[Remoting] action=userUnauthorized service={serviceName} ip={ip} user={authUserName}");
 
             return false;
         }
@@ -697,7 +696,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
             {
                 var ip = GetIp(context.Request);
-                PowerShellLog.Error($"[{serviceName}] Rejected file path with traversal attempt: '{pathParam}', IP: {ip}");
+                PowerShellLog.Audit($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip} path=\"{pathParam}\"");
+                PowerShellLog.Error($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip}");
                 SetErrorResponse(context, 403, "Path traversal is not allowed.");
                 return;
             }
@@ -737,16 +737,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 fileInfo.Refresh();
-                PowerShellLog.Info($"[{serviceName}] File uploaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
+                PowerShellLog.Audit($"[Remoting] action=fileUploaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\"");
             }
             catch (UnauthorizedAccessException ex)
             {
-                PowerShellLog.Error($"[{serviceName}] Write permission denied for path: {file}", ex);
+                PowerShellLog.Error($"[Remoting] action=writePermissionDenied service={serviceName} path=\"{file}\"", ex);
                 SetErrorResponse(context, 403, "Write access denied to the target path.");
             }
             catch (ArgumentException ex)
             {
-                PowerShellLog.Error($"[{serviceName}] Invalid file path: {file}", ex);
+                PowerShellLog.Error($"[Remoting] action=invalidFilePath service={serviceName} path=\"{file}\"", ex);
                 SetErrorResponse(context, 400, "The specified path contains invalid characters.");
             }
         }
@@ -769,7 +769,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 var fileInfo = new FileInfo(file);
                 AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
-                PowerShellLog.Info($"[{serviceName}] File downloaded: {fileInfo.Name}, size: {fileInfo.Length} bytes, path: {file}");
+                PowerShellLog.Audit($"[Remoting] action=fileDownloaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\"");
                 try
                 {
                     context.Response.TransmitFile(file);
@@ -789,7 +789,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
                 {
-                    PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
+                    PowerShellLog.Debug("[Remoting] action=mediaExtraction destination=MediaLibrary");
                     using (var packageReader = new ZipArchive(request.InputStream))
                     {
                         itemParam = Path.GetDirectoryName(itemParam.TrimEnd('\\', '/'));
@@ -864,7 +864,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (String.IsNullOrEmpty(fileName))
                 {
-                    PowerShellLog.Warn($"The filename cannot be determined for the entry {fileName}.");
+                    PowerShellLog.Warn($"[Remoting] action=undeterminedFilename entry={fileName}");
                     return;
                 }
 
@@ -881,7 +881,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     content.CopyTo(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     mc.CreateFromStream(ms, fileName, mco);
-                    PowerShellLog.Info($"[{serviceName}] Media uploaded: {fileName}, size: {ms.Length} bytes, destination: {mco.Destination}");
+                    PowerShellLog.Audit($"[Remoting] action=mediaUploaded service={serviceName} file={fileName} size={ms.Length} destination=\"{mco.Destination}\"");
                 }
             }
             else
@@ -903,7 +903,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             media.SetStream(mediaStream);
                         }
                     }
-                    PowerShellLog.Info($"[{serviceName}] Media updated: {mediaItem.Name}, size: {size} bytes, item: {mediaItem.ID}");
+                    PowerShellLog.Audit($"[Remoting] action=mediaUpdated service={serviceName} item=\"{mediaItem.Name} {mediaItem.ID}\" size={size}");
                 }
             }
         }
@@ -941,7 +941,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!str.StartsWith(".", StringComparison.InvariantCulture))
                 str = "." + str;
             AddContentHeaders(context, mediaItem.Name + str, mediaItem.Size);
-            PowerShellLog.Info($"[{serviceName}] Media downloaded: {mediaItem.Name}{str}, size: {mediaItem.Size} bytes, item: {mediaItem.ID}");
+            PowerShellLog.Audit($"[Remoting] action=mediaDownloaded service={serviceName} item=\"{mediaItem.Name}{str} {mediaItem.ID}\" size={mediaItem.Size}");
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
@@ -1023,7 +1023,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
             var clientSession = tokenResult?.ClientSessionId ?? "none";
 
-            PowerShellLog.Audit("Remoting: script starting, user={0}, ip={1}, session={2}, scriptHash={3}, clientSession={4}",
+            PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} clientSession={4}",
                 user, ip, session.ID, scriptHash, clientSession);
 
             // Determine language mode restriction for user scripts (applied just before execution, restored after)
@@ -1033,7 +1033,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var scope = tokenResult?.Scope;
             if (!ScriptValidator.ValidateScript(serviceName, script, scope, out var blockedCommand))
             {
-                PowerShellLog.Audit("Remoting: script rejected, user={0}, ip={1}, blockedCommand={2}, clientSession={3}",
+                PowerShellLog.Audit("[Remoting] action=scriptRejected user={0} ip={1} blockedCommand={2} clientSession={3}",
                     user, ip, blockedCommand, clientSession);
                 context.Response.Headers["X-SPE-Restriction"] = "command-blocked";
                 context.Response.Headers["X-SPE-BlockedCommand"] = blockedCommand;
@@ -1051,7 +1051,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (!ScriptValidator.ValidateScriptAgainstProfile(profile, script, user, serviceName, out var profileBlockedCommand))
                 {
-                    PowerShellLog.Audit("Remoting: script rejected by profile, user={0}, ip={1}, profile={2}, blockedCommand={3}, clientSession={4}",
+                    PowerShellLog.Audit("[Remoting] action=scriptRejectedByProfile user={0} ip={1} profile={2} blockedCommand={3} clientSession={4}",
                         user, ip, profile.Name, profileBlockedCommand, clientSession);
                     context.Response.Headers["X-SPE-Restriction"] = "profile-blocked";
                     context.Response.Headers["X-SPE-BlockedCommand"] = profileBlockedCommand;
@@ -1073,16 +1073,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     if (trustResult.EffectiveTrustLevel == ScriptTrustLevel.Trusted)
                     {
                         PowerShellLog.Audit(
-                            "SPE.Security [TRUST] Script '{0}' (ItemId={1}) trusted for profile '{2}', restoring FullLanguage mode. User={3}",
-                            trustResult.Entry?.Name ?? "unknown", scriptItemId, profile.Name, user);
+                            "[Trust] action=scriptTrusted script=\"{0} {1}\" profile={2}",
+                            trustResult.Entry?.Name ?? "unknown", scriptItemId, profile.Name);
                         languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
                     }
                 }
 
                 if (profile.AuditLevel >= AuditLevel.Standard)
                 {
-                    PowerShellLog.Audit("SPE.Security [EXECUTION] User={0} Service={1} Profile={2} ScriptHash={3} ClientSession={4}",
-                        user, serviceName, profile.Name, scriptHash, clientSession);
+                    PowerShellLog.Audit("[Remoting] action=profileAudit service={0} profile={1} scriptHash={2} clientSession={3}",
+                        serviceName, profile.Name, scriptHash, clientSession);
                 }
             }
 
@@ -1273,14 +1273,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     context.Response.StatusDescription = "Method Failure";
                 }
 
-                PowerShellLog.Audit("Remoting: script completed, user={0}, ip={1}, session={2}, scriptHash={3}, hasErrors={4}, clientSession={5}",
+                PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3} hasErrors={4} clientSession={5}",
                     user, ip, session.ID, scriptHash, session.Output.HasErrors, clientSession);
             }
             catch (Exception ex)
             {
-                PowerShellLog.Audit("Remoting: script failed, user={0}, ip={1}, session={2}, scriptHash={3}, error={4}, clientSession={5}",
+                PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} session={2} scriptHash={3} error={4} clientSession={5}",
                     user, ip, session.ID, scriptHash, ex.GetType().Name, clientSession);
-                PowerShellLog.Error("Error during script execution via RemoteScriptCall", ex);
+                PowerShellLog.Error("[Remoting] action=scriptFailed error=scriptExecution", ex);
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";
 
@@ -1423,7 +1423,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error("Error while querying for items", ex);
+                    PowerShellLog.Error("[Remoting] action=itemQueryFailed", ex);
                 }
             }
         }

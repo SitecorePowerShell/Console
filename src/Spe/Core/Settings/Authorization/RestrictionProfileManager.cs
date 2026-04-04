@@ -72,7 +72,7 @@ namespace Spe.Core.Settings.Authorization
                 }
 
                 PowerShellLog.Error(
-                    $"RestrictionProfileManager: API Key references unknown profile '{apiKeyProfile}'. Denying access.");
+                    $"[Profile] action=unknownProfile service=apiKey profile={apiKeyProfile}");
                 return RestrictionProfile.DenyAll;
             }
 
@@ -95,7 +95,7 @@ namespace Spe.Core.Settings.Authorization
                 {
                     return ProfileOverrideProvider.GetMergedProfile(profile);
                 }
-                PowerShellLog.Warn($"Service '{serviceName}' references unknown profile '{profileName}'. Falling back to unrestricted.");
+                PowerShellLog.Warn($"[Profile] action=unknownProfile service={serviceName} profile={profileName}");
             }
 
             return null;
@@ -130,11 +130,11 @@ namespace Spe.Core.Settings.Authorization
                 {
                     var profile = ParseProfile(element);
                     _profiles[name] = profile;
-                    PowerShellLog.Info($"Loaded restriction profile: {name} (LanguageMode={profile.LanguageMode}, CommandMode={profile.CommandMode}, Enforcement={profile.Enforcement})");
+                    PowerShellLog.Info($"[Profile] action=loaded name={name} languageMode={profile.LanguageMode} commandMode={profile.CommandMode} enforcement={profile.Enforcement}");
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Failed to load restriction profile '{name}'.", ex);
+                    PowerShellLog.Error($"[Profile] action=loadFailed name={name}", ex);
                 }
             }
         }

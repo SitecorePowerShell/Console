@@ -41,7 +41,7 @@ namespace Spe.Integrations.Tasks
                     if (string.IsNullOrWhiteSpace(currentItem[Templates.Script.Fields.ScriptBody])) continue;
                     if (!RulesUtils.EvaluateRules(currentItem[Templates.Script.Fields.EnableRule], currentItem)) continue;
 
-                    PowerShellLog.Info($"[Task] Executing script {currentItem.ID} for Context User {Context.User.Name}.");
+                    PowerShellLog.Audit($"[Task] action=executing user={Context.User.Name} script={currentItem.ID}");
                     session.SetItemLocationContext(currentItem);
                     session.ExecuteScriptPart(currentItem, true);
                 }

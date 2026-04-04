@@ -18,13 +18,13 @@ namespace Spe.Core.Utility
                 stopWatch.Stop();
                 if (log)
                 {
-                    PowerShellLog.Debug($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
+                    PowerShellLog.Debug($"[Timer] action=measure operation=\"{message}\" elapsed={stopWatch.ElapsedMilliseconds}ms");
                 }
                 return result;
             }
             catch (Exception)
             {
-                PowerShellLog.Error($"Error while performing timed '{message}' operation within {stopWatch.ElapsedMilliseconds} ms. Exception logged at operation origin point.");
+                PowerShellLog.Error($"[Timer] action=measure status=failed operation=\"{message}\" elapsed={stopWatch.ElapsedMilliseconds}ms");
                 throw;
             }
         }
