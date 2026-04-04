@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sitecore;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Events;
 using Sitecore.Rules;
+using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Modules;
@@ -75,7 +79,19 @@ namespace Spe.Integrations.Tasks
                     
                     foreach (var scriptItem in applicableScriptItems)
                     {
-                        session.ExecuteScriptPart(scriptItem, true);
+                        if (DelegatedAccessManager.IsElevated(Context.User, scriptItem))
+                        {
+                            var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
+                            PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=EventHandler");
+                            using (new UserSwitcher(jobUser))
+                            {
+                                session.ExecuteScriptPart(scriptItem, true);
+                            }
+                        }
+                        else
+                        {
+                            session.ExecuteScriptPart(scriptItem, true);
+                        }
                     }
                 }
             }

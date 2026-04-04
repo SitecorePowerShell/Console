@@ -1,8 +1,10 @@
-﻿using Sitecore.Data.Events;
+﻿using Sitecore;
+using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Security.Accounts;
+using Spe.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Web.Security;
@@ -26,6 +28,12 @@ namespace Spe.Core.Settings.Authorization
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
+                if (item.TemplateID == Templates.DelegatedAccess.Id)
+                {
+                    var enabled = MainUtil.GetBool(item.Fields[Templates.DelegatedAccess.Fields.Enabled].Value, false);
+                    PowerShellLog.Audit($"DelegatedAccess: config changed, item={item.Name} {item.ID}, enabled={enabled}, user={Context.User?.Name}");
+                }
+
                 DelegatedAccessManager.Invalidate();
             }
         }
@@ -38,6 +46,11 @@ namespace Spe.Core.Settings.Authorization
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
+                if (item.TemplateID == Templates.DelegatedAccess.Id)
+                {
+                    PowerShellLog.Audit($"DelegatedAccess: config deleted, item={item.Name} {item.ID}, user={Context.User?.Name}");
+                }
+
                 DelegatedAccessManager.Invalidate();
             }
         }

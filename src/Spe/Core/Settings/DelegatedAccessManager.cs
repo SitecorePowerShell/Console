@@ -1,4 +1,4 @@
-﻿using Sitecore;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -17,48 +17,57 @@ namespace Spe.Core.Settings
         private static readonly ConcurrentDictionary<string, DelegatedAccessEntry> _accessEntries =
             new ConcurrentDictionary<string, DelegatedAccessEntry>();
 
-        private static readonly List<Item> _delegatedItems = new List<Item>();
+        private static readonly object _initLock = new object();
+        private static List<DelegatedAccessConfig> _delegatedConfigs;
 
         public const string DelegatedItemPath = "/sitecore/system/Modules/PowerShell/Delegated Access";
 
-        private static bool _isInitialized = false;
-
         public static void Invalidate()
         {
-            PowerShellLog.Audit($"Clearing {nameof(DelegatedAccessEntry)} entries.");
+            PowerShellLog.Debug($"DelegatedAccess: cache invalidated.");
             _accessEntries.Clear();
-            _delegatedItems.Clear();
-            _isInitialized = false;
+            lock (_initLock)
+            {
+                _delegatedConfigs = null;
+            }
         }
 
-        private static IEnumerable<Item> GetDelegatedItems()
+        private static IEnumerable<DelegatedAccessConfig> GetDelegatedConfigs()
         {
-            if (_isInitialized)
+            var configs = _delegatedConfigs;
+            if (configs != null)
             {
-                return _delegatedItems;
+                return configs;
             }
 
-            using (new SecurityDisabler())
+            lock (_initLock)
             {
-                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-                var delegatedItems = db.GetItem(DelegatedItemPath)
-                    .Axes.GetDescendants()
-                    .Where(d => d.TemplateID == Templates.DelegatedAccess.Id);
+                if (_delegatedConfigs != null)
+                {
+                    return _delegatedConfigs;
+                }
 
-                _delegatedItems.AddRange(delegatedItems);
+                using (new SecurityDisabler())
+                {
+                    var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                    var parent = db.GetItem(DelegatedItemPath);
+                    _delegatedConfigs = parent?.Axes.GetDescendants()
+                        .Where(d => d.TemplateID == Templates.DelegatedAccess.Id)
+                        .Select(DelegatedAccessConfig.FromItem)
+                        .ToList() ?? new List<DelegatedAccessConfig>();
+                }
+
+                return _delegatedConfigs;
             }
-
-            _isInitialized = true;
-            return _delegatedItems;
         }
 
         private static DelegatedAccessEntry GetDelegatedAccessEntry(User currentUser, Item scriptItem)
         {
-            var delegatedItems = GetDelegatedItems();
+            var configs = GetDelegatedConfigs();
 
-            foreach (var delegatedItem in delegatedItems)
+            foreach (var config in configs)
             {
-                var entry = GetDelegatedCachedEntry(scriptItem, delegatedItem, currentUser);
+                var entry = GetDelegatedCachedEntry(scriptItem, config, currentUser);
                 if (entry != null && entry.IsElevated)
                 {
                     return entry;
@@ -96,49 +105,33 @@ namespace Spe.Core.Settings
             return entry;
         }
 
-        private static DelegatedAccessEntry GetDelegatedCachedEntry(Item scriptItem, Item delegatedItem, User currentUser)
+        private static DelegatedAccessEntry GetDelegatedCachedEntry(Item scriptItem, DelegatedAccessConfig config, User currentUser)
         {
-            var cacheKey = $"{currentUser.Name}-{scriptItem.ID}-{delegatedItem.ID}";
+            var cacheKey = $"{currentUser.Name}-{scriptItem.ID}-{config.Id}";
             if(_accessEntries.TryGetValue(cacheKey, out var entry))
             {
                 return entry;
             }
 
-            var isEnabled = MainUtil.GetBool(delegatedItem.Fields[Templates.DelegatedAccess.Fields.Enabled].Value, false);
-            if (!isEnabled) return GetDeniedElevation(cacheKey, currentUser);
+            if (!config.Enabled) return GetDeniedElevation(cacheKey, currentUser);
 
-            var impersonatedUserName = delegatedItem.Fields[Templates.DelegatedAccess.Fields.ImpersonatedUser].Value;
-            if (string.IsNullOrEmpty(impersonatedUserName)) return GetDeniedElevation(cacheKey, currentUser);
+            if (string.IsNullOrEmpty(config.ImpersonatedUserName)) return GetDeniedElevation(cacheKey, currentUser);
 
-            var impersonatedUser = User.FromName(impersonatedUserName, true);
+            var impersonatedUser = User.FromName(config.ImpersonatedUserName, true);
             if (impersonatedUser == null) return GetDeniedElevation(cacheKey, currentUser);
 
-            var elevatedRoleName = delegatedItem.Fields[Templates.DelegatedAccess.Fields.ElevatedRole].Value;
-            if (string.IsNullOrEmpty(elevatedRoleName)) return GetDeniedElevation(cacheKey, currentUser);
+            if (string.IsNullOrEmpty(config.ElevatedRoleName)) return GetDeniedElevation(cacheKey, currentUser);
 
-            var elevatedRole = Role.FromName(elevatedRoleName);
+            var elevatedRole = Role.FromName(config.ElevatedRoleName);
             if (elevatedRole == null) return GetDeniedElevation(cacheKey, currentUser);
 
-            var selectedItemIds = delegatedItem.Fields[Templates.DelegatedAccess.Fields.ScriptItemId].Value?
-                .Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-
-            var itemInList = false;
-            foreach (var selectedItemId in selectedItemIds)
-            {
-                if (ID.Parse(selectedItemId) == scriptItem.ID)
-                {
-                    itemInList = true;
-                    break;
-                }
-            }
-
-            if (!itemInList) { return GetDeniedElevation(cacheKey, currentUser); }
+            if (!config.ScriptItemIds.Contains(scriptItem.ID)) return GetDeniedElevation(cacheKey, currentUser);
 
             if (RolesInRolesManager.IsUserInRole(currentUser, elevatedRole, true))
             {
                 entry = new DelegatedAccessEntry
                 {
-                    DelegatedAccessItemId = delegatedItem.ID,
+                    DelegatedAccessItemId = config.Id,
                     CurrentUser = currentUser,
                     ElevatedRole = elevatedRole,
                     ImpersonatedUser = impersonatedUser,
@@ -151,6 +144,40 @@ namespace Spe.Core.Settings
             }
 
             return GetDeniedElevation(cacheKey, currentUser);
+        }
+    }
+
+    internal class DelegatedAccessConfig
+    {
+        public ID Id { get; set; }
+        public bool Enabled { get; set; }
+        public string ElevatedRoleName { get; set; }
+        public string ImpersonatedUserName { get; set; }
+        public HashSet<ID> ScriptItemIds { get; set; }
+
+        public static DelegatedAccessConfig FromItem(Item item)
+        {
+            var scriptItemIdValue = item.Fields[Templates.DelegatedAccess.Fields.ScriptItemId].Value;
+            var scriptItemIds = new HashSet<ID>();
+            if (!string.IsNullOrEmpty(scriptItemIdValue))
+            {
+                foreach (var id in scriptItemIdValue.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (ID.TryParse(id, out var parsed))
+                    {
+                        scriptItemIds.Add(parsed);
+                    }
+                }
+            }
+
+            return new DelegatedAccessConfig
+            {
+                Id = item.ID,
+                Enabled = MainUtil.GetBool(item.Fields[Templates.DelegatedAccess.Fields.Enabled].Value, false),
+                ElevatedRoleName = item.Fields[Templates.DelegatedAccess.Fields.ElevatedRole].Value,
+                ImpersonatedUserName = item.Fields[Templates.DelegatedAccess.Fields.ImpersonatedUser].Value,
+                ScriptItemIds = scriptItemIds
+            };
         }
     }
 
