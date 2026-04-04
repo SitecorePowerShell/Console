@@ -167,9 +167,15 @@ if ($global:isConstrainedLanguage) {
     Write-Host "`n  Server is in ConstrainedLanguage mode -- tests requiring FullLanguage will be skipped" -ForegroundColor Yellow
 }
 
-# Run all test files EXCEPT enforced/profiles (those need security config) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1","Remoting.ItemPathRestrictions.Tests.ps1","Remoting.SoapProfiles.Tests.ps1" |
+# Run all test files EXCEPT enforced/profiles/DA (those need setup/teardown) and maintenance
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1","Remoting.ItemPathRestrictions.Tests.ps1","Remoting.SoapProfiles.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
+
+# Phase 1b: Delegated access tests (setup -> test -> teardown, no config deploy needed)
+Write-Host "`n=== Phase 1b: Delegated Access Tests ===" -ForegroundColor Magenta
+. "$PSScriptRoot\Remoting.DelegatedAccess.Setup.ps1"
+Invoke-TestFile "$PSScriptRoot\Remoting.DelegatedAccess.Tests.ps1"
+. "$PSScriptRoot\Remoting.DelegatedAccess.Teardown.ps1"
 
 # Phase 2: Security enforcement tests (requires security config)
 Write-Host "`n=== Phase 2: Security Enforcement Tests (deploying security config) ===" -ForegroundColor Magenta

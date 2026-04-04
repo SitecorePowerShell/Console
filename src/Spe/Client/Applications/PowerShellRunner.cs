@@ -279,11 +279,11 @@ namespace Spe.Client.Applications
                 scriptSession.SetExecutedScript(scriptItem);
 
                 jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
-                PowerShellLog.Info($"[Runner] Executing script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
+                PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=Runner");
             }
             else
             {
-                PowerShellLog.Info($"[Runner] Executing arbitrary script for Context User {Context.User.Name}.");
+                PowerShellLog.Info($"Runner: executing, user={Context.User.Name}, script=arbitrary");
             }
             if (scriptSession.JobOptions != null)
             {

@@ -60,14 +60,14 @@ namespace Spe.Integrations.Gutters
                 if(DelegatedAccessManager.IsElevated(Context.User, scriptItem))
                 {
                     var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-                    PowerShellLog.Info($"[Gutter] Executing script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
+                    PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=Gutter");
                     using (new UserSwitcher(jobUser))
                     {
                         return RunGutterScript(item, scriptItem);
                     }
                 }
 
-                PowerShellLog.Info($"[Gutter] Executing script {scriptItem.ID} for Context User {Context.User.Name}.");
+                PowerShellLog.Info($"Gutter: executing, user={Context.User.Name}, script={scriptItem.ID}");
                 return RunGutterScript(item, scriptItem);
             });
         }
