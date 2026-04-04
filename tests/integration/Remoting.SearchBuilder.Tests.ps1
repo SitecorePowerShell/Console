@@ -189,8 +189,8 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     @{
         Count     = $fields.Count
         HasFields = $fields.Count -gt 0
-        HasTemplateName = ($fields | Where-Object { $_.FieldName -eq "_templatename" }).Count -gt 0
-        HasPath   = ($fields | Where-Object { $_.FieldName -eq "_path" }).Count -gt 0
+        HasTemplateName = @($fields | Where-Object { $_.FieldName -eq "_templatename" }).Count -gt 0
+        HasPath   = @($fields | Where-Object { $_.FieldName -eq "_path" }).Count -gt 0
         IndexName = if ($fields.Count -gt 0) { $fields[0].IndexName } else { "" }
     }
 }

@@ -1,4 +1,4 @@
----
+﻿---
 ID: "8b795224-e096-46b1-9ab4-3c27f1775187"
 Parent: "26bb9a94-7cec-4ad5-924e-aaaf1499c306"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -560,15 +560,23 @@ SharedFields:
         if ($SearchBuilder._Strict) {
             $searchIndex = [Sitecore.ContentSearch.ContentSearchManager]::GetIndex($SearchBuilder._Index)
             $fnt = $searchIndex.FieldNameTranslator
-            $schemaFields = $searchIndex.Schema.AllFieldNames
+            $schemaFields = [System.Collections.Generic.HashSet[string]]::new(
+                [System.StringComparer]::OrdinalIgnoreCase)
+            if ($null -ne $searchIndex.Schema -and $null -ne $searchIndex.Schema.AllFieldNames) {
+                foreach ($sf in $searchIndex.Schema.AllFieldNames) { $schemaFields.Add($sf) > $null }
+            }
+            $docOptions = $searchIndex.Configuration.DocumentOptions
+            if ($null -ne $docOptions -and $null -ne $docOptions.ComputedIndexFields) {
+                foreach ($cf in $docOptions.ComputedIndexFields) { $schemaFields.Add($cf.FieldName) > $null }
+            }
             $invalidFields = [System.Collections.ArrayList]@()
     
             foreach ($criterion in $SearchBuilder._Criteria) {
-                if ($criterion.ContainsKey('Field') -and $criterion.Field -ne "_path") {
+                if ($criterion.ContainsKey('Field')) {
                     $fieldName = $criterion.Field
                     $resolved = $fnt.GetIndexFieldName($fieldName)
                     $wasTranslated = $resolved -ne $fieldName
-                    $inSchema = $schemaFields -contains $fieldName -or $schemaFields -contains $resolved
+                    $inSchema = $schemaFields.Contains($fieldName) -or $schemaFields.Contains($resolved)
                     if (-not $wasTranslated -and -not $inSchema) {
                         $invalidFields.Add($fieldName) > $null
                     }
@@ -892,12 +900,27 @@ SharedFields:
         }
     
         $schema = $searchIndex.Schema
-        if ($null -eq $schema -or $null -eq $schema.AllFieldNames) {
-            Write-Warning "No schema available for index '$Index'."
+        $allNames = [System.Collections.Generic.HashSet[string]]::new(
+            [System.StringComparer]::OrdinalIgnoreCase)
+    
+        if ($null -ne $schema -and $null -ne $schema.AllFieldNames) {
+            foreach ($f in $schema.AllFieldNames) { $allNames.Add($f) > $null }
+        }
+    
+        # Include computed index fields (e.g. _templatename, _path)
+        $docOptions = $searchIndex.Configuration.DocumentOptions
+        if ($null -ne $docOptions -and $null -ne $docOptions.ComputedIndexFields) {
+            foreach ($cf in $docOptions.ComputedIndexFields) {
+                $allNames.Add($cf.FieldName) > $null
+            }
+        }
+    
+        if ($allNames.Count -eq 0) {
+            Write-Warning "No fields available for index '$Index'."
             return
         }
     
-        $schema.AllFieldNames | Sort-Object | ForEach-Object {
+        $allNames | Sort-Object | ForEach-Object {
             New-PSObject @{
                 FieldName = $_
                 IndexName = $Index
