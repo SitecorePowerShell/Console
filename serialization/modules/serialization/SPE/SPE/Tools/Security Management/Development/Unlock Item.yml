@@ -8,6 +8,11 @@ SharedFields:
   Hint: Script
   Value: |
     $SitecoreContextItem | Unlock-Item
+    Send-SheerMessage -OnScriptEnd -Name "item:refresh" -Parameters @{
+        id=$SitecoreContextItem.ID;
+        language=$SitecoreContextItem.Language;
+        version=$SitecoreContextItem.Version
+    }
     Close-Window
 Languages:
 - Language: en
@@ -19,11 +24,11 @@ Languages:
       Value: 20180914T182531Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "39c091d9-c521-48e0-b813-959d6788e85a"
+      Value: "56329fea-40f8-4868-8196-4628da8ba43f"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230731T132020Z
+      Value: 20260404T163613Z
