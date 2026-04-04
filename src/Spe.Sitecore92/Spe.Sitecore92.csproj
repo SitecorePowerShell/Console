@@ -52,6 +52,10 @@
       <HintPath>..\..\packages\Sitecore.Owin.Authentication.9.2.0\lib\net471\Sitecore.Owin.Authentication.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sitecore.Update, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sitecore.Update.9.2.0\lib\net471\Sitecore.Update.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="sysglobl" />
     <Reference Include="System" />
     <Reference Include="System.Data.Linq" />
@@ -83,6 +87,9 @@
     <Compile Include="Services\SpeJobMessageManager.cs" />
     <Compile Include="Services\SpeObsoletor.cs" />
     <Compile Include="Services\SpePublishManager.cs" />
+    <Compile Include="Services\SpeSerializationManager.cs" />
+    <Compile Include="Services\SpeSerializationPathResolver.cs" />
+    <Compile Include="Services\SpeUpdatePackageGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

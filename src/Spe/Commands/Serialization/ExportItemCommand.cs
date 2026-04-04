@@ -2,10 +2,11 @@
 using System.Management.Automation;
 using Sitecore.Collections;
 using Sitecore.Data.Items;
-using Sitecore.Data.Serialization;
 using Sitecore.Data.Serialization.Presets;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Serialization;
 using Spe.Core.Utility;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -66,11 +67,14 @@ namespace Spe.Commands.Serialization
             WriteVerbose(message);
             WriteDebug(message);
 
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+
             var fileName = target;
             if (string.IsNullOrEmpty(fileName))
             {
                 var itemReference = item.Database.Name + item.Paths.Path;
-                fileName = PathUtils.GetFilePath(itemReference);
+                fileName = pathResolver.GetFilePath(itemReference);
             }
             if (!ShouldProcess(item.GetProviderPath(), $"Serializing item to '{fileName}'"))
             {
@@ -79,12 +83,12 @@ namespace Spe.Commands.Serialization
 
             if (string.IsNullOrEmpty(target))
             {
-                Manager.DumpItem(item);
+                serializationManager.DumpItem(item);
             }
             else
             {
                 target = target.EndsWith("\\") ? target + item.Name : target + "\\" + item.Name;
-                Manager.DumpItem(target + ".item", item);
+                serializationManager.DumpItem(target + ".item", item);
             }
             if (recursive)
             {

@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
-using Sitecore.Security.Serialization;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -76,6 +76,9 @@ namespace Spe.Commands.Serialization
 
         private void SerializeUser(User user)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
                 if (ShouldProcess(user.Name, "Serializing user"))
@@ -83,28 +86,26 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing user '{0}'", user.Name);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpUser(user.Name);
-                    var userReference = new UserReference(user.Name);
-                    WriteObject(PathUtils.GetDirectoryPath(userReference.ToString()) + PathUtils.UserExtension);
+                    serializationManager.DumpUser(user.Name);
+                    WriteObject(pathResolver.GetDirectoryPath(user.Name) + pathResolver.UserExtension);
                 }
             }
             else
             {
-                var userReference = new UserReference(user.Name);
                 if (string.IsNullOrEmpty(Path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        Path = PathUtils.GetFilePath(userReference);
+                        Path = pathResolver.GetFilePath(user.Name);
                     }
                     else
                     {
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        Path = (target + user.Name).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }
                     if (!System.IO.Path.HasExtension(Path))
                     {
-                        Path += PathUtils.UserExtension;
+                        Path += pathResolver.UserExtension;
                     }
                 }
 
@@ -113,7 +114,7 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpUser(Path, userReference.User);
+                    serializationManager.DumpUser(Path, user);
                     WriteObject(Path);
                 }
             }
