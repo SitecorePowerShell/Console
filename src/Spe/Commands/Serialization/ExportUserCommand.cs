@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using Sitecore;
 using Sitecore.Security.Accounts;
+using Sitecore.Security.Serialization;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
 using Spe.Core.Extensions;
@@ -87,21 +88,23 @@ namespace Spe.Commands.Serialization
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
                     serializationManager.DumpUser(user.Name);
-                    WriteObject(pathResolver.GetDirectoryPath(user.Name) + pathResolver.UserExtension);
+                    var userReference = new UserReference(user.Name);
+                    WriteObject(pathResolver.GetDirectoryPath(userReference.ToString()) + pathResolver.UserExtension);
                 }
             }
             else
             {
+                var userReference = new UserReference(user.Name);
                 if (string.IsNullOrEmpty(Path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        Path = pathResolver.GetFilePath(user.Name);
+                        Path = pathResolver.GetFilePath(userReference.ToString());
                     }
                     else
                     {
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + user.Name).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }
                     if (!System.IO.Path.HasExtension(Path))
                     {
