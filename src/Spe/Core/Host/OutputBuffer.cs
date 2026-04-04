@@ -110,7 +110,7 @@ namespace Spe.Core.Host
             return output.ToString();
         }
 
-        public new void AddRange(IEnumerable<OutputLine> collection, int maxHeight = Int32.MaxValue)
+        public void AddRange(IEnumerable<OutputLine> collection, int maxHeight = int.MaxValue)
         {
             if (SilenceOutput)
             {
