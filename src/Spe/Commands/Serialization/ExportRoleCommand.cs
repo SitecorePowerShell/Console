@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
 using Sitecore.Security.Serialization;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -64,6 +65,9 @@ namespace Spe.Commands.Serialization
 
         private void SerializeRole(Role role)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
                 if (ShouldProcess(role.Name, "Serializing role"))
@@ -71,29 +75,28 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing role '{0}'", role.Name);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpRole(role.Name);
+                    serializationManager.DumpRole(role.Name);
                     var roleReference = new RoleReference(role.Name);
-                    WriteObject(PathUtils.GetDirectoryPath(roleReference.ToString()) + PathUtils.RoleExtension);
+                    WriteObject(pathResolver.GetDirectoryPath(roleReference.ToString()) + pathResolver.RoleExtension);
                 }
             }
             else
             {
+                var roleReference = new RoleReference(role.Name);
                 if (string.IsNullOrEmpty(Path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        var roleReference = new RoleReference(role.Name);
-                        Path = PathUtils.GetFilePath(roleReference);
+                        Path = pathResolver.GetFilePath(roleReference.ToString());
                     }
                     else
                     {
-                        var roleReference = new RoleReference(role.Name);
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
                         Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }
                     if (!System.IO.Path.HasExtension(Path))
                     {
-                        Path += PathUtils.RoleExtension;
+                        Path += pathResolver.RoleExtension;
                     }
                 }
                 if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", Path)))
@@ -101,7 +104,7 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpRole(Path, role);
+                    serializationManager.DumpRole(Path, role);
                     WriteObject(Path);
                 }
             }

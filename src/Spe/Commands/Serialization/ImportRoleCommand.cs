@@ -2,9 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -37,7 +38,7 @@ namespace Spe.Commands.Serialization
         {
             if (string.IsNullOrEmpty(Root))
             {
-                Root = PathUtils.Root + "security\\";
+                Root = TypeResolver.ResolveFromCache<ISerializationPathResolver>().Root + "security\\";
             }
             switch (ParameterSetName)
             {
@@ -90,13 +91,14 @@ namespace Spe.Commands.Serialization
                 {
                     var identity = new AccountIdentity(roleName);
                     var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-                    fileName = target + identity.Domain + @"\Roles\" + identity.Account + PathUtils.RoleExtension;
+                    fileName = target + identity.Domain + @"\Roles\" + identity.Account + TypeResolver.ResolveFromCache<ISerializationPathResolver>().RoleExtension;
                 }
 
                 // make sure the path has the proper extension
-                if (!fileName.EndsWith(PathUtils.RoleExtension, StringComparison.OrdinalIgnoreCase))
+                var roleExtension = TypeResolver.ResolveFromCache<ISerializationPathResolver>().RoleExtension;
+                if (!fileName.EndsWith(roleExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    fileName += PathUtils.RoleExtension;
+                    fileName += roleExtension;
                 }
 
                 DeserializeRoleFile(roleName, fileName);
@@ -110,7 +112,7 @@ namespace Spe.Commands.Serialization
                 var logMessage = string.Format("Deserializing role '{0}' from '{1}'", userName, file);
                 WriteVerbose(logMessage);
                 WriteDebug(logMessage);
-                Manager.LoadRole(file);
+                TypeResolver.ResolveFromCache<ISerializationManager>().LoadRole(file);
             }
         }
     }
