@@ -35,7 +35,7 @@ _Deploy
 # User files
 deploy.user.json
 !deploy.user.json.sample
-UserConfiguration/**/*.config
+*.User.config
 
 node_modules/
 
