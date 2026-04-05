@@ -31,7 +31,7 @@ namespace Spe.Core.Settings.Authorization
                 if (item.TemplateID == Templates.DelegatedAccess.Id)
                 {
                     var enabled = MainUtil.GetBool(item.Fields[Templates.DelegatedAccess.Fields.Enabled].Value, false);
-                    PowerShellLog.Audit($"DelegatedAccess: config changed, item={item.Name} {item.ID}, enabled={enabled}, user={Context.User?.Name}");
+                    PowerShellLog.Audit($"[DelegatedAccess] action=configChanged item=\"{item.Name} {item.ID}\" enabled={enabled}");
                 }
 
                 DelegatedAccessManager.Invalidate();
@@ -48,7 +48,7 @@ namespace Spe.Core.Settings.Authorization
             {
                 if (item.TemplateID == Templates.DelegatedAccess.Id)
                 {
-                    PowerShellLog.Audit($"DelegatedAccess: config deleted, item={item.Name} {item.ID}, user={Context.User?.Name}");
+                    PowerShellLog.Audit($"[DelegatedAccess] action=configDeleted item=\"{item.Name} {item.ID}\"");
                 }
 
                 DelegatedAccessManager.Invalidate();

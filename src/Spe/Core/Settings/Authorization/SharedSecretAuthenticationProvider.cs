@@ -73,7 +73,7 @@ namespace Spe.Core.Settings.Authorization
             if (error != null)
             {
                 isValid = false;
-                if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: {error.Message}");
+                if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason={error.Message}");
             }
 
             if (DetailedAuthenticationErrors && error != null)
@@ -91,7 +91,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = !string.IsNullOrEmpty(type) && type.Is("JWT");
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: token type '{type}' is not JWT.");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=invalidTokenType type={type}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Type is incorrect.");
 
@@ -100,14 +100,14 @@ namespace Spe.Core.Settings.Authorization
 
         private bool IsValidAudience(string audience, string authority)
         {
-            PowerShellLog.Debug($"The current audience is {audience} and the current authority is {authority}.");
+            PowerShellLog.Debug($"[JWT] action=audienceCheck audience={audience} authority={authority}");
             var isValid = !string.IsNullOrEmpty(audience) &&
                           (audience.Is(authority) ||
                            AllowedAudiences.Any() &&
                            AllowedAudiences.Contains(audience));
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: audience '{audience}' is not allowed (authority: '{authority}').");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=audienceNotAllowed audience={audience} authority={authority}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Audience is not allowed.");
 
@@ -121,7 +121,7 @@ namespace Spe.Core.Settings.Authorization
                           AllowedIssuers.Contains(issuer);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: issuer '{issuer}' is not allowed.");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuerNotAllowed issuer={issuer}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Issuer is not allowed.");
 
@@ -135,7 +135,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = nowUtc < expireUtc;
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: token expired at {expireUtc:O}.");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=tokenExpired expiry={expireUtc:O}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Expiration has passed.");
 
@@ -147,7 +147,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = SecureCompare.FixedTimeEquals(providedSignature, testSignature);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn("JWT validation failed: token signature does not match.");
+            if (!SuppressWarnings) PowerShellLog.Warn("[JWT] action=validationFailed reason=signatureMismatch");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token signatures do not match.");
 
@@ -159,7 +159,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = !string.IsNullOrEmpty(name);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn("JWT validation failed: token does not contain a valid username.");
+            if (!SuppressWarnings) PowerShellLog.Warn("[JWT] action=validationFailed reason=invalidUsername");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The name provided must be a valid username.");
 
@@ -173,7 +173,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = DateTime.UtcNow >= nbfUtc.AddSeconds(-ClockSkewSeconds);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: token is not yet valid (nbf: {nbfUtc:O}).");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=notYetValid nbf={nbfUtc:O}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token is not yet valid (nbf claim).");
 
@@ -187,7 +187,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = DateTime.UtcNow >= iatUtc.AddSeconds(-ClockSkewSeconds);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: token issued-at is in the future (iat: {iatUtc:O}).");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuedInFuture iat={iatUtc:O}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token issued-at time is in the future (iat claim).");
 
@@ -200,7 +200,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = lifetime <= MaxTokenLifetimeSeconds;
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"JWT validation failed: token lifetime {lifetime}s exceeds maximum {MaxTokenLifetimeSeconds}s.");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=lifetimeExceeded lifetime={lifetime}s maximum={MaxTokenLifetimeSeconds}s");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException($"The Token lifetime ({lifetime}s) exceeds the maximum allowed ({MaxTokenLifetimeSeconds}s).");
 
@@ -276,7 +276,7 @@ namespace Spe.Core.Settings.Authorization
                 var payload = Encoding.UTF8.GetString(decodedPayload);
                 var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
 
-                PowerShellLog.Debug($"JWT validation: issuer='{tokenPayload.Iss}', audience='{tokenPayload.Aud}', algorithm='{tokenHeader.Alg}'.");
+                PowerShellLog.Debug($"[JWT] action=tokenParsed issuer={tokenPayload.Iss} audience={tokenPayload.Aud} algorithm={tokenHeader.Alg}");
 
                 if (!IsValidExpiration(tokenPayload.Exp)) return false;
                 if (tokenPayload.Nbf > 0 && !IsValidNotBefore(tokenPayload.Nbf)) return false;

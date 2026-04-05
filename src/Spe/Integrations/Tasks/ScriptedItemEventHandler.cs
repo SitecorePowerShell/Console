@@ -82,7 +82,7 @@ namespace Spe.Integrations.Tasks
                         if (DelegatedAccessManager.IsElevated(Context.User, scriptItem))
                         {
                             var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-                            PowerShellLog.Audit($"DelegatedAccess: executing, user={Context.User.Name}, impersonatedUser={jobUser.Name}, script={scriptItem.Name} {scriptItem.ID}, source=EventHandler");
+                            PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=EventHandler");
                             using (new UserSwitcher(jobUser))
                             {
                                 session.ExecuteScriptPart(scriptItem, true);

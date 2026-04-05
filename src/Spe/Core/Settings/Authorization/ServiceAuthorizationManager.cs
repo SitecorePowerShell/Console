@@ -164,7 +164,7 @@ namespace Spe.Core.Settings.Authorization
                 }
                 else
                 {
-                    PowerShellLog.Error($"Invalid permission entry for service '{serviceName}'");
+                    PowerShellLog.Error($"[Security] action=invalidPermissionEntry service={serviceName}");
                 }
             }
 

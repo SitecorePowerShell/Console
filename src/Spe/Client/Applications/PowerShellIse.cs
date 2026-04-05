@@ -221,7 +221,7 @@ namespace Spe.Client.Applications
                 ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceClient,
                     Context.User.Name))
             {
-                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell ISE - denied.");
+                PowerShellLog.Audit($"[ISE] action=accessDenied target=ISE");
                 return;
             }
 
@@ -708,7 +708,7 @@ namespace Spe.Client.Applications
                 return;
             }
 
-            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
+            PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true))
             {
@@ -826,7 +826,7 @@ namespace Spe.Client.Applications
             ScriptRunning = true;
             UpdateRibbon();
 
-            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
+            PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
             scriptSession.SetExecutedScript(ScriptItem);
 

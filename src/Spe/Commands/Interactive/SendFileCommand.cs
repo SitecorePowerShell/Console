@@ -84,7 +84,7 @@ namespace Spe.Commands.Interactive
                         var name = System.IO.Path.GetFileName(Path);
 
                         PutMessage(new AlertMessage($"The file could not be found:\n{name}"));
-                        PowerShellLog.Warn($"Attempted to download the file {Path} but it does not exist.");
+                        PowerShellLog.Warn($"[Upload] action=downloadFile status=notFound path=\"{Path}\"");
                         return;
                     }
 

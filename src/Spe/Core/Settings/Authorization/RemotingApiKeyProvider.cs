@@ -103,8 +103,7 @@ namespace Spe.Core.Settings.Authorization
                 }
 
                 PowerShellLog.Warn(
-                    $"RemotingApiKeyProvider: throttle limit exceeded for API Key '{apiKey.Name}' " +
-                    $"({state.RequestCount}/{apiKey.RequestLimit} in {apiKey.ThrottleWindowSeconds}s window).");
+                    $"[ApiKey] action=throttleExceeded key={apiKey.Name} count={state.RequestCount} limit={apiKey.RequestLimit} window={apiKey.ThrottleWindowSeconds}");
 
                 return new ThrottleResult(false, apiKey.RequestLimit, 0, windowEnd);
             }
@@ -179,7 +178,7 @@ namespace Spe.Core.Settings.Authorization
 
                 if (settingsFolder == null)
                 {
-                    PowerShellLog.Debug("RemotingApiKeyProvider: API Keys folder not found.");
+                    PowerShellLog.Debug("[ApiKey] action=folderNotFound");
                     return null;
                 }
 
@@ -198,8 +197,7 @@ namespace Spe.Core.Settings.Authorization
                     if (secretOwners.TryGetValue(key.SharedSecret, out var existingName))
                     {
                         PowerShellLog.Warn(
-                            $"RemotingApiKeyProvider: API Key '{key.Name}' uses the same shared secret as '{existingName}'. " +
-                            $"Only the first match ('{existingName}') will be used for authentication.");
+                            $"[ApiKey] action=duplicateSecret key={key.Name} duplicateOf={existingName}");
                     }
                     else
                     {
@@ -207,12 +205,12 @@ namespace Spe.Core.Settings.Authorization
                     }
                 }
 
-                PowerShellLog.Info($"RemotingApiKeyProvider: loaded {keys.Count} API Key(s).");
+                PowerShellLog.Info($"[ApiKey] action=registryLoaded count={keys.Count}");
                 return keys;
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("RemotingApiKeyProvider: failed to load API Keys.", ex);
+                PowerShellLog.Error("[ApiKey] action=loadFailed", ex);
                 return null;
             }
         }
@@ -230,13 +228,12 @@ namespace Spe.Core.Settings.Authorization
                         {
                             keys.Add(key);
                             PowerShellLog.Debug(
-                                $"RemotingApiKeyProvider: loaded API Key '{key.Name}' " +
-                                $"(Enabled={key.Enabled}, Profile={key.Profile ?? "none"}).");
+                                $"[ApiKey] action=entryLoaded key={key.Name} enabled={key.Enabled} profile={key.Profile ?? "none"}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Error($"RemotingApiKeyProvider: failed to parse API Key '{child.Name}'.", ex);
+                        PowerShellLog.Error($"[ApiKey] action=entryLoadFailed key={child.Name}", ex);
                     }
                 }
                 else if (child.HasChildren)
@@ -251,7 +248,7 @@ namespace Spe.Core.Settings.Authorization
             var sharedSecret = item.Fields[Templates.RemotingApiKey.Fields.SharedSecret]?.Value?.Trim();
             if (string.IsNullOrEmpty(sharedSecret))
             {
-                PowerShellLog.Warn($"RemotingApiKeyProvider: API Key '{item.Name}' has no shared secret, skipping.");
+                PowerShellLog.Warn($"[ApiKey] action=noSecret key={item.Name}");
                 return null;
             }
 

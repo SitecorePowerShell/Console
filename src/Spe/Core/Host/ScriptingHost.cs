@@ -177,7 +177,7 @@ namespace Spe.Core.Host
                     if (scriptSession.ImmediateCommand is string commandString)
                     {
                         scriptSession.ImmediateCommand = null;
-                        PowerShellLog.Info($"Executing a command in ScriptSession '{SessionKey}'.");
+                        PowerShellLog.Debug($"[Session] action=immediateCommand session={SessionKey}");
                         PowerShellLog.Debug(commandString);
                         try
                         {
@@ -186,7 +186,7 @@ namespace Spe.Core.Host
                         }
                         catch (Exception ex)
                         {
-                            PowerShellLog.Error("Error while executing Debugging command.", ex);
+                            PowerShellLog.Error("[Session] action=immediateCommandFailed", ex);
                             UI.WriteErrorLine(ScriptSession.GetExceptionString(ex));
                         }
                     }

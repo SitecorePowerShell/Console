@@ -225,7 +225,7 @@ namespace Spe.Client.Controls
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("Error while Showing MRU entries", ex);
+                PowerShellLog.Error("[ISE] action=showMruEntries status=failed", ex);
                 ShowScriptEnumerationProblem();
             }
             var writer = new HtmlTextWriter(new StringWriter());

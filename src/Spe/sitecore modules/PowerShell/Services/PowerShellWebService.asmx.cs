@@ -101,7 +101,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     });
             }
 
-            PowerShellLog.Info($"Arbitrary script execution in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Audit($"[Console] action=scriptExecuting session={guid} user={Sitecore.Context.User?.Name}");
 
             var session = GetScriptSession(guid);
             session.Interactive = true;
@@ -307,7 +307,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
+                        PowerShellLog.Error("[Session] action=scriptExecutionFailed", ex);
                     }
                     job.AddStatusMessage(exceptionMessage);
                     job.AddStatusMessage(
@@ -319,7 +319,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
                 else
                 {
-                    PowerShellLog.Error("Script execution failed. Could not find command job.", ex);
+                    PowerShellLog.Error("[Session] action=commandJobNotFound", ex);
                 }
             }
         }
@@ -401,7 +401,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested for command in ISE session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[ISE] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
@@ -418,7 +418,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested for command in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Console] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
@@ -435,7 +435,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Session] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
@@ -480,7 +480,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Help message requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Session] action=helpRequested session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetHelpOutputs(guid, command));

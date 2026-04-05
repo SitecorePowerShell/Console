@@ -102,7 +102,7 @@ namespace Spe.Core.Processors
             }
             catch (Exception exception)
             {
-                PowerShellLog.Error("Error during the SPE API call", exception);
+                PowerShellLog.Error("[Pipeline] action=rewriteUrl status=failed", exception);
             }
         }
 

@@ -57,7 +57,7 @@ namespace Spe.Client.Applications
             }
             catch (ThreadAbortException taex)
             {
-                PowerShellLog.Error("Script was aborted", taex);
+                PowerShellLog.Error("[Runner] action=executeScript status=aborted", taex);
                 if (!Environment.HasShutdownStarted)
                 {
                     Thread.ResetAbort();
@@ -65,7 +65,7 @@ namespace Spe.Client.Applications
             }
             catch (Exception exc)
             {
-                PowerShellLog.Error("Error while executing PowerShell script.", exc);
+                PowerShellLog.Error("[Runner] action=executeScript status=failed", exc);
 
                 if (job != null)
                 {

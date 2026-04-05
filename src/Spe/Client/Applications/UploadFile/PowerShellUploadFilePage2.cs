@@ -48,7 +48,7 @@ namespace Spe.Client.Applications.UploadFile
                     {
                         var failedValidationMessage = "The file type is not on the configured list of approved file types.";
                         CancelFailedValidation(failedValidationMessage);
-                        PowerShellLog.Warn($"{result.Message}");
+                        PowerShellLog.Warn($"[Upload] action=validateContentType status=rejected detail=\"{result.Message}\"");
                         return;
                     }
 
@@ -77,7 +77,7 @@ namespace Spe.Client.Applications.UploadFile
                         {
                             var failedValidationMessage = "The upload folder is not on the list of allowed upload locations.";
                             CancelFailedValidation(failedValidationMessage);
-                            PowerShellLog.Warn($"Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.");
+                            PowerShellLog.Warn($"[Upload] action=validateLocation status=rejected path=\"{pathOrId}\"");
                             return;
                         }
                     }
@@ -93,7 +93,7 @@ namespace Spe.Client.Applications.UploadFile
                     if (uploadArgs.UploadedItems.Count > 0)
                     {
                         fileName = uploadArgs.UploadedItems[0].ID.ToString();
-                        PowerShellLog.Audit("Upload: {0}", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
+                        PowerShellLog.Audit("[Upload] action=uploadFile items=\"{0}\"", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
                     }
                     else
                     {

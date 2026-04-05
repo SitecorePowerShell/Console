@@ -76,7 +76,7 @@ namespace Spe.Core.Settings.Authorization
                     var expirationTime = (DateTime)cachedSession;
                     if (DateTime.Now < expirationTime) return true;
 
-                    PowerShellLog.Warn($"Session state elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
+                    PowerShellLog.Audit($"[Session] action=elevationExpired app={appName}");
                     HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token.Name));
                     return false;
                 default:
@@ -87,7 +87,7 @@ namespace Spe.Core.Settings.Authorization
         public static void ElevateSessionToken(string appName)
         {
             var token = GetToken(appName);
-            PowerShellLog.Warn($"Session state elevated for '{appName}' by user: {Sitecore.Context.User?.Name}");
+            PowerShellLog.Audit($"[Session] action=elevationGranted app={appName}");
             HttpContext.Current.Session[string.Format(SessionCacheToken, token?.Name)] = DateTime.Now + token.Expiration;
         }
 
@@ -95,7 +95,7 @@ namespace Spe.Core.Settings.Authorization
         {
             var token = GetToken(appName);
             HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token?.Name));
-            PowerShellLog.Warn($"Session state elevation dropped for '{appName}' by user: {Sitecore.Context.User?.Name}");
+            PowerShellLog.Audit($"[Session] action=elevationDropped app={appName}");
         }
 
         internal class TokenDefinition

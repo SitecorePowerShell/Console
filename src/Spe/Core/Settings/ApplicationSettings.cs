@@ -328,7 +328,7 @@ namespace Spe.Core.Settings
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while restoring setting {fieldName}", ex);
+                PowerShellLog.Error($"[Settings] action=restoreFailed field={fieldName}", ex);
                 return defaultValue;
             }
         }

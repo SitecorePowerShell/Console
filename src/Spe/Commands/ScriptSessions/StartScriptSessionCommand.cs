@@ -257,7 +257,7 @@ namespace Spe.Commands.ScriptSessions
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
+                        PowerShellLog.Error("[Command] action=executeScript status=failed", ex);
                     }
                     job.AddStatusMessage(exceptionMessage);
                     job.AddStatusMessage(
@@ -269,7 +269,7 @@ namespace Spe.Commands.ScriptSessions
                 }
                 else
                 {
-                    PowerShellLog.Error("Script execution failed. Could not find command job.", ex);
+                    PowerShellLog.Error("[Command] action=executeScript status=failed reason=\"job not found\"", ex);
                 }
             }
             finally

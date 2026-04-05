@@ -423,7 +423,7 @@ namespace Spe.Core.Host
                     {
                         if (ImmediateCommand is string commandString)
                         {
-                            PowerShellLog.Info($"Executing a debug command in ScriptSession '{Key}'.");
+                            PowerShellLog.Debug($"[Session] action=debugCommand session={Key}");
                             PowerShellLog.Debug(commandString);
                             DebuggerCommandResults results = null;
                             try
@@ -442,7 +442,7 @@ namespace Spe.Core.Host
                             }
                             catch (Exception ex)
                             {
-                                PowerShellLog.Error("Error while executing Debugging command.", ex);
+                                PowerShellLog.Error("[Session] action=debugCommandFailed", ex);
                                 ImmediateCommand = null;
                                 host.UI.WriteErrorLine(GetExceptionString(ex,ExceptionStringFormat.Default));
                             }
@@ -645,7 +645,7 @@ namespace Spe.Core.Host
 
             if (!internalScript)
             {
-                PowerShellLog.Debug($"Executing a script in ScriptSession '{Key}'.");
+                PowerShellLog.Debug($"[Session] action=scriptExecuting session={Key}");
                 PowerShellLog.Debug(script);
             }
 
@@ -694,14 +694,14 @@ namespace Spe.Core.Host
             {
                 TryInvokeInRunningSession("quit");
             }
-            PowerShellLog.Info($"Aborting script execution in ScriptSession '{Key}'.");
+            PowerShellLog.Info($"[Session] action=scriptAborting session={Key}");
             try
             {
                 powerShell?.Stop();
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while aborting script execution in ScriptSession '{Key}'.", ex);
+                PowerShellLog.Error($"[Session] action=scriptAbortFailed session={Key}", ex);
             }
             abortRequested = true;
         }
@@ -858,7 +858,7 @@ namespace Spe.Core.Host
             var path = item.GetProviderPath();
             if (path.Contains(PathUtilities.OrphanPath))
             {
-                PowerShellLog.Error($"Cannot set location to: {path} - the item with id {item.ID} is an orphan. Setting location to drive root.");
+                PowerShellLog.Error($"[Session] action=orphanItem path=\"{path}\" item={item.ID}");
                 path = $"{item.Database}:\\";
             }
             
@@ -897,7 +897,7 @@ namespace Spe.Core.Host
             if (scriptItem == null) return;
 
             var scriptPath = scriptItem.GetProviderPath();
-            PowerShellLog.Debug($"Script item set to {scriptPath} in ScriptSession {Key}.");
+            PowerShellLog.Debug($"[Session] action=scriptItemSet path=\"{scriptPath}\" session={Key}");
             SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
             SetVariable("SitecoreCommandPath", scriptPath);
             SetVariable("PSScript", scriptItem);
