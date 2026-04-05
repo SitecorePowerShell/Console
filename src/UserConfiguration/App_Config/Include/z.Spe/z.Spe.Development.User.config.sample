@@ -43,5 +43,11 @@
         </tokens>
       </userAccountControl>
     </powershell>
+    <settings>
+      <!-- Log output format: keyvalue (default) or json for structured JSON log aggregation -->
+      <setting name="Spe.LogFormat">
+        <patch:attribute name="value">json</patch:attribute>
+      </setting>
+    </settings>
   </sitecore>
 </configuration>

@@ -1,5 +1,7 @@
-﻿using System;
+using System;
+using System.Text.RegularExpressions;
 using log4net;
+using Newtonsoft.Json.Linq;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 
@@ -9,10 +11,10 @@ namespace Spe.Core.Diagnostics
     {
         /*
 
-        Loggers may be assigned levels. 
-        Levels are instances of the log4net.Core.Level class. 
+        Loggers may be assigned levels.
+        Levels are instances of the log4net.Core.Level class.
         The following levels are defined in order of increasing priority:
-         
+
         ALL
         DEBUG
         INFO
@@ -24,8 +26,10 @@ namespace Spe.Core.Diagnostics
         */
 
         private static readonly string messagePrefix = string.Empty;
-
         private static readonly ILog Log;
+        private static readonly bool UseJsonFormat;
+        private static readonly Regex CategoryPattern = new Regex(@"^\[([^\]]+)\]\s*(.*)$", RegexOptions.Compiled);
+        private static readonly Regex KeyValuePattern = new Regex(@"(\w+)=(\S+)", RegexOptions.Compiled);
 
         static PowerShellLog()
         {
@@ -33,7 +37,7 @@ namespace Spe.Core.Diagnostics
 
             if (Factory.GetConfigNode("log4net/appender[@name='PowerShellExtensionsFileAppender']") == null)
             {
-                // no own appender - prefix with [SPE] 
+                // no own appender - prefix with [SPE]
                 messagePrefix = "[SPE] ";
             }
 
@@ -41,6 +45,9 @@ namespace Spe.Core.Diagnostics
             {
                 Log = LoggerFactory.GetLogger(typeof(PowerShellLog));
             }
+
+            var logFormat = Sitecore.Configuration.Settings.GetSetting("Spe.LogFormat", "keyvalue");
+            UseJsonFormat = string.Equals(logFormat, "json", StringComparison.OrdinalIgnoreCase);
         }
 
         public static void Audit(string message, params object[] parameters)
@@ -50,7 +57,23 @@ namespace Spe.Core.Diagnostics
             {
                 message = string.Format(message, parameters);
             }
-            Log.Info($"{messagePrefix}AUDIT ({Sitecore.Context.User?.Name ?? "unknown user"}) {message}");
+
+            var user = Sitecore.Context.User?.Name ?? "unknown user";
+
+            if (UseJsonFormat)
+            {
+                var json = ToJson(message);
+                json["level"] = "audit";
+                if (json["user"] == null)
+                {
+                    json["user"] = user;
+                }
+                Log.Info(json.ToString(Newtonsoft.Json.Formatting.None));
+            }
+            else
+            {
+                Log.Info($"{messagePrefix}AUDIT ({user}) {message}");
+            }
         }
 
         public static void Debug(string message, Exception exception = null)
@@ -59,17 +82,50 @@ namespace Spe.Core.Diagnostics
             Assert.ArgumentNotNull(message, "message");
             if (exception == null)
             {
-                Log.Debug(FormatMessage(message));
+                Log.Debug(FormatMessage(message, "debug"));
             }
             else
             {
-                Log.Debug(FormatMessage(message), exception);
+                Log.Debug(FormatMessage(message, "debug"), exception);
             }
         }
 
-        private static string FormatMessage(string message)
+        private static string FormatMessage(string message, string level = null)
         {
+            if (UseJsonFormat)
+            {
+                var json = ToJson(message);
+                if (level != null)
+                {
+                    json["level"] = level;
+                }
+                return json.ToString(Newtonsoft.Json.Formatting.None);
+            }
+
             return messagePrefix != string.Empty ? messagePrefix + message : message;
+        }
+
+        private static JObject ToJson(string message)
+        {
+            var json = new JObject();
+            var categoryMatch = CategoryPattern.Match(message);
+
+            if (categoryMatch.Success)
+            {
+                json["type"] = categoryMatch.Groups[1].Value;
+                var remainder = categoryMatch.Groups[2].Value;
+                var kvMatches = KeyValuePattern.Matches(remainder);
+                foreach (Match kv in kvMatches)
+                {
+                    json[kv.Groups[1].Value] = kv.Groups[2].Value;
+                }
+            }
+            else
+            {
+                json["message"] = message;
+            }
+
+            return json;
         }
 
         public static void Error(string message, Exception exception = null)
@@ -77,11 +133,11 @@ namespace Spe.Core.Diagnostics
             Assert.IsNotNull(Log, "Logger implementation was not initialized");
             if (exception == null)
             {
-                Log.Error(FormatMessage(message));
+                Log.Error(FormatMessage(message, "error"));
             }
             else
             {
-                Log.Error(FormatMessage(message), exception);
+                Log.Error(FormatMessage(message, "error"), exception);
             }
         }
 
@@ -90,11 +146,11 @@ namespace Spe.Core.Diagnostics
             Assert.IsNotNull(Log, "Logger implementation was not initialized");
             if (exception == null)
             {
-                Log.Fatal(FormatMessage(message));
+                Log.Fatal(FormatMessage(message, "fatal"));
             }
             else
             {
-                Log.Fatal(FormatMessage(message), exception);
+                Log.Fatal(FormatMessage(message, "fatal"), exception);
             }
         }
 
@@ -103,11 +159,11 @@ namespace Spe.Core.Diagnostics
             Assert.IsNotNull(Log, "Logger implementation was not initialized");
             if (exception == null)
             {
-                Log.Info(FormatMessage(message));
+                Log.Info(FormatMessage(message, "info"));
             }
             else
             {
-                Log.Info(FormatMessage(message), exception);
+                Log.Info(FormatMessage(message, "info"), exception);
             }
         }
 
@@ -116,11 +172,11 @@ namespace Spe.Core.Diagnostics
             Assert.IsNotNull(Log, "Logger implementation was not initialized");
             if (exception == null)
             {
-                Log.Warn(FormatMessage(message));
+                Log.Warn(FormatMessage(message, "warn"));
             }
             else
             {
-                Log.Warn(FormatMessage(message), exception);
+                Log.Warn(FormatMessage(message, "warn"), exception);
             }
         }
     }
