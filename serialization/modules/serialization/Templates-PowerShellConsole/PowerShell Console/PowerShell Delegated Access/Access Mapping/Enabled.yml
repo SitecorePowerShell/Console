@@ -19,6 +19,12 @@ Languages:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
     Value: Enable the delegated access
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Disable to suspend elevated execution without removing the mapping. The selected scripts will continue to run but under the caller's own permissions.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: When disabled, scripts run under the current user context
   Versions:
   - Version: 1
     Fields:

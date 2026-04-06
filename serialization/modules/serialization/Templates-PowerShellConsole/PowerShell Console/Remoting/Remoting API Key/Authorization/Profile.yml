@@ -16,6 +16,12 @@ SharedFields:
 Languages:
 - Language: en
   Fields:
+  - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
+    Hint: Title
+    Value: Restriction Profile
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Limits the commands and paths available to scripts executed through this API key. Profiles are defined in Spe.config.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: "The name of a restriction profile defined in Spe.config (e.g. read-only, content-editor)."

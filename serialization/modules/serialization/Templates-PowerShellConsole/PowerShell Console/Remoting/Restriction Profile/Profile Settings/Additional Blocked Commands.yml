@@ -16,6 +16,12 @@ SharedFields:
 Languages:
 - Language: en
   Fields:
+  - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
+    Hint: Title
+    Value: Additional Blocked Commands
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Cmdlet or function names added to the base profile blocklist. One entry per line. Supports wildcards.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Commands to add to the blocklist, one per line.

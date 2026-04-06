@@ -16,9 +16,12 @@ Languages:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
     Value: Separate output per script tab
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: When enabled, each ISE script tab has an independent output panel. When disabled, all tabs share a single output panel.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Only valid in ISE
+    Value: Each script tab maintains its own output panel
   Versions:
   - Version: 1
     Fields:

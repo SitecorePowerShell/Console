@@ -44,6 +44,12 @@ Languages:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
     Value: Host Width (in number of text columns)
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Sets the virtual console width in characters. Cmdlets like Format-Table use this value to determine column layout and line breaks.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Affects text wrapping and Format-Table output
   Versions:
   - Version: 1
     Fields:

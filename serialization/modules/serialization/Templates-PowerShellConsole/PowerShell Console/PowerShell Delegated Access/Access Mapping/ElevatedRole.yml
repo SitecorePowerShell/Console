@@ -22,6 +22,12 @@ Languages:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
     Value: Elevated Role (the current user must be a member)
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: The user must be a member of this role for delegated access to activate. The script then runs as the Impersonated User rather than the current user.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: e.g., sitecore\Developer
   Versions:
   - Version: 1
     Fields:

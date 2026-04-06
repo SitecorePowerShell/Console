@@ -55,11 +55,11 @@ Languages:
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
     Value: |
-      Typing the character "\" or "-"  will trigger auto-complete; a web service is called to query new auto-complete data which may result in a temporary delay in response from the editor.
+      Typing "\" or "-" will invoke a web service call to query auto-complete suggestions. This may cause a brief delay in editor responsiveness.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: |
-      Typing the character "\" or "-"  will trigger auto-complete (may temporarily delay response from the editor)
+      Triggers auto-complete when typing "\" or "-"
   Versions:
   - Version: 1
     Fields:

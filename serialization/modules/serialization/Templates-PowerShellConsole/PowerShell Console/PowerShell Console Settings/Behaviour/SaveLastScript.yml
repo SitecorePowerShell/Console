@@ -49,13 +49,13 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: "Save script last executed?"
+    Value: Save last executed script
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
     Value: Indicates that the script will be saved to the user settings item after execution. If the PowerShell ISE is closed, the script will be restored to the editor once reopened. This is helpful when the PowerShell ISE is closed by mistake, however is not a substitute for saving scripts to the script library.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Temporarily saves scripts executed in the PowerShell ISE
+    Value: Restores the script to the editor if the ISE is reopened
   Versions:
   - Version: 1
     Fields:
