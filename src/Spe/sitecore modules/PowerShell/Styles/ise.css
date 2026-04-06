@@ -349,10 +349,6 @@ a.ps-link {
     color: white;
 }
 
-.ace_editor.ace_autocomplete {
-    width: auto !important;
-    right: 100px !important;
-}
 
 .error_widget {
     font-size: smaller;

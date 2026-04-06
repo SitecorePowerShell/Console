@@ -1,6 +1,6 @@
 function scHSplitter() {
     this.dragging = false;
-    this.minPaneSize = 100;
+    this.minPaneSize = 150;
 }
 
 scHSplitter.prototype.createOutline = function(bounds, tag) {
@@ -41,6 +41,18 @@ scHSplitter.prototype.mouseDown = function(tag, evt, id) {
         this.dragging = true;
         this.delta = 0;
 
+        // Capture initial pane heights for real-time clamping
+        var ctl = tag;
+        while (ctl != null && ctl.tagName != "TD") {
+            ctl = ctl.parentNode;
+        }
+        if (ctl != null) {
+            var prev = scForm.browser.getPreviousSibling(ctl.parentNode).children[0];
+            var next = scForm.browser.getNextSibling(ctl.parentNode).children[0];
+            this.initialTopHeight = prev.offsetHeight;
+            this.initialBottomHeight = next.offsetHeight;
+        }
+
         scForm.browser.setCapture(tag);
 
         scForm.browser.clearEvent(evt, true, false);
@@ -53,6 +65,13 @@ scHSplitter.prototype.mouseMove = function(tag, evt, id) {
         }
 
         var dy = evt.screenY - this.trackCursor.y;
+
+        // Clamp delta so neither pane shrinks below minPaneSize
+        var proposedDelta = this.delta + dy;
+        var maxDelta = this.initialTopHeight + this.initialBottomHeight - this.minPaneSize;
+        var minDelta = -(this.initialTopHeight - this.minPaneSize);
+        proposedDelta = Math.max(minDelta, Math.min(proposedDelta, maxDelta));
+        dy = proposedDelta - this.delta;
 
         this.bounds.offset(0, dy);
 

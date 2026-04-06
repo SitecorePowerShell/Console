@@ -52,7 +52,7 @@
         var resultsVisibilityIntent = true;
         var splitOrientation = localStorage.getItem("spe::ise.splitOrientation") || "horizontal";
         var splitPosition = JSON.parse(localStorage.getItem("spe::ise.splitPosition") || '{}');
-        var minPaneSize = 100;
+
         var editorSessions = [];
         var editorFontFamily = "Monaco";
         var editorFontSize = 12;
@@ -876,12 +876,14 @@
         function initVerticalSplitter(splitter, leftPane) {
             var dragging = false;
             var startX, startWidth;
+            var minPanePct = 0.25; // 25% minimum pane width
 
             // Restore saved position
             if (splitPosition.vertical) {
                 var containerWidth = leftPane.parentNode.offsetWidth;
+                var minWidth = Math.round(containerWidth * minPanePct);
                 var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
-                restoredWidth = Math.max(minPaneSize, Math.min(restoredWidth, containerWidth - minPaneSize - 10));
+                restoredWidth = Math.max(minWidth, Math.min(restoredWidth, containerWidth - minWidth - 10));
                 leftPane.style.flexBasis = restoredWidth + "px";
                 leftPane.style.flexGrow = "0";
                 leftPane.style.flexShrink = "0";
@@ -909,8 +911,9 @@
                 if (!dragging) return;
                 var dx = e.clientX - startX;
                 var containerWidth = leftPane.parentNode.offsetWidth;
-                var maxWidth = containerWidth - minPaneSize - 10;
-                var newWidth = Math.max(minPaneSize, Math.min(startWidth + dx, maxWidth));
+                var minWidth = Math.round(containerWidth * minPanePct);
+                var maxWidth = containerWidth - minWidth - 10;
+                var newWidth = Math.max(minWidth, Math.min(startWidth + dx, maxWidth));
                 leftPane.style.flexBasis = newWidth + "px";
                 leftPane.style.flexGrow = "0";
                 leftPane.style.flexShrink = "0";
