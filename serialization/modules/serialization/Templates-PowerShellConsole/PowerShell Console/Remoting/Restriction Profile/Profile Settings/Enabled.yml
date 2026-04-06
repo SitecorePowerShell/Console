@@ -18,10 +18,10 @@ Languages:
     Value: Enable the profile restriction
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: 
+    Value: Disable to temporarily remove a profile from use without deleting its configuration. Existing API key or trusted script references will have no effect while disabled.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: 
+    Value: Disabled profiles cannot be assigned to API keys
   Versions:
   - Version: 1
     Fields:

@@ -81,9 +81,12 @@ Languages:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
     Value: Phrase
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: The CSS font-family string passed to the browser. Must match an installed or web-loaded font name.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Value used by the browser to render the font
+    Value: CSS font-family value rendered by the browser
   Versions:
   - Version: 1
     Fields:
