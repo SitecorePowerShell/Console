@@ -438,6 +438,25 @@
                         spe.breakpointSet(currRow, "toggle");
                     },
                     readOnly: true
+                }, {
+                    name: "debugScript",
+                    bindKey: {win: "Ctrl-D", mac: "Ctrl-D"},
+                    exec: function () {
+                        scForm.postRequest("", "", "", "ise:debug");
+                    },
+                    readOnly: true
+                }, {
+                    name: "executeSelection",
+                    bindKey: {win: "Alt-E", mac: "Alt-E"},
+                    exec: function () {
+                        scForm.postRequest("", "", "", "ise:executeselection");
+                    },
+                    readOnly: true
+                }, {
+                    name: "runPlugin",
+                    bindKey: {win: "Ctrl-Shift-Alt-I", mac: "Ctrl-Shift-Alt-I"},
+                    exec: function () { },
+                    readOnly: true
                 }
             ];
 
