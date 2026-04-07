@@ -66,9 +66,9 @@ $langResult = Invoke-RemoteScript -Session $session -ScriptBlock {
 Assert-Equal $langResult "ConstrainedLanguage" "read-only profile enforces ConstrainedLanguage"
 
 # ============================================================================
-#  Test Group 2: Profile Command Blocklist
+#  Test Group 2: Profile Command Allowlist
 # ============================================================================
-Write-Host "`n  [Test Group 2: Profile Command Blocklist]" -ForegroundColor White
+Write-Host "`n  [Test Group 2: Profile Command Allowlist]" -ForegroundColor White
 
 # 2a. Write commands blocked by read-only profile
 $removeResponse = Invoke-ProfileBearerRequest -Script 'Remove-Item -Path "master:/content/nonexistent" -ErrorAction Stop'
@@ -80,8 +80,8 @@ Assert-Equal ([int]$setResponse.StatusCode) 403 "read-only profile blocks Set-It
 $newResponse = Invoke-ProfileBearerRequest -Script 'New-Item -Path "master:/content" -Name "profile-test" -ItemType "Sample/Sample Item"'
 Assert-Equal ([int]$newResponse.StatusCode) 403 "read-only profile blocks New-Item"
 
-$publishResponse = Invoke-ProfileBearerRequest -Script 'Publish-Item -Path "master:/content"'
-Assert-Equal ([int]$publishResponse.StatusCode) 403 "read-only profile blocks Publish-Item"
+$moveResponse = Invoke-ProfileBearerRequest -Script 'Move-Item -Path "master:/content/nonexistent" -Destination "master:/content"'
+Assert-Equal ([int]$moveResponse.StatusCode) 403 "read-only profile blocks Move-Item"
 
 # 2b. Response body includes blocked command name
 $removeBody = $removeResponse.Content.ReadAsStringAsync().Result
@@ -207,21 +207,17 @@ Assert-Equal $postErrorLang "ConstrainedLanguage" "Language mode restored after 
 # ============================================================================
 Write-Host "`n  [Test Group 9: Item-Based Profile Overrides]" -ForegroundColor White
 
-# 9a. Get-Database should be blocked (override item adds it to the read-only blocklist)
-$overrideBlockResponse = Invoke-ProfileBearerRequest -Script 'Get-Database -Name "master"'
-Assert-Equal ([int]$overrideBlockResponse.StatusCode) 403 "Get-Database blocked by item-based override"
+# 9a. Publish-Item should be allowed (override item adds it to the read-only allowlist)
+$overrideAllowResponse = Invoke-ProfileBearerRequest -Script 'Publish-Item -Path "master:/content" -ErrorAction SilentlyContinue; "OK"'
+Assert-Equal ([int]$overrideAllowResponse.StatusCode) 200 "Publish-Item allowed by item-based override"
 
-# 9b. Blocked command name is in the response
-$overrideBlockBody = $overrideBlockResponse.Content.ReadAsStringAsync().Result
-Assert-Like $overrideBlockBody "*Get-Database*" "Response includes overridden blocked command name"
-
-# 9c. Other read commands still work (override is additive, doesn't affect existing allows)
+# 9b. Other read commands still work (override is additive, doesn't affect existing allows)
 $stillAllowedResponse = Invoke-ProfileBearerRequest -Script 'Get-Item -Path "master:/"'
 Assert-Equal ([int]$stillAllowedResponse.StatusCode) 200 "Get-Item still allowed (override is additive)"
 
-# 9d. Commands already blocked by config profile remain blocked
+# 9c. Commands not in the allowlist remain blocked
 $configBlockResponse = Invoke-ProfileBearerRequest -Script 'Remove-Item -Path "master:/content/nonexistent"'
-Assert-Equal ([int]$configBlockResponse.StatusCode) 403 "Remove-Item still blocked (config profile unchanged)"
+Assert-Equal ([int]$configBlockResponse.StatusCode) 403 "Remove-Item still blocked (not in allowlist)"
 
 # ============================================================================
 #  Test Group 10: Dynamic Invocation Rejection
