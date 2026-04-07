@@ -13,8 +13,7 @@ namespace Spe.Core.Settings.Authorization
     /// <summary>
     /// Reads Restriction Profile Override items from the Sitecore content tree
     /// and merges them with config-based profiles. Overrides are additive only:
-    /// blocklist profiles can add more blocked commands, allowlist profiles can
-    /// add more allowed commands. Most restrictive wins on conflict.
+    /// allowlist profiles can add more allowed commands via item-based overrides.
     ///
     /// Override items live under:
     /// /sitecore/system/Modules/PowerShell/Settings/Restriction Profiles/
@@ -69,23 +68,10 @@ namespace Spe.Core.Settings.Authorization
 
             // Start with copies of the config profile's restrictions
             var mergedCommands = new HashSet<string>(configProfile.Commands, StringComparer.OrdinalIgnoreCase);
-            var mergedPaths = configProfile.ItemPaths != null
-                ? new HashSet<string>(configProfile.ItemPaths.Paths, StringComparer.OrdinalIgnoreCase)
-                : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var auditLevel = configProfile.AuditLevel;
 
             foreach (var item in overrideItems)
             {
-                // Merge additional blocked commands (only for blocklist profiles)
-                if (configProfile.CommandMode == CommandRestrictionMode.Blocklist)
-                {
-                    var blocked = ParseMultiLineField(item, "Additional Blocked Commands");
-                    foreach (var cmd in blocked)
-                    {
-                        mergedCommands.Add(cmd);
-                    }
-                }
-
                 // Merge additional allowed commands (only for allowlist profiles)
                 if (configProfile.CommandMode == CommandRestrictionMode.Allowlist)
                 {
@@ -105,45 +91,18 @@ namespace Spe.Core.Settings.Authorization
                         auditLevel = parsed;
                     }
                 }
-
-                // Merge additional blocked paths (only for blocklist item path profiles)
-                if (configProfile.ItemPaths != null && configProfile.ItemPaths.Mode == CommandRestrictionMode.Blocklist)
-                {
-                    var blockedPaths = ResolveTreelistPaths(item, "Additional Blocked Paths");
-                    foreach (var path in blockedPaths)
-                    {
-                        mergedPaths.Add(path);
-                    }
-                }
-
-                // Merge additional allowed paths (only for allowlist item path profiles)
-                if (configProfile.ItemPaths != null && configProfile.ItemPaths.Mode == CommandRestrictionMode.Allowlist)
-                {
-                    var allowedPaths = ResolveTreelistPaths(item, "Additional Allowed Paths");
-                    foreach (var path in allowedPaths)
-                    {
-                        mergedPaths.Add(path);
-                    }
-                }
             }
 
             // Only create a new profile if something actually changed
-            var configPathCount = configProfile.ItemPaths?.Paths.Count ?? 0;
             var commandsChanged = !mergedCommands.SetEquals(configProfile.Commands);
-            var pathsChanged = mergedPaths.Count != configPathCount ||
-                               (configProfile.ItemPaths != null && !mergedPaths.SetEquals(configProfile.ItemPaths.Paths));
             var auditChanged = auditLevel != configProfile.AuditLevel;
 
-            if (!commandsChanged && !pathsChanged && !auditChanged)
+            if (!commandsChanged && !auditChanged)
             {
                 return configProfile;
             }
 
-            PowerShellLog.Info($"[Profile] action=overrideMerged profile={configProfile.Name} overrides={overrideItems.Count} commands={configProfile.Commands.Count}->{mergedCommands.Count} paths={configPathCount}->{mergedPaths.Count} auditLevel={configProfile.AuditLevel}->{auditLevel}");
-
-            var mergedItemPaths = configProfile.ItemPaths != null
-                ? new ItemPathRestrictions(configProfile.ItemPaths.Mode, mergedPaths)
-                : null;
+            PowerShellLog.Info($"[Profile] action=overrideMerged profile={configProfile.Name} overrides={overrideItems.Count} commands={configProfile.Commands.Count}->{mergedCommands.Count} auditLevel={configProfile.AuditLevel}->{auditLevel}");
 
             return new RestrictionProfile(
                 configProfile.Name,
@@ -152,8 +111,7 @@ namespace Spe.Core.Settings.Authorization
                 mergedCommands,
                 configProfile.Modules,
                 auditLevel,
-                configProfile.Enforcement,
-                mergedItemPaths);
+                configProfile.Enforcement);
         }
 
         private static List<Item> GetOverrideItems(string profileName)
@@ -223,36 +181,6 @@ namespace Spe.Core.Settings.Authorization
                     CollectOverridesRecursive(child, profileName, results);
                 }
             }
-        }
-
-        /// <summary>
-        /// Resolves a Treelist field (pipe-delimited GUIDs) to Sitecore item paths.
-        /// Skips GUIDs that cannot be resolved (deleted items).
-        /// </summary>
-        private static IEnumerable<string> ResolveTreelistPaths(Item item, string fieldName)
-        {
-            var value = item.Fields[fieldName]?.Value;
-            if (string.IsNullOrEmpty(value)) return Enumerable.Empty<string>();
-
-            var db = item.Database;
-            var paths = new List<string>();
-
-            foreach (var guidStr in value.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                if (!ID.TryParse(guidStr.Trim(), out var id)) continue;
-
-                var target = db.GetItem(id);
-                if (target != null)
-                {
-                    paths.Add(target.Paths.Path);
-                }
-                else
-                {
-                    PowerShellLog.Warn($"[Profile] action=unresolvedTreelistItem entry={item.Name} field={fieldName} id={guidStr}");
-                }
-            }
-
-            return paths;
         }
 
         private static IEnumerable<string> ParseMultiLineField(Item item, string fieldName)

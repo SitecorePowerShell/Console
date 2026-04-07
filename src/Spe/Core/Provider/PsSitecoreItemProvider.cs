@@ -234,7 +234,6 @@ namespace Spe.Core.Provider
                         if (returnContainers == ReturnContainers.ReturnAllContainers || wildcard == null ||
                             wildcard.IsMatch(child.Name))
                         {
-                            if (!IsItemAccessAllowed(child)) continue;
                             WriteItemObject(child.Name, child.GetProviderPath(), child.HasChildren);
                         }
                         if (Stopping)
@@ -441,46 +440,9 @@ namespace Spe.Core.Provider
             // add the properties defined by the page type
             if (item == null) return;
 
-            if (!IsItemAccessAllowed(item)) return;
-
             var psObject = ItemShellExtensions.GetPsObject(SessionState, item);
             var path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
             WriteItemObject(psObject, path, item.HasChildren);
-        }
-
-        private bool IsItemAccessAllowed(Item item)
-        {
-            var session = SessionState?.PSVariable?.GetValue("ScriptSession") as ScriptSession;
-            var profile = session?.ActiveRestrictionProfile;
-            if (profile == null || profile.ItemPaths == null) return true;
-
-            if (profile.IsItemPathAllowed(item.Paths.Path)) return true;
-
-            if (profile.Enforcement == EnforcementMode.Audit)
-            {
-                if (profile.AuditLevel >= AuditLevel.Violations)
-                {
-                    PowerShellLog.Audit(
-                        "[Provider] action=itemPathRestriction status=denied mode=audit path=\"{0}\" profile=\"{1}\"",
-                        item.Paths.Path, profile.Name);
-                }
-                return true;
-            }
-
-            if (profile.AuditLevel >= AuditLevel.Violations)
-            {
-                PowerShellLog.Audit(
-                    "[Provider] action=itemPathRestriction status=denied mode=enforce path=\"{0}\" profile=\"{1}\"",
-                    item.Paths.Path, profile.Name);
-            }
-
-            WriteError(new ErrorRecord(
-                new UnauthorizedAccessException(
-                    $"Access to '{item.Paths.Path}' is denied by restriction profile '{profile.Name}'."),
-                "ItemPathRestricted",
-                ErrorCategory.PermissionDenied,
-                item));
-            return false;
         }
 
         protected override void CopyItem(string path, string destination, bool recurse)
