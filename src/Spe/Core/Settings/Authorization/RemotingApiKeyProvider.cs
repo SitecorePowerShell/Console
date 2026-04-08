@@ -57,7 +57,7 @@ namespace Spe.Core.Settings.Authorization
 
             foreach (var key in keys)
             {
-                if (key.Enabled && SecureCompare.FixedTimeEquals(key.SharedSecret, sharedSecret))
+                if (key.Enabled && SecureCompare.FixedTimeSecretEquals(key.SharedSecret, sharedSecret))
                 {
                     return key;
                 }
