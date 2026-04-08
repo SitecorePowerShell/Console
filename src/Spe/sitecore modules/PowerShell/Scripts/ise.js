@@ -265,8 +265,6 @@
             ace.config.loadModule("ace/ext/emmet", function () {
                 ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function () {
                     currentAceEditor.setOption("enableEmmet", true);
-                    // Remove emmet's Alt-E binding so it propagates to the ISE ribbon (Execute Selection)
-                    currentAceEditor.commands.removeCommand("expand_abbreviation");
                 });
 
                 currentAceEditor.setOptions({
@@ -409,9 +407,9 @@
                 spe.updateModificationFlag(false);
             });
 
-            // Remove Ace's default Alt-E binding so it propagates to the ISE ribbon (Execute Selection)
-            currentAceEditor.commands.removeCommand("goToNextError");
-
+            // Ace keybinding overrides for ISE shortcuts are registered
+            // as explicit commands below (#1457); removeCommand calls from
+            // #1458 were redundant and have been dropped.
             var codeeeditorcommands = [
                 {
                     name: "help",
@@ -1012,8 +1010,9 @@
                 var leftPane = document.getElementById("VerticalLeftPane");
                 if (leftPane && splitPosition.vertical) {
                     var containerWidth = leftPane.parentNode.offsetWidth;
+                    var minWidth = Math.round(containerWidth * 0.25);
                     var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
-                    restoredWidth = Math.max(minPaneSize, Math.min(restoredWidth, containerWidth - minPaneSize - 10));
+                    restoredWidth = Math.max(minWidth, Math.min(restoredWidth, containerWidth - minWidth - 10));
                     leftPane.style.flexBasis = restoredWidth + "px";
                     leftPane.style.flexGrow = "0";
                     leftPane.style.flexShrink = "0";
