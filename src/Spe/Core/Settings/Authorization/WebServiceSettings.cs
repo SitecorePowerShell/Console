@@ -220,7 +220,7 @@ namespace Spe.Core.Settings.Authorization
             else
             {
                 // Check if request was offloaded on edge web server.
-                // Trusts X-Forwarded-Proto header -- assumes a trusted reverse proxy strips/sets this header.
+                // Trusts X-Forwarded-Proto header - assumes a trusted reverse proxy strips/sets this header.
                 return string.Equals(HttpContext.Current.Request.Headers["X-Forwarded-Proto"], Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
             }
         }

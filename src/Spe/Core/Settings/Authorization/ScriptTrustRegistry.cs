@@ -217,7 +217,7 @@ namespace Spe.Core.Settings.Authorization
                 return results;
             }
 
-            // Script references (Treelist -- pipe-delimited item IDs)
+            // Script references (Treelist - pipe-delimited item IDs)
             var scriptFieldValue = trustItem.Fields[Templates.TrustedScript.Fields.Script]?.Value;
             if (string.IsNullOrEmpty(scriptFieldValue))
             {

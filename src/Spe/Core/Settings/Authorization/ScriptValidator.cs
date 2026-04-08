@@ -81,12 +81,12 @@ namespace Spe.Core.Settings.Authorization
                 else if (_scopeRestrictions.Count > 0)
                 {
                     // Scope restrictions are configured but the requested scope is unknown.
-                    // Log a warning -- this could indicate a typo or misconfiguration.
+                    // Log a warning - this could indicate a typo or misconfiguration.
                     PowerShellLog.Warn($"[Security] action=unknownScope scope={scope}");
                 }
             }
 
-            // No restrictions configured at all -- skip parsing
+            // No restrictions configured at all - skip parsing
             if (serviceRestrictions == null && !hasScopeRestrictions) return true;
 
             var ast = Parser.ParseInput(script, out _, out _);
@@ -167,7 +167,7 @@ namespace Spe.Core.Settings.Authorization
 
         /// <summary>
         /// Validates a script against a restriction profile's command restrictions.
-        /// Supports audit-only enforcement mode -- logs violations but returns true when enforcement=audit.
+        /// Supports audit-only enforcement mode - logs violations but returns true when enforcement=audit.
         /// </summary>
         private static bool ValidateScriptAgainstProfileInternal(RestrictionProfile profile, string script, string userName, string serviceName, out string blockedCommand)
         {
@@ -207,7 +207,7 @@ namespace Spe.Core.Settings.Authorization
 
                     if (profile.Enforcement == EnforcementMode.Audit)
                     {
-                        blockedCommand = null; // Clear -- not actually blocking
+                        blockedCommand = null; // Clear - not actually blocking
                         continue; // Check remaining commands for audit logging
                     }
 

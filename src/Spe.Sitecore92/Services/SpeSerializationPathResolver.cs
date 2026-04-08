@@ -1,4 +1,4 @@
-// CS0618: PathUtils is obsolete. Suppressed intentionally -- this class exists to wrap the
+// CS0618: PathUtils is obsolete. Suppressed intentionally - this class exists to wrap the
 // deprecated Sitecore.Data.Serialization.PathUtils API for Sitecore 9.2 backwards compatibility.
 // See https://github.com/SitecorePowerShell/Console/issues/1433
 #pragma warning disable CS0618

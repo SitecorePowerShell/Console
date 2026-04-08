@@ -42,6 +42,10 @@ namespace Spe.Core.Settings
 
         private static readonly Regex validNameRegex = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
+        private static string settingsDb;
+        private static string scriptLibraryDb;
+        private static string rulesDb;
+
         private ApplicationSettings(string applicationName, bool personalizedSettings)
         {
             ApplicationName = applicationName;
@@ -52,8 +56,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref field, "powershell/workingDatabase/rules");
-                return field;
+                GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
+                return rulesDb;
             }
         }
 
@@ -61,8 +65,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref field, "powershell/workingDatabase/settings");
-                return field;
+                GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
+                return settingsDb;
             }
         }
 
@@ -70,8 +74,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref field, "powershell/workingDatabase/scriptLibrary");
-                return field;
+                GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
+                return scriptLibraryDb;
             }
         }
 

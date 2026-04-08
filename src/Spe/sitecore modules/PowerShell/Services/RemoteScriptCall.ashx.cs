@@ -235,7 +235,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             matchedApiKey = apiKeyResult;
                         }
 
-                        // Step 2: No API Key matched -- try legacy config shared secret
+                        // Step 2: No API Key matched - try legacy config shared secret
                         if (!isValid)
                         {
                             try
@@ -255,7 +255,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                 PowerShellLog.Debug("[Remoting] action=legacySecretFailed");
                             }
 
-                            // Step 3: Legacy secret matched -- check if it also matches an API Key
+                            // Step 3: Legacy secret matched - check if it also matches an API Key
                             if (isValid)
                             {
                                 var configSecret = (provider as SharedSecretAuthenticationProvider)?.SharedSecret;
@@ -569,7 +569,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
                 catch (SecurityException)
                 {
-                    // This key's secret didn't match -- try the next one
+                    // This key's secret didn't match - try the next one
                 }
             }
 

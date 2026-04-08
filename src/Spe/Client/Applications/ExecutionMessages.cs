@@ -14,7 +14,7 @@
             "Please wait, and dream of a faster server.",
             "We are executing your scripts, would you like fries with that?",
             "Please wait, while we are checking the gravitational constant in your locale.",
-            "Go ahead -- hold your breath.",
+            "Go ahead - hold your breath.",
             "Please wait, at least you're not on hold.",
             "Please wait and hum something loud while others stare.",
             "Please wait... you're not in Kansas any more.",

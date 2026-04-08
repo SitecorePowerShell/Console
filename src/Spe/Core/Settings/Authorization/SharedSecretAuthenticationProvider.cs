@@ -53,7 +53,7 @@ namespace Spe.Core.Settings.Authorization
             public string Scope { get; set; }
             public long Iat { get; set; }
             public long Nbf { get; set; }
-            // ReSharper disable once InconsistentNaming -- must match JWT claim name "client_session"
+            // ReSharper disable once InconsistentNaming - must match JWT claim name "client_session"
             public string Client_Session { get; set; }
         }
 
