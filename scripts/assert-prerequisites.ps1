@@ -117,7 +117,7 @@ function Assert-CmAvailable {
 function Assert-SpeRemoting {
     param([string]$Hostname)
 
-    # Step 1 – verify the endpoint exists (any HTTP response means it's there)
+    # Step 1 - verify the endpoint exists (any HTTP response means it's there)
     Write-Host "Checking SPE Remoting endpoint..." -ForegroundColor Cyan
 
     $status = Invoke-HttpCheck -Uri "https://$Hostname/-/script/script/" -Method "POST"
@@ -130,7 +130,7 @@ function Assert-SpeRemoting {
     }
     Write-Host "  SPE Remoting endpoint responded (HTTP $status)." -ForegroundColor Green
 
-    # Step 2 – verify authentication using credentials from .env
+    # Step 2 - verify authentication using credentials from .env
     Write-Host "Verifying SPE Remoting authentication..." -ForegroundColor Cyan
 
     $moduleRoot = "$PSScriptRoot\..\modules\SPE"

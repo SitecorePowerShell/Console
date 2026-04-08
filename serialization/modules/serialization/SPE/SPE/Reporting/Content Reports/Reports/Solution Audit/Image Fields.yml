@@ -14,7 +14,7 @@ SharedFields:
       What "Image" type fields do I have and in which template? Do they have Source defined?
      
       Sitecore recommendation:
-         Image Fields — Define the source field to show the point 
+         Image Fields - Define the source field to show the point
                         in the media library that is relevant to the item being created.
      
       Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"

@@ -14,7 +14,7 @@ SharedFields:
       Do my items assign rights to users?
      
       Sitecore recommendation:
-         Apply security to roles rather than users — 
+         Apply security to roles rather than users -
            We recommend that you configure security rights for a role security account rather than a user account. 
            Even if there is only one user in the system with this unique access level, 
            it is still better to have permissions configured for a role account. 

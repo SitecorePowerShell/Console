@@ -38,12 +38,12 @@ SharedFields:
             
         .EXAMPLE
             The following compresses the specified images.
-            PS C:\> Compress-Archive -LiteralPath "C:\image.png","C:\image2.png" –CompressionLevel Optimal -DestinationPath "C:\images.zip"
+            PS C:\> Compress-Archive -LiteralPath "C:\image.png","C:\image2.png" -CompressionLevel Optimal -DestinationPath "C:\images.zip"
     
         .EXAMPLE
             The following compresses an entire directory maintaining the folder structure.
             
-            PS C:\> Compress-Archive -Path "C:\Images" –CompressionLevel Fastest -DestinationPath "C:\temp\bunchofimages"
+            PS C:\> Compress-Archive -Path "C:\Images" -CompressionLevel Fastest -DestinationPath "C:\temp\bunchofimages"
     
         .EXAMPLE
             The following adds files to the compressed archive as a flat structure. The default name is archive.zip.

@@ -14,7 +14,7 @@ SharedFields:
       Which of my Templates inherit from Standard Item template?
      
       Sitecore recommendation:
-         Make good use of inheritance — Place commonly used sections and fields in their own template, 
+         Make good use of inheritance - Place commonly used sections and fields in their own template,
          so that more specific templates can inherit them. For example, the Title and Text fields in the Page Title 
          and Text section are used in multiple different content templates. Rather than duplicate these fields 
          in each content template, simply inherit the Page Title and Text template.

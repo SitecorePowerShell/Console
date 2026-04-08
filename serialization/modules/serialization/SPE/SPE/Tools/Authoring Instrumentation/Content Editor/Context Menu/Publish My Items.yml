@@ -32,8 +32,8 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Get-Item -Path . | Where-Object { $_.UpdatedBy –eq $me } | Publish-Item -verbose
-    Get-ChildItem -Path . -Recurse | Where-Object { $_.UpdatedBy –eq $me } | Publish-Item -Verbose
+    Get-Item -Path . | Where-Object { $_.UpdatedBy -eq $me } | Publish-Item -verbose
+    Get-ChildItem -Path . -Recurse | Where-Object { $_.UpdatedBy -eq $me } | Publish-Item -Verbose
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100

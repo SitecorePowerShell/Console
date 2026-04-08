@@ -76,7 +76,7 @@ SharedFields:
     # Compare values 
     $name -eq "Michael" # case-insensitive 
     $total -le 3 
-    $names.Length -gt 2 –and $name[0] -ne "Adam" 
+    $names.Length -gt 2 -and $name[0] -ne "Adam"
     
     # Negate value 
     $isTrue = !$false 

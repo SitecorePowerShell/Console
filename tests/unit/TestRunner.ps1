@@ -1,5 +1,5 @@
 # Minimal assert-based test runner for SPE unit tests
-# No Pester dependency — just assert functions and a summary
+# No Pester dependency -- just assert functions and a summary
 
 $script:Passed = 0
 $script:Failed = 0

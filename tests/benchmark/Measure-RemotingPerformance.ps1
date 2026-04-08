@@ -112,13 +112,13 @@ Write-Host "============================================" -ForegroundColor Green
 
 $results = @()
 
-# 1. Minimal script — measures baseline request overhead
+# 1. Minimal script -- measures baseline request overhead
 #    (session creation, param setup, script execution, teardown)
 $results += Measure-Scenario -Name "Minimal script (echo)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
     Invoke-RemoteScript -Session $session -ScriptBlock { "hello" }
 }
 
-# 2. Script with parameters — exercises the Request.Params loop
+# 2. Script with parameters -- exercises the Request.Params loop
 $results += Measure-Scenario -Name "Script with query params" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
     Invoke-RemoteScript -Session $session -ScriptBlock {
         param($foo, $bar)
@@ -126,12 +126,12 @@ $results += Measure-Scenario -Name "Script with query params" -Iterations $Itera
     } -Arguments @{ foo = "value1"; bar = "value2" }
 }
 
-# 3. Raw output mode — exercises the rawOutput path
+# 3. Raw output mode -- exercises the rawOutput path
 $results += Measure-Scenario -Name "Raw output" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
     Invoke-RemoteScript -Session $session -ScriptBlock { "raw" } -Raw
 }
 
-# 4. Larger payload — returns more data, exercises serialization
+# 4. Larger payload -- returns more data, exercises serialization
 $heavyScript = {
     1..500 | ForEach-Object {
         [PSCustomObject]@{
@@ -147,7 +147,7 @@ $results += Measure-Scenario -Name "Heavy result (500 objects, CliXml)" -Iterati
     Invoke-RemoteScript -Session $session -ScriptBlock $heavyScript
 }
 
-# 5. JSON output mode — exercises the JSON serialization path
+# 5. JSON output mode -- exercises the JSON serialization path
 $results += Measure-Scenario -Name "Heavy result (500 objects, JSON)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {
     Invoke-RemoteScript -Session $session -OutputFormat Json -ScriptBlock $heavyScript
 }
@@ -157,7 +157,7 @@ $results += Measure-Scenario -Name "Heavy result (500 objects, Raw)" -Iterations
     Invoke-RemoteScript -Session $session -OutputFormat Raw -ScriptBlock $heavyScript
 }
 
-# 7. API v2 endpoint — exercises the dictionary lookup path (GetApiScripts)
+# 7. API v2 endpoint -- exercises the dictionary lookup path (GetApiScripts)
 #    This requires a script registered in the Web API integration point.
 #    If none exist, this scenario is skipped.
 Write-Host "`n--- API v2 lookup (GetApiScripts cache) ---" -ForegroundColor Cyan
@@ -170,10 +170,10 @@ try {
     $sw.Stop()
     Write-Host "  Single API v2 probe: $([math]::Round($sw.Elapsed.TotalMilliseconds, 2))ms (exercises dictionary lookup + cache)" -ForegroundColor Yellow
 } catch {
-    Write-Host "  Skipped — could not probe API v2 endpoint" -ForegroundColor Yellow
+    Write-Host "  Skipped -- could not probe API v2 endpoint" -ForegroundColor Yellow
 }
 
-# 8. Persistent session — measures without session teardown overhead
+# 8. Persistent session -- measures without session teardown overhead
 $persistentSession = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $ConnectionUri
 
 $results += Measure-Scenario -Name "Persistent session (no teardown)" -Iterations $Iterations -WarmupIterations $WarmupIterations -ScriptBlock {

@@ -14,7 +14,7 @@ SharedFields:
       How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
      
       Sitecore recommendation:
-         _Standard Values — Define layout details, initial workflow, and insert options to a template. 
+         _Standard Values - Define layout details, initial workflow, and insert options to a template.
          This reduces administration and centrally manages system settings, rather than setting them on individual items.
      
       Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"

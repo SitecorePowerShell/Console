@@ -14,7 +14,7 @@ SharedFields:
       How many of my templates define or no an icon? Which templates I need to examine to check if adding an icon would benefit my users?
      
       Sitecore recommendation:
-         Assign icons to templates — 
+         Assign icons to templates -
            This provides a visual clue to the type of item that will be created.
      
       Before executing this script point the "Context Item" to where you store your solution templates e.g. "sitecore/templates/My Site Templates"

@@ -86,7 +86,7 @@ Assert-Equal $result "hello world" "Raw response without delimiter returns text 
 $result = Parse-Response -Response "output text<#messages#>" -HasRedirectedMessages $false -Raw $true
 Assert-Equal $result "output text" "Response before delimiter is returned"
 
-# Non-raw empty-ish path — no messages means ConvertFrom-CliXml called on empty, which returns nothing
+# Non-raw empty-ish path -- no messages means ConvertFrom-CliXml called on empty, which returns nothing
 $result = Parse-Response -Response "" -HasRedirectedMessages $false -Raw $false
 Assert-Null $result "Non-raw empty response returns null"
 
@@ -105,7 +105,7 @@ $result = Resolve-UsingVariables -ScriptBlock $sb -Arguments $existingArgs
 Assert-Equal $result.Arguments["existing"] "value" "Existing Arguments preserved when no using vars"
 
 # ============================================================
-# Resolve-UsingVariables (with $Using: vars — run inside module scope)
+# Resolve-UsingVariables (with $Using: vars -- run inside module scope)
 # ============================================================
 Write-Host "`n  [Resolve-UsingVariables - with using vars]" -ForegroundColor White
 

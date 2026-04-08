@@ -28,7 +28,7 @@ namespace Spe.Core.Provider
 
                     foreach (var name in providerSpecificPickList)
                     {
-                        // Copy all the properties from the original object into ’result’
+                        // Copy all the properties from the original object into 'result'
                         var prop = psobj.Properties[name];
                         object value = null;
                         if (prop != null)
@@ -122,7 +122,7 @@ namespace Spe.Core.Provider
                 }
                 else
                 {
-                    WriteWarning($"Property name ’{propertyName}’ does not exist for item at path ’{path}’");
+                    WriteWarning($"Property name '{propertyName}' does not exist for item at path '{path}'");
                 }
             }
         }

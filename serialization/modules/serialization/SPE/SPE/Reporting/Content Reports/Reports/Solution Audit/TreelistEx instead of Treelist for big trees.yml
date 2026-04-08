@@ -14,7 +14,7 @@ SharedFields:
       Which of my Templates use TreeList fields?
      
       Sitecore recommendation:
-         Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants — 
+         Use TreelistEx instead of Treelist when showing very big trees - like the Home node and its descendants - 
          or have lots of Treelist fields in one single item. TreelistEx only computes the tree 
          when you click Edit whereas a Treelist will compute it every time it is rendered.
      
@@ -25,7 +25,7 @@ SharedFields:
     $icon =[regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
-        -Description "Sitecore recommendation: Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants" `
+        -Description "Sitecore recommendation: Use TreelistEx instead of Treelist when showing very big trees - like the Home node and its descendants" `
         -Title "Which of my templates use TreeList fields?" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon $icon
     
@@ -40,7 +40,7 @@ SharedFields:
             @{Name="Source"; Expression={$_._Source }} `
             -Title "Templates using TreeList fields" `
             -InfoTitle "Sitecore recommendation:" `
-            -InfoDescription "Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants — 
+            -InfoDescription "Use TreelistEx instead of Treelist when showing very big trees - like the Home node and its descendants - 
                               or have lots of Treelist fields in one single item. TreelistEx only computes the tree
                               when you click Edit whereas a Treelist will compute it every time it is rendered. <br/><br/>
                               This report shows which of your templates use TreeList fields."

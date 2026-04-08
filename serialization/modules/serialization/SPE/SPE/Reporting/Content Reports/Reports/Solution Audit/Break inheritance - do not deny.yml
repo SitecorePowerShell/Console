@@ -14,7 +14,7 @@ SharedFields:
       Do my items restrict access rights?
      
       Sitecore recommendation:
-         Break inheritance rather than explicitly deny access rights — 
+         Break inheritance rather than explicitly deny access rights -
            It is a recommended practice to break inheritance in cases where the access right should be denied 
            instead of explicitly denying it for a security account. If you deny an access right explicitly to a security account, 
            the only way to override this denial of access is to do it directly on a user account. 

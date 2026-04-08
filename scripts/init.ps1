@@ -156,7 +156,7 @@ if([string]::IsNullOrEmpty($licenseLocation)) {
 
 & "$PSScriptRoot\cert.ps1" -HostName $HostName
 
-# SITECORE_ID_CERTIFICATE — reuse the Traefik PFX
+# SITECORE_ID_CERTIFICATE -- reuse the Traefik PFX
 $certsDir = Join-Path $projectPath "docker\traefik\certs"
 $certificatePath = Join-Path $certsDir "devcert.pfx"
 $certificatePassword = (Get-Content (Join-Path $certsDir "devcert.password.txt") -Raw).Trim()

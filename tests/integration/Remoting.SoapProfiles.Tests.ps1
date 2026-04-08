@@ -74,7 +74,7 @@ try {
     Assert-True $blocked "SOAP read-only profile blocks Remove-Item"
 } catch {
     # SOAP returns 500 for blocked commands (InvalidOperationException -> SOAP fault).
-    # Catching the error IS the expected behavior — the command was rejected.
+    # Catching the error IS the expected behavior -- the command was rejected.
     Assert-True $true "SOAP read-only profile blocks Remove-Item"
 }
 

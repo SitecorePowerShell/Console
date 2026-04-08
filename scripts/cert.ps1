@@ -69,7 +69,7 @@ try {
         Write-Host "Info: A newer certz version is available: $($release.tag_name) (pinned: $certzVersion)" -ForegroundColor Cyan
     }
 } catch {
-    # Non-fatal — skip version check if offline or rate-limited
+    # Non-fatal -- skip version check if offline or rate-limited
 }
 
 if ($Renew) {
