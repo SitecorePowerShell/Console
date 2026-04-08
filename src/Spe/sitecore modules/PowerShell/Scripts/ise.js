@@ -37,7 +37,7 @@
                 this.isModified = false;          // bool: is modified
                 this.initialAssignment = true;    // bool: initial assignment
                 this.breakpoints = "";            // string: breakpoints
-                this.results = "";                // string: Script execution results
+                this.resultsHistory = [];         // array: Script execution results for terminal replay
             }
         }
 
@@ -70,12 +70,6 @@
         var scriptItemIdMemo = $($("#ScriptItemIdMemo")[0]);
         var scriptItemDbMemo = $($("#ScriptItemDbMemo")[0]);
         // Setup the ace code editor.
-
-        addProxy(scForm, "invoke", function (args) {
-            if (args[0] === "ise:immediatewindow") {
-                clearVariablesCache();
-            }
-        });
 
         function registerEventListenersForRibbonButtons() {
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
@@ -205,10 +199,22 @@
                 }
             });
 
-            if (perTabResults) {
-                $("#ScriptResultCode").text("");
-                $("#ScriptResultCode").append(currentEditorSession.results);
-                $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            if (perTabResults && iseTerminal) {
+                iseTerminal.clear();
+                var history = currentEditorSession.resultsHistory || [];
+                history.forEach(function (entry) {
+                    if (typeof entry === "string") {
+                        // Legacy format - treat as raw HTML
+                        iseTerminal.echo(entry, { raw: true });
+                    } else {
+                        iseTerminal.echo(entry.text, { raw: entry.raw });
+                    }
+                });
+                // Ensure terminal is interactive after tab switch (unless busy)
+                if (!iseTerminalBusy) {
+                    iseTerminal.find(".cmd").show();
+                    iseTerminal.resume();
+                }
             }
         }
 
@@ -259,6 +265,8 @@
             ace.config.loadModule("ace/ext/emmet", function () {
                 ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function () {
                     currentAceEditor.setOption("enableEmmet", true);
+                    // Remove emmet's Alt-E binding so it propagates to the ISE ribbon (Execute Selection)
+                    currentAceEditor.commands.removeCommand("expand_abbreviation");
                 });
 
                 currentAceEditor.setOptions({
@@ -401,6 +409,9 @@
                 spe.updateModificationFlag(false);
             });
 
+            // Remove Ace's default Alt-E binding so it propagates to the ISE ribbon (Execute Selection)
+            currentAceEditor.commands.removeCommand("goToNextError");
+
             var codeeeditorcommands = [
                 {
                     name: "help",
@@ -474,27 +485,214 @@
         };
 
 
+        // Initialize jQuery Terminal in the results pane
+        var iseTerminal = null;
+        var iseTerminalBusy = false;
+        var iseScriptRunning = false;
+        var iseTerminalAttempts = 0;
+        var iseInitialPoll = 100;
+        var iseMaxPoll = 2500;
+        var iseLastPrompt = "PS >";
+        var iseDebugActive = false;
+
+        function getIsePrompt() {
+            // jQuery Terminal format syntax: [[STYLE;FG;BG]text]
+            // Avoid [ and ] characters in the text since they conflict with the tag delimiters.
+            // White when ready for commands, yellow during debug inspection.
+            if (iseDebugActive) {
+                return "[[;yellow;]DBG " + iseLastPrompt + "]";
+            }
+            return "[[;white;]" + iseLastPrompt + "]";
+        }
+
+        function getPowerShellResponseAsync(callData, remotefunction, doneFunction, errorFunction) {
+            var datastring = JSON.stringify(callData);
+            var ajax = $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
+                data: datastring,
+                processData: false,
+                cache: false,
+                async: true
+            }).done(doneFunction);
+            if (typeof errorFunction !== "undefined") {
+                ajax.fail(errorFunction);
+            }
+        }
+
+        function displayIseResult(data) {
+            if (data["status"] !== "partial" && data["status"] !== "working") {
+                iseTerminalBusy = false;
+                iseTerminal.resume();
+                iseTerminal.find(".cmd").show();
+                if (data["prompt"]) {
+                    iseLastPrompt = data["prompt"];
+                }
+                iseTerminal.set_prompt(getIsePrompt());
+                var background = data["background"];
+                if (background !== undefined && background !== "null") {
+                    $("#ScriptResultCode").css({ "background-color": background });
+                }
+                var color = data["color"];
+                if (color !== undefined && color !== "null") {
+                    $("#ScriptResultCode").css({ "color": color });
+                }
+            }
+
+            if (data["result"]) {
+                iseTerminal.echo(data["result"]);
+                if (!currentEditorSession.resultsHistory) {
+                    currentEditorSession.resultsHistory = [];
+                }
+                currentEditorSession.resultsHistory.push({ text: data["result"], raw: false });
+            }
+        }
+
+        function callIseHost(command) {
+            iseTerminal.pause();
+            iseTerminalBusy = true;
+            iseTerminalAttempts = 0;
+            getPowerShellResponseAsync({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
+                function (json) {
+                    var data = JSON.parse(json.d);
+                    if (data["status"] === "working") {
+                        displayIseResult(data);
+                        var handle = data["handle"];
+                        (function poll(wait) {
+                            setTimeout(function () {
+                                getPowerShellResponseAsync({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
+                                    function (pollJson) {
+                                        var jsonData = JSON.parse(pollJson.d);
+                                        if (jsonData["status"] === "working") {
+                                            displayIseResult(jsonData);
+                                            var textResult = jsonData["result"];
+                                            if (textResult && textResult.length > 0) {
+                                                iseTerminalAttempts = 0;
+                                            }
+                                            if (iseTerminalAttempts >= 0) {
+                                                iseTerminalAttempts++;
+                                                var newWait = Math.pow(iseInitialPoll, 1 + (iseTerminalAttempts / 10));
+                                                if (newWait > iseMaxPoll) {
+                                                    newWait = iseMaxPoll;
+                                                    iseTerminalAttempts = -1;
+                                                }
+                                                poll(newWait);
+                                            } else {
+                                                poll(iseMaxPoll);
+                                            }
+                                        } else if (jsonData["status"] === "partial") {
+                                            displayIseResult(jsonData);
+                                            poll(iseInitialPoll);
+                                        } else {
+                                            displayIseResult(jsonData);
+                                            clearVariablesCache();
+                                        }
+                                    },
+                                    function (jqXHR, textStatus, errorThrown) {
+                                        iseTerminalBusy = false;
+                                        iseTerminal.resume();
+                                        iseTerminal.find(".cmd").show();
+                                        iseTerminal.echo("Communication error: " + textStatus + "; " + errorThrown);
+                                    }
+                                );
+                            }, wait);
+                        })(iseInitialPoll);
+                    } else if (data["status"] === "unauthorized") {
+                        iseTerminalBusy = false;
+                        iseTerminal.resume();
+                        iseTerminal.find(".cmd").show();
+                        spe.requestElevation();
+                    } else {
+                        displayIseResult(data);
+                        clearVariablesCache();
+                    }
+                }
+            );
+        }
+
+        function initIseTerminal() {
+            iseTerminal = $("#ScriptResultCode").terminal(function (command, term) {
+                if (command.length > 0) {
+                    callIseHost(command);
+                }
+            }, {
+                greetings: false,
+                prompt: getIsePrompt(),
+                enabled: true,
+                onClear: function () {}
+            });
+            // If a script is currently executing, hide the command line and pause.
+            // Otherwise leave the terminal interactive so the user can type commands.
+            if (iseScriptRunning) {
+                iseTerminal.find(".cmd").hide();
+                iseTerminal.pause();
+            }
+        }
+
+        // Fetches the current prompt from the ISE session by running an empty command.
+        // The session must already be primed on the server via ise:initterminal.
+        spe.refreshTerminalPrompt = function () {
+            if (iseTerminal && !iseTerminalBusy && !iseScriptRunning) {
+                callIseHost("");
+            }
+        };
+
+        // Silently updates the terminal prompt without pausing the UI.
+        // Used during debug breakpoints where we want to refresh the prompt
+        // but keep the command line visible and usable while waiting for the response.
+        function silentRefreshPrompt() {
+            if (!iseTerminal) return;
+            getPowerShellResponseAsync(
+                { "guid": guid, "command": "", "stringFormat": "jsterm" },
+                "ExecuteCommand",
+                function (json) {
+                    try {
+                        var data = JSON.parse(json.d);
+                        if (data && data["prompt"]) {
+                            iseLastPrompt = data["prompt"];
+                            if (iseTerminal) {
+                                iseTerminal.set_prompt(getIsePrompt());
+                            }
+                        }
+                    } catch (e) { /* ignore parse errors */ }
+                },
+                function () { /* silently ignore network errors */ }
+            );
+        }
+
+        initIseTerminal();
+
         $("#CopyResultsToClipboard").on("click", function () {
             clipboard.copy(spe.getOutput());
         });
 
 
         spe.getOutput = function () {
-            return $("#ScriptResultCode")[0].innerText;
+            if (!iseTerminal) return "";
+            return iseTerminal.find(".terminal-output").text();
         };
 
         spe.clearOutput = function () {
-            $("#ScriptResultCode").text("");
-            $("#Result").scrollTop($("#Result")[0].scrollHeight);
-            currentEditorSession.results = "";
+            if (iseTerminal) {
+                iseTerminal.clear();
+            }
+            currentEditorSession.resultsHistory = [];
             clearVariablesCache();
         };
 
         spe.appendOutput = function (outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
-            $("#ScriptResultCode").append(decoded);
-            $("#Result").scrollTop($("#Result")[0].scrollHeight);
-            currentEditorSession.results = currentEditorSession.results + decoded;
+            // Reinitialize terminal if DOM was replaced
+            if (!iseTerminal || !$.contains(document, iseTerminal[0])) {
+                initIseTerminal();
+            }
+            iseTerminal.echo(decoded, { raw: true });
+            if (!currentEditorSession.resultsHistory) {
+                currentEditorSession.resultsHistory = [];
+            }
+            currentEditorSession.resultsHistory.push({ text: decoded, raw: true });
             clearVariablesCache();
         };
 
@@ -506,6 +704,7 @@
             });
 
             document.getElementById("ScriptResult").style.fontFamily = setting;
+            $("#ScriptResultCode").css({ "font-family": setting });
         };
 
         spe.changeFontSize = function (setting) {
@@ -515,12 +714,14 @@
                 editor.editor.setOption("fontSize", setting);
             });
             $("#ScriptResult").css({"font-size": setting + "px"});
+            $("#ScriptResultCode").css({ "font-size": setting + "px" });
         };
 
 
         spe.changeBackgroundColor = function (setting) {
             $("#ScriptResult").css({"background-color": setting});
             $("#Result").css({"background-color": setting});
+            $("#ScriptResultCode").css({"background-color": setting});
         };
 
         spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
@@ -545,6 +746,13 @@
         spe.debugStop = function (sessionId) {
             setTimeout(spe.breakpointHandled, 100);
             currentAceEditor.setReadOnly(false);
+            iseDebugActive = false;
+            // Only hide terminal if the script is still running (stepping),
+            // not when the debug session has ended (scriptExecutionEnded handles that)
+            if (iseTerminal && iseScriptRunning) {
+                iseTerminal.find(".cmd").hide();
+                iseTerminal.pause();
+            }
         };
 
         spe.toggleBreakpoint = function (row, set) {
@@ -585,6 +793,17 @@
             if (line < currentAceEditor.getFirstVisibleRow() || line > currentAceEditor.getLastVisibleRow()) {
                 currentAceEditor.gotoLine(line);
             }
+            // Enable terminal for debug inspection
+            iseDebugActive = true;
+            if (iseTerminal) {
+                iseTerminal.find(".cmd").show();
+                iseTerminal.resume();
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+            // Silently refresh the prompt from the paused session without blocking
+            // the command line - the path may have changed since the last command
+            // (especially if the script cd'd before the breakpoint).
+            silentRefreshPrompt();
         };
 
         spe.breakpointHandled = function () {
@@ -612,6 +831,17 @@
             if (!resultsVisibilityIntent) {
                 setTimeout(spe.closeResults, 2000);
             }
+            // Enable terminal command line after script finishes
+            iseScriptRunning = false;
+            iseDebugActive = false;
+            if (iseTerminal && !iseTerminalBusy) {
+                iseTerminal.find(".cmd").show();
+                iseTerminal.resume();
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+            // Refresh prompt from the server - the path may have changed during script execution
+            // (especially during debug, where the user may have cd'd or the script itself did)
+            spe.refreshTerminalPrompt();
         };
 
         spe.clearBreakpoints = function () {
@@ -776,12 +1006,32 @@
         };
 
         spe.restoreResults = function () {
+            iseScriptRunning = true;
             if (splitOrientation === "vertical") {
+                // Restore left pane flex from saved splitter position
+                var leftPane = document.getElementById("VerticalLeftPane");
+                if (leftPane && splitPosition.vertical) {
+                    var containerWidth = leftPane.parentNode.offsetWidth;
+                    var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
+                    restoredWidth = Math.max(minPaneSize, Math.min(restoredWidth, containerWidth - minPaneSize - 10));
+                    leftPane.style.flexBasis = restoredWidth + "px";
+                    leftPane.style.flexGrow = "0";
+                    leftPane.style.flexShrink = "0";
+                } else if (leftPane) {
+                    leftPane.style.flexBasis = "";
+                    leftPane.style.flexGrow = "";
+                    leftPane.style.flexShrink = "";
+                }
                 $("#VerticalSplitter").show();
                 $("#VerticalRightPane").show();
             } else {
                 $("#ResultsSplitter").show();
                 $("#ResultsRow").show();
+            }
+            // Reinitialize terminal if the DOM was replaced (e.g. by SetInnerHtml during script execution)
+            if ($("#ScriptResultCode").length && (!iseTerminal || !$.contains(document, iseTerminal[0]))) {
+                initIseTerminal();
+                currentEditorSession.resultsHistory = [];
             }
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
@@ -791,12 +1041,19 @@
             if (splitOrientation === "vertical") {
                 $("#VerticalSplitter").hide();
                 $("#VerticalRightPane").hide("slow", function () {
-                    if (currentAceEditor) currentAceEditor.resize();
+                    // Let the left pane fill the entire container width
+                    var leftPane = document.getElementById("VerticalLeftPane");
+                    if (leftPane) {
+                        leftPane.style.flexBasis = "100%";
+                        leftPane.style.flexGrow = "1";
+                        leftPane.style.flexShrink = "1";
+                    }
+                    spe.resizeEditor();
                 });
             } else {
                 $("#ResultsSplitter").hide();
                 $("#ResultsRow").hide("slow", function () {
-                    currentAceEditor.resize();
+                    spe.resizeEditor();
                 });
             }
             $("#ResultsStatusBarAction").addClass("status-bar-results-hidden")
@@ -954,7 +1211,10 @@
             splitOrientation = splitOrientation === "horizontal" ? "vertical" : "horizontal";
             localStorage.setItem("spe::ise.splitOrientation", splitOrientation);
             applySplitOrientation(splitOrientation);
-            spe.resizeEditor();
+            // Defer resize to allow the DOM to reflow after layout changes
+            setTimeout(function () {
+                spe.resizeEditor();
+            }, 0);
         };
 
         function getCachedVariableValue(storageKey, variableName) {
@@ -1189,6 +1449,10 @@
             scForm.postRequest("", "", "", "ise:updatesettings");
             scForm.postRequest("", "", "", "ise:loadinitialscript");
             spe.resizeEditor();
+            // Prime the ISE PowerShell session on the server with the correct
+            // application type (ISE) and context item location. The server
+            // will then call spe.refreshTerminalPrompt() to update the prompt.
+            scForm.postRequest("", "", "", "ise:initterminal");
         }, 100);
 
         const resizeObserver = new ResizeObserver((entries) => {

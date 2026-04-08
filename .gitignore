@@ -63,5 +63,9 @@ docker/traefik/certs/*.pem
 docker/traefik/certs/*.txt
 docker/traefik/certs/certz.exe
 
+# work folders
+releases/sat
+cli
+
 # Claude Code
-.claude/settings.local.json
+.claude

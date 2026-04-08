@@ -155,7 +155,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Client\Applications\FieldEditor.cs" />
-    <Compile Include="Client\Applications\ImmediateDebugWindowLauncher.cs" />
     <Compile Include="Client\Applications\PowerShellReports.cs" />
     <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
     <Compile Include="Client\Applications\SessionElevationWindowLauncher.cs" />

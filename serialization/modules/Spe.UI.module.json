@@ -1,5 +1,6 @@
 {
     "namespace": "Spe.UI",
+    "references": ["Spe.Core"],
     "items": {
         "includes": [
             {

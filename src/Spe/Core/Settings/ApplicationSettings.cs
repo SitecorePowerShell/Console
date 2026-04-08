@@ -38,12 +38,7 @@ namespace Spe.Core.Settings
         private const string FontSizeSettingFieldName = "FontSize";
         private const string FontFamilySettingFieldName = "FontFamily";
 
-        private static string rulesDb;
-        private static string settingsDb;
-        private static string scriptLibraryDb;
-
-        private static readonly Dictionary<string, ApplicationSettings> instances =
-            new Dictionary<string, ApplicationSettings>();
+        private static readonly Dictionary<string, ApplicationSettings> instances = new();
 
         private static readonly Regex validNameRegex = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
@@ -57,8 +52,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
-                return rulesDb;
+                GetDatabaseName(ref field, "powershell/workingDatabase/rules");
+                return field;
             }
         }
 
@@ -66,8 +61,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
-                return settingsDb;
+                GetDatabaseName(ref field, "powershell/workingDatabase/settings");
+                return field;
             }
         }
 
@@ -75,8 +70,8 @@ namespace Spe.Core.Settings
         {
             get
             {
-                GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
-                return scriptLibraryDb;
+                GetDatabaseName(ref field, "powershell/workingDatabase/scriptLibrary");
+                return field;
             }
         }
 

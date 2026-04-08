@@ -117,10 +117,44 @@ html {
     bottom: 0;
 }
 
-#ScriptResult pre { 
-    margin: 4px 2px !important; 
+#ScriptResult pre {
+    margin: 4px 2px !important;
     z-index: 0;
     position: absolute;
+}
+
+/* jQuery Terminal in ISE results pane */
+#ScriptResultCode.terminal {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #012456;
+}
+
+#ScriptResultCode.terminal .terminal-output {
+    padding: 4px 2px;
+}
+
+#ScriptResultCode.terminal .terminal-output div div {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#ScriptResultCode.terminal .cmd .cursor.blink {
+    animation-name: spe-blink;
+    background-color: var(--background, #012456);
+}
+
+#ScriptResultCode.terminal .cmd {
+    color: inherit;
+    background-color: inherit;
+}
+
+#ScriptResultCode.terminal .cmd .prompt {
+    color: inherit;
 }
 
 .console a { color: #ffa; }

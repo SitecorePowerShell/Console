@@ -74,7 +74,9 @@ function Get-RandomString {
     )
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     $bytes = [byte[]]::new($Length)
-    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    $rng.GetBytes($bytes)
+    $rng.Dispose()
     $result = [char[]]::new($Length)
     for ($i = 0; $i -lt $Length; $i++) {
         $result[$i] = $chars[$bytes[$i] % $chars.Length]

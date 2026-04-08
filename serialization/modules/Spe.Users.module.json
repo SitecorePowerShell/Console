@@ -1,5 +1,6 @@
 {
     "namespace": "Spe.Users",
+    "references": ["Spe.Core"],
     "users": [
         {
             "domain": "sitecore",

@@ -297,12 +297,14 @@ namespace Spe.Client.Applications
         {
             var tab = Tabs.Controls.OfType<Tab>().Skip(Tabs.Active).FirstOrDefault();
             SelectTabByIndex(Tabs.Active + 1);
-            var openedScript = OpenedScripts.Value.Split('\n')[Tabs.Active].Split(':')[0];
 
-            if (openedScript.IndexOf("/") > 0)
+            // Use the ID-based ScriptItem lookup (populated from the per-tab memos)
+            // instead of reconstructing the path from OpenedScripts - that path may
+            // be malformed for scripts opened from locations outside ScriptLibraryPath
+            // (e.g. via a search gallery), which previously caused a NullReferenceException.
+            var scriptItem = ScriptItem;
+            if (scriptItem != null)
             {
-                var scriptItem = Sitecore.Client.ContentDatabase.GetItem(ApplicationSettings.ScriptLibraryPath+openedScript);
-
                 ContentDataContext.BeginUpdate();
                 ContentDataContext.SetFolder(scriptItem.Uri);
                 ContentDataContext.EndUpdate();
@@ -489,7 +491,7 @@ namespace Spe.Client.Applications
             ScriptItemId = string.Empty;
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
-            ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
+            ScriptResult.Value = "<div ID='ScriptResultCode'></div>";
             CreateNewTab(null);
             UpdateRibbon();
         }
@@ -674,9 +676,21 @@ namespace Spe.Client.Applications
         private void UpdateTabInfo(Item scriptItem, int tabIndex)
         {
             var itemEditing = scriptItem != null;
-            var path = itemEditing
-                ? scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length)
-                : String.Empty;
+            string path;
+            if (itemEditing)
+            {
+                var fullPath = scriptItem.Paths.Path;
+                // Strip the ScriptLibraryPath prefix for scripts inside the library,
+                // otherwise fall back to the full path (e.g. scripts opened from
+                // a search gallery that live outside the library root).
+                path = fullPath.StartsWith(ApplicationSettings.ScriptLibraryPath, StringComparison.OrdinalIgnoreCase)
+                    ? fullPath.Substring(ApplicationSettings.ScriptLibraryPath.Length)
+                    : fullPath;
+            }
+            else
+            {
+                path = String.Empty;
+            }
 
             var title = itemEditing ? scriptItem.Name : $"Untitled{TabSequencer}";
             var icon = itemEditing ? scriptItem[FieldIDs.Icon] : "powershell/16x16/ise8.png";
@@ -842,7 +856,7 @@ namespace Spe.Client.Applications
                     "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
                     Texts.PowerShellIse_JobExecuteScript_Working +
                     "' /><div>{0}</div></div>" +
-                    "<pre ID='ScriptResultCode'></pre>", executionMessage));
+                    "<div ID='ScriptResultCode'></div>", executionMessage));
 
             Context.ClientPage.ClientResponse.Eval(
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
@@ -1320,6 +1334,39 @@ namespace Spe.Client.Applications
             }
 
             UpdateRibbon();
+            // Reprime the terminal session with the new context item and refresh its prompt
+            PrimeTerminalSession();
+        }
+
+        [HandleMessage("ise:initterminal", true)]
+        protected void InitTerminalSession(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            PrimeTerminalSession();
+        }
+
+        /// <summary>
+        /// Creates or retrieves the ISE PowerShell session and primes it with the
+        /// ISE's context (current item location, interactive flag). Then notifies
+        /// the client terminal so it can fetch the updated prompt.
+        /// </summary>
+        private void PrimeTerminalSession()
+        {
+            try
+            {
+                var session = ScriptSessionManager.GetSession(CurrentSessionId, ApplicationNames.ISE, true);
+                session.Interactive = true;
+                if (UseContext && ContextItem != null)
+                {
+                    session.SetItemLocationContext(ContextItem);
+                }
+                // Tell the client terminal to refresh its prompt from the server
+                SheerResponse.Eval("if (spe.refreshTerminalPrompt) { spe.refreshTerminalPrompt(); }");
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"[ISE] action=primeTerminalSession failed: {ex.Message}", ex);
+            }
         }
 
         [HandleMessage("ise:updatesettings", true)]
@@ -1393,33 +1440,6 @@ namespace Spe.Client.Applications
             session.TryInvokeInRunningSession(args.Parameters["action"]);
             SheerResponse.Eval("$ise(function() { spe.breakpointHandled(); });");
             InBreakpoint = false;
-        }
-
-        [HandleMessage("ise:immediatewindow", true)]
-        protected virtual void ImmediateWindow(ClientPipelineArgs args)
-        {
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
-            {
-                Context.ClientPage.Start(this, nameof(ImmediateWindowPipeline));
-            }
-        }
-
-        public void ImmediateWindowPipeline(ClientPipelineArgs args)
-        {
-            if (!args.IsPostBack)
-            {
-                Monitor.Active = false;
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                var url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
-                url.Parameters["id"] = session.Key;
-                url.Parameters["debug"] = "true";
-                TypeResolver.Resolve<IImmediateDebugWindowLauncher>().ShowImmediateWindow(url);
-                args.WaitForPostBack(true);
-            }
-            else
-            {
-                Monitor.Active = true;
-            }
         }
 
         public void SessionElevationPipeline(ClientPipelineArgs args)

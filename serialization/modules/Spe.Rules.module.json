@@ -1,5 +1,6 @@
 {
     "namespace": "Spe.Rules",
+    "references": ["Spe.Core"],
     "items": {
         "includes": [
             {

@@ -333,6 +333,7 @@ a.ps-link {
     right: 19px;
     text-align: right;
     float: right;
+    z-index: 1000;
 }
 
 
