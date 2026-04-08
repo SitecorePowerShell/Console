@@ -3626,6 +3626,12 @@
                 var output;
                 var line_length = line.length;
                 var chars = $.terminal.split_characters(text(line));
+                if (!chars.length) {
+                    // SPE #1458: Line contains only formatting codes with no visible text;
+                    // skip word-wrap to avoid undefined access on empty chars array.
+                    result.push(line);
+                    continue;
+                }
                 var last_char = chars[chars.length - 1];
                 $.terminal.iterate_formatting(line, function(data) {
                     var last_iteraction = data.index === line_length - last_char.length;
