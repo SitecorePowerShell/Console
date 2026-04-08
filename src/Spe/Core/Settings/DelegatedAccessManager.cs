@@ -14,13 +14,32 @@ namespace Spe.Core.Settings
 {
     public static class DelegatedAccessManager
     {
-        private static readonly ConcurrentDictionary<string, DelegatedAccessEntry> _accessEntries =
-            new ConcurrentDictionary<string, DelegatedAccessEntry>();
+        private static readonly ConcurrentDictionary<string, CachedAccessEntry> _accessEntries =
+            new ConcurrentDictionary<string, CachedAccessEntry>();
 
         private static readonly object _initLock = new object();
         private static List<DelegatedAccessConfig> _delegatedConfigs;
+        private static DateTime _lastCleanupUtc = DateTime.UtcNow;
+
+        private const int DefaultCacheTtlSeconds = 300;
+        private const int CleanupIntervalSeconds = 60;
 
         public const string DelegatedItemPath = "/sitecore/system/Modules/PowerShell/Delegated Access";
+
+        internal static int CacheTtlSeconds
+        {
+            get
+            {
+                try
+                {
+                    return Sitecore.Configuration.Settings.GetIntSetting("Spe.DelegatedAccessCacheTtlSeconds", DefaultCacheTtlSeconds);
+                }
+                catch
+                {
+                    return DefaultCacheTtlSeconds;
+                }
+            }
+        }
 
         public static void Invalidate()
         {
@@ -100,18 +119,54 @@ namespace Spe.Core.Settings
                 CurrentUser = currentUser
             };
 
-            _accessEntries.TryAdd(cacheKey, entry);
+            var cached = new CachedAccessEntry
+            {
+                Entry = entry,
+                ExpiresUtc = DateTime.UtcNow.AddSeconds(CacheTtlSeconds)
+            };
+
+            _accessEntries.TryAdd(cacheKey, cached);
 
             return entry;
+        }
+
+        private static void CleanupExpiredEntries()
+        {
+            var now = DateTime.UtcNow;
+            if ((now - _lastCleanupUtc).TotalSeconds < CleanupIntervalSeconds) return;
+
+            _lastCleanupUtc = now;
+            var expiredKeys = _accessEntries
+                .Where(kvp => kvp.Value.ExpiresUtc <= now)
+                .Select(kvp => kvp.Key)
+                .ToList();
+
+            foreach (var key in expiredKeys)
+            {
+                _accessEntries.TryRemove(key, out _);
+            }
+
+            if (expiredKeys.Count > 0)
+            {
+                PowerShellLog.Debug($"[DelegatedAccess] action=cacheCleanup removed={expiredKeys.Count} remaining={_accessEntries.Count}");
+            }
         }
 
         private static DelegatedAccessEntry GetDelegatedCachedEntry(Item scriptItem, DelegatedAccessConfig config, User currentUser)
         {
             var cacheKey = $"{currentUser.Name}-{scriptItem.ID}-{config.Id}";
-            if(_accessEntries.TryGetValue(cacheKey, out var entry))
+
+            if (_accessEntries.TryGetValue(cacheKey, out var cached))
             {
-                return entry;
+                if (cached.ExpiresUtc > DateTime.UtcNow)
+                {
+                    return cached.Entry;
+                }
+
+                _accessEntries.TryRemove(cacheKey, out _);
             }
+
+            CleanupExpiredEntries();
 
             if (!config.Enabled) return GetDeniedElevation(cacheKey, currentUser);
 
@@ -129,7 +184,7 @@ namespace Spe.Core.Settings
 
             if (RolesInRolesManager.IsUserInRole(currentUser, elevatedRole, true))
             {
-                entry = new DelegatedAccessEntry
+                var entry = new DelegatedAccessEntry
                 {
                     DelegatedAccessItemId = config.Id,
                     CurrentUser = currentUser,
@@ -138,7 +193,13 @@ namespace Spe.Core.Settings
                     IsElevated = true
                 };
 
-                _accessEntries.TryAdd(cacheKey, entry);
+                var cachedEntry = new CachedAccessEntry
+                {
+                    Entry = entry,
+                    ExpiresUtc = DateTime.UtcNow.AddSeconds(CacheTtlSeconds)
+                };
+
+                _accessEntries.TryAdd(cacheKey, cachedEntry);
 
                 return entry;
             }
@@ -179,6 +240,12 @@ namespace Spe.Core.Settings
                 ScriptItemIds = scriptItemIds
             };
         }
+    }
+
+    internal class CachedAccessEntry
+    {
+        public DelegatedAccessEntry Entry { get; set; }
+        public DateTime ExpiresUtc { get; set; }
     }
 
     internal class DelegatedAccessEntry
