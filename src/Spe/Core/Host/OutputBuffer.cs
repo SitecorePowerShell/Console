@@ -10,9 +10,23 @@ namespace Spe.Core.Host
     public class OutputBuffer : List<OutputLine>
     {
         private int updatePointer = 0;
+        private bool clearPending = false;
         public bool HasErrors { get; set; }
         public bool SilenceOutput { get; set; }
         public OutputBuffer SilencedOutput { get; private set; }
+
+        /// <summary>
+        /// Returns true and resets the flag if a Clear was requested since the
+        /// last call. Used by client output pollers (ISE PrintOutput, Console
+        /// PollCommandOutput) to tell the browser to purge its displayed output
+        /// when Clear-Host is invoked from within a running script.
+        /// </summary>
+        public bool ConsumeClearPending()
+        {
+            if (!clearPending) return false;
+            clearPending = false;
+            return true;
+        }
 
         public string ToHtml(bool enableGuidLink = true)
         {
@@ -156,6 +170,7 @@ namespace Spe.Core.Host
         public new void Clear()
         {
             updatePointer = 0;
+            clearPending = true;
             base.Clear();
             SilencedOutput?.Clear();
         }

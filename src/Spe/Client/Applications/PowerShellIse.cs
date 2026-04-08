@@ -922,6 +922,12 @@ namespace Spe.Client.Applications
         {
             if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
 
+            // If the script called Clear-Host, purge the browser's terminal
+            // output before appending any new output from this poll cycle.
+            if (session.Output.ConsumeClearPending())
+            {
+                ClearOutput();
+            }
             var result = session.Output.GetHtmlUpdate();
             PrintSessionUpdate(result);
         }

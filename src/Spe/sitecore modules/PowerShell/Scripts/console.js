@@ -183,6 +183,12 @@
             }
         }
 
+        // Clear-Host called during command execution: purge the terminal
+        // output before rendering any new result from this poll cycle.
+        if (data["clear"]) {
+            term.clear();
+        }
+
         var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
         term.echo(data["result"], {
             finalize: function (div) {

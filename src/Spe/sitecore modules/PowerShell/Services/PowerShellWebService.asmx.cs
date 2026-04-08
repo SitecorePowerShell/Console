@@ -373,6 +373,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var complete = scriptJob == null || scriptJob.IsDone;
 
+            // Clear-Host called from within the running script: tell the client
+            // to purge its displayed output before rendering anything new.
+            result.clear = session.Output.ConsumeClearPending();
+
             var output = new StringBuilder();
             session.Output.GetConsoleUpdate(output, 131072);
             var partial = session.Output.HasUpdates();
@@ -518,6 +522,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             public string status;
             public string background;
             public string color;
+            public bool clear;
 
         }
     }

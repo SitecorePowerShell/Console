@@ -576,6 +576,12 @@
                 }
             }
 
+            // Clear-Host called during command execution: purge the terminal
+            // output before rendering any new result from this poll cycle.
+            if (data["clear"]) {
+                spe.clearOutput();
+            }
+
             if (data["result"]) {
                 iseTerminal.echo(data["result"], { finalize: finalizeGuidLinks });
                 if (!currentEditorSession.resultsHistory) {
