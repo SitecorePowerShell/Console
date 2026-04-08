@@ -280,6 +280,14 @@ namespace Spe.Core.Settings.Authorization
 
                 PowerShellLog.Debug($"[JWT] action=tokenParsed issuer={tokenPayload.Iss} audience={tokenPayload.Aud} algorithm={tokenHeader.Alg}");
 
+                var signature = parts[2];
+                var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
+                var hash = ComputeHash(tokenHeader.Alg, effectiveSecret, toBeSigned);
+                var testSignature = Convert.ToBase64String(hash).Split('=')[0]
+                    .Replace('+', '-').Replace('/', '_');
+
+                if (!IsValidSignature(signature, testSignature)) return false;
+
                 if (!IsValidExpiration(tokenPayload.Exp)) return false;
                 if (tokenPayload.Nbf > 0 && !IsValidNotBefore(tokenPayload.Nbf)) return false;
                 if (tokenPayload.Iat > 0 && !IsValidIssuedAt(tokenPayload.Iat)) return false;
@@ -287,15 +295,6 @@ namespace Spe.Core.Settings.Authorization
                 if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
                 if (!IsValidIssuer(tokenPayload.Iss)) return false;
 
-                var signature = parts[2];
-
-                var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
-
-                var hash = ComputeHash(tokenHeader.Alg, effectiveSecret, toBeSigned);
-                var testSignature = Convert.ToBase64String(hash).Split('=')[0]
-                    .Replace('+', '-').Replace('/', '_');
-
-                if (!IsValidSignature(signature, testSignature)) return false;
                 if (!IsValidUsername(tokenPayload.Name)) return false;
                 username = tokenPayload.Name;
 
