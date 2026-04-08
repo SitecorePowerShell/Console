@@ -574,7 +574,9 @@ nobr:first-child > .scTabActive,
 nobr:first-child > .scTabActive_Hover,
 nobr:first-child > .scTab,
 nobr:first-child > .scTab_Hover {
-    margin-left: 30px;
+    /* 52px reserves space for both TreeViewToggle (at left:6) and
+     * VariablesToggle (at left:28) icons with a small gap before the tabs. */
+    margin-left: 52px;
     pointer-events: all;
 
 }
@@ -586,8 +588,215 @@ nobr > .scTab_Hover {
 
 }
 
-#TreeSplitterPanel, #TreeViewPanel  {
+/* Sidebar cell holds both TreeView and VariablesView Scrollboxes.
+ * They stack absolutely inside the cell so they share the same space and
+ * inherit the same user-controlled width (resized via #TreeSplitter).
+ * Only one is visible at a time via JS-controlled display toggling. */
+#TreeSplitterPanel, #SidebarPanel {
     display: none;
+}
+
+#Sidebar > #TreeView,
+#Sidebar > #VariablesView {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+/* Initially both panels inside the sidebar are hidden (JS shows the
+ * requested one when its toggle is clicked). */
+#Sidebar > #VariablesView {
+    display: none;
+}
+
+#VariablesToggle {
+    position: absolute;
+}
+
+.spe-variables-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-bottom: 1px solid #cccccc;
+    background: #f0f0f0;
+    font-weight: bold;
+    font-size: 12px;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.spe-variables-header img {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.spe-variables-header img:hover {
+    opacity: 1;
+}
+
+.spe-variables-list {
+    padding: 0;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+}
+
+.spe-variables-section {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.spe-variables-section-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: #eaeaea;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+    color: #333;
+    user-select: none;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.spe-variables-section-header:hover {
+    background: #dde7f5;
+}
+
+.spe-variables-section-caret {
+    display: inline-block;
+    width: 14px;
+    color: #666;
+    font-size: 9px;
+}
+
+.spe-variables-section-title {
+    flex: 1;
+}
+
+.spe-variables-section-count {
+    color: #888;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+.spe-variables-section-body {
+    padding: 4px 0;
+}
+
+.spe-variables-list .spe-variable {
+    padding: 4px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: default;
+}
+
+.spe-variables-list .spe-variable:hover {
+    background: #f7fafe;
+}
+
+.spe-variables-list .spe-variable-name-row {
+    display: flex;
+    align-items: baseline;
+}
+
+.spe-variables-list .spe-variable-expandable {
+    cursor: pointer;
+}
+
+.spe-variables-list .spe-variable-expandable:hover {
+    background: #eef5ff;
+}
+
+/* Keep the expanded detail block using the default cursor and its own
+ * background even inside an expandable entry - so it doesn't look clickable
+ * and the entry-level hover highlight doesn't bleed into it. */
+.spe-variables-list .spe-variable-expandable .spe-variable-detail {
+    cursor: default;
+}
+
+.spe-variables-list .spe-variable-caret {
+    display: inline-block;
+    width: 12px;
+    color: #666;
+    font-size: 9px;
+    flex-shrink: 0;
+}
+
+.spe-variables-list .spe-variable-name {
+    color: #FF4500;
+}
+
+.spe-variables-list .spe-variable-type {
+    /* Match the tooltip's .variableType pill style so the type label reads
+     * consistently between the hover tooltip and the panel. */
+    border: 1px solid #BCE3EE;
+    background: #DCF1F6;
+    color: #267F98;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    /* Push the type pill to the right edge of the flex row so there's a
+     * clear visual gap between the variable name and its type. */
+    margin-left: auto;
+}
+
+.spe-variables-list .spe-variable-value {
+    color: #333;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: block;
+    padding-left: 12px;
+    margin-top: 2px;
+}
+
+.spe-variables-list .spe-variable-detail {
+    padding: 6px 8px 4px 12px;
+    margin-top: 4px;
+    border-left: 2px solid #BCE3EE;
+    background: #f7fcfe;
+    font-size: 10px;
+    color: #333;
+}
+
+.spe-variables-list .spe-variable-detail .variableType {
+    display: none; /* type already shown inline in the name row */
+}
+
+.spe-variables-list .spe-variable-detail .variableLine {
+    display: none; /* main line already shown inline */
+}
+
+.spe-variables-list .spe-variable-detail .varChild,
+.spe-variables-list .spe-variable-detail .varChild2 {
+    display: block;
+    padding-left: 4px;
+    overflow: hidden;
+}
+
+.spe-variables-list .spe-variable-detail .childName {
+    color: #267F98;
+    font-weight: normal;
+}
+
+.spe-variables-list .spe-variable-detail .childValue {
+    color: #333;
+}
+
+.spe-variables-list .spe-variable-loading {
+    color: #888;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.spe-variables-list .spe-variables-empty {
+    padding: 12px 8px;
+    color: #888;
+    font-style: italic;
+    text-align: center;
 }
 
 .scEditorWarning {

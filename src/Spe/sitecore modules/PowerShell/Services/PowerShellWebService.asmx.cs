@@ -158,6 +158,28 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         [WebMethod(EnableSession = true)]
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object GetSessionVariables(string guid)
+        {
+            if (!IsLoggedInUserAuthorized)
+            {
+                return string.Empty;
+            }
+
+            var serializer = new JavaScriptSerializer();
+            if (!ScriptSessionManager.SessionExists(guid))
+            {
+                return serializer.Serialize(new { status = "no-session", variables = new object[0] });
+            }
+
+            var session = ScriptSessionManager.GetSession(guid);
+            var vars = session.GetUserVariables()
+                .Select(v => new { name = v.Name, type = v.TypeName, value = v.Preview, category = v.Category, expandable = v.Expandable })
+                .ToArray();
+            return serializer.Serialize(new { status = "ok", variables = vars });
+        }
+
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetVariableValue(string guid, string variableName)
         {
             if (!IsLoggedInUserAuthorized)
@@ -348,7 +370,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (!session.Output.HasUpdates())
                 {
-                    session.Output.Clear();
+                    session.Output.ClearSilent();
                     return serializer.Serialize(result);
                 }
             }
@@ -367,7 +389,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 result.result = "[[;#f00;#000]" +
                                 (message.IsNullOrEmpty() ? "Command failed" : HttpUtility.HtmlEncode(message)) + "]";
                 result.prompt = $"PS {session.CurrentLocation}>";
-                session.Output.Clear();
+                session.Output.ClearSilent();
                 return serializer.Serialize(result);
             }
 
@@ -389,7 +411,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (partial && complete)
             {
-                session.Output.Clear();
+                session.Output.ClearSilent();
             }
             var serializedResult = serializer.Serialize(result);
             return serializedResult;

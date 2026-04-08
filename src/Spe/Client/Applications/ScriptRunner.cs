@@ -87,7 +87,10 @@ namespace Spe.Client.Applications
             finally
             {
                 Session.CloseRunner = false;
-                Session.Output.Clear();
+                // Post-execution cleanup - don't signal the client to purge its
+                // terminal output, we just finished consuming it through the poll
+                // loop and want to free server-side memory.
+                Session.Output.ClearSilent();
                 if (AutoDispose)
                 {
                     Session.Dispose();

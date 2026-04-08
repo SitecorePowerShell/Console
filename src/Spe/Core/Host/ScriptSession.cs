@@ -18,6 +18,7 @@ using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.Debugging;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Settings.Authorization;
@@ -131,7 +132,8 @@ namespace Spe.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            Output.Clear();
+            // Session init - no client connected yet, silent clear.
+            Output.ClearSilent();
         }
 
         private void OnRunspaceStateEvent(object sender, RunspaceStateEventArgs e)
@@ -310,6 +312,178 @@ namespace Spe.Core.Host
                     return ex.Message;
                 }
             }
+        }
+
+        /// <summary>
+        /// PowerShell automatic variables that should be hidden from the ISE
+        /// Variables panel entirely because they're engine-managed, not user-visible.
+        /// </summary>
+        private static readonly HashSet<string> EngineAutomaticVariableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "_", "?", "^", "$", "args", "ConfirmPreference", "ConsoleFileName",
+            "DebugPreference", "EnabledExperimentalFeatures", "ErrorActionPreference",
+            "ErrorView", "Error", "Event", "EventArgs", "EventSubscriber", "ExecutionContext",
+            "false", "FormatEnumerationLimit", "foreach", "HOME", "Host", "InformationPreference",
+            "input", "IsCoreCLR", "IsLinux", "IsMacOS", "IsWindows", "LASTEXITCODE",
+            "Matches", "MaximumAliasCount", "MaximumDriveCount", "MaximumErrorCount",
+            "MaximumFunctionCount", "MaximumHistoryCount", "MaximumVariableCount",
+            "MyInvocation", "NestedPromptLevel", "null", "OFS", "OutputEncoding", "PID",
+            "profile", "ProgressPreference", "PSBoundParameters", "PSCmdlet", "PSCommandPath",
+            "PSCulture", "PSDebugContext", "PSDefaultParameterValues", "PSEdition",
+            "PSEmailServer", "PSHOME", "PSItem", "PSNativeCommandArgumentPassing",
+            "PSNativeCommandUseErrorActionPreference", "PSScriptRoot", "PSSenderInfo",
+            "PSSessionApplicationName", "PSSessionConfigurationName", "PSSessionOption",
+            "PSStyle", "PSUICulture", "PSVersionTable", "PWD", "Sender", "ShellId",
+            "StackTrace", "switch", "this", "true", "VerbosePreference", "WarningPreference",
+            "WhatIfPreference", "SitecoreContextItem"
+        };
+
+        /// <summary>
+        /// SPE/Sitecore "built-in" variables that are set up by the session's
+        /// Initialize() method and PredefinedVariables. They're shown in the
+        /// Variables panel but grouped separately from user-created variables.
+        /// Keep in sync with Initialize() in this class and PredefinedVariables.cs.
+        /// </summary>
+        private static readonly HashSet<string> SpeBuiltInVariableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "me", "HostSettings", "ScriptSession", "SitecoreAuthority",
+            "AppPath", "AppVPath", "tempPath", "tmpPath",
+            "SitecoreDataFolder", "SitecoreDebugFolder", "SitecoreLayoutFolder",
+            "SitecoreLogFolder", "SitecoreMediaFolder", "SitecorePackageFolder",
+            "SitecoreSerializationFolder", "SitecoreTempFolder", "SitecoreVersion"
+        };
+
+        /// <summary>
+        /// Lazily-created CSharpCodeProvider for generating C# shorthand type
+        /// names (e.g. "string" instead of "System.String", "object[]" instead
+        /// of "System.Object[]") via GetTypeOutput.
+        /// </summary>
+        private static readonly Lazy<Microsoft.CSharp.CSharpCodeProvider> CSharpTypeFormatter =
+            new Lazy<Microsoft.CSharp.CSharpCodeProvider>(() => new Microsoft.CSharp.CSharpCodeProvider());
+
+        /// <summary>
+        /// Returns a C#-style type name (e.g. "string", "int", "object[]",
+        /// "System.Collections.Hashtable") using the built-in CSharpCodeProvider
+        /// so built-in primitives and arrays get their keyword form automatically.
+        /// Falls back to the full .NET name if code generation fails.
+        /// </summary>
+        private static string FormatCSharpTypeName(Type type)
+        {
+            if (type == null) return string.Empty;
+            try
+            {
+                return CSharpTypeFormatter.Value.GetTypeOutput(new System.CodeDom.CodeTypeReference(type));
+            }
+            catch
+            {
+                return type.FullName ?? type.Name;
+            }
+        }
+
+        /// <summary>
+        /// A single entry in the Variables panel.
+        /// Category is "user" for user-created variables and "builtin" for
+        /// SPE/Sitecore convenience variables set up during session init.
+        /// Expandable indicates the variable has children (object properties,
+        /// collection items, hashtable entries) worth showing on demand.
+        /// </summary>
+        public class VariableEntry
+        {
+            public string Name { get; set; }
+            public string TypeName { get; set; }
+            public string Preview { get; set; }
+            public string Category { get; set; }
+            public bool Expandable { get; set; }
+        }
+
+        /// <summary>
+        /// Enumerates session variables visible in the ISE Variables panel.
+        /// Splits results into "user" (user-created) and "builtin" (SPE/Sitecore
+        /// convenience variables). PowerShell engine automatic variables are
+        /// filtered out entirely.
+        /// </summary>
+        public List<VariableEntry> GetUserVariables()
+        {
+            var result = new List<VariableEntry>();
+            lock (this)
+            {
+                try
+                {
+                    // Enumerate via the Variable: PSDrive through the session's own
+                    // provider intrinsics - this walks the session's actual variable
+                    // scope (same one GetDebugVariable reads from by name), unlike
+                    // Engine.InvokeCommand.InvokeScript which would create a child
+                    // scope that can't see user variables at the top-level script scope.
+                    var items = Engine.SessionState.InvokeProvider.Item.Get(@"Variable:\*");
+                    if (items == null)
+                    {
+                        PowerShellLog.Debug("[Session] action=getUserVariables Variable: provider returned null");
+                        return result;
+                    }
+
+                    int totalFound = 0;
+                    int filtered = 0;
+                    foreach (var item in items)
+                    {
+                        totalFound++;
+                        var psVar = item?.BaseObject as PSVariable;
+                        if (psVar == null)
+                        {
+                            filtered++;
+                            continue;
+                        }
+                        var name = psVar.Name;
+                        if (string.IsNullOrEmpty(name) || EngineAutomaticVariableNames.Contains(name))
+                        {
+                            filtered++;
+                            continue;
+                        }
+                        if ((psVar.Options & (ScopedItemOptions.Constant | ScopedItemOptions.ReadOnly)) != 0)
+                        {
+                            filtered++;
+                            continue;
+                        }
+
+                        // Unwrap PSObject layers the same way the inline tooltip does
+                        // (see PowerShellWebService.GetVariableValue) so we expose the
+                        // underlying .NET type (e.g. Sitecore.Data.Items.Item) rather
+                        // than System.Management.Automation.PSObject, and so the
+                        // VariableDetails formatter sees the real object.
+                        var variable = psVar.Value.BaseObject();
+                        if (variable is PSCustomObject)
+                        {
+                            variable = psVar.Value;
+                        }
+                        var typeName = variable == null ? "$null" : FormatCSharpTypeName(variable.GetType());
+                        string preview;
+                        bool expandable = false;
+                        try
+                        {
+                            var details = new VariableDetails("$" + name, variable);
+                            preview = details.ValueString ?? string.Empty;
+                            expandable = details.IsExpandable;
+                        }
+                        catch (Exception ex)
+                        {
+                            preview = "<" + ex.Message + ">";
+                        }
+                        result.Add(new VariableEntry
+                        {
+                            Name = name,
+                            TypeName = typeName,
+                            Preview = preview ?? string.Empty,
+                            Category = SpeBuiltInVariableNames.Contains(name) ? "builtin" : "user",
+                            Expandable = expandable
+                        });
+                    }
+                    PowerShellLog.Debug($"[Session] action=getUserVariables total={totalFound} filtered={filtered} returned={result.Count}");
+                }
+                catch (Exception ex)
+                {
+                    PowerShellLog.Error($"[Session] action=getUserVariables failed: {ex.Message}", ex);
+                }
+            }
+            return result.OrderBy(v => v.Name, StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         public void SetBreakpoints(IEnumerable<int> breakpoints)

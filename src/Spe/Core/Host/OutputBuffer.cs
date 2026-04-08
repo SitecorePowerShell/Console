@@ -174,5 +174,19 @@ namespace Spe.Core.Host
             base.Clear();
             SilencedOutput?.Clear();
         }
+
+        /// <summary>
+        /// Clears the buffer without signaling the client to purge its terminal
+        /// output. Used for post-execution / post-poll cleanup where the output
+        /// has already been consumed and we're just freeing server-side memory -
+        /// unlike Clear() (invoked by Clear-Host via SetBufferContents) which
+        /// must propagate to the browser.
+        /// </summary>
+        public void ClearSilent()
+        {
+            updatePointer = 0;
+            base.Clear();
+            SilencedOutput?.ClearSilent();
+        }
     }
 }

@@ -103,12 +103,23 @@
                     </Border>
                 </Border>
                 <GridPanel ID="Content" CellPadding="4" GridPanel.Height="100%" Columns="3">
-                    <Scrollbox Width="100%" ID="TreeView" Height="100%" Class="scScrollbox scFixSize scFixSize4"
-                               style="border-right: 2px solid #474747;" Background="white" Padding="0px"
-                               GridPanel.Width="200px" GridPanel.Height="100%"  GridPanel.ID="TreeViewPanel">
-                        <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"
-                                    Click="ContentTreeview_Click"/>
-                    </Scrollbox>
+                    <Border ID="Sidebar" GridPanel.Width="200px" GridPanel.Height="100%" GridPanel.ID="SidebarPanel"
+                            style="position:relative;height:100%;border-right:2px solid #474747;background:white;overflow:hidden;">
+                        <Scrollbox Width="100%" Height="100%" ID="TreeView" Class="scScrollbox scFixSize scFixSize4"
+                                   Background="white" Padding="0px">
+                            <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"
+                                        Click="ContentTreeview_Click"/>
+                        </Scrollbox>
+                        <Scrollbox Width="100%" Height="100%" ID="VariablesView" Class="scScrollbox scFixSize scFixSize4"
+                                   Background="white" Padding="0px">
+                            <Border ID="VariablesHeader" class="spe-variables-header">
+                                <Literal Text="Variables" ID="VariablesHeaderText"/>
+                                <Image ID="VariablesRefresh" src="/~/icon/office/16x16/nav_refresh.png"
+                                       Alt="Refresh variables" Title="Refresh variables"/>
+                            </Border>
+                            <Border ID="VariablesList" class="spe-variables-list"/>
+                        </Scrollbox>
+                    </Border>
                     <VSplitter ID="TreeSplitter" GridPanel.Class="scThinSplitter" Target="left"
                                GridPanel.ID="TreeSplitterPanel"/>
                     <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4"
@@ -121,6 +132,9 @@
                             <Image ID="TreeViewToggle" src="/~/icon/office/16x16/elements_tree.png"
                                    Alt="Toggle Tree View"
                                    Title="Toggle Tree View"/>
+                            <Image ID="VariablesToggle" src="/~/icon/office/16x16/data.png"
+                                   Alt="Toggle Variables Panel"
+                                   Title="Toggle Variables Panel"/>
                             <Border ID="CodeEditors"/>
                         </Border>
                         <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top"

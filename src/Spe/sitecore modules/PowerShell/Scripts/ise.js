@@ -590,6 +590,14 @@
                 currentEditorSession.resultsHistory.push({ text: data["result"], raw: false });
                 trimResultsHistory();
             }
+
+            // Refresh the Variables panel once the command fully completes -
+            // a terminal command may have created or modified session variables.
+            if (data["status"] !== "partial" && data["status"] !== "working") {
+                if (spe.refreshVariables) {
+                    spe.refreshVariables();
+                }
+            }
         }
 
         function callIseHost(command) {
@@ -915,6 +923,11 @@
             // the command line - the path may have changed since the last command
             // (especially if the script cd'd before the breakpoint).
             silentRefreshPrompt();
+            // Refresh the Variables panel when the breakpoint is hit so the user
+            // can inspect the current variable state without manually clicking refresh.
+            if (spe.refreshVariables) {
+                spe.refreshVariables();
+            }
         };
 
         spe.breakpointHandled = function () {
@@ -953,6 +966,10 @@
             // Refresh prompt from the server - the path may have changed during script execution
             // (especially during debug, where the user may have cd'd or the script itself did)
             spe.refreshTerminalPrompt();
+            // Refresh the Variables panel - the script may have created or modified variables
+            if (spe.refreshVariables) {
+                spe.refreshVariables();
+            }
         };
 
         spe.clearBreakpoints = function () {
@@ -1092,6 +1109,8 @@
             // double-offsets the overlay off-screen.
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
+            $("#VariablesToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
+            $("#VariablesToggle").css("left", ($("#TabsPanel").offset().left + 28) + "px");
             if ($("#TreeView").is(":visible")) {
 
             }
@@ -1499,19 +1518,234 @@
                 scHSplit.dblClick(img, e, "IDEXsltBottom", "top");
             }
         });
-        $("#TreeViewToggle").click(function () {
-            if ($("#TreeViewPanel").is(":visible")) {
-                $("#TreeViewPanel").hide();
-                $("#TreeSplitterPanel").hide();
-                spe.resizeEditor();
+        // Tree view and Variables panel share the same sidebar cell (#SidebarPanel)
+        // and are mutually exclusive. The sidebar uses the existing #TreeSplitter
+        // for resizing - since both panels live in the same cell, they inherently
+        // share the same user-chosen width. Clicking a panel's toggle:
+        //  - if that panel is already visible   -> hide the sidebar
+        //  - if the *other* panel is visible    -> switch to this one (sidebar stays)
+        //  - if nothing is visible              -> open sidebar showing this panel
+
+        function isSidebarVisible() {
+            return $("#SidebarPanel").is(":visible");
+        }
+        function currentSidebarContent() {
+            if ($("#VariablesView").is(":visible")) return "variables";
+            if ($("#TreeView").is(":visible")) return "tree";
+            return null;
+        }
+        function openSidebar(which) {
+            $("#SidebarPanel").show();
+            $("#TreeSplitterPanel").show();
+            if (which === "variables") {
+                $("#TreeView").hide();
+                $("#VariablesView").show();
+                spe.refreshVariables();
             } else {
-                $("#TreeViewPanel").show();
-                $("#TreeSplitterPanel").show();
+                $("#VariablesView").hide();
+                $("#TreeView").show();
                 scForm.postRequest("", "", "", "ise:updatetreeview");
-                spe.resizeEditor();
             }
+        }
+        function closeSidebar() {
+            $("#SidebarPanel").hide();
+            $("#TreeSplitterPanel").hide();
+        }
+
+        $("#TreeViewToggle").click(function () {
+            if (isSidebarVisible() && currentSidebarContent() === "tree") {
+                closeSidebar();
+            } else {
+                openSidebar("tree");
+            }
+            spe.resizeEditor();
         });
-        
+
+        // Variables panel - shows PowerShell session variables from the current
+        // ISE session, refreshing automatically after script execution and when
+        // terminal commands complete. Values use the same GetVariableValue style
+        // tooltip source as the inline variable hover tooltip, but show the
+        // entire user-defined variable set at once.
+        function escapeVarHtml(s) {
+            return $("<div/>").text(s == null ? "" : String(s)).html();
+        }
+
+        // Persist the collapsed state of each Variables section and individual
+        // expanded variables across refreshes so the user's choices aren't reset
+        // every time variables are reloaded.
+        // Section defaults: user expanded, builtin collapsed.
+        var iseVariablesSectionCollapsed = {
+            "user": false,
+            "builtin": true
+        };
+        // Set of variable names (without $) that the user has expanded.
+        var iseExpandedVariables = {};
+        // Cached per-variable detail HTML so re-expanding is instant.
+        var iseVariableDetailCache = {};
+
+        function fetchVariableDetails(name, container) {
+            if (iseVariableDetailCache[name] !== undefined) {
+                container.html(iseVariableDetailCache[name]);
+                return;
+            }
+            container.html("<div class='spe-variable-loading'>Loading…</div>");
+            getPowerShellResponseAsync(
+                { "guid": guid, "variableName": name },
+                "GetVariableValue",
+                function (json) {
+                    // GetVariableValue returns the HTML fragment directly as json.d (a string,
+                    // not a JSON object), matching what the inline hover tooltip consumes.
+                    var html = (json && typeof json.d === "string") ? json.d : "";
+                    iseVariableDetailCache[name] = html;
+                    container.html(html);
+                },
+                function (xhr, status, err) {
+                    container.html("<div class='spe-variable-loading'>Error: " + (err || status) + "</div>");
+                }
+            );
+        }
+
+        function renderVariablesSection(category, title, entries) {
+            var section = $("<div/>").addClass("spe-variables-section").attr("data-category", category);
+            var header = $("<div/>").addClass("spe-variables-section-header");
+            var caret = $("<span/>").addClass("spe-variables-section-caret").text(iseVariablesSectionCollapsed[category] ? "▶" : "▼");
+            header.append(caret);
+            header.append($("<span/>").addClass("spe-variables-section-title").text(title));
+            header.append($("<span/>").addClass("spe-variables-section-count").text("(" + entries.length + ")"));
+            section.append(header);
+
+            var body = $("<div/>").addClass("spe-variables-section-body");
+            if (iseVariablesSectionCollapsed[category]) {
+                body.hide();
+            }
+            if (entries.length === 0) {
+                body.append($("<div/>").addClass("spe-variables-empty").text("None"));
+            } else {
+                entries.forEach(function (v) {
+                    var entry = $("<div/>").addClass("spe-variable");
+                    if (v.expandable) {
+                        entry.addClass("spe-variable-expandable");
+                    }
+
+                    var nameRow = $("<div/>").addClass("spe-variable-name-row");
+                    // Chevron placeholder keeps horizontal alignment consistent between
+                    // expandable and non-expandable entries.
+                    var varCaret = $("<span/>").addClass("spe-variable-caret");
+                    if (v.expandable) {
+                        varCaret.text(iseExpandedVariables[v.name] ? "▼" : "▶");
+                    } else {
+                        varCaret.html("&nbsp;");
+                    }
+                    nameRow.append(varCaret);
+                    nameRow.append($("<span/>").addClass("spe-variable-name").text("$" + v.name));
+                    nameRow.append($("<span/>").addClass("spe-variable-type").text(v.type));
+                    entry.append(nameRow);
+                    entry.append($("<span/>").addClass("spe-variable-value").text(v.value));
+
+                    if (v.expandable) {
+                        var detail = $("<div/>").addClass("spe-variable-detail");
+                        entry.append(detail);
+                        if (iseExpandedVariables[v.name]) {
+                            detail.show();
+                            fetchVariableDetails(v.name, detail);
+                        } else {
+                            detail.hide();
+                        }
+                        // Prevent clicks inside the rendered detail content from
+                        // bubbling up and collapsing the entry.
+                        detail.on("click", function (e) { e.stopPropagation(); });
+                        // Clicking anywhere on the entry (name row or value line)
+                        // toggles expansion.
+                        entry.on("click", function () {
+                            var willExpand = !iseExpandedVariables[v.name];
+                            if (willExpand) {
+                                iseExpandedVariables[v.name] = true;
+                                varCaret.text("▼");
+                                detail.show();
+                                fetchVariableDetails(v.name, detail);
+                            } else {
+                                delete iseExpandedVariables[v.name];
+                                varCaret.text("▶");
+                                detail.hide();
+                            }
+                        });
+                    }
+
+                    body.append(entry);
+                });
+            }
+            section.append(body);
+
+            // Toggle collapse on header click.
+            header.on("click", function () {
+                iseVariablesSectionCollapsed[category] = !iseVariablesSectionCollapsed[category];
+                body.toggle(!iseVariablesSectionCollapsed[category]);
+                caret.text(iseVariablesSectionCollapsed[category] ? "▶" : "▼");
+            });
+
+            return section;
+        }
+
+        spe.refreshVariables = function () {
+            if (!$("#VariablesView").is(":visible")) {
+                return;
+            }
+            var list = $("#VariablesList");
+            if (list.length === 0) {
+                console.error("[spe] refreshVariables: #VariablesList element not found in DOM");
+                return;
+            }
+            // Invalidate cached detail HTML so expanded variables re-fetch on refresh.
+            iseVariableDetailCache = {};
+            getPowerShellResponseAsync(
+                { "guid": guid },
+                "GetSessionVariables",
+                function (json) {
+                    var payload;
+                    try { payload = JSON.parse(json.d); } catch (e) {
+                        list.empty().append($("<div/>").addClass("spe-variables-empty").text("Error parsing response: " + e.message));
+                        return;
+                    }
+                    list.empty();
+                    if (!payload || (payload.status !== "ok" && payload.status !== "no-session")) {
+                        list.append($("<div/>").addClass("spe-variables-empty").text("Unexpected response: " + (payload ? payload.status : "null")));
+                        return;
+                    }
+                    if (payload.status === "no-session") {
+                        list.append($("<div/>").addClass("spe-variables-empty").text("No session in memory. Run a script first."));
+                        return;
+                    }
+                    var vars = payload.variables || [];
+                    var userVars = vars.filter(function (v) { return v.category !== "builtin"; });
+                    var builtInVars = vars.filter(function (v) { return v.category === "builtin"; });
+
+                    // User section first (expanded by default), built-in second (collapsed by default).
+                    list.append(renderVariablesSection("user", "User variables", userVars));
+                    list.append(renderVariablesSection("builtin", "Built-in variables", builtInVars));
+                },
+                function (xhr, status, err) {
+                    list.empty().append($("<div/>").addClass("spe-variables-empty").text("Error: " + status + " " + err));
+                }
+            );
+        };
+
+        $("#VariablesToggle").click(function () {
+            if (isSidebarVisible() && currentSidebarContent() === "variables") {
+                closeSidebar();
+            } else {
+                openSidebar("variables");
+            }
+            spe.resizeEditor();
+        });
+
+        $(document).on("click", "#VariablesRefresh", function (e) {
+            // Clicking the refresh icon inside the Variables header should
+            // only refresh - not bubble up to any parent click handlers.
+            e.stopPropagation();
+            spe.refreshVariables();
+        });
+
+
         function _getCommandHelp(str) {
             getPowerShellResponse({"guid": guid, "command": str}, "GetHelpForCommand",
                 function (json) {
