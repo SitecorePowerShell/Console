@@ -547,49 +547,30 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
             if (sharedSecretProvider == null) return null;
 
-            // Save original secret
-            var originalSecret = sharedSecretProvider.SharedSecret;
-
-            try
+            foreach (var apiKey in allKeys)
             {
-                // Suppress per-key mismatch warnings during probing -- only the final
-                // outcome matters. Individual mismatches are expected when multiple keys exist.
-                sharedSecretProvider.SuppressWarnings = true;
-
-                foreach (var apiKey in allKeys)
+                try
                 {
-                    // Temporarily set the provider's secret to this API Key's secret
-                    sharedSecretProvider.SharedSecret = apiKey.SharedSecret;
-
-                    try
+                    bool isValid;
+                    if (sharedSecretProvider is ISpeAuthenticationProviderEx providerEx)
                     {
-                        bool isValid;
-                        if (provider is ISpeAuthenticationProviderEx providerEx)
-                        {
-                            isValid = providerEx.Validate(token, authority, out username, out tokenResult);
-                        }
-                        else
-                        {
-                            isValid = provider.Validate(token, authority, out username);
-                        }
-
-                        if (isValid)
-                        {
-                            PowerShellLog.Audit($"[Remoting] action=apiKeyValidated apiKey={apiKey.Name}");
-                            return apiKey;
-                        }
+                        isValid = providerEx.Validate(token, authority, out username, out tokenResult, apiKey.SharedSecret);
                     }
-                    catch (SecurityException)
+                    else
                     {
-                        // This key's secret didn't match -- try the next one
+                        isValid = sharedSecretProvider.Validate(token, authority, out username);
+                    }
+
+                    if (isValid)
+                    {
+                        PowerShellLog.Audit($"[Remoting] action=apiKeyValidated apiKey={apiKey.Name}");
+                        return apiKey;
                     }
                 }
-            }
-            finally
-            {
-                // Restore original secret and re-enable warnings for legacy validation
-                sharedSecretProvider.SharedSecret = originalSecret;
-                sharedSecretProvider.SuppressWarnings = false;
+                catch (SecurityException)
+                {
+                    // This key's secret didn't match -- try the next one
+                }
             }
 
             return null;
