@@ -9,7 +9,7 @@ SharedFields:
   Value: Office/32x32/users3.png
 - ID: "6f442ac9-7001-4124-9bc3-589875876c27"
   Hint: FontSize
-  Value: 20
+  Value: 14
 - ID: "86ecc435-0924-4ea0-92d8-cca12ed7e644"
   Hint: FontFamily
   Value: Source Code Pro
@@ -65,14 +65,14 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "576d72fa-f8c8-437c-b20f-2470784def40"
+      Value: "3f2cbd29-c8b4-46ed-9a33-a1cdd4af1f25"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\anajmanowicz
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214548Z
+      Value: 20260408T063612Z
 - Language: "ja-JP"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

@@ -938,6 +938,12 @@
             }
             iseScriptRunning = false;
             iseDebugActive = false;
+            // Restore the terminal command line now that the script has finished.
+            if (iseTerminal && !iseTerminalBusy) {
+                iseTerminal.find(".cmd").css("visibility", "visible");
+                iseTerminal.resume();
+                iseTerminal.set_prompt(getIsePrompt());
+            }
             // Refresh prompt from the server - the path may have changed during script execution
             // (especially during debug, where the user may have cd'd or the script itself did)
             spe.refreshTerminalPrompt();
@@ -1106,6 +1112,12 @@
 
         spe.restoreResults = function () {
             iseScriptRunning = true;
+            // Hide the terminal command line while a script is running so the
+            // user can't submit a concurrent command against the busy session.
+            if (iseTerminal) {
+                iseTerminal.find(".cmd").css("visibility", "hidden");
+                iseTerminal.pause();
+            }
             if (splitOrientation === "vertical") {
                 // Restore left pane flex from saved splitter position
                 var leftPane = document.getElementById("VerticalLeftPane");
