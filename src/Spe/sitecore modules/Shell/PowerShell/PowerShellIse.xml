@@ -138,6 +138,7 @@
                                 </Border>
                             </Border>
                             <Border ID="ScriptResult" class="console">
+                                <Border ID="PleaseWaitContainer"/>
                                 <div ID="ScriptResultCode"></div>
                             </Border>
                         </Border>

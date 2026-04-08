@@ -230,7 +230,7 @@
                 });
                 // Ensure terminal is interactive after tab switch (unless busy)
                 if (!iseTerminalBusy) {
-                    iseTerminal.find(".cmd").show();
+                    iseTerminal.find(".cmd").css("visibility", "visible");
                     iseTerminal.resume();
                 }
             }
@@ -518,7 +518,6 @@
 
         // Initialize jQuery Terminal in the results pane
         var iseTerminal = null;
-        var detachedTerminal = null;
         var iseTerminalBusy = false;
         var iseScriptRunning = false;
         var iseTerminalAttempts = 0;
@@ -562,7 +561,7 @@
             if (data["status"] !== "partial" && data["status"] !== "working") {
                 iseTerminalBusy = false;
                 iseTerminal.resume();
-                iseTerminal.find(".cmd").show();
+                iseTerminal.find(".cmd").css("visibility", "visible");
                 if (data["prompt"]) {
                     iseLastPrompt = data["prompt"];
                 }
@@ -630,7 +629,7 @@
                                     function (jqXHR, textStatus, errorThrown) {
                                         iseTerminalBusy = false;
                                         iseTerminal.resume();
-                                        iseTerminal.find(".cmd").show();
+                                        iseTerminal.find(".cmd").css("visibility", "visible");
                                         iseTerminal.echo("Communication error: " + textStatus + "; " + errorThrown);
                                     }
                                 );
@@ -639,7 +638,7 @@
                     } else if (data["status"] === "unauthorized") {
                         iseTerminalBusy = false;
                         iseTerminal.resume();
-                        iseTerminal.find(".cmd").show();
+                        iseTerminal.find(".cmd").css("visibility", "visible");
                         spe.requestElevation();
                     } else {
                         displayIseResult(data);
@@ -649,18 +648,7 @@
             );
         }
 
-        var iseCommandHistory = [];
-
         function initIseTerminal() {
-            // Save command history from outgoing terminal before creating a new one
-            if (iseTerminal && iseTerminal.history) {
-                try {
-                    var h = iseTerminal.history().data();
-                    if (h && h.length) iseCommandHistory = h;
-                } catch (e) {
-                    console.warn("[ISE] Failed to save command history from detached terminal:", e);
-                }
-            }
             var target = $("#ScriptResultCode");
             if (!target.length) {
                 console.error("[ISE] initIseTerminal: #ScriptResultCode not found in DOM");
@@ -676,16 +664,6 @@
                 enabled: true,
                 onClear: function () {}
             });
-            // Restore command history into the new terminal
-            if (iseCommandHistory.length) {
-                iseTerminal.history().set(iseCommandHistory);
-            }
-            // If a script is currently executing, hide the command line and pause.
-            // Otherwise leave the terminal interactive so the user can type commands.
-            if (iseScriptRunning) {
-                iseTerminal.find(".cmd").hide();
-                iseTerminal.pause();
-            }
         }
 
         // Fetches the current prompt from the ISE session by running an empty command.
@@ -732,23 +710,17 @@
         };
 
         spe.clearOutput = function () {
-            // Detach the terminal from the DOM before SetInnerHtml destroys it.
-            // The detached element will be reattached in restoreResults.
-            if (iseTerminal && $.contains(document, iseTerminal[0])) {
-                detachedTerminal = iseTerminal.detach();
+            if (iseTerminal) {
+                iseTerminal.clear();
             }
             clearVariablesCache();
         };
 
         spe.appendOutput = function (outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
-            // Reinitialize terminal if it was lost without a prior detach/reattach
-            if (!iseTerminal || !$.contains(document, iseTerminal[0])) {
-                initIseTerminal();
-                if (!iseTerminal) {
-                    console.error("[ISE] appendOutput: terminal initialization failed, output lost");
-                    return;
-                }
+            if (!iseTerminal) {
+                console.error("[ISE] appendOutput: terminal not initialized, output lost");
+                return;
             }
             iseTerminal.echo(decoded, { raw: true });
             if (!currentEditorSession.resultsHistory) {
@@ -813,7 +785,7 @@
             // Only hide terminal if the script is still running (stepping),
             // not when the debug session has ended (scriptExecutionEnded handles that)
             if (iseTerminal && iseScriptRunning) {
-                iseTerminal.find(".cmd").hide();
+                iseTerminal.find(".cmd").css("visibility", "hidden");
                 iseTerminal.pause();
             }
         };
@@ -859,7 +831,7 @@
             // Enable terminal for debug inspection
             iseDebugActive = true;
             if (iseTerminal) {
-                iseTerminal.find(".cmd").show();
+                iseTerminal.find(".cmd").css("visibility", "visible");
                 iseTerminal.resume();
                 iseTerminal.set_prompt(getIsePrompt());
             }
@@ -894,14 +866,8 @@
             if (!resultsVisibilityIntent) {
                 setTimeout(spe.closeResults, 2000);
             }
-            // Enable terminal command line after script finishes
             iseScriptRunning = false;
             iseDebugActive = false;
-            if (iseTerminal && !iseTerminalBusy) {
-                iseTerminal.find(".cmd").show();
-                iseTerminal.resume();
-                iseTerminal.set_prompt(getIsePrompt());
-            }
             // Refresh prompt from the server - the path may have changed during script execution
             // (especially during debug, where the user may have cd'd or the script itself did)
             spe.refreshTerminalPrompt();
@@ -1091,19 +1057,6 @@
             } else {
                 $("#ResultsSplitter").show();
                 $("#ResultsRow").show();
-            }
-            // Reattach the terminal if it was detached before SetInnerHtml, or
-            // reinitialize if the DOM was replaced without a prior detach.
-            if (detachedTerminal) {
-                $("#ScriptResultCode").replaceWith(detachedTerminal);
-                detachedTerminal = null;
-                iseTerminal.find(".cmd").hide();
-                iseTerminal.pause();
-            } else if ($("#ScriptResultCode").length && (!iseTerminal || !$.contains(document, iseTerminal[0]))) {
-                initIseTerminal();
-                if (!iseTerminal) {
-                    console.error("[ISE] restoreResults: terminal reinitialization failed");
-                }
             }
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
