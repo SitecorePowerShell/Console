@@ -4,40 +4,40 @@ ace.define("ace/snippets/powershell", ["require", "exports", "module"], function
     exports.snippetText = "\
 # General PowerShell\n\
 \n\
-snippet foreach\n\
+snippet ps-foreach\n\
 	foreach (\\$${1:item} in \\$${2:collection}) {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet for\n\
+snippet ps-for\n\
 	for (\\$${1:i} = ${2:0}; \\$${1:i} -lt ${3:count}; \\$${1:i}++) {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet while\n\
+snippet ps-while\n\
 	while (${1:condition}) {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet if\n\
+snippet ps-if\n\
 	if (${1:condition}) {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet ifelse\n\
+snippet ps-ifelse\n\
 	if (${1:condition}) {\n\
 	    ${2}\n\
 	} else {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet switch\n\
+snippet ps-switch\n\
 	switch (\\$${1:variable}) {\n\
 	    \"${2:value}\" { ${3} }\n\
 	    default { ${0} }\n\
 	}\n\
 \n\
-snippet trycatch\n\
+snippet ps-trycatch\n\
 	try {\n\
 	    ${1}\n\
 	} catch {\n\
@@ -45,7 +45,7 @@ snippet trycatch\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet function\n\
+snippet ps-function\n\
 	function ${1:Verb-Noun} {\n\
 	    param(\n\
 	        [Parameter(Mandatory)]\n\
@@ -54,56 +54,56 @@ snippet function\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet param\n\
+snippet ps-param\n\
 	param(\n\
 	    [Parameter(Mandatory)]\n\
 	    [${1:string}]\\$${2:Name}\n\
 	)\n\
 \n\
-snippet hashtable\n\
+snippet ps-hashtable\n\
 	\\$${1:hash} = @{\n\
 	    \"${2:Key}\" = \"${3:Value}\"\n\
 	}\n\
 \n\
-snippet pscustomobject\n\
+snippet ps-pscustomobject\n\
 	[PSCustomObject]@{\n\
 	    ${1:Property} = ${2:Value}\n\
 	}\n\
 \n\
 # SPE Items\n\
 \n\
-snippet getitem\n\
+snippet ps-getitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:\" -ID \"${3:{ID\\}}\"\n\
 \n\
-snippet getchildren\n\
+snippet ps-getchildren\n\
 	\\$${1:items} = Get-ChildItem -Path \"${2:master}:${3:/sitecore/content}\" -Recurse\n\
 	foreach (\\$item in \\$${1:items}) {\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet newitem\n\
+snippet ps-newitem\n\
 	\\$${1:item} = New-Item -Path \"${2:master:${3:/sitecore/content}}\" -Name \"${4:name}\" -ItemType \"${5:templatePath}\"\n\
 \n\
-snippet setfield\n\
+snippet ps-setfield\n\
 	\\$${1:item}.Editing.BeginEdit()\n\
 	\\$${1:item}[\"${2:FieldName}\"] = \"${3:value}\"\n\
 	\\$${1:item}.Editing.EndEdit()\n\
 \n\
-snippet removeitem\n\
+snippet ps-removeitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	\\$${1:item} | Remove-Item -Permanently ${0}\n\
 \n\
-snippet moveitem\n\
+snippet ps-moveitem\n\
 	Move-Item -Path \"${1:master:${2:/sitecore/content/source}}\" -Destination \"${3:master:${4:/sitecore/content/target}}\"\n\
 \n\
 # SPE Search\n\
 \n\
-snippet finditem\n\
+snippet ps-finditem\n\
 	Find-Item -Index \"${1:sitecore_master_index}\" \\\\\n\
 	    -Criteria @{Filter = \"Equals\"; Field = \"${2:_templatename}\"; Value = \"${3:Sample Item}\"} \\\\\n\
 	    | Initialize-Item\n\
 \n\
-snippet findcriteria\n\
+snippet ps-findcriteria\n\
 	Find-Item -Index \"${1:sitecore_master_index}\" \\\\\n\
 	    -Criteria @{Filter = \"Equals\"; Field = \"${2:_templatename}\"; Value = \"${3:Sample Item}\"}, \\\\\n\
 	              @{Filter = \"Contains\"; Field = \"${4:_fullpath}\"; Value = \"${5:/sitecore/content}\"} \\\\\n\
@@ -111,7 +111,7 @@ snippet findcriteria\n\
 \n\
 # SPE Dialogs\n\
 \n\
-snippet readvariable\n\
+snippet ps-readvariable\n\
 	\\$result = Read-Variable -Parameters \\\\\n\
 	    @{ Name = \"${1:selectedItem}\"; Title = \"${2:Choose Item}\"; Source = \"${3:DataSource=/sitecore/content}\"; Editor = \"${4:droptree}\" } \\\\\n\
 	    -Description \"${5:Dialog description}\" \\\\\n\
@@ -119,7 +119,7 @@ snippet readvariable\n\
 	    -OkButtonName \"OK\" -CancelButtonName \"Cancel\"\n\
 	if (\\$result -ne \"ok\") { exit }\n\
 \n\
-snippet showlistview\n\
+snippet ps-showlistview\n\
 	\\$${1:items} = Get-ChildItem -Path \"${2:master:${3:/sitecore/content}}\" -Recurse\n\
 	\\$${1:items} | Show-ListView -Property @{Label=\"Name\"; Expression={\\$_.DisplayName}}, \\\\\n\
 	    @{Label=\"Path\"; Expression={\\$_.ItemPath}}, \\\\\n\
@@ -127,54 +127,54 @@ snippet showlistview\n\
 	    -Title \"${4:Report title}\"\n\
 	Close-Window\n\
 \n\
-snippet showalert\n\
+snippet ps-showalert\n\
 	Show-Alert -Title \"${1:Message}\"\n\
 \n\
-snippet showconfirm\n\
+snippet ps-showconfirm\n\
 	\\$${1:confirmed} = Show-Confirm -Title \"${2:Are you sure?}\"\n\
 	if (\\$${1:confirmed} -ne \"yes\") { exit }\n\
 \n\
 # SPE Publishing\n\
 \n\
-snippet publishitem\n\
+snippet ps-publishitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	Publish-Item -Item \\$${1:item} -PublishMode ${4:Smart} -Target \"${5:web}\"\n\
 \n\
 # SPE Security\n\
 \n\
-snippet protectitem\n\
+snippet ps-protectitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	Protect-Item -Item \\$${1:item} -PassThru\n\
 \n\
-snippet newrole\n\
+snippet ps-newrole\n\
 	New-Role -Identity \"${1:domain\\\\role}\"\n\
 \n\
-snippet newuser\n\
+snippet ps-newuser\n\
 	\\$${1:user} = New-User -Identity \"${2:domain\\\\username}\" -Enabled -Password (ConvertTo-SecureString -String \"${3:password}\" -AsPlainText -Force)\n\
 	Add-RoleMember -Identity \"${4:domain\\\\role}\" -Members \\$${1:user}\n\
 \n\
-snippet addrole\n\
+snippet ps-addrole\n\
 	Add-RoleMember -Identity \"${1:domain\\\\role}\" -Members \"${2:domain\\\\user}\"\n\
 \n\
-snippet setrights\n\
+snippet ps-setrights\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	\\$${1:item} | Add-ItemAcl -AccessRight \"${4:item:read}\" -PropagationType \"${5:Any}\" -SecurityPermission AllowAccess -Identity \"${6:domain\\\\role}\"\n\
 \n\
-snippet getrights\n\
+snippet ps-getrights\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	\\$${1:item} | Get-ItemAcl | Format-Table -Property Identity, AccessRight, SecurityPermission, PropagationType\n\
 \n\
-snippet lockitem\n\
+snippet ps-lockitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	\\$${1:item} | Lock-Item\n\
 \n\
-snippet unlockitem\n\
+snippet ps-unlockitem\n\
 	\\$${1:item} = Get-Item -Path \"${2:master}:${3:/sitecore/content/path}\"\n\
 	\\$${1:item} | Unlock-Item\n\
 \n\
 # SPE DialogBuilder\n\
 \n\
-snippet dialogbuilder\n\
+snippet ps-dialogbuilder\n\
 	Import-Function -Name DialogBuilder\n\
 	\\$dialog = New-DialogBuilder -Title \"${1:Dialog Title}\" -Description \"${2:Description}\" -ShowHints\n\
 	\\$dialog | Add-TextField -Name \"${3:fieldName}\" -Title \"${4:Field Label}\" -Mandatory\n\
@@ -184,31 +184,31 @@ snippet dialogbuilder\n\
 	    Write-Host \"Value: \\$${3:fieldName}\"\n\
 	}\n\
 \n\
-snippet dialogfield\n\
+snippet ps-dialogfield\n\
 	\\$dialog | Add-TextField -Name \"${1:fieldName}\" -Title \"${2:Field Label}\" -Value \"${3}\" -Tooltip \"${4:Help text}\"\n\
 \n\
-snippet dialogcheckbox\n\
+snippet ps-dialogcheckbox\n\
 	\\$dialog | Add-Checkbox -Name \"${1:fieldName}\" -Title \"${2:Field Label}\" -Value \\$${3:false}\n\
 \n\
-snippet dialogdropdown\n\
+snippet ps-dialogdropdown\n\
 	\\$dialog | Add-Dropdown -Name \"${1:fieldName}\" -Title \"${2:Field Label}\" -Options @{\"${3:Option A}\" = 1; \"${4:Option B}\" = 2}\n\
 \n\
-snippet dialogdroptree\n\
+snippet ps-dialogdroptree\n\
 	\\$dialog | Add-Droptree -Name \"${1:fieldName}\" -Title \"${2:Choose Item}\" -Root \"${3:/sitecore/content}\"\n\
 \n\
-snippet dialogdate\n\
+snippet ps-dialogdate\n\
 	\\$dialog | Add-DateTimePicker -Name \"${1:fieldName}\" -Title \"${2:Select Date}\" -Value ([DateTime]::Now)\n\
 \n\
-snippet dialogmultilist\n\
+snippet ps-dialogmultilist\n\
 	\\$dialog | Add-MultiList -Name \"${1:fieldName}\" -Title \"${2:Select Items}\" -Source \"${3:DataSource=/sitecore/content}\"\n\
 \n\
-snippet dialogtabs\n\
+snippet ps-dialogtabs\n\
 	\\$dialog | Add-TextField -Name \"${1:field1}\" -Title \"${2:Field 1}\" -Tab \"${3:General}\"\n\
 	\\$dialog | Add-TextField -Name \"${4:field2}\" -Title \"${5:Field 2}\" -Tab \"${6:Advanced}\"\n\
 \n\
 # SPE SearchBuilder\n\
 \n\
-snippet searchbuilder\n\
+snippet ps-searchbuilder\n\
 	Import-Function -Name SearchBuilder\n\
 	\\$search = New-SearchBuilder -Index \"${1:sitecore_master_index}\" -First ${2:25}\n\
 	\\$search | Add-TemplateFilter -Name \"${3:Sample Item}\"\n\
@@ -217,25 +217,25 @@ snippet searchbuilder\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet searchtemplate\n\
+snippet ps-searchtemplate\n\
 	\\$search | Add-TemplateFilter -Name \"${1:Template Name}\"\n\
 \n\
-snippet searchfield\n\
+snippet ps-searchfield\n\
 	\\$search | Add-FieldContains -Field \"${1:Title}\" -Value \"${2:keyword}\"\n\
 \n\
-snippet searchequals\n\
+snippet ps-searchequals\n\
 	\\$search | Add-FieldEquals -Field \"${1:_language}\" -Value \"${2:en}\"\n\
 \n\
-snippet searchdate\n\
+snippet ps-searchdate\n\
 	\\$search | Add-DateRangeFilter -Field \"${1:__Updated}\" -Last \"${2:7d}\"\n\
 \n\
-snippet searchgroup\n\
+snippet ps-searchgroup\n\
 	\\$${1:group} = New-SearchFilterGroup -Operation ${2:Or}\n\
 	\\$${1:group} | Add-TemplateFilter -Name \"${3:Template A}\"\n\
 	\\$${1:group} | Add-TemplateFilter -Name \"${4:Template B}\"\n\
 	\\$search | Add-SearchFilterGroup -Group \\$${1:group}\n\
 \n\
-snippet searchpaginate\n\
+snippet ps-searchpaginate\n\
 	\\$search = New-SearchBuilder -Index \"${1:sitecore_master_index}\" -First ${2:25}\n\
 	\\$search | Add-TemplateFilter -Name \"${3:Sample Item}\"\n\
 	do {\n\
@@ -247,7 +247,7 @@ snippet searchpaginate\n\
 \n\
 # SPE Reporting\n\
 \n\
-snippet report\n\
+snippet ps-report\n\
 	\\$items = Get-ChildItem -Path \"${1:master:${2:/sitecore/content}}\" -Recurse\n\
 	if (\\$items.Count -eq 0) {\n\
 	    Show-Alert \"No items found matching the criteria.\"\n\
@@ -270,7 +270,7 @@ snippet report\n\
 \n\
 # SPE Import/Export\n\
 \n\
-snippet csvimport\n\
+snippet ps-csvimport\n\
 	\\$uploadPath = \"${1:temp}\"\n\
 	\\$filePath = Receive-File -Overwrite -Title \"${2:Import Data}\" -Path \\$uploadPath\n\
 	\\$data = Import-Csv \\$filePath\n\
@@ -278,14 +278,14 @@ snippet csvimport\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet csvexport\n\
+snippet ps-csvexport\n\
 	\\$items = Get-ChildItem -Path \"${1:master:${2:/sitecore/content}}\" -Recurse\n\
 	\\$items | Select-Object -Property Name, @{Label=\"Path\"; Expression={\\$_.ItemPath}} |\n\
 	    Export-Csv -Path \"${3:\\$SitecoreDataFolder\\\\export.csv}\" -NoTypeInformation\n\
 \n\
 # SPE Tasks & Logging\n\
 \n\
-snippet jobprogress\n\
+snippet ps-jobprogress\n\
 	\\$items = Get-ChildItem -Path \"${1:master:${2:/sitecore/content}}\" -Recurse\n\
 	\\$total = \\$items.Count\n\
 	for (\\$i = 0; \\$i -lt \\$total; \\$i++) {\n\
@@ -295,15 +295,15 @@ snippet jobprogress\n\
 	    ${0}\n\
 	}\n\
 \n\
-snippet writelog\n\
+snippet ps-writelog\n\
 	Write-Log \"${1:message}\"\n\
 \n\
-snippet importfunction\n\
+snippet ps-importfunction\n\
 	Import-Function -Name ${1:FunctionName}\n\
 \n\
 # SPE Advanced Functions\n\
 \n\
-snippet filter\n\
+snippet ps-filter\n\
 	filter ${1:Skip-Item} {\n\
 	    param(\n\
 	        [Parameter(Mandatory, ValueFromPipeline)]\n\
@@ -314,7 +314,7 @@ snippet filter\n\
 	    }\n\
 	}\n\
 \n\
-snippet beginprocessend\n\
+snippet ps-beginprocessend\n\
 	function ${1:Verb-Noun} {\n\
 	    [CmdletBinding()]\n\
 	    param(\n\
@@ -331,7 +331,7 @@ snippet beginprocessend\n\
 	    }\n\
 	}\n\
 \n\
-snippet bulkupdate\n\
+snippet ps-bulkupdate\n\
 	\\$items = Get-ChildItem -Path \"${1:master:${2:/sitecore/content}}\" -Recurse\n\
 	foreach (\\$item in \\$items) {\n\
 	    \\$item.Editing.BeginEdit()\n\
@@ -339,7 +339,7 @@ snippet bulkupdate\n\
 	    \\$item.Editing.EndEdit() > \\$null\n\
 	}\n\
 \n\
-snippet sqlquery\n\
+snippet ps-sqlquery\n\
 	Import-Function -Name Invoke-SqlCommand\n\
 	\\$connection = [Sitecore.Configuration.Settings]::GetConnectionString(\"${1:master}\")\n\
 	\\$query = @\"\n\
@@ -350,7 +350,7 @@ snippet sqlquery\n\
 \n\
 # Advanced Functions\n\
 \n\
-snippet advfunc\n\
+snippet ps-advfunc\n\
 	function ${1:Verb-Noun} {\n\
 	    [CmdletBinding(SupportsShouldProcess)]\n\
 	    [OutputType([PSCustomObject])]\n\
@@ -389,7 +389,7 @@ snippet advfunc\n\
 	    }\n\
 	}\n\
 \n\
-snippet itemfunc\n\
+snippet ps-itemfunc\n\
 	function ${1:Verb-SitecoreNoun} {\n\
 	    [CmdletBinding()]\n\
 	    param(\n\
@@ -416,7 +416,7 @@ snippet itemfunc\n\
 	    }\n\
 	}\n\
 \n\
-snippet paramblock\n\
+snippet ps-paramblock\n\
 	[CmdletBinding()]\n\
 	param(\n\
 	    [Parameter(Mandatory)]\n\
