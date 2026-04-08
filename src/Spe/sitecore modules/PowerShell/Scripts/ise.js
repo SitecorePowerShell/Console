@@ -1079,8 +1079,11 @@
                 $("#Result").width($(window).width() - $("#Result").offset().left * 2);
                 $("#Result").width($("#ResultsPane").width());
             }
-            $("#ProgressOverlay").css("top", ($("#Result").offset().top + 8) + "px");
-            $("#ProgressOverlay").css("left", ($("#Result").offset().left + 8) + "px");
+            // ProgressOverlay positioning is handled entirely by CSS now -
+            // it's position:absolute relative to #Result, which is position:relative.
+            // The old JS below used $.offset() (document coordinates) which was
+            // correct when the overlay had no positioned ancestor, but now it
+            // double-offsets the overlay off-screen.
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
             if ($("#TreeView").is(":visible")) {

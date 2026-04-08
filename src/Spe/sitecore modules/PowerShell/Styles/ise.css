@@ -248,13 +248,24 @@ a.ps-link {
     width: 100%;
 }
 
+/* Ensure both #Result and its containing td are positioning contexts,
+ * so the absolutely-positioned ProgressOverlay has a reliable ancestor to
+ * anchor to regardless of which of those two elements Sheer UI/GridPanel
+ * renders. */
+#ResultsPane,
+#Result {
+    position: relative;
+}
+
 #ProgressOverlay {
     position: absolute;
-    top: 0;
-    left: 8px;
-    right: 8px;
-    z-index: 100;
-    border-radius: 15px;
+    top: 2px;
+    left: 4px;
+    right: 2px;
+    /* Must be higher than any internal jquery.terminal.css z-index
+     * (e.g. .cmd .clipboard at z-index:1000, .tilda at 1100). */
+    z-index: 2000;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.95);
     padding: 8px;
 }
@@ -271,12 +282,14 @@ a.ps-link {
     background-color: #f7f7f7;
     border: #e3e3e3 1px solid;
     margin-top: 4px;
+    border-radius: 4px;
 }
 
 #progressbar div {
     background: #5E5E5E;
     border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
     height: 20px;
+    border-radius: 4px;
 }
 
 #Tip .ui-widget-content {

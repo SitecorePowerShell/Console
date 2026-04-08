@@ -22,7 +22,8 @@ html {
     position: absolute;
     right: 0;
     top: 0;
-    z-index: -1
+    z-index: -1;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 #terminal * {
@@ -132,10 +133,22 @@ html {
     right: 0;
     bottom: 0;
     background: #012456;
+    /* Explicit z-index creates a stacking context so the terminal's internal
+     * z-indexes (e.g. .cmd .clipboard at z-index:1000 from jquery.terminal.css)
+     * stay contained inside this element and can't escape to cover siblings
+     * like #ProgressOverlay. */
+    z-index: 0;
 }
 
 #ScriptResultCode.terminal .terminal-output {
     padding: 4px 2px;
+}
+
+/* Minimal scrollbar for the ISE terminal - transparent track and a subtle
+ * translucent thumb. Uses the standard CSS Scrollbars Module Level 1 properties
+ * (scrollbar-width, scrollbar-color) supported by all modern browsers. */
+#ScriptResultCode.terminal {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 #ScriptResultCode.terminal .terminal-output div div {
