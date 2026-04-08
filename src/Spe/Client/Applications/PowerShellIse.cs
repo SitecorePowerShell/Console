@@ -491,7 +491,7 @@ namespace Spe.Client.Applications
             ScriptItemId = string.Empty;
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
-            ScriptResult.Value = "<div ID='ScriptResultCode'></div>";
+            Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWaitContainer", "");
             CreateNewTab(null);
             UpdateRibbon();
         }
@@ -736,7 +736,6 @@ namespace Spe.Client.Applications
 
                     scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
-                    ClearOutput();
                     if (scriptSession.Output != null)
                     {
                         PrintSessionUpdate(scriptSession.Output.GetHtmlUpdate());
@@ -798,7 +797,6 @@ namespace Spe.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.ISE, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.ISE, true);
 
-            ClearOutput();
             if (scriptSession.State == RunspaceAvailability.AvailableForNestedCommand || scriptSession.State == RunspaceAvailability.Busy)
             { 
                 var errorMessage =
@@ -850,13 +848,12 @@ namespace Spe.Client.Applications
             var randomIndex = rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1);
             var executionMessage = ExecutionMessages.PleaseWaitMessages[randomIndex];
             Context.ClientPage.ClientResponse.SetInnerHtml(
-                "ScriptResult",
+                "PleaseWaitContainer",
                 string.Format(
                     "<div id='PleaseWait'>" +
                     "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
                     Texts.PowerShellIse_JobExecuteScript_Working +
-                    "' /><div>{0}</div></div>" +
-                    "<div ID='ScriptResultCode'></div>", executionMessage));
+                    "' /><div>{0}</div></div>", executionMessage));
 
             Context.ClientPage.ClientResponse.Eval(
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");

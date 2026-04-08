@@ -249,9 +249,14 @@ a.ps-link {
 }
 
 #ProgressOverlay {
+    position: absolute;
+    top: 0;
     left: 8px;
     right: 8px;
+    z-index: 100;
     border-radius: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px;
 }
 
 #OperationProgress {
@@ -425,6 +430,7 @@ a.ps-link {
 
 #ScriptResult * {
     font-family: inherit !important;
+    font-size: inherit !important;
 }
 
 .ace_layer.ace_text-layer * {
@@ -585,6 +591,10 @@ nobr > .scTab_Hover {
 
 #Content, #Wrapper, #Result {
     width: 100% !important;
+}
+
+#Result {
+    position: relative;
 }
 
 .scRibbonNavigator {
