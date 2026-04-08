@@ -648,6 +648,43 @@
             );
         }
 
+        var iseTabCompletions = null;
+        var iseTabCycleIndex = -1;
+        var iseTabCycleActive = false;
+
+        function iseCompletion(command, callback) {
+            var term = this;
+            var fullCommand = term.get_command();
+            if (iseTabCycleActive && iseTabCompletions && iseTabCompletions.length > 0) {
+                iseTabCycleIndex = (iseTabCycleIndex + 1) % iseTabCompletions.length;
+                term.set_command(iseTabCompletions[iseTabCycleIndex]);
+                return;
+            }
+            getPowerShellResponseAsync({ "guid": guid, "command": fullCommand }, "CompleteCommand",
+                function (json) {
+                    var data = JSON.parse(json.d);
+                    iseTabCompletions = data.filter(function (hint) {
+                        return hint.indexOf("Signature|") !== 0;
+                    }).map(function (hint) {
+                        var hintParts = hint.split("|");
+                        if (hintParts[0] === "Type") {
+                            return "[" + hintParts[3];
+                        }
+                        return hint;
+                    });
+                    if (iseTabCompletions.length === 0) {
+                        // no completions
+                    } else if (iseTabCompletions.length === 1) {
+                        term.set_command(iseTabCompletions[0]);
+                    } else {
+                        iseTabCycleIndex = 0;
+                        iseTabCycleActive = true;
+                        term.set_command(iseTabCompletions[0]);
+                    }
+                }
+            );
+        }
+
         function initIseTerminal() {
             var target = $("#ScriptResultCode");
             if (!target.length) {
@@ -662,7 +699,15 @@
                 greetings: false,
                 prompt: getIsePrompt(),
                 enabled: true,
-                onClear: function () {}
+                onClear: function () {},
+                completion: iseCompletion,
+                caseSensitiveAutocomplete: false,
+                keydown: function (e) {
+                    if (e.which !== 9) {
+                        iseTabCycleActive = false;
+                        iseTabCompletions = null;
+                    }
+                }
             });
         }
 
