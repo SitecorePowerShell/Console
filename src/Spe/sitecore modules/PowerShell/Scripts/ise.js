@@ -555,7 +555,7 @@
 
         function displayIseResult(data) {
             if (!iseTerminal) {
-                console.error("[ISE] displayIseResult: terminal not initialized, dropping result");
+                console.error("[spe] displayIseResult: terminal not initialized, dropping result");
                 return;
             }
             if (data["status"] !== "partial" && data["status"] !== "working") {
@@ -660,6 +660,7 @@
                 term.set_command(iseTabCompletions[iseTabCycleIndex]);
                 return;
             }
+            console.log("[spe] initializing tab completion");
             getPowerShellResponseAsync({ "guid": guid, "command": fullCommand }, "CompleteCommand",
                 function (json) {
                     var data = JSON.parse(json.d);
@@ -672,6 +673,7 @@
                         }
                         return hint;
                     });
+                    console.log("[spe] setting tabCompletions to: ", iseTabCompletions);
                     if (iseTabCompletions.length === 0) {
                         // no completions
                     } else if (iseTabCompletions.length === 1) {
@@ -688,10 +690,14 @@
         function initIseTerminal() {
             var target = $("#ScriptResultCode");
             if (!target.length) {
-                console.error("[ISE] initIseTerminal: #ScriptResultCode not found in DOM");
+                console.error("[spe] initIseTerminal: #ScriptResultCode not found in DOM");
                 return;
             }
             iseTerminal = target.terminal(function (command, term) {
+                if (/^\s*(cls|clear-host)\s*$/i.test(command)) {
+                    spe.clearOutput();
+                    return;
+                }
                 if (command.length > 0) {
                     callIseHost(command);
                 }
@@ -744,6 +750,20 @@
 
         initIseTerminal();
 
+        $.terminal.defaults.formatters.push(function (string) {
+            return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {
+                if (/^[a-zA-Z]{1,}[\-][a-zA-Z]*\b$/g.test(string)) {
+                    return '[[;yellow;]' + string + ']';
+                } else if (/^([\-])([a-zA-Z]{1,})\b$/g.test(string)) {
+                    return '[[;magenta;]' + string + ']';
+                } else if (/^[$][a-zA-Z_][a-zA-Z0-9_]*\b/g.test(string)) {
+                    return '[[;lightgreen;]' + string + ']';
+                } else {
+                    return string;
+                }
+            }).join('');
+        });
+
         $("#CopyResultsToClipboard").on("click", function () {
             clipboard.copy(spe.getOutput());
         });
@@ -764,7 +784,7 @@
         spe.appendOutput = function (outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
             if (!iseTerminal) {
-                console.error("[ISE] appendOutput: terminal not initialized, output lost");
+                console.error("[spe] appendOutput: terminal not initialized, output lost");
                 return;
             }
             iseTerminal.echo(decoded, { raw: true });
@@ -782,9 +802,6 @@
             editorSessions.forEach(function (editor) {
                 editor.editor.setOption("fontFamily", setting);
             });
-
-            document.getElementById("ScriptResult").style.fontFamily = setting;
-            $("#ScriptResultCode").css({ "font-family": setting });
         };
 
         spe.changeFontSize = function (setting) {
@@ -793,19 +810,27 @@
             editorSessions.forEach(function (editor) {
                 editor.editor.setOption("fontSize", setting);
             });
-            $("#ScriptResult").css({"font-size": setting + "px"});
-            $("#ScriptResultCode").css({ "font-size": setting + "px" });
         };
 
-
-        spe.changeBackgroundColor = function (setting) {
-            $("#ScriptResult").css({"background-color": setting});
-            $("#Result").css({"background-color": setting});
-            $("#ScriptResultCode").css({"background-color": setting});
+        spe.changeTerminalSettings = function (fontFamily, fontSize, backgroundColor, foregroundColor) {
+            fontFamily = fontFamily || "Monaco";
+            fontSize = parseInt(fontSize) || 12;
+            $("#ScriptResult").css({
+                "font-family": fontFamily,
+                "font-size": fontSize + "px",
+                "background-color": backgroundColor,
+                "color": foregroundColor
+            });
+            $("#Result").css({"background-color": backgroundColor});
+            $("#ScriptResultCode").css({
+                "font-family": fontFamily,
+                "font-size": fontSize + "px",
+                "background-color": backgroundColor,
+                "color": foregroundColor
+            });
         };
 
-        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
-            spe.changeBackgroundColor(backgroundColor);
+        spe.changeSettings = function (fontFamily, fontSize, bottomOffset, liveAutocompletion, perTabOutput) {
             spe.changeFontFamily(fontFamily);
             spe.changeFontSize(fontSize);
             if (liveAutocompletion !== undefined) {

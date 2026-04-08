@@ -250,13 +250,9 @@
                 if (callback) {
                     callback();
                 }
-                if (!!console) {
-                    console.log("[spe] setting tabCompletions to: ", tabCompletions);
-                }
+                console.log("[spe] setting tabCompletions to: ", tabCompletions);
             });
-        if (!!console) {
-            console.log("[spe] initializing tab completion");
-        }
+        console.log("[spe] initializing tab completion");
         return (tabCompletions) ? tabCompletions.length : 0;
     }
 
@@ -290,6 +286,10 @@
     $(function() {
         terminal =
             $("#terminal").terminal(function(command, term) {
+                if (/^\s*(cls|clear-host)\s*$/i.test(command)) {
+                    term.clear();
+                    return;
+                }
                 var buffer;
                 if (command.length > 0 && command.lastIndexOf(" `") == command.length - 1) {
                     buffer = command;

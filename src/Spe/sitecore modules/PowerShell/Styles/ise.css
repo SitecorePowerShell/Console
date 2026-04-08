@@ -431,6 +431,7 @@ a.ps-link {
 #ScriptResult * {
     font-family: inherit !important;
     font-size: inherit !important;
+    line-height: normal;
 }
 
 .ace_layer.ace_text-layer * {
