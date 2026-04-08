@@ -425,6 +425,7 @@ a.ps-link {
 
 #ScriptResult * {
     font-family: inherit !important;
+    font-size: inherit !important;
 }
 
 .ace_layer.ace_text-layer * {

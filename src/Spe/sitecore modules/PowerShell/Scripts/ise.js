@@ -48,6 +48,22 @@
         var debugSessionId = "";
         var debugMarkers = [];
         var resultsBottomOffset = 10;
+        var maxResultsHistoryLines = 9001;
+
+        function trimResultsHistory() {
+            var history = currentEditorSession.resultsHistory;
+            if (!history) return;
+            var totalLines = 0;
+            for (var i = 0; i < history.length; i++) {
+                var text = typeof history[i] === "string" ? history[i] : history[i].text;
+                totalLines += (text || "").split("\n").length;
+            }
+            while (totalLines > maxResultsHistoryLines && history.length > 1) {
+                var removed = history.shift();
+                var removedText = typeof removed === "string" ? removed : removed.text;
+                totalLines -= (removedText || "").split("\n").length;
+            }
+        }
         var typingTimer;
         var resultsVisibilityIntent = true;
         var splitOrientation = localStorage.getItem("spe::ise.splitOrientation") || "horizontal";
@@ -207,7 +223,9 @@
                         // Legacy format - treat as raw HTML
                         iseTerminal.echo(entry, { raw: true });
                     } else {
-                        iseTerminal.echo(entry.text, { raw: entry.raw });
+                        var opts = { raw: entry.raw };
+                        if (!entry.raw) opts.finalize = finalizeGuidLinks;
+                        iseTerminal.echo(entry.text, opts);
                     }
                 });
                 // Ensure terminal is interactive after tab switch (unless busy)
@@ -483,8 +501,24 @@
         };
 
 
+        // Linkify Sitecore GUIDs in terminal output so they open the item in Content Editor
+        var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
+        function finalizeGuidLinks(div) {
+            div.find("span").each(function () {
+                var span = $(this);
+                var html = span.html();
+                if (guidRegex.test(html)) {
+                    guidRegex.lastIndex = 0;
+                    span.html(html.replace(guidRegex, function (match) {
+                        return "<a href='#' onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={" + match + "})')\">" + match + "</a>";
+                    }));
+                }
+            });
+        }
+
         // Initialize jQuery Terminal in the results pane
         var iseTerminal = null;
+        var detachedTerminal = null;
         var iseTerminalBusy = false;
         var iseScriptRunning = false;
         var iseTerminalAttempts = 0;
@@ -521,6 +555,10 @@
         }
 
         function displayIseResult(data) {
+            if (!iseTerminal) {
+                console.error("[ISE] displayIseResult: terminal not initialized, dropping result");
+                return;
+            }
             if (data["status"] !== "partial" && data["status"] !== "working") {
                 iseTerminalBusy = false;
                 iseTerminal.resume();
@@ -540,11 +578,12 @@
             }
 
             if (data["result"]) {
-                iseTerminal.echo(data["result"]);
+                iseTerminal.echo(data["result"], { finalize: finalizeGuidLinks });
                 if (!currentEditorSession.resultsHistory) {
                     currentEditorSession.resultsHistory = [];
                 }
                 currentEditorSession.resultsHistory.push({ text: data["result"], raw: false });
+                trimResultsHistory();
             }
         }
 
@@ -610,8 +649,24 @@
             );
         }
 
+        var iseCommandHistory = [];
+
         function initIseTerminal() {
-            iseTerminal = $("#ScriptResultCode").terminal(function (command, term) {
+            // Save command history from outgoing terminal before creating a new one
+            if (iseTerminal && iseTerminal.history) {
+                try {
+                    var h = iseTerminal.history().data();
+                    if (h && h.length) iseCommandHistory = h;
+                } catch (e) {
+                    console.warn("[ISE] Failed to save command history from detached terminal:", e);
+                }
+            }
+            var target = $("#ScriptResultCode");
+            if (!target.length) {
+                console.error("[ISE] initIseTerminal: #ScriptResultCode not found in DOM");
+                return;
+            }
+            iseTerminal = target.terminal(function (command, term) {
                 if (command.length > 0) {
                     callIseHost(command);
                 }
@@ -621,6 +676,10 @@
                 enabled: true,
                 onClear: function () {}
             });
+            // Restore command history into the new terminal
+            if (iseCommandHistory.length) {
+                iseTerminal.history().set(iseCommandHistory);
+            }
             // If a script is currently executing, hide the command line and pause.
             // Otherwise leave the terminal interactive so the user can type commands.
             if (iseScriptRunning) {
@@ -673,24 +732,30 @@
         };
 
         spe.clearOutput = function () {
-            if (iseTerminal) {
-                iseTerminal.clear();
+            // Detach the terminal from the DOM before SetInnerHtml destroys it.
+            // The detached element will be reattached in restoreResults.
+            if (iseTerminal && $.contains(document, iseTerminal[0])) {
+                detachedTerminal = iseTerminal.detach();
             }
-            currentEditorSession.resultsHistory = [];
             clearVariablesCache();
         };
 
         spe.appendOutput = function (outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
-            // Reinitialize terminal if DOM was replaced
+            // Reinitialize terminal if it was lost without a prior detach/reattach
             if (!iseTerminal || !$.contains(document, iseTerminal[0])) {
                 initIseTerminal();
+                if (!iseTerminal) {
+                    console.error("[ISE] appendOutput: terminal initialization failed, output lost");
+                    return;
+                }
             }
             iseTerminal.echo(decoded, { raw: true });
             if (!currentEditorSession.resultsHistory) {
                 currentEditorSession.resultsHistory = [];
             }
             currentEditorSession.resultsHistory.push({ text: decoded, raw: true });
+            trimResultsHistory();
             clearVariablesCache();
         };
 
@@ -1027,10 +1092,18 @@
                 $("#ResultsSplitter").show();
                 $("#ResultsRow").show();
             }
-            // Reinitialize terminal if the DOM was replaced (e.g. by SetInnerHtml during script execution)
-            if ($("#ScriptResultCode").length && (!iseTerminal || !$.contains(document, iseTerminal[0]))) {
+            // Reattach the terminal if it was detached before SetInnerHtml, or
+            // reinitialize if the DOM was replaced without a prior detach.
+            if (detachedTerminal) {
+                $("#ScriptResultCode").replaceWith(detachedTerminal);
+                detachedTerminal = null;
+                iseTerminal.find(".cmd").hide();
+                iseTerminal.pause();
+            } else if ($("#ScriptResultCode").length && (!iseTerminal || !$.contains(document, iseTerminal[0]))) {
                 initIseTerminal();
-                currentEditorSession.resultsHistory = [];
+                if (!iseTerminal) {
+                    console.error("[ISE] restoreResults: terminal reinitialization failed");
+                }
             }
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
