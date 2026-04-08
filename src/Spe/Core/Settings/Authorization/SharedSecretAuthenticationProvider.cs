@@ -33,9 +33,9 @@ namespace Spe.Core.Settings.Authorization
             return ValidateToken(token, authority, out username, out _);
         }
 
-        public bool Validate(string token, string authority, out string username, out TokenValidationResult result)
+        public bool Validate(string token, string authority, out string username, out TokenValidationResult result, string sharedSecretOverride = null)
         {
-            return ValidateToken(token, authority, out username, out result);
+            return ValidateToken(token, authority, out username, out result, sharedSecretOverride);
         }
 
         public class TokenHeader
@@ -57,17 +57,17 @@ namespace Spe.Core.Settings.Authorization
             public string Client_Session { get; set; }
         }
 
-        private bool IsValidSharedSecret()
+        private bool IsValidSharedSecret(string secret)
         {
             SecurityException error = null;
             var isValid = true;
-            if (string.IsNullOrWhiteSpace(SharedSecret))
+            if (string.IsNullOrWhiteSpace(secret))
                 error = new SecurityException("The SPE shared secret is not set. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char random string.");
 
-            if (double.TryParse(SharedSecret, out _))
+            if (double.TryParse(secret, out _))
                 error = new SecurityException("The SPE shared secret is not set, or was set to a numeric value. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char random string.");
 
-            if (SharedSecret.Length < 30)
+            if (secret.Length < 30)
                 error = new SecurityException("Your SPE shared secret is not long enough. Please make it more than 30 characters for maximum security. You can set this in Spe.config on the <authenticationProvider>.");
 
             if (error != null)
@@ -249,15 +249,17 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        public bool ValidateToken(string token, string authority, out string username, out TokenValidationResult result)
+        public bool ValidateToken(string token, string authority, out string username, out TokenValidationResult result, string sharedSecretOverride = null)
         {
             username = null;
             result = null;
             if (string.IsNullOrEmpty(token)) return false;
 
+            var effectiveSecret = sharedSecretOverride ?? SharedSecret;
+
             try
             {
-                if (!IsValidSharedSecret()) return false;
+                if (!IsValidSharedSecret(effectiveSecret)) return false;
 
                 var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length != 3) return false;
@@ -289,7 +291,7 @@ namespace Spe.Core.Settings.Authorization
 
                 var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
 
-                var hash = ComputeHash(tokenHeader.Alg, SharedSecret, toBeSigned);
+                var hash = ComputeHash(tokenHeader.Alg, effectiveSecret, toBeSigned);
                 var testSignature = Convert.ToBase64String(hash).Split('=')[0]
                     .Replace('+', '-').Replace('/', '_');
 
