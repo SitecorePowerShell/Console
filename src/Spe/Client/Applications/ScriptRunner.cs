@@ -41,10 +41,19 @@ namespace Spe.Client.Applications
                 Method(Session, Script);
                 if (job == null) return;
 
+                // Drain remaining output in jquery.terminal's native format
+                // (jsterm). The ISE's terminal is a jquery.terminal instance
+                // (#1458) and its echo path parses these format strings
+                // natively, matching what the standalone SPE Console does.
+                // Using GetConsoleUpdate instead of GetHtmlUpdate is also what
+                // gives us correct Write-Host -NoNewline handling via its
+                // "wait for terminator" line-buffering.
+                var finalOutputBuffer = new System.Text.StringBuilder();
+                Session.Output.GetConsoleUpdate(finalOutputBuffer, 131072);
                 var output = new RunnerOutput
                 {
                     Exception = null,
-                    Output = Session.Output.GetHtmlUpdate(),
+                    Output = finalOutputBuffer.ToString(),
                     DialogResult = Session.Output.GetDialogRessult(),
                     HasErrors = Session.Output.HasErrors,
                     CloseRunner = Session.CloseRunner,
@@ -69,10 +78,13 @@ namespace Spe.Client.Applications
 
                 if (job != null)
                 {
+                    // jsterm format - same as the success-path drain above.
+                    var errorOutputBuffer = new System.Text.StringBuilder();
+                    Session.Output.GetConsoleUpdate(errorOutputBuffer, 131072);
                     var output =  new RunnerOutput
                     {
                         Exception = exc,
-                        Output = Session.Output.GetHtmlUpdate(),
+                        Output = errorOutputBuffer.ToString(),
                         DialogResult = Session.Output.GetDialogRessult(),
                         HasErrors = true,
                         CloseRunner = Session.CloseRunner,

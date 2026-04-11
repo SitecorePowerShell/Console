@@ -41,6 +41,7 @@
             <Memo ID="ScriptItemIdMemo" Style="display:none;"/>
             <Memo ID="ScriptItemDbMemo" Style="display:none;"/>
             <Memo ID="ActiveTabsMemo" Style="display:none;"/>
+            <Memo ID="TerminalCommand" Style="display:none;"/>
             <DataContext ID="ContentDataContext"/>
 
             <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master"/>
@@ -153,7 +154,6 @@
                                 </Border>
                             </Border>
                             <Border ID="ScriptResult" class="console">
-                                <Border ID="PleaseWaitContainer"/>
                                 <div ID="ScriptResultCode"></div>
                             </Border>
                         </Border>

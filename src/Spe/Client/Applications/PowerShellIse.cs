@@ -52,6 +52,7 @@ namespace Spe.Client.Applications
         protected Memo ScriptItemIdMemo;
         protected Memo ScriptItemDbMemo;
         protected Memo ActiveTabsMemo;
+        protected Memo TerminalCommand;
         protected Literal Progress;
         protected Border ProgressOverlay;
         protected Border RibbonPanel;
@@ -87,6 +88,24 @@ namespace Spe.Client.Applications
         {
             get => StringUtil.GetString(ServerProperties["ParentFrameName"]);
             set => ServerProperties["ParentFrameName"] = value;
+        }
+
+        // Index of the next unread line in session.Output for this ISE
+        // page's streaming drain. All lines at indices < CommittedLineCount
+        // have been sent to the client as committed (non-partial) lines.
+        // When HasPendingPartial is true, the line at CommittedLineCount
+        // is the currently-open partial on the client - it may still grow
+        // on the server and will be re-read on the next poll.
+        private int CommittedLineCount
+        {
+            get => int.TryParse(StringUtil.GetString(ServerProperties["OutputCommittedLineCount"]), out var v) ? v : 0;
+            set => ServerProperties["OutputCommittedLineCount"] = value.ToString();
+        }
+
+        private bool HasPendingPartial
+        {
+            get => StringUtil.GetString(ServerProperties["OutputHasPendingPartial"]) == "1";
+            set => ServerProperties["OutputHasPendingPartial"] = value ? "1" : string.Empty;
         }
 
         public string ScriptItemId
@@ -496,7 +515,6 @@ namespace Spe.Client.Applications
             ScriptItemId = string.Empty;
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
-            Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWaitContainer", "");
             CreateNewTab(null);
             UpdateRibbon();
             TrySaveActiveTabs();
@@ -876,13 +894,17 @@ namespace Spe.Client.Applications
                     scriptSession.ExecuteScriptPart(Editor.Value);
                     if (scriptSession.Output != null)
                     {
-                        PrintSessionUpdate(scriptSession.Output.GetHtmlUpdate());
+                        var clientOutputBuffer = new StringBuilder();
+                        if (scriptSession.Output.GetConsoleUpdate(clientOutputBuffer, JstermBufferSize))
+                        {
+                            PrintSessionUpdate(clientOutputBuffer.ToString());
+                        }
                     }
                 }
                 catch (Exception exc)
                 {
                     var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html);
-                    PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                    PrintHtmlSessionUpdate($"<pre style='background:red;'>{error}</pre>");
                 }
 
                 if (settings.SaveLastScript)
@@ -901,6 +923,29 @@ namespace Spe.Client.Applications
         {
             args.Parameters.Add("message", "ise:execute");
             JobExecuteScript(args, Editor.Value, false);
+        }
+
+        /// <summary>
+        ///     Terminal command execution entry point. The client writes the typed
+        ///     command into the TerminalCommand hidden Memo and posts this message.
+        ///     Routing through JobExecuteScript means the terminal shares the
+        ///     editor's full execution pipeline: Monitor-driven job message queue,
+        ///     ScriptRunning flag, ribbon state, progress overlay, Abort, and the
+        ///     PromptForChoice / modal dialog machinery that ScriptingHostUserInterface
+        ///     relies on. The web service ExecuteCommand path is no longer used by
+        ///     the ISE (it remains for the standalone SPE Console).
+        /// </summary>
+        [HandleMessage("ise:termexecute", true)]
+        protected virtual void JobExecuteTerm(ClientPipelineArgs args)
+        {
+            args.Parameters.Add("message", "ise:termexecute");
+            var command = TerminalCommand?.Value ?? string.Empty;
+            // Clear the memo so subsequent postbacks don't pick up stale content.
+            if (TerminalCommand != null)
+            {
+                TerminalCommand.Value = string.Empty;
+            }
+            JobExecuteScript(args, command, false);
         }
 
         [HandleMessage("ise:debug", true)]
@@ -941,7 +986,7 @@ namespace Spe.Client.Applications
             { 
                 var errorMessage =
                     "A Script is already executing in this script session. Use another session or wait for the other script to finish.";
-                PrintSessionUpdate($"<span style='background:red; color:white'>{errorMessage}</span>");
+                PrintHtmlSessionUpdate($"<span style='background:red; color:white'>{errorMessage}</span>");
                 SheerResponse.Eval(
                     "spe.showSessionIDGallery();");
                 return;
@@ -978,6 +1023,12 @@ namespace Spe.Client.Applications
             ScriptRunning = true;
             UpdateRibbon();
 
+            // Reset streaming trackers for the new execution. session.Output
+            // is cleared by ScriptRunner's finally (ClearSilent), so we
+            // start at zero lines and no pending partial.
+            CommittedLineCount = 0;
+            HasPendingPartial = false;
+
             PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
             scriptSession.SetExecutedScript(ScriptItem);
@@ -987,13 +1038,12 @@ namespace Spe.Client.Applications
             var rnd = new Random();
             var randomIndex = rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1);
             var executionMessage = ExecutionMessages.PleaseWaitMessages[randomIndex];
-            Context.ClientPage.ClientResponse.SetInnerHtml(
-                "PleaseWaitContainer",
-                string.Format(
-                    "<div id='PleaseWait'>" +
-                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
-                    Texts.PowerShellIse_JobExecuteScript_Working +
-                    "' /><div>{0}</div></div>", executionMessage));
+            // Show the inline busy indicator in the terminal prompt line. The
+            // client animates a spinner next to the fun message until the
+            // script ends (spe.hideBusy is called from spe.scriptExecutionEnded).
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode(executionMessage, true);
+            Context.ClientPage.ClientResponse.Eval(
+                $"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
 
             Context.ClientPage.ClientResponse.Eval(
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
@@ -1069,9 +1119,121 @@ namespace Spe.Client.Applications
             if (session.Output.ConsumeClearPending())
             {
                 ClearOutput();
+                CommittedLineCount = 0;
+                HasPendingPartial = false;
             }
-            var result = session.Output.GetHtmlUpdate();
-            PrintSessionUpdate(result);
+
+            StreamOutputToTerminal(session);
+        }
+
+        // Max per-update buffer size for jsterm output, matching what the
+        // standalone SPE Console web service passes (128 KiB).
+        private const int JstermBufferSize = 131072;
+
+        /// <summary>
+        ///     Streams pending output to the ISE terminal in jquery.terminal
+        ///     native format (jsterm), supporting inline-append for
+        ///     Write-Host -NoNewline. Iterates session.Output by index,
+        ///     groups lines into batches (up to a terminator or the end of
+        ///     the buffer), and emits:
+        ///       - spe.appendOutput(jsterm)          for terminated batches
+        ///         (new committed line)
+        ///       - spe.commitPartialOutput(jsterm)   when a previously
+        ///         pending partial is now frozen by a terminator
+        ///       - spe.updatePartialOutput(jsterm)   for the unterminated
+        ///         tail (the line may still grow on subsequent polls)
+        ///
+        ///     After the drain, calls session.Output.GetHtmlUpdate() to
+        ///     advance the OutputBuffer.updatePointer so that ScriptRunner's
+        ///     later GetConsoleUpdate drain does not re-emit the same lines.
+        /// </summary>
+        private void StreamOutputToTerminal(ScriptSession session)
+        {
+            var output = session.Output;
+            var committed = CommittedLineCount;
+            var hasPending = HasPendingPartial;
+
+            var totalLines = output.Count;
+
+            // The buffer was cleared since the last poll (e.g. by Clear-Host
+            // or a session reset). Reset our tracking.
+            if (totalLines < committed)
+            {
+                committed = 0;
+                hasPending = false;
+            }
+
+            // Process batches until we either exhaust the buffer or land on
+            // an unterminated tail that we have to leave open.
+            while (committed < totalLines)
+            {
+                // Find the end of the next batch: the index of the first
+                // terminated line at or after `committed`, inclusive. If
+                // no terminated line exists in the remainder, the batch
+                // ends at the last line (which is unterminated -> partial).
+                int batchEnd = committed;
+                while (batchEnd < totalLines && !output[batchEnd].Terminated)
+                {
+                    batchEnd++;
+                }
+
+                bool batchEndsWithTerminator = batchEnd < totalLines;
+                int lastInBatch = batchEndsWithTerminator ? batchEnd : totalLines - 1;
+
+                // Concatenate lines [committed .. lastInBatch] into one
+                // jsterm chunk. jquery.terminal renders multiple format
+                // blocks on the same visual line when there are no
+                // embedded newlines between them, which is exactly what
+                // we want for inline Write-Host -NoNewline output.
+                var sb = new StringBuilder();
+                for (int i = committed; i <= lastInBatch; i++)
+                {
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
+                }
+                var jsterm = sb.ToString();
+                var encoded = HttpUtility.JavaScriptStringEncode(jsterm, true);
+
+                if (batchEndsWithTerminator)
+                {
+                    if (hasPending)
+                    {
+                        // The pending partial is now frozen because this
+                        // batch introduces content after it. Commit with
+                        // the concatenated final text of the whole batch.
+                        SheerResponse.Eval($"spe.commitPartialOutput({encoded});");
+                        hasPending = false;
+                    }
+                    else
+                    {
+                        SheerResponse.Eval($"spe.appendOutput({encoded});");
+                    }
+                    committed = lastInBatch + 1;
+                    // Loop to look for another batch.
+                }
+                else
+                {
+                    // Unterminated tail - becomes the pending partial. The
+                    // tail may grow (either by mutation of the last line
+                    // if plain Write appends to it, or by new unterminated
+                    // lines being added after it). Next poll re-reads the
+                    // full tail and emits another update.
+                    SheerResponse.Eval($"spe.updatePartialOutput({encoded});");
+                    hasPending = true;
+                    // Don't advance committed past the tail; we'll re-read
+                    // it on the next poll.
+                    break;
+                }
+            }
+
+            // Sync the OutputBuffer's internal updatePointer with what we
+            // have rendered so the ScriptRunner's end-of-run drain (which
+            // uses GetConsoleUpdate) does not re-emit the same lines. The
+            // returned HTML is discarded - we only care about the side
+            // effect of advancing the pointer.
+            var _ = output.GetHtmlUpdate();
+
+            CommittedLineCount = committed;
+            HasPendingPartial = hasPending;
         }
 
         private static void ClearOutput()
@@ -1079,20 +1241,36 @@ namespace Spe.Client.Applications
             SheerResponse.Eval($"spe.clearOutput();");
         }
 
-        private static void PrintSessionUpdate(string result)
+        /// <summary>
+        ///     Emits a jquery.terminal format string (jsterm) to the ISE
+        ///     terminal as a committed (non-partial) line.
+        /// </summary>
+        private static void PrintSessionUpdate(string jstermText)
         {
-            if (!string.IsNullOrEmpty(result))
-            {
-                var xssCleanup =
-                    new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
-                if (xssCleanup.IsMatch(result))
-                {
-                    result = xssCleanup.Replace(result, "<div title='Script tag removed'>&#9888;</div>");
-                }
+            if (string.IsNullOrEmpty(jstermText)) return;
+            var encoded = HttpUtility.JavaScriptStringEncode(jstermText, true);
+            SheerResponse.Eval($"spe.appendOutput({encoded});");
+        }
 
-                result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
-                SheerResponse.Eval($"spe.appendOutput(\"{result}\");");
+        /// <summary>
+        ///     Emits a raw HTML fragment to the ISE terminal via the raw-echo
+        ///     path. Used for the small set of UI affordances the ISE renders
+        ///     with bespoke styling: error spans, session-busy warnings, and
+        ///     the deferred-action blocks produced by ScriptExecutionResult.
+        /// </summary>
+        private static void PrintHtmlSessionUpdate(string html)
+        {
+            if (string.IsNullOrEmpty(html)) return;
+
+            var xssCleanup =
+                new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            if (xssCleanup.IsMatch(html))
+            {
+                html = xssCleanup.Replace(html, "<div title='Script tag removed'>&#9888;</div>");
             }
+
+            html = HttpUtility.HtmlEncode(html.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
+            SheerResponse.Eval($"spe.appendHtmlOutput(\"{html}\");");
         }
 
         protected void ExecuteInternal(ScriptSession scriptSession, string script)
@@ -1146,8 +1324,29 @@ namespace Spe.Client.Applications
         {
             var args = eventArgs as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
+
+            // If the polling drain left a pending partial on the client,
+            // finalize it before emitting anything else - the content the
+            // client has rendered is the final text of that partial, and
+            // subsequent appendOutput calls must start a fresh visual line.
+            if (HasPendingPartial)
+            {
+                SheerResponse.Eval("spe.finalizePartial();");
+                HasPendingPartial = false;
+            }
+
             if (result != null)
             {
+                // result.Output is jsterm format drained by ScriptRunner at
+                // script end (via GetConsoleUpdate). For fast scripts that
+                // completed before any polling tick fired, this contains
+                // the full script output. For slower scripts where polling
+                // already streamed the bulk of the output, this contains
+                // only the delta between the last poll and script end.
+                //
+                // In both cases it is a jsterm string that jquery.terminal
+                // renders inline (multi-line via embedded \n, single-line
+                // if multiple format blocks with no newlines between).
                 PrintSessionUpdate(result.Output);
             }
 
@@ -1155,15 +1354,29 @@ namespace Spe.Client.Applications
             {
                 var error = ScriptSession.GetExceptionString(result.Exception,
                     ScriptSession.ExceptionStringFormat.Html);
-                PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                PrintHtmlSessionUpdate($"<pre style='background:red;'>{error}</pre>");
             }
 
             var executionResult = new ScriptExecutionResult(result);
-            executionResult.GetIseResult(result.CloseRunner).ForEach(PrintSessionUpdate);
-            
-            SheerResponse.SetInnerHtml("PleaseWait", "");
+            // GetIseResult yields literal HTML fragments with bespoke CSS
+            // classes (.deferred, .label, .content) - those go through the
+            // HTML path.
+            executionResult.GetIseResult(result.CloseRunner).ForEach(PrintHtmlSessionUpdate);
+
             ProgressOverlay.Visible = false;
             ScriptRunning = false;
+
+            // Push the updated prompt before signalling the client that the
+            // script has ended - the session's location may have changed during
+            // execution (cd, Set-Location, Push-Location), and we want the
+            // terminal's prompt to reflect the new location the instant the
+            // command line becomes usable again.
+            var finishedSession = ScriptSessionManager.GetSessionIfExists(Monitor.SessionID);
+            if (finishedSession != null)
+            {
+                PushTerminalPrompt(finishedSession);
+            }
+
             Monitor.SessionID = string.Empty;
             UpdateRibbon();
             SheerResponse.Eval("spe.scriptExecutionEnded()");
@@ -1506,13 +1719,29 @@ namespace Spe.Client.Applications
                 {
                     session.SetItemLocationContext(ContextItem);
                 }
-                // Tell the client terminal to refresh its prompt from the server
-                SheerResponse.Eval("if (spe.refreshTerminalPrompt) { spe.refreshTerminalPrompt(); }");
+                // Push the current prompt to the client terminal directly - no
+                // client-initiated round trip needed since we already have the
+                // session here.
+                PushTerminalPrompt(session);
             }
             catch (Exception ex)
             {
                 PowerShellLog.Error($"[ISE] action=primeTerminalSession failed: {ex.Message}", ex);
             }
+        }
+
+        /// <summary>
+        ///     Pushes the current PS prompt for the given session to the client
+        ///     terminal. Called after session priming and after script execution
+        ///     completes so the terminal prompt reflects the session's current
+        ///     location without the client having to make a web service round trip.
+        /// </summary>
+        private static void PushTerminalPrompt(ScriptSession session)
+        {
+            if (session == null) return;
+            var prompt = $"PS {session.CurrentLocation}>";
+            var encoded = HttpUtility.JavaScriptStringEncode(prompt, true);
+            SheerResponse.Eval($"if (spe.setTerminalPrompt) {{ spe.setTerminalPrompt({encoded}); }}");
         }
 
         [HandleMessage("ise:updatesettings", true)]

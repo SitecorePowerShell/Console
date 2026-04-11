@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -399,20 +400,59 @@ namespace Spe.sitecore_modules.PowerShell.Services
             // to purge its displayed output before rendering anything new.
             result.clear = session.Output.ConsumeClearPending();
 
-            var output = new StringBuilder();
-            session.Output.GetConsoleUpdate(output, 131072);
-            var partial = session.Output.HasUpdates();
-            result.result = output.ToString().TrimEnd('\r', '\n');
+            var state = GetStreamingState(guid);
+            if (result.clear)
+            {
+                // Client is about to clear its terminal; reset our local
+                // streaming tracking so we start at line 0.
+                state.CommittedLineCount = 0;
+                state.HasPendingPartial = false;
+            }
+
+            result.emits = new List<EmitInstruction>();
+            BuildStreamingEmits(session, state, result.emits);
+
+            // Populate the legacy `result` field with the concatenated emit
+            // text so any consumer that still reads it (for example tests
+            // or older clients) still sees something. The Console client
+            // prefers `emits` when present.
+            if (result.emits.Count > 0)
+            {
+                var flat = new StringBuilder();
+                foreach (var e in result.emits)
+                {
+                    flat.Append(e.text);
+                }
+                result.result = flat.ToString().TrimEnd('\r', '\n');
+            }
+            else
+            {
+                result.result = string.Empty;
+            }
+
             result.prompt = $"PS {session.CurrentLocation}>";
 
-            result.status = complete ? (partial ? StatusPartial : StatusComplete) : StatusWorking;
+            // "partial" status means "there is more content that has not
+            // been emitted this poll, keep polling". With the streaming
+            // drain this maps to HasPendingPartial being true - the last
+            // line is unterminated and may still grow.
+            bool hadContent = result.emits.Count > 0;
+            result.status = complete
+                ? (hadContent || state.HasPendingPartial ? StatusPartial : StatusComplete)
+                : StatusWorking;
             result.background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor);
             result.color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor);
 
-            if (partial && complete)
+            if (complete && !state.HasPendingPartial)
             {
+                // Script is done and there is nothing left to stream.
+                // ClearSilent the output buffer so future commands start
+                // fresh; also reset our streaming tracking.
                 session.Output.ClearSilent();
+                state.CommittedLineCount = 0;
+                state.HasPendingPartial = false;
             }
+
             var serializedResult = serializer.Serialize(result);
             return serializedResult;
         }
@@ -545,7 +585,131 @@ namespace Spe.sitecore_modules.PowerShell.Services
             public string background;
             public string color;
             public bool clear;
+            /// <summary>
+            ///     Structured streaming emits for the Console terminal to
+            ///     render output as it arrives, including inline-append
+            ///     support for Write-Host -NoNewline via update() of the
+            ///     currently-pending partial line.
+            ///
+            ///     Each entry has an op and text:
+            ///         op = "append"  -> new committed visual line
+            ///         op = "partial" -> start/update the pending partial
+            ///         op = "commit"  -> replace pending partial with
+            ///                            final text and release pending
+            /// </summary>
+            public List<EmitInstruction> emits;
+        }
 
+        public class EmitInstruction
+        {
+            public string op;
+            public string text;
+        }
+
+        /// <summary>
+        ///     Per-session streaming state for the Console terminal. Tracks
+        ///     the next unread line index in session.Output and whether the
+        ///     last emission left a pending partial on the client. Keyed by
+        ///     session guid.
+        /// </summary>
+        private class StreamingState
+        {
+            public int CommittedLineCount;
+            public bool HasPendingPartial;
+        }
+
+        private static readonly ConcurrentDictionary<string, StreamingState> _streamingStates
+            = new ConcurrentDictionary<string, StreamingState>(StringComparer.OrdinalIgnoreCase);
+
+        private static StreamingState GetStreamingState(string guid)
+        {
+            return _streamingStates.GetOrAdd(guid, _ => new StreamingState());
+        }
+
+        /// <summary>
+        ///     Drain pending lines from session.Output into a list of
+        ///     streaming emit instructions. The algorithm mirrors the
+        ///     ISE's StreamOutputToTerminal logic:
+        ///
+        ///       - iterate by index from CommittedLineCount forward,
+        ///       - group lines into batches ending at a terminator or the
+        ///         buffer tail,
+        ///       - for terminated batches emit "append" (or "commit" when
+        ///         a previous pending partial is now frozen by new content
+        ///         after it),
+        ///       - for the unterminated tail emit "partial" and leave
+        ///         CommittedLineCount at the start of the tail so the next
+        ///         poll re-reads it (catches line mutation by plain Write
+        ///         appending to the last unterminated line).
+        ///
+        ///     Does not modify OutputBuffer internals; iterates session.Output
+        ///     by index via the public IList semantics. Advances the buffer's
+        ///     internal updatePointer via GetHtmlUpdate at the end so other
+        ///     consumers do not re-read the same content.
+        /// </summary>
+        private static void BuildStreamingEmits(ScriptSession session, StreamingState state, List<EmitInstruction> emits)
+        {
+            var output = session.Output;
+            var totalLines = output.Count;
+            var committed = state.CommittedLineCount;
+            var hasPending = state.HasPendingPartial;
+
+            // The buffer was cleared (e.g. ClearSilent on script end, or a
+            // Clear-Host detection path called Output.Clear). Reset local
+            // tracking.
+            if (totalLines < committed)
+            {
+                committed = 0;
+                hasPending = false;
+            }
+
+            while (committed < totalLines)
+            {
+                int batchEnd = committed;
+                while (batchEnd < totalLines && !output[batchEnd].Terminated)
+                {
+                    batchEnd++;
+                }
+
+                bool batchEndsWithTerminator = batchEnd < totalLines;
+                int lastInBatch = batchEndsWithTerminator ? batchEnd : totalLines - 1;
+
+                var sb = new StringBuilder();
+                for (int i = committed; i <= lastInBatch; i++)
+                {
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
+                }
+                var jsterm = sb.ToString();
+
+                if (batchEndsWithTerminator)
+                {
+                    if (hasPending)
+                    {
+                        emits.Add(new EmitInstruction { op = "commit", text = jsterm });
+                        hasPending = false;
+                    }
+                    else
+                    {
+                        emits.Add(new EmitInstruction { op = "append", text = jsterm });
+                    }
+                    committed = lastInBatch + 1;
+                }
+                else
+                {
+                    emits.Add(new EmitInstruction { op = "partial", text = jsterm });
+                    hasPending = true;
+                    break;
+                }
+            }
+
+            // Advance the OutputBuffer's internal updatePointer so that
+            // any other consumer (e.g. GetConsoleUpdate in code paths we
+            // do not control) does not re-read the same lines. The HTML
+            // result is discarded; we only care about the pointer advance.
+            var _ = output.GetHtmlUpdate();
+
+            state.CommittedLineCount = committed;
+            state.HasPendingPartial = hasPending;
         }
     }
 }

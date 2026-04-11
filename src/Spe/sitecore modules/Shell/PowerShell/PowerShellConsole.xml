@@ -75,7 +75,7 @@
         </Border>
       </Border>
       <div id="terminal"></div>
-      <div id="working">
+      <div id="working" style="display:none;">
         <img src="/sitecore modules/PowerShell/Assets/working.gif" alt="Working" />
       </div>
     </FormPage>

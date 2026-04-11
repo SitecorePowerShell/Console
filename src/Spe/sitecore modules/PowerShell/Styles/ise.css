@@ -345,14 +345,6 @@ a.ps-link {
     padding-top: 37px;
 }
 
-#PleaseWait {
-    position: fixed;
-    bottom: 28px;
-    right: 19px;
-    text-align: right;
-    float: right;
-    z-index: 1000;
-}
 
 
 .breakpoint {

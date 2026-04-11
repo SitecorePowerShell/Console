@@ -88,6 +88,7 @@
         var scriptItemIdMemo = $($("#ScriptItemIdMemo")[0]);
         var scriptItemDbMemo = $($("#ScriptItemDbMemo")[0]);
         var activeTabsMemo = $($("#ActiveTabsMemo")[0]);
+        var terminalCommandMemo = $($("#TerminalCommand")[0]);
         // Setup the ace code editor.
 
         function registerEventListenersForRibbonButtons() {
@@ -344,8 +345,9 @@
                         iseTerminal.echo(entry.text, opts);
                     }
                 });
-                // Ensure terminal is interactive after tab switch (unless busy)
-                if (!iseTerminalBusy) {
+                // Ensure terminal is interactive after tab switch (unless a
+                // script is currently running in the shared ISE session).
+                if (!iseScriptRunning) {
                     iseTerminal.find(".cmd").css("visibility", "visible");
                     iseTerminal.resume();
                 }
@@ -642,11 +644,7 @@
 
         // Initialize jQuery Terminal in the results pane
         var iseTerminal = null;
-        var iseTerminalBusy = false;
         var iseScriptRunning = false;
-        var iseTerminalAttempts = 0;
-        var iseInitialPoll = 100;
-        var iseMaxPoll = 2500;
         var iseLastPrompt = "PS >";
         var iseDebugActive = false;
 
@@ -677,114 +675,66 @@
             }
         }
 
-        function displayIseResult(data) {
-            if (!iseTerminal) {
-                console.error("[spe] displayIseResult: terminal not initialized, dropping result");
-                return;
+        // Server-pushed prompt update. Called from PushTerminalPrompt on the
+        // server after session priming and after script execution completes.
+        // Replaces the old round-trip prompt refresh that was routed through
+        // PowerShellWebService.ExecuteCommand.
+        spe.setTerminalPrompt = function (prompt) {
+            if (prompt) {
+                iseLastPrompt = prompt;
             }
-            if (data["status"] !== "partial" && data["status"] !== "working") {
-                iseTerminalBusy = false;
-                iseTerminal.resume();
-                iseTerminal.find(".cmd").css("visibility", "visible");
-                if (data["prompt"]) {
-                    iseLastPrompt = data["prompt"];
-                }
+            if (iseTerminal && !speBusyInterval) {
                 iseTerminal.set_prompt(getIsePrompt());
-                var background = data["background"];
-                if (background !== undefined && background !== "null") {
-                    $("#ScriptResultCode").css({ "background-color": background });
-                }
-                var color = data["color"];
-                if (color !== undefined && color !== "null") {
-                    $("#ScriptResultCode").css({ "color": color });
-                }
             }
+        };
 
-            // Clear-Host called during command execution: purge the terminal
-            // output before rendering any new result from this poll cycle.
-            if (data["clear"]) {
-                spe.clearOutput();
-            }
+        // Animated "busy" indicator that takes over the terminal prompt line
+        // while a script is executing (editor Run or terminal command). Replaces
+        // the floating bottom-right PleaseWait overlay, which was easy to miss
+        // for terminal-issued commands since it appeared in a different spot
+        // than the user's focus. Now the indicator appears exactly where the
+        // prompt normally lives.
+        //
+        // Spinner is the classic cli-spinners "dots" pattern; ~80ms per frame
+        // gives the characteristic rolling motion.
+        var speSpinnerFrames = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C",
+                                "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
+        var speBusyInterval = null;
+        var speBusyMessage = "";
+        var speBusyFrame = 0;
 
-            if (data["result"]) {
-                iseTerminal.echo(data["result"], { finalize: finalizeGuidLinks });
-                if (!currentEditorSession.resultsHistory) {
-                    currentEditorSession.resultsHistory = [];
-                }
-                currentEditorSession.resultsHistory.push({ text: data["result"], raw: false });
-                trimResultsHistory();
-            }
-
-            // Refresh the Variables panel once the command fully completes -
-            // a terminal command may have created or modified session variables.
-            if (data["status"] !== "partial" && data["status"] !== "working") {
-                if (spe.refreshVariables) {
-                    spe.refreshVariables();
-                }
-            }
+        function getBusyPrompt() {
+            var frame = speSpinnerFrames[speBusyFrame];
+            // jquery.terminal color format: [[STYLE;FG;BG]text]. Teal spinner
+            // next to a white message line keeps the indicator distinct from
+            // the normal white prompt without being noisy.
+            return "[[;#4ec9b0;]" + frame + "] [[;#d4d4d4;]" + speBusyMessage + "]";
         }
 
-        function callIseHost(command) {
-            iseTerminal.pause();
-            iseTerminalBusy = true;
-            iseTerminalAttempts = 0;
-            getPowerShellResponseAsync({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
-                function (json) {
-                    var data = JSON.parse(json.d);
-                    if (data["status"] === "working") {
-                        displayIseResult(data);
-                        var handle = data["handle"];
-                        (function poll(wait) {
-                            setTimeout(function () {
-                                getPowerShellResponseAsync({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
-                                    function (pollJson) {
-                                        var jsonData = JSON.parse(pollJson.d);
-                                        if (jsonData["status"] === "working") {
-                                            displayIseResult(jsonData);
-                                            var textResult = jsonData["result"];
-                                            if (textResult && textResult.length > 0) {
-                                                iseTerminalAttempts = 0;
-                                            }
-                                            if (iseTerminalAttempts >= 0) {
-                                                iseTerminalAttempts++;
-                                                var newWait = Math.pow(iseInitialPoll, 1 + (iseTerminalAttempts / 10));
-                                                if (newWait > iseMaxPoll) {
-                                                    newWait = iseMaxPoll;
-                                                    iseTerminalAttempts = -1;
-                                                }
-                                                poll(newWait);
-                                            } else {
-                                                poll(iseMaxPoll);
-                                            }
-                                        } else if (jsonData["status"] === "partial") {
-                                            displayIseResult(jsonData);
-                                            poll(iseInitialPoll);
-                                        } else {
-                                            displayIseResult(jsonData);
-                                            clearVariablesCache();
-                                        }
-                                    },
-                                    function (jqXHR, textStatus, errorThrown) {
-                                        iseTerminalBusy = false;
-                                        iseTerminal.resume();
-                                        iseTerminal.find(".cmd").css("visibility", "visible");
-                                        iseTerminal.echo("Communication error: " + textStatus + "; " + errorThrown);
-                                    }
-                                );
-                            }, wait);
-                        })(iseInitialPoll);
-                    } else if (data["status"] === "unauthorized") {
-                        iseTerminalBusy = false;
-                        iseTerminal.resume();
-                        iseTerminal.find(".cmd").css("visibility", "visible");
-                        spe.requestElevation();
-                    } else {
-                        displayIseResult(data);
-                        clearVariablesCache();
-                    }
+        spe.showBusy = function (message) {
+            speBusyMessage = message || "";
+            speBusyFrame = 0;
+            if (!iseTerminal) return;
+            iseTerminal.set_prompt(getBusyPrompt());
+            if (speBusyInterval) return;
+            speBusyInterval = setInterval(function () {
+                speBusyFrame = (speBusyFrame + 1) % speSpinnerFrames.length;
+                if (iseTerminal) {
+                    iseTerminal.set_prompt(getBusyPrompt());
                 }
-            );
-        }
+            }, 80);
+        };
+
+        spe.hideBusy = function () {
+            if (speBusyInterval) {
+                clearInterval(speBusyInterval);
+                speBusyInterval = null;
+            }
+            speBusyMessage = "";
+            if (iseTerminal) {
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+        };
 
         var iseTabCompletions = null;
         var iseTabCycleIndex = -1;
@@ -837,7 +787,15 @@
                     return;
                 }
                 if (command.length > 0) {
-                    callIseHost(command);
+                    // Route the terminal command through the same Sheer UI
+                    // message pipeline as the ribbon Run button. The server
+                    // reads the command from the TerminalCommand memo and
+                    // calls JobExecuteScript, giving the terminal the full
+                    // editor execution pipeline (ScriptRunning flag, ribbon
+                    // disable, progress overlay, Abort, PromptForChoice via
+                    // the job message queue).
+                    terminalCommandMemo.val(command);
+                    scForm.postRequest("", "", "", "ise:termexecute");
                 }
             }, {
                 greetings: false,
@@ -854,14 +812,6 @@
                 }
             });
         }
-
-        // Fetches the current prompt from the ISE session by running an empty command.
-        // The session must already be primed on the server via ise:initterminal.
-        spe.refreshTerminalPrompt = function () {
-            if (iseTerminal && !iseTerminalBusy && !iseScriptRunning) {
-                callIseHost("");
-            }
-        };
 
         // Silently updates the terminal prompt without pausing the UI.
         // Used during debug breakpoints where we want to refresh the prompt
@@ -919,18 +869,172 @@
             clearVariablesCache();
         };
 
+        // Script output in jquery.terminal's native jsterm format. Text
+        // contains color wrappers like [[;#fg;#bg]text]; jquery.terminal
+        // parses them natively via echo (no `raw` flag).
+        //
+        // To support Write-Host -NoNewline correctly (inline-append
+        // streaming), three functions cooperate:
+        //
+        //   spe.appendOutput(jsterm)          - commit a new line. Resets
+        //                                       any pending partial.
+        //   spe.updatePartialOutput(jsterm)   - create or update an
+        //                                       in-progress "partial" line
+        //                                       that may grow on subsequent
+        //                                       polls. Uses jquery.terminal
+        //                                       update() to replace the
+        //                                       line in place.
+        //   spe.commitPartialOutput(jsterm)   - replace the pending line
+        //                                       with final text and release
+        //                                       the pending-partial state.
+        //   spe.finalizePartial()             - release the pending-partial
+        //                                       state without updating text
+        //                                       (used at script end).
+        //
+        // pendingPartialLineIndex is the jquery.terminal line index of the
+        // current in-progress partial (-1 if none). Updates are applied via
+        // iseTerminal.update(index, text, options).
+        var pendingPartialLineIndex = -1;
+
+        function appendHistoryEntry(text, partial) {
+            if (!currentEditorSession.resultsHistory) {
+                currentEditorSession.resultsHistory = [];
+            }
+            currentEditorSession.resultsHistory.push({ text: text, raw: false, partial: !!partial });
+            trimResultsHistory();
+        }
+
+        function replacePartialHistoryEntry(text) {
+            var history = currentEditorSession.resultsHistory;
+            if (!history || history.length === 0) {
+                appendHistoryEntry(text, true);
+                return;
+            }
+            var last = history[history.length - 1];
+            if (last && typeof last === "object" && last.partial) {
+                last.text = text;
+            } else {
+                appendHistoryEntry(text, true);
+            }
+        }
+
+        function commitPartialHistoryEntry(text) {
+            var history = currentEditorSession.resultsHistory;
+            if (!history || history.length === 0) {
+                appendHistoryEntry(text, false);
+                return;
+            }
+            var last = history[history.length - 1];
+            if (last && typeof last === "object" && last.partial) {
+                last.text = text;
+                last.partial = false;
+            } else {
+                appendHistoryEntry(text, false);
+            }
+        }
+
+        // Strip a trailing CR/LF from jsterm text before handing it to
+        // jquery.terminal's echo/update. The server's GetTerminalLine adds
+        // \r\n to terminated lines, and a trailing newline in echo/update
+        // input causes jquery.terminal to split into [content, ""] and
+        // produce a phantom empty row inside the block. echo/update already
+        // implicitly start a new logical line per call, so we never want
+        // the trailing newline.
+        function stripTrailingNewline(text) {
+            if (!text) return text;
+            if (text.length >= 2 && text.charAt(text.length - 2) === "\r" && text.charAt(text.length - 1) === "\n") {
+                return text.substring(0, text.length - 2);
+            }
+            if (text.charAt(text.length - 1) === "\n") {
+                return text.substring(0, text.length - 1);
+            }
+            return text;
+        }
+
         spe.appendOutput = function (outputToAppend) {
-            var decoded = $("<div/>").html(outputToAppend).text();
             if (!iseTerminal) {
                 console.error("[spe] appendOutput: terminal not initialized, output lost");
                 return;
             }
-            iseTerminal.echo(decoded, { raw: true });
-            if (!currentEditorSession.resultsHistory) {
-                currentEditorSession.resultsHistory = [];
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+            // Any previous pending partial is now closed; the new echo is
+            // the current "last line" and is fully committed.
+            pendingPartialLineIndex = -1;
+            appendHistoryEntry(outputToAppend, false);
+            clearVariablesCache();
+        };
+
+        spe.updatePartialOutput = function (outputToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] updatePartialOutput: terminal not initialized, output lost");
+                return;
             }
-            currentEditorSession.resultsHistory.push({ text: decoded, raw: true });
-            trimResultsHistory();
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            if (pendingPartialLineIndex >= 0) {
+                iseTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+                replacePartialHistoryEntry(outputToAppend);
+            } else {
+                iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+                pendingPartialLineIndex = iseTerminal.last_index();
+                appendHistoryEntry(outputToAppend, true);
+            }
+            clearVariablesCache();
+        };
+
+        spe.commitPartialOutput = function (outputToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] commitPartialOutput: terminal not initialized, output lost");
+                return;
+            }
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            if (pendingPartialLineIndex >= 0) {
+                iseTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+                commitPartialHistoryEntry(outputToAppend);
+            } else {
+                iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+                appendHistoryEntry(outputToAppend, false);
+            }
+            pendingPartialLineIndex = -1;
+            clearVariablesCache();
+        };
+
+        spe.finalizePartial = function () {
+            // Close the pending partial without updating its text - the
+            // currently rendered content is considered final. Used at
+            // script end so subsequent appends start a new visual line.
+            if (pendingPartialLineIndex >= 0) {
+                // Mark the last partial history entry as committed.
+                var history = currentEditorSession.resultsHistory;
+                if (history && history.length > 0) {
+                    var last = history[history.length - 1];
+                    if (last && typeof last === "object" && last.partial) {
+                        last.partial = false;
+                    }
+                }
+            }
+            pendingPartialLineIndex = -1;
+        };
+
+        // Append literal HTML fragments (error spans, deferred-message
+        // blocks with bespoke CSS classes, etc.) via jquery.terminal's raw
+        // echo. Used for the small set of non-output-buffer messages the
+        // ISE emits for error display and deferred-action reporting.
+        spe.appendHtmlOutput = function (htmlToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] appendHtmlOutput: terminal not initialized, output lost");
+                return;
+            }
+            var decoded = $("<div/>").html(htmlToAppend).text();
+            iseTerminal.echo(decoded, { raw: true });
+            // An HTML echo also closes the pending partial visually.
+            pendingPartialLineIndex = -1;
+            appendHistoryEntry(decoded, false);
+            // Mark the last history entry as raw since we used raw echo.
+            var history = currentEditorSession.resultsHistory;
+            if (history && history.length > 0) {
+                history[history.length - 1].raw = true;
+            }
             clearVariablesCache();
         };
 
@@ -1093,15 +1197,14 @@
             }
             iseScriptRunning = false;
             iseDebugActive = false;
+            // Stop the busy spinner; this also restores the normal prompt via
+            // getIsePrompt() using the prompt text the server pushed during
+            // MonitorOnJobFinished.
+            spe.hideBusy();
             // Restore the terminal command line now that the script has finished.
-            if (iseTerminal && !iseTerminalBusy) {
-                iseTerminal.find(".cmd").css("visibility", "visible");
+            if (iseTerminal) {
                 iseTerminal.resume();
-                iseTerminal.set_prompt(getIsePrompt());
             }
-            // Refresh prompt from the server - the path may have changed during script execution
-            // (especially during debug, where the user may have cd'd or the script itself did)
-            spe.refreshTerminalPrompt();
             // Refresh the Variables panel - the script may have created or modified variables
             if (spe.refreshVariables) {
                 spe.refreshVariables();
@@ -1283,11 +1386,13 @@
 
         spe.restoreResults = function () {
             iseScriptRunning = true;
-            // Hide the terminal command line while a script is running so the
-            // user can't submit a concurrent command against the busy session.
+            // Pause the terminal so the user can't submit a concurrent command
+            // against the busy session. The `visible` arg (pause(true)) keeps
+            // the prompt element visible - without it jquery.terminal calls
+            // command_line.find('.prompt').hidden() and our spe.showBusy
+            // set_prompt updates are invisible.
             if (iseTerminal) {
-                iseTerminal.find(".cmd").css("visibility", "hidden");
-                iseTerminal.pause();
+                iseTerminal.pause(true);
             }
             if (splitOrientation === "vertical") {
                 // Restore left pane flex from saved splitter position
@@ -1958,7 +2063,7 @@
             spe.resizeEditor();
             // Prime the ISE PowerShell session on the server with the correct
             // application type (ISE) and context item location. The server
-            // will then call spe.refreshTerminalPrompt() to update the prompt.
+            // pushes the current prompt back via spe.setTerminalPrompt.
             scForm.postRequest("", "", "", "ise:initterminal");
         }, 100);
 

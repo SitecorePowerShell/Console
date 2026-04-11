@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Security;
@@ -69,11 +70,16 @@ namespace Spe.Client.Applications
 
             if (!Context.ClientPage.IsEvent)
             {
+                // Serialize the fun busy messages so the Console client can
+                // pick a random one per command execution (same pattern the
+                // ISE uses server-side).
+                var busyMessagesJson = new JavaScriptSerializer().Serialize(ExecutionMessages.PleaseWaitMessages);
                 Options.Text = @"<script type='text/javascript'>" +
                                @"$ise(function() { spe.setOptions({ initialPoll: " +
                                WebServiceSettings.InitialPollMillis + @", maxPoll: " +
-                               WebServiceSettings.MaxmimumPollMillis + @", fontSize: " + 
-                               settings.FontSize + $", fontFamily: '{settings.FontFamilyStyle}' }});}});</script>" +
+                               WebServiceSettings.MaxmimumPollMillis + @", fontSize: " +
+                               settings.FontSize + $", fontFamily: '{settings.FontFamilyStyle}'" +
+                               @", busyMessages: " + busyMessagesJson + @" });});</script>" +
                                @"<style>#terminal {" +
                                $"color: {OutputLine.ProcessHtmlColor(settings.ForegroundColor)};" +
                                $"background-color: {OutputLine.ProcessHtmlColor(settings.BackgroundColor)};" +
