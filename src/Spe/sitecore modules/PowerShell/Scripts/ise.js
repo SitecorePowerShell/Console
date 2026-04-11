@@ -35,9 +35,11 @@
                 this.tabTitleInnerHTML = "";      // string: tab title inner html
                 this.windowTitleInnerHTML = "";   // string: window title inner html
                 this.isModified = false;          // bool: is modified
-                this.initialAssignment = true;    // bool: initial assignment
                 this.breakpoints = "";            // string: breakpoints
                 this.resultsHistory = [];         // array: Script execution results for terminal replay
+                this.scriptId = "";               // string: Sitecore item ID
+                this.scriptDb = "";               // string: Sitecore database name
+                this.isDeleted = false;           // bool: source item was deleted
             }
         }
 
@@ -85,6 +87,7 @@
         var breakpointsMemo = $($("#Breakpoints")[0]);
         var scriptItemIdMemo = $($("#ScriptItemIdMemo")[0]);
         var scriptItemDbMemo = $($("#ScriptItemDbMemo")[0]);
+        var activeTabsMemo = $($("#ActiveTabsMemo")[0]);
         // Setup the ace code editor.
 
         function registerEventListenersForRibbonButtons() {
@@ -179,13 +182,126 @@
         var posx = $("#PosX");
         var posy = $("#PosY");
 
-        spe.updateModificationFlag = function (clear) {
+        spe.updateModificationFlag = function (clear, targetSession) {
+            // Called from two very different places:
+            //   1. The Ace "input" event handler (clear === false), which
+            //      fires asynchronously ~31ms after any editor change
+            //      because Ace debounces input via lang.delayedCall. A
+            //      programmatic setValue (restore, reload, plugin update)
+            //      therefore schedules a deferred event that could
+            //      incorrectly flag the session as modified. We
+            //      distinguish "user edit" from "programmatic load" by
+            //      checking the session's undo bookmark - callers who
+            //      load content programmatically call
+            //      session.getUndoManager().markClean() immediately after
+            //      setValue, and user edits advance the revision past
+            //      that bookmark.
+            //   2. The server-side save handler (clear === true), which
+            //      clears the modified flag and re-anchors the clean
+            //      bookmark to the current content.
+            // targetSession lets the deferred input handler pass the
+            // session it was registered for, avoiding a race where the
+            // globally-active session is read instead of the editor that
+            // actually raised the event.
+            var session = targetSession || currentEditorSession;
 
-            if (currentEditorSession.initialAssignment) {
-                currentEditorSession.initialAssignment = false;
-            } else if (clear === currentEditorSession.isModified) {
-                currentEditorSession.isModified = !clear;
-                spe.applyWindowTitle(currentEditorIndex);
+            if (clear) {
+                session.isModified = false;
+                session.isDeleted = false;
+                if (session.editor && session.editor.session) {
+                    session.editor.session.getUndoManager().markClean();
+                }
+                spe.applyWindowTitle(session.index);
+                return;
+            }
+
+            var aceSession = session.editor && session.editor.session;
+            if (aceSession && aceSession.getUndoManager().isClean()) {
+                return;
+            }
+            if (!session.isModified) {
+                session.isModified = true;
+                spe.applyWindowTitle(session.index);
+            }
+        };
+
+        spe.collectTabState = function () {
+            var tabs = [];
+            var adjustedActiveIndex = 1;
+
+            editorSessions.forEach(function (session) {
+                var tab = {
+                    db: session.scriptDb || "",
+                    id: session.scriptId || "",
+                    path: session.path || "",
+                    modified: session.isModified
+                };
+
+                if (session.isModified || !tab.id) {
+                    tab.content = session.editor.session.getValue();
+                }
+
+                if (!tab.id && !tab.content) return;
+                tabs.push(tab);
+                if (session.index === currentEditorIndex) {
+                    adjustedActiveIndex = tabs.length;
+                }
+            });
+
+            var state = {
+                activeIndex: adjustedActiveIndex,
+                tabs: tabs
+            };
+
+            activeTabsMemo.val(JSON.stringify(state));
+        };
+
+        spe.saveActiveTabs = function () {
+            spe.collectTabState();
+            scForm.postRequest("", "", "", "ise:savetabstate");
+        };
+
+        spe.applyRestoredTabs = function (tabsData) {
+            if (!tabsData || !tabsData.tabs) return;
+
+            var prevSession = currentEditorSession;
+            var prevEditor = currentAceEditor;
+            var prevIndex = currentEditorIndex;
+
+            tabsData.tabs.forEach(function (tab, idx) {
+                var session = editorSessions[idx];
+                if (!session) return;
+
+                // Temporarily swap to this session so Ace's session
+                // "change" handler (which reads global currentAceEditor
+                // to mirror content into the Editor memo) runs against
+                // the correct session during setValue. The delayed
+                // "input" event is handled separately via the
+                // session-scoped handler registered in createEditor.
+                currentEditorSession = session;
+                currentAceEditor = session.editor;
+                currentEditorIndex = session.index;
+
+                var aceSession = session.editor.session;
+                aceSession.setValue(tab.content || "");
+                // Anchor the undo bookmark so the deferred Ace input
+                // event (scheduled ~31ms after this setValue) does not
+                // spuriously flag the tab as modified. Any subsequent
+                // user edit advances the revision past this bookmark
+                // and the flag logic marks the tab dirty correctly.
+                aceSession.getUndoManager().markClean();
+
+                session.isModified = !!tab.modified;
+                session.isDeleted = !!tab.deleted;
+                spe.applyWindowTitle(session.index);
+            });
+
+            currentEditorSession = prevSession;
+            currentAceEditor = prevEditor;
+            currentEditorIndex = prevIndex;
+
+            if (currentAceEditor) {
+                editor.val(currentAceEditor.session.getValue());
             }
         };
 
@@ -253,6 +369,10 @@
             currentAceEditor.session.setMode("ace/mode/powershell");
             currentAceEditor.setShowPrintMargin(false);
             currentAceEditor.session.setValue(editor.val());
+            // Anchor the undo bookmark to the initial content so the
+            // modification-flag logic can tell later whether the session
+            // has diverged from its loaded baseline.
+            currentAceEditor.session.getUndoManager().markClean();
             currentAceEditor.session.on("change", function () {
                 editor.val(currentAceEditor.session.getValue());
             });
@@ -421,8 +541,12 @@
                 breakpointsMemo.val(currentEditorSession.breakpoints);
             });
 
+            // Capture newSession in the closure so the deferred Ace
+            // input event always fires against the editor that actually
+            // raised it, not whichever tab happens to be globally active
+            // when the 31ms delayedCall timer elapses.
             currentAceEditor.on("input", function () {
-                spe.updateModificationFlag(false);
+                spe.updateModificationFlag(false, newSession);
             });
 
             // Ace keybinding overrides for ISE shortcuts are registered
@@ -941,6 +1065,18 @@
             currentAceEditor.getSession().setValue(editor.val());
         };
 
+        spe.reloadCurrentEditor = function (content) {
+            var aceSession = currentAceEditor.getSession();
+            aceSession.setValue(content);
+            // Anchor the clean bookmark so the deferred Ace input event
+            // does not mark the tab dirty right after the reload.
+            aceSession.getUndoManager().markClean();
+            currentEditorSession.isModified = false;
+            currentEditorSession.isDeleted = false;
+            spe.applyWindowTitle(currentEditorIndex);
+            editor.val(content);
+        };
+
         spe.insertEditorContent = function (text) {
             var position = currentAceEditor.getCursorPosition();
             currentAceEditor.getSession().insert(position, text);
@@ -1021,9 +1157,12 @@
             var editorSession = getSessionByIndex(codeEditorIndex);
             var windowCaption = $("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
-                windowCaption[0].innerHTML =
-                    editorSession.windowTitleInnerHTML.replace("#tabindex#", editorSession.index).replace("#styles#", editorSession.isModified ? "display:inline;" : "display:none;");
-
+                var windowStyles = editorSession.isModified || editorSession.isDeleted ? "display:inline;" : "display:none;";
+                var windowHtml = editorSession.windowTitleInnerHTML.replace("#tabindex#", editorSession.index).replace("#styles#", windowStyles);
+                if (editorSession.isDeleted) {
+                    windowHtml = windowHtml.replace("\u2B24", "\u2716");
+                }
+                windowCaption[0].innerHTML = windowHtml;
             }
 
             var styles = $("#ModifiedStatusStyles");
@@ -1036,8 +1175,12 @@
             editorSessions.forEach(function (currEditor) {
                 var tabHeader = $("#Tabs_tab_" + (currEditor.index - 1))
                 if (tabHeader.length > 0) {
-                    tabHeader[0].innerHTML = currEditor.tabTitleInnerHTML.replaceAll("#tabindex#", currEditor.index);
-                    if (currEditor.isModified) {
+                    var tabHtml = currEditor.tabTitleInnerHTML.replaceAll("#tabindex#", currEditor.index);
+                    if (currEditor.isDeleted) {
+                        tabHtml = tabHtml.replace("\u2B24", "\u2716");
+                    }
+                    tabHeader[0].innerHTML = tabHtml;
+                    if (currEditor.isModified || currEditor.isDeleted) {
                         stylesinnerHTML = stylesinnerHTML + ".ModifiedMark" + currEditor.index + "{display:inline;}";
                     }
                 }
@@ -1794,10 +1937,24 @@
         $(window).on('resize', function () {
             spe.resizeEditor();
         }).trigger('resize');
-        
+
+        // Best-effort save when the ISE window is unloaded. The per-mutation
+        // saves fired on tab open / close / switch / execute cover the normal
+        // case; this catches edge cases like the user closing the window
+        // without any prior action after editing. pagehide is preferred over
+        // beforeunload because it fires reliably on bfcache transitions and
+        // works cross-browser. scForm.postRequest is async XHR so delivery
+        // during unload is not guaranteed; the server-side per-mutation
+        // saves are the primary defense.
+        $(window).on('pagehide', function () {
+            if (window.spe && typeof spe.saveActiveTabs === 'function') {
+                try { spe.saveActiveTabs(); } catch (e) { }
+            }
+        });
+
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
-            scForm.postRequest("", "", "", "ise:loadinitialscript");
+            scForm.postRequest("", "", "", "ise:restoreactivetabs");
             spe.resizeEditor();
             // Prime the ISE PowerShell session on the server with the correct
             // application type (ISE) and context item location. The server

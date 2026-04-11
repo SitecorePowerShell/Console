@@ -1,15 +1,15 @@
 ﻿---
-ID: "08c36097-57d5-440d-ab36-0ed73e0cb11e"
+ID: "eb3a26de-5412-42f3-9538-ff8ac47805a8"
 Parent: "86d29da6-ffad-4f0e-a659-aae49f0e4a6b"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/PerTabOutput
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/ActiveTabs
 SharedFields:
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
-  Value: Checkbox
+  Value: "Multi-Line Text"
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 500
+  Value: 350
 - ID: "be351a73-fcb0-4213-93fa-c302d8ab4f51"
   Hint: Shared
   Value: 1
@@ -18,26 +18,30 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Separate output per script tab
+    Value: Active tabs
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: When enabled, each ISE script tab has an independent output panel. When disabled, all tabs share a single output panel.
+    Value: Serialized state of the PowerShell ISE open tabs as JSON. Stores each tab's script item id, database, modified flag, unsaved content, deleted-source marker and the currently active tab index. Populated by the ISE after script execution when Save active tabs is enabled and consumed on ISE load to rebuild the editor tab set. Not intended for direct editing.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Each script tab maintains its own output panel
+    Value: Open ISE tabs restored when the editor is reopened
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20240508T164719Z
+      Value: 20260410T144337Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
-        sitecore\Admin
+        sitecore\anajmanowicz
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "bfba073e-29a3-46f9-a905-1d90afaf0713"
+      Value: "96e6536f-d124-4d75-b980-3d98289d540e"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |

@@ -36,10 +36,11 @@
             <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip"/>
             <Memo ID="SelectionText" Style="display:none;"/>
             <Memo ID="Breakpoints" Style="display:none;"/>
-            <Memo ID="Editor" Value="Get-ChildItem *" Style="display:none;"/>
+            <Memo ID="Editor" Value="" Style="display:none;"/>
             <Memo ID="OpenedScripts" Style="display:none;"/>
             <Memo ID="ScriptItemIdMemo" Style="display:none;"/>
             <Memo ID="ScriptItemDbMemo" Style="display:none;"/>
+            <Memo ID="ActiveTabsMemo" Style="display:none;"/>
             <DataContext ID="ContentDataContext"/>
 
             <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master"/>

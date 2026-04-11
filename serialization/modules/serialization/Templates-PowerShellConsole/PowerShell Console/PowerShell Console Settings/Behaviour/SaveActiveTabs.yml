@@ -1,15 +1,15 @@
 ﻿---
-ID: "08c36097-57d5-440d-ab36-0ed73e0cb11e"
+ID: "b6c74dc2-1d8f-497e-a202-39e4ba79667c"
 Parent: "86d29da6-ffad-4f0e-a659-aae49f0e4a6b"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/PerTabOutput
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveActiveTabs
 SharedFields:
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Checkbox
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 500
+  Value: 300
 - ID: "be351a73-fcb0-4213-93fa-c302d8ab4f51"
   Hint: Shared
   Value: 1
@@ -18,26 +18,30 @@ Languages:
   Fields:
   - ID: "19a69332-a23e-4e70-8d16-b2640cb24cc8"
     Hint: Title
-    Value: Separate output per script tab
+    Value: Save active tabs
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: When enabled, each ISE script tab has an independent output panel. When disabled, all tabs share a single output panel.
+    Value: Indicates that the full set of open tabs in the PowerShell ISE will be saved to the user settings item after script execution. When the PowerShell ISE is reopened every tab is restored, including its unsaved content, and the previously active tab is selected. Tabs whose source script was deleted are kept with their last known content so the work can be saved elsewhere. This is helpful for resuming work across sessions or recovering after the ISE is closed by mistake, however it is not a substitute for saving scripts to the script library.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Each script tab maintains its own output panel
+    Value: Restores every open tab to the ISE when reopened
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20240508T164719Z
+      Value: 20260410T144337Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
-        sitecore\Admin
+        sitecore\anajmanowicz
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "bfba073e-29a3-46f9-a905-1d90afaf0713"
+      Value: "cfab68cd-7800-4c1f-80dc-14c7a33d42b7"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |

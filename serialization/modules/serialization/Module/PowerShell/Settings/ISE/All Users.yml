@@ -19,6 +19,9 @@ SharedFields:
 - ID: "aeeb1bb0-87b9-4e16-b5de-d4cc544a992f"
   Hint: BackgroundColor
   Value: DarkBlue
+- ID: "b6c74dc2-1d8f-497e-a202-39e4ba79667c"
+  Hint: SaveActiveTabs
+  Value: 1
 - ID: "d0620274-d94d-4b13-bd66-ce3104daee0d"
   Hint: LastScript
   Value: |
@@ -109,14 +112,14 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "96d2840a-06e9-4485-8ec8-298ee2693f3d"
+      Value: "e01bcbdf-c3b7-4505-9d6f-276b4a73187b"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\anajmanowicz
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260407T222700Z
+      Value: 20260411T153919Z
 - Language: "ja-JP"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

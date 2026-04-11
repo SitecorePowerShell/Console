@@ -29,6 +29,8 @@ namespace Spe.Core.Settings
 
         private const string LastScriptSettingFieldName = "LastScript";
         private const string SaveLastScriptSettingFieldName = "SaveLastScript";
+        private const string ActiveTabsSettingFieldName = "ActiveTabs";
+        private const string SaveActiveTabsSettingFieldName = "SaveActiveTabs";
         private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
         private const string PerTabOutputSettingFieldName = "PerTabOutput"; 
         private const string HostWidthSettingFieldName = "HostWidth";
@@ -82,6 +84,8 @@ namespace Spe.Core.Settings
         private bool Loaded { get; set; }
         public string LastScript { get; set; }
         public bool SaveLastScript { get; private set; }
+        public bool SaveActiveTabs { get; private set; }
+        public string ActiveTabs { get; set; }
         public int HostWidth { get; set; }
         public int HostHeight { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
@@ -232,6 +236,8 @@ namespace Spe.Core.Settings
                     {
                         configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
                         ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
+                        ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked = SaveActiveTabs;
+                        configuration[ActiveTabsSettingFieldName] = ActiveTabs;
                         ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;
                         ((CheckboxField)configuration.Fields[PerTabOutputSettingFieldName]).Checked = PerTabOutput;
                         configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
@@ -259,6 +265,11 @@ namespace Spe.Core.Settings
                     LastScript = TryGetSettingValue(LastScriptSettingFieldName,string.Empty,() => HttpUtility.HtmlDecode(configuration[LastScriptSettingFieldName]));
                     SaveLastScript =
                         TryGetSettingValue(SaveLastScriptSettingFieldName, true, () => ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked);
+                    SaveActiveTabs =
+                        TryGetSettingValue(SaveActiveTabsSettingFieldName, false,
+                            () => ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked);
+                    ActiveTabs = TryGetSettingValue(ActiveTabsSettingFieldName, string.Empty,
+                        () => configuration[ActiveTabsSettingFieldName]);
                     LiveAutocompletion =
                         TryGetSettingValue(LiveAutocompletionSettingFieldName, false,
                             () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
@@ -307,6 +318,8 @@ namespace Spe.Core.Settings
         {
             LastScript = string.Empty;
             SaveLastScript = true;
+            SaveActiveTabs = false;
+            ActiveTabs = string.Empty;
             LiveAutocompletion = false;
             PerTabOutput = false;
             HostWidth = 150;

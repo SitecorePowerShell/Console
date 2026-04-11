@@ -12,7 +12,7 @@ SharedFields:
   Value: 200
 - ID: "cf738220-908d-4c3f-9482-32e625daf13c"
   Hint: Fields
-  Value: FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor|SaveLastScript|LiveAutocompletion|PerTabOutput
+  Value: FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor|SaveLastScript|SaveActiveTabs|LiveAutocompletion|PerTabOutput
 Languages:
 - Language: da
   Fields:

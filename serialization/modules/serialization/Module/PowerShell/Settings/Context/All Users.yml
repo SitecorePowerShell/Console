@@ -7,6 +7,9 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: office/32x32/users3.png
+- ID: "6209f0c2-e2b0-4f0c-95e3-037061cb866c"
+  Hint: SaveLastScript
+  Value: 
 - ID: "6f442ac9-7001-4124-9bc3-589875876c27"
   Hint: FontSize
   Value: 14
@@ -16,6 +19,9 @@ SharedFields:
 - ID: "aeeb1bb0-87b9-4e16-b5de-d4cc544a992f"
   Hint: BackgroundColor
   Value: DarkBlue
+- ID: "b6c74dc2-1d8f-497e-a202-39e4ba79667c"
+  Hint: SaveActiveTabs
+  Value: 
 - ID: "f59378a5-f21d-4e07-b7de-7986dda3a510"
   Hint: HostWidth
   Value: 200
@@ -65,14 +71,14 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "8717513f-12f3-48a7-b760-3201f18c41b0"
+      Value: "41b9c130-f2dd-4991-b809-c216d8b42d7c"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\anajmanowicz
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214549Z
+      Value: 20260411T154439Z
 - Language: "ja-JP"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"

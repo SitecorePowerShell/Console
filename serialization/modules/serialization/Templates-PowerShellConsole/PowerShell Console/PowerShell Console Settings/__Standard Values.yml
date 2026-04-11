@@ -1,0 +1,38 @@
+﻿---
+ID: "f1e707d5-5422-4a3f-a312-9a52da3952b8"
+Parent: "69316117-03a6-4679-a34a-21e8ce8701d5"
+Template: "69316117-03a6-4679-a34a-21e8ce8701d5"
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/__Standard Values
+SharedFields:
+- ID: "6209f0c2-e2b0-4f0c-95e3-037061cb866c"
+  Hint: SaveLastScript
+  Value: 1
+- ID: "b6c74dc2-1d8f-497e-a202-39e4ba79667c"
+  Hint: SaveActiveTabs
+  Value: 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260411T154351Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "55e205af-b6d9-4790-af25-d4f97eb681c7"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260411T154409Z

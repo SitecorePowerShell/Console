@@ -51,6 +51,7 @@ namespace Spe.Client.Applications
         protected Memo OpenedScripts;
         protected Memo ScriptItemIdMemo;
         protected Memo ScriptItemDbMemo;
+        protected Memo ActiveTabsMemo;
         protected Literal Progress;
         protected Border ProgressOverlay;
         protected Border RibbonPanel;
@@ -248,7 +249,8 @@ namespace Spe.Client.Applications
             
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
 
-            if (settings.SaveLastScript)
+            var hasActiveTabsState = settings.SaveActiveTabs && !string.IsNullOrEmpty(settings.ActiveTabs);
+            if (settings.SaveLastScript && !hasActiveTabsState)
             {
                 Editor.Value = settings.LastScript;
             }
@@ -319,6 +321,9 @@ namespace Spe.Client.Applications
                 if (selectionItem != null)
                     ContentTreeview.Refresh(selectionItem);
             }
+
+            // Persist the new active tab so reopening the ISE restores it.
+            TrySaveActiveTabs();
         }
 
         public override void HandleMessage(Message message)
@@ -494,6 +499,7 @@ namespace Spe.Client.Applications
             Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWaitContainer", "");
             CreateNewTab(null);
             UpdateRibbon();
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:saveas", true)]
@@ -590,10 +596,141 @@ namespace Spe.Client.Applications
             }
         }
 
+        [HandleMessage("ise:restoreactivetabs", true)]
+        protected void RestoreActiveTabs(ClientPipelineArgs args)
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (!settings.SaveActiveTabs || string.IsNullOrEmpty(settings.ActiveTabs))
+            {
+                LoadInitialScript(args);
+                return;
+            }
+
+            try
+            {
+                var tabState = Newtonsoft.Json.Linq.JObject.Parse(settings.ActiveTabs);
+                var tabs = tabState["tabs"] as Newtonsoft.Json.Linq.JArray;
+                if (tabs == null || tabs.Count == 0)
+                {
+                    LoadInitialScript(args);
+                    return;
+                }
+
+                if (ScriptItemId.Length > 0)
+                {
+                    LoadInitialScript(args);
+                    return;
+                }
+
+                var activeIndex = (int?)tabState["activeIndex"] ?? 1;
+                var restoreInfo = new Newtonsoft.Json.Linq.JArray();
+
+                // Don't rely on Editor.Value to carry per-tab content through the
+                // loop - it's a single memo and only the last value survives to the
+                // client. Instead create tabs with a placeholder and push all content
+                // via a single JS call at the end.
+                Editor.Value = string.Empty;
+
+                foreach (var tabToken in tabs)
+                {
+                    var db = (string)tabToken["db"] ?? string.Empty;
+                    var id = (string)tabToken["id"] ?? string.Empty;
+                    var modified = (bool?)tabToken["modified"] ?? false;
+                    var content = (string)tabToken["content"];
+                    var tabInfo = new Newtonsoft.Json.Linq.JObject
+                    {
+                        ["modified"] = modified,
+                        ["deleted"] = false
+                    };
+
+                    if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(db))
+                    {
+                        var scriptItem = Factory.GetDatabase(db).GetItem(id);
+                        if (scriptItem != null && scriptItem.IsPowerShellScript())
+                        {
+                            CreateNewTab(scriptItem);
+                            ScriptItemId = scriptItem.ID.ToString();
+                            ScriptItemDb = scriptItem.Database.Name;
+
+                            tabInfo["content"] = modified && content != null
+                                ? content
+                                : scriptItem[Templates.Script.Fields.ScriptBody];
+                        }
+                        else
+                        {
+                            // Item was deleted - create tab with stored content
+                            CreateNewTab(null);
+                            tabInfo["deleted"] = true;
+                            tabInfo["content"] = content ?? string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        // Untitled tab
+                        CreateNewTab(null);
+                        tabInfo["content"] = content ?? string.Empty;
+                    }
+
+                    restoreInfo.Add(tabInfo);
+                }
+
+                var tabCount = Tabs.Controls.Count;
+                SelectTabByIndex(Math.Min(activeIndex, tabCount));
+
+                var restoreData = new Newtonsoft.Json.Linq.JObject
+                {
+                    ["tabs"] = restoreInfo
+                };
+                var escapedJson = HttpUtility.JavaScriptStringEncode(restoreData.ToString(Newtonsoft.Json.Formatting.None));
+                SheerResponse.Eval($"spe.applyRestoredTabs(JSON.parse(\"{escapedJson}\"));");
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"Failed to restore active tabs: {ex.Message}", ex);
+                LoadInitialScript(args);
+            }
+        }
+
+        [HandleMessage("ise:savetabstate", true)]
+        protected void SaveTabState(ClientPipelineArgs args)
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (!settings.SaveActiveTabs) return;
+
+            settings.Load();
+            settings.ActiveTabs = ActiveTabsMemo.Value;
+            settings.Save();
+        }
+
+        /// <summary>
+        ///     Triggers the client to serialize the current tab set and post it back
+        ///     via ise:savetabstate. Called after any server-side mutation that
+        ///     changes the tab set (open, close, switch, execute) so the stored
+        ///     state is always current without relying on window-unload delivery.
+        /// </summary>
+        private void TrySaveActiveTabs()
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (settings.SaveActiveTabs)
+            {
+                SheerResponse.Eval("spe.saveActiveTabs();");
+            }
+        }
+
         [HandleMessage("ise:reload", true)]
         protected void ReloadItem(ClientPipelineArgs args)
         {
-            LoadItem(ScriptItemDb, ScriptItemId);
+            if (string.IsNullOrEmpty(ScriptItemId) || string.IsNullOrEmpty(ScriptItemDb))
+                return;
+
+            var scriptItem = Factory.GetDatabase(ScriptItemDb).GetItem(ScriptItemId);
+            if (scriptItem == null || !scriptItem.IsPowerShellScript())
+                return;
+
+            var content = scriptItem[Templates.Script.Fields.ScriptBody] ?? string.Empty;
+            Editor.Value = content;
+            var escaped = HttpUtility.JavaScriptStringEncode(content);
+            SheerResponse.Eval($"spe.reloadCurrentEditor(\"{escaped}\");");
         }
 
         private void LoadItem(string db, string id)
@@ -618,6 +755,7 @@ namespace Spe.Client.Applications
                 MruUpdate(scriptItem);
                 UpdateRibbon();
                 SheerResponse.Eval("scForm.postRequest(\"\", \"\", \"\", \"ise:updatetreeview\");");
+                TrySaveActiveTabs();
             }
             else
             {
@@ -753,6 +891,8 @@ namespace Spe.Client.Applications
                     settings.LastScript = Editor.Value;
                     settings.Save();
                 }
+
+                TrySaveActiveTabs();
             }
         }
 
@@ -877,6 +1017,8 @@ namespace Spe.Client.Applications
                 settings.LastScript = Editor.Value;
                 settings.Save();
             }
+
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:runplugin", true)]
@@ -1151,6 +1293,7 @@ namespace Spe.Client.Applications
             {
                 SelectTabByIndex(newSelectedIndex);
             }
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:updateribbon")]
