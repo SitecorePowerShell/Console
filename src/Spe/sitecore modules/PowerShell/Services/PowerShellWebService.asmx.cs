@@ -663,43 +663,53 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 hasPending = false;
             }
 
-            while (committed < totalLines)
+            // Find the boundary between terminated and unterminated content.
+            // Everything up to (and including) the last terminated line is
+            // committed output; anything after it is an unterminated partial
+            // tail that may still grow.
+            int lastTerminated = -1;
+            for (int i = totalLines - 1; i >= committed; i--)
             {
-                int batchEnd = committed;
-                while (batchEnd < totalLines && !output[batchEnd].Terminated)
+                if (output[i].Terminated)
                 {
-                    batchEnd++;
+                    lastTerminated = i;
+                    break;
                 }
+            }
 
-                bool batchEndsWithTerminator = batchEnd < totalLines;
-                int lastInBatch = batchEndsWithTerminator ? batchEnd : totalLines - 1;
-
+            // Emit all terminated content as a single append (or commit if
+            // there was a pending partial). One echo() call with the full
+            // concatenated jsterm string - jquery.terminal's format parser
+            // handles multi-block strings correctly in a single call.
+            if (lastTerminated >= committed)
+            {
                 var sb = new StringBuilder();
-                for (int i = committed; i <= lastInBatch; i++)
+                for (int i = committed; i <= lastTerminated; i++)
                 {
                     output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
                 }
                 var jsterm = sb.ToString();
+                emits.Add(new EmitInstruction
+                {
+                    op = hasPending ? "commit" : "append",
+                    text = jsterm
+                });
+                hasPending = false;
+                committed = lastTerminated + 1;
+            }
 
-                if (batchEndsWithTerminator)
+            // If there is an unterminated tail after the last terminated
+            // line, emit it as a partial for Write-Host -NoNewline support.
+            if (committed < totalLines)
+            {
+                var sb = new StringBuilder();
+                for (int i = committed; i < totalLines; i++)
                 {
-                    if (hasPending)
-                    {
-                        emits.Add(new EmitInstruction { op = "commit", text = jsterm });
-                        hasPending = false;
-                    }
-                    else
-                    {
-                        emits.Add(new EmitInstruction { op = "append", text = jsterm });
-                    }
-                    committed = lastInBatch + 1;
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
                 }
-                else
-                {
-                    emits.Add(new EmitInstruction { op = "partial", text = jsterm });
-                    hasPending = true;
-                    break;
-                }
+                emits.Add(new EmitInstruction { op = "partial", text = sb.ToString() });
+                hasPending = true;
+                // Don't advance committed past the tail; next poll re-reads it.
             }
 
             // Advance the OutputBuffer's internal updatePointer so that

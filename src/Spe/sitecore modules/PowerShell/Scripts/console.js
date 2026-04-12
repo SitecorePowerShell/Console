@@ -335,15 +335,13 @@
             pendingPartialLineIndex = -1;
         }
 
-        // Preferred path: server sent a structured list of streaming emits.
-        // Each emit is one of { op: "append"|"partial"|"commit", text }
-        // and dispatches to spe.appendOutput / updatePartialOutput /
-        // commitPartialOutput which uses jquery.terminal's update(index)
-        // API for inline-append support of Write-Host -NoNewline.
+        // Server sends at most one "append" (all terminated content
+        // concatenated) and one "partial" (unterminated tail) per poll.
+        // "partial"/"commit" use jquery.terminal's update() for
+        // Write-Host -NoNewline inline append support.
         if (data["emits"] && data["emits"].length > 0) {
             dispatchEmits(data["emits"]);
         } else if (data["result"]) {
-            // Fallback to the legacy flat result field (e.g. error paths).
             term.echo(data["result"], { finalize: finalizeGuidLinks });
             pendingPartialLineIndex = -1;
         }

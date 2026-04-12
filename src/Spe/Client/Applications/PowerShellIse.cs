@@ -1163,66 +1163,51 @@ namespace Spe.Client.Applications
                 hasPending = false;
             }
 
-            // Process batches until we either exhaust the buffer or land on
-            // an unterminated tail that we have to leave open.
-            while (committed < totalLines)
+            // Find the boundary between terminated and unterminated content.
+            int lastTerminated = -1;
+            for (int i = totalLines - 1; i >= committed; i--)
             {
-                // Find the end of the next batch: the index of the first
-                // terminated line at or after `committed`, inclusive. If
-                // no terminated line exists in the remainder, the batch
-                // ends at the last line (which is unterminated -> partial).
-                int batchEnd = committed;
-                while (batchEnd < totalLines && !output[batchEnd].Terminated)
+                if (output[i].Terminated)
                 {
-                    batchEnd++;
+                    lastTerminated = i;
+                    break;
                 }
+            }
 
-                bool batchEndsWithTerminator = batchEnd < totalLines;
-                int lastInBatch = batchEndsWithTerminator ? batchEnd : totalLines - 1;
-
-                // Concatenate lines [committed .. lastInBatch] into one
-                // jsterm chunk. jquery.terminal renders multiple format
-                // blocks on the same visual line when there are no
-                // embedded newlines between them, which is exactly what
-                // we want for inline Write-Host -NoNewline output.
+            // Emit all terminated content as a single appendOutput (or
+            // commitPartialOutput if there was a pending partial). One
+            // echo() call with the full concatenated jsterm string.
+            if (lastTerminated >= committed)
+            {
                 var sb = new StringBuilder();
-                for (int i = committed; i <= lastInBatch; i++)
+                for (int i = committed; i <= lastTerminated; i++)
                 {
                     output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
                 }
-                var jsterm = sb.ToString();
-                var encoded = HttpUtility.JavaScriptStringEncode(jsterm, true);
-
-                if (batchEndsWithTerminator)
+                var encoded = HttpUtility.JavaScriptStringEncode(sb.ToString(), true);
+                if (hasPending)
                 {
-                    if (hasPending)
-                    {
-                        // The pending partial is now frozen because this
-                        // batch introduces content after it. Commit with
-                        // the concatenated final text of the whole batch.
-                        SheerResponse.Eval($"spe.commitPartialOutput({encoded});");
-                        hasPending = false;
-                    }
-                    else
-                    {
-                        SheerResponse.Eval($"spe.appendOutput({encoded});");
-                    }
-                    committed = lastInBatch + 1;
-                    // Loop to look for another batch.
+                    SheerResponse.Eval($"spe.commitPartialOutput({encoded});");
+                    hasPending = false;
                 }
                 else
                 {
-                    // Unterminated tail - becomes the pending partial. The
-                    // tail may grow (either by mutation of the last line
-                    // if plain Write appends to it, or by new unterminated
-                    // lines being added after it). Next poll re-reads the
-                    // full tail and emits another update.
-                    SheerResponse.Eval($"spe.updatePartialOutput({encoded});");
-                    hasPending = true;
-                    // Don't advance committed past the tail; we'll re-read
-                    // it on the next poll.
-                    break;
+                    SheerResponse.Eval($"spe.appendOutput({encoded});");
                 }
+                committed = lastTerminated + 1;
+            }
+
+            // If there is an unterminated tail, emit it as a partial.
+            if (committed < totalLines)
+            {
+                var sb = new StringBuilder();
+                for (int i = committed; i < totalLines; i++)
+                {
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
+                }
+                var encoded = HttpUtility.JavaScriptStringEncode(sb.ToString(), true);
+                SheerResponse.Eval($"spe.updatePartialOutput({encoded});");
+                hasPending = true;
             }
 
             // Sync the OutputBuffer's internal updatePointer with what we
