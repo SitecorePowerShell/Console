@@ -2043,20 +2043,6 @@
             spe.resizeEditor();
         }).trigger('resize');
 
-        // Best-effort save when the ISE window is unloaded. The per-mutation
-        // saves fired on tab open / close / switch / execute cover the normal
-        // case; this catches edge cases like the user closing the window
-        // without any prior action after editing. pagehide is preferred over
-        // beforeunload because it fires reliably on bfcache transitions and
-        // works cross-browser. scForm.postRequest is async XHR so delivery
-        // during unload is not guaranteed; the server-side per-mutation
-        // saves are the primary defense.
-        $(window).on('pagehide', function () {
-            if (window.spe && typeof spe.saveActiveTabs === 'function') {
-                try { spe.saveActiveTabs(); } catch (e) { }
-            }
-        });
-
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
             scForm.postRequest("", "", "", "ise:restoreactivetabs");
