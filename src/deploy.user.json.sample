@@ -1,6 +1,18 @@
 {
-    "sites": [],
+    "sites": [
+        {
+            "path": "C:\\inetpub\\wwwroot\\my-sc.dev.local",
+            "version": 10,
+            "junction": true,
+            "test": {
+                "url": "https://my-sc.dev.local",
+                "username": "admin",
+                "password": "your-password-here"
+            }
+        }
+    ],
     "files": {
+        "remove": [],
         "enable": [
             "App_Config/Include/Spe/Spe.IdentityServer.config"
         ]

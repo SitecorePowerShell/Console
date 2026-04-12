@@ -122,6 +122,32 @@ tasks:
       - powershell -File tests/unit/Run-Tests.ps1
       - powershell -File tests/integration/Run-RemotingTests.ps1
 
+  local:build:
+    desc: Build the solution using locally-detected MSBuild
+    preconditions:
+      - sh: test -f Spe.sln
+        msg: "Spe.sln not found. Are you in the repository root?"
+    cmds:
+      - powershell -NoProfile -File scripts/local-build.ps1
+
+  local:deploy:
+    desc: Build and deploy to local IIS sites (uses deploy.user.json)
+    deps: [local:build]
+    cmds:
+      - powershell -NoProfile -File src/Post_Build.ps1
+
+  ui:test:
+    desc: Run Playwright UI tests against local Sitecore
+    dir: tests/ui
+    cmds:
+      - npx playwright test {{.CLI_ARGS}}
+
+  ui:test:headed:
+    desc: Run Playwright UI tests with visible browser
+    dir: tests/ui
+    cmds:
+      - npx playwright test --headed {{.CLI_ARGS}}
+
   clean:
     desc: Clean build artifacts
     cmds:

@@ -30,7 +30,31 @@ The Sitecore PowerShell Extensions module (SPE) provides a robust environment fo
 
 ## Quick Start
 
-Run `task --list` to see all available commands:
+Run `task --list` to see all available commands.
+
+### Local IIS development
+
+If you have Sitecore installed locally (not Docker), use the `local:` tasks:
+
+1. Copy `src/deploy.user.json.sample` to `src/deploy.user.json`
+2. Edit it to point to your Sitecore webroot(s) and set `"junction": true`
+3. Build and deploy:
+
+```powershell
+task local:deploy
+```
+
+This finds MSBuild via vswhere, restores NuGet packages, rebuilds the solution, and deploys to all sites in your `deploy.user.json`. With junctions enabled, JS/CSS/XML/config edits are live instantly - only C# changes need a redeploy.
+
+To run Playwright UI tests against your local site, add a `test` block to your site in `deploy.user.json` (see sample file), then:
+
+```powershell
+task ui:test
+```
+
+See [src/DEPLOYMENT.md](src/DEPLOYMENT.md) for the full configuration reference.
+
+### Docker development
 
 ```
 task init            # Set up local dev environment (license, certs, .env)
@@ -46,7 +70,7 @@ task test            # Run integration tests
 task clean           # Clean build artifacts
 ```
 
-### First-time setup
+First-time setup:
 
 ```powershell
 task init -- -LicenseXmlPath "C:\path\to\license.xml"
@@ -99,8 +123,11 @@ The `cert.ps1` script generates `devcert.pfx` as an RSA certificate with legacy 
 │   ├── Spe.Abstractions/
 │   ├── Spe.Sitecore92/
 │   ├── Spe.Package/
-│   ├── Post_Build.ps1    MSBuild post-build (referenced by csproj)
-│   └── Deploy_Functions.ps1
+│   ├── Post_Build.ps1    Deployment script (copies build output to sites)
+│   ├── Deploy_Functions.ps1
+│   ├── deploy.json       Shared deployment config (projects, junctions)
+│   ├── deploy.user.json  Per-developer site paths + credentials (gitignored)
+│   └── DEPLOYMENT.md     Full deployment configuration reference
 ├── serialization/        SCS content serialization (YAML items)
 │   ├── sitecore.json
 │   └── modules/          Module definitions + serialized items
@@ -116,6 +143,7 @@ The `cert.ps1` script generates `devcert.pfx` as an RSA certificate with legacy 
 │   ├── generate-dat.ps1
 │   └── setup-module.ps1
 ├── tests/                Test suites
+│   ├── ui/               Playwright UI tests (Console, ISE)
 │   ├── unit/             SPE module unit tests
 │   ├── integration/      Remoting integration tests
 │   ├── examples/         Script examples

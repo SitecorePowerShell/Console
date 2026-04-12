@@ -7,6 +7,9 @@ ehthumbs.db
 Icon?
 Thumbs.db
 
+# Local build tools (nuget.exe downloaded on demand)
+.tools/
+
 ######## GENERAL .NET IGNORES ########
 
 # Ignore binaries in the source
