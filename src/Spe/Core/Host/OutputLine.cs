@@ -103,6 +103,18 @@ namespace Spe.Core.Host
         public void GetTerminalLine(StringBuilder output)
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
+
+            // Text that is empty or only whitespace/control characters does
+            // not need a format block. An empty [[;fg;bg]] or one whose
+            // content is only \r\n cannot be rendered by jquery.terminal.
+            // Emit a bare \r\n for terminated lines (produces a blank line
+            // in the terminal) or nothing for unterminated lines.
+            if (string.IsNullOrWhiteSpace(outString))
+            {
+                if (Terminated) output.Append("\r\n");
+                return;
+            }
+
             if (outString.EndsWith("\\"))
             {
                 outString += " ";
