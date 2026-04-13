@@ -135,9 +135,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                 output +
                                 ScriptSession.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) +
                                 "\r\n" +
-                                "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
-                                "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
-                                "[[;#f00;#000]We also have a user guide here https://doc.sitecorepowershell.com/.]\r\n\r\n",
+                                "\r\n[[;#FF9494;]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
+                                "[[;#FF9494;]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
+                                "[[;#FF9494;]We also have a user guide here https://doc.sitecorepowershell.com/.]\r\n\r\n",
                             prompt = $"PS {session.CurrentLocation}>",
                             background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
                             color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
@@ -387,7 +387,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     string.Join(Environment.NewLine, scriptJob.StatusMessages.Cast<string>().ToArray())
                         .Replace("[", "&#91;")
                         .Replace("]", "&#93;");
-                result.result = "[[;#f00;#000]" +
+                result.result = "[[;#FF9494;]" +
                                 (message.IsNullOrEmpty() ? "Command failed" : HttpUtility.HtmlEncode(message)) + "]";
                 result.prompt = $"PS {session.CurrentLocation}>";
                 session.Output.ClearSilent();

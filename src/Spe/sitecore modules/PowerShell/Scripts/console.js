@@ -257,7 +257,7 @@
         getPowerShellResponse({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
             function(json) {
                 var data = JSON.parse(json.d);
-                if (data["status"] === "working") {
+                if (data["status"] === "working" || data["status"] === "partial") {
                     displayResult(term, data);
                     var handle = data["handle"];
                     var initialWait = settings.initialPoll;
@@ -349,6 +349,7 @@
         if (terminated) {
             spe.hideBusy();
             term.resume();
+            term.echo(" ");
             spe.preventCloseWhenRunning(false);
             // Finalize any pending partial so subsequent commands start a
             // fresh visual line. The current rendered text is considered
@@ -508,7 +509,6 @@
         spe.bootstrap(false);
     });
 
-    
     spe.elevateSession = function() {
         scForm.postRequest("", "", "", "ise:elevatesession");
         spe.showInfoPanel(true);

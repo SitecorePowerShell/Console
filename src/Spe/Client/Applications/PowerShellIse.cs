@@ -903,8 +903,8 @@ namespace Spe.Client.Applications
                 }
                 catch (Exception exc)
                 {
-                    var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html);
-                    PrintHtmlSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                    var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Console);
+                    PrintSessionUpdate(error);
                 }
 
                 if (settings.SaveLastScript)
@@ -986,7 +986,7 @@ namespace Spe.Client.Applications
             { 
                 var errorMessage =
                     "A Script is already executing in this script session. Use another session or wait for the other script to finish.";
-                PrintHtmlSessionUpdate($"<span style='background:red; color:white'>{errorMessage}</span>");
+                PrintSessionUpdate($"[[;#FF9494;]{errorMessage}]");
                 SheerResponse.Eval(
                     "spe.showSessionIDGallery();");
                 return;
@@ -1322,24 +1322,18 @@ namespace Spe.Client.Applications
 
             if (result != null)
             {
-                // result.Output is jsterm format drained by ScriptRunner at
-                // script end (via GetConsoleUpdate). For fast scripts that
-                // completed before any polling tick fired, this contains
-                // the full script output. For slower scripts where polling
-                // already streamed the bulk of the output, this contains
-                // only the delta between the last poll and script end.
-                //
-                // In both cases it is a jsterm string that jquery.terminal
-                // renders inline (multi-line via embedded \n, single-line
-                // if multiple format blocks with no newlines between).
+                if (result.ClearHost)
+                {
+                    ClearOutput();
+                }
                 PrintSessionUpdate(result.Output);
             }
 
             if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception,
-                    ScriptSession.ExceptionStringFormat.Html);
-                PrintHtmlSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                    ScriptSession.ExceptionStringFormat.Console);
+                PrintSessionUpdate(error);
             }
 
             var executionResult = new ScriptExecutionResult(result);

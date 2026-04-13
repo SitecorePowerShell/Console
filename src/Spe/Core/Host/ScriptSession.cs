@@ -46,9 +46,9 @@ namespace Spe.Core.Host
         private const string HtmlLineEndFormat = "<br/>";
 
         private const string ConsoleExceptionFormatString =
-            "[[;#f00;#000]Exception: {0}]\r\n" + "[[;#f00;#000]Type: {1}]\r\n" + "[[;#f00;#000]Stack trace:\r\n{2}]";
+            "[[;#FF9494;]Exception: {0}]\r\n" + "[[;#FF9494;]Type: {1}]\r\n" + "[[;#FF9494;]Stack trace:\r\n{2}]";
 
-        private const string ConsoleInnerExceptionPrefix = "{0}[[b;#fff;#F00]Inner ] {1}";
+        private const string ConsoleInnerExceptionPrefix = "{0}[[b;#f00;]Inner ] {1}";
         private const string ConsoleLineEndFormat = "\r\n";
 
         private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";

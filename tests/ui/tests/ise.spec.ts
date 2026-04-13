@@ -16,6 +16,14 @@ const writeHostScript = fs.readFileSync(
   path.join(__dirname, "ise-writehost.ps1"),
   "utf-8"
 );
+const errorScript = fs.readFileSync(
+  path.join(__dirname, "ise-error.ps1"),
+  "utf-8"
+);
+const clearHostScript = fs.readFileSync(
+  path.join(__dirname, "ise-clearhost.ps1"),
+  "utf-8"
+);
 
 async function setEditorAndRun(page: Page, script: string) {
   await page.evaluate((s) => {
@@ -84,6 +92,50 @@ for (const site of sites) {
 
       const output = await terminal.innerText();
       expect(output).not.toMatch(/\[\[;#[A-F0-9]+;#[A-F0-9]+/);
+    });
+
+    test("script errors render as red text without HTML artifacts", async ({
+      page,
+    }) => {
+      await setEditorAndRun(page, errorScript);
+
+      const terminal = page.locator(".terminal-output");
+
+      // Wait for error output to appear
+      await expect(terminal).toContainText("missing the terminator", {
+        timeout: 30_000,
+      });
+
+      const output = await terminal.innerText();
+
+      // No raw HTML tags should appear in visible output
+      expect(output).not.toMatch(/<pre[\s>]/i);
+      expect(output).not.toMatch(/<span[\s>]/i);
+      expect(output).not.toMatch(/<br\s*\/?>/i);
+    });
+
+    test("Clear-Host clears terminal output", async ({ page }) => {
+      // First run a script that produces output
+      await setEditorAndRun(page, 'Write-Host "before clear"');
+
+      const terminal = page.locator(".terminal-output");
+      await expect(terminal).toContainText("before clear", {
+        timeout: 30_000,
+      });
+
+      // Now run a script with Clear-Host at the top
+      await setEditorAndRun(page, clearHostScript);
+
+      await expect(terminal).toContainText("after clear", {
+        timeout: 30_000,
+      });
+
+      // "before clear" should be gone - Clear-Host wiped it.
+      // jquery.terminal uses &nbsp; for spaces, which innerText()
+      // returns as \u00A0. Normalize to regular spaces for comparison.
+      const output = (await terminal.innerText()).replace(/\u00A0/g, " ");
+      expect(output).toContain("after clear");
+      expect(output).not.toContain("before clear");
     });
   });
 }

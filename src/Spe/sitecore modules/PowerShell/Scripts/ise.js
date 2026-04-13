@@ -1204,6 +1204,7 @@
             // Restore the terminal command line now that the script has finished.
             if (iseTerminal) {
                 iseTerminal.resume();
+                iseTerminal.echo(" ");
             }
             // Refresh the Variables panel - the script may have created or modified variables
             if (spe.refreshVariables) {

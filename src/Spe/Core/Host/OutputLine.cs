@@ -87,17 +87,33 @@ namespace Spe.Core.Host
             }
         }
 
-        public static Color ProcessTerminalColor(ConsoleColor color)
+        public static Color ProcessTerminalColor(ConsoleColor color, bool isBackground = false)
         {
+            Color c;
             switch (color)
             {
-                case (ConsoleColor.DarkBlue):
-                    return Color.FromArgb(1, 0x24, 0x56);
-                case (ConsoleColor.Green):
-                    return Color.LimeGreen;
+                case ConsoleColor.DarkBlue:
+                    c = Color.FromArgb(1, 0x24, 0x56);
+                    break;
+                case ConsoleColor.Green:
+                    c = Color.LimeGreen;
+                    break;
                 default:
-                    return Color.FromName(color.ToString());
+                    c = Color.FromName(color.ToString());
+                    break;
             }
+
+            // Darken non-default background colors so text remains legible
+            // even when foreground and background use the same ConsoleColor.
+            // DarkBlue is the default console background and stays as-is.
+            if (isBackground && color != ConsoleColor.DarkBlue)
+            {
+                return Color.FromArgb(
+                    (int)(c.R * 0.65),
+                    (int)(c.G * 0.65),
+                    (int)(c.B * 0.65));
+            }
+            return c;
         }
 
         public void GetTerminalLine(StringBuilder output)
@@ -119,18 +135,27 @@ namespace Spe.Core.Host
             {
                 outString += " ";
             }
-            var htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
-            var htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
+            // Error lines use a fixed legible color with no background
+            // (terminal default). Other lines use the mapped ConsoleColors.
+            string fgHex, bgHex;
+            if (LineType == OutputLineType.Error)
+            {
+                fgHex = "#FF9494";
+                bgHex = "";
+            }
+            else
+            {
+                var fg = ProcessTerminalColor(ForegroundColor, false);
+                var bg = ProcessTerminalColor(BackgroundColor, true);
+                fgHex = $"#{fg.R:X2}{fg.G:X2}{fg.B:X2}";
+                bgHex = $"#{bg.R:X2}{bg.G:X2}{bg.B:X2}";
+            }
             output.AppendFormat(
                 Terminated
-                    ? "[[;#{0}{1}{2};#{3}{4}{5}]{6}]\r\n"
-                    : "[[;#{0}{1}{2};#{3}{4}{5}]{6}]",
-                htmlForegroundColor.R.ToString("X2"),
-                htmlForegroundColor.G.ToString("X2"),
-                htmlForegroundColor.B.ToString("X2"),
-                htmlBackgroundColor.R.ToString("X2"),
-                htmlBackgroundColor.G.ToString("X2"),
-                htmlBackgroundColor.B.ToString("X2"),
+                    ? "[[;{0};{1}]{2}]\r\n"
+                    : "[[;{0};{1}]{2}]",
+                fgHex,
+                bgHex,
                 HttpUtility.HtmlEncode(outString).Replace("[", "&#91;").Replace("]", "&#93;"));
         }
 

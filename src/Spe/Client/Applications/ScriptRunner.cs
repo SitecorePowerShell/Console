@@ -48,11 +48,13 @@ namespace Spe.Client.Applications
                 // Using GetConsoleUpdate instead of GetHtmlUpdate is also what
                 // gives us correct Write-Host -NoNewline handling via its
                 // "wait for terminator" line-buffering.
+                var clearHost = Session.Output.ConsumeClearPending();
                 var finalOutputBuffer = new System.Text.StringBuilder();
                 Session.Output.GetConsoleUpdate(finalOutputBuffer, 131072);
                 var output = new RunnerOutput
                 {
                     Exception = null,
+                    ClearHost = clearHost,
                     Output = finalOutputBuffer.ToString(),
                     DialogResult = Session.Output.GetDialogRessult(),
                     HasErrors = Session.Output.HasErrors,
