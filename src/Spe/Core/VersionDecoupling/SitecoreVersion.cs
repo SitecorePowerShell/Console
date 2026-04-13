@@ -9,7 +9,29 @@ namespace Spe.Core.VersionDecoupling
     {
         public static Version Current = GetVersionNumber();
 
+        /// <summary>
+        /// The actual Sitecore version from About.Version, ignoring the
+        /// Spe.SupportedVersion override. Use this for display surfaces
+        /// ($PSVersionTable, console banner, documentation links) where
+        /// the real version should be shown rather than the compatibility
+        /// shim used for assembly resolution.
+        /// </summary>
+        public static Version Display = GetDisplayVersion();
+
         public static Version V92 = new Version(9, 2);
+
+        private static Version GetDisplayVersion()
+        {
+            if (Version.TryParse(About.Version, out var version))
+            {
+                return version;
+            }
+            if (Version.TryParse(About.GetVersionNumber(false), out version))
+            {
+                return version;
+            }
+            return Current;
+        }
 
         public static Version GetVersionNumber()
         {

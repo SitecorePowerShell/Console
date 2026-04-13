@@ -34,8 +34,8 @@ namespace Spe.Client.Commands.MenuItems
                             .Replace("{ps}", ScriptSession.PsVersion.Major + "." + ScriptSession.PsVersion.Minor)
                             .Replace("{cn}", CurrentVersion.CodeName)
                             .Replace("{sc}",
-                                SitecoreVersion.Current.Major + "." +
-                                SitecoreVersion.Current.Minor);
+                                SitecoreVersion.Display.Major + "." +
+                                SitecoreVersion.Display.Minor);
                     urlString.Add(key, param);
                 }
 

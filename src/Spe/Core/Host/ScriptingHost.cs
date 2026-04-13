@@ -117,7 +117,7 @@ namespace Spe.Core.Host
         /// </summary>
         public override string Name => ScriptSession.PsVersion == null
             ? "Sitecore PowerShell Extensions Host"
-            : $"Sitecore PowerShell Extensions Host {CurrentVersion.SpeVersion} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {SitecoreVersion.Current.Major}.{SitecoreVersion.Current.Minor}";
+            : $"Sitecore PowerShell Extensions Host {CurrentVersion.SpeVersion} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {SitecoreVersion.Display.Major}.{SitecoreVersion.Display.Minor}";
 
         /// <summary>
         ///     This sample does not implement a PSHostUserInterface component so
