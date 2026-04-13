@@ -506,6 +506,7 @@
                 }
             }).join('');
         });
+        document.title = "SPE Console";
         spe.bootstrap(false);
     });
 

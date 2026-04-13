@@ -1297,6 +1297,8 @@
                 var startbar = window.parent.parent.document.getElementById('startbar_application_' + frameId);
                 $(startbar).find('span').html(editorSession.startBarHtml);
             }
+
+            document.title = editorSession.name + " - SPE ISE";
         };
 
 

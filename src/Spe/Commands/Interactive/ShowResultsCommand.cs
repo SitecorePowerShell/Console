@@ -25,6 +25,9 @@ namespace Spe.Commands.Interactive
         [Parameter(ParameterSetName = "Text Results")]
         public SwitchParameter Text { get; set; }
 
+        [Parameter]
+        public string Description { get; set; }
+
         protected override void ProcessRecord()
         {
             LogErrors(() =>
@@ -46,7 +49,8 @@ namespace Spe.Commands.Interactive
                         var ph = Host.PrivateData.BaseObject as ScriptingHostPrivateData;
                         var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString,
                             ph?.ForegroundColor.ToString() ?? string.Empty,
-                            ph?.BackgroundColor.ToString() ?? string.Empty);
+                            ph?.BackgroundColor.ToString() ?? string.Empty,
+                            Title, Icon, Description);
 
                         PutMessage(message);
                         var results = (object[])message.GetResult();

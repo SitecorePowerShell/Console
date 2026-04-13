@@ -13,12 +13,30 @@ namespace Spe.Client.Applications
         protected Border Result;
         protected Scrollbox All;
         protected Scrollbox Promo;
+        protected Literal DialogHeader;
+        protected Literal PsProgressStatus;
+        protected ThemedImage Icon;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             var sid = WebUtil.SafeEncode(WebUtil.GetQueryString("sid"));
+            var title = WebUtil.GetQueryString("title");
+            var icon = WebUtil.GetQueryString("icon");
+            if (!string.IsNullOrEmpty(title))
+            {
+                DialogHeader.Text = title;
+            }
+            if (!string.IsNullOrEmpty(icon))
+            {
+                Icon.Src = icon;
+            }
+            var description = WebUtil.GetQueryString("desc");
+            if (!string.IsNullOrEmpty(description))
+            {
+                PsProgressStatus.Text = description;
+            }
             var settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             if (!Enum.TryParse(WebUtil.GetQueryString("fc"), true, out ConsoleColor fc))
             {
