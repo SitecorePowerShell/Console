@@ -2044,6 +2044,18 @@
             spe.resizeEditor();
         }).trigger('resize');
 
+        // Middle-click on a tab header closes it (#1396)
+        $(document).on("mouseup", function (e) {
+            if (e.which !== 2) return;
+            var tab = $(e.target).closest("[id^='Tabs_tab_']");
+            if (tab.length) {
+                e.preventDefault();
+                e.stopPropagation();
+                var tabIndex = parseInt(tab.attr("id").replace("Tabs_tab_", ""), 10) + 1;
+                spe.closeTab(e, tabIndex);
+            }
+        });
+
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
             scForm.postRequest("", "", "", "ise:restoreactivetabs");
