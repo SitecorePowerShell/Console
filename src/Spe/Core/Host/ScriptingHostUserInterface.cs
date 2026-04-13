@@ -131,17 +131,28 @@ namespace Spe.Core.Host
             }
             else
             {
-                var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, false);
-                Output.AddRange(splitter,RawUI.BufferSize.Height);
+                var terminated = value.EndsWith("\n");
+                var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, terminated);
+                Output.AddRange(splitter, RawUI.BufferSize.Height);
             }
         }
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI.BufferSize.Width,
-                foregroundColor,
-                backgroundColor, false);
-            Output.AddRange(splitter,RawUI.BufferSize.Height);
+            // Split on newlines so each line becomes its own OutputLine in the
+            // buffer. This ensures newlines are structural (line breaks between
+            // OutputLines) rather than content embedded inside a single line's
+            // text, which GetTerminalLine and jquery.terminal cannot render
+            // correctly inside format blocks.
+            var parts = value.Split('\n');
+            for (var i = 0; i < parts.Length; i++)
+            {
+                var part = parts[i].TrimEnd('\r');
+                var terminated = i < parts.Length - 1;
+                var splitter = new BufferSplitterCollection(OutputLineType.Output, part, RawUI.BufferSize.Width,
+                    foregroundColor, backgroundColor, terminated);
+                Output.AddRange(splitter, RawUI.BufferSize.Height);
+            }
         }
 
         public override void WriteLine(string value)

@@ -120,21 +120,6 @@ namespace Spe.Core.Host
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
 
-            // Text that is empty or only whitespace/control characters does
-            // not need a format block. An empty [[;fg;bg]] or one whose
-            // content is only \r\n cannot be rendered by jquery.terminal.
-            // Emit a bare \r\n for terminated lines (produces a blank line
-            // in the terminal) or nothing for unterminated lines.
-            if (string.IsNullOrWhiteSpace(outString))
-            {
-                if (Terminated) output.Append("\r\n");
-                return;
-            }
-
-            if (outString.EndsWith("\\"))
-            {
-                outString += " ";
-            }
             // Error lines use a fixed legible color with no background
             // (terminal default). Other lines use the mapped ConsoleColors.
             string fgHex, bgHex;
@@ -150,13 +135,22 @@ namespace Spe.Core.Host
                 fgHex = $"#{fg.R:X2}{fg.G:X2}{fg.B:X2}";
                 bgHex = $"#{bg.R:X2}{bg.G:X2}{bg.B:X2}";
             }
-            output.AppendFormat(
-                Terminated
-                    ? "[[;{0};{1}]{2}]\r\n"
-                    : "[[;{0};{1}]{2}]",
-                fgHex,
-                bgHex,
-                HttpUtility.HtmlEncode(outString).Replace("[", "&#91;").Replace("]", "&#93;"));
+
+            // Split on \n as a safety net - Write(ConsoleColor,...) splits at
+            // storage time but Write(string) may still append newlines to text.
+            // Each segment gets a trailing space to prevent empty format blocks,
+            // trailing-backslash escaping issues, and blank-line collapsing.
+            var segments = (outString ?? "").Split('\n');
+            for (var i = 0; i < segments.Length; i++)
+            {
+                var seg = segments[i].TrimEnd('\r');
+                var escaped = HttpUtility.HtmlEncode(seg + " ")
+                    .Replace("[", "&#91;")
+                    .Replace("]", "&#93;");
+                output.AppendFormat("[[;{0};{1}]{2}]", fgHex, bgHex, escaped);
+                if (i < segments.Length - 1) output.Append("\n");
+            }
+            if (Terminated) output.Append("\r\n");
         }
 
         public void GetPlainTextLine(StringBuilder output)

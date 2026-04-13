@@ -24,6 +24,10 @@ const clearHostScript = fs.readFileSync(
   path.join(__dirname, "ise-clearhost.ps1"),
   "utf-8"
 );
+const newlineScript = fs.readFileSync(
+  path.join(__dirname, "ise-newline.ps1"),
+  "utf-8"
+);
 
 async function setEditorAndRun(page: Page, script: string) {
   await page.evaluate((s) => {
@@ -136,6 +140,27 @@ for (const site of sites) {
       const output = (await terminal.innerText()).replace(/\u00A0/g, " ");
       expect(output).toContain("after clear");
       expect(output).not.toContain("before clear");
+    });
+
+    test("text with embedded newlines renders without jsterm artifacts", async ({
+      page,
+    }) => {
+      await setEditorAndRun(page, newlineScript);
+
+      const terminal = page.locator(".terminal-output");
+      await expect(terminal).toContainText("Done!", { timeout: 30_000 });
+
+      const output = (await terminal.innerText()).replace(/\u00A0/g, " ");
+      expect(output).toContain("Sample line starting with EOL char");
+      expect(output).toContain("Done!");
+      expect(output).not.toMatch(/\[\[;/);
+
+      // The script has two \n after the text - there should be blank
+      // lines between "EOL char" and "Done!"
+      const lines = output.split("\n");
+      const eolIdx = lines.findIndex((l) => l.includes("EOL char"));
+      const doneIdx = lines.findIndex((l) => l.includes("Done!"));
+      expect(doneIdx - eolIdx).toBeGreaterThanOrEqual(3);
     });
   });
 }

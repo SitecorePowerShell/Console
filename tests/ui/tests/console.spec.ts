@@ -20,6 +20,14 @@ const multilineScript = fs.readFileSync(
   path.join(__dirname, "console-multiline.ps1"),
   "utf-8"
 );
+const newlineScript = fs.readFileSync(
+  path.join(__dirname, "console-newline.ps1"),
+  "utf-8"
+);
+const fastScript = fs.readFileSync(
+  path.join(__dirname, "console-fast.ps1"),
+  "utf-8"
+);
 const blankLineScript = fs.readFileSync(
   path.join(__dirname, "console-blankline.ps1"),
   "utf-8"
@@ -161,6 +169,50 @@ for (const site of sites) {
       const lastDiv = page.locator(".terminal-output > div").last();
       const lastText = await lastDiv.innerText();
       expect(lastText.trim()).toBe("");
+    });
+
+    test("text with embedded newlines renders without jsterm artifacts", async ({
+      page,
+    }) => {
+      await page.goto(
+        `${site.url}/sitecore/shell/applications/powershell/powershell-console`,
+        { waitUntil: "domcontentloaded" }
+      );
+      await waitForConsoleReady(page);
+      await executeInConsole(page, newlineScript);
+
+      await expect(page.locator(".terminal-output")).toContainText("Done!", {
+        timeout: 30_000,
+      });
+
+      const output = (await page.locator(".terminal-output").innerText()).replace(/\u00A0/g, " ");
+      expect(output).toContain("Sample line starting with EOL char");
+      expect(output).not.toMatch(/\[\[;/);
+    });
+
+    test("fast script returns prompt without hanging", async ({ page }) => {
+      await page.goto(
+        `${site.url}/sitecore/shell/applications/powershell/powershell-console`,
+        { waitUntil: "domcontentloaded" }
+      );
+      await waitForConsoleReady(page);
+
+      // Run a trivially fast script 3 times in succession. If the
+      // fast-completion polling path is broken, the terminal will hang
+      // on the first or second execution and never become unpaused.
+      for (let i = 0; i < 3; i++) {
+        await executeInConsole(page, fastScript);
+        await expect(page.locator(".terminal-output")).toContainText("fast", {
+          timeout: 15_000,
+        });
+        await page.waitForFunction(
+          () => {
+            const term = (window as any).jQuery("#terminal").terminal();
+            return term && !term.paused();
+          },
+          { timeout: 15_000 }
+        );
+      }
     });
   });
 }

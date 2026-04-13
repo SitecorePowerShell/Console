@@ -22,8 +22,6 @@
     min-width: 100px;
 }
 
-.ui-dialog { z-index: 1; }
-
 #ajax-dialog {
     border: 0;
     display: none;
@@ -86,7 +84,6 @@
 }
 
 .ui-widget-content ul li {
-    /* margin-bottom: 1.2em; */
     list-style-position: inside;
     list-style-type: disc;
 }
@@ -105,7 +102,7 @@
     text-decoration: underline;
 }
 
-.ui-dialog { margin-left: 40px !important; }
+.ui-dialog { z-index: 1; margin-left: 40px !important; }
 
 .ui-dialog-titlebar { display: none; }
 
@@ -123,8 +120,6 @@ a.ps-link {
 }
 
 .ui-state-highlight .ui-icon.ui-icon-info {
-    /*background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;*/
-    /*background-size: 16px;*/
     display: none;
 }
 
@@ -160,44 +155,35 @@ a.ps-link {
 }
 
 #HelpClose {
-    -moz-border-radius-bottomleft: 9px;
-    -moz-border-radius-bottomright: 9px;
-    -moz-border-radius-topleft: 9px;
-    -moz-border-radius-topright: 0;
-    -moz-box-shadow: inset 0 1px 0 0 #ffffff;
-    background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
     background-color: #ededed;
     border: 1px solid #dcdcdc;
-    border-bottom-left-radius: 9px;
-    border-bottom-right-radius: 9px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 0;
+    border-radius: 9px 0 9px 9px;
     box-shadow: inset 0 1px 0 0 #ffffff;
-    color: #777777;
+    color: #555555;
     display: inline-block;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
     float: right;
     font-family: cursive;
-    font-size: 24px;
     font-style: normal;
     font-weight: normal;
-    height: 24px;
-    line-height: 16px;
     margin: 1px 4px 0 0;
     padding: 7px 5px 4px 6px;
     text-align: center;
     text-decoration: none;
     text-indent: 0;
     text-shadow: 1px 1px 0 #ffffff;
-    width: 24px;
     z-index: 10;
+    font-size: 18px;
+    height: 22px;
+    line-height: 22px;
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 20px;
+    top: 2px;
+    width: 22px;
+    
 }
 
 #HelpClose:hover {
-    background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%);
     background-color: #e3e3e3;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
 }
@@ -217,21 +203,6 @@ a.ps-link {
 
 #ResultsSplitter:active {
     background-color: #dcdcdc;
-}
-
-/*#Result {*/
-/*    position: fixed;*/
-/*    bottom: 27px;*/
-/*}*/
-
-#HelpClose {
-    font-size: 18px;
-    height: 22px;
-    line-height: 22px;
-    position: absolute;
-    right: 20px;
-    top: 2px;
-    width: 22px;
 }
 
 #HelpClose:active {
@@ -394,14 +365,12 @@ a.ps-link {
 }
 
 .varChild {
-    /* color: #FF4500; */
     padding-left: 40px;
     display: block;
     overflow: hidden;
 }
 
 .varChild2 {
-    /* color: #FF4500; */
     padding-left: 60px;
     display: block;
     overflow: hidden;
@@ -510,7 +479,8 @@ a.ps-link {
 #ScriptResultCode .deferred {
     padding: 1px;
     border-radius: 6px;
-    margin: 1px;
+    margin-top: 4px;
+    margin-left: -2px;
     display: inline-block;
 }
 
