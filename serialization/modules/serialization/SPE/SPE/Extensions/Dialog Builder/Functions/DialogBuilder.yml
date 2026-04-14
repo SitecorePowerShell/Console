@@ -35,11 +35,24 @@ SharedFields:
     .NOTES
         Usage: You must call Import-Function -Name DialogBuilder before using any of these functions.
     
-        Version: 3.0.0
-        Date: 2026-03-31
+        Version: 3.2.0
+        Date: 2026-04-15
         Author: SPE Community
     
         Changelog:
+        - v3.2.0: Added MaxLength parameter to Add-DialogField, Add-TextField, and
+                  Add-MultiLineTextField. When set, enforces a browser-level character
+                  limit and shows a live character counter on text and multitext fields.
+        - v3.1.0: Compatibility and quality improvements:
+                  Fixed duplicate field names causing runtime crash (now replaces previous)
+                  Added -Visible parameter to Add-DialogField for hidden context fields
+                  Added per-field -Height parameter (exposed on MultiLineTextField, TreeList, MultiList, RuleField, RuleActionField)
+                  Added per-field -Validator parameter for inline field validation
+                  Added per-field -Description parameter
+                  Added Values hashtable to Invoke-Dialog result for scope-independent access
+                  Removed misleading return from convenience functions
+                  Removed fragile Set-Variable -Scope 1 from Add-DialogField (Invoke-Dialog handles it)
+                  Changed Add-DateTimePicker default from [DateTime]::MinValue to $null
         - v3.0.0: Breaking changes to align with SearchBuilder conventions (#1429):
                   Renamed Show-Dialog to Invoke-Dialog (returns structured PSObject)
                   Merged Debug-DialogBuilder into Test-DialogBuilder (-ShowDetails)
@@ -204,6 +217,26 @@ SharedFields:
         .PARAMETER ShowOnValue
             Values that show this field when parent has them.
     
+        .PARAMETER Visible
+            Whether the field is visible in the dialog (default: true).
+            Hidden fields still participate in the result and can pass context values.
+    
+        .PARAMETER Height
+            Per-field editor height as a string (e.g., "200"). Controls the height
+            of editors like multi-line text, tree lists, and rule fields.
+    
+        .PARAMETER Validator
+            Per-field validation scriptblock. The script receives the field value and
+            can set an error message on the field. Not supported under Constrained
+            Language Mode (CLM).
+    
+        .PARAMETER MaxLength
+            Maximum character length for text and multitext fields. When specified,
+            the browser enforces a hard limit and a live character counter is displayed.
+    
+        .PARAMETER Description
+            Per-field description text, displayed separately from the tooltip.
+    
         .EXAMPLE
             $dialog | Add-DialogField -Name "userName" -Title "User Name" -Mandatory
     
@@ -257,7 +290,17 @@ SharedFields:
     
             [string]$HideOnValue = "",
     
-            [string]$ShowOnValue = ""
+            [string]$ShowOnValue = "",
+    
+            [bool]$Visible = $true,
+    
+            [string]$Height = "",
+    
+            [int]$MaxLength = 0,
+    
+            [scriptblock]$Validator = $null,
+    
+            [string]$Description = ""
         )
     
         if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
@@ -269,9 +312,17 @@ SharedFields:
             throw "Field name '$Name' contains invalid characters. Use only letters, numbers, and underscores."
         }
     
-        # Check for duplicate field names
+        # Replace existing field if duplicate name
         if ($DialogBuilder._Variables.ContainsKey($Name)) {
-            Write-Warning "Field '$Name' already exists in the dialog. Previous field will be overwritten."
+            Write-Warning "Field '$Name' already exists in the dialog. Replacing previous definition."
+            $remaining = [System.Collections.ArrayList]@()
+            foreach ($existing in $DialogBuilder._Parameters) {
+                if ($existing.Name -ne $Name) {
+                    $remaining.Add($existing) > $null
+                }
+            }
+            $DialogBuilder._Parameters = $remaining
+            $DialogBuilder._Variables.Remove($Name)
         }
     
         # Validate Columns parameter
@@ -293,17 +344,10 @@ SharedFields:
             $Title = $Name
         }
     
-        # Auto-initialize Item variables if needed
-        if ($Value -is [Sitecore.Data.Items.Item] -or
-            ($Editor -match "^(item|droplist|droptree|groupeddroplink|groupeddroplist)" -and $null -eq $Value)) {
-    
-            # Initialize with a default item if null
-            if ($null -eq $Value) {
-                $Value = Get-Item -Path "master:/sitecore" -ErrorAction SilentlyContinue
-            }
-    
-            # Store in caller's scope
-            Set-Variable -Name $Name -Value $Value -Scope 1
+        # Auto-initialize Item value if needed (Invoke-Dialog handles scope injection)
+        if ($null -eq $Value -and
+            $Editor -match "^(item|droplist|droptree|groupeddroplink|groupeddroplist)") {
+            $Value = Get-Item -Path "master:/sitecore" -ErrorAction SilentlyContinue
         }
     
         # Auto-detect editor type based on value type
@@ -359,6 +403,11 @@ SharedFields:
         if ($ParentGroupId -gt 0) { $param.ParentGroupId = $ParentGroupId }
         if (-not [string]::IsNullOrEmpty($HideOnValue)) { $param.HideOnValue = $HideOnValue }
         if (-not [string]::IsNullOrEmpty($ShowOnValue)) { $param.ShowOnValue = $ShowOnValue }
+        if ($PSBoundParameters.ContainsKey('Visible') -and -not $Visible) { $param.Visible = $false }
+        if (-not [string]::IsNullOrEmpty($Height)) { $param.Height = $Height }
+        if ($null -ne $Validator) { $param.Validator = $Validator }
+        if (-not [string]::IsNullOrEmpty($Description)) { $param.Description = $Description }
+        if ($MaxLength -gt 0) { $param.MaxLength = $MaxLength }
     
         # Add parameter to builder
         $DialogBuilder._Parameters.Add($param) > $null
@@ -390,7 +439,10 @@ SharedFields:
         .EXAMPLE
             $result = $dialog | Invoke-Dialog
             if ($result.Result -eq "ok") {
-                Write-Host "Accepted"
+                # Access values via scope-injected variables:
+                Write-Host "User: $userName"
+                # Or via the Values hashtable (scope-independent):
+                Write-Host "User: $($result.Values['userName'])"
             }
     
         .EXAMPLE
@@ -467,21 +519,25 @@ SharedFields:
             throw "Failed to display dialog '$($DialogBuilder._Title)'. Error: $($_.Exception.Message)"
         }
     
-        # Update variable values in caller scope
+        # Collect values and update variables in caller scope
+        $values = @{}
         foreach ($varName in $DialogBuilder._Variables.Keys) {
             try {
-                Set-Variable -Name $varName -Value (Get-Variable -Name $varName -ValueOnly) -Scope 1 -ErrorAction Stop
+                $val = Get-Variable -Name $varName -ValueOnly -ErrorAction Stop
+                $values[$varName] = $val
+                Set-Variable -Name $varName -Value $val -Scope 1 -ErrorAction Stop
             }
             catch {
-                Write-Warning "Failed to update variable '$varName' after dialog closed. Variable may not be available in your script."
+                Write-Warning "Failed to update variable '$varName' after dialog closed. Use the Values hashtable on the result object instead."
             }
         }
     
-        # Build structured result
+        # Build structured result with Values for scope-independent access
         $result = New-PSObject @{
             Result     = $rawResult
             Title      = $DialogBuilder._Title
             FieldCount = $DialogBuilder._Parameters.Count
+            Values     = $values
         }
     
         return $result
@@ -674,6 +730,17 @@ SharedFields:
             }
         }
     
+        # Check for Root/Source conflicts on list controls
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if ($editor -match "treelist|multilist") {
+                if ($param.ContainsKey('Root') -and $param.ContainsKey('Source')) {
+                    Write-Warning "Field '$($param.Name)' has both Root and Source. List controls use Source for their data; Root will be ignored."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
         # Check for mandatory fields without editors that support it
         foreach ($param in $DialogBuilder._Parameters) {
             if ($param.ContainsKey('Mandatory') -and $param.Mandatory) {
@@ -837,6 +904,8 @@ SharedFields:
     
             [switch]$Mandatory,
     
+            [int]$MaxLength = 0,
+    
             [string]$Tab = "",
     
             [int]$Columns = 0,
@@ -867,7 +936,7 @@ SharedFields:
             $PSBoundParameters.Add("Editor", $editor) > $null
         }
     
-        return Add-DialogField @PSBoundParameters
+        Add-DialogField @PSBoundParameters
     }
     
     function Add-MultiLineTextField {
@@ -886,9 +955,11 @@ SharedFields:
             [string]$Title = "",
             [string]$Value = "",
             [int]$Lines = 3,
+            [string]$Height = "",
             [string]$Tooltip = "",
             [string]$Placeholder = "",
             [switch]$Mandatory,
+            [int]$MaxLength = 0,
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -900,7 +971,7 @@ SharedFields:
         if (-not $PSBoundParameters.ContainsKey('Lines')) {
             $PSBoundParameters['Lines'] = $Lines
         }
-        return Add-DialogField @PSBoundParameters
+        Add-DialogField @PSBoundParameters
     }
     
     function Add-Checkbox {
@@ -931,7 +1002,7 @@ SharedFields:
         if(!$PSBoundParameters.ContainsKey("Value")) {
             $PSBoundParameters.Add("Value", $Value) > $null
         }
-        return Add-DialogField @PSBoundParameters -Editor "checkbox"
+        Add-DialogField @PSBoundParameters -Editor "checkbox"
     }
     
     function Add-DateTimePicker {
@@ -945,6 +1016,9 @@ SharedFields:
         .EXAMPLE
             $dialog | Add-DateTimePicker -Name "expires" -Title "Expires"
             # Renders an empty date picker; the user can leave it blank.
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "deadline" -Title "Deadline" -Value ([DateTime]::Now.AddDays(7))
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -952,7 +1026,7 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Name,
             [string]$Title = "",
-            [DateTime]$Value = [DateTime]::MinValue,
+            [object]$Value = $null,
             [string]$Tooltip = "",
             [switch]$DateOnly,
             [switch]$Mandatory,
@@ -969,7 +1043,7 @@ SharedFields:
         }
         $editor = if ($DateOnly) { "date" } else { "date time" }
     
-        return Add-DialogField @PSBoundParameters -Editor $editor
+        Add-DialogField @PSBoundParameters -Editor $editor
     }
     
     function Add-ItemPicker {
@@ -1009,7 +1083,7 @@ SharedFields:
             }
         }
     
-        return Add-DialogField @PSBoundParameters
+        Add-DialogField @PSBoundParameters
     }
     
     function Add-Droplink {
@@ -1052,7 +1126,7 @@ SharedFields:
             }
         }
     
-        return Add-DialogField @PSBoundParameters -Editor "droplink"
+        Add-DialogField @PSBoundParameters -Editor "droplink"
     }
     
     function Add-Droptree {
@@ -1086,7 +1160,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "droptree"
+        Add-DialogField @PSBoundParameters -Editor "droptree"
     }
     
     function Add-Droplist {
@@ -1121,7 +1195,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "droplist"
+        Add-DialogField @PSBoundParameters -Editor "droplist"
     }
     
     function Add-GroupedDroplink {
@@ -1155,7 +1229,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "groupeddroplink"
+        Add-DialogField @PSBoundParameters -Editor "groupeddroplink"
     }
     
     function Add-GroupedDroplist {
@@ -1189,7 +1263,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "groupeddroplist"
+        Add-DialogField @PSBoundParameters -Editor "groupeddroplist"
     }
     
     function Add-Dropdown {
@@ -1221,7 +1295,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "combo"
+        Add-DialogField @PSBoundParameters -Editor "combo"
     }
     
     function Add-RadioButtons {
@@ -1250,7 +1324,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "radio"
+        Add-DialogField @PSBoundParameters -Editor "radio"
     }
     
     function Add-Checklist {
@@ -1281,7 +1355,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "checklist"
+        Add-DialogField @PSBoundParameters -Editor "checklist"
     }
     
     function Add-UserPicker {
@@ -1316,7 +1390,7 @@ SharedFields:
         # Remove Multiple from bound parameters
         $PSBoundParameters.Remove("Multiple") > $null
     
-        return Add-DialogField @PSBoundParameters -Editor $editor
+        Add-DialogField @PSBoundParameters -Editor $editor
     }
     
     function Add-RolePicker {
@@ -1354,7 +1428,7 @@ SharedFields:
         # Remove Multiple from bound parameters
         $PSBoundParameters.Remove("Multiple") > $null
     
-        return Add-DialogField @PSBoundParameters -Editor $editor
+        Add-DialogField @PSBoundParameters -Editor $editor
     }
     
     function Add-UserRolePicker {
@@ -1392,7 +1466,7 @@ SharedFields:
         # Remove Multiple from bound parameters
         $PSBoundParameters.Remove("Multiple") > $null
     
-        return Add-DialogField @PSBoundParameters -Editor $editor
+        Add-DialogField @PSBoundParameters -Editor $editor
     }
     
     function Add-InfoText {
@@ -1418,7 +1492,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "info"
+        Add-DialogField @PSBoundParameters -Editor "info"
     }
     
     function Add-Marquee {
@@ -1444,7 +1518,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "marquee"
+        Add-DialogField @PSBoundParameters -Editor "marquee"
     }
     
     function Add-TreeList {
@@ -1472,6 +1546,7 @@ SharedFields:
             [array]$Value = @(),
             [string]$Root = "/sitecore/content/",
             [string]$Source = "",
+            [string]$Height = "",
             [string]$Tooltip = "",
             [switch]$Mandatory,
             [switch]$WithSearch,
@@ -1483,7 +1558,8 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        if (-not $PSBoundParameters.ContainsKey('Root')) {
+        # Only apply default Root when Source is not specified
+        if (-not $PSBoundParameters.ContainsKey('Root') -and -not $PSBoundParameters.ContainsKey('Source')) {
             $PSBoundParameters['Root'] = $Root
         }
         $editor = if ($WithSearch.IsPresent) { "treelist search" } else { "treelist" }
@@ -1492,7 +1568,7 @@ SharedFields:
         $params = $PSBoundParameters
         $params.Remove('WithSearch') | Out-Null
     
-        return Add-DialogField @params -Editor $editor
+        Add-DialogField @params -Editor $editor
     }
     
     function Add-MultiList {
@@ -1520,6 +1596,7 @@ SharedFields:
             [array]$Value = @(),
             [string]$Root = "/sitecore/content/",
             [string]$Source = "",
+            [string]$Height = "",
             [string]$Tooltip = "",
             [switch]$Mandatory,
             [switch]$WithSearch,
@@ -1531,7 +1608,8 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        if (-not $PSBoundParameters.ContainsKey('Root')) {
+        # Only apply default Root when Source is not specified
+        if (-not $PSBoundParameters.ContainsKey('Root') -and -not $PSBoundParameters.ContainsKey('Source')) {
             $PSBoundParameters['Root'] = $Root
         }
         $editor = if ($WithSearch.IsPresent) { "multilist search" } else { "multilist" }
@@ -1540,7 +1618,7 @@ SharedFields:
         $params = $PSBoundParameters
         $params.Remove('WithSearch') | Out-Null
     
-        return Add-DialogField @params -Editor $editor
+        Add-DialogField @params -Editor $editor
     }
     
     function Add-LinkField {
@@ -1573,7 +1651,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "link"
+        Add-DialogField @PSBoundParameters -Editor "link"
     }
     
     function Add-TristateCheckbox {
@@ -1606,7 +1684,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "tristate"
+        Add-DialogField @PSBoundParameters -Editor "tristate"
     }
     
     function Add-RuleField {
@@ -1632,6 +1710,7 @@ SharedFields:
             [string]$Name,
             [string]$Title = "",
             [string]$Value = "",
+            [string]$Height = "",
             [string]$Tooltip = "",
             [string]$Source = "",
             [switch]$Mandatory,
@@ -1643,7 +1722,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "rule"
+        Add-DialogField @PSBoundParameters -Editor "rule"
     }
     
     function Add-RuleActionField {
@@ -1669,6 +1748,7 @@ SharedFields:
             [string]$Name,
             [string]$Title = "",
             [string]$Value = "",
+            [string]$Height = "",
             [string]$Tooltip = "",
             [string]$Source = "",
             [switch]$Mandatory,
@@ -1680,7 +1760,7 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        return Add-DialogField @PSBoundParameters -Editor "rule action"
+        Add-DialogField @PSBoundParameters -Editor "rule action"
     }
     
     # Helper utility functions
@@ -1865,3 +1945,4 @@ Languages:
 
 
 
+    

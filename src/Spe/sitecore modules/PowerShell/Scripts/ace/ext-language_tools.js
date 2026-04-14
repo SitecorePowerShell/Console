@@ -2557,22 +2557,36 @@ var snippetCompleter = {
                 var caption = s.name || s.tabTrigger;
                 if (!caption)
                     continue;
+                // [SPE PATCH: snippet-description] Pass the description property
+                // to the completion item so getDocTooltip can render it.
+                // Snippet files support arbitrary keys (e.g. "description Some text")
+                // but stock Ace ignores them. This patch threads them through.
+                // When upgrading Ace, reapply this change and the matching
+                // getDocTooltip patch below. Search for "SPE PATCH: snippet-description".
                 completions.push({
                     caption: caption,
                     snippet: s.content,
                     meta: s.tabTrigger && !s.name ? s.tabTrigger + "\u21E5 " : "snippet",
+                    description: s.description,
                     completerId: snippetCompleter.id
                 });
             }
         }, this);
         callback(null, completions);
     },
+    // [SPE PATCH: snippet-description] Show the description property in the
+    // autocomplete tooltip when present. Falls back to the stock behavior
+    // (escaped snippet preview) when no description is set.
+    // When upgrading Ace, reapply this change and the matching completions.push
+    // patch above. Search for "SPE PATCH: snippet-description".
     getDocTooltip: function (item) {
         if (item.snippet && !item.docHTML) {
-            item.docHTML = [
-                "<b>", lang.escapeHTML(item.caption), "</b>", "<hr></hr>",
-                lang.escapeHTML(transformSnippetTooltip(item.snippet))
-            ].join("");
+            var parts = ["<b>", lang.escapeHTML(item.caption), "</b>", "<hr></hr>"];
+            if (item.description) {
+                parts.push("<p>", lang.escapeHTML(item.description), "</p>", "<hr></hr>");
+            }
+            parts.push(lang.escapeHTML(transformSnippetTooltip(item.snippet)));
+            item.docHTML = parts.join("");
         }
     },
     id: "snippetCompleter"

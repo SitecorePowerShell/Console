@@ -9,6 +9,10 @@ SharedFields:
   Value: 150
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: "Extensions : Authorable Reports"
   Versions:
   - Version: 1
     Fields:
@@ -17,11 +21,11 @@ Languages:
       Value: 20170217T021351Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "2b6c0410-fd5e-4f9f-b42d-ad39d667c15c"
+      Value: "6e074afb-588c-4bf8-bb94-bb302bf4db31"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214505Z
+      Value: 20260410T012616Z

@@ -319,6 +319,140 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
 Assert-Equal $result "threw" "ShowOnValue without ParentGroupId throws"
 
 # ============================================================
+# Duplicate field name replacement (H1)
+# ============================================================
+Write-Host "`n  [Add-DialogField - duplicate name replaces previous]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-TextField -Name "field1" -Value "original"
+    $db | Add-TextField -Name "field2" -Value "keep"
+    $db | Add-TextField -Name "field1" -Value "replaced"
+
+    @{
+        ParameterCount = $db._Parameters.Count
+        VariableCount  = $db._Variables.Count
+        Field1Value    = $db._Parameters[0].Name
+        Field2Value    = $db._Parameters[1].Name
+        VarField1      = $db._Variables["field1"]
+    }
+}
+
+Assert-Equal $result.ParameterCount 2 "Duplicate replaced, two params remain"
+Assert-Equal $result.VariableCount 2 "Two variables tracked"
+Assert-Equal $result.Field1Value "field2" "First param is now field2 (field1 was removed and re-added)"
+Assert-Equal $result.Field2Value "field1" "Second param is the replaced field1"
+Assert-Equal $result.VarField1 "replaced" "Variable tracks new value"
+
+# ============================================================
+# Visible parameter (H2)
+# ============================================================
+Write-Host "`n  [Add-DialogField - Visible parameter]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-TextField -Name "shown" -Value "a"
+    $db | Add-DialogField -Name "hidden" -Value "context" -Visible $false
+
+    @{
+        ShownHasVisible = $db._Parameters[0].ContainsKey("Visible")
+        HiddenVisible   = $db._Parameters[1].Visible
+    }
+}
+
+Assert-True (-not $result.ShownHasVisible) "Visible=true fields do not include Visible key"
+Assert-Equal $result.HiddenVisible $false "Hidden field has Visible=false"
+
+# ============================================================
+# Per-field Height parameter (H3)
+# ============================================================
+Write-Host "`n  [Add-DialogField - Height parameter]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-MultiLineTextField -Name "notes" -Lines 5 -Height "200"
+    $db | Add-TextField -Name "plain" -Value "x"
+
+    @{
+        NotesHeight   = $db._Parameters[0].Height
+        PlainHasHeight = $db._Parameters[1].ContainsKey("Height")
+    }
+}
+
+Assert-Equal $result.NotesHeight "200" "Height set on multi-line field"
+Assert-True (-not $result.PlainHasHeight) "Plain text has no Height key"
+
+# ============================================================
+# Per-field Validator parameter (H4)
+# ============================================================
+Write-Host "`n  [Add-DialogField - Validator parameter]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-DialogField -Name "email" -Value "" -Validator { if (-not $value) { $variable.Error = "Required" } }
+    $db | Add-TextField -Name "plain" -Value "x"
+
+    @{
+        HasValidator      = $null -ne $db._Parameters[0].Validator
+        PlainHasValidator = $db._Parameters[1].ContainsKey("Validator")
+    }
+}
+
+Assert-True $result.HasValidator "Field with Validator has it set"
+Assert-True (-not $result.PlainHasValidator) "Plain field has no Validator key"
+
+# ============================================================
+# Per-field Description parameter (L2)
+# ============================================================
+Write-Host "`n  [Add-DialogField - Description parameter]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-DialogField -Name "name" -Value "" -Description "Enter your full name"
+    $db | Add-TextField -Name "plain" -Value "x"
+
+    @{
+        HasDescription      = $db._Parameters[0].Description
+        PlainHasDescription = $db._Parameters[1].ContainsKey("Description")
+    }
+}
+
+Assert-Equal $result.HasDescription "Enter your full name" "Description is set on field"
+Assert-True (-not $result.PlainHasDescription) "Plain field has no Description key"
+
+# ============================================================
+# DateTimePicker null default (L1)
+# ============================================================
+Write-Host "`n  [Add-DateTimePicker - null default value]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Test"
+    $db | Add-DateTimePicker -Name "empty_date"
+    $db | Add-DateTimePicker -Name "set_date" -Value ([DateTime]::Parse("2026-01-15"))
+
+    @{
+        EmptyValue = $db._Parameters[0].Value
+        SetValue   = $db._Parameters[1].Value
+        IsNull     = $null -eq $db._Parameters[0].Value
+    }
+}
+
+Assert-True $result.IsNull "Empty DateTimePicker has null value"
+Assert-True ($null -ne $result.SetValue) "Set DateTimePicker has non-null value"
+
+# ============================================================
 # Cleanup
 # ============================================================
 Stop-ScriptSession -Session $session

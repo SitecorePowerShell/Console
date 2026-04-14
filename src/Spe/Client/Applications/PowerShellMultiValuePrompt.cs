@@ -1,52 +1,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Sitecore;
 using Sitecore.Controls;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
-using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Shell.Applications.Dialogs.RulesEditor;
-using Sitecore.Shell.Applications.Rules;
 using Sitecore.StringExtensions;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
-using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Client.Controls;
+using Spe.Client.Controls.VariableEditors;
 using Spe.Commands.Interactive.Messages;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
-using Spe.Core.VersionDecoupling;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
-using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
 using Control = System.Web.UI.Control;
-using Convert = System.Convert;
 using DateTime = System.DateTime;
 using Label = Sitecore.Web.UI.HtmlControls.Label;
-using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
-using Memo = Sitecore.Web.UI.HtmlControls.Memo;
 
 namespace Spe.Client.Applications
 {
     public class PowerShellMultiValuePrompt : DialogPage
     {
-        private static readonly Regex TypeRegex = new Regex(@".*clr(?<type>[\w-\.]+)\s*",
-            RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly List<IVariableEditor> Editors = new List<IVariableEditor>
+        {
+            new DateTimeVariableEditor(),
+            new RuleVariableEditor(),
+            new ListVariableEditor(),
+            new ItemVariableEditor(),
+            new BoolVariableEditor(),
+            new SecurityVariableEditor(),
+            new InfoVariableEditor(),
+            new MarqueeVariableEditor(),
+            new MemoVariableEditor(),
+            new LinkVariableEditor(),
+            new RadioVariableEditor(),
+            new CheckboxListVariableEditor(),
+            new ComboboxVariableEditor(),
+            new TextVariableEditor()
+        };
 
         protected Button CancelButton;
         protected Border DataContextPanel;
@@ -334,510 +338,6 @@ namespace Spe.Client.Applications
             return border;
         }
 
-        private static Control GetLinkControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
-        {
-            //var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("novariable_" + name + "_");
-            Sitecore.Context.ClientPage.ServerProperties[editorId] = value;
-
-            var table = new GridPanel
-            {
-                ID = editorId
-            };
-
-            var buttonsBorder = new Border
-            {
-                Class = "scContentButtons"
-            };
-
-            var linkBuilder = new List<string>();
-            var linkFormat =
-                @"<a href=""#"" class=""scContentButton"" onclick=""javascript:return scForm.postEvent(this,event,'{0}')"">{1}</a>";
-            
-            foreach (var option in options.Keys)
-            {
-                var optionName = option;
-                var optionValue = options[optionName];
-                
-                linkBuilder.Add(string.Format(linkFormat, optionValue, optionName));
-            }
-
-            var links = new Literal(string.Join("&nbsp;|&nbsp;", linkBuilder.ToArray()));
-            buttonsBorder.Controls.Add(links);
-
-            var info = new Literal { Text = value.ToString(), Class = "varHint" };
-            table.Controls.Add(info);
-            table.Controls.Add(buttonsBorder);
-
-            return table;
-        }
-
-        private static Control GetDateTimePicker(IDictionary variable, string name, object value, string editor)
-        {
-            var dateTimePicker = new DateTimePicker
-            {
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                ShowTime = (variable["ShowTime"] != null && (bool)variable["ShowTime"]) ||
-                           (!string.IsNullOrEmpty(editor) &&
-                            editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1)
-            };
-            if (value is DateTime date)
-            {
-                if (date != DateTime.MinValue && date != DateTime.MaxValue)
-                {
-                    dateTimePicker.Value = date.Kind != DateTimeKind.Utc
-                        ? DateUtil.ToIsoDate(TypeResolver.Resolve<IDateConverter>().ToServerTime(date))
-                        : DateUtil.ToIsoDate(date);
-                }
-            }
-            else
-            {
-                dateTimePicker.Value = value as string ?? string.Empty;
-            }
-
-            return dateTimePicker;
-        }
-
-        private static Control GetRuleControl(IDictionary variable, string name, object value, string editor)
-        {
-            var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            Sitecore.Context.ClientPage.ServerProperties[editorId] = value;
-
-            var rulesBorder = new Border
-            {
-                Class = "rulesWrapper",
-                ID = editorId
-            };
-
-            var showActions = editor.IndexOf("action", StringComparison.OrdinalIgnoreCase) > -1;
-            var source = variable["Source"] as string;
-            var rulesPath = string.Empty;
-            if (!string.IsNullOrEmpty(source) && source.ToLowerInvariant().Contains("rulespath"))
-            {
-                var urlString = new UrlString(source);
-                rulesPath = urlString["rulespath"];
-                var hideActions = urlString["hideactions"];
-                showActions = !MainUtil.GetBool(hideActions, !showActions);
-            }
-            var rulesEditButton = new Button
-            {
-                Header = Texts.PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule,
-                Class = "scButton edit-button rules-edit-button",
-                Click = $"EditConditionClick(\"{editorId}\",\"{showActions}\", \"{rulesPath}\")"
-            };
-
-            rulesBorder.Controls.Add(rulesEditButton);
-
-            var rule = string.IsNullOrEmpty(value as string) ? "<ruleset />" : value as string;
-            var rulesRender = new Literal
-            {
-                ID = editorId + "_renderer",
-                Text = GetRuleConditionsHtml(rule, showActions)
-            };
-            rulesRender.Class = rulesRender.Class + " varRule";
-            rulesBorder.Controls.Add(rulesRender);
-            return rulesBorder;
-        }
-
-        private static Control GetListControl(IDictionary variable, string name, object value, string editor)
-        {
-            Item item = null;
-            var strValue = string.Empty;
-
-            if (value is Item)
-            {
-                item = (Item)value;
-                strValue = item.ID.ToString();
-            }
-            else if (value is IEnumerable<object>)
-            {
-                var items = (value as IEnumerable<object>).Cast<Item>().ToList();
-                item = items.FirstOrDefault();
-                strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
-            }
-
-            var dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
-            if (editor.HasWord("multilist"))
-            {
-                if (editor.HasWord("search"))
-                {
-                    var bucketlist = new BucketListExtended
-                    {
-                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                        Value = strValue,
-                        Database = dbName,
-                        ItemID = Sitecore.ItemIDs.RootID.ToString(),
-                        Source = variable["Source"] as string ?? "/sitecore"
-                    };
-
-                    bucketlist.Class += "  treePicker";
-
-                    return bucketlist;
-                }
-
-                var multiList = new MultilistExtended
-                {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Value = strValue,
-                    Database = dbName,
-                    ItemID = Sitecore.ItemIDs.RootID.ToString(),
-                    Source = variable["Source"] as string ?? "/sitecore"
-                };
-                multiList.SetLanguage(Sitecore.Context.Language.Name);
-
-                multiList.Class += "  treePicker";
-
-                return multiList;
-            }
-
-            if (editor.HasWord("droplist", "groupeddroplink", "groupeddroplist"))
-            {
-                if (Sitecore.Context.ContentDatabase?.Name != dbName)
-                {
-                    // this control will crash if if content database is different than the items fed to it.
-                    return new Literal
-                    {
-                        Text = "<span style='color: red'>" +
-                               Translate.Text(
-                                   Texts
-                                       .PowerShellMultiValuePrompt_GetVariableEditor_DropList_control_cannot_render_items_from_the_database___0___because_it_its_not_the_same_as___1___which_is_the_current_content_database__,
-                                   dbName, Sitecore.Context.ContentDatabase?.Name) + "</span>",
-                        Class = "varHint"
-                    };
-
-                }
-
-                if (editor.HasWord("groupeddroplist"))
-                {
-                    var groupedDroplist = new GroupedDroplist
-                    {
-                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                        Database = dbName,
-                        ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                        Source = variable["Source"] as string ?? "/sitecore",
-                        ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
-                    };
-
-                    return groupedDroplist;
-                }
-                
-                if (editor.HasWord("groupeddroplink"))
-                {
-                    var groupedDroplink = new GroupedDroplink
-                    {
-                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                        Database = dbName,
-                        ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                        Source = variable["Source"] as string ?? "/sitecore",
-                        ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
-                    };
-
-                    return groupedDroplink;
-                }
-
-                var lookup = new LookupEx
-                {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Database = dbName,
-                    ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                    Source = variable["Source"] as string ?? "/sitecore",
-                    ItemLanguage = Sitecore.Context.Language.Name,
-                    Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
-                };
-                lookup.Class += " textEdit";
-
-                return lookup;
-            }
-
-            if (editor.HasWord("droptree"))
-            {
-                var tree = new Tree
-                {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Database = dbName,
-                    ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.Null.ToString(),
-                    Source = variable["Source"] as string ?? "",
-                    Value = item?.ID.ToString() ?? "",
-                    ItemLanguage = Sitecore.Context.Language.Name
-                };
-                tree.Class += " textEdit";
-
-                return tree;
-            }
-
-            var treeList = new TreelistExtended
-            {
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                Value = strValue,
-                AllowMultipleSelection = true,
-                DatabaseName = dbName,
-                //Database = dbName,
-                Source = variable["Source"] as string ?? "/sitecore",
-                DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName"
-            };
-
-            treeList.Class += " treePicker";
-
-            return treeList;
-        }
-
-        private static Control GetItemControl(IDictionary variable, string name, object value, string editor, Border panel)
-        {
-            var item = value as Item;
-            var source = variable["Source"] as string;
-            var root = variable["Root"] as string;
-            var sourceRoot = string.IsNullOrEmpty(source)
-                ? "/sitecore"
-                : StringUtil.ExtractParameter("DataSource", source);
-            var dataContext = item != null
-                ? new DataContext
-                {
-                    DefaultItem = item.Paths.Path,
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
-                    Parameters = string.IsNullOrEmpty(source) ? "databasename=" + item.Database.Name : source,
-                    DataViewName = "Master",
-                    Root = string.IsNullOrEmpty(root) ? sourceRoot : root,
-                    Database = item.Database.Name,
-                    Selected = new[] { new DataUri(item.ID, item.Language, item.Version) },
-                    Folder = item.ID.ToString(),
-                    Language = item.Language,
-                    Version = item.Version
-                }
-                : new DataContext
-                {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
-                    Parameters = string.IsNullOrEmpty(source) ? "databasename=master" : source,
-                    DataViewName = "Master",
-                    Root = string.IsNullOrEmpty(root) ? sourceRoot : root
-                };
-
-            panel.Controls.Add(dataContext);
-
-            var treePicker = new TreePicker
-            {
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                Value = item?.ID.ToString() ?? string.Empty,
-                DataContext = dataContext.ID,
-                AllowNone =
-                    !string.IsNullOrEmpty(editor) &&
-                    (editor.IndexOf("allownone", StringComparison.OrdinalIgnoreCase) > -1)
-            };
-            treePicker.Class += " treePicker";
-
-            return treePicker;
-        }
-
-        private static Control GetBoolControl(IDictionary variable, string name, object value, string editor)
-        {
-            var checkboxBorder = new Border
-            {
-                Class = "checkBoxWrapper",
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_")
-            };
-
-            var checkBox = new Checkbox
-            {
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                Header = (string)variable["Title"],
-                HeaderStyle = "display:inline-block;",
-                Checked = (bool)value,
-                Class = "varCheckbox"
-            };
-
-            var tip = variable["Tooltip"] as string;
-            if (!string.IsNullOrEmpty(tip))
-            {
-                checkBox.ToolTip = tip.RemoveHtmlTags();
-            }
-
-            checkboxBorder.Controls.Add(checkBox);
-
-            AddControlAttributes(variable, checkBox);
-
-            return checkboxBorder;
-        }
-
-        private static Control GetSecurityControl(IDictionary variable, string name, object value, string editor)
-        {
-            var showRoles = editor.HasWord("role");
-            var showUsers = editor.HasWord("user");
-            var multiple = editor.HasWord("multiple");
-
-            var picker = new UserPicker();
-            picker.Style.Add("float", "left");
-            picker.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            picker.Class += " scContentControl textEdit clr" + value.GetType().Name;
-            picker.Value = value is IEnumerable<object>
-                ? string.Join("|", ((IEnumerable<object>)value).Select(x => x.ToString()).ToArray())
-                : value.ToString();
-            picker.ExcludeRoles = !showRoles;
-            picker.ExcludeUsers = !showUsers;
-            picker.DomainName = variable["Domain"] as string ?? variable["DomainName"] as string;
-            picker.Multiple = multiple;
-            picker.Click = "UserPickerClick(" + picker.ID + ")";
-
-            return picker;
-        }
-
-        private static Control GetRadioControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
-        {
-            var radioList = new Groupbox
-            {
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                // Header = (string) variable["Title"],
-                Class = "scRadioGroup"
-            };
-
-            foreach (var option in options.Keys)
-            {
-                var optionName = option;
-                var optionValue = options[optionName];
-                var item = new Radiobutton
-                {
-                    Header = optionName.ToString(),
-                    Value = optionValue.ToString(),
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(radioList.ID),
-                    Name = radioList.ID,
-                    Checked = optionValue.ToString() == value.ToString()
-                };
-
-                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
-                {
-                    var optionTitle = optionTooltips[optionValue].ToString();
-                    item.ToolTip = optionTitle;
-                }
-
-                radioList.Controls.Add(item);
-                radioList.Controls.Add(new Literal("<br/>"));
-            }
-
-            AddControlAttributes(variable, radioList);
-
-            return radioList;
-        }
-
-        private static Control GetCheckboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
-        {
-            var checkBorder = new Border
-            {
-                Class = "checkListWrapper",
-                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_")
-            };
-
-            var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            var link =
-                new Literal(
-                    @"<div class='checkListActions'>" +
-                    @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id=" +
-                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Select_all) + "</a> &nbsp;|&nbsp; " +
-                    @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" +
-                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Unselect_all) + "</a> &nbsp;|&nbsp;" +
-                    @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" +
-                    editorId + @")')"">" + Translate.Text(Texts.PowerShellMultiValuePrompt_GetCheckboxControl_Invert_selection) + "</a>" +
-                    @"</div>");
-            checkBorder.Controls.Add(link);
-            var checkList = new PSCheckList
-            {
-                ID = editorId,
-                HeaderStyle = "margin-top:20px; display:inline-block;",
-                ItemID = Sitecore.ItemIDs.RootID.ToString()
-            };
-            checkList.SetItemLanguage(Sitecore.Context.Language.Name);
-            string[] values;
-            switch (value)
-            {
-                case string _:
-                    values = value.ToString().Split('|');
-                    break;
-                case IEnumerable _:
-                    values =
-                        ((IEnumerable)value).Cast<object>()
-                        .Select(s => s?.ToString() ?? "")
-                        .ToArray();
-                    break;
-                default:
-                    values = new[] { value.ToString() };
-                    break;
-            }
-            foreach (var item in from object option in options.Keys
-                                 select option.ToString()
-                into optionName
-                                 let optionValue = options[optionName].ToString()
-                                 select new ChecklistItem
-                                 {
-                                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(checkList.ID),
-                                     Header = optionName,
-                                     Value = optionValue,
-                                     Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
-                                 })
-            {
-                var optionValue = item.Value;
-                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
-                {
-                    var optionTitle = optionTooltips[optionValue].ToString();
-                    item.ToolTip = optionTitle;
-                }
-                checkList.Controls.Add(item);
-            }
-
-            checkList.TrackModified = false;
-            checkList.Disabled = false;
-            checkBorder.Controls.Add(checkList);
-            return checkBorder;
-        }
-
-        private static Control GetComboboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
-        {
-            var combo = new Combobox();
-            var placeholder = variable["Placeholder"];
-            if (placeholder is string)
-            {
-                var option = new ListItem
-                {
-                    Header = placeholder.ToString(),
-                    Value = "",
-                    Selected = true
-                };
-                combo.Controls.Add(option);
-            }
-
-            var useTooltips = optionTooltips.Count > 0;
-            foreach (var option in options.Keys)
-            {
-                var optionName = option;
-                var optionValue = options[optionName];
-                var item = new ListItem
-                {
-                    Header = optionName.ToString(),
-                    Value = optionValue.ToString()
-                };
-
-                if (useTooltips)
-                {
-                    if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
-                    {
-                        var optionTitle = optionTooltips[optionValue].ToString();
-                        item.ToolTip = optionTitle;
-                    }
-                }
-
-                combo.Controls.Add(item);
-            }
-
-            AddControlAttributes(variable, combo);
-
-            return combo;
-        }
-
-        private static void AddControlAttributes(IDictionary variable, Sitecore.Web.UI.HtmlControls.Control variableEditor)
-        {
-            if (!variable.Contains("GroupId")) return;
-
-            variableEditor.Attributes.Add("data-group-id", variable["GroupId"].ToString());
-        }
-
         private static void AddRelatedAttributes(IDictionary variable, Sitecore.Web.UI.HtmlControls.Control variableEditor)
         {
             if (!variable.Contains("ParentGroupId")) return;
@@ -856,185 +356,19 @@ namespace Spe.Client.Applications
         private Control GetVariableEditor(IDictionary variable)
         {
             var value = variable["Value"].BaseObject();
-            var name = (string)variable["Name"];
             var editor = variable["Editor"] as string;
-            var isEditorSpecified = !string.IsNullOrEmpty(editor);
-            var type = value.GetType();
+            var valueType = value.GetType();
+            var editorContext = new VariableEditorContext { DataContextPanel = DataContextPanel };
 
-            if (type == typeof(DateTime) || (isEditorSpecified && editor.HasWord("date", "time")))
+            foreach (var variableEditor in Editors)
             {
-                return GetDateTimePicker(variable, name, value, editor);
-            }
-
-            if (isEditorSpecified && editor.HasWord("rule"))
-            {
-                return GetRuleControl(variable, name, value, editor);
-            }
-
-            if (isEditorSpecified && editor.HasWord("treelist", "multilist", "droplist", "droptree", "groupeddroplink", "groupeddroplist"))
-            {
-                return GetListControl(variable, name, value, editor);
-            }
-
-            if (type == typeof(Item) || (isEditorSpecified && editor.HasWord("item")))
-            {
-                return GetItemControl(variable, name, value, editor, DataContextPanel);
-            }
-
-            if (type == typeof(bool) || (isEditorSpecified && editor.HasWord("bool")))
-            {
-                return GetBoolControl(variable, name, value, editor);
-            }
-
-            if (isEditorSpecified && editor.HasWord("role", "user"))
-            {
-                return GetSecurityControl(variable, name, value, editor);
-            }
-
-            if (isEditorSpecified && editor.HasWord("info"))
-            {
-                return new Literal { Text = value.ToString(), Class = "varHint" };
-            }
-
-            if (isEditorSpecified && editor.HasWord("marquee"))
-            {
-                return new Marquee { InnerHtml = value.ToString(), Name = name };
-            }
-
-            Sitecore.Web.UI.HtmlControls.Control edit;
-            if ((isEditorSpecified && editor.HasWord("multitext")) || 
-                (variable["lines"] != null && (int)variable["lines"] > 1))
-            {
-                var lines = MainUtil.GetInt(variable["lines"], 4);
-                edit = new Memo();
-                edit.Attributes.Add("rows", lines.ToString());
-                var placeholder = variable["Placeholder"];
-                if (placeholder is string)
+                if (variableEditor.CanHandle(variable, editor, valueType))
                 {
-                    edit.Attributes.Add("Placeholder", placeholder.ToString());
-                }
-            }
-            else if (variable["Options"] != null)
-            {
-                var psOptions = variable["Options"].BaseObject();
-                var options = new OrderedDictionary();
-                switch (psOptions)
-                {
-                    case OrderedDictionary _:
-                        options = psOptions as OrderedDictionary;
-                        break;
-                    case string _:
-                        var strOptions = ((string)variable["Options"]).Split('|');
-                        var i = 0;
-                        while (i < strOptions.Length)
-                        {
-                            options.Add(strOptions[i++], strOptions[i++]);
-                        }
-
-                        break;
-                    case Hashtable _:
-                        var hashOptions = variable["Options"] as Hashtable;
-                        foreach (var key in hashOptions.Keys)
-                        {
-                            options.Add(key, hashOptions[key]);
-                        }
-
-                        break;
-                    default:
-                        throw new Exception("Checklist options format unrecognized.");
-                }
-
-                var optionTooltips = new OrderedDictionary();
-                if (variable["OptionTooltips"] != null)
-                {
-                    var psOptionTooltips = variable["OptionTooltips"].BaseObject();
-
-                    if (psOptionTooltips is OrderedDictionary dictionary)
-                    {
-                        optionTooltips = dictionary;
-                    }
-                    else if (psOptionTooltips is Hashtable)
-                    {
-                        var hashOptions = variable["OptionTooltips"] as Hashtable;
-                        foreach (var key in hashOptions.Keys)
-                        {
-                            optionTooltips.Add(key, hashOptions[key]);
-                        }
-                    }
-                }
-
-                if (isEditorSpecified)
-                {
-                    if (editor.HasWord("link"))
-                    {
-                        return GetLinkControl(variable, name, value, editor, options);
-                    }
-
-                    if (editor.HasWord("radio"))
-                    {
-                        return GetRadioControl(variable, name, value, editor, options, optionTooltips);
-                    }
-
-                    if (editor.HasWord("check"))
-                    {
-                        return GetCheckboxControl(variable, name, value, editor, options, optionTooltips);
-                    }
-                }
-
-                edit = (Combobox)GetComboboxControl(variable, name, value, editor, options, optionTooltips);
-            }
-            else
-            {
-                var placeholder = variable["Placeholder"];
-                if (isEditorSpecified && editor.HasWord("pass"))
-                {
-                    edit = new PasswordExtended();
-                    if (placeholder is string)
-                    {
-                        ((PasswordExtended)edit).PlaceholderText = placeholder.ToString();
-                    }
-                    edit.Attributes["type"] = "password";
-                }
-                else if (isEditorSpecified && editor.HasWord("tristate"))
-                {
-                    edit = new Sitecore.Shell.Applications.ContentEditor.Tristate();
-                }
-                else
-                {
-                    edit = new EditExtended();
-                    if (placeholder is string)
-                    {
-                        ((EditExtended)edit).PlaceholderText = placeholder.ToString();
-                    }
-                    if (isEditorSpecified)
-                    {
-                        if (editor.HasWord("number"))
-                        {
-                            edit.Attributes["type"] = "number";
-                        }
-                        else if (editor.HasWord("email"))
-                        {
-                            edit.Attributes["type"] = "email";
-                        }
-                        else
-                        {
-                            edit.Attributes["type"] = "text";
-                        }
-                    }
+                    return variableEditor.CreateControl(variable, editorContext);
                 }
             }
 
-            var tip = variable["Tooltip"] as string;
-            if (!string.IsNullOrEmpty(tip))
-            {
-                edit.ToolTip = tip.RemoveHtmlTags();
-            }
-            edit.Style.Add("float", "left");
-            edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            edit.Class += " scContentControl textEdit clr" + value.GetType().FullName.Replace(".", "-");
-            edit.Value = value.ToString();
-
-            return edit;
+            return new Literal { Text = value.ToString(), Class = "varHint" };
         }
 
         protected void UserPickerClick()
@@ -1245,125 +579,18 @@ namespace Spe.Client.Applications
             var controlValue = control.Value;
             if (controlValue == null) return result;
 
-            if (control is DateTimePicker)
+            var editorContext = new VariableEditorContext { DataContextPanel = DataContextPanel };
+
+            foreach (var variableEditor in Editors)
             {
-                result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
-            }
-            else if (control is TreePicker picker)
-            {
-                var contextId = picker.DataContext;
-                var context = (DataContext)DataContextPanel.FindControl(contextId);
-                result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
-            }
-            else if (control is Border checkboxBorder && checkboxBorder.Class == "checkBoxWrapper")
-            {
-                foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))
+                if (variableEditor.CanReadValue(control))
                 {
-                    result.Add("Value", boolValue);
+                    variableEditor.ReadValue(control, result, editorContext);
+                    return result;
                 }
-            }
-            else if (control is Border rulesWrapper && rulesWrapper.Class == "rulesWrapper")
-            {
-                result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
-            }
-            else if (control is Combobox combobox)
-            {
-                var boolValue = combobox.Value;
-                result.Add("Value", boolValue);
-            }
-            else if (control is TreeList treeList)
-            {
-                var strIds = treeList.GetValue();
-                var ids = strIds.Split('|');
-                var db = string.IsNullOrEmpty(treeList.DatabaseName)
-                    ? Sitecore.Context.ContentDatabase
-                    : Database.GetDatabase(treeList.DatabaseName);
-                var items = ids.Select(p => db.GetItem(p)).ToList();
-                result.Add("Value", items);
-            }
-            else if (control is MultilistEx multilist)
-            {
-                var strIds = multilist.GetValue();
-                var ids = strIds.Split('|');
-                var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
-                result.Add("Value", items);
-            }
-            else if (control is GroupedDroplist groupedDroplist)
-            {
-                result.Add("Value",
-                    !string.IsNullOrEmpty(groupedDroplist.Value)
-                        ? groupedDroplist.Value
-                        : null);
-            }
-            else if (control is GroupedDroplink groupedDroplink)
-            {
-                result.Add("Value",
-                    !string.IsNullOrEmpty(groupedDroplink.Value)
-                        ? Sitecore.Context.ContentDatabase.GetItem(groupedDroplink.Value)
-                        : null);
-            }
-            else if (control is LookupEx lookup)
-            {
-                result.Add("Value",
-                    !string.IsNullOrEmpty(lookup.Value)
-                        ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
-                        : null);
-            }
-            else if (control is Border checkListBorder && checkListBorder.Class == "checkListWrapper")
-            {
-                var checkList = checkListBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
-                var values =
-                    checkList?.Controls.Cast<Control>()
-                        .Where(item => item is ChecklistItem)
-                        .Cast<ChecklistItem>()
-                        .Where(checkItem => checkItem.Checked)
-                        .Select(checkItem => checkItem.Value)
-                        .ToArray();
-                result.Add("Value", values);
-            }
-            else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
-            {
-                foreach (
-                    var radioItem in
-                    control.Controls.OfType<Radiobutton>()
-                        .Select(item => item)
-                        .Where(radioItem => radioItem.Checked))
-                {
-                    result.Add("Value", radioItem.Value);
-                    break;
-                }
-            }
-            else if (control is Edit || control is Memo)
-            {
-                var value = control.Value;
-                var typeName = GetClrTypeName(control.Class);
-                result.Add("Value", TryParse(value, typeName));
-            }
-            else if (control is UserPicker)
-            {
-                result.Add("Value", control.Value.Split('|'));
             }
 
             return result;
-        }
-
-        protected string GetClrTypeName(string classNames)
-        {
-            var typeMatch = TypeRegex.Match(classNames);
-            return typeMatch.Success ? typeMatch.Groups["type"].Value.Replace("-", ".") : string.Empty;
-        }
-
-        protected object TryParse(string inputValue, string typeName)
-        {
-            try
-            {
-                var targetType = Type.GetType(typeName);
-                return typeof(IConvertible).IsAssignableFrom(targetType) ? Convert.ChangeType(inputValue, Type.GetType(typeName)) : inputValue;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         protected void CancelClick()
@@ -1418,22 +645,9 @@ namespace Spe.Client.Applications
                     var content = args.Result;
                     var hideActions = !MainUtil.GetBool(args.Parameters["showActions"], false);
                     Sitecore.Context.ClientPage.ServerProperties[id] = content;
-                    SheerResponse.SetInnerHtml(id + "_renderer", GetRuleConditionsHtml(content, !hideActions));
+                    SheerResponse.SetInnerHtml(id + "_renderer", VariableEditorHelper.GetRuleConditionsHtml(content, !hideActions));
                 }
             }
-        }
-
-        private static string GetRuleConditionsHtml(string rule, bool showActions = false)
-        {
-            Assert.ArgumentNotNull(rule, "rule");
-            var output = new HtmlTextWriter(new StringWriter());
-            var renderer2 = new RulesRenderer(rule)
-            {
-                SkipActions = !showActions,
-                AllowMultiple = false
-            };
-            renderer2.Render(output);
-            return output.InnerWriter.ToString();
         }
 
     }

@@ -101,6 +101,14 @@ namespace Spe.Commands.Interactive
                             result.Add("Value", string.Empty);
                         }
                     }
+
+                    // Unwrap PSObject-wrapped values for proper type handling
+                    var resultValue = result["Value"].BaseObject();
+                    if (resultValue is IEnumerable<object> && !(resultValue is string))
+                    {
+                        resultValue = (resultValue as IEnumerable<object>).Select(p => p.BaseObject()).ToList();
+                    }
+                    result["Value"] = resultValue;
                 }
 
                 PutMessage(message);

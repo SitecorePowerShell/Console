@@ -5,6 +5,10 @@ Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Web API and Remoting/Advanced Web API/Web API
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: "Training : Advanced Web API"
   Versions:
   - Version: 1
     Fields:
@@ -17,11 +21,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "138db1db-9cf5-40f6-b236-6f3a051bca86"
+      Value: "a906e8da-bc37-47db-b8d9-61a6bff90489"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214507Z
+      Value: 20260410T012351Z

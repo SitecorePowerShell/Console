@@ -1,4 +1,4 @@
-﻿---
+---
 ID: "cace2e80-0cd2-48bd-894e-8784b7f2b00b"
 Parent: "ebe5fcb3-a06a-4fc7-9583-32e7f6815424"
 Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
@@ -31,7 +31,7 @@ Languages:
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\admin
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20260414T013835Z

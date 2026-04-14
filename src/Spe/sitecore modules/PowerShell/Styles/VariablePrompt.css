@@ -198,6 +198,8 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 }
 .scContentButton { color:#dc291e }
 .validator { color: red; margin-top:4px; float: left; }
+.varCharCounter { display: block; clear: both; float: left; width: 100%; text-align: right; font-size: 11px; color: #888; margin-top: 2px; }
+.varCharCounterOver { color: red; font-weight: bold; }
 
 textarea.scContentControl {
     padding: 8px 12px;
