@@ -5,6 +5,7 @@ using System.Web.UI;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch;
+using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -38,6 +39,27 @@ namespace Spe.Client.Controls
         protected Edit SearchPhrase;
         protected GalleryMenu SearchResults;
         public Item ItemFromQueryString { get; set; }
+
+        private const int DefaultPageSize = 10;
+
+        private int PageSize
+        {
+            get => int.TryParse(Sitecore.StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["MruPageSize"]),
+                out var v) && v > 0 ? v : DefaultPageSize;
+            set => Sitecore.Context.ClientPage.ServerProperties["MruPageSize"] = value.ToString();
+        }
+
+        private string LastPhrase
+        {
+            get => Sitecore.StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["MruLastPhrase"]);
+            set => Sitecore.Context.ClientPage.ServerProperties["MruLastPhrase"] = value ?? string.Empty;
+        }
+
+        protected void LoadMore()
+        {
+            PageSize += DefaultPageSize;
+            ChangeSearchPhrase();
+        }
 
         public override void HandleMessage(Message message)
         {
@@ -157,7 +179,15 @@ namespace Spe.Client.Controls
 
         protected void ChangeSearchPhrase()
         {
-            var parts = (SearchPhrase.Value ?? string.Empty).Split(':');
+            var raw = SearchPhrase.Value ?? string.Empty;
+            if (!string.Equals(raw, LastPhrase, StringComparison.Ordinal))
+            {
+                PageSize = DefaultPageSize;
+                LastPhrase = raw;
+            }
+            var includeBody = raw.StartsWith("~");
+            if (includeBody) raw = raw.Substring(1);
+            var parts = raw.Split(':');
             var database = parts.Length > 1 ? parts[0] : string.Empty;
             var phrase = parts.Length > 1 ? parts[1] : parts[0];
             var recentHeader = new MenuHeader();
@@ -169,57 +199,56 @@ namespace Spe.Client.Controls
                 {
                     recentHeader.Header =
                         Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_);
-                    foreach (Item item in ApplicationSettings.GetIseMruContainerItem().Children)
+                    var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+                    var entries = Spe.Client.Applications.PowerShellIse.ParseMruEntries(settings.MostRecentlyUsedScripts);
+                    var stale = new System.Collections.Generic.List<Spe.Client.Applications.PowerShellIse.MruEntry>();
+                    foreach (var entry in entries)
                     {
-                        var messageString = item["Message"];
-                        var message = Message.Parse(null, messageString);
-                        var db = message.Arguments["db"];
-                        var id = message.Arguments["id"];
-                        var scriptItem = Factory.GetDatabase(db).GetItem(id);
+                        var scriptItem = Factory.GetDatabase(entry.Db)?.GetItem(entry.Id);
                         if (scriptItem != null)
                         {
                             RenderRecent(scriptItem);
                         }
                         else
                         {
-                            item.Delete();
+                            stale.Add(entry);
                         }
+                    }
+                    if (stale.Count > 0)
+                    {
+                        foreach (var s in stale) entries.Remove(s);
+                        settings.MostRecentlyUsedScripts = Spe.Client.Applications.PowerShellIse.SerializeMruEntries(entries);
+                        settings.Save();
                     }
 
                 }
-                else if (database.Length > 0)
-                {
-                    recentHeader.Header =
-                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database,
-                            phrase, database);
-                    foreach (var index in ContentSearchManager.Indexes)
-                    {
-                        if (index.Name.StartsWith("sitecore_" + database) &&
-                            index.Name.EndsWith("_index"))
-                        {
-                            SearchDatabase(index.Name, phrase);
-                        }
-                    }
-                }
                 else
                 {
+                    var targetDb = database.Length > 0
+                        ? database
+                        : Databases.SelectedItem?.Value ?? ApplicationSettings.ScriptLibraryDb;
                     recentHeader.Header =
-                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases,
-                            phrase);
-                    var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
-                    var scriptsFound = SearchDatabase(masterIndex, phrase);
+                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database,
+                            phrase, targetDb);
+                    var renderedCount = 0;
+                    var totalCount = 0;
                     foreach (var index in ContentSearchManager.Indexes)
                     {
-                        if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) &&
-                            index.Name.StartsWith("sitecore_") &&
-                            index.Name.EndsWith("_index"))
+                        if (index.Name.StartsWith("sitecore_" + targetDb, StringComparison.OrdinalIgnoreCase) &&
+                            index.Name.EndsWith("_index", StringComparison.OrdinalIgnoreCase))
                         {
-                            scriptsFound |= SearchDatabase(index.Name, phrase);
+                            var (rendered, total) = SearchDatabase(index.Name, phrase, includeBody, PageSize);
+                            renderedCount += rendered;
+                            totalCount += total;
                         }
                     }
-                    if (!scriptsFound)
+                    if (totalCount == 0)
                     {
                         ShowScriptEnumerationProblem();
+                    }
+                    else
+                    {
+                        RenderResultsFooter(renderedCount, totalCount);
                     }
                 }
             }
@@ -246,34 +275,53 @@ namespace Spe.Client.Controls
             Scripts.CssStyle = "text-align: center;";
         }
 
-        private bool SearchDatabase(string indexName, string phrase)
+        private (int rendered, int total) SearchDatabase(string indexName, string phrase, bool includeBody, int pageSize)
         {
             using (
                 var context =
                     ContentSearchManager.GetIndex(indexName)
                         .CreateSearchContext())
             {
-                var scriptsFound = false;
-                // get all items in medialibrary
+                var rendered = 0;
                 var rootID = ApplicationSettings.ScriptLibraryRoot.ID.ToShortID().ToString().ToLower();
                 var query =
                     context.GetQueryable<SearchResultItem>()
                         .Where(
                             i =>
                                 i["_path"].Contains(rootID) &&
-                                i["_templatename"] == "PowerShell Script").Take(10);
+                                i["_templatename"] == "PowerShell Script");
                 if (!string.IsNullOrWhiteSpace(phrase))
                 {
-                    query = query.Where(i => i["_name"].Contains(phrase));
+                    query = includeBody
+                        ? query.Where(i => i["_name"].Contains(phrase) || i["_content"].Contains(phrase))
+                        : query.Where(i => i["_name"].Contains(phrase));
                 }
-                foreach (var result in query)
+                var results = query.Take(pageSize).GetResults();
+                foreach (var hit in results.Hits)
                 {
-                    scriptsFound = true;
-                    var scriptItem = result.GetItem();
-                    RenderRecent(scriptItem);
+                    var scriptItem = hit.Document.GetItem();
+                    if (scriptItem != null)
+                    {
+                        // Re-fetch a full item via the database to ensure all fields
+                        // (DisplayName, Paths) are populated, not just the indexed subset.
+                        var fullItem = scriptItem.Database.GetItem(scriptItem.ID);
+                        RenderRecent(fullItem ?? scriptItem);
+                        rendered++;
+                    }
                 }
-                return scriptsFound;
+                return (rendered, results.TotalSearchResults);
             }
+        }
+
+        private void RenderResultsFooter(int rendered, int total)
+        {
+            var loadMore = rendered < total
+                ? " <a href=\"#\" class=\"mruLoadMore\" onclick=\"scForm.postEvent(this,event,'LoadMore');return false;\">Load more</a>"
+                : string.Empty;
+            Context.ClientPage.AddControl(Scripts, new Literal
+            {
+                Text = $"<div class=\"mruResultsFooter\">Showing {rendered} of {total}{loadMore}</div>"
+            });
         }
 
         private void RenderRecent(Item scriptItem)
@@ -304,12 +352,21 @@ namespace Spe.Client.Controls
                                 ItemFromQueryString.Database.Name == scriptItem.Database.Name;
 
             control["ScriptIcon"] = "<div class=\"versionNum\">" + iconUrl + "</div>";
-            control["Location"] = scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length-1);
+            control["Location"] = GetDisplayLocation(scriptItem.Paths.ParentPath);
             control["Database"] = scriptItem.Database.Name;
-            control["Name"] = scriptItem.DisplayName;
+            control["Name"] = string.IsNullOrEmpty(scriptItem.DisplayName) ? scriptItem.Name : scriptItem.DisplayName;
             control["Click"] = string.Format("ExecuteMruItem(\"ise:mruopen(id={0},db={1})\")", scriptItem.ID,
                 scriptItem.Database.Name);
             control["Class"] = currentScript ? "selected" : string.Empty;
+        }
+
+        private static string GetDisplayLocation(string parentPath)
+        {
+            if (string.IsNullOrEmpty(parentPath)) return string.Empty;
+            var prefix = ApplicationSettings.ScriptLibraryPath.TrimEnd('/');
+            return parentPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                ? parentPath.Substring(prefix.Length)
+                : parentPath;
         }
     }
 }

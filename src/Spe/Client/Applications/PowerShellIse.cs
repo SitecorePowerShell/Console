@@ -473,48 +473,51 @@ namespace Spe.Client.Applications
 
             var db = scriptItem.Database.Name;
             var id = scriptItem.ID.ToString();
-            var name = scriptItem.Name;
-            var icon = scriptItem[FieldIDs.Icon];
 
-            var mruMenu = ApplicationSettings.GetIseMruContainerItem();
-            var mruItems = mruMenu.Children;
-            if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            var entries = ParseMruEntries(settings.MostRecentlyUsedScripts);
+
+            // Remove any existing entry for this script, then prepend it.
+            entries.RemoveAll(e => string.Equals(e.Id, id, StringComparison.OrdinalIgnoreCase)
+                                   && string.Equals(e.Db, db, StringComparison.OrdinalIgnoreCase));
+            entries.Insert(0, new MruEntry { Id = id, Db = db });
+
+            // Keep only the 10 most recent.
+            if (entries.Count > 10)
             {
-                var openedScript = mruItems.FirstOrDefault(mruItem => mruItem["Message"].Contains(id)) ??
-                                   mruMenu.Add(Guid.NewGuid().ToString("n"),
-                                       new TemplateID(Sitecore.TemplateIDs.MenuItem));
-                openedScript.Edit(args =>
-                {
-                    openedScript["Message"] = $"ise:mruopen(id={id},db={db})";
-                    openedScript["Icon"] = icon;
-                    openedScript[FieldIDs.Icon] = icon;
-                    openedScript["Display name"] = name;
-                    openedScript[FieldIDs.DisplayName] = name;
-                    openedScript[FieldIDs.Sortorder] = "0";
-                    openedScript.Publishing.NeverPublish = true;
-                });
-
-                var sortOrder = 1;
-                foreach (Item mruItem in mruItems)
-                {
-                    if (sortOrder > 9)
-                    {
-                        mruItem.Delete();
-                        continue;
-                    }
-
-                    if (!(mruItem["Message"].Contains(id)))
-                    {
-                        var item = mruItem;
-                        item.Edit(args =>
-                        {
-                            item[Sitecore.FieldIDs.Sortorder] = sortOrder.ToString("G");
-                            item.Publishing.NeverPublish = true;
-                            sortOrder++;
-                        });
-                    }
-                }
+                entries = entries.Take(10).ToList();
             }
+
+            settings.MostRecentlyUsedScripts = SerializeMruEntries(entries);
+            settings.Save();
+        }
+
+        public class MruEntry
+        {
+            public string Id { get; set; }
+            public string Db { get; set; }
+        }
+
+        public static System.Collections.Generic.List<MruEntry> ParseMruEntries(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return new System.Collections.Generic.List<MruEntry>();
+            }
+            try
+            {
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<MruEntry>>(json)
+                       ?? new System.Collections.Generic.List<MruEntry>();
+            }
+            catch
+            {
+                return new System.Collections.Generic.List<MruEntry>();
+            }
+        }
+
+        public static string SerializeMruEntries(System.Collections.Generic.List<MruEntry> entries)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(entries);
         }
 
         [HandleMessage("ise:new", true)]

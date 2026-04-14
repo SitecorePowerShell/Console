@@ -45,12 +45,10 @@ namespace Spe
             "No scripts found...Do you need to re-index your databases?";
         public const string MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database =
             "Scripts matching: '{0}' in '{1}*' database";
-        public const string MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases =
-            "Scripts matching: '{0}' in all databases";
 
         public const string
             MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database =
-                "Script name to search for - prefix with e.g. 'master:' to narrow to specific database";
+                "Search scripts. '~' includes body, 'db:' switches database.";
         public const string
             PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor = "Error while rendering this editor";
 

@@ -1,8 +1,8 @@
 ﻿---
 ID: "d0620274-d94d-4b13-bd66-ce3104daee0d"
-Parent: "86d29da6-ffad-4f0e-a659-aae49f0e4a6b"
+Parent: "43a30232-5a27-47d7-bfed-336a7b805003"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Most Recently Used/LastScript
 SharedFields:
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type

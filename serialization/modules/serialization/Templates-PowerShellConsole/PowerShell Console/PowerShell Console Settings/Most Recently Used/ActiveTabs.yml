@@ -1,8 +1,8 @@
 ﻿---
 ID: "eb3a26de-5412-42f3-9538-ff8ac47805a8"
-Parent: "86d29da6-ffad-4f0e-a659-aae49f0e4a6b"
+Parent: "43a30232-5a27-47d7-bfed-336a7b805003"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/ActiveTabs
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Most Recently Used/ActiveTabs
 SharedFields:
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
@@ -21,7 +21,7 @@ Languages:
     Value: Active tabs
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: Serialized state of the PowerShell ISE open tabs as JSON. Stores each tab's script item id, database, modified flag, unsaved content, deleted-source marker and the currently active tab index. Populated by the ISE after script execution when Save active tabs is enabled and consumed on ISE load to rebuild the editor tab set. Not intended for direct editing.
+    Value: "Serialized state of the PowerShell ISE open tabs as JSON. Stores each tab's script item id, database, modified flag, unsaved content, deleted-source marker and the currently active tab index. Populated by the ISE after script execution when Save active tabs is enabled and consumed on ISE load to rebuild the editor tab set. Not intended for direct editing."
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Open ISE tabs restored when the editor is reopened

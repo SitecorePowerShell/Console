@@ -55,6 +55,7 @@ namespace Spe.Core.Settings
         private const string BackgroundColorSettingFieldName = "BackgroundColor";
         private const string FontSizeSettingFieldName = "FontSize";
         private const string FontFamilySettingFieldName = "FontFamily";
+        private const string MostRecentlyUsedScriptsFieldName = "MostRecentlyUsedScripts";
 
         private static readonly Dictionary<string, ApplicationSettings> instances = new();
 
@@ -102,6 +103,7 @@ namespace Spe.Core.Settings
         public bool SaveLastScript { get; private set; }
         public bool SaveActiveTabs { get; private set; }
         public string ActiveTabs { get; set; }
+        public string MostRecentlyUsedScripts { get; set; }
         public int HostWidth { get; set; }
         public int HostHeight { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
@@ -225,21 +227,6 @@ namespace Spe.Core.Settings
             }
         }
 
-        public static Item GetIseMruContainerItem()
-        {
-            var currentUserItem = GetInstance(ApplicationNames.ISE).GetSettingsDtoForSave();
-            var mruItem = currentUserItem.Children["MRU"] ??
-                          currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
-            if (!mruItem.Publishing.NeverPublish)
-            {
-                mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
-            }
-
-            mruItem.Edit(args => mruItem.Appearance.Icon = FolderIcon);
-
-            return mruItem;
-        }
-
         public void Save()
         {
             var configuration = GetSettingsDtoForSave();
@@ -254,6 +241,7 @@ namespace Spe.Core.Settings
                         ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
                         ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked = SaveActiveTabs;
                         configuration[ActiveTabsSettingFieldName] = ActiveTabs;
+                        configuration[MostRecentlyUsedScriptsFieldName] = MostRecentlyUsedScripts;
                         ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;
                         ((CheckboxField)configuration.Fields[PerTabOutputSettingFieldName]).Checked = PerTabOutput;
                         configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
@@ -286,6 +274,8 @@ namespace Spe.Core.Settings
                             () => ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked);
                     ActiveTabs = TryGetSettingValue(ActiveTabsSettingFieldName, string.Empty,
                         () => configuration[ActiveTabsSettingFieldName]);
+                    MostRecentlyUsedScripts = TryGetSettingValue(MostRecentlyUsedScriptsFieldName, string.Empty,
+                        () => configuration[MostRecentlyUsedScriptsFieldName]);
                     LiveAutocompletion =
                         TryGetSettingValue(LiveAutocompletionSettingFieldName, false,
                             () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
