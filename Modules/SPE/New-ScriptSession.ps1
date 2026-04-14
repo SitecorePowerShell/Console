@@ -2,27 +2,32 @@ function New-ScriptSession {
     <#
         .SYNOPSIS
             Creates a new script session in Sitecore PowerShell Extensions via web service calls.
-    
+
         .EXAMPLE
-            The following remotely connects to an instance of Sitecore initializes a session.
-            
-            New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-    
-            Username      : admin
-            Password      : b
-            ConnectionUri : http://concentrasitecore/
-            SessionId     : 528b9865-a69e-4875-919f-12209646c934
-            Credential    : 
-        
+            The following remotely connects to an instance of Sitecore using the legacy shared secret.
+
+            New-ScriptSession -Username admin -SharedSecret $secret -ConnectionUri https://remotesitecore
+
+        .EXAMPLE
+            The following remotely connects using an API Key (Access Key Id).
+
+            New-ScriptSession -AccessKeyId "spe_a3f7b2c891d4e6f0a1b2c3d4" -SharedSecret $secret -ConnectionUri https://remotesitecore
+
         .PARAMETER Username
             Specifies the Sitecore identity used for connecting to a remote instance.
+            Required for Password and SharedSecret parameter sets. Not used with AccessKey.
 
         .PARAMETER Password
             Specifies the Sitecore password associated with the identity.
 
         .PARAMETER SharedSecret
-            Specifies the SharedSecret used to authenticate the identity. 
-        
+            Specifies the shared secret used for HMAC authentication.
+
+        .PARAMETER AccessKeyId
+            Specifies the Access Key Id of a Remoting API Key item. When provided, the
+            JWT includes a kid header for direct key lookup. Username is not required
+            because identity is determined by the Impersonate User field on the API Key item.
+
         .PARAMETER Timeout
             Specifies the duration of the wait, in seconds.
 
@@ -34,7 +39,7 @@ function New-ScriptSession {
 
         .PARAMETER UseDefaultCredential
             Indicates that this command uses the default credential. This command sets the UseDefaultCredential property in the resulting proxy object to True. This is an alternative to using the Credential parameter.
-        
+
         .LINK
             Invoke-RemoteScript
 
@@ -47,7 +52,9 @@ function New-ScriptSession {
     #>
     [CmdletBinding(DefaultParameterSetName="All")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "All")]
+        [Parameter(Mandatory = $true, ParameterSetName = "Password")]
+        [Parameter(Mandatory = $true, ParameterSetName = "SharedSecret")]
         [ValidateNotNullOrEmpty()]
         [string]$Username = $null,
 
@@ -56,8 +63,13 @@ function New-ScriptSession {
         [string]$Password = $null,
 
         [Parameter(Mandatory = $true, ParameterSetName = "SharedSecret")]
+        [Parameter(Mandatory = $true, ParameterSetName = "AccessKey")]
         [ValidateNotNullOrEmpty()]
         [string]$SharedSecret = $null,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "AccessKey")]
+        [ValidateNotNullOrEmpty()]
+        [string]$AccessKeyId = $null,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -75,18 +87,25 @@ function New-ScriptSession {
         [Parameter(Mandatory = $false, ParameterSetName = "Password")]
         [Parameter(Mandatory = $false, ParameterSetName = "SharedSecret")]
         [Parameter(Mandatory = $false, ParameterSetName = "DefaultCredentials")]
-        [switch]$UseDefaultCredentials
+        [switch]$UseDefaultCredentials,
+
+        [Parameter(Mandatory = $false, ParameterSetName = "SharedSecret")]
+        [Parameter(Mandatory = $false, ParameterSetName = "AccessKey")]
+        [ValidateSet("HS256", "HS384", "HS512")]
+        [string]$Algorithm = "HS256"
     )
-    
+
     begin {
         $sessionId = [guid]::NewGuid()
         $session = @{
             "Username" = [string]$Username
             "Password" = [string]$Password
             "SharedSecret" = [string]$SharedSecret
+            "AccessKeyId" = [string]$AccessKeyId
             "SessionId" = [string]$sessionId
             "Credential" = [System.Management.Automation.PSCredential]$Credential
             "UseDefaultCredentials" = [bool]$UseDefaultCredentials
+            "Algorithm" = [string]$Algorithm
             "Connection" = @()
             "PersistentSession" = $false
             "_HttpClients" = @{}
@@ -104,7 +123,7 @@ function New-ScriptSession {
             $session["Connection"] += @($connection)
         }
     }
-    
+
     end {
         [PSCustomObject]$session
     }

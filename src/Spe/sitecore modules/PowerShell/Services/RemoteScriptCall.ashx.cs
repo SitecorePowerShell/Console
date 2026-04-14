@@ -84,6 +84,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private const string FlatErrorScript =
             "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress";
+        private const string ParamAction = "action";
         private const string ParamSkipUnpack = "skipunpack";
         private const string ParamSkipExisting = "skipexisting";
         private const string ParamScDatabase = "sc_database";
@@ -116,8 +117,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 serviceName = string.Empty;
             }
 
-            PowerShellLog.Audit($"[Remoting] action=requestReceived service={serviceName} ip={GetIp(request)}");
-            PowerShellLog.Debug($"[Remoting] action=requestUrl url={request.Url}");
+            PowerShellLog.Audit($"[Remoting] action=requestReceived service={serviceName} ip={GetIp(request)} rid={GetRequestId()}");
+            PowerShellLog.Debug($"[Remoting] action=requestUrl url={LogSanitizer.RedactUrl(request.Url)}");
 
             if (!CheckServiceEnabled(context, serviceName))
             {
@@ -129,7 +130,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name}");
+            var authenticatedApiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name} apiKey={authenticatedApiKey?.Name ?? "none"} rid={GetRequestId()}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
 
@@ -223,54 +225,79 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     try
                     {
                         var provider = ServiceAuthenticationManager.AuthenticationProvider;
+                        var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
                         TokenValidationResult tokenResult = null;
                         RemotingApiKey matchedApiKey = null;
                         var isValid = false;
 
-                        // Step 1: Try API Key items first (if any exist)
-                        var apiKeyResult = TryApiKeyAuthentication(token, request, provider, out username, out tokenResult);
-                        if (apiKeyResult != null)
-                        {
-                            isValid = true;
-                            matchedApiKey = apiKeyResult;
-                        }
+                        // Extract kid (Key ID) from JWT header to determine auth path
+                        var kid = SharedSecretAuthenticationProvider.ExtractKeyId(token);
+                        var authority = request.Url.GetLeftPart(UriPartial.Authority);
 
-                        // Step 2: No API Key matched - try legacy config shared secret
-                        if (!isValid)
+                        if (!string.IsNullOrEmpty(kid))
                         {
+                            // Path A: kid present - O(1) lookup by Access Key Id.
+                            // Only API Key items are checked; no exhaustive enumeration.
+                            if (!RemotingApiKeyProvider.IsRegistryLoaded())
+                            {
+                                PowerShellLog.Warn($"[Remoting] action=coldStart ip={ip} rid={GetRequestId()}");
+                                context.Response.AddHeader("Retry-After", "2");
+                                SetErrorResponse(context, 503, "Service is starting. Please retry.");
+                                return false;
+                            }
+
+                            matchedApiKey = RemotingApiKeyProvider.FindByAccessKeyId(kid);
+                            if (matchedApiKey != null && sharedSecretProvider != null)
+                            {
+                                isValid = sharedSecretProvider.ValidateToken(
+                                    token, authority, out username, out tokenResult,
+                                    matchedApiKey.SharedSecret, skipUsernameValidation: true);
+
+                                if (!isValid)
+                                {
+                                    PowerShellLog.Debug($"[Remoting] action=apiKeySignatureFailed kid={kid} apiKey={matchedApiKey.Name}");
+                                    matchedApiKey = null;
+                                }
+                            }
+                            else if (matchedApiKey == null)
+                            {
+                                PowerShellLog.Debug($"[Remoting] action=apiKeyNotFound kid={kid}");
+                            }
+                        }
+                        else
+                        {
+                            // Path B: No kid - try legacy config shared secret only.
+                            // Username (Name claim) is required for this path.
                             try
                             {
                                 if (provider is ISpeAuthenticationProviderEx providerEx)
                                 {
-                                    isValid = providerEx.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username, out tokenResult);
+                                    isValid = providerEx.Validate(token, authority, out username, out tokenResult);
                                 }
                                 else
                                 {
-                                    isValid = provider.Validate(token, request.Url.GetLeftPart(UriPartial.Authority), out username);
+                                    isValid = provider.Validate(token, authority, out username);
                                 }
                             }
                             catch (SecurityException)
                             {
-                                // Legacy secret validation failed with DetailedAuthenticationErrors enabled.
                                 PowerShellLog.Debug("[Remoting] action=legacySecretFailed");
-                            }
-
-                            // Step 3: Legacy secret matched - check if it also matches an API Key
-                            if (isValid)
-                            {
-                                var configSecret = (provider as SharedSecretAuthenticationProvider)?.SharedSecret;
-                                if (!string.IsNullOrEmpty(configSecret))
-                                {
-                                    matchedApiKey = RemotingApiKeyProvider.FindBySecret(configSecret);
-                                }
                             }
                         }
 
                         if (isValid)
                         {
-                            // Apply API Key impersonation if configured
-                            if (matchedApiKey != null && matchedApiKey.HasImpersonation)
+                            // API Keys require an Impersonate User for identity
+                            if (matchedApiKey != null)
                             {
+                                if (!matchedApiKey.HasImpersonation)
+                                {
+                                    PowerShellLog.Audit("[Remoting] action=apiKeyDenied reason=noImpersonateUser apiKey={0} ip={1} rid={2}",
+                                        matchedApiKey.Name, ip, GetRequestId());
+                                    SetErrorResponse(context, 403, "API Key requires an Impersonate User. Configure the field on the API Key item.");
+                                    return false;
+                                }
+
                                 username = matchedApiKey.ImpersonateUser;
                             }
 
@@ -282,17 +309,30 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                                 if (!throttle.Allowed)
                                 {
-                                    PowerShellLog.Audit("[Remoting] action=throttled apiKey={0} ip={1}",
-                                        matchedApiKey.Name, ip);
-                                    SetErrorResponse(context, 429, "Rate limit exceeded.");
-                                    return false;
+                                    var throttlePolicy = RemotingPolicyManager.ResolvePolicy(matchedApiKey.Policy);
+                                    if (string.Equals(throttle.Action, "Bypass", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (throttlePolicy.AuditLevel >= AuditLevel.Standard)
+                                        {
+                                            PowerShellLog.Audit("[Remoting] action=throttleBypassed apiKey={0} ip={1} rid={2}",
+                                                matchedApiKey.Name, ip, GetRequestId());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (throttlePolicy.AuditLevel >= AuditLevel.Violations)
+                                        {
+                                            PowerShellLog.Audit("[Remoting] action=throttled apiKey={0} ip={1} rid={2}",
+                                                matchedApiKey.Name, ip, GetRequestId());
+                                        }
+                                        SetErrorResponse(context, 429, "Rate limit exceeded.");
+                                        return false;
+                                    }
                                 }
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Audit("[Remoting] action=bearerAuthSuccess user={0} ip={1} scope={2} clientSession={3} apiKey={4}",
-                                username, ip, tokenResult?.Scope ?? "none", tokenResult?.ClientSessionId ?? "none",
-                                matchedApiKey?.Name ?? "none");
+                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess user={username} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} apiKey={matchedApiKey?.Name ?? "none"}");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
@@ -304,14 +344,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed user={0} ip={1}", username ?? "unknown", ip);
+                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed user={0} ip={1} rid={2}", username ?? "unknown", ip, GetRequestId());
                             RejectAuthenticationMethod(context, serviceName, username);
                             return false;
                         }
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Audit("[Remoting] action=bearerAuthError user={0} ip={1} error={2}", username ?? "unknown", ip, ex.Message);
+                        PowerShellLog.Audit("[Remoting] action=bearerAuthError user={0} ip={1} error={2} rid={3}", username ?? "unknown", ip, LogSanitizer.SanitizeValue(ex.Message), GetRequestId());
                         RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;
                     }
@@ -370,6 +410,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var pathParam = requestParameters.Get(ParamPath);
             var originParam = requestParameters.Get(ParamScriptDb);
             var sessionId = requestParameters.Get(ParamSessionId);
+
+            // Handle built-in actions without policy enforcement.
+            var action = requestParameters.Get(ParamAction);
+            if ("cleanup".Equals(action, StringComparison.OrdinalIgnoreCase))
+            {
+                ProcessCleanup(context, sessionId, identity.Name);
+                return;
+            }
+
+            if ("test".Equals(action, StringComparison.OrdinalIgnoreCase))
+            {
+                ProcessTest(context, identity.Name);
+                return;
+            }
+
             var persistentSession = requestParameters.Get(ParamPersistentSession).Is("true");
             var rawOutput = requestParameters.Get(ParamRawOutput).Is("true");
             var outputFormat = requestParameters.Get(ParamOutputFormat) ?? string.Empty;
@@ -464,6 +519,34 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
+        private const string RequestIdKey = "SpeRequestId";
+
+        /// <summary>
+        /// Returns the correlation ID for the current HTTP request, generating one if needed.
+        /// </summary>
+        private static string GetRequestId()
+        {
+            var ctx = HttpContext.Current;
+            if (ctx == null) return "no-ctx";
+            var rid = ctx.Items[RequestIdKey] as string;
+            if (rid != null) return rid;
+            rid = Guid.NewGuid().ToString("N").Substring(0, 8);
+            ctx.Items[RequestIdKey] = rid;
+            return rid;
+        }
+
+        /// <summary>
+        /// Resolves the active remoting policy from the current HTTP context.
+        /// Returns <see cref="RemotingPolicy.Unrestricted"/> when no API key is present
+        /// (legacy shared-secret sessions).
+        /// </summary>
+        private static RemotingPolicy GetActivePolicy()
+        {
+            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            if (apiKey == null) return RemotingPolicy.Unrestricted;
+            return RemotingPolicyManager.ResolvePolicy(apiKey.Policy);
+        }
+
         public bool IsReusable => true;
 
         private static void SetErrorResponse(HttpContext context, int statusCode, string message, bool suppressFormsAuth = false)
@@ -532,49 +615,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
         /// <summary>
         /// Attempts to validate a Bearer token against each enabled API Key item's shared secret.
         /// Returns the matched API Key on success, or null if no key matches.
+        /// Sets <paramref name="registryAvailable"/> to false when the API key registry
+        /// could not be loaded (e.g. during cold start).
         /// </summary>
-        private static RemotingApiKey TryApiKeyAuthentication(
-            string token, HttpRequest request, ISpeAuthenticationProvider provider,
-            out string username, out TokenValidationResult tokenResult)
-        {
-            username = null;
-            tokenResult = null;
 
-            var allKeys = RemotingApiKeyProvider.FindAllEnabled();
-            if (allKeys == null) return null;
 
-            var authority = request.Url.GetLeftPart(UriPartial.Authority);
-            var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
-            if (sharedSecretProvider == null) return null;
-
-            foreach (var apiKey in allKeys)
-            {
-                try
-                {
-                    bool isValid;
-                    if (sharedSecretProvider is ISpeAuthenticationProviderEx providerEx)
-                    {
-                        isValid = providerEx.Validate(token, authority, out username, out tokenResult, apiKey.SharedSecret);
-                    }
-                    else
-                    {
-                        isValid = sharedSecretProvider.Validate(token, authority, out username);
-                    }
-
-                    if (isValid)
-                    {
-                        PowerShellLog.Audit($"[Remoting] action=apiKeyValidated apiKey={apiKey.Name}");
-                        return apiKey;
-                    }
-                }
-                catch (SecurityException)
-                {
-                    // This key's secret didn't match - try the next one
-                }
-            }
-
-            return null;
-        }
 
         private static bool CheckServiceAuthentication(HttpContext context, string serviceName, bool isAuthenticated)
         {
@@ -593,7 +638,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var ip = GetIp(context.Request);
             var errorMessage = $"Unauthorized request to the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Audit($"[Remoting] action=authRejected service={serviceName} ip={ip} user={username ?? "unknown"}");
+            PowerShellLog.Audit($"[Remoting] action=authRejected service={serviceName} ip={ip} user={username ?? "unknown"} rid={GetRequestId()}");
 
             if (ex != null)
             {
@@ -610,7 +655,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var ip = GetIp(context.Request);
             var errorMessage = $"The specified user is not authorized for the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Audit($"[Remoting] action=userUnauthorized service={serviceName} ip={ip} user={authUserName}");
+            PowerShellLog.Audit($"[Remoting] action=userUnauthorized service={serviceName} ip={ip} user={authUserName} rid={GetRequestId()}");
 
             return false;
         }
@@ -677,7 +722,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
             {
                 var ip = GetIp(context.Request);
-                PowerShellLog.Audit($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip} path=\"{pathParam}\"");
+                PowerShellLog.Audit($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip} path=\"{pathParam}\" rid={GetRequestId()}");
                 PowerShellLog.Error($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip}");
                 SetErrorResponse(context, 403, "Path traversal is not allowed.");
                 return;
@@ -718,7 +763,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 fileInfo.Refresh();
-                PowerShellLog.Audit($"[Remoting] action=fileUploaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\"");
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+                {
+                    PowerShellLog.Audit($"[Remoting] action=fileUploaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\" rid={GetRequestId()}");
+                }
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -750,7 +798,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 var fileInfo = new FileInfo(file);
                 AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
-                PowerShellLog.Audit($"[Remoting] action=fileDownloaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\"");
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+                {
+                    PowerShellLog.Audit($"[Remoting] action=fileDownloaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\" rid={GetRequestId()}");
+                }
                 try
                 {
                     context.Response.TransmitFile(file);
@@ -862,7 +913,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     content.CopyTo(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     mc.CreateFromStream(ms, fileName, mco);
-                    PowerShellLog.Audit($"[Remoting] action=mediaUploaded service={serviceName} file={fileName} size={ms.Length} destination=\"{mco.Destination}\"");
+                    if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+                    {
+                        PowerShellLog.Audit($"[Remoting] action=mediaUploaded service={serviceName} file={fileName} size={ms.Length} destination=\"{mco.Destination}\" rid={GetRequestId()}");
+                    }
                 }
             }
             else
@@ -884,7 +938,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             media.SetStream(mediaStream);
                         }
                     }
-                    PowerShellLog.Audit($"[Remoting] action=mediaUpdated service={serviceName} item=\"{mediaItem.Name} {mediaItem.ID}\" size={size}");
+                    if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+                    {
+                        PowerShellLog.Audit($"[Remoting] action=mediaUpdated service={serviceName} item=\"{mediaItem.Name} {mediaItem.ID}\" size={size} rid={GetRequestId()}");
+                    }
                 }
             }
         }
@@ -922,7 +979,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
             if (!str.StartsWith(".", StringComparison.InvariantCulture))
                 str = "." + str;
             AddContentHeaders(context, mediaItem.Name + str, mediaItem.Size);
-            PowerShellLog.Audit($"[Remoting] action=mediaDownloaded service={serviceName} item=\"{mediaItem.Name}{str} {mediaItem.ID}\" size={mediaItem.Size}");
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+            {
+                PowerShellLog.Audit($"[Remoting] action=mediaDownloaded service={serviceName} item=\"{mediaItem.Name}{str} {mediaItem.ID}\" size={mediaItem.Size} rid={GetRequestId()}");
+            }
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
@@ -934,6 +994,58 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 stream.CopyTo(memory);
                 return memory.ToArray();
             }
+        }
+
+        private static void ProcessCleanup(HttpContext context, string sessionId, string user)
+        {
+            var ip = GetIp(context.Request);
+
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                SetErrorResponse(context, 400, "Session ID is required for cleanup.");
+                return;
+            }
+
+            var disposed = 0;
+            foreach (var session in ScriptSessionManager.GetMatchingSessionsForAnyUserSession(sessionId).ToList())
+            {
+                if (session.ApplianceType == "RemoteAutomation")
+                {
+                    ScriptSessionManager.RemoveSession(session);
+                    disposed++;
+                }
+            }
+
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+            {
+                PowerShellLog.Audit("[Remoting] action=sessionCleanup user={0} ip={1} sessionId={2} disposed={3} rid={4}",
+                    user, ip, sessionId, disposed, GetRequestId());
+            }
+
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/plain";
+            context.Response.Write($"Disposed {disposed} session(s).");
+        }
+
+        private static void ProcessTest(HttpContext context, string user)
+        {
+            var ip = GetIp(context.Request);
+
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+            {
+                PowerShellLog.Audit("[Remoting] action=connectionTest user={0} ip={1} rid={2}", user, ip, GetRequestId());
+            }
+
+            var result = new
+            {
+                SPEVersion = CurrentVersion.SpeVersion.ToString(),
+                SitecoreVersion = SitecoreVersion.Current.ToString(),
+                CurrentTime = DateTime.UtcNow.ToString("o")
+            };
+
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "application/json";
+            context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(result));
         }
 
         private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession, bool useStructuredErrors = false)
@@ -986,10 +1098,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 streams.Add("stream", request.InputStream);
             }
 
-            ProcessScript(context, script, serviceName, streams, scriptItemId: scriptItem.ID);
+            ProcessScript(context, script, serviceName, streams, scriptItemId: scriptItem.ID, isInlineScript: false);
         }
 
-        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false, ID scriptItemId = null)
+        private static void ProcessScript(HttpContext context, string script, string serviceName, Dictionary<string, Stream> streams, string cliXmlArgs = null, string outputFormat = "clixml", string sessionId = null, bool persistentSession = false, bool useStructuredErrors = false, ID scriptItemId = null, bool isInlineScript = true)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -1004,66 +1116,97 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
             var clientSession = tokenResult?.ClientSessionId ?? "none";
 
-            PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} clientSession={4}",
-                user, ip, session.ID, scriptHash, clientSession);
-
-            // Determine language mode restriction for user scripts (applied just before execution, restored after)
-            var languageMode = WebServiceSettings.GetLanguageMode(serviceName);
-
-            // Validate script against command restrictions
-            var scope = tokenResult?.Scope;
-            if (!ScriptValidator.ValidateScript(serviceName, script, scope, out var blockedCommand))
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
             {
-                PowerShellLog.Audit("[Remoting] action=scriptRejected user={0} ip={1} blockedCommand={2} clientSession={3}",
-                    user, ip, blockedCommand, clientSession);
-                context.Response.Headers["X-SPE-Restriction"] = "command-blocked";
-                context.Response.Headers["X-SPE-BlockedCommand"] = blockedCommand;
-                SetErrorResponse(context, 403, $"Script contains blocked command: {blockedCommand}");
-                return;
+                PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} clientSession={4} rid={5}",
+                    user, ip, session.ID, scriptHash, clientSession, GetRequestId());
             }
 
-            // Resolve restriction profile (API Key > JWT scope > service default)
-            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
-            var apiKeyProfile = apiKey?.Profile;
-            var profile = RestrictionProfileManager.ResolveProfile(serviceName, scope, apiKeyProfile);
+            // Language mode defaults to FullLanguage; policy may restrict it below
+            var languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
 
-            // Profile-based validation (supports audit-only enforcement)
-            if (profile != null && profile != RestrictionProfile.Unrestricted)
+            // Resolve remoting policy (API Key > unrestricted for legacy shared-secret)
+            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+
+            RemotingPolicy policy;
+            if (apiKey != null)
             {
-                if (!ScriptValidator.ValidateScriptAgainstProfile(profile, script, user, serviceName, out var profileBlockedCommand))
+                if (!apiKey.HasPolicy)
                 {
-                    PowerShellLog.Audit("[Remoting] action=scriptRejectedByProfile user={0} ip={1} profile={2} blockedCommand={3} clientSession={4}",
-                        user, ip, profile.Name, profileBlockedCommand, clientSession);
-                    context.Response.Headers["X-SPE-Restriction"] = "profile-blocked";
-                    context.Response.Headers["X-SPE-BlockedCommand"] = profileBlockedCommand;
-                    context.Response.Headers["X-SPE-Profile"] = profile.Name;
-                    SetErrorResponse(context, 403, $"Script blocked by restriction profile '{profile.Name}': {profileBlockedCommand}");
+                    PowerShellLog.Audit(
+                        "[Remoting] action=apiKeyDenied reason=noPolicyAssigned apiKey={0} user={1} ip={2} rid={3}",
+                        apiKey.Name, user, ip, GetRequestId());
+                    SetErrorResponse(context, 403, "The request is not authorized. A remoting policy is required.");
                     return;
                 }
 
-                // Profile's language mode overrides the service-level setting when more restrictive
-                if (profile.LanguageMode > languageMode)
-                {
-                    languageMode = profile.LanguageMode;
-                }
+                policy = RemotingPolicyManager.ResolvePolicy(apiKey.Policy);
+            }
+            else
+            {
+                // Legacy shared-secret sessions have no API key - unrestricted
+                policy = RemotingPolicy.Unrestricted;
+            }
 
-                // Trusted scripts can bypass language mode restrictions for their profile
-                if (scriptItemId != (ID)null && languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
+            // Policy-based validation
+            if (policy != null && policy != RemotingPolicy.Unrestricted)
+            {
+                if (isInlineScript)
                 {
-                    var trustResult = ScriptTrustRegistry.EvaluateTrust(scriptItemId, script, profile.Name);
-                    if (trustResult.EffectiveTrustLevel == ScriptTrustLevel.Trusted)
+                    // Inline scripts (remoting endpoint): enforce command allowlist
+                    if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, user, serviceName, out var policyBlockedCommand))
+                    {
+                        if (policy.AuditLevel >= AuditLevel.Violations)
+                        {
+                            PowerShellLog.Audit("[Remoting] action=scriptRejectedByPolicy user={0} ip={1} policy={2} blockedCommand={3} clientSession={4} rid={5}",
+                                user, ip, policy.Name, policyBlockedCommand, clientSession, GetRequestId());
+                        }
+                        context.Response.Headers["X-SPE-Restriction"] = "policy-blocked";
+                        context.Response.Headers["X-SPE-BlockedCommand"] = policyBlockedCommand;
+                        context.Response.Headers["X-SPE-Policy"] = policy.Name;
+                        SetErrorResponse(context, 403, $"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
+                        return;
+                    }
+                }
+                else
+                {
+                    // By-reference scripts (v2 endpoint): enforce approved scripts list
+                    if (!policy.IsScriptApproved(scriptItemId))
+                    {
+                        if (policy.AuditLevel >= AuditLevel.Violations)
+                        {
+                            PowerShellLog.Audit(
+                                "[Remoting] action=scriptNotApproved script={0} policy={1} user={2} ip={3} rid={4}",
+                                scriptItemId, policy.Name, user, ip, GetRequestId());
+                        }
+                        SetErrorResponse(context, 403, "The requested script is not approved under this policy.");
+                        return;
+                    }
+
+                    if (policy.AuditLevel >= AuditLevel.Standard)
                     {
                         PowerShellLog.Audit(
-                            "[Trust] action=scriptTrusted script=\"{0} {1}\" profile={2}",
-                            trustResult.Entry?.Name ?? "unknown", scriptItemId, profile.Name);
-                        languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
+                            "[Approval] action=scriptApproved script={0} policy={1} rid={2}",
+                            scriptItemId, policy.Name, GetRequestId());
                     }
                 }
 
-                if (profile.AuditLevel >= AuditLevel.Standard)
+                // Policy's language mode applies to all scripts (approved and unapproved)
+                if (policy.LanguageMode > languageMode)
                 {
-                    PowerShellLog.Audit("[Remoting] action=profileAudit service={0} profile={1} scriptHash={2} clientSession={3}",
-                        serviceName, profile.Name, scriptHash, clientSession);
+                    languageMode = policy.LanguageMode;
+                }
+
+                if (policy.AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=policyAudit service={0} policy={1} scriptHash={2} clientSession={3} endpoint={4} rid={5}",
+                        serviceName, policy.Name, scriptHash, clientSession, isInlineScript ? "inline" : "v2", GetRequestId());
+                }
+
+                if (policy.AuditLevel >= AuditLevel.Full)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptDetail scriptLength={0} languageMode={1} rid={2}",
+                        script.Length, languageMode, GetRequestId());
                 }
             }
 
@@ -1078,7 +1221,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 context.Response.ContentType = "text/plain";
                 context.Response.Headers["X-SPE-LanguageMode"] = languageMode.ToString();
-                session.ActiveRestrictionProfile = profile;
+                session.ActiveRemotingPolicy = policy;
 
                 if (streams != null)
                 {
@@ -1120,10 +1263,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     session.SetVariable("requestStreams", streams);
                     session.SetVariable("scriptArguments", scriptArguments);
 
-                    // Apply module autoload restriction if profile requires it
-                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
+                    if (policy.AuditLevel >= AuditLevel.Full)
                     {
-                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
+                        PowerShellLog.Audit("[Remoting] action=requestDetail paramCount={0} rid={1}",
+                            scriptArguments.Count, GetRequestId());
                     }
 
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
@@ -1136,8 +1279,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
-                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
-                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
 
                     context.Response.Write(session.Output.ToString());
@@ -1157,12 +1298,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         script = script.TrimEnd(' ', '\t', '\n');
                     }
 
-                    // Apply module autoload restriction if profile requires it
-                    if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
-                    {
-                        session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
-                    }
-
                     if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                         session.SetLanguageMode(languageMode);
                     List<object> outObjects;
@@ -1174,8 +1309,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (languageMode != System.Management.Automation.PSLanguageMode.FullLanguage)
                             session.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
-                        if (profile != null && profile.Modules != null && profile.Modules.RestrictModules)
-                            session.RemoveVariable("PSModuleAutoloadingPreference");
                     }
                     var response = context.Response;
                     if (outputFormat.Equals("raw", StringComparison.OrdinalIgnoreCase))
@@ -1254,13 +1387,25 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     context.Response.StatusDescription = "Method Failure";
                 }
 
-                PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3} hasErrors={4} clientSession={5}",
-                    user, ip, session.ID, scriptHash, session.Output.HasErrors, clientSession);
+                if (policy.AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3} hasErrors={4} clientSession={5} rid={6}",
+                        user, ip, session.ID, scriptHash, session.Output.HasErrors, clientSession, GetRequestId());
+                }
+
+                if (policy.AuditLevel >= AuditLevel.Full)
+                {
+                    PowerShellLog.Audit("[Remoting] action=responseDetail outputFormat={0} statusCode={1} rid={2}",
+                        outputFormat, context.Response.StatusCode, GetRequestId());
+                }
             }
             catch (Exception ex)
             {
-                PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} session={2} scriptHash={3} error={4} clientSession={5}",
-                    user, ip, session.ID, scriptHash, ex.GetType().Name, clientSession);
+                if (policy.AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} session={2} scriptHash={3} error={4} clientSession={5} rid={6}",
+                        user, ip, session.ID, scriptHash, ex.GetType().Name, clientSession, GetRequestId());
+                }
                 PowerShellLog.Error("[Remoting] action=scriptFailed error=scriptExecution", ex);
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";

@@ -11,14 +11,14 @@ function New-Jwt {
         [string]$Issuer,
         [Parameter(Mandatory = $true)]
         [string]$Audience,
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [string]$Name,
+        [Parameter()]
+        [string]$KeyId,
         [Parameter()]
         [int]$ValidForSeconds = 30,
         [Parameter(Mandatory = $true)]
         [string]$SecretKey,
-        [Parameter()]
-        [string]$Scope,
         [Parameter()]
         [string]$ClientSessionId,
         [Parameter()]
@@ -31,8 +31,9 @@ function New-Jwt {
 
     $exp = [datetimeoffset]::UtcNow.AddSeconds($ValidForSeconds).ToUnixTimeSeconds()
     $header = [ordered]@{alg = $Algorithm; typ = $type}
-    $payload = [ordered]@{iss = $Issuer; exp = $exp; aud = $Audience; name = $Name}
-    if ($Scope) { $payload['scope'] = $Scope }
+    if ($KeyId) { $header['kid'] = $KeyId }
+    $payload = [ordered]@{iss = $Issuer; exp = $exp; aud = $Audience}
+    if ($Name) { $payload['name'] = $Name }
     if ($ClientSessionId) { $payload['client_session'] = $ClientSessionId }
     if ($IncludeIssuedAt -and $IssuedAt -eq 0) {
         $payload['iat'] = [datetimeoffset]::UtcNow.ToUnixTimeSeconds()
@@ -43,7 +44,7 @@ function New-Jwt {
 
     $headerjson = $header | ConvertTo-Json -Compress
     $payloadjson = $payload | ConvertTo-Json -Compress
-    
+
     $headerjsonbase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($headerjson)).Split('=')[0].Replace('+', '-').Replace('/', '_')
     $payloadjsonbase64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($payloadjson)).Split('=')[0].Replace('+', '-').Replace('/', '_')
 
@@ -57,7 +58,7 @@ function New-Jwt {
 
     $SigningAlgorithm.Key = [System.Text.Encoding]::UTF8.GetBytes($SecretKey)
     $Signature = [Convert]::ToBase64String($SigningAlgorithm.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ToBeSigned))).Split('=')[0].Replace('+', '-').Replace('/', '_')
-    
+
     $token = "$headerjsonbase64.$payloadjsonbase64.$Signature"
     $token
 }

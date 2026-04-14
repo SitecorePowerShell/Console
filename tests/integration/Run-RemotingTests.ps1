@@ -149,7 +149,6 @@ if ($TestFile) {
 # Here we only ensure leftover security test configs from a previous run are removed.
 Write-Host "`n=== Phase 1: Baseline Tests (no security enforcement config) ===" -ForegroundColor Magenta
 Remove-TestConfigs -ConfigDir $testConfigDir
-Remove-TestConfigs -ConfigDir (Join-Path $configRoot "profiles")
 
 # Wait for SPE to be ready with FullLanguage (no security enforcement config present).
 # Covers both fresh starts and removal of leftover security configs from previous runs.
@@ -168,7 +167,7 @@ if ($global:isConstrainedLanguage) {
 }
 
 # Run all test files EXCEPT enforced/profiles/DA (those need setup/teardown) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RestrictionProfiles.Tests.ps1","Remoting.SoapProfiles.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1" |
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 1b: Delegated access tests (setup -> test -> teardown, no config deploy needed)
@@ -177,46 +176,77 @@ Write-Host "`n=== Phase 1b: Delegated Access Tests ===" -ForegroundColor Magenta
 Invoke-TestFile "$PSScriptRoot\Remoting.DelegatedAccess.Tests.ps1"
 . "$PSScriptRoot\Remoting.DelegatedAccess.Teardown.ps1"
 
-# Phase 2: Security enforcement tests (requires security config)
-Write-Host "`n=== Phase 2: Security Enforcement Tests (deploying security config) ===" -ForegroundColor Magenta
+# Phase 2: Token lifetime enforcement tests (requires maxTokenLifetimeSeconds config)
+Write-Host "`n=== Phase 2: Token Lifetime Tests (deploying auth config) ===" -ForegroundColor Magenta
 $deployedSecurity = Deploy-TestConfigs -ConfigDir $testConfigDir
 if ($deployedSecurity) {
-    Wait-SitecoreRestart -ExpectedLanguageMode "ConstrainedLanguage"
+    # Config only sets maxTokenLifetimeSeconds (auth provider level, no language mode change)
+    Wait-SitecoreRestart
 }
 
 Invoke-TestFile "$PSScriptRoot\Remoting.Security.Enforced.Tests.ps1"
 
-# Cleanup Phase 2: remove security test configs before Phase 3
+# Cleanup Phase 2: remove test configs before Phase 3
 Remove-TestConfigs -ConfigDir $testConfigDir
 
-# Phase 3: Restriction profile tests (requires profile config)
-Write-Host "`n=== Phase 3: Restriction Profile Tests (deploying profile config) ===" -ForegroundColor Magenta
+# Phase 3: Remoting policy tests (item-based, no config deploy needed)
+Write-Host "`n=== Phase 3: Remoting Policy Tests ===" -ForegroundColor Magenta
 
-# Wait for Phase 2 cleanup to take effect (FullLanguage restored)
-Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+# Wait for config removal to take effect
+Wait-SitecoreRestart
 
-# Setup: create override test items while remoting is still unrestricted
-. "$PSScriptRoot\Remoting.RestrictionProfiles.Setup.ps1"
+# Setup: create policy test items
+. "$PSScriptRoot\Remoting.RemotingPolicies.Setup.ps1"
 
-# Deploy profile config and wait for restart
-$profileConfigDir = Join-Path $configRoot "profiles"
-$deployedProfiles = Deploy-TestConfigs -ConfigDir $profileConfigDir
-if ($deployedProfiles) {
-    Wait-SitecoreRestart -ExpectedLanguageMode "ConstrainedLanguage"
-}
+# Wait for API Key and policy caches to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
+Start-Sleep -Seconds 12
 
-Invoke-TestFile "$PSScriptRoot\Remoting.RestrictionProfiles.Tests.ps1"
-Invoke-TestFile "$PSScriptRoot\Remoting.SoapProfiles.Tests.ps1"
+# Run policy tests (policies are resolved from items, no restart needed)
+Invoke-TestFile "$PSScriptRoot\Remoting.RemotingPolicies.Tests.ps1"
 
-# Cleanup: remove profile test configs first
-Remove-TestConfigs -ConfigDir $profileConfigDir
+# Teardown: remove test policy items
+. "$PSScriptRoot\Remoting.RemotingPolicies.Teardown.ps1"
 
-# Wait for unrestricted mode to restore before teardown
-Wait-SitecoreRestart -ExpectedLanguageMode "FullLanguage"
+Write-Host "`n  Policy test cleanup complete." -ForegroundColor Cyan
 
-# Teardown: remove override test items (requires unrestricted remoting)
-. "$PSScriptRoot\Remoting.RestrictionProfiles.Teardown.ps1"
+# Phase 4: Throttle action tests (item-based, no config deploy needed)
+Write-Host "`n=== Phase 4: Throttle Action Tests ===" -ForegroundColor Magenta
 
-Write-Host "`n  Profile test cleanup complete." -ForegroundColor Cyan
+# Setup: create throttle test API Keys
+. "$PSScriptRoot\Remoting.Throttle.Setup.ps1"
+
+# Wait for API Key cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
+Start-Sleep -Seconds 12
+
+# Run throttle tests
+Invoke-TestFile "$PSScriptRoot\Remoting.Throttle.Tests.ps1"
+
+# Teardown: remove throttle test items
+. "$PSScriptRoot\Remoting.Throttle.Teardown.ps1"
+
+Write-Host "`n  Throttle test cleanup complete." -ForegroundColor Cyan
+
+# Phase 5: API Key expiration and duplicate key tests (item-based, no config deploy needed)
+Write-Host "`n=== Phase 5: API Key Expiration and Validation Tests ===" -ForegroundColor Magenta
+
+# Setup: create expiration test API Keys
+. "$PSScriptRoot\Remoting.Expiration.Setup.ps1"
+
+# Wait for API Key cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
+Start-Sleep -Seconds 12
+
+# Run expiration tests
+Invoke-TestFile "$PSScriptRoot\Remoting.Expiration.Tests.ps1"
+
+# Run duplicate key ID tests (creates and cleans up its own items)
+Invoke-TestFile "$PSScriptRoot\Remoting.Expiration.DuplicateKeyId.Tests.ps1"
+
+# Teardown: remove expiration test items
+. "$PSScriptRoot\Remoting.Expiration.Teardown.ps1"
+
+Write-Host "`n  Expiration test cleanup complete." -ForegroundColor Cyan
 
 Show-TestSummary

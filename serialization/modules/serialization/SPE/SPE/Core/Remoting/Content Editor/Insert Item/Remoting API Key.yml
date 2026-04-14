@@ -1,0 +1,179 @@
+---
+ID: "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a"
+Parent: "52ead8ce-f95a-4283-b98b-5264d83e8e58"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Content Editor/Insert Item/Remoting API Key
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/keys.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{F2A1B3C4-D5E6-4F78-9A0B-1C2D3E4F5A6B}"
+        name="Only show under API Keys folder">
+        <conditions>
+          <or
+            uid="A1B2C3D4E5F64A78B9C0D1E2F3A4B5C6">
+            <condition
+              id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}"
+              uid="B2C3D4E5F6A74B89C0D1E2F3A4B5C6D7"
+              operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
+              value="{529AD80B-CACA-43D3-A321-094E92BAF9A9}" />
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="C3D4E5F6A7B84C90D1E2F3A4B5C6D7E8"
+              templateid="{9DC763FC-E1EA-4B37-8223-EA5A7712D307}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name DialogBuilder
+    
+    $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::new()
+    $kidBytes = New-Object byte[] 12
+    $rng.GetBytes($kidBytes)
+    $generatedAccessKeyId = "spe_" + [System.BitConverter]::ToString($kidBytes).Replace("-","").ToLower()
+    $secretBytes = New-Object byte[] 32
+    $rng.GetBytes($secretBytes)
+    $generatedSecret = [System.BitConverter]::ToString($secretBytes).Replace("-","")
+    $rng.Dispose()
+    
+    $dialog = New-DialogBuilder -Title "Create Remoting API Key" `
+        -Description "Creates a new API Key for SPE Remoting authentication. The Access Key Id is included in the JWT header for direct key lookup." `
+        -Width 700 -Height 600 -OkButtonName "Create" -ShowHints `
+        -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    
+    $dialog | Add-TextField -Name "name" -Title "Name" -Placeholder "My API Key" `
+        -Tooltip "A descriptive name for this API key." -Mandatory -Tab "General"
+    
+    $dialog | Add-TextField -Name "accessKeyId" -Title "Access Key Id" -Value $generatedAccessKeyId `
+        -Tooltip "Unique identifier sent in the JWT kid header. Auto-generated but can be customized." `
+        -Mandatory -Tab "Authentication"
+    
+    $dialog | Add-TextField -Name "sharedSecret" -Title "Shared Secret" -Value $generatedSecret `
+        -Tooltip "HMAC signing key shared between client and server. Auto-generated (64 hex chars, 256 bits). Minimum lengths per RFC 7518: HS256 = 32 chars, HS384 = 48 chars, HS512 = 64 chars." `
+        -Mandatory -Tab "Authentication"
+    
+    $dialog | Add-DateTimePicker -Name "expires" -Title "Expires" `
+        -Tooltip "Optional expiration date. After this date the key is automatically rejected. Leave empty for no expiration." `
+        -Tab "Authentication"
+    
+    $dialog | Add-UserPicker -Name "impersonateUser" -Title "Impersonate User" `
+        -Tooltip "The Sitecore user identity used when executing scripts with this key." `
+        -Mandatory -Tab "Authorization"
+    
+    $policy = Get-Item -Path "master:" -ID "{59B24247-999C-4298-B297-53C548E6D6E9}"
+    $dialog | Add-Droplink -Name "policy" -Title "Remoting Policy" -Value $policy `
+        -Tooltip "Controls what commands and scripts this key can execute." `
+        -Source "DataSource={59B24247-999C-4298-B297-53C548E6D6E9}&IncludeTemplatesForSelection={AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}" `
+        -Tab "Authorization"
+    
+    $dialog | Add-TextField -Name "requestLimit" -Title "Request Limit" -IsNumber `
+        -Tooltip "Maximum requests allowed within the throttle window. Leave empty to disable rate limiting." `
+        -Tab "Throttling"
+    
+    $dialog | Add-TextField -Name "throttleWindow" -Title "Throttle Window (seconds)" -IsNumber `
+        -Tooltip "Duration in seconds for the rate limiting window (e.g. 60 for per-minute limiting)." `
+        -Tab "Throttling"
+    
+    $dialog | Add-Dropdown -Name "throttleAction" -Title "Throttle Action" -Value "" `
+        -Options ([ordered]@{ "Block (HTTP 429)" = "Block"; "Bypass (allow but log)" = "Bypass" }) `
+        -Placeholder "Select an action" `
+        -Tooltip "Block rejects with HTTP 429. Bypass allows the request through and logs that the limit was exceeded." `
+        -Tab "Throttling"
+    
+    $dialog | Add-InfoText -Name "rateLimitInfo" -Title "Response Headers" `
+        -Value "When enabled, every response includes X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers." `
+        -Tab "Throttling"
+    
+    $validator = {
+        $proposedName = $variables.name.Value
+        if($existingKeyNames | Where-Object { $_ -eq $proposedName }) {
+            $variables.name.Error = "An item named '$proposedName' already exists."
+        }
+        if($variables.accessKeyId.Value.Length -lt 8) {
+            $variables.accessKeyId.Error = "Access Key Id must be at least 8 characters."
+        }
+        if($variables.sharedSecret.Value.Length -lt 32) {
+            $variables.sharedSecret.Error = "Shared Secret must be at least 32 characters. RFC 7518 requires: HS256 = 32 chars, HS384 = 48 chars, HS512 = 64 chars."
+        }
+        if([string]::IsNullOrEmpty($variables.impersonateUser.Value)) {
+            $variables.impersonateUser.Error = "Impersonate User is required. This determines the Sitecore identity for script execution."
+        }
+        $policyTemplateId = "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}"
+        if(!$variables.policy.Value -or $variables.policy.Value.TemplateID.ToString() -ne $policyTemplateId) {
+            $variables.policy.Error = "Please select a Remoting Policy."
+        }
+        $limit = $variables.requestLimit.Value
+        $window = $variables.throttleWindow.Value
+        if($limit -gt 0 -and $window -le 0) {
+            $variables.throttleWindow.Error = "Throttle Window is required when Request Limit is set."
+        }
+    }
+    
+    $result = $dialog | Invoke-Dialog -Validator $validator -ValidatorParameters @{ existingKeyNames = $SitecoreContextItem.Children.Name }
+    
+    if($result.Result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $item = New-Item -Path $SitecoreContextItem.ProviderPath -Name $name -ItemType "{55AB1AA8-890E-401E-AF06-094CA21E0E2D}"
+    New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
+        $item.Editing.BeginEdit()
+        $item["Access Key Id"] = $accessKeyId
+        $item["Shared Secret"] = $sharedSecret
+        $item["Impersonate User"] = $impersonateUser | Select-Object -First 1
+        if($policy) {
+            $item["Policy"] = $policy.ID
+        }
+        $item["Request Limit"] = if($requestLimit) { $requestLimit.ToString() } else { "" }
+        $item["Throttle Window"] = if($throttleWindow) { $throttleWindow.ToString() } else { "" }
+        $item["Throttle Action"] = $throttleAction
+        if($expires -and $expires -ne [DateTime]::MinValue) {
+            $item["Expires"] = [Sitecore.DateUtil]::ToIsoDate($expires)
+        }
+        $item.Editing.EndEdit() > $null
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: "Create a new Remoting API Key with auto-generated Access Key Id."
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Remoting API Key
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260411T210000Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e9c8b857-0964-4157-9b5c-9cbeb0612a7e"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260412T145313Z
+
+
+
+
+

@@ -1,4 +1,4 @@
-﻿---
+---
 ID: "9d311b90-0de4-42fd-b150-cf1591597394"
 Parent: "a0371a90-d4b0-4e07-9245-c9f07f86d0d6"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -897,6 +897,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Lines')) {
+            $PSBoundParameters['Lines'] = $Lines
+        }
         return Add-DialogField @PSBoundParameters
     }
     
@@ -916,6 +919,7 @@ SharedFields:
             [string]$Title = "",
             [bool]$Value = $false,
             [string]$Tooltip = "",
+            [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -937,6 +941,10 @@ SharedFields:
     
         .EXAMPLE
             $dialog | Add-DateTimePicker -Name "startDate" -Title "Start Date" -DateOnly
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "expires" -Title "Expires"
+            # Renders an empty date picker; the user can leave it blank.
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -944,7 +952,7 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Name,
             [string]$Title = "",
-            [DateTime]$Value = [DateTime]::Now,
+            [DateTime]$Value = [DateTime]::MinValue,
             [string]$Tooltip = "",
             [switch]$DateOnly,
             [switch]$Mandatory,
@@ -956,6 +964,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Value')) {
+            $PSBoundParameters['Value'] = $Value
+        }
         $editor = if ($DateOnly) { "date" } else { "date time" }
     
         return Add-DialogField @PSBoundParameters -Editor $editor
@@ -987,6 +998,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Root')) {
+            $PSBoundParameters['Root'] = $Root
+        }
         # Initialize Value if not provided
         if (!$PSBoundParameters.ContainsKey("Value") -and $null -eq $Value) {
             $Value = Get-Item -Path $Root -ErrorAction SilentlyContinue
@@ -1197,6 +1211,7 @@ SharedFields:
             [System.Collections.IDictionary]$Options,
             [System.Collections.IDictionary]$OptionTooltips = $null,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1227,6 +1242,7 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [System.Collections.IDictionary]$Options,
             [string]$Tooltip = "",
+            [switch]$Mandatory,
             [string]$Tab = "",
             [int]$GroupId = 0,
             [int]$ParentGroupId = 0,
@@ -1254,7 +1270,9 @@ SharedFields:
             [array]$Value = @(),
             [Parameter(Mandatory = $true)]
             [System.Collections.IDictionary]$Options,
+            [System.Collections.IDictionary]$OptionTooltips = $null,
             [string]$Tooltip = "",
+            [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -1283,6 +1301,8 @@ SharedFields:
             [string]$Value = "",
             [string]$Tooltip = "",
             [switch]$Multiple,
+            [switch]$Mandatory,
+            [string]$Domain = "",
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -1317,6 +1337,7 @@ SharedFields:
             [string]$Domain = "sitecore",
             [string]$Tooltip = "",
             [switch]$Multiple,
+            [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -1325,6 +1346,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Domain')) {
+            $PSBoundParameters['Domain'] = $Domain
+        }
         $editor = if ($Multiple) { "role multiple" } else { "role" }
     
         # Remove Multiple from bound parameters
@@ -1351,6 +1375,7 @@ SharedFields:
             [string]$Domain = "sitecore",
             [string]$Tooltip = "",
             [switch]$Multiple,
+            [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
             [int]$GroupId = 0,
@@ -1359,6 +1384,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Domain')) {
+            $PSBoundParameters['Domain'] = $Domain
+        }
         $editor = if ($Multiple) { "user role multiple" } else { "user role" }
     
         # Remove Multiple from bound parameters
@@ -1455,6 +1483,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Root')) {
+            $PSBoundParameters['Root'] = $Root
+        }
         $editor = if ($WithSearch.IsPresent) { "treelist search" } else { "treelist" }
     
         # Remove WithSearch from parameters before passing to Add-DialogField
@@ -1500,6 +1531,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
+        if (-not $PSBoundParameters.ContainsKey('Root')) {
+            $PSBoundParameters['Root'] = $Root
+        }
         $editor = if ($WithSearch.IsPresent) { "multilist search" } else { "multilist" }
     
         # Remove WithSearch from parameters before passing to Add-DialogField
@@ -1826,3 +1860,8 @@ Languages:
       Hint: __Updated
       Value: 20260331T120000Z
     
+
+
+
+
+

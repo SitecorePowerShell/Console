@@ -65,28 +65,16 @@ namespace Spe
             }
         }
 
-        public readonly struct RestrictionProfile
+        public readonly struct RemotingPolicy
         {
             public static readonly ID Id = new ID("{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}");
 
             public struct Fields
             {
-                public static readonly ID Enabled = new ID("{4DA86B82-4784-44E9-9491-DE6DE80E8145}");
-                public static readonly ID BaseProfile = new ID("{9545526C-CE07-498F-9B23-FB6736D986D1}");
-                public static readonly ID AdditionalAllowedCommands = new ID("{5E01F1C2-27A3-4A38-8A3E-6F7E09BDE34F}");
-                public static readonly ID AuditLevelOverride = new ID("{FB657388-BF96-475D-AE69-EBF028F47432}");
-            }
-        }
-
-        public readonly struct TrustedScript
-        {
-            public static readonly ID Id = new ID("{C30C6FF9-EEF9-49C5-9787-44AAAAB70563}");
-
-            public struct Fields
-            {
-                public static readonly ID Enabled = new ID("{9A64EEB5-EF6E-4F00-B26E-7DCEDDCE48B2}");
-                public static readonly ID Script = new ID("{01F26B2A-C396-4B06-A826-A625B62721B5}");
-                public static readonly ID AllowedProfiles = new ID("{ADBD8BBE-2C9C-41C8-935A-D43D3C8474DD}");
+                public static readonly ID FullLanguage = new ID("{B7D4F2A1-3C58-4E9D-A612-8F5C7D4E3B2A}");
+                public static readonly ID AllowedCommands = new ID("{5E01F1C2-27A3-4A38-8A3E-6F7E09BDE34F}");
+                public static readonly ID ApprovedScripts = new ID("{E3A9C1B4-7D56-4F28-9E83-2A1B5C6D8F47}");
+                public static readonly ID AuditLevel = new ID("{FB657388-BF96-475D-AE69-EBF028F47432}");
             }
         }
 
@@ -96,12 +84,15 @@ namespace Spe
 
             public struct Fields
             {
+                public static readonly ID AccessKeyId = new ID("{C4D5E6F7-8A9B-4C0D-1E2F-3A4B5C6D7E8F}");
                 public static readonly ID SharedSecret = new ID("{BBF52C26-7825-4F7B-88FF-2DB2785C5954}");
                 public static readonly ID Enabled = new ID("{8D158FCA-E8F3-4D94-8469-C782B099EC07}");
-                public static readonly ID Profile = new ID("{ECB2A0C9-3AC3-4FF8-A66C-6D4AE4AA2C21}");
+                public static readonly ID Policy = new ID("{ECB2A0C9-3AC3-4FF8-A66C-6D4AE4AA2C21}");
                 public static readonly ID ImpersonateUser = new ID("{5EB16BF4-605A-457C-8588-5D9833FF4DD9}");
                 public static readonly ID RequestLimit = new ID("{33D88116-A954-4954-A94C-A7AE083BC983}");
                 public static readonly ID ThrottleWindow = new ID("{9F12735C-65C2-401E-A499-3C3597452440}");
+                public static readonly ID ThrottleAction = new ID("{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}");
+                public static readonly ID Expires = new ID("{B2C3D4E5-F6A7-4B89-C0D1-E2F3A4B5C6D7}");
             }
         }
 

@@ -3,9 +3,9 @@ function Wait-RemoteScriptSession {
         .SYNOPSIS
             Polls for the specified job until it has completed.
 
-        .DESCRIPTON
+        .DESCRIPTION
             The Wait-RemoteScriptSession command waits for a ScriptSession to complete processing.
-    
+
         .PARAMETER Session
             The ScriptSession object to poll.
 
@@ -14,15 +14,15 @@ function Wait-RemoteScriptSession {
 
         .PARAMETER Delay
             The polling interval in seconds.
-    
+
         .EXAMPLE
             The following example remotely rebuilds link databases as a job and waits for it to complete.
             The Invoke-RemoteScript command returns a ScriptSession object.
 
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            $session = New-ScriptSession -Username admin -SharedSecret $secret -ConnectionUri https://remotesitecore
             $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-                    "master", "web" | Get-Database | 
-                        ForEach-Object { 
+                    "master", "web" | Get-Database |
+                        ForEach-Object {
                             [Sitecore.Globals]::LinkDatabase.Rebuild($_)
                         }
             } -AsJob
@@ -41,7 +41,7 @@ function Wait-RemoteScriptSession {
         .LINK
             Wait-RemoteSitecoreJob
     #>
-    
+
     [CmdletBinding()]
     param(
         [Parameter(ParameterSetName='Session')]
@@ -56,7 +56,7 @@ function Wait-RemoteScriptSession {
         [Parameter()]
         [switch]$Raw
     )
-    
+
     $doneScript = {
         $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
         $isDone = $backgroundScriptSession -eq $null -or $backgroundScriptSession.State -ne "Busy"
@@ -81,9 +81,9 @@ function Wait-RemoteScriptSession {
             break
         } elseif ($response -eq "login failed") {
             Write-Verbose "Stopped polling job. Login with the specified account failed."
-            break            
+            break
         }
-        
+
         if($response -and $response.IsDone) {
             $keepRunning = $false
             Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."

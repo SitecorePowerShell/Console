@@ -21,6 +21,7 @@ namespace Spe.Core.Settings.Authorization
         private const string SettingsPath =
             "/sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys";
         private const string CacheKey = "Spe.RemotingApiKeys";
+        private const string AccessKeyIndexCacheKey = "Spe.RemotingApiKeys.ByAccessKeyId";
 
         // Throttle state: key name -> (window start, request count)
         private static readonly ConcurrentDictionary<string, ThrottleState> _throttleState =
@@ -30,10 +31,22 @@ namespace Spe.Core.Settings.Authorization
         /// Returns all enabled API Key items. Used for iterative token validation
         /// when the legacy shared secret doesn't match.
         /// </summary>
-        public static List<RemotingApiKey> FindAllEnabled()
+        /// <summary>
+        /// Returns all enabled API Key items.
+        /// Sets <paramref name="registryLoaded"/> to true when the registry was
+        /// successfully loaded from the database (even if no enabled keys exist).
+        /// Returns null when no enabled keys are found or the registry could not load.
+        /// </summary>
+        public static List<RemotingApiKey> FindAllEnabled(out bool registryLoaded)
         {
             var keys = GetCachedKeys();
-            if (keys == null) return null;
+            if (keys == null)
+            {
+                registryLoaded = false;
+                return null;
+            }
+
+            registryLoaded = true;
 
             var enabled = new List<RemotingApiKey>();
             foreach (var key in keys)
@@ -44,26 +57,37 @@ namespace Spe.Core.Settings.Authorization
             return enabled.Count > 0 ? enabled : null;
         }
 
-        /// <summary>
-        /// Finds an enabled API Key whose shared secret matches the provided value.
-        /// Returns null if no match is found.
-        /// </summary>
-        public static RemotingApiKey FindBySecret(string sharedSecret)
+        public static List<RemotingApiKey> FindAllEnabled()
         {
-            if (string.IsNullOrEmpty(sharedSecret)) return null;
+            return FindAllEnabled(out _);
+        }
 
-            var keys = GetCachedKeys();
-            if (keys == null) return null;
+        /// <summary>
+        /// Finds an enabled API Key by its Access Key Id (O(1) dictionary lookup).
+        /// Returns null if no match is found or the matched key is disabled.
+        /// </summary>
+        public static RemotingApiKey FindByAccessKeyId(string accessKeyId)
+        {
+            if (string.IsNullOrEmpty(accessKeyId)) return null;
 
-            foreach (var key in keys)
+            var index = GetAccessKeyIndex();
+            if (index == null) return null;
+
+            if (index.TryGetValue(accessKeyId, out var key) && key.Enabled)
             {
-                if (key.Enabled && SecureCompare.FixedTimeSecretEquals(key.SharedSecret, sharedSecret))
-                {
-                    return key;
-                }
+                return key;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Checks whether the Access Key Id index was successfully loaded.
+        /// Returns false during cold start when the database is not yet available.
+        /// </summary>
+        public static bool IsRegistryLoaded()
+        {
+            return GetAccessKeyIndex() != null;
         }
 
         /// <summary>
@@ -91,7 +115,7 @@ namespace Spe.Core.Settings.Authorization
                     windowEnd = now.AddSeconds(apiKey.ThrottleWindowSeconds);
 
                     return new ThrottleResult(true, apiKey.RequestLimit,
-                        apiKey.RequestLimit - 1, windowEnd);
+                        apiKey.RequestLimit - 1, windowEnd, apiKey.ThrottleAction);
                 }
 
                 state.RequestCount++;
@@ -99,24 +123,25 @@ namespace Spe.Core.Settings.Authorization
 
                 if (state.RequestCount <= apiKey.RequestLimit)
                 {
-                    return new ThrottleResult(true, apiKey.RequestLimit, remaining, windowEnd);
+                    return new ThrottleResult(true, apiKey.RequestLimit, remaining, windowEnd, apiKey.ThrottleAction);
                 }
 
                 PowerShellLog.Warn(
                     $"[ApiKey] action=throttleExceeded key={apiKey.Name} count={state.RequestCount} limit={apiKey.RequestLimit} window={apiKey.ThrottleWindowSeconds}");
 
-                return new ThrottleResult(false, apiKey.RequestLimit, 0, windowEnd);
+                return new ThrottleResult(false, apiKey.RequestLimit, 0, windowEnd, apiKey.ThrottleAction);
             }
         }
 
         public class ThrottleResult
         {
-            public static readonly ThrottleResult Unlimited = new ThrottleResult(true, 0, 0, DateTime.MinValue);
+            public static readonly ThrottleResult Unlimited = new ThrottleResult(true, 0, 0, DateTime.MinValue, "Block");
 
             public bool Allowed { get; }
             public int Limit { get; }
             public int Remaining { get; }
             public DateTime WindowResetUtc { get; }
+            public string Action { get; }
 
             public bool HasLimit => Limit > 0;
 
@@ -138,13 +163,27 @@ namespace Spe.Core.Settings.Authorization
                 }
             }
 
-            public ThrottleResult(bool allowed, int limit, int remaining, DateTime windowResetUtc)
+            public ThrottleResult(bool allowed, int limit, int remaining, DateTime windowResetUtc, string action)
             {
                 Allowed = allowed;
                 Limit = limit;
                 Remaining = remaining;
                 WindowResetUtc = windowResetUtc;
+                Action = action;
             }
+        }
+
+        private static Dictionary<string, RemotingApiKey> GetAccessKeyIndex()
+        {
+            var cached = HttpRuntime.Cache.Get(AccessKeyIndexCacheKey) as Dictionary<string, RemotingApiKey>;
+            if (cached != null) return cached;
+
+            // Building the index triggers key loading if not already cached
+            var keys = GetCachedKeys();
+            if (keys == null) return null;
+
+            // Re-check after GetCachedKeys since it builds the index
+            return HttpRuntime.Cache.Get(AccessKeyIndexCacheKey) as Dictionary<string, RemotingApiKey>;
         }
 
         private static List<RemotingApiKey> GetCachedKeys()
@@ -157,6 +196,27 @@ namespace Spe.Core.Settings.Authorization
 
             var ttl = WebServiceSettings.AuthorizationCacheExpirationSecs;
             HttpRuntime.Cache.Insert(CacheKey, keys, null,
+                DateTime.UtcNow.AddSeconds(ttl),
+                System.Web.Caching.Cache.NoSlidingExpiration);
+
+            // Build Access Key Id index alongside the key list
+            var index = new Dictionary<string, RemotingApiKey>(StringComparer.OrdinalIgnoreCase);
+            foreach (var key in keys)
+            {
+                if (string.IsNullOrEmpty(key.AccessKeyId)) continue;
+
+                if (index.ContainsKey(key.AccessKeyId))
+                {
+                    PowerShellLog.Warn(
+                        $"[ApiKey] action=duplicateAccessKeyId accessKeyId={key.AccessKeyId} key={key.Name} duplicateOf={index[key.AccessKeyId].Name}");
+                }
+                else
+                {
+                    index[key.AccessKeyId] = key;
+                }
+            }
+
+            HttpRuntime.Cache.Insert(AccessKeyIndexCacheKey, index, null,
                 DateTime.UtcNow.AddSeconds(ttl),
                 System.Web.Caching.Cache.NoSlidingExpiration);
 
@@ -188,24 +248,7 @@ namespace Spe.Core.Settings.Authorization
                     CollectApiKeysRecursive(settingsFolder, keys);
                 }
 
-                // Warn about duplicate shared secrets
-                var secretOwners = new Dictionary<string, string>(StringComparer.Ordinal);
-                foreach (var key in keys)
-                {
-                    if (!key.Enabled || string.IsNullOrEmpty(key.SharedSecret)) continue;
-
-                    if (secretOwners.TryGetValue(key.SharedSecret, out var existingName))
-                    {
-                        PowerShellLog.Warn(
-                            $"[ApiKey] action=duplicateSecret key={key.Name} duplicateOf={existingName}");
-                    }
-                    else
-                    {
-                        secretOwners[key.SharedSecret] = key.Name;
-                    }
-                }
-
-                PowerShellLog.Info($"[ApiKey] action=registryLoaded count={keys.Count}");
+                PowerShellLog.Debug($"[ApiKey] action=registryLoaded count={keys.Count}");
                 return keys;
             }
             catch (Exception ex)
@@ -228,7 +271,7 @@ namespace Spe.Core.Settings.Authorization
                         {
                             keys.Add(key);
                             PowerShellLog.Debug(
-                                $"[ApiKey] action=entryLoaded key={key.Name} enabled={key.Enabled} profile={key.Profile ?? "none"}");
+                                $"[ApiKey] action=entryLoaded key={key.Name} enabled={key.Enabled} profile={key.Policy ?? "none"}");
                         }
                     }
                     catch (Exception ex)
@@ -245,6 +288,12 @@ namespace Spe.Core.Settings.Authorization
 
         private static RemotingApiKey ParseApiKey(Item item)
         {
+            var accessKeyId = item.Fields[Templates.RemotingApiKey.Fields.AccessKeyId]?.Value?.Trim();
+            if (string.IsNullOrEmpty(accessKeyId))
+            {
+                PowerShellLog.Warn($"[ApiKey] action=noAccessKeyId key={item.Name}");
+            }
+
             var sharedSecret = item.Fields[Templates.RemotingApiKey.Fields.SharedSecret]?.Value?.Trim();
             if (string.IsNullOrEmpty(sharedSecret))
             {
@@ -252,18 +301,61 @@ namespace Spe.Core.Settings.Authorization
                 return null;
             }
 
+            if (sharedSecret.Length < 32)
+            {
+                PowerShellLog.Warn($"[ApiKey] action=secretTooShort key={item.Name} length={sharedSecret.Length} minimum=32");
+            }
+
             var enabledField = item.Fields[Templates.RemotingApiKey.Fields.Enabled];
             var enabled = enabledField != null && enabledField.Value == "1";
 
-            var profile = item.Fields[Templates.RemotingApiKey.Fields.Profile]?.Value?.Trim();
+            // Policy field is a Droplink (stores item ID). Resolve to the policy item name.
+            // If the Droplink references a deleted/missing item, use a sentinel name
+            // that won't match any policy — RemotingPolicyManager.ResolvePolicy will DenyAll.
+            string policy = null;
+            var policyFieldValue = item.Fields[Templates.RemotingApiKey.Fields.Policy]?.Value?.Trim();
+            if (!string.IsNullOrEmpty(policyFieldValue) && Sitecore.Data.ID.TryParse(policyFieldValue, out var policyId))
+            {
+                var policyItem = item.Database.GetItem(policyId);
+                if (policyItem != null)
+                {
+                    policy = policyItem.Name;
+                }
+                else
+                {
+                    policy = $"__deleted:{policyId}";
+                    PowerShellLog.Warn($"[ApiKey] action=policyItemMissing key={item.Name} policyId={policyId}");
+                }
+            }
             var impersonateUser = item.Fields[Templates.RemotingApiKey.Fields.ImpersonateUser]?.Value?.Trim();
+            if (enabled && string.IsNullOrEmpty(impersonateUser))
+            {
+                PowerShellLog.Warn($"[ApiKey] action=noImpersonateUser key={item.Name}");
+            }
 
             int.TryParse(item.Fields[Templates.RemotingApiKey.Fields.RequestLimit]?.Value, out var requestLimit);
             int.TryParse(item.Fields[Templates.RemotingApiKey.Fields.ThrottleWindow]?.Value, out var throttleWindow);
+            var throttleAction = item.Fields[Templates.RemotingApiKey.Fields.ThrottleAction]?.Value?.Trim();
+
+            DateTime? expires = null;
+            var expiresField = item.Fields[Templates.RemotingApiKey.Fields.Expires];
+            if (expiresField != null && !string.IsNullOrEmpty(expiresField.Value))
+            {
+                var expiresDate = Sitecore.DateUtil.IsoDateToDateTime(expiresField.Value, DateTime.MinValue);
+                if (expiresDate != DateTime.MinValue)
+                {
+                    expires = expiresDate;
+                    if (DateTime.UtcNow > expiresDate)
+                    {
+                        PowerShellLog.Info($"[ApiKey] action=expired key={item.Name} expires={expiresDate:O}");
+                        return null;
+                    }
+                }
+            }
 
             return new RemotingApiKey(
-                item.Name, sharedSecret, enabled, profile, impersonateUser,
-                requestLimit, throttleWindow);
+                item.Name, accessKeyId, sharedSecret, enabled, policy, impersonateUser,
+                requestLimit, throttleWindow, throttleAction, expires);
         }
 
         private class ThrottleState

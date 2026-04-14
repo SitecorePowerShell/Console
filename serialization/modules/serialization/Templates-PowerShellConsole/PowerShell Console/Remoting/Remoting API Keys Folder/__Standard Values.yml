@@ -6,9 +6,7 @@ Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Keys 
 SharedFields:
 - ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
   Hint: __Masters
-  Value: |
-    {55AB1AA8-890E-401E-AF06-094CA21E0E2D}
-    {9DC763FC-E1EA-4B37-8223-EA5A7712D307}
+  Value: "{9DC763FC-E1EA-4B37-8223-EA5A7712D307}"
 Languages:
 - Language: en
   Versions:
@@ -27,11 +25,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "38e2d8c3-1611-4c2e-8d51-bfe558444e77"
+      Value: "15bfbe37-3122-462e-8285-f35e041344d0"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260328T125617Z
+      Value: 20260414T054207Z

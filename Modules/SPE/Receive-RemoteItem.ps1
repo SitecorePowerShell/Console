@@ -9,34 +9,34 @@ function Receive-RemoteItem {
 
        .PARAMETER Path
             The source path of the item to download on the server side.
-            
+
        .PARAMETER Destination
             The destination path of the item on the client side.
-            
+
        .PARAMETER RootPath
-            The predefined directory in which the item will be downloaded from. This is simply a keyword that maps to a predefined location on the server side. 
-            
-            When using this you can simply provide the file or media item name in the Path parameter.    
-            
+            The predefined directory in which the item will be downloaded from. This is simply a keyword that maps to a predefined location on the server side.
+
+            When using this you can simply provide the file or media item name in the Path parameter.
+
        .EXAMPLE
             The following downloads an item from the media library in the master db and overwrite any existing version.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "/Default Website/cover" -Destination "C:\Images\" -Database master -Force
-    
+
        .EXAMPLE
             The following downloads an item from the media library using the Id in the master db and uses the specified name.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "{04DAD0FD-DB66-4070-881F-17264CA257E1}" -Destination "C:\Images\cover1.jpg" -Database master -Force
-    
+
         .EXAMPLE
             The following downloads all the items from the media library in the specified path.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Invoke-RemoteScript -Session $session -ScriptBlock { 
-                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | 
-                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath 
+            Invoke-RemoteScript -Session $session -ScriptBlock {
+                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse |
+                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath
             } | Receive-RemoteItem -Destination "C:\Images\" -Database master
             Stop-ScriptSession -Session $session
 
@@ -46,17 +46,17 @@ function Receive-RemoteItem {
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
             Stop-ScriptSession -Session $session
-              
+
         .EXAMPLE
             The following compresses the log files into an archive and downloads from the absolute path.
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Invoke-RemoteScript -Session $session -ScriptBlock {
                 Import-Function -Name Compress-Archive
-                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
+                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } |
                     Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
             } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
-    
+
         .LINK
             Send-RemoteItem
 
@@ -74,7 +74,7 @@ function Receive-RemoteItem {
         [Parameter(Mandatory=$true, ParameterSetName='Session and Database')]
         [ValidateNotNull()]
         [pscustomobject]$Session,
-        
+
         [Parameter(Mandatory=$true, ParameterSetName='Uri and File')]
         [Parameter(Mandatory=$true, ParameterSetName='Uri and Database')]
         [Uri[]]$ConnectionUri,
@@ -124,11 +124,11 @@ function Receive-RemoteItem {
     process {
 
         $isMediaItem = ![string]::IsNullOrEmpty($Database) -or ($RootPath -eq "media" -and ![System.IO.Path]::HasExtension($Path))
-        
+
         if($isMediaItem -and !$Database){
             $Database = "master"
         }
-        
+
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Path))) {
             Write-Error -Message "RootPath is required when Path is not fully qualified." -ErrorAction Stop
         }
@@ -140,11 +140,14 @@ function Receive-RemoteItem {
             $Username             = $sd.Username
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
+            $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
+            $Algorithm = "HS256"
             $clientCache = @{}
         }
 
@@ -168,7 +171,8 @@ function Receive-RemoteItem {
             Write-Verbose -Message "Preparing to download remote item from the url $($url)"
             Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
+                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
             $errorResponse = $null
             $ex = $null
@@ -197,24 +201,24 @@ function Receive-RemoteItem {
             if($response -and $response.Length -gt 0 -or $responseMessage.Content.Headers.Count -gt 0) {
                 if(!$responseMessage.IsSuccessStatusCode) {
                     Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
-                    return    
+                    return
                 }
                 $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
                 $contentDisposition = $responseMessage.Content.Headers.GetValues("Content-Disposition")[0]
                 $filename = ""
                 Write-Verbose -Message "Response content length: $($response.Length) bytes"
                 Write-Verbose -Message "Response content type: $($contentType)"
-                
+
                 if($contentDisposition.IndexOf("filename=") -gt -1) {
                     $filename = $contentDisposition.Substring($contentDisposition.IndexOf("filename=") + 10).Replace('"', "")
                     Write-Verbose -Message "Response filename: $($filename)"
                 }
-     
+
                 $directory = [System.IO.Path]::GetDirectoryName($Destination)
                 if(!$directory) {
                     $directory = $Destination
                 }
-                
+
                 if(!(Test-Path $directory -PathType Container)) {
                     Write-Verbose "Creating a new directory $($directory)"
                     New-Item -ItemType Directory -Path $directory | Out-Null
@@ -235,18 +239,18 @@ function Receive-RemoteItem {
                     if(!$extension) {
                         Write-Error -Message "The file extension could not be determined."
                     }
-                    
+
                     # If a media item is requested it will use the filename as the last part.
                     $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
                     if($output.EndsWith($filenameWithoutExtension)) {
-                        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)        
+                        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)
                     }
                     $output = Join-Path -Path $output -ChildPath $filename
-                    
+
                 } else {
                     Write-Verbose "Overriding the filename $($filename) with $([System.IO.Path]::GetFileName($output))"
                 }
-                
+
                 if(-not(Test-Path $output -PathType Leaf) -or $Force.IsPresent) {
                     Write-Verbose "Creating a new file $($output)"
                     New-Item -Path $output -ItemType File -Force | Out-Null

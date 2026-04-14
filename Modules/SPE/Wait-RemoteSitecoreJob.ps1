@@ -3,22 +3,22 @@
         .SYNOPSIS
             Polls for the specified job until it has completed.
 
-        .DESCRIPTON
+        .DESCRIPTION
             The Wait-RemoteSitecoreJob command waits for a Sitecore.Jobs.Job to complete processing.
-    
+
         .PARAMETER Job
             The Sitecore.Jobs.Job object to poll.
 
         .PARAMETER Delay
             The polling interval in seconds.
-        
+
         .EXAMPLE
             The following example remotely rebuilds a search index as a job and waits for it to complete.
             The Rebuild-SearchIndex command returns a Sitecore.Jobs.Job object.
-    
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+
+            $session = New-ScriptSession -Username admin -SharedSecret $secret -ConnectionUri https://remotesitecore
             $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-                    Rebuild-SearchIndex -Name sitecore_master_index -AsJob | 
+                    Rebuild-SearchIndex -Name sitecore_master_index -AsJob |
                         ForEach-Object { $_.Handle.ToString() }
             }
             Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 5 -Verbose
@@ -37,7 +37,7 @@
             Wait-RemoteScriptSession
 
     #>
-    
+
     [CmdletBinding()]
     param(
         [Parameter(ParameterSetName='Session')]
@@ -49,7 +49,7 @@
 
         [int]$Delay = 1
     )
-    
+
     $doneScript = { $true }
     $finishScript = {}
     $doneScript = {

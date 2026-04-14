@@ -1,0 +1,30 @@
+﻿---
+ID: "59b24247-999c-4298-b297-53c548e6d6e9"
+Parent: "1fb4bdec-b064-4bf5-8d5b-b78978c2245b"
+Template: "d54b33a4-12fa-4b5e-b18e-b9aa27c33e43"
+Path: /sitecore/system/Modules/PowerShell/Settings/Remoting/Policies
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: 
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{D54B33A4-12FA-4B5E-B18E-B9AA27C33E43}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260323T210000Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "67e2a61c-6ac7-420e-8d56-eae1b03485c0"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260413T212218Z

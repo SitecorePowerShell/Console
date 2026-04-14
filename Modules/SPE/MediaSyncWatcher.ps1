@@ -3,7 +3,7 @@ function ShouldSkip {
 		[string]$Path,
 		[array]$SkippedPaths
 	)
-	
+
 	$SkippedPaths | ForEach-Object {
 		if ($Path -like $_) {
 			return $true
@@ -209,8 +209,8 @@ function Stop-FolderMediaSync {
 	)
 
 	$idf = GenerateIdentifier $ThemeFolder
-	$identifiers = @("FileCreated_$idf", "FileRenamed_$idf", "FileDeleted_$idf", "FileChanged_$idf") 
-	
+	$identifiers = @("FileCreated_$idf", "FileRenamed_$idf", "FileDeleted_$idf", "FileChanged_$idf")
+
 	foreach ($identifier in $identifiers) {
 		Unregister-Event -SourceIdentifier $identifier
 		Write-Host "Event subscription with identifier '$identifier' has been removed" -ForegroundColor Cyan
@@ -223,18 +223,18 @@ function Stop-FolderMediaSync {
 
     .DESCRIPTION
         The script allows you to work with SXA Themes in a more comfortable way.
-        You can need specify the instance hostname, a folder to watch and the location of your Theme in Media Library 
+        You can need specify the instance hostname, a folder to watch and the location of your Theme in Media Library
         in the variables directly below and run the script that will monitor and upload your changes.
 
         The script requires that SPE Remoting is deployed and enabled on the Sitecore Server.
         The script requires that SPE Remoting PowerShell Module is installed on your local machine.
-                
+
         The following endpoints must be enabled:
             - remoting
             - mediaUpload
 
 		The script requires the same xml config that was profided for Start-MediaSyncWatcher
-    
+
 	.NOTES
 		Author PowerShell:  Adam Najmanowicz
 		Version: 1.0.0 29.March.2017
@@ -251,25 +251,25 @@ function Stop-MediaSyncWatcher {
 	$themeFolders = GetConfigNodeValues $Path "mediaSync/folder/@path"
 	foreach ($themeFolder in $themeFolders) {
 		Stop-FolderMediaSync -Path $Path -ThemeFolder $themeFolder
-	}	
+	}
 }
 
 <#
     .SYNOPSIS
-		Synchronize local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance        
-    
+		Synchronize local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
+
     .DESCRIPTION
         The script allows you to stops synchronization of local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
 
         The script requires that SPE Remoting is deployed and enabled on the Sitecore Server.
         The script requires that SPE Remoting PowerShell Module is installed on your local machine.
-                
+
         The following endpoints must be enabled:
             - remoting
             - mediaUpload
 
 		The script requires xml config file with a following structure
-		
+
 	    <?xml version="1.0" encoding="utf-8"?>
 	    <mediaSync>
             <folder path="C:\Projects\Showcase">
@@ -281,19 +281,19 @@ function Stop-MediaSyncWatcher {
                     </credentials>
                 </site>
                 <media>
-                    <mediaFolder>Project/Showcase</mediaFolder>			
+                    <mediaFolder>Project/Showcase</mediaFolder>
                     <skippedPaths>
                         <mask>.sass-cache*</mask>
-                        <mask>*optimized*</mask>				
+                        <mask>*optimized*</mask>
                         <mask>Styles.css</mask>
                         <mask>node_modules*</mask>
                         <mask>Showcase.zip</mask>
-                        <mask>Scripts\concat.js</mask>				
+                        <mask>Scripts\concat.js</mask>
                     </skippedPaths>
                 </media>
-            </folder>			<!-- it's possible to add here few more folders for sync -->			
+            </folder>			<!-- it's possible to add here few more folders for sync -->
         </mediaSync>
-		
+
     .NOTES
 		Author PowerShell:  Adam Najmanowicz
 		Version: 1.0.0 29.March.2017
@@ -306,7 +306,7 @@ function Start-MediaSyncWatcher {
 		[ValidateScript({ Test-Path -Path $_ })]
 		[string]$Path
 	)
-    	
+
 	$themeFolders = GetConfigNodeValues $Path "mediaSync/folder/@path"
 	foreach ($themeFolder in $themeFolders) {
 		Start-FolderMediaSync -Path $Path -ThemeFolder $themeFolder

@@ -63,20 +63,26 @@ try {
     Assert-True $false "POST with Origin failed: $_"
 }
 
-# 3b. GET with Origin header -- Access-Control-Allow-Origin present
-try {
+# 3b. GET with Origin header on error response -- Access-Control-Allow-Origin present
+# Use -SkipHttpErrorCheck (PS7+) to read headers on non-success responses without exceptions
+if ($PSVersionTable.PSVersion.Major -ge 7) {
     $response = Invoke-WebRequest -Uri "$ashxBase/v2/master/NonExistent/CorsTest$(Get-Random)" -Method GET `
-        -Headers ($basicAuth + @{ Origin = $testOrigin }) -ErrorAction Stop -UseBasicParsing
-    # May get 404 but still should have CORS headers
-    Assert-Equal $response.Headers["Access-Control-Allow-Origin"] "*" "GET with Origin gets Allow-Origin header"
-} catch {
-    # Check CORS headers even on error responses
-    $errorResponse = $_.Exception.Response
-    if ($errorResponse) {
-        $allowOrigin = $errorResponse.Headers["Access-Control-Allow-Origin"]
-        Assert-Equal $allowOrigin "*" "GET error response with Origin gets Allow-Origin header"
-    } else {
-        Assert-True $false "GET with Origin failed without response: $_"
+        -Headers ($basicAuth + @{ Origin = $testOrigin }) -UseBasicParsing -SkipHttpErrorCheck
+    Assert-Equal $response.Headers["Access-Control-Allow-Origin"] "*" "GET error response with Origin gets Allow-Origin header"
+} else {
+    try {
+        $null = Invoke-WebRequest -Uri "$ashxBase/v2/master/NonExistent/CorsTest$(Get-Random)" -Method GET `
+            -Headers ($basicAuth + @{ Origin = $testOrigin }) -ErrorAction Stop -UseBasicParsing
+        Assert-True $false "Expected 404 but got success"
+    } catch {
+        $errorResponse = $_.Exception.Response
+        if ($errorResponse) {
+            # .NET Framework WebException exposes headers directly
+            $allowOrigin = $errorResponse.Headers["Access-Control-Allow-Origin"]
+            Assert-Equal $allowOrigin "*" "GET error response with Origin gets Allow-Origin header"
+        } else {
+            Assert-True $false "GET with Origin failed without response: $_"
+        }
     }
 }
 

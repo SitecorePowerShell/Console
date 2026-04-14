@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using System.Web;
+using Sitecore.Configuration;
+using Sitecore.Data;
+using Sitecore.Data.Items;
+using Sitecore.SecurityModel;
+using Spe.Core.Diagnostics;
+
+namespace Spe.Core.Settings.Authorization
+{
+    /// <summary>
+    /// Loads and manages remoting policies from Sitecore content items.
+    /// Policies are defined under /sitecore/system/Modules/PowerShell/Settings/Remoting/Policies/.
+    /// </summary>
+    public static class RemotingPolicyManager
+    {
+        private const string PoliciesPath =
+            "/sitecore/system/Modules/PowerShell/Settings/Remoting/Policies";
+
+        private const string CacheKey = "Spe.RemotingPolicies";
+
+        /// <summary>
+        /// Returns true if a policy with the given name exists.
+        /// </summary>
+        public static bool PolicyExists(string policyName)
+        {
+            if (string.IsNullOrEmpty(policyName)) return false;
+            var policies = GetCachedPolicies();
+            return policies != null && policies.ContainsKey(policyName);
+        }
+
+        /// <summary>
+        /// Gets a policy by name. Returns null if not found.
+        /// </summary>
+        public static RemotingPolicy GetPolicy(string policyName)
+        {
+            if (string.IsNullOrEmpty(policyName)) return null;
+            var policies = GetCachedPolicies();
+            if (policies == null) return null;
+            policies.TryGetValue(policyName, out var policy);
+            return policy;
+        }
+
+        /// <summary>
+        /// Resolves the effective policy for a request.
+        /// API keys without a policy are denied.
+        /// </summary>
+        public static RemotingPolicy ResolvePolicy(string apiKeyPolicy)
+        {
+            if (!string.IsNullOrEmpty(apiKeyPolicy))
+            {
+                var keyPolicy = GetPolicy(apiKeyPolicy);
+                if (keyPolicy != null) return keyPolicy;
+
+                PowerShellLog.Error(
+                    $"[Policy] action=unknownPolicy source=apiKey policy={apiKeyPolicy}");
+                return RemotingPolicy.DenyAll;
+            }
+
+            PowerShellLog.Error("[Policy] action=noPolicy reason=API key has no policy assigned");
+            return RemotingPolicy.DenyAll;
+        }
+
+        /// <summary>
+        /// Invalidates the policy cache so policies will be reloaded on next access.
+        /// </summary>
+        public static void Invalidate()
+        {
+            HttpRuntime.Cache.Remove(CacheKey);
+        }
+
+        private static Dictionary<string, RemotingPolicy> GetCachedPolicies()
+        {
+            var cached = HttpRuntime.Cache.Get(CacheKey) as Dictionary<string, RemotingPolicy>;
+            if (cached != null) return cached;
+
+            var policies = LoadPolicies();
+
+            var ttl = WebServiceSettings.AuthorizationCacheExpirationSecs;
+            HttpRuntime.Cache.Insert(CacheKey, policies, null,
+                DateTime.UtcNow.AddSeconds(ttl),
+                System.Web.Caching.Cache.NoSlidingExpiration);
+
+            return policies;
+        }
+
+        private static Dictionary<string, RemotingPolicy> LoadPolicies()
+        {
+            try
+            {
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                if (db == null)
+                {
+                    PowerShellLog.Warn("[Policy] action=databaseNull");
+                    return new Dictionary<string, RemotingPolicy>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                Item policiesFolder;
+                using (new SecurityDisabler())
+                {
+                    policiesFolder = db.GetItem(PoliciesPath);
+                }
+
+                if (policiesFolder == null)
+                {
+                    PowerShellLog.Debug($"[Policy] action=folderNotFound path=\"{PoliciesPath}\"");
+                    return new Dictionary<string, RemotingPolicy>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                var policies = new Dictionary<string, RemotingPolicy>(StringComparer.OrdinalIgnoreCase);
+                using (new SecurityDisabler())
+                {
+                    CollectPoliciesRecursive(policiesFolder, policies);
+                }
+
+                PowerShellLog.Debug($"[Policy] action=registryLoaded count={policies.Count}");
+                return policies;
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error("[Policy] action=loadFailed", ex);
+                return new Dictionary<string, RemotingPolicy>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        private static void CollectPoliciesRecursive(Item folder, Dictionary<string, RemotingPolicy> policies)
+        {
+            foreach (Item child in folder.GetChildren())
+            {
+                if (child.TemplateID == Templates.RemotingPolicy.Id)
+                {
+                    try
+                    {
+                        var policy = ParsePolicy(child);
+                        if (policy != null)
+                        {
+                            policies[policy.Name] = policy;
+                            PowerShellLog.Debug(
+                                $"[Policy] action=entryLoaded policy={policy.Name} fullLanguage={policy.FullLanguage} restrictCommands={policy.RestrictCommands}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PowerShellLog.Error($"[Policy] action=entryLoadFailed item={child.Name}", ex);
+                    }
+                }
+                else if (child.HasChildren)
+                {
+                    CollectPoliciesRecursive(child, policies);
+                }
+            }
+        }
+
+        private static RemotingPolicy ParsePolicy(Item item)
+        {
+            var fullLanguageField = item.Fields[Templates.RemotingPolicy.Fields.FullLanguage];
+            var fullLanguage = fullLanguageField != null && fullLanguageField.Value == "1";
+
+            // Parse allowed commands (multi-line text, one per line)
+            // When Full Language is unchecked (CLM), commands are always restricted.
+            // An empty allowlist under CLM means no inline commands are permitted.
+            var allowedCommandsText = item.Fields[Templates.RemotingPolicy.Fields.AllowedCommands]?.Value;
+            var restrictCommands = !fullLanguage;
+            var allowedCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrEmpty(allowedCommandsText))
+            {
+                var lines = allowedCommandsText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    var cmd = line.Trim();
+                    if (!string.IsNullOrEmpty(cmd))
+                    {
+                        allowedCommands.Add(cmd);
+                    }
+                }
+                if (allowedCommands.Count > 0)
+                {
+                    restrictCommands = true;
+                }
+            }
+
+            // Parse approved scripts (Treelist — pipe-delimited item IDs)
+            var approvedScriptsText = item.Fields[Templates.RemotingPolicy.Fields.ApprovedScripts]?.Value;
+            var approvedScriptIds = new HashSet<ID>();
+            if (!string.IsNullOrEmpty(approvedScriptsText))
+            {
+                var ids = approvedScriptsText.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var idStr in ids)
+                {
+                    if (ID.TryParse(idStr.Trim(), out var id))
+                    {
+                        approvedScriptIds.Add(id);
+                    }
+                }
+            }
+
+            // Parse audit level
+            var auditLevel = AuditLevel.Violations;
+            var auditLevelText = item.Fields[Templates.RemotingPolicy.Fields.AuditLevel]?.Value?.Trim();
+            if (!string.IsNullOrEmpty(auditLevelText))
+            {
+                if (!Enum.TryParse(auditLevelText, true, out auditLevel))
+                {
+                    PowerShellLog.Warn($"[Policy] action=auditLevelParseFailed policy={item.Name} value=\"{auditLevelText}\" fallback=Violations");
+                    auditLevel = AuditLevel.Violations;
+                }
+            }
+
+            return new RemotingPolicy(
+                item.Name, fullLanguage, restrictCommands, allowedCommands, approvedScriptIds, auditLevel);
+        }
+    }
+}

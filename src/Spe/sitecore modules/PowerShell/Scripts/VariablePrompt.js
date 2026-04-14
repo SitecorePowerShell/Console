@@ -35,41 +35,55 @@ jQuery(document).ready(function ($) {
         return $(this).data("parent-group-id") !== undefined;
     });
 
-    $.each(controlElements, function (index, element) {
-        $(element).on("change", function () {
-            let controlValue;
-            if (element.type === "checkbox") {
-                controlValue = this.checked ? "1" : "0";
-            } else if (element.type === "select-one") {
-                controlValue = $(this).find(":selected").val();
+    function applyGroupVisibility(element) {
+        let controlValue;
+        if (element.type === "checkbox") {
+            controlValue = element.checked ? "1" : "0";
+        } else if (element.type === "select-one") {
+            controlValue = $(element).find(":selected").val();
+        } else {
+            const checkedRadio = $(element).find("input[type='radio']:checked");
+            if (checkedRadio.length) {
+                controlValue = checkedRadio.val();
             }
-            const groupId = element.getAttribute("data-group-id");
-            for (let i = 0; i < stateControlElements.length; i++) {
-                const e = stateControlElements[i];
-                if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
-                    const hideOnValue = e.getAttribute("data-hide-on-value");
-                    if (hideOnValue) {
-                        if (controlValue === hideOnValue) {
-                            $(e).hide();
-                        } else {
-                            $(e).show();
-                        }
+        }
+        const groupId = element.getAttribute("data-group-id");
+        for (let i = 0; i < stateControlElements.length; i++) {
+            const e = stateControlElements[i];
+            if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
+                const hideOnValue = e.getAttribute("data-hide-on-value");
+                if (hideOnValue) {
+                    if (controlValue === hideOnValue) {
+                        $(e).hide();
                     } else {
-                        const showOnValue = e.getAttribute("data-show-on-value");
-                        if (showOnValue) {
-                            if (controlValue === showOnValue) {
-                                $(e).show();
-                            } else {
-                                $(e).hide();
-                            }
+                        $(e).show();
+                    }
+                } else {
+                    const showOnValue = e.getAttribute("data-show-on-value");
+                    if (showOnValue) {
+                        if (controlValue === showOnValue) {
+                            $(e).show();
+                        } else {
+                            $(e).hide();
                         }
                     }
-
                 }
+
             }
+        }
+    }
+
+    $.each(controlElements, function (index, element) {
+        $(element).on("change", function () {
+            applyGroupVisibility(element);
         });
 
-        $(element).trigger("change");
+        // Radio buttons: delegate change from inner inputs to the container
+        $(element).find("input[type='radio']").on("change", function () {
+            applyGroupVisibility(element);
+        });
+
+        applyGroupVisibility(element);
     });
 
     document.observe("keypress", function (event) {

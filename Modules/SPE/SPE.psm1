@@ -4,10 +4,12 @@ function Expand-ScriptSession {
         Username              = $Session.Username
         Password              = $Session.Password
         SharedSecret          = $Session.SharedSecret
+        AccessKeyId           = $Session.AccessKeyId
         SessionId             = $Session.SessionId
         Credential            = $Session.Credential
         UseDefaultCredentials = [bool]$Session.UseDefaultCredentials
         ConnectionUri         = @($Session.Connection | ForEach-Object { $_.BaseUri })
+        Algorithm             = if ($Session.Algorithm) { $Session.Algorithm } else { "HS256" }
         PersistentSession     = $Session.PersistentSession
         HttpClients           = $Session._HttpClients
     }
@@ -18,10 +20,12 @@ function New-SpeHttpClient {
         [string]$Username,
         [string]$Password,
         [string]$SharedSecret,
+        [string]$AccessKeyId,
         [System.Management.Automation.PSCredential]$Credential,
         [bool]$UseDefaultCredentials,
         [Uri]$Uri,
-        [hashtable]$Cache
+        [hashtable]$Cache,
+        [string]$Algorithm = "HS256"
     )
     $cacheKey = $Uri.AbsoluteUri
     if ($null -ne $Cache -and $Cache.ContainsKey($cacheKey)) {
@@ -36,7 +40,20 @@ function New-SpeHttpClient {
     }
     # Auth header is refreshed on every call; JWT tokens expire after 30 seconds
     if (![string]::IsNullOrEmpty($SharedSecret)) {
-        $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($Uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
+        $jwtParams = @{
+            Algorithm = $Algorithm
+            Issuer = 'SPE Remoting'
+            Audience = $Uri.GetLeftPart([System.UriPartial]::Authority)
+            SecretKey = $SharedSecret
+            ValidForSeconds = 30
+        }
+        if (![string]::IsNullOrEmpty($AccessKeyId)) {
+            $jwtParams['KeyId'] = $AccessKeyId
+        }
+        if (![string]::IsNullOrEmpty($Username)) {
+            $jwtParams['Name'] = $Username
+        }
+        $token = New-Jwt @jwtParams
         $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
     } else {
         $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("${Username}:${Password}")

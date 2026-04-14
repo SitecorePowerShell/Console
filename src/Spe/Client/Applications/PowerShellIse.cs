@@ -207,6 +207,14 @@ namespace Spe.Client.Applications
             set => Context.ClientPage.ServerProperties["CurrentLanguage"] = value;
         }
 
+        public const string DefaultRunspaceMode = "FullLanguage";
+
+        public static string CurrentRunspaceMode
+        {
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentRunspaceMode"], DefaultRunspaceMode);
+            set => Context.ClientPage.ServerProperties["CurrentRunspaceMode"] = value;
+        }
+
         public SpeJobMonitor Monitor { get; private set; }
 
         public CommandContext GetCommandContext()
@@ -291,6 +299,7 @@ namespace Spe.Client.Applications
             CurrentSessionId = DefaultSessionName;
             CurrentUser = DefaultUser;
             CurrentLanguage = DefaultLanguage;
+            CurrentRunspaceMode = DefaultRunspaceMode;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
             
@@ -1049,6 +1058,10 @@ namespace Spe.Client.Applications
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
+            scriptSession.SetLanguageMode(
+                string.Equals(CurrentRunspaceMode, "ConstrainedLanguage", StringComparison.OrdinalIgnoreCase)
+                    ? System.Management.Automation.PSLanguageMode.ConstrainedLanguage
+                    : System.Management.Automation.PSLanguageMode.FullLanguage);
             Monitor.Start($"{DefaultSessionName}", "ISE", progressBoxRunner.Run,
                 LanguageManager.IsValidLanguageName(CurrentLanguage)
                     ? LanguageManager.GetLanguage(CurrentLanguage)
@@ -1271,6 +1284,8 @@ namespace Spe.Client.Applications
             }
             finally
             {
+                scriptSession.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+
                 if (!string.IsNullOrEmpty(scriptSession.DebugFile))
                 {
                     File.Delete(scriptSession.DebugFile);
@@ -1546,6 +1561,9 @@ namespace Spe.Client.Applications
             ribbon.CommandContext.Parameters["currentLanguage"] = string.IsNullOrEmpty(CurrentLanguage)
                 ? DefaultLanguage
                 : CurrentLanguage;
+            ribbon.CommandContext.Parameters["currentRunspaceMode"] = string.IsNullOrEmpty(CurrentRunspaceMode)
+                ? DefaultRunspaceMode
+                : CurrentRunspaceMode;
 
             ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
@@ -1648,6 +1666,20 @@ namespace Spe.Client.Applications
 
             CurrentUser = user;
             new UserHistory().Add(user);
+            UpdateRibbon();
+        }
+
+        [HandleMessage("ise:setrunspacemode", true)]
+        protected void SetRunspaceMode(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var mode = args.Parameters["mode"];
+            if (string.IsNullOrEmpty(mode))
+            {
+                return;
+            }
+
+            CurrentRunspaceMode = mode;
             UpdateRibbon();
         }
 
