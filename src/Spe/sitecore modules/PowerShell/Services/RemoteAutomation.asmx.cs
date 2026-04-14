@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Management.Automation;
-using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using System.Web.Services;
 using Sitecore;
 using Sitecore.Configuration;
@@ -35,68 +32,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
-        private static string ComputeScriptHash(string script)
-        {
-            if (string.IsNullOrEmpty(script)) return "empty";
-            using (var sha = SHA256.Create())
-            {
-                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(script));
-                return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant().Substring(0, 16);
-            }
-        }
-
-        private static string GetIp()
-        {
-            var request = HttpContext.Current?.Request;
-            if (request == null) return "unknown";
-            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-            return string.IsNullOrEmpty(ip) ? request.ServerVariables["REMOTE_ADDR"] : ip;
-        }
-
-        private static RemotingPolicy ValidateAndResolvePolicy(string script, string userName)
-        {
-            // SOAP endpoint authenticates via username/password, not API keys.
-            // No policy enforcement applies - callers have full access.
-            var policy = RemotingPolicy.Unrestricted;
-            if (policy != null && policy != RemotingPolicy.Unrestricted)
-            {
-                if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, userName, WebServiceSettings.ServiceRemoting, out var policyBlockedCommand))
-                {
-                    PowerShellLog.Audit("[Remoting(SOAP)] action=scriptRejectedByPolicy user={0} ip={1} policy={2} blockedCommand={3}",
-                        userName, GetIp(), policy.Name, policyBlockedCommand);
-                    throw new InvalidOperationException($"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
-                }
-            }
-
-            return policy;
-        }
-
-        private static PSLanguageMode ApplyRestrictions(ScriptSession session, RemotingPolicy policy)
-        {
-            session.ActiveRemotingPolicy = policy;
-            var languageMode = PSLanguageMode.FullLanguage;
-
-            if (policy != null && policy != RemotingPolicy.Unrestricted)
-            {
-                languageMode = policy.LanguageMode;
-            }
-
-            if (languageMode != PSLanguageMode.FullLanguage)
-            {
-                session.SetLanguageMode(languageMode);
-            }
-
-            return languageMode;
-        }
-
-        private static void RestoreRestrictions(ScriptSession session, PSLanguageMode appliedMode)
-        {
-            if (appliedMode != PSLanguageMode.FullLanguage)
-            {
-                session.SetLanguageMode(PSLanguageMode.FullLanguage);
-            }
-        }
-
         private bool Login(string userName, string password)
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
@@ -149,24 +84,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
-                var policy = ValidateAndResolvePolicy(script, userName);
-
-                var scriptHash = ComputeScriptHash(script);
-                PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} policy={4}",
-                    userName, GetIp(), scriptSession.ID, scriptHash, policy?.Name ?? "unrestricted");
-
-                var appliedMode = ApplyRestrictions(scriptSession, policy);
-                try
-                {
-                    scriptSession.ExecuteScriptPart(script);
-                }
-                finally
-                {
-                    RestoreRestrictions(scriptSession, appliedMode);
-                }
-
-                PowerShellLog.Audit("[Remoting(SOAP)] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3}",
-                    userName, GetIp(), scriptSession.ID, scriptHash);
+                scriptSession.ExecuteScriptPart(script);
 
                 var result = new List<NameValue>();
 
@@ -252,12 +170,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
-            var policy = ValidateAndResolvePolicy(script, userName);
-
-            var scriptHash = ComputeScriptHash(script);
-            PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} policy={4}",
-                userName, GetIp(), scriptSession.ID, scriptHash, policy?.Name ?? "unrestricted");
-
             Sitecore.Context.SetActiveSite(siteName);
 
             if (!string.IsNullOrEmpty(cliXmlArgs))
@@ -267,16 +179,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 script = script.TrimEnd(' ', '\t', '\n');
             }
 
-            var appliedMode = ApplyRestrictions(scriptSession, policy);
-            List<object> outObjects;
-            try
-            {
-                outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
-            }
-            finally
-            {
-                RestoreRestrictions(scriptSession, appliedMode);
-            }
+            var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
             if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
                 outObjects.AddRange(scriptSession.LastErrors);

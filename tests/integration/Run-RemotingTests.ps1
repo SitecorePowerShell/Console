@@ -167,7 +167,7 @@ if ($global:isConstrainedLanguage) {
 }
 
 # Run all test files EXCEPT enforced/profiles/DA (those need setup/teardown) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1" |
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1","Remoting.Expiration.Tests.ps1","Remoting.Expiration.DuplicateKeyId.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 1b: Delegated access tests (setup -> test -> teardown, no config deploy needed)
