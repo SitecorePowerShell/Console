@@ -97,7 +97,7 @@ namespace Spe.Core.Settings.Authorization
                 Item policiesFolder;
                 using (new SecurityDisabler())
                 {
-                    policiesFolder = db.GetItem(Templates.Items.Policies);
+                    policiesFolder = db.GetItem(ItemIDs.Policies);
                 }
 
                 if (policiesFolder == null)

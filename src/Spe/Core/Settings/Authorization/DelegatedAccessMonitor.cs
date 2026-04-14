@@ -17,8 +17,8 @@ namespace Spe.Core.Settings.Authorization
         {
             if (item == null) return false;
 
-            return item.ID == Templates.Items.DelegatedAccess ||
-                   (item.Parent != null && item.Parent.ID == Templates.Items.DelegatedAccess);
+            return item.ID == ItemIDs.DelegatedAccess ||
+                   (item.Parent != null && item.Parent.ID == ItemIDs.DelegatedAccess);
         }
 
         internal void OnItemSaved(object sender, EventArgs args)

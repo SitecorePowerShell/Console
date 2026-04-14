@@ -19,25 +19,10 @@ namespace Spe.Core.Settings
     {
         public const string IseSettingsItemAllUsers = "All Users";
 
-        public static string SettingsItemPath
-        {
-            get
-            {
-                var db = Factory.GetDatabase(ScriptLibraryDb);
-                var item = db?.GetItem(Templates.Items.UserSettings);
-                return item != null ? item.Paths.Path + "/" : null;
-            }
-        }
+        public static string SettingsItemPath => GetPathForItemId(ItemIDs.UserSettings, ref settingsItemPath);
+
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
-        public static string FontNamesPath
-        {
-            get
-            {
-                var db = Factory.GetDatabase(ScriptLibraryDb);
-                var item = db?.GetItem(Templates.Items.Fonts);
-                return item != null ? item.Paths.Path + "/" : null;
-            }
-        }
+        public static string FontNamesPath => GetPathForItemId(ItemIDs.Fonts, ref fontNamesPath);
 
         public const string MediaLibraryPath = "/sitecore/media library/";
         public const string TemplatesPath = "/sitecore/templates/";
@@ -64,6 +49,9 @@ namespace Spe.Core.Settings
         private static string settingsDb;
         private static string scriptLibraryDb;
         private static string rulesDb;
+        private static string settingsItemPath;
+        private static string fontNamesPath;
+        private static Item scriptLibraryRoot;
 
         private ApplicationSettings(string applicationName, bool personalizedSettings)
         {
@@ -71,32 +59,11 @@ namespace Spe.Core.Settings
             IsPersonalized = personalizedSettings;
         }
 
-        public static string RulesDb
-        {
-            get
-            {
-                GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
-                return rulesDb;
-            }
-        }
+        public static string RulesDb => GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
 
-        public static string SettingsDb
-        {
-            get
-            {
-                GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
-                return settingsDb;
-            }
-        }
+        public static string SettingsDb => GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
 
-        public static string ScriptLibraryDb
-        {
-            get
-            {
-                GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
-                return scriptLibraryDb;
-            }
-        }
+        public static string ScriptLibraryDb => GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
 
         private bool Loaded { get; set; }
         public string LastScript { get; set; }
@@ -113,18 +80,20 @@ namespace Spe.Core.Settings
         private string FontFamily { get; set; }
         public bool IsPersonalized { get; }
 
+        private string fontFamilyStyle;
         public string FontFamilyStyle
         {
             get
             {
+                if (fontFamilyStyle != null) return fontFamilyStyle;
                 var db = Factory.GetDatabase(ScriptLibraryDb);
-                var fonts = db.GetItem(Templates.Items.Fonts);
+                var fonts = db.GetItem(ItemIDs.Fonts);
                 var font = string.IsNullOrEmpty(FontFamily) ? "Monaco" : FontFamily;
                 var fontItem = fonts.Children[font];
-                return fontItem != null
+                fontFamilyStyle = fontItem != null
                     ? fontItem["Phrase"]
                     : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-
+                return fontFamilyStyle;
             }
         }
 
@@ -139,16 +108,30 @@ namespace Spe.Core.Settings
 
         private static string CurrentDomain => User.Current?.Domain != null ? validNameRegex.Replace(User.Current?.Domain?.Name, "_") : string.Empty;
 
-        private static void GetDatabaseName(ref string databaseName, string settingPath)
+        private static string GetDatabaseName(ref string databaseName, string settingPath)
         {
-            if (!string.IsNullOrEmpty(databaseName)) return;
+            if (!string.IsNullOrEmpty(databaseName)) return databaseName;
 
             databaseName = Factory.GetString(settingPath, false);
             if (string.IsNullOrEmpty(databaseName))
             {
                 databaseName = "master";
             }
+
+            return databaseName;
         }
+        
+        private static string GetPathForItemId(ID itemId, ref string itemPath)
+        {
+            if (itemPath != null) return itemPath;
+            var db = Factory.GetDatabase(ScriptLibraryDb);
+            var item = db?.GetItem(itemId);
+            if (item == null) return null;
+            itemPath = item.Paths.Path + "/";
+            return itemPath;
+        }
+
+        
 
         public static string GetSettingsPath(string applicationName, bool personalizedSettings)
         {
@@ -355,8 +338,10 @@ namespace Spe.Core.Settings
         {
             get
             {
+                if (scriptLibraryRoot != null) return scriptLibraryRoot;
                 var db = Factory.GetDatabase(ScriptLibraryDb);
-                return db.GetItem(ScriptLibraryPath);
+                scriptLibraryRoot = db.GetItem(ScriptLibraryPath);
+                return scriptLibraryRoot;
             }
         }
     }

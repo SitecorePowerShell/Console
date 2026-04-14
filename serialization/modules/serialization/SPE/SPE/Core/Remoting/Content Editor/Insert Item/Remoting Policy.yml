@@ -1,4 +1,4 @@
----
+﻿---
 ID: "dde4eaa6-5b99-48ec-9dd4-bb4a8ceae443"
 Parent: "52ead8ce-f95a-4283-b98b-5264d83e8e58"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -227,6 +227,8 @@ SharedFields:
         $item.Editing.EndEdit() > $null
     }
     
+    Invoke-JavaScript -OnScriptEnd -Script "scForm.invoke('item:load(id=$($item.ID),language=$($item.Language),version=$($item.Version))')"
+    
     Close-Window
 Languages:
 - Language: en
@@ -249,14 +251,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "b686c3ec-ce80-4e37-862b-fb0da1c7119a"
+      Value: "836e739f-611b-47af-a0aa-26d1cfbed2ed"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\Admin
+        sitecore\anajmanowicz
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260413T023143Z
-
-
-
+      Value: 20260414T201843Z

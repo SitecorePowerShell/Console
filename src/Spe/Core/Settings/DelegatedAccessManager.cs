@@ -29,7 +29,7 @@ namespace Spe.Core.Settings
             get
             {
                 var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-                var item = db?.GetItem(Templates.Items.DelegatedAccess);
+                var item = db?.GetItem(ItemIDs.DelegatedAccess);
                 return item?.Paths.Path;
             }
         }
@@ -77,7 +77,7 @@ namespace Spe.Core.Settings
                 using (new SecurityDisabler())
                 {
                     var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-                    var parent = db.GetItem(Templates.Items.DelegatedAccess);
+                    var parent = db.GetItem(ItemIDs.DelegatedAccess);
                     _delegatedConfigs = parent?.Axes.GetDescendants()
                         .Where(d => d.TemplateID == Templates.DelegatedAccess.Id)
                         .Select(DelegatedAccessConfig.FromItem)

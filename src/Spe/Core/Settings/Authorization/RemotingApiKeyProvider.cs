@@ -230,7 +230,7 @@ namespace Spe.Core.Settings.Authorization
                 Item settingsFolder;
                 using (new SecurityDisabler())
                 {
-                    settingsFolder = db.GetItem(Templates.Items.ApiKeys);
+                    settingsFolder = db.GetItem(ItemIDs.ApiKeys);
                 }
 
                 if (settingsFolder == null)

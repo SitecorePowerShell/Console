@@ -466,7 +466,7 @@ namespace Spe.Client.Applications
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Value = strValue,
                         Database = dbName,
-                        ItemID = ItemIDs.RootID.ToString(),
+                        ItemID = Sitecore.ItemIDs.RootID.ToString(),
                         Source = variable["Source"] as string ?? "/sitecore"
                     };
 
@@ -480,7 +480,7 @@ namespace Spe.Client.Applications
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Value = strValue,
                     Database = dbName,
-                    ItemID = ItemIDs.RootID.ToString(),
+                    ItemID = Sitecore.ItemIDs.RootID.ToString(),
                     Source = variable["Source"] as string ?? "/sitecore"
                 };
                 multiList.SetLanguage(Sitecore.Context.Language.Name);
@@ -513,10 +513,10 @@ namespace Spe.Client.Applications
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
-                        ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
+                        ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
                         Source = variable["Source"] as string ?? "/sitecore",
                         ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
+                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
                     };
 
                     return groupedDroplist;
@@ -528,10 +528,10 @@ namespace Spe.Client.Applications
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
-                        ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
+                        ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
                         Source = variable["Source"] as string ?? "/sitecore",
                         ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
+                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
                     };
 
                     return groupedDroplink;
@@ -541,10 +541,10 @@ namespace Spe.Client.Applications
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Database = dbName,
-                    ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
+                    ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
                     Source = variable["Source"] as string ?? "/sitecore",
                     ItemLanguage = Sitecore.Context.Language.Name,
-                    Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
+                    Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
                 };
                 lookup.Class += " textEdit";
 
@@ -557,7 +557,7 @@ namespace Spe.Client.Applications
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Database = dbName,
-                    ItemID = item?.ID.ToString() ?? ItemIDs.Null.ToString(),
+                    ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.Null.ToString(),
                     Source = variable["Source"] as string ?? "",
                     Value = item?.ID.ToString() ?? "",
                     ItemLanguage = Sitecore.Context.Language.Name
@@ -742,7 +742,7 @@ namespace Spe.Client.Applications
             {
                 ID = editorId,
                 HeaderStyle = "margin-top:20px; display:inline-block;",
-                ItemID = ItemIDs.RootID.ToString()
+                ItemID = Sitecore.ItemIDs.RootID.ToString()
             };
             checkList.SetItemLanguage(Sitecore.Context.Language.Name);
             string[] values;
