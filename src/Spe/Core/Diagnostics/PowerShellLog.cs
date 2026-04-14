@@ -117,7 +117,11 @@ namespace Spe.Core.Diagnostics
                 var kvMatches = KeyValuePattern.Matches(remainder);
                 foreach (Match kv in kvMatches)
                 {
-                    json[kv.Groups[1].Value] = kv.Groups[2].Value;
+                    var key = kv.Groups[1].Value;
+                    if (json[key] == null)
+                    {
+                        json[key] = kv.Groups[2].Value;
+                    }
                 }
             }
             else

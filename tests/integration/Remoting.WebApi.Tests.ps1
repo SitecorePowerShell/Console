@@ -61,11 +61,11 @@ Assert-Type $html "XmlDocument" "ChildrenAsHtml script should return XML Documen
 
 Write-Host "`n  [Web API invalid calls]" -ForegroundColor White
 
-Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NonExistingScript?user=sitecore%5Cadmin&password=b" } "(404) Not Found" "Non existing script should throw exception"
+Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NonExistingScript?user=sitecore%5Cadmin&password=b" } "404" "Non existing script should throw exception"
 
-Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=admin&password=invalid" } "(401) Unauthorized" "Wrong password should throw exception"
+Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=admin&password=invalid" } "401" "Wrong password should throw exception"
 
-Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=non_existing&password=invalid" } "(401) Unauthorized" "Non existing user should throw exception"
+Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=non_existing&password=invalid" } "401" "Non existing user should throw exception"
 
 Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NotFound" } "" "Not found script without credentials should throw exception"
 

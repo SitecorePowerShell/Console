@@ -177,6 +177,7 @@
     <Compile Include="Client\Controls\LanguageGallery.cs" />
     <Compile Include="Client\Controls\IseContextPanelBase.cs" />
     <Compile Include="Client\Controls\IseContextPanelEx.cs" />
+    <Compile Include="Client\Controls\IseRunspaceModePanel.cs" />
     <Compile Include="Commands\Data\Clones\BaseItemCloneNotificationCommand.cs" />
     <Compile Include="Commands\Data\Clones\GetItemCloneNotificationCommand.cs" />
     <Compile Include="Commands\Data\Clones\NotificationAction.cs" />
@@ -225,16 +226,13 @@
     <Compile Include="Core\Rules\SitecoreConfigSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigIntSettingValueCondition.cs" />
     <Compile Include="Core\Rules\WebConfigSettingValueCondition.cs" />
-    <Compile Include="Core\Settings\Authorization\ProfileOverrideProvider.cs" />
-    <Compile Include="Core\Settings\Authorization\RestrictionProfile.cs" />
-    <Compile Include="Core\Settings\Authorization\RestrictionProfileManager.cs" />
-    <Compile Include="Core\Settings\Authorization\ScriptTrustRegistry.cs" />
-    <Compile Include="Core\Settings\Authorization\TrustedScriptSaveHandler.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingPolicy.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingPolicyManager.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingItemEventHandler.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingApiKey.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingApiKeyProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
     <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
-    <Compile Include="Core\Settings\Authorization\TrustedScriptEntry.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />
     <Compile Include="Core\Data\DisablePropertyExpander.cs" />
@@ -534,6 +532,7 @@
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
+    <Compile Include="Core\Diagnostics\LogSanitizer.cs" />
     <Compile Include="Core\Diagnostics\PowerShellLog.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />
     <Compile Include="Core\Utility\RulesUtils.cs" />

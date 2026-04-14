@@ -158,18 +158,18 @@ function Invoke-RemoteScript {
             VerbosePreference              SilentlyContinue
             WarningPreference              Continue
             WhatIfPreference               False
-    
+
         .EXAMPLE
             The following example remotely executes a script in Sitecore using a reusable session.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
             Stop-ScriptSession -Session $session
-    
+
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
             sitecore\admin           sitecore     True            False
-    
+
         .EXAMPLE
             The following remotely executes a script in Sitecore with the $Using variable.
 
@@ -177,17 +177,17 @@ function Invoke-RemoteScript {
             $script = {
                 $Using:date
             }
-    
+
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script
             Stop-ScriptSession -Session $session
-    
+
             6/25/2015 11:09:17 AM
-                    
+
         .EXAMPLE
             The following example runs a script as a ScriptSession job on the server (using Start-ScriptSession internally).
             The arguments are passed to the server with the help of the $Using convention.
             The results are finally returned and the job is removed.
-            
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             $identity = "admin"
             $date = [datetime]::Now
@@ -207,28 +207,28 @@ function Invoke-RemoteScript {
                 }
             }
             Stop-ScriptSession -Session $session
-        
+
         .EXAMPLE
             The following remotely executes a script in Sitecore with arguments.
-            
+
             $script = {
                 [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin
                 $user
                 $params.date.ToString()
             }
-    
+
             $args = @{
                 "date" = [datetime]::Now
             }
-    
+
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
             Stop-ScriptSession -Session $session
-    
+
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
-            sitecore\admin           sitecore     True            False          
+            sitecore\admin           sitecore     True            False
             6/25/2015 11:09:17 AM
-    
+
     	.LINK
     		Wait-RemoteScriptSession
 
@@ -240,7 +240,7 @@ function Invoke-RemoteScript {
     #>
    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
-        
+
         [Parameter(ParameterSetName='InProcess')]
         [Parameter(ParameterSetName='Session')]
         [Parameter(ParameterSetName='Uri')]
@@ -268,7 +268,7 @@ function Invoke-RemoteScript {
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
-        
+
         [Parameter()]
         [Alias("ArgumentList")]
         [hashtable]$Arguments,
@@ -329,15 +329,18 @@ function Invoke-RemoteScript {
             $Username             = $sd.Username
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
             $SessionId            = $sd.SessionId
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
             $PersistentSession    = $sd.PersistentSession
+            $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
             $SessionId = [guid]::NewGuid()
             $PersistentSession = $false
+            $Algorithm = "HS256"
             $clientCache = @{}
         }
 
@@ -357,8 +360,9 @@ function Invoke-RemoteScript {
 
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
-            
+                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
+
             $errorResponse = $null
             $encounteredError = $false
             $response = $null
@@ -423,19 +427,19 @@ function Invoke-RemoteScript {
                             -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "TooManyRequests"
                         $errorResponse = $null
                     }
-                    # Handle restriction/profile blocks (403)
+                    # Handle policy/command blocks (403)
                     elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
                         $restriction = $null
                         $blockedCmd = $null
-                        $profileName = $null
+                        $policyName = $null
                         if ($errorResponse.Headers.Contains("X-SPE-Restriction")) {
                             $restriction = $errorResponse.Headers.GetValues("X-SPE-Restriction") | Select-Object -First 1
                         }
                         if ($errorResponse.Headers.Contains("X-SPE-BlockedCommand")) {
                             $blockedCmd = $errorResponse.Headers.GetValues("X-SPE-BlockedCommand") | Select-Object -First 1
                         }
-                        if ($errorResponse.Headers.Contains("X-SPE-Profile")) {
-                            $profileName = $errorResponse.Headers.GetValues("X-SPE-Profile") | Select-Object -First 1
+                        if ($errorResponse.Headers.Contains("X-SPE-Policy")) {
+                            $policyName = $errorResponse.Headers.GetValues("X-SPE-Policy") | Select-Object -First 1
                         }
 
                         if ($restriction -eq "command-blocked") {
@@ -445,11 +449,11 @@ function Invoke-RemoteScript {
                                 -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "CommandBlocked"
                             $errorResponse = $null
                         }
-                        elseif ($restriction -eq "profile-blocked") {
-                            $msg = "Script blocked by restriction profile '$profileName': $blockedCmd"
+                        elseif ($restriction -eq "policy-blocked") {
+                            $msg = "Script blocked by remoting policy '$policyName': $blockedCmd"
                             $encounteredError = $true
                             Write-Error -Message $msg -Category SecurityError `
-                                -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "ProfileRestriction"
+                                -CategoryActivity "Invoke" -CategoryTargetName $uri -CategoryReason "PolicyRestriction"
                             $errorResponse = $null
                         }
                         else {

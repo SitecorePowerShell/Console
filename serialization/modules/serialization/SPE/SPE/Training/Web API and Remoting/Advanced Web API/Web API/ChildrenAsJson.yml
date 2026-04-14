@@ -20,7 +20,7 @@ SharedFields:
     #if the location is not Sitecore tree, switch to root of Master Database
     $HttpContext = [System.Web.HttpContext]::Current;
     
-    if((Get-Location).Provider.Name -ne "CmsItemProvider"){
+    if((Get-Location).Provider.Name -ne "Sitecore"){
         Set-Location master:\
     }
     
@@ -51,11 +51,11 @@ Languages:
       Value: 20130913T041828
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "03c9ae72-8453-4e20-b893-5d7690b3ec68"
+      Value: "7a7437bc-ec48-4dad-b45f-7bd9b185b80a"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214513Z
+      Value: 20260413T212845Z

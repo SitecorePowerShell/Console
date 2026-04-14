@@ -42,6 +42,7 @@ namespace Spe.Core.Settings.Authorization
         {
             public string Alg { get; set; }
             public string Typ { get; set; }
+            public string Kid { get; set; }
         }
 
         public class TokenPayload
@@ -50,40 +51,50 @@ namespace Spe.Core.Settings.Authorization
             public string Aud { get; set; }
             public long Exp { get; set; }
             public string Name { get; set; }
-            public string Scope { get; set; }
             public long Iat { get; set; }
             public long Nbf { get; set; }
             // ReSharper disable once InconsistentNaming - must match JWT claim name "client_session"
             public string Client_Session { get; set; }
         }
 
-        private bool IsValidSharedSecret(string secret)
+        // RFC 7518 Section 3.2: "A key of the same size as the hash output
+        // or larger MUST be used with this algorithm."
+        // Keys are UTF-8 encoded, so character count equals byte count for ASCII secrets.
+        private static readonly Dictionary<string, int> MinSecretLengthByAlgorithm =
+            new Dictionary<string, int>(StringComparer.Ordinal)
+            {
+                { "HS256", 32 },
+                { "HS384", 48 },
+                { "HS512", 64 }
+            };
+
+        private bool IsValidSharedSecret(string secret, string algorithm = null)
         {
             SecurityException error = null;
-            var isValid = true;
             if (string.IsNullOrWhiteSpace(secret))
-                error = new SecurityException("The SPE shared secret is not set. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char random string.");
+                error = new SecurityException("The SPE shared secret is not set. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char hex string.");
 
-            if (double.TryParse(secret, out _))
-                error = new SecurityException("The SPE shared secret is not set, or was set to a numeric value. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char random string.");
+            if (error == null && double.TryParse(secret, out _))
+                error = new SecurityException("The SPE shared secret is not set, or was set to a numeric value. Add a child <SharedSecret> element in the SPE <authenticationProvider> config (Spe.config) and set a secure shared secret, e.g. a 64-char hex string.");
 
-            if (secret.Length < 30)
-                error = new SecurityException("Your SPE shared secret is not long enough. Please make it more than 30 characters for maximum security. You can set this in Spe.config on the <authenticationProvider>.");
+            if (error == null && !string.IsNullOrEmpty(algorithm) && MinSecretLengthByAlgorithm.TryGetValue(algorithm, out var minLength))
+            {
+                if (secret.Length < minLength)
+                    error = new SecurityException($"The shared secret is too short for {algorithm}. RFC 7518 requires at least {minLength} characters. Current length: {secret.Length}.");
+            }
+            else if (error == null && secret.Length < 32)
+            {
+                error = new SecurityException("The shared secret must be at least 32 characters (256 bits) for HMAC-based JWT signing.");
+            }
 
             if (error != null)
             {
-                isValid = false;
-                if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason={error.Message}");
+                if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason={LogSanitizer.SanitizeValue(error.Message)}");
+                if (DetailedAuthenticationErrors) throw error;
+                return false;
             }
 
-            if (DetailedAuthenticationErrors && error != null)
-            {
-                throw error;
-            }
-
-            if (isValid) return true;
-
-            return false;
+            return true;
         }
 
         private bool IsValidTokenType(string type)
@@ -91,7 +102,7 @@ namespace Spe.Core.Settings.Authorization
             var isValid = !string.IsNullOrEmpty(type) && type.Is("JWT");
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=invalidTokenType type={type}");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=invalidTokenType type={LogSanitizer.SanitizeValue(type)}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Type is incorrect.");
 
@@ -100,14 +111,14 @@ namespace Spe.Core.Settings.Authorization
 
         private bool IsValidAudience(string audience, string authority)
         {
-            PowerShellLog.Debug($"[JWT] action=audienceCheck audience={audience} authority={authority}");
+            PowerShellLog.Debug($"[JWT] action=audienceCheck audience={LogSanitizer.SanitizeValue(audience)} authority={LogSanitizer.SanitizeValue(authority)}");
             var isValid = !string.IsNullOrEmpty(audience) &&
                           (audience.Is(authority) ||
                            AllowedAudiences.Any() &&
                            AllowedAudiences.Contains(audience));
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=audienceNotAllowed audience={audience} authority={authority}");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=audienceNotAllowed audience={LogSanitizer.SanitizeValue(audience)} authority={LogSanitizer.SanitizeValue(authority)}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Audience is not allowed.");
 
@@ -121,7 +132,7 @@ namespace Spe.Core.Settings.Authorization
                           AllowedIssuers.Contains(issuer);
             if (isValid) return true;
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuerNotAllowed issuer={issuer}");
+            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuerNotAllowed issuer={LogSanitizer.SanitizeValue(issuer)}");
             if (DetailedAuthenticationErrors)
                 throw new SecurityException("The Token Issuer is not allowed.");
 
@@ -232,8 +243,17 @@ namespace Spe.Core.Settings.Authorization
             return converted;
         }
 
+        private static readonly HashSet<string> AllowedAlgorithms =
+            new HashSet<string>(StringComparer.Ordinal) { "HS256", "HS384", "HS512" };
+
         private static byte[] ComputeHash(string algorithm, string secret, string toBeSigned)
         {
+            if (!AllowedAlgorithms.Contains(algorithm))
+            {
+                PowerShellLog.Warn($"[Auth] action=algorithmRejected algorithm={LogSanitizer.SanitizeValue(algorithm)}");
+                return null;
+            }
+
             var secretBytes = Encoding.UTF8.GetBytes(secret);
             var dataBytes = Encoding.UTF8.GetBytes(toBeSigned);
             switch (algorithm)
@@ -249,7 +269,32 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        public bool ValidateToken(string token, string authority, out string username, out TokenValidationResult result, string sharedSecretOverride = null)
+        /// <summary>
+        /// Extracts the kid (Key ID) claim from a JWT header without performing
+        /// signature validation. Returns null if the token is malformed or has no kid.
+        /// </summary>
+        public static string ExtractKeyId(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return null;
+
+            try
+            {
+                var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 3) return null;
+
+                var decodedHeader = Decode(parts[0]);
+                var header = Encoding.UTF8.GetString(decodedHeader);
+                var serializer = new JavaScriptSerializer();
+                var tokenHeader = serializer.Deserialize<TokenHeader>(header);
+                return tokenHeader?.Kid;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool ValidateToken(string token, string authority, out string username, out TokenValidationResult result, string sharedSecretOverride = null, bool skipUsernameValidation = false)
         {
             username = null;
             result = null;
@@ -259,6 +304,7 @@ namespace Spe.Core.Settings.Authorization
 
             try
             {
+                // Quick rejection for null/empty/numeric secrets before parsing the token
                 if (!IsValidSharedSecret(effectiveSecret)) return false;
 
                 var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
@@ -273,16 +319,24 @@ namespace Spe.Core.Settings.Authorization
 
                 if (!IsValidTokenType(tokenHeader.Typ)) return false;
 
+                // Algorithm-aware secret length check per RFC 7518 Section 3.2
+                if (!IsValidSharedSecret(effectiveSecret, tokenHeader.Alg)) return false;
+
                 var payloadJsonBase64 = parts[1];
                 var decodedPayload = Decode(payloadJsonBase64);
                 var payload = Encoding.UTF8.GetString(decodedPayload);
                 var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
 
-                PowerShellLog.Debug($"[JWT] action=tokenParsed issuer={tokenPayload.Iss} audience={tokenPayload.Aud} algorithm={tokenHeader.Alg}");
+                PowerShellLog.Debug($"[JWT] action=tokenParsed issuer={LogSanitizer.SanitizeValue(tokenPayload.Iss)} audience={LogSanitizer.SanitizeValue(tokenPayload.Aud)} algorithm={LogSanitizer.SanitizeValue(tokenHeader.Alg)}");
 
                 var signature = parts[2];
                 var toBeSigned = $"{headerJsonBase64}.{payloadJsonBase64}";
                 var hash = ComputeHash(tokenHeader.Alg, effectiveSecret, toBeSigned);
+                if (hash == null)
+                {
+                    PowerShellLog.Warn("[Auth] action=authFailed reason=unsupportedAlgorithm");
+                    return false;
+                }
                 var testSignature = Convert.ToBase64String(hash).Split('=')[0]
                     .Replace('+', '-').Replace('/', '_');
 
@@ -295,12 +349,14 @@ namespace Spe.Core.Settings.Authorization
                 if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
                 if (!IsValidIssuer(tokenPayload.Iss)) return false;
 
-                if (!IsValidUsername(tokenPayload.Name)) return false;
-                username = tokenPayload.Name;
+                if (!skipUsernameValidation)
+                {
+                    if (!IsValidUsername(tokenPayload.Name)) return false;
+                    username = tokenPayload.Name;
+                }
 
                 result = new TokenValidationResult
                 {
-                    Scope = tokenPayload.Scope,
                     ClientSessionId = tokenPayload.Client_Session
                 };
 

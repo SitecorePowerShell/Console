@@ -1,5 +1,5 @@
 # Remoting Tests - Security Baseline (Issue #1419)
-# Tests that run WITHOUT security config (CLM, blocklist, scope restrictions).
+# Tests that run WITHOUT security config (CLM, blocklist).
 # These verify audit logging, JWT acceptance, and New-Jwt client parameters.
 # Run via: .\Run-RemotingTests.ps1 -TestFile Remoting.Security.Tests.ps1
 # Requires: SPE Remoting enabled, shared secret configured
@@ -28,14 +28,12 @@ $httpClient = New-Object System.Net.Http.HttpClient($handler)
 function Invoke-BearerRequest {
     param(
         [string]$Script,
-        [string]$Scope,
         [string]$ClientSessionId
     )
     $jwtParams = @{
         Algorithm = 'HS256'; Issuer = 'SPE Remoting'
         Audience  = $protocolHost; Name = 'sitecore\admin'; SecretKey = $sharedSecret
     }
-    if ($Scope)      { $jwtParams['Scope']      = $Scope }
     if ($ClientSessionId) { $jwtParams['ClientSessionId']  = $ClientSessionId }
     $token = New-Jwt @jwtParams
 
@@ -83,38 +81,20 @@ Assert-Equal $clmResult "FullLanguage" "Language mode is FullLanguage (no securi
 # ============================================================================
 Write-Host "`n  [Test Group 3: JWT Token Acceptance]" -ForegroundColor White
 
-# 3a. JWT with scope claim is accepted
-$scopeResponse = Invoke-BearerRequest -Script '"scope-test-ok"' -Scope "admin" -ClientSessionId "test-sess-001"
-Assert-Equal ([int]$scopeResponse.StatusCode) 200 "JWT with scope=admin accepted"
-
-# 3b. JWT without scope claim works (backwards compatible)
-$noScopeResponse = Invoke-BearerRequest -Script '"no-scope-ok"'
-Assert-Equal ([int]$noScopeResponse.StatusCode) 200 "JWT without scope claim works (backwards compatible)"
-
-# 3c. JWT with ClientSessionId claim is accepted
+# 3a. JWT with ClientSessionId claim is accepted
 $sessionResponse = Invoke-BearerRequest -Script '"session-test-ok"' -ClientSessionId "correlation-123"
 Assert-Equal ([int]$sessionResponse.StatusCode) 200 "JWT with clientSession claim accepted"
 
+# 3b. JWT without optional claims works
+$noClaimsResponse = Invoke-BearerRequest -Script '"no-claims-ok"'
+Assert-Equal ([int]$noClaimsResponse.StatusCode) 200 "JWT without optional claims works"
+
 # ============================================================================
-#  Test Group 4: New-Jwt Scope/ClientSessionId Parameters
+#  Test Group 4: New-Jwt Client Module
 # ============================================================================
 Write-Host "`n  [Test Group 4: New-Jwt Client Module]" -ForegroundColor White
 
-# 4a. New-Jwt accepts Scope parameter
-$scopedToken = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -Scope "read-only"
-Assert-NotNull $scopedToken "New-Jwt produces token with Scope parameter"
-
-# 4b. Token contains scope claim in payload
-$payloadBase64 = $scopedToken.Split('.')[1]
-switch ($payloadBase64.Length % 4) {
-    2 { $payloadBase64 += "==" }
-    3 { $payloadBase64 += "=" }
-}
-$payloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payloadBase64.Replace('-','+').Replace('_','/')))
-Assert-Like $payloadJson '*"scope":"read-only"*' "JWT payload contains scope claim"
-
-# 4c. New-Jwt accepts ClientSessionId parameter
+# 4a. New-Jwt accepts ClientSessionId parameter
 $sessionToken = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
     -Name "sitecore\admin" -SecretKey $sharedSecret -ClientSessionId "sess-456"
 $sessionPayloadBase64 = $sessionToken.Split('.')[1]
@@ -125,17 +105,40 @@ switch ($sessionPayloadBase64.Length % 4) {
 $sessionPayloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($sessionPayloadBase64.Replace('-','+').Replace('_','/')))
 Assert-Like $sessionPayloadJson '*"client_session":"sess-456"*' "JWT payload contains client_session claim"
 
-# 4d. Omitting Scope/ClientSessionId doesn't break token (backwards compatible)
+# 4b. Omitting ClientSessionId doesn't break token
 $plainToken = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
     -Name "sitecore\admin" -SecretKey $sharedSecret
-Assert-NotNull $plainToken "New-Jwt without Scope/ClientSessionId still works"
-$plainPayloadBase64 = $plainToken.Split('.')[1]
-switch ($plainPayloadBase64.Length % 4) {
-    2 { $plainPayloadBase64 += "==" }
-    3 { $plainPayloadBase64 += "=" }
-}
-$plainPayloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($plainPayloadBase64.Replace('-','+').Replace('_','/')))
-Assert-True ($plainPayloadJson -notlike '*scope*') "JWT without Scope omits scope claim"
+Assert-NotNull $plainToken "New-Jwt without ClientSessionId still works"
+
+# ============================================================================
+#  Test Group 5: Connection Test Endpoint (action=test)
+# ============================================================================
+Write-Host "`n  [Test Group 5: Connection Test Endpoint]" -ForegroundColor White
+
+# 5a. Test-RemoteConnection returns server info
+$testResult = Test-RemoteConnection -Session $session
+Assert-NotNull $testResult "Test-RemoteConnection returns a result"
+Assert-NotNull $testResult.SPEVersion "Result contains SPEVersion"
+Assert-NotNull $testResult.SitecoreVersion "Result contains SitecoreVersion"
+Assert-NotNull $testResult.CurrentTime "Result contains CurrentTime"
+
+# 5b. Test-RemoteConnection -Quiet returns boolean
+$quietResult = Test-RemoteConnection -Session $session -Quiet
+Assert-Equal $quietResult $true "Test-RemoteConnection -Quiet returns true for healthy server"
+
+# ============================================================================
+#  Test Group 6: Session Cleanup Endpoint (action=cleanup)
+# ============================================================================
+Write-Host "`n  [Test Group 6: Session Cleanup Endpoint]" -ForegroundColor White
+
+# 6a. Create a persistent session, then clean it up
+$cleanupSession = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
+$cleanupSession.PersistentSession = $true
+Invoke-RemoteScript -Session $cleanupSession -ScriptBlock { "persistent-session-ok" } | Out-Null
+
+# 6b. Stop-ScriptSession uses action=cleanup (no server-side script needed)
+Stop-ScriptSession -Session $cleanupSession
+Assert-True $true "Stop-ScriptSession completed without error"
 
 # Cleanup
 $httpClient.Dispose()

@@ -30,7 +30,7 @@ SharedFields:
     $body = "<h1>Children of $($item)</h1>"
     $HttpContext = [System.Web.HttpContext]::Current;
     
-    if((Get-Location).Provider.Name -ne "CmsItemProvider"){
+    if((Get-Location).Provider.Name -ne "Sitecore"){
         Set-Location master:\
     }
     
@@ -57,11 +57,11 @@ Languages:
       Value: 20130913T041828
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "d08dfb73-c85d-4b63-a431-b16d789d2604"
+      Value: "cd58cd54-11b0-4968-8e47-468612e411f3"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214513Z
+      Value: 20260413T212818Z

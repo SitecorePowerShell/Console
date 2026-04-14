@@ -6,10 +6,10 @@ Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Web API an
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/jar_coffee_bean.png
+  Value: Office/32x32/jar.png
 - ID: "218ca464-cb77-4c97-b141-34871ecae00b"
   Hint: Enabled
-  Value: 1
+  Value: 
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 200
@@ -27,11 +27,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "5cb85e98-a754-4655-b518-d86e00fae1da"
+      Value: "3371d45b-de37-4bce-aa63-e2eb27ed2e44"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260323T144406Z
+      Value: 20260414T013835Z

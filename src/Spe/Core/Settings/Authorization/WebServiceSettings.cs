@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Web;
 using System.Xml;
 using Sitecore;
@@ -19,20 +18,11 @@ namespace Spe.Core.Settings.Authorization
             public int MaxAge { get; set; }
         }
 
-        internal class CommandRestrictionSettings
-        {
-            public string Mode { get; set; }
-            public HashSet<string> Commands { get; set; }
-        }
-
         private class ServiceState
         {
             public bool Enabled { get; set; }
             public bool RequireSecureConnection { get; set; }
             public CorsSettings Cors { get; set; }
-            public PSLanguageMode LanguageMode { get; set; }
-            public CommandRestrictionSettings CommandRestrictions { get; set; }
-            public string ProfileName { get; set; }
         }
 
         private static readonly Dictionary<string, ServiceState> services = new Dictionary<string, ServiceState>();
@@ -58,21 +48,10 @@ namespace Spe.Core.Settings.Authorization
                     throw new ArgumentException($"A duplicate service name was detected in the configuration. The service '{xmlDefinition.Name}' already exists.");
                 }
 
-                PSLanguageMode langMode = PSLanguageMode.FullLanguage;
-                var langModeAttr = xmlDefinition.Attributes["languageMode"]?.Value;
-                if (!string.IsNullOrEmpty(langModeAttr))
-                {
-                    Enum.TryParse(langModeAttr, true, out langMode);
-                }
-
-                var profileName = xmlDefinition.Attributes["profile"]?.Value;
-
                 var service = new ServiceState()
                 {
                     Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
-                    RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true,
-                    LanguageMode = langMode,
-                    ProfileName = profileName
+                    RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true
                 };
 
                 var corsNode = xmlDefinition.SelectSingleNode("cors") as XmlElement;
@@ -103,37 +82,6 @@ namespace Spe.Core.Settings.Authorization
                     }
                 }
 
-                var restrictionsNode = xmlDefinition.SelectSingleNode("commandRestrictions") as XmlElement;
-                if (restrictionsNode != null)
-                {
-                    var mode = restrictionsNode.GetAttribute("mode");
-                    if (string.IsNullOrEmpty(mode)) mode = "blocklist";
-
-                    var commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    var isAllowlist = mode.Equals("allowlist", StringComparison.OrdinalIgnoreCase);
-                    var commandNodes = isAllowlist
-                        ? restrictionsNode.SelectNodes("allowedCommands/command")
-                        : restrictionsNode.SelectNodes("blockedCommands/command");
-
-                    if (commandNodes != null)
-                    {
-                        foreach (XmlNode commandNode in commandNodes)
-                        {
-                            var cmd = commandNode.InnerText?.Trim();
-                            if (!string.IsNullOrEmpty(cmd))
-                            {
-                                commands.Add(cmd);
-                            }
-                        }
-                    }
-
-                    service.CommandRestrictions = new CommandRestrictionSettings
-                    {
-                        Mode = mode,
-                        Commands = commands
-                    };
-                }
-
                 services.Add(xmlDefinition.Name, service);
             }
 
@@ -157,36 +105,6 @@ namespace Spe.Core.Settings.Authorization
             if (services.ContainsKey(serviceName))
             {
                 return services[serviceName].Cors;
-            }
-            return null;
-        }
-
-        public static PSLanguageMode GetLanguageMode(string serviceName)
-        {
-            if (services.ContainsKey(serviceName))
-            {
-                return services[serviceName].LanguageMode;
-            }
-            return PSLanguageMode.FullLanguage;
-        }
-
-        internal static CommandRestrictionSettings GetCommandRestrictions(string serviceName)
-        {
-            if (services.ContainsKey(serviceName))
-            {
-                return services[serviceName].CommandRestrictions;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the restriction profile name configured for the given service, or null if none.
-        /// </summary>
-        public static string GetProfileName(string serviceName)
-        {
-            if (services.ContainsKey(serviceName))
-            {
-                return services[serviceName].ProfileName;
             }
             return null;
         }

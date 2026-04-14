@@ -713,6 +713,8 @@ namespace Spe.Client.Applications
                 radioList.Controls.Add(new Literal("<br/>"));
             }
 
+            AddControlAttributes(variable, radioList);
+
             return radioList;
         }
 
@@ -1137,7 +1139,8 @@ namespace Spe.Client.Applications
                         if (!string.IsNullOrEmpty(value as string)) continue;
                         break;
                     case "String[]":
-                        if ((value as string[]).Length > 0) continue;
+                        var arr = value as string[];
+                        if (arr.Length > 0 && arr.Any(s => !string.IsNullOrEmpty(s))) continue;
                         break;
                     case "DateTime":
                         if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue) continue;

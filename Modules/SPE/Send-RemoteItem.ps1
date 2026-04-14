@@ -6,39 +6,39 @@ function Send-RemoteItem {
     <#
         .SYNOPSIS
             Uploads a file to the filesystem on the server or media library through a Sitecore PowerShell Extensions web service.
-    
+
        .PARAMETER Path
             The source path of the item to upload on the client side.
-            
+
        .PARAMETER Destination
             The destination path of the item on the server side.
-            
+
        .PARAMETER RootPath
-            The predefined directory in which the item will be uploaded to. This is simply a keyword that maps to a predefined location on the server side. 
-            
+            The predefined directory in which the item will be uploaded to. This is simply a keyword that maps to a predefined location on the server side.
+
             When using this you can simply provide the file or media item name in the Destination parameter.
-       
+
        .PARAMETER SkipUnpack
             The compressed archive should not be unpacked during the upload process. This is a dynamic parameter that appears when RootPath is 'Media'.
-       
+
        .PARAMETER SkipExisting
             Any existing items should not be overwritten.
-            
+
        .EXAMPLE
             The following uploads a file to the root application path.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\data.xml | Send-RemoteItem @props -RootPath App
-    
+
        .EXAMPLE
             The following uploads the image to the media library with the specified name.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\image.png | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/image2.png"
-    
+
         .EXAMPLE
             The following uploads the image to the media library updating the item with the specified Id..
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\cover.jpg | Send-RemoteItem -Session $session -Destination "{04DAD0FD-DB66-4070-881F-17264CA257E1}"
 
@@ -47,14 +47,14 @@ function Send-RemoteItem {
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
-        
+
         .EXAMPLE
             The following uploads a compressed archive to the the media library and skips unpacking.
-            
+
             Compress-Archive -Path C:\temp\kittens -DestinationPath C:\temp\kittens.zip
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
-        
+
         .LINK
             Receive-RemoteItem
 
@@ -70,7 +70,7 @@ function Send-RemoteItem {
         [Parameter(Mandatory=$true, ParameterSetName='Session')]
         [ValidateNotNull()]
         [pscustomobject]$Session,
-        
+
         [Parameter(ParameterSetName='Uri')]
         [Uri[]]$ConnectionUri,
 
@@ -127,7 +127,7 @@ function Send-RemoteItem {
 
         $mediaId = [guid]::Empty
         $isMediaItem = $RootPath -eq "Media" -or [guid]::TryParse($Destination, [ref]$mediaId)
-        
+
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Destination))) {
             Write-Error -Message "RootPath is required when Destination is not fully qualified." -ErrorAction Stop
         }
@@ -152,11 +152,14 @@ function Send-RemoteItem {
             $Username             = $sd.Username
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
+            $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
+            $Algorithm = "HS256"
             $clientCache = @{}
         }
 
@@ -182,12 +185,13 @@ function Send-RemoteItem {
 
             Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials -Uri $uri -Cache $clientCache
+                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
             try {
                 Write-Verbose -Message "Uploading $($Path)"
                 [System.Net.HttpWebResponse]$errorResponse = $null;
-                
+
                 $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
                 $content = New-Object System.Net.Http.StreamContent($fileStream)
                 $responseMessage = $client.PostAsync($url, $content).Result
@@ -196,7 +200,7 @@ function Send-RemoteItem {
 
                 if(!$responseMessage.IsSuccessStatusCode) {
                     Write-Error "Upload failed. $($responseMessage.ReasonPhrase)"
-                    return    
+                    return
                 }
 
                 Write-Verbose -Message "Upload complete."
@@ -214,8 +218,8 @@ function Send-RemoteItem {
 
             if($errorResponse){
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
-                    -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
-            }            
+                    -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
+            }
         }
     }
 }

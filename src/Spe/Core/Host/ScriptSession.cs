@@ -249,7 +249,7 @@ namespace Spe.Core.Host
         public string ApplianceType { get; set; }
         public bool Debugging { get; set; }
         public string DebugFile { get; set; }
-        public RestrictionProfile ActiveRestrictionProfile { get; set; }
+        public RemotingPolicy ActiveRemotingPolicy { get; set; }
         internal EngineIntrinsics Engine { get; set; }
         public bool DebuggingInBreakpoint { get; private set; }
         public int[] Breakpoints { get; set; } = new int[0];

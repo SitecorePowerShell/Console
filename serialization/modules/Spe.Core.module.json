@@ -59,8 +59,12 @@
                         "scope": "ItemAndDescendants"
                     },
                     {
-                        "path": "/Settings/Remoting/Trusted Scripts",
-                        "scope": "ItemAndDescendants"
+                        "path": "/Settings/Remoting/API Keys",
+                        "scope": "SingleItem"
+                    },
+                    {
+                        "path": "/Settings/Remoting/Policies",
+                        "scope": "SingleItem"
                     },
                     {
                         "path": "/Settings/Remoting",

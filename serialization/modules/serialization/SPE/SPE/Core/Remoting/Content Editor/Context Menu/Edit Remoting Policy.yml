@@ -1,0 +1,281 @@
+---
+ID: "4e7e1cd8-bd37-448a-aa12-46a2f29869ee"
+Parent: "a9153fbe-bea5-44b4-b901-60891b5bda39"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Content Editor/Context Menu/Edit Remoting Policy
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/brickwall.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{5C440F09-3F03-47C3-8583-E3F03C029340}"
+        name="Only show for Remoting Policy items">
+        <conditions>
+          <condition
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="61B234184D454DF9902AF163A5F2E26B"
+            templateid="{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID.ToString() -ne "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}") {
+        Close-Window
+        Exit
+    }
+    
+    Import-Function -Name DialogBuilder
+    
+    $item = $SitecoreContextItem | Initialize-Item
+    
+    $commandGroups = [ordered]@{
+        "Inert: Item Discovery and Inspection" = @(
+            "Find-Item", "Get-ChildItem", "Get-Item",
+            "Get-ItemClone", "Get-ItemCloneNotification", "Get-ItemField",
+            "Get-ItemReference", "Get-ItemReferrer", "Get-ItemTemplate",
+            "Get-ItemWorkflowEvent", "Get-LockedChildItem",
+            "Initialize-Item", "Test-BaseTemplate"
+        )
+        "Inert: Presentation and Layout" = @(
+            "Get-Layout", "Get-LayoutDevice", "Get-PlaceholderSetting",
+            "Get-Preset", "Get-Rendering", "Get-RenderingParameter"
+        )
+        "Inert: System and Security Audit" = @(
+            "Get-Archive", "Get-ArchiveItem", "Get-Cache", "Get-Database",
+            "Get-Domain", "Get-ItemAcl", "Get-Package", "Get-PackageItem",
+            "Get-Role", "Get-RoleMember", "Get-ScriptSession",
+            "Get-SearchIndex", "Get-Session", "Get-SitecoreJob",
+            "Get-SpeModule", "Get-SpeModuleFeatureRoot", "Get-TaskSchedule",
+            "Get-UpdatePackageDiff", "Get-User", "Get-UserAgent",
+            "Test-Account", "Test-ItemAcl", "Test-Rule"
+        )
+        "Inert: Search" = @(
+            "Add-DateRangeFilter", "Add-FieldContains", "Add-FieldEquals",
+            "Add-SearchFilter", "Add-SearchFilterGroup", "Add-TemplateFilter",
+            "Get-SearchFilter", "Get-SearchIndexField", "Invoke-Search",
+            "New-SearchBuilder", "New-SearchFilterGroup", "New-SearchPredicate",
+            "Reset-SearchBuilder"
+        )
+        "Inert: Data Transformation" = @(
+            "Compare-Object", "ConvertFrom-CliXml", "ConvertFrom-Csv",
+            "ConvertFrom-Json", "ConvertTo-CliXml", "ConvertTo-Csv",
+            "ConvertTo-Json", "ConvertTo-Xml", "ForEach-Object",
+            "Format-Custom", "Format-List", "Format-Table", "Format-Wide",
+            "Group-Object", "Measure-Object", "New-PSObject",
+            "Select-Object", "Sort-Object", "Where-Object"
+        )
+        "Inert: Output and Diagnostics" = @(
+            "Out-Null", "Out-String", "Resolve-Error",
+            "Write-Debug", "Write-Error", "Write-Host", "Write-Log",
+            "Write-Output", "Write-Verbose", "Write-Warning"
+        )
+        "Inert: Variables and Utilities" = @(
+            "Compress-Archive", "Expand-Archive", "Get-Content",
+            "Get-Date", "Get-Member", "Get-Random", "Get-Variable",
+            "New-Object", "New-UsingBlock", "Resolve-Path",
+            "Set-Variable", "Start-Sleep", "Test-Path"
+        )
+        "State Change: Content and Structure" = @(
+            "Add-BaseTemplate", "Add-ItemVersion", "Clear-Archive",
+            "Copy-Item", "Expand-Token", "Lock-Item", "Move-Item",
+            "New-Item", "New-ItemClone", "New-ItemWorkflowEvent",
+            "Protect-Item", "Receive-ItemCloneNotification",
+            "Remove-ArchiveItem", "Remove-BaseTemplate", "Remove-Item",
+            "Remove-ItemVersion", "Reset-ItemField", "Restore-ArchiveItem",
+            "Set-ItemTemplate", "Unlock-Item", "Unprotect-Item",
+            "Update-ItemReferrer"
+        )
+        "State Change: Presentation and Layout" = @(
+            "Add-PlaceholderSetting", "Add-Rendering", "Merge-Layout",
+            "New-PlaceholderSetting", "New-Rendering", "Remove-Layout",
+            "Remove-PlaceholderSetting", "Remove-Rendering",
+            "Remove-RenderingParameter", "Reset-Layout", "Set-Layout",
+            "Set-Rendering", "Set-RenderingParameter", "Switch-Rendering"
+        )
+        "State Change: Security" = @(
+            "Add-ItemAcl", "Add-RoleMember", "Clear-ItemAcl",
+            "Disable-User", "Enable-User", "New-Domain", "New-ItemAcl",
+            "New-Role", "New-User", "Remove-Domain", "Remove-Role",
+            "Remove-RoleMember", "Remove-User", "Set-ItemAcl",
+            "Set-User", "Set-UserPassword", "Unlock-User"
+        )
+        "State Change: Publishing and Indexing" = @(
+            "Initialize-SearchIndex", "Initialize-SearchIndexItem",
+            "Publish-Item", "Remove-SearchIndexItem", "Resume-SearchIndex",
+            "Stop-SearchIndex", "Suspend-SearchIndex", "Update-SearchIndexItem"
+        )
+        "State Change: Packages" = @(
+            "Export-Item", "Export-Package", "Export-Role",
+            "Export-UpdatePackage", "Export-User", "Import-Item",
+            "Import-Role", "Import-User", "Install-Package",
+            "Install-UpdatePackage", "New-ExplicitFileSource",
+            "New-ExplicitItemSource", "New-FileSource", "New-ItemSource",
+            "New-Package", "New-PackagePostStep", "New-SecuritySource"
+        )
+        "State Change: Sessions" = @(
+            "Remove-ScriptSession", "Remove-Session",
+            "Stop-ScriptSession", "Wait-ScriptSession"
+        )
+        "Script Execution" = @(
+            "Import-Function", "Invoke-Script", "Invoke-SqlCommand",
+            "Invoke-Workflow", "Start-ScriptSession", "Start-TaskSchedule"
+        )
+    }
+    
+    # Parse existing commands and determine which groups are fully present
+    $existingCommands = ($item["Allowed Commands"] -split "`n") |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    $existingSet = [System.Collections.Generic.HashSet[string]]::new(
+        [string[]]$existingCommands, [System.StringComparer]::OrdinalIgnoreCase)
+    
+    $preSelected = @()
+    $coveredCommands = [System.Collections.Generic.HashSet[string]]::new(
+        [System.StringComparer]::OrdinalIgnoreCase)
+    foreach($key in $commandGroups.Keys) {
+        $groupCmds = $commandGroups[$key]
+        $allPresent = $true
+        foreach($cmd in $groupCmds) {
+            if(-not $existingSet.Contains($cmd)) { $allPresent = $false; break }
+        }
+        if($allPresent) {
+            $preSelected += $key
+            foreach($cmd in $groupCmds) { [void]$coveredCommands.Add($cmd) }
+        }
+    }
+    $additionalCommands = @($existingCommands | Where-Object { -not $coveredCommands.Contains($_) })
+    
+    # Read current field values
+    $isFullLanguage = [Sitecore.MainUtil]::GetBool($item["Full Language"], $false)
+    $currentMode = if($isFullLanguage) { "FullLanguage" } else { "Constrained" }
+    
+    $currentAudit = $item["Audit Level"]
+    if([string]::IsNullOrEmpty($currentAudit)) { $currentAudit = "Violations" }
+    
+    $checklistOptions = [ordered]@{}
+    $checklistTooltips = [ordered]@{}
+    foreach($key in $commandGroups.Keys) {
+        $checklistOptions[$key] = $key
+        $cmds = $commandGroups[$key]
+        $preview = ($cmds | Select-Object -First 4) -join ", "
+        if($cmds.Count -gt 4) { $preview += " (+$($cmds.Count - 4) more)" }
+        $checklistTooltips[$key] = $preview
+    }
+    
+    $dialog = New-DialogBuilder -Title "Edit Remoting Policy" `
+        -Description "Modify the remoting policy '$($item.Name)' to control permitted commands and scripts." `
+        -Width 750 -Height 700 -OkButtonName "Save" -ShowHints `
+        -Icon ([regex]::Replace($item.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    
+    $dialog | Add-RadioButtons -Name "languageMode" -Title "Language Mode" -Value $currentMode `
+        -Options ([ordered]@{ "Constrained Language (recommended)" = "Constrained"; "Full Language" = "FullLanguage" }) `
+        -Tooltip "Constrained Language restricts scripts to the allowed command list. Full Language permits all commands." `
+        -Tab "General" -GroupId 1
+    
+    $dialog | Add-Dropdown -Name "auditLevel" -Title "Audit Level" -Value $currentAudit `
+        -Options ([ordered]@{ "None" = "None"; "Violations" = "Violations"; "Standard" = "Standard"; "Full" = "Full" }) `
+        -Tooltip "Controls how much detail is logged. None disables logging; Violations logs only blocked actions; Standard logs key operations; Full logs everything." `
+        -Tab "General"
+    
+    $dialog | Add-Checklist -Name "allowedCommands" -Title "Allowed Commands" -Value $preSelected `
+        -Options $checklistOptions -OptionTooltips $checklistTooltips `
+        -Tooltip "Select command groups to allow for inline scripts. Only applies in Constrained Language mode." `
+        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
+    
+    $additionalText = ($additionalCommands | Sort-Object) -join "`n"
+    $dialog | Add-MultiLineTextField -Name "additionalCommands" -Title "Additional Commands" `
+        -Value $additionalText -Placeholder "One command per line" `
+        -Tooltip "Add individual commands not covered by the groups above. One command name per line." `
+        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
+    
+    # --- Web API tab ---
+    $webApiScripts = @(Get-SpeModuleFeatureRoot -Feature "webAPI" |
+        ForEach-Object { Get-ChildItem -Path "$($_.Database.Name):$($_.Paths.Path)" -Recurse } |
+        Where-Object { $_.TemplateID -eq "{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" })
+    
+    # Parse existing approved scripts (pipe-delimited IDs)
+    $currentApprovedIds = @()
+    $approvedScriptsText = $item["Approved Scripts"]
+    if(-not [string]::IsNullOrEmpty($approvedScriptsText)) {
+        $currentApprovedIds = @($approvedScriptsText -split '\|' |
+            ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    }
+    
+    if($webApiScripts.Count -gt 0) {
+        $scriptOptions = [ordered]@{}
+        foreach($s in $webApiScripts) { $scriptOptions[$s.Name] = $s.ID.ToString() }
+        $dialog | Add-Checklist -Name "approvedScripts" -Title "Approved Scripts" -Value $currentApprovedIds `
+            -Options $scriptOptions `
+            -Tooltip "Web API scripts permitted for execution by name. Only selected scripts can be invoked through the v2 endpoint." `
+            -Tab "Web API"
+    } else {
+        $dialog | Add-InfoText -Name "noScriptsInfo" -Title "Approved Scripts" `
+            -Value "No Web API scripts found. Add scripts to a module's Web API library to enable approval." `
+            -Tab "Web API"
+    }
+    
+    $result = $dialog | Invoke-Dialog
+    
+    if($result.Result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    # Build allowed commands from selected groups plus any additional commands
+    $selectedCommands = @()
+    foreach($group in $allowedCommands) {
+        $selectedCommands += $commandGroups[$group]
+    }
+    $extraCommands = ($additionalCommands -split "`n") |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    $allCommands = @($selectedCommands) + @($extraCommands) |
+        Sort-Object -Unique
+    $commandText = $allCommands -join "`n"
+    
+    New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
+        $item.Editing.BeginEdit()
+        $item["Full Language"] = if($languageMode -eq "FullLanguage") { "1" } else { "" }
+        $item["Allowed Commands"] = $commandText
+        $item["Audit Level"] = $auditLevel
+        $item["Approved Scripts"] = if($approvedScripts) { $approvedScripts -join "|" } else { "" }
+        $item.Editing.EndEdit() > $null
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Edit a Remoting Policy's command groups and approved scripts.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Edit Remoting Policy
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260412T210000Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "bc67218f-51c3-4c32-aafb-f6bd8f9decc4"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260412T210000Z
+
+
+

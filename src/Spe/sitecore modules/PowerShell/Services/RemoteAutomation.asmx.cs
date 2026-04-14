@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -31,7 +31,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
     [WebService(Namespace = "http://sitecorepowershellextensions/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [ToolboxItem(false)]
-    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line.
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
@@ -53,49 +53,32 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return string.IsNullOrEmpty(ip) ? request.ServerVariables["REMOTE_ADDR"] : ip;
         }
 
-        private static RestrictionProfile ValidateAndResolveProfile(string script, string userName)
+        private static RemotingPolicy ValidateAndResolvePolicy(string script, string userName)
         {
-            // Service-level command restrictions
-            if (!ScriptValidator.ValidateScript(WebServiceSettings.ServiceRemoting, script, null, out var blockedCommand))
+            // SOAP endpoint authenticates via username/password, not API keys.
+            // No policy enforcement applies - callers have full access.
+            var policy = RemotingPolicy.Unrestricted;
+            if (policy != null && policy != RemotingPolicy.Unrestricted)
             {
-                PowerShellLog.Audit("[Remoting(SOAP)] action=scriptRejected user={0} ip={1} blockedCommand={2}",
-                    userName, GetIp(), blockedCommand);
-                throw new InvalidOperationException($"Script contains blocked command: {blockedCommand}");
-            }
-
-            // Resolve restriction profile for the remoting service (SOAP has no JWT scope or API key)
-            var profile = RestrictionProfileManager.ResolveProfile(WebServiceSettings.ServiceRemoting, null, null);
-            if (profile != null && profile != RestrictionProfile.Unrestricted)
-            {
-                if (!ScriptValidator.ValidateScriptAgainstProfile(profile, script, userName, WebServiceSettings.ServiceRemoting, out var profileBlockedCommand))
+                if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, userName, WebServiceSettings.ServiceRemoting, out var policyBlockedCommand))
                 {
-                    PowerShellLog.Audit("[Remoting(SOAP)] action=scriptRejectedByProfile user={0} ip={1} profile={2} blockedCommand={3}",
-                        userName, GetIp(), profile.Name, profileBlockedCommand);
-                    throw new InvalidOperationException($"Script blocked by restriction profile '{profile.Name}': {profileBlockedCommand}");
+                    PowerShellLog.Audit("[Remoting(SOAP)] action=scriptRejectedByPolicy user={0} ip={1} policy={2} blockedCommand={3}",
+                        userName, GetIp(), policy.Name, policyBlockedCommand);
+                    throw new InvalidOperationException($"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
                 }
             }
 
-            return profile;
+            return policy;
         }
 
-        private static PSLanguageMode ApplyRestrictions(ScriptSession session, RestrictionProfile profile)
+        private static PSLanguageMode ApplyRestrictions(ScriptSession session, RemotingPolicy policy)
         {
-            session.ActiveRestrictionProfile = profile;
-            var languageMode = WebServiceSettings.GetLanguageMode(WebServiceSettings.ServiceRemoting);
+            session.ActiveRemotingPolicy = policy;
+            var languageMode = PSLanguageMode.FullLanguage;
 
-            if (profile != null && profile != RestrictionProfile.Unrestricted)
+            if (policy != null && policy != RemotingPolicy.Unrestricted)
             {
-                // Profile's language mode overrides when more restrictive
-                if (profile.LanguageMode > languageMode)
-                {
-                    languageMode = profile.LanguageMode;
-                }
-
-                // Module restrictions
-                if (profile.Modules != null && profile.Modules.RestrictModules)
-                {
-                    session.SetVariable("PSModuleAutoloadingPreference", profile.Modules.AutoloadPreference);
-                }
+                languageMode = policy.LanguageMode;
             }
 
             if (languageMode != PSLanguageMode.FullLanguage)
@@ -106,16 +89,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return languageMode;
         }
 
-        private static void RestoreRestrictions(ScriptSession session, PSLanguageMode appliedMode, RestrictionProfile profile)
+        private static void RestoreRestrictions(ScriptSession session, PSLanguageMode appliedMode)
         {
             if (appliedMode != PSLanguageMode.FullLanguage)
             {
                 session.SetLanguageMode(PSLanguageMode.FullLanguage);
-            }
-
-            if (profile?.Modules != null && profile.Modules.RestrictModules)
-            {
-                session.RemoveVariable("PSModuleAutoloadingPreference");
             }
         }
 
@@ -163,7 +141,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 return new[]
                 {
-                    new NameValue() { Name = "login failed", Value = "login failed" } 
+                    new NameValue() { Name = "login failed", Value = "login failed" }
                 };
             }
 
@@ -171,20 +149,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
-                var profile = ValidateAndResolveProfile(script, userName);
+                var policy = ValidateAndResolvePolicy(script, userName);
 
                 var scriptHash = ComputeScriptHash(script);
-                PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} profile={4}",
-                    userName, GetIp(), scriptSession.ID, scriptHash, profile?.Name ?? "unrestricted");
+                PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} policy={4}",
+                    userName, GetIp(), scriptSession.ID, scriptHash, policy?.Name ?? "unrestricted");
 
-                var appliedMode = ApplyRestrictions(scriptSession, profile);
+                var appliedMode = ApplyRestrictions(scriptSession, policy);
                 try
                 {
                     scriptSession.ExecuteScriptPart(script);
                 }
                 finally
                 {
-                    RestoreRestrictions(scriptSession, appliedMode, profile);
+                    RestoreRestrictions(scriptSession, appliedMode);
                 }
 
                 PowerShellLog.Audit("[Remoting(SOAP)] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3}",
@@ -274,11 +252,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
-            var profile = ValidateAndResolveProfile(script, userName);
+            var policy = ValidateAndResolvePolicy(script, userName);
 
             var scriptHash = ComputeScriptHash(script);
-            PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} profile={4}",
-                userName, GetIp(), scriptSession.ID, scriptHash, profile?.Name ?? "unrestricted");
+            PowerShellLog.Audit("[Remoting(SOAP)] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} policy={4}",
+                userName, GetIp(), scriptSession.ID, scriptHash, policy?.Name ?? "unrestricted");
 
             Sitecore.Context.SetActiveSite(siteName);
 
@@ -289,7 +267,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 script = script.TrimEnd(' ', '\t', '\n');
             }
 
-            var appliedMode = ApplyRestrictions(scriptSession, profile);
+            var appliedMode = ApplyRestrictions(scriptSession, policy);
             List<object> outObjects;
             try
             {
@@ -297,7 +275,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             finally
             {
-                RestoreRestrictions(scriptSession, appliedMode, profile);
+                RestoreRestrictions(scriptSession, appliedMode);
             }
             if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
