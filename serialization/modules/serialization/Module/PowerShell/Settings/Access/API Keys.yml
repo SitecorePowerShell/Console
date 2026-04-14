@@ -1,0 +1,30 @@
+﻿---
+ID: "529ad80b-caca-43d3-a321-094e92baf9a9"
+Parent: "9e9090f9-0395-4183-8587-cc50262aa3c4"
+Template: "9dc763fc-e1ea-4b37-8223-ea5a7712d307"
+Path: /sitecore/system/Modules/PowerShell/Settings/Access/API Keys
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: 
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{9DC763FC-E1EA-4B37-8223-EA5A7712D307}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260323T210000Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d48ca590-3703-4feb-babd-8a8f50d80bfd"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260412T021323Z

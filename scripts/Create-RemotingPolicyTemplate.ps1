@@ -104,15 +104,15 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     # =========================================================================
     # 2. Create settings folder for policy items
     # =========================================================================
-    $remotingSettings = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Remoting"
-    if (-not $remotingSettings) {
-        return "ERROR: Remoting settings root not found"
+    $securityRoot = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access"
+    if (-not $securityRoot) {
+        return "ERROR: Security root not found"
     }
 
     $folderName = "Policies"
-    $existingFolder = Get-ChildItem -Path $remotingSettings.Paths.FullPath | Where-Object { $_.Name -eq $folderName }
+    $existingFolder = Get-ChildItem -Path $securityRoot.Paths.FullPath | Where-Object { $_.Name -eq $folderName }
     if (-not $existingFolder) {
-        $folder = New-Item -Path "$($remotingSettings.Paths.FullPath)/$folderName" -ItemType "Common/Folder"
+        $folder = New-Item -Path "$($securityRoot.Paths.FullPath)/$folderName" -ItemType "Common/Folder"
         "Created settings folder: $($folder.Paths.FullPath)"
     } else {
         "Settings folder already exists: $($existingFolder.Paths.FullPath)"

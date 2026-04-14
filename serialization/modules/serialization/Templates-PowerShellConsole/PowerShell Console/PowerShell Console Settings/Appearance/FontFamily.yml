@@ -6,7 +6,7 @@ Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: /sitecore/system/Modules/PowerShell/Fonts
+  Value: "{4406B665-C086-4D1F-9048-0E62A9863755}"
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Droplist
@@ -24,7 +24,7 @@ Languages:
     Value: Font Family
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: Choose from the predefined fonts under /sitecore/system/Modules/PowerShell/Fonts. The CSS font-family value is applied to the console and ISE.
+    Value: Choose from the predefined fonts under /sitecore/system/Modules/PowerShell/Resources/Fonts. The CSS font-family value is applied to the console and ISE.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Monospace fonts recommended

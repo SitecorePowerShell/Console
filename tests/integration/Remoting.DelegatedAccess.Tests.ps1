@@ -11,7 +11,7 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 $ids = Invoke-RemoteScript -Session $session -ScriptBlock {
     $scriptItem = Get-ChildItem -Path "master:/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development" |
         Where-Object { $_.Name -eq "Test-DA-WhoAmI" }
-    $daItem = Get-ChildItem -Path "master:/sitecore/system/Modules/PowerShell/Delegated Access" |
+    $daItem = Get-ChildItem -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Delegated Access" |
         Where-Object { $_.Name -eq "Test-DA-Mapping" }
     "$($scriptItem.ID)|$($daItem.ID)"
 } -Raw

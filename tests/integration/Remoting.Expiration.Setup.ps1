@@ -8,7 +8,7 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 Write-Host "`n  [Expiration Setup: creating test API Keys]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-    $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Remoting"
+    $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
 
     $fieldIds = @{
         # RemotingPolicy.Fields

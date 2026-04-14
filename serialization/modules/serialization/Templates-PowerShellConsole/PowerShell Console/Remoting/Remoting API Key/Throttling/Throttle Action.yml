@@ -1,4 +1,4 @@
----
+﻿---
 ID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 Parent: "bbbbbbbb-0003-0003-0003-000000000003"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
@@ -6,7 +6,7 @@ Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key/T
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: /sitecore/system/Modules/PowerShell/Settings/Remoting/Options/Throttle Actions
+  Value: /sitecore/system/Modules/PowerShell/Settings/Resources/Remoting Options/Throttle Actions
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Droplist
@@ -36,11 +36,11 @@ Languages:
       Value: 20260409T120000Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "a1b2c3d4-e5f6-7890-abcd-ef1234567891"
+      Value: "a59b0d1a-0443-4739-bd98-cf509ed93aa6"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260409T120000Z
+      Value: 20260414T104430Z

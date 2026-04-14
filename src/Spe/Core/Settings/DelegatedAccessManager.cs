@@ -24,7 +24,15 @@ namespace Spe.Core.Settings
         private const int DefaultCacheTtlSeconds = 300;
         private const int CleanupIntervalSeconds = 60;
 
-        public const string DelegatedItemPath = "/sitecore/system/Modules/PowerShell/Delegated Access";
+        public static string DelegatedItemPath
+        {
+            get
+            {
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                var item = db?.GetItem(Templates.Items.DelegatedAccess);
+                return item?.Paths.Path;
+            }
+        }
 
         internal static int CacheTtlSeconds
         {
@@ -69,7 +77,7 @@ namespace Spe.Core.Settings
                 using (new SecurityDisabler())
                 {
                     var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-                    var parent = db.GetItem(DelegatedItemPath);
+                    var parent = db.GetItem(Templates.Items.DelegatedAccess);
                     _delegatedConfigs = parent?.Axes.GetDescendants()
                         .Where(d => d.TemplateID == Templates.DelegatedAccess.Id)
                         .Select(DelegatedAccessConfig.FromItem)

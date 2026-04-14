@@ -3589,7 +3589,7 @@ PS master:\&gt; Get-Preset -Name "PowerShell", "AssetsOptimiser" | ft PresetName
 PresetName      Database Path
 ----------      -------- ----
 PowerShell      core     /sitecore/templates/Modules/PowerShell Console
-PowerShell      core     /sitecore/system/Modules/PowerShell/Console Colors
+PowerShell      core     /sitecore/system/Modules/PowerShell/Settings/Resources/Console Colors
 PowerShell      core     /sitecore/system/Modules/PowerShell/Script Library
 PowerShell      core     /sitecore/layout/Layouts/Applications/PowerShell Console
 PowerShell      core     /sitecore/layout/Layouts/Applications/PowerShell ISE Sheer
@@ -3599,7 +3599,7 @@ PowerShell      core     /sitecore/content/Documents and Settings/All users/Star
 PowerShell      core     /sitecore/content/Applications/PowerShell
 PowerShell      core     /sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts
 PowerShell      master   /sitecore/templates/Modules/PowerShell Console
-PowerShell      master   /sitecore/system/Modules/PowerShell/Console Colors
+PowerShell      master   /sitecore/system/Modules/PowerShell/Settings/Resources/Console Colors
 PowerShell      master   /sitecore/system/Modules/PowerShell/Rules
 PowerShell      master   /sitecore/system/Modules/PowerShell/Script Library
 AssetsOptimiser master   /sitecore/system/Modules/Optimiser

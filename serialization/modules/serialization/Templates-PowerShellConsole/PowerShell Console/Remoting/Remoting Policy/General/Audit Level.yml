@@ -6,7 +6,7 @@ Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy/Ge
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: /sitecore/system/Modules/PowerShell/Settings/Remoting/Options/Audit Levels
+  Value: /sitecore/system/Modules/PowerShell/Settings/Resources/Remoting Options/Audit Levels
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Droplist
@@ -36,11 +36,11 @@ Languages:
       Value: 20260322T202504Z
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "dbd2b2b9-eaac-4b9c-b0b9-029d0874325c"
+      Value: "7d30da1e-2855-45b3-8cf6-10d7a7c855f0"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260410T015009Z
+      Value: 20260414T104430Z

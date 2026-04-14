@@ -6,7 +6,7 @@ Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings
 SharedFields:
 - ID: "1eb8ae32-e190-44a6-968d-ed904c794ebf"
   Hint: Source
-  Value: /sitecore/system/Modules/PowerShell/Console Colors
+  Value: "{42FFA0E6-F121-432A-821D-D40C53560563}"
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Droplist
@@ -49,7 +49,7 @@ Languages:
     Value: Text Background Color
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: Choose from the predefined colors under /sitecore/system/Modules/PowerShell/Console Colors.
+    Value: Choose from the predefined colors under /sitecore/system/Modules/PowerShell/Resources/Console Colors.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Applied to the console and ISE output panels

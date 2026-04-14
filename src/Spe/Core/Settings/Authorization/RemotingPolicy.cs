@@ -8,7 +8,7 @@ namespace Spe.Core.Settings.Authorization
     /// <summary>
     /// Represents a named remoting policy that controls language mode and command access
     /// for remote script execution sessions. Policies are defined as Sitecore content items
-    /// under /sitecore/system/Modules/PowerShell/Settings/Remoting/Policies/.
+    /// under the Security/Policies node, resolved by item ID.
     /// </summary>
     public class RemotingPolicy
     {

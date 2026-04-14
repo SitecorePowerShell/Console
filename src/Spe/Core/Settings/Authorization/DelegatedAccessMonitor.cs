@@ -15,9 +15,10 @@ namespace Spe.Core.Settings.Authorization
     {
         protected bool IsPowerShellMonitoredItem(Item item)
         {
-            return (item != null) &&
-                   item.Paths.Path.StartsWith(DelegatedAccessManager.DelegatedItemPath,
-                       StringComparison.InvariantCultureIgnoreCase);
+            if (item == null) return false;
+
+            return item.ID == Templates.Items.DelegatedAccess ||
+                   (item.Parent != null && item.Parent.ID == Templates.Items.DelegatedAccess);
         }
 
         internal void OnItemSaved(object sender, EventArgs args)

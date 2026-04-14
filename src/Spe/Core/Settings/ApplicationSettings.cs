@@ -19,9 +19,25 @@ namespace Spe.Core.Settings
     {
         public const string IseSettingsItemAllUsers = "All Users";
 
-        public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
+        public static string SettingsItemPath
+        {
+            get
+            {
+                var db = Factory.GetDatabase(ScriptLibraryDb);
+                var item = db?.GetItem(Templates.Items.UserSettings);
+                return item != null ? item.Paths.Path + "/" : null;
+            }
+        }
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
-        public const string FontNamesPath = "/sitecore/system/Modules/PowerShell/Fonts/";
+        public static string FontNamesPath
+        {
+            get
+            {
+                var db = Factory.GetDatabase(ScriptLibraryDb);
+                var item = db?.GetItem(Templates.Items.Fonts);
+                return item != null ? item.Paths.Path + "/" : null;
+            }
+        }
 
         public const string MediaLibraryPath = "/sitecore/media library/";
         public const string TemplatesPath = "/sitecore/templates/";
@@ -100,7 +116,7 @@ namespace Spe.Core.Settings
             get
             {
                 var db = Factory.GetDatabase(ScriptLibraryDb);
-                var fonts = db.GetItem(FontNamesPath);
+                var fonts = db.GetItem(Templates.Items.Fonts);
                 var font = string.IsNullOrEmpty(FontFamily) ? "Monaco" : FontFamily;
                 var fontItem = fonts.Children[font];
                 return fontItem != null

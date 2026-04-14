@@ -27,48 +27,36 @@
                 "scope": "ItemAndDescendants",
                 "rules": [
                     {
-                        "path": "/Delegated Access",
-                        "scope": "SingleItem"
-                    },
-                    {
                         "path": "/Script Library",
                         "scope": "SingleItem"
                     },
                     {
-                        "path": "/Settings/Console/Sitecore",
-                        "scope": "ignored"
+                        "path": "/Settings/Access",
+                        "scope": "ItemAndChildren"
                     },
                     {
-                        "path": "/Settings/Context/Sitecore",
-                        "scope": "ignored"
-                    },
-                    {
-                        "path": "/Settings/Default/Sitecore",
-                        "scope": "ignored"
-                    },
-                    {
-                        "path": "/Settings/ISE/Sitecore",
-                        "scope": "ignored"
-                    },
-                    {
-                        "path": "/Settings/RemoteAutomation/Sitecore",
-                        "scope": "ignored"
-                    },
-                    {
-                        "path": "/Settings/Remoting/Options",
+                        "path": "/Settings/Resources",
                         "scope": "ItemAndDescendants"
                     },
                     {
-                        "path": "/Settings/Remoting/API Keys",
-                        "scope": "SingleItem"
+                        "path": "/Settings/User Settings/Console/Sitecore",
+                        "scope": "ignored"
                     },
                     {
-                        "path": "/Settings/Remoting/Policies",
-                        "scope": "SingleItem"
+                        "path": "/Settings/User Settings/Context/Sitecore",
+                        "scope": "ignored"
                     },
                     {
-                        "path": "/Settings/Remoting",
-                        "scope": "ItemAndChildren"
+                        "path": "/Settings/User Settings/Default/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/ISE/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/RemoteAutomation/Sitecore",
+                        "scope": "ignored"
                     }
                 ]
             }

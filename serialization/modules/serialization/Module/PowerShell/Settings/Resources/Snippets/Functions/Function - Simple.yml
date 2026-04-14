@@ -1,0 +1,41 @@
+﻿---
+ID: "eefe343a-e30a-4811-b7f2-c21e7ba9d61d"
+Parent: "56666c57-4a63-408f-bcbb-3768a6bb6421"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Settings/Resources/Snippets/Functions/Function - Simple"
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    function Do-Something {
+        param(
+            [string]$Name
+        )
+        
+        $name
+    }
+    
+    $props = @{
+        "Name" = "Michael"
+    }
+    
+    # Use splatting to map the properties
+    Do-Something @props
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180730T021248Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "06fc51f9-62cd-46bb-8c4a-ed55a3d22981"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214549Z

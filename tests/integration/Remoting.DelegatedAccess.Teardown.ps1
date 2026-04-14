@@ -11,7 +11,7 @@ $teardownResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $results = @()
 
     # Remove DA config item
-    $daItem = Get-ChildItem -Path "master:/sitecore/system/Modules/PowerShell/Delegated Access" |
+    $daItem = Get-ChildItem -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Delegated Access" |
         Where-Object { $_.Name -eq "Test-DA-Mapping" }
     if ($daItem) { $daItem | Remove-Item -Force; $results += "DA_DELETED" }
     else { $results += "DA_NOT_FOUND" }

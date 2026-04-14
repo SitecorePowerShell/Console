@@ -7,9 +7,24 @@ SharedFields:
 - ID: "6209f0c2-e2b0-4f0c-95e3-037061cb866c"
   Hint: SaveLastScript
   Value: 1
+- ID: "6f442ac9-7001-4124-9bc3-589875876c27"
+  Hint: FontSize
+  Value: 14
+- ID: "86ecc435-0924-4ea0-92d8-cca12ed7e644"
+  Hint: FontFamily
+  Value: Monaco
+- ID: "aeeb1bb0-87b9-4e16-b5de-d4cc544a992f"
+  Hint: BackgroundColor
+  Value: DarkBlue
 - ID: "b6c74dc2-1d8f-497e-a202-39e4ba79667c"
   Hint: SaveActiveTabs
   Value: 1
+- ID: "f59378a5-f21d-4e07-b7de-7986dda3a510"
+  Hint: HostWidth
+  Value: 200
+- ID: "f810eec7-9a73-43e6-84c1-36e4951d2b3e"
+  Hint: ForegroundColor
+  Value: White
 Languages:
 - Language: en
   Versions:
@@ -28,11 +43,11 @@ Languages:
         sitecore\anajmanowicz
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "55e205af-b6d9-4790-af25-d4f97eb681c7"
+      Value: "fc2d99b3-bea9-4dbf-85af-f37e93c88294"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\anajmanowicz
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260411T154409Z
+      Value: 20260414T112721Z

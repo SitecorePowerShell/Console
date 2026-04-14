@@ -8,7 +8,7 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 Write-Host "`n  [Throttle Setup: creating test API Keys]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-    $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Remoting"
+    $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
     $remoting = Get-Item -Path $remotingPath
     if (-not $remoting) { return "ERROR:REMOTING_NOT_FOUND" }
 

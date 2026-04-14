@@ -13,13 +13,10 @@ namespace Spe.Core.Settings.Authorization
     /// Loads and caches SPE Remoting API Key items from the content tree.
     /// Provides lookup by shared secret for authentication and per-key throttling.
     ///
-    /// API Key items live under:
-    /// /sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys/
+    /// API Key items live under the Security/API Keys node, resolved by item ID.
     /// </summary>
     public static class RemotingApiKeyProvider
     {
-        private const string SettingsPath =
-            "/sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys";
         private const string CacheKey = "Spe.RemotingApiKeys";
         private const string AccessKeyIndexCacheKey = "Spe.RemotingApiKeys.ByAccessKeyId";
 
@@ -233,7 +230,7 @@ namespace Spe.Core.Settings.Authorization
                 Item settingsFolder;
                 using (new SecurityDisabler())
                 {
-                    settingsFolder = db.GetItem(SettingsPath);
+                    settingsFolder = db.GetItem(Templates.Items.ApiKeys);
                 }
 
                 if (settingsFolder == null)

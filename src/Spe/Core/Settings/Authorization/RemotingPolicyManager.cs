@@ -11,12 +11,10 @@ namespace Spe.Core.Settings.Authorization
 {
     /// <summary>
     /// Loads and manages remoting policies from Sitecore content items.
-    /// Policies are defined under /sitecore/system/Modules/PowerShell/Settings/Remoting/Policies/.
+    /// Policies are defined under the Security/Policies node, resolved by item ID.
     /// </summary>
     public static class RemotingPolicyManager
     {
-        private const string PoliciesPath =
-            "/sitecore/system/Modules/PowerShell/Settings/Remoting/Policies";
 
         private const string CacheKey = "Spe.RemotingPolicies";
 
@@ -99,12 +97,12 @@ namespace Spe.Core.Settings.Authorization
                 Item policiesFolder;
                 using (new SecurityDisabler())
                 {
-                    policiesFolder = db.GetItem(PoliciesPath);
+                    policiesFolder = db.GetItem(Templates.Items.Policies);
                 }
 
                 if (policiesFolder == null)
                 {
-                    PowerShellLog.Debug($"[Policy] action=folderNotFound path=\"{PoliciesPath}\"");
+                    PowerShellLog.Debug("[Policy] action=folderNotFound");
                     return new Dictionary<string, RemotingPolicy>(StringComparer.OrdinalIgnoreCase);
                 }
 

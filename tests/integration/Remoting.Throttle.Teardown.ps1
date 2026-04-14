@@ -11,7 +11,7 @@ $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $deleted = 0
 
     # Clean up throttle test API Key items
-    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/API Keys" -ErrorAction SilentlyContinue
     if ($apiKeysFolder) {
         $items = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-Throttle*" }
@@ -22,7 +22,7 @@ $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     # Clean up throttle test policy items
-    $policiesFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Remoting/Policies" -ErrorAction SilentlyContinue
+    $policiesFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Policies" -ErrorAction SilentlyContinue
     if ($policiesFolder) {
         $items = Get-ChildItem -Path "master:$($policiesFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-Throttle*" }

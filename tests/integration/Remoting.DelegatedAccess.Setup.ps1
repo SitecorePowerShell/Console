@@ -50,7 +50,7 @@ $setupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $results += "SCRIPT:$($scriptItem.ID)"
 
     # 4. Create DA config item mapping the test role + admin impersonation + the script
-    $daFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Delegated Access" -ErrorAction SilentlyContinue
+    $daFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Delegated Access" -ErrorAction SilentlyContinue
     if (-not $daFolder) {
         $results += "DA_FOLDER_NOT_FOUND"
         return $results -join "|"

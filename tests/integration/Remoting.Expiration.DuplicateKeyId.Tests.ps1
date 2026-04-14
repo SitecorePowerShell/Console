@@ -11,7 +11,7 @@ Write-Host "`n  [Test Group 1: Duplicate Access Key Id Blocked on Save]" -Foregr
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
 $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-    $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Remoting"
+    $securityPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
 
     $fieldIds = @{
         KeyAccessKeyId     = "{C4D5E6F7-8A9B-4C0D-1E2F-3A4B5C6D7E8F}"
@@ -20,7 +20,7 @@ $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         KeyImpersonateUser = "{5EB16BF4-605A-457C-8588-5D9833FF4DD9}"
     }
 
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$securityPath/API Keys" -ErrorAction SilentlyContinue
     if (-not $apiKeysFolder) { return "ERROR:FOLDER_NOT_FOUND" }
 
     $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"

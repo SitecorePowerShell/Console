@@ -22,7 +22,7 @@ You have a Sitecore instance with PowerShell Extensions installed. A developer n
 
 ### 1. Create a policy
 
-Go to `/sitecore/system/Modules/PowerShell/Settings/Remoting/Policies/`. Right-click, Insert, choose "Remoting Policy." Name it something descriptive like "ReadOnly-Reporting."
+Go to `/sitecore/system/Modules/PowerShell/Settings/Access/Policies/`. Right-click, Insert, choose "Remoting Policy." Name it something descriptive like "ReadOnly-Reporting."
 
 - Leave **Full Language** unchecked
 - In **Allowed Commands**, add only what the developer needs:
@@ -36,7 +36,7 @@ Go to `/sitecore/system/Modules/PowerShell/Settings/Remoting/Policies/`. Right-c
 
 ### 2. Create an API Key
 
-Go to `/sitecore/system/Modules/PowerShell/Settings/Remoting/API Keys/`. Right-click, Insert, choose "Remoting API Key."
+Go to `/sitecore/system/Modules/PowerShell/Settings/Access/API Keys/`. Right-click, Insert, choose "Remoting API Key."
 
 - Check **Enabled**
 - Set a **Shared Secret** — a long, random string. Give this to the developer securely
