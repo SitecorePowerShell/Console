@@ -43,6 +43,10 @@ Languages:
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
       Value: Vælg kontekstelementet til brug for at køre scriptet.
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
@@ -79,17 +83,17 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "eab78db6-9236-4d68-bd09-e54b66e56641"
+      Value: "4a8849bd-4dd4-49c4-808d-42d769790120"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\anajmanowicz
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
-      Value: Context
+      Value: Item
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214606Z
+      Value: 20260414T202859Z
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -100,6 +104,10 @@ Languages:
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
       Value: スクリプト実行中のインメモリセッションの選択
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

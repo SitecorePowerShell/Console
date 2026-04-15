@@ -1,27 +1,27 @@
 ﻿---
-ID: "71044ce9-03d1-4d5c-81b5-854993686189"
+ID: "3939b85b-3a9b-45fa-8efb-67af84e0cf18"
 Parent: "3309a55f-c77c-44f3-9810-7cfea36e8945"
 Template: "6b84bd97-60e8-4e18-b1fc-9f92ae0659c5"
-Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx/UserLanguageContextPanel/User
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Context/ContextEx/UserLanguageContextPanel/Language
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/user.png
+  Value: Office/32x32/flag_generic.png
 - ID: "1ba953ee-84ad-4753-870e-abe82af900c4"
   Hint: Command
   Value: "ise:pickcontext"
 - ID: "212b99df-c246-46ce-9e51-86db77e3bc97"
   Hint: Gallery Height
-  Value: 400
+  Value: 500
 - ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
   Hint: Gallery
-  Value: Gallery.UserGallery
+  Value: Gallery.LanguageGallery
 - ID: "47ab3889-0da4-418c-b4a0-ca58f0ae4c1f"
   Hint: Gallery Width
-  Value: 500
+  Value: 400
 - ID: "601ebec8-1d78-4d06-8228-45c28d9fabd8"
   Hint: Icon
-  Value: Office/32x32/user.png
+  Value: Office/32x32/flag_generic.png
 - ID: "71219cb2-bd4f-4bcb-8891-a821870e6197"
   Hint: KeyCode
   Value: 
@@ -39,24 +39,24 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20190718T151906Z
+      Value: 20190718T151905Z
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
-      Value: Vælg en bruger at køre scriptet som.
+      Value: Vælg sprogkonteksten til brug for kørsel af scriptet.
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "fedf2265-cdba-410c-b83b-0753878754ff"
+      Value: "ce465c4e-6345-4d64-ab4f-45c39741132e"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\unicorn
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
-      Value: Bruger
+      Value: Sprog
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20230122T214606Z
@@ -69,7 +69,7 @@ Languages:
       Value: 20060412T103554
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
-      Value: Select a user to impersonate when running the script.
+      Value: Select context language to use when running the script.
     - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
       Hint: __Workflow state
       Value: 
@@ -79,14 +79,14 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "51d722ed-d4f1-466e-b326-76a7ffb61bdd"
+      Value: "a1d2b234-8280-4e20-9ff6-67e23f260bff"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\unicorn
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
-      Value: User
+      Value: Language
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20230122T214606Z
@@ -106,14 +106,14 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "c5ec1880-c3a6-4400-b2ba-40ad32a2fca8"
+      Value: "be00add7-65cb-49a0-b9b6-f9485703272f"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\unicorn
     - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
       Hint: Header
-      Value: ワンタイムセッション
+      Value: コンテキスト
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
       Value: 20230122T214606Z

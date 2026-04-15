@@ -1,18 +1,24 @@
 ﻿---
-ID: "693b043e-b20b-4c2f-86a8-786161d08dab"
-Parent: "fdd5b2d5-31be-41c3-aa76-64e5cc63b187"
-Template: "ec6d62a5-5d00-4329-8958-8ac1ad100ebb"
-Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script
+ID: "2bf02911-1244-4ab8-a3c9-9be70a8b51cd"
+Parent: "074109cd-10ce-49d2-aab6-5d1fdc3d6702"
+Template: "8f3d8f9b-2d76-4ace-803f-35415d2b230a"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Context/ContextEx
 SharedFields:
-- ID: "12c1ceb4-f549-472a-97ed-99bff70eb84e"
-  Hint: ID
-  Value: ScriptStrip
-- ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
-  Hint: __Workflow
-  Value: 
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/Document.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {998B965E-6AB8-4568-810F-8101D60D0CC3}
+    {35753BF3-8A94-4DA6-A5D7-DBD945D1AA59}
+    {ED6552DB-2852-400E-9E22-58C0554E5639}
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 100
+  Value: 600
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: 
 Languages:
 - Language: da
   Versions:
@@ -20,83 +26,69 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20190718T151820Z
-    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
-      Hint: __Owner
-      Value: |
-        sitecore\anajmanowicz
-    - ID: "5453dc07-6a17-48ba-8d05-17db90a2e795"
-      Hint: Header
-      Value: Hjem
+      Value: 20190718T151822Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "9973e1e0-8f7e-44f7-854a-e793d4ff06dd"
+      Value: "c6998126-69da-4245-a386-15f3f3ec345e"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\unicorn
+    - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
+      Hint: Header
+      Value: UI kontekst
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214557Z
+      Value: 20230122T214559Z
 - Language: en
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20060721T095446
-    - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
-      Hint: __Workflow state
-      Value: 
-    - ID: "5453dc07-6a17-48ba-8d05-17db90a2e795"
-      Hint: Header
-      Value: Home
-    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
-      Hint: __Created by
-      Value: |
-        sitecore\Admin
-    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
-      Hint: __Revision
-      Value: "3d2d0c32-aadb-4fa4-8160-3d986afe2219"
-    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
-      Hint: __Updated by
-      Value: |
-        sitecore\anajmanowicz
-    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
-      Hint: __Valid from
-      Value: 20060320T101959
-    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
-      Hint: __Updated
-      Value: 20260414T202827Z
-- Language: "ja-JP"
-  Versions:
-  - Version: 1
-    Fields:
-    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
-      Hint: __Created
-      Value: 20160823T075958
-    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
-      Hint: __Owner
-      Value: |
-        sitecore\anajmanowicz
-    - ID: "5453dc07-6a17-48ba-8d05-17db90a2e795"
-      Hint: Header
-      Value: ホーム
+      Value: 20090424T171300
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "73f63c77-5b70-404a-9817-ac939067a247"
+      Value: "df124e74-989f-4d59-8efb-84ccaf3bf3d2"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\unicorn
+    - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
+      Hint: Header
+      Value: UI Context
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214557Z
+      Value: 20230122T214559Z
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T075959
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c4f59963-6f97-4776-bc1c-f3ab3bf90232"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
+      Hint: Header
+      Value: コンテキスト
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214559Z

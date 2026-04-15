@@ -1,8 +1,8 @@
 ﻿---
-ID: "2bf02911-1244-4ab8-a3c9-9be70a8b51cd"
-Parent: "693b043e-b20b-4c2f-86a8-786161d08dab"
+ID: "2a1fde17-e3b8-464f-95e4-0c0009b0862e"
+Parent: "074109cd-10ce-49d2-aab6-5d1fdc3d6702"
 Template: "8f3d8f9b-2d76-4ace-803f-35415d2b230a"
-Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/ContextEx
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Context/Runspace
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
@@ -57,17 +57,17 @@ Languages:
         sitecore\admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "df124e74-989f-4d59-8efb-84ccaf3bf3d2"
+      Value: "65e974eb-07a0-4730-9d16-b6b472c9ee7c"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "c95d21bd-66c3-444b-a37f-d346cbaf2b55"
       Hint: Header
-      Value: UI Context
+      Value: Runspace
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214559Z
+      Value: 20260413T211312Z
 - Language: "ja-JP"
   Versions:
   - Version: 1

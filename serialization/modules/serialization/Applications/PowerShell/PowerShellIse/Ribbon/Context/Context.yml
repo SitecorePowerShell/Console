@@ -1,0 +1,35 @@
+﻿---
+ID: "17f32191-528a-4875-bb27-c9dbbf04328a"
+Parent: "074109cd-10ce-49d2-aab6-5d1fdc3d6702"
+Template: "ef295cd8-19d4-4e02-9438-94c926ef5284"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Context/Context
+SharedFields:
+- ID: "c9ce97fb-3e8e-4384-9430-7dba75b275dd"
+  Hint: Reference
+  Value: "{4C794DE3-FA37-46E2-AFEC-FD458211C11A}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260415T161916Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "66fb5b58-8d8c-4519-9b95-72e2682b5a4f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\anajmanowicz
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260415T162054Z
