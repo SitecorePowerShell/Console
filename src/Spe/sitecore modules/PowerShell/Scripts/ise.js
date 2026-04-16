@@ -1044,6 +1044,9 @@
             editorSessions.forEach(function (editor) {
                 editor.editor.setOption("fontFamily", setting);
             });
+
+            document.getElementById("ScriptResult").style.fontFamily = setting;
+            $("#ScriptResultCode").css({ "font-family": setting });
         };
 
         spe.changeFontSize = function (setting) {
@@ -1052,27 +1055,18 @@
             editorSessions.forEach(function (editor) {
                 editor.editor.setOption("fontSize", setting);
             });
+            $("#ScriptResult").css({"font-size": setting + "px"});
+            $("#ScriptResultCode").css({ "font-size": setting + "px" });
         };
 
-        spe.changeTerminalSettings = function (fontFamily, fontSize, backgroundColor, foregroundColor) {
-            fontFamily = fontFamily || "Monaco";
-            fontSize = parseInt(fontSize) || 12;
-            $("#ScriptResult").css({
-                "font-family": fontFamily,
-                "font-size": fontSize + "px",
-                "background-color": backgroundColor,
-                "color": foregroundColor
-            });
-            $("#Result").css({"background-color": backgroundColor});
-            $("#ScriptResultCode").css({
-                "font-family": fontFamily,
-                "font-size": fontSize + "px",
-                "background-color": backgroundColor,
-                "color": foregroundColor
-            });
+        spe.changeBackgroundColor = function (setting) {
+            $("#ScriptResult").css({"background-color": setting});
+            $("#Result").css({"background-color": setting});
+            $("#ScriptResultCode").css({"background-color": setting});
         };
 
-        spe.changeSettings = function (fontFamily, fontSize, bottomOffset, liveAutocompletion, perTabOutput) {
+        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
+            spe.changeBackgroundColor(backgroundColor);
             spe.changeFontFamily(fontFamily);
             spe.changeFontSize(fontSize);
             if (liveAutocompletion !== undefined) {

@@ -1762,19 +1762,17 @@ namespace Spe.Client.Applications
         protected virtual void UpdateSettings(ClientPipelineArgs args)
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             var bottomPadding = 0;
             SheerResponse.Eval(
                 $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, " +
-                $"{bottomPadding}," +
+                $"'{backgroundColor}', {bottomPadding}," +
                 $" {settings.LiveAutocompletion.ToString().ToLower()}," +
                 $" {settings.PerTabOutput.ToString().ToLower()});");
 
-            var consoleSettings = ApplicationSettings.GetInstance(ApplicationNames.Console, false);
-            var backgroundColor = OutputLine.ProcessHtmlColor(consoleSettings.BackgroundColor);
-            var foregroundColor = OutputLine.ProcessHtmlColor(consoleSettings.ForegroundColor);
-            SheerResponse.Eval(
-                $"spe.changeTerminalSettings('{consoleSettings.FontFamilyStyle}', {consoleSettings.FontSize}, " +
-                $"'{backgroundColor}', '{foregroundColor}');");
+            var session = ScriptSessionManager.GetSession(CurrentSessionId, ApplicationNames.ISE, true);
+            session.PrivateData.BackgroundColor = settings.BackgroundColor;
+            session.PrivateData.ForegroundColor = settings.ForegroundColor;
         }
 
         [HandleMessage("ise:setbreakpoint", true)]
