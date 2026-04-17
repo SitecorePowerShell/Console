@@ -20,7 +20,7 @@ namespace Spe.Client.Controls.VariableEditors
         public bool CanHandle(IDictionary variable, string editor, Type valueType)
         {
             return !string.IsNullOrEmpty(editor) &&
-                   editor.HasWord("treelist", "multiroottreelist", "multilist", "droplist", "droptree",
+                   editor.HasWord("treelist", "multiroottreelist", "multilist", "droplist", "droplink", "droptree",
                        "groupeddroplink", "groupeddroplist");
         }
 
@@ -80,7 +80,7 @@ namespace Spe.Client.Controls.VariableEditors
                 return multiList;
             }
 
-            if (editor.HasWord("droplist", "groupeddroplink", "groupeddroplist"))
+            if (editor.HasWord("droplist", "droplink", "groupeddroplink", "groupeddroplist"))
             {
                 if (Sitecore.Context.ContentDatabase?.Name != dbName)
                 {
