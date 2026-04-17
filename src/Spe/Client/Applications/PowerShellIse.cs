@@ -1710,6 +1710,38 @@ namespace Spe.Client.Applications
             UpdateRibbon();
         }
 
+        [HandleMessage("ise:killsessionid", true)]
+        protected void KillSessionId(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var sessionId = args.Parameters["id"];
+            if (IsHackedParameter(sessionId) || string.IsNullOrEmpty(sessionId))
+            {
+                return;
+            }
+
+            var session = ScriptSessionManager.GetSessionIfExists(sessionId);
+            if (session == null) return;
+
+            // Abort first in case a script is still running in this session,
+            // then dispose so the cache entry and runspace are released.
+            try { session.Abort(); }
+            catch { /* session may already be idle; disposal handles the rest */ }
+            ScriptSessionManager.RemoveSession(session);
+
+            // If the user killed the session they were bound to, fall back to
+            // the default so the ribbon and the next execution don't reference
+            // an id that no longer exists. The gallery hides the kill button
+            // for the active row, so this branch only fires if the row became
+            // active between render and click.
+            if (string.Equals(sessionId, CurrentSessionId, StringComparison.OrdinalIgnoreCase))
+            {
+                CurrentSessionId = DefaultSessionName;
+                SheerResponse.Eval($"spe.changeSessionId('{DefaultSessionName}');");
+                UpdateRibbon();
+            }
+        }
+
         [HandleMessage("ise:setlanguage", true)]
         protected void SetCurrentLanguage(ClientPipelineArgs args)
         {

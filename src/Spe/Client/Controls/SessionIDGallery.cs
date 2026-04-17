@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Web;
 using Sitecore;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.Resources;
 using Sitecore.Shell.Applications.ContentManager.Galleries;
 using Sitecore.Shell.Framework.Commands;
@@ -38,7 +39,14 @@ namespace Spe.Client.Controls
             {
                 CurrenSession = WebUtil.GetQueryString("currentSessionId");
 
-                var sessions = ScriptSessionManager.GetAll();
+                // Only surface sessions for the current user. ScriptSessionManager.GetAll
+                // returns every session across the server, including other users' - showing
+                // them here lets the user click-bind to a session they have no business with
+                // and makes the "selected" highlight match multiple rows for any shared
+                // persistent id (e.g. "ISE_Editing_Session").
+                var currentUserName = Sitecore.Context.User?.Name;
+                var sessions = ScriptSessionManager.GetAll()
+                    .Where(s => string.Equals(s.UserName, currentUserName, StringComparison.OrdinalIgnoreCase));
                 foreach (var session in sessions)
                 {
                     var control = ControlFactory.GetControl("SessionIDGallery.Option") as XmlControl;
@@ -55,21 +63,45 @@ namespace Spe.Client.Controls
                         Class = "scRibbonToolbarSmallGalleryButtonIcon",
                         Alt = session.ApplianceType
                     };
-                    var type = builder.ToString();
-                    if (session.ID == CurrenSession)
+
+                    var isSelected = session.ID == CurrenSession;
+                    control["Number"] = builder.ToString();
+                    control["SessionId"] = session.ID;
+                    control["Location"] = session.CurrentLocation;
+                    control["UserName"] = session.UserName;
+                    control["Click"] = string.Format("ise:setsessionid(id={0})", session.ID);
+
+                    // Outer row classes: keep scMenuPanelItem for the default
+                    // hover/selection behavior from Gallery.css, add a speSessionRow
+                    // hook for our flex layout, and mark the active row with
+                    // speSessionRowSelected so it gets the "inspected variable" look.
+                    control["RowClass"] = isSelected
+                        ? "scMenuPanelItem speSessionRow speSessionRowSelected"
+                        : "scMenuPanelItem speSessionRow";
+
+                    // Kill button closes the session on click. Always render the
+                    // slot (even for the active row) so the row content width -
+                    // and therefore the pill position - is consistent across all
+                    // rows; the active row just gets a non-interactive placeholder
+                    // of the same dimensions. The user cannot delete the session
+                    // they are currently bound to (which would leave the ribbon
+                    // pointing at an id that no longer exists). stopPropagation
+                    // keeps the row-level click from firing (which would otherwise
+                    // re-select the session).
+                    if (isSelected)
                     {
-                        type = "<div class=\"versionNumSelected\">" + type + "</div>";
+                        control["KillButton"] = "<span class=\"speSessionKillSlot\" aria-hidden=\"true\"></span>";
                     }
                     else
                     {
-                        type = "<div class=\"versionNum\">" + type + "</div>";
+                        var escapedId = HttpUtility.JavaScriptStringEncode(session.ID);
+                        control["KillButton"] =
+                            $"<span class=\"speSessionKill\" title=\"Close session\" " +
+                            $"onclick=\"event.stopPropagation(); " +
+                            $"scForm.getParentForm().invoke('ise:killsessionid(id={escapedId})'); " +
+                            $"var r=this.closest('.speSessionRow'); if(r){{r.remove();}} " +
+                            $"return false;\">&#215;</span>";
                     }
-
-                    control["Number"] = type;
-                    control["SessionId"] = Translate.Text(Texts.SessionIDGallery_ID, session.ID);
-                    control["Location"] = Translate.Text(Texts.SessionIDGallery_Location, session.CurrentLocation);
-                    control["UserName"] = Translate.Text(Texts.SessionIDGallery_User, session.UserName);
-                    control["Click"] = string.Format("ise:setsessionid(id={0})", session.ID);
                 }
                 var item =
                     Sitecore.Client.CoreDatabase.GetItem(

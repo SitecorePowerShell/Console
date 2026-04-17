@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
   <SessionIDGallery.Option>
-    <Border RollOver="true" Class="scMenuPanelItem" Click="$Click">
-      <GridPanel Columns="2" Width="100%">
-        <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top">
-          <Literal Text="$Number"/>
-        </Border>
-
-        <Stylesheet>
-          .userName { float: left; }
-          .sessionId { float: right; padding-right: 8px; color: red; }
-          .location { clear: both; }
-        </Stylesheet>
-        <Border NoWrap="true">
-
-          <Border Padding="0px 0px 0px 8px">
-            <p class="userName">
-              <Literal Text="$UserName"/>
-            </p>
-            <p class="sessionId">
-                  <Literal Text="$SessionId"/>
-            </p>
-            <p class="location">
-              <Literal Text="$Location"/>
-            </p>
-          </Border>
-
-        </Border>
-      </GridPanel>
+    <!--
+      RollOver="false" is deliberate. Sitecore's scForm.rollOver swaps the class
+      name (e.g. speSessionRow -> speSessionRow_Hover) while the cursor is over
+      the row, which knocks display:flex off during hover and lays the kill
+      button out on a new line. Disabling rollover and driving hover purely
+      through the :hover pseudo-class keeps the classes stable so the flex
+      layout survives the hover state.
+    -->
+    <Border RollOver="false" Class="$RowClass" Click="$Click">
+      <div class="speSessionIcon">
+        <Literal Text="$Number"/>
+      </div>
+      <div class="speSessionBody">
+        <div class="speSessionHeader">
+          <span class="speSessionUser"><Literal Text="$UserName"/></span>
+          <span class="speSessionIdPill"><Literal Text="$SessionId"/></span>
+        </div>
+        <div class="speSessionLocation"><Literal Text="$Location"/></div>
+      </div>
+      <Literal Text="$KillButton"/>
     </Border>
   </SessionIDGallery.Option>
 </control>
