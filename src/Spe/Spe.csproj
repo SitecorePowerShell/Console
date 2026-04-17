@@ -193,9 +193,10 @@
     <Compile Include="Client\Controls\TreelistExtended.cs" />
     <Compile Include="Client\Controls\UserGallery.cs" />
     <Compile Include="Client\Controls\LanguageGallery.cs" />
+    <Compile Include="Client\Controls\PolicyGallery.cs" />
+    <Compile Include="Client\Controls\IsePolicyPanel.cs" />
     <Compile Include="Client\Controls\IseContextPanelBase.cs" />
     <Compile Include="Client\Controls\IseContextPanelEx.cs" />
-    <Compile Include="Client\Controls\IseRunspaceModePanel.cs" />
     <Compile Include="Commands\Data\Clones\BaseItemCloneNotificationCommand.cs" />
     <Compile Include="Commands\Data\Clones\GetItemCloneNotificationCommand.cs" />
     <Compile Include="Commands\Data\Clones\NotificationAction.cs" />
@@ -716,6 +717,8 @@
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.Option.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PolicyGallery.Option.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PolicyGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.SearchItem.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellExternalView.xml" />

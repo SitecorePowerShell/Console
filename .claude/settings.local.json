@@ -9,7 +9,14 @@
       "Bash(git add:*)",
       "Bash(git stash:*)",
       "mcp__plugin_github_github__get_label",
-      "mcp__plugin_github_github__issue_read"
+      "mcp__plugin_github_github__issue_read",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_press_key",
+      "mcp__plugin_playwright_playwright__browser_close"
     ]
   }
 }

@@ -715,9 +715,16 @@
             speBusyMessage = message || "";
             speBusyFrame = 0;
             if (!iseTerminal) return;
-            iseTerminal.set_prompt(getBusyPrompt());
+            if (!iseDebugActive) {
+                iseTerminal.set_prompt(getBusyPrompt());
+            }
             if (speBusyInterval) return;
             speBusyInterval = setInterval(function () {
+                // At a breakpoint the user is inspecting state and needs
+                // the DBG prompt to stay put so they can type commands.
+                // The script is technically still the running job, so the
+                // interval is alive, but we must not clobber the prompt.
+                if (iseDebugActive) return;
                 speBusyFrame = (speBusyFrame + 1) % speSpinnerFrames.length;
                 if (iseTerminal) {
                     iseTerminal.set_prompt(getBusyPrompt());
@@ -1123,10 +1130,12 @@
             }
         };
 
+        var switchedToDebugStrip = false;
         spe.breakpointHit = function (line, column, endLine, endColumn, sessionId) {
             debugLine = line;
             debugSessionId = sessionId;
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
+            switchedToDebugStrip = true;
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
                 debugMarkers.push(currentAceEditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
@@ -1156,7 +1165,20 @@
             while (debugMarkers.length > 0) {
                 currentAceEditor.session.removeMarker(debugMarkers.shift());
             }
-            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
+            // Only restore the Home tab if we had switched away to the
+            // Debug strip. Re-clicking the already-active Home tab toggles
+            // the Sitecore ribbon into its collapsed (tabs-only) state,
+            // which is what used to happen when a debug session ended
+            // without ever hitting a breakpoint (e.g. a script that calls
+            // Close-Window + Exit). The original code referenced a legacy
+            // strip ID ("ImageStrip") that no longer exists after the
+            // #1468 ribbon restructure, which silently no-op'd - we just
+            // need the same "don't touch anything" behavior when nothing
+            // was switched.
+            if (switchedToDebugStrip) {
+                scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ScriptStrip");
+                switchedToDebugStrip = false;
+            }
         };
 
         spe.updateEditor = function () {

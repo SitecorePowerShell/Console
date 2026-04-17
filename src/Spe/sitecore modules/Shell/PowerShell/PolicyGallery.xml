@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
+  <Gallery.PolicyGallery>
+    <Gallery>
+      <CodeBeside Type="Spe.Client.Controls.PolicyGallery, Spe" />
+      <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+
+      <div class="scStretch">
+        <div class="scGalleryContent13">
+          <GalleryMenu ID="Options" Class="scStretch">
+            <MenuHeader Header="Remoting policies" />
+
+            <MenuPanel Height="100%">
+              <DataContext ID="PolicyDataContext" />
+              <TreeviewEx ID="PolicyTreeview"
+                          Style="width: 0px"
+                          DataContext="PolicyDataContext"
+                          Click="PolicyTreeview_Click" />
+            </MenuPanel>
+            <MenuHeader Header="Other" />
+          </GalleryMenu>
+        </div>
+        <div class="scGalleryBottom13">
+          <GalleryMenuLine />
+          <Gallery.Grip />
+        </div>
+      </div>
+    </Gallery>
+  </Gallery.PolicyGallery>
+</control>

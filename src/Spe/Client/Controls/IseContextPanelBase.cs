@@ -59,15 +59,27 @@ namespace Spe.Client.Controls
             // timestamp added because Sitecore won't re-send it to browser it if content didn't change - so changing session to the same wouldn't close the dropdowns
             output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",
                 DateTime.Now.ToString("O"));
-            output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(GetFieldValue(button1, "Header"));
+            if (button1 != null)
+            {
+                output.Write("<div class=\"iseRibbonContextPanelLabel\">");
+                output.Write(GetFieldValue(button1, "Header"));
+                output.Write("</div>");
+            }
+            if (button2 != null)
+            {
+                output.Write("<div class=\"iseRibbonContextPanelLabel\">");
+                output.Write(GetFieldValue(button2, "Header"));
+                output.Write("</div>");
+            }
             output.Write("</div>");
-            output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(GetFieldValue(button2, "Header"));
-            output.Write("</div>");
-            output.Write("</div>");
-            RenderSmallGalleryButton(output, button1, context, ribbon, Label1, Icon1, parameters);
-            RenderSmallGalleryButton(output, button2, context, ribbon, Label2, Icon2, parameters);
+            if (button1 != null)
+            {
+                RenderSmallGalleryButton(output, button1, context, ribbon, Label1, Icon1, parameters);
+            }
+            if (button2 != null)
+            {
+                RenderSmallGalleryButton(output, button2, context, ribbon, Label2, Icon2, parameters);
+            }
             output.Write("</div>");
         }
 

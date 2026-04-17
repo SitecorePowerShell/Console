@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -14,6 +15,7 @@ using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.IO;
+using Sitecore.Jobs;
 using Sitecore.Mvc.Extensions;
 using Sitecore.Resources;
 using Sitecore.Security;
@@ -207,15 +209,21 @@ namespace Spe.Client.Applications
             set => Context.ClientPage.ServerProperties["CurrentLanguage"] = value;
         }
 
-        public const string DefaultRunspaceMode = "FullLanguage";
-
-        public static string CurrentRunspaceMode
+        // Holds the SELECTED policy ITEM ID (GUID string, braces included) - not
+        // the policy name. Names aren't unique across subfolders, so looking
+        // policies up by name can pick the wrong one in the ISE. The ribbon
+        // button still displays the human-readable name via IsePolicyPanel.
+        public static string CurrentPolicy
         {
-            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentRunspaceMode"], DefaultRunspaceMode);
-            set => Context.ClientPage.ServerProperties["CurrentRunspaceMode"] = value;
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentPolicy"]);
+            set => Context.ClientPage.ServerProperties["CurrentPolicy"] = value ?? string.Empty;
         }
 
+        private static Item ResolveCurrentPolicyItem() =>
+            RemotingPolicyManager.ResolvePolicyItem(CurrentPolicy);
+
         public SpeJobMonitor Monitor { get; private set; }
+        public SpeJobMonitor AuxiliaryMonitor { get; private set; }
 
         public CommandContext GetCommandContext()
         {
@@ -268,7 +276,27 @@ namespace Spe.Client.Applications
                 }
             }
 
+            // Auxiliary monitor for side jobs (e.g. the policy editor/creator)
+            // that need to pump dialog messages to the ISE page without touching
+            // the terminal. Their job output goes to a throwaway session that the
+            // main PrintOutput handler doesn't know about, and MonitorOnJobFinished
+            // (which drains output and resets ISE UI state) only fires on the main
+            // Monitor, leaving the terminal prompt and ribbon undisturbed.
+            if (AuxiliaryMonitor == null)
+            {
+                if (!Context.ClientPage.IsEvent)
+                {
+                    AuxiliaryMonitor = new SpeJobMonitor { ID = "AuxiliaryMonitor" };
+                    Context.ClientPage.Controls.Add(AuxiliaryMonitor);
+                }
+                else
+                {
+                    AuxiliaryMonitor = (SpeJobMonitor)Context.ClientPage.FindControl("AuxiliaryMonitor");
+                }
+            }
+
             Monitor.JobFinished += MonitorOnJobFinished;
+            AuxiliaryMonitor.JobFinished += AuxiliaryMonitorOnJobFinished;
 
             Tabs.OnChange += TabsOnChange;
             if (Context.ClientPage.IsEvent)
@@ -299,7 +327,6 @@ namespace Spe.Client.Applications
             CurrentSessionId = DefaultSessionName;
             CurrentUser = DefaultUser;
             CurrentLanguage = DefaultLanguage;
-            CurrentRunspaceMode = DefaultRunspaceMode;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
             
@@ -974,8 +1001,54 @@ namespace Spe.Client.Applications
             JobExecuteScript(args, SelectionText.Value, false);
         }
 
+        private static bool TryValidateAgainstPolicy(string script)
+        {
+            if (string.IsNullOrEmpty(CurrentPolicy)) return true;
+
+            var policyItem = ResolveCurrentPolicyItem();
+            if (policyItem == null)
+            {
+                PrintSessionUpdate("[[;#FF9494;]The selected policy item could not be resolved. Clear the selection and pick another.]");
+                return false;
+            }
+
+            var policy = RemotingPolicyManager.GetPolicyFromItem(policyItem);
+            if (policy == null)
+            {
+                PrintSessionUpdate($"[[;#FF9494;]Policy '{policyItem.Name}' could not be parsed.]");
+                return false;
+            }
+
+            if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, Context.User?.Name, "ISE", out var blocked))
+            {
+                PrintSessionUpdate($"[[;#FF9494;]Blocked by policy '{policy.Name}': command '{blocked}' is not in AllowedCommands.]");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static System.Management.Automation.PSLanguageMode ResolveLanguageMode(bool debug)
+        {
+            // Debug bypasses policy constraints so breakpoints and the debugger
+            // protocol work; without this, Set-PSBreakpoint is blocked in CLM.
+            if (debug) return System.Management.Automation.PSLanguageMode.FullLanguage;
+
+            var policy = RemotingPolicyManager.GetPolicyFromItem(ResolveCurrentPolicyItem());
+            if (policy == null) return System.Management.Automation.PSLanguageMode.FullLanguage;
+
+            return policy.FullLanguage
+                ? System.Management.Automation.PSLanguageMode.FullLanguage
+                : System.Management.Automation.PSLanguageMode.ConstrainedLanguage;
+        }
+
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
+            if (!debug && !TryValidateAgainstPolicy(scriptToExecute))
+            {
+                return;
+            }
+
             if (!RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction))
             {
                 return;
@@ -1061,10 +1134,7 @@ namespace Spe.Client.Applications
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
-            scriptSession.SetLanguageMode(
-                string.Equals(CurrentRunspaceMode, "ConstrainedLanguage", StringComparison.OrdinalIgnoreCase)
-                    ? System.Management.Automation.PSLanguageMode.ConstrainedLanguage
-                    : System.Management.Automation.PSLanguageMode.FullLanguage);
+            scriptSession.SetLanguageMode(ResolveLanguageMode(debug));
             Monitor.Start($"{DefaultSessionName}", "ISE", progressBoxRunner.Run,
                 LanguageManager.IsValidLanguageName(CurrentLanguage)
                     ? LanguageManager.GetLanguage(CurrentLanguage)
@@ -1564,9 +1634,7 @@ namespace Spe.Client.Applications
             ribbon.CommandContext.Parameters["currentLanguage"] = string.IsNullOrEmpty(CurrentLanguage)
                 ? DefaultLanguage
                 : CurrentLanguage;
-            ribbon.CommandContext.Parameters["currentRunspaceMode"] = string.IsNullOrEmpty(CurrentRunspaceMode)
-                ? DefaultRunspaceMode
-                : CurrentRunspaceMode;
+            ribbon.CommandContext.Parameters["currentPolicy"] = CurrentPolicy ?? string.Empty;
 
             ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
@@ -1672,18 +1740,124 @@ namespace Spe.Client.Applications
             UpdateRibbon();
         }
 
-        [HandleMessage("ise:setrunspacemode", true)]
-        protected void SetRunspaceMode(ClientPipelineArgs args)
+        [HandleMessage("ise:setpolicy", true)]
+        protected void SetPolicy(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            var mode = args.Parameters["mode"];
-            if (string.IsNullOrEmpty(mode))
+            var idStr = args.Parameters["id"] ?? string.Empty;
+            if (IsHackedParameter(idStr))
             {
                 return;
             }
 
-            CurrentRunspaceMode = mode;
+            if (string.IsNullOrEmpty(idStr))
+            {
+                CurrentPolicy = string.Empty;
+                UpdateRibbon();
+                return;
+            }
+
+            var item = RemotingPolicyManager.ResolvePolicyItem(idStr);
+            if (item == null)
+            {
+                SheerResponse.Alert("The selected policy item no longer exists.");
+                return;
+            }
+
+            // Drop the policy cache so a just-created or just-renamed policy is
+            // visible on the next remoting validation without waiting for the TTL.
+            RemotingPolicyManager.Invalidate();
+
+            CurrentPolicy = item.ID.ToString();
             UpdateRibbon();
+        }
+
+        // Script IDs for the Content-Editor-shipped policy management scripts.
+        // Keeping the same script as a single source of truth so Content Editor and
+        // ISE show the exact same Edit / Create UI.
+        private static readonly ID EditPolicyScriptId = new ID("{4E7E1CD8-BD37-448A-AA12-46A2F29869EE}");
+        private static readonly ID CreatePolicyScriptId = new ID("{DDE4EAA6-5B99-48EC-9DD4-BB4A8CEAE443}");
+
+        [HandleMessage("ise:createpolicy", true)]
+        protected void CreatePolicy(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+            var policiesFolder = db?.GetItem(ItemIDs.Policies);
+            if (policiesFolder == null)
+            {
+                SheerResponse.Alert("Remoting Policies folder was not found.");
+                return;
+            }
+
+            LaunchPolicyEditor(CreatePolicyScriptId, policiesFolder);
+        }
+
+        [HandleMessage("ise:editpolicy", true)]
+        protected void EditPolicy(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+            if (string.IsNullOrEmpty(CurrentPolicy))
+            {
+                SheerResponse.Alert("Select a policy from the Policy dropdown first.");
+                return;
+            }
+
+            var policyItem = ResolveCurrentPolicyItem();
+            if (policyItem == null)
+            {
+                SheerResponse.Alert("The selected policy item could not be resolved. It may have been deleted.");
+                return;
+            }
+
+            LaunchPolicyEditor(EditPolicyScriptId, policyItem);
+        }
+
+        private void LaunchPolicyEditor(ID scriptId, Item contextItem)
+        {
+            if (!AuxiliaryMonitor.JobHandle.Equals((object)Handle.Null))
+            {
+                SheerResponse.Alert("A policy editor is already open.");
+                return;
+            }
+
+            var scriptItem = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)?.GetItem(scriptId);
+            if (scriptItem == null || !scriptItem.IsPowerShellScript())
+            {
+                SheerResponse.Alert("Policy management script not found in the script library.");
+                return;
+            }
+
+            // Throwaway session, not named and autoDispose=true. ScriptRunner.Run
+            // disposes it in its finally block, so we don't need to track it.
+            // Output, progress and any terminal-bound messages go to this session's
+            // buffer and are never streamed to the ISE terminal because the main
+            // Monitor.SessionID stays tied to the ISE's display session.
+            var session = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
+            session.SetExecutedScript(scriptItem);
+            session.SetItemLocationContext(contextItem);
+            session.Interactive = true;
+
+            var runner = new ScriptRunner(ExecuteInternal, session,
+                scriptItem[Templates.Script.Fields.ScriptBody], true);
+
+            // Starting on AuxiliaryMonitor keeps the job's dialog messages flowing
+            // through a monitor that is not wired to MonitorOnJobFinished,
+            // so the ISE terminal, ribbon state and prompt are not disturbed
+            // when the script opens its Invoke-Dialog modal and later ends.
+            AuxiliaryMonitor.Start($"Edit policy \"{contextItem.Name}\"", "ISE-Auxiliary",
+                runner.Run, Context.Language, Context.User);
+        }
+
+        private void AuxiliaryMonitorOnJobFinished(object sender, EventArgs e)
+        {
+            // Currently the only auxiliary consumer is the Remoting Policy
+            // editor/creator, so drop the policy cache here. If other side
+            // jobs are added later this should be split into per-job handlers
+            // (attach before Start, detach inside the callback).
+            RemotingPolicyManager.Invalidate();
         }
 
         [HandleMessage("ise:setcontextitem", true)]

@@ -150,6 +150,37 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
+        /// <summary>
+        /// Parses a Sitecore item into a <see cref="RemotingPolicy"/>.
+        /// Use this when you have an item reference and want the policy as it is
+        /// on disk, bypassing the by-name cache. Needed in the ISE where multiple
+        /// policies with the same name may exist under different subfolders.
+        /// </summary>
+        public static RemotingPolicy GetPolicyFromItem(Item item)
+        {
+            if (item == null) return null;
+            if (item.TemplateID != Templates.RemotingPolicy.Id) return null;
+            return ParsePolicy(item);
+        }
+
+        /// <summary>
+        /// Resolves a policy item by its ID string in the script library database.
+        /// Returns null if the ID is blank, unparseable, points at a missing item, or the
+        /// item is not a Remoting Policy. Runs under <see cref="SecurityDisabler"/> so the
+        /// caller doesn't need to manage read access.
+        /// </summary>
+        public static Item ResolvePolicyItem(string idStr)
+        {
+            if (string.IsNullOrEmpty(idStr) || !ID.TryParse(idStr, out var id)) return null;
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+            if (db == null) return null;
+            using (new SecurityDisabler())
+            {
+                var item = db.GetItem(id);
+                return item != null && item.TemplateID == Templates.RemotingPolicy.Id ? item : null;
+            }
+        }
+
         private static RemotingPolicy ParsePolicy(Item item)
         {
             var fullLanguageField = item.Fields[Templates.RemotingPolicy.Fields.FullLanguage];

@@ -24,7 +24,7 @@ SharedFields:
   Value: Office/32x32/information.png
 - ID: "dbbf9ee3-c30e-4456-a81f-ed8c2e8df91b"
   Hint: Click
-  Value: "ise:iframe(spe_url=/sitecore%20modules/PowerShell/Assets/version.html,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
+  Value: "ise:iframe(spe_url=/sitecore%20modules/PowerShell/Assets/version.html,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc},cn={cn})"
 Languages:
 - Language: da
   Versions:
@@ -36,6 +36,10 @@ Languages:
     - ID: "4df6da21-e745-444c-956e-1d4a96ab8821"
       Hint: Header
       Value: Om
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
@@ -59,7 +63,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20060721T115446
+      Value: 20060721T095446Z
     - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
       Hint: __Workflow state
       Value: 
@@ -72,20 +76,20 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "1624aa0f-14c9-4824-8ffc-e0b3b34f3f8d"
+      Value: "159900e4-a959-4b56-a2eb-4522a208b328"
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
       Value: About the module and environment.
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\anajmanowicz
     - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
       Hint: __Valid from
-      Value: 20060320T112016
+      Value: 20060320T102016Z
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214604Z
+      Value: 20260417T053256Z
 - Language: "ja-JP"
   Versions:
   - Version: 1
@@ -96,6 +100,10 @@ Languages:
     - ID: "4df6da21-e745-444c-956e-1d4a96ab8821"
       Hint: Header
       Value: About
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\anajmanowicz
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
