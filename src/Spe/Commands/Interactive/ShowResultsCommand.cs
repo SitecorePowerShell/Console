@@ -47,7 +47,13 @@ namespace Spe.Commands.Interactive
                     if (SessionState.PSVariable.Get("ScriptSession").Value is ScriptSession session)
                     {
                         var ph = Host.PrivateData.BaseObject as ScriptingHostPrivateData;
-                        var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString,
+                        // PowerShellResultViewerText renders a jquery.terminal so
+                        // it can virtualise very long output. Feed it the session
+                        // buffer in jsterm format (same format the ISE/Console
+                        // terminals consume) instead of pre-rendered HTML - this
+                        // also shares the payload shape with the Runner's
+                        // "View Script Results" path.
+                        var message = new ShowResultsMessage(session.Output.ToJsTerminalString(), WidthString, HeightString,
                             ph?.ForegroundColor.ToString() ?? string.Empty,
                             ph?.BackgroundColor.ToString() ?? string.Empty,
                             Title, Icon, Description);

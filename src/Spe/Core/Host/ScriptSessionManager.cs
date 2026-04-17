@@ -52,6 +52,22 @@ namespace Spe.Core.Host
             return null;
         }
 
+        // Direct lookup by the full cache key (scriptSession|httpSessionId|persistentId).
+        // Unlike GetSession / GetSessionIfExists, this does not reconstruct the key
+        // from the caller's current HttpContext, so it can resolve a session
+        // belonging to a different browser session of the same user - which is what
+        // the ISE session gallery needs to kill a peer session with the same
+        // persistent id.
+        public static ScriptSession GetSessionByKey(string key)
+        {
+            if (string.IsNullOrEmpty(key)) return null;
+            lock (sessions)
+            {
+                if (!sessions.Contains(key)) return null;
+                return HttpRuntime.Cache[key] as ScriptSession;
+            }
+        }
+
         public static bool SessionExistsForAnyUserSession(string persistentId)
         {
             var wildcard = new WildcardPattern("*|"+persistentId, WildcardOptions.IgnoreCase);

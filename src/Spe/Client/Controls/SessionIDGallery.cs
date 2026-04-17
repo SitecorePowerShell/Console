@@ -47,6 +47,13 @@ namespace Spe.Client.Controls
                 var currentUserName = Sitecore.Context.User?.Name;
                 var sessions = ScriptSessionManager.GetAll()
                     .Where(s => string.Equals(s.UserName, currentUserName, StringComparison.OrdinalIgnoreCase));
+
+                // "The session this ISE is bound to" is identified by the full cache
+                // Key (HttpSessionID + persistent id), not by the persistent id alone -
+                // two browser sessions of the same Sitecore user can both hold a
+                // session with the same name, and we want exactly one row highlighted
+                // and the others killable.
+                var mySessionKey = ScriptSessionManager.GetSessionIfExists(CurrenSession)?.Key;
                 foreach (var session in sessions)
                 {
                     var control = ControlFactory.GetControl("SessionIDGallery.Option") as XmlControl;
@@ -64,7 +71,8 @@ namespace Spe.Client.Controls
                         Alt = session.ApplianceType
                     };
 
-                    var isSelected = session.ID == CurrenSession;
+                    var isSelected = mySessionKey != null &&
+                        string.Equals(session.Key, mySessionKey, StringComparison.Ordinal);
                     control["Number"] = builder.ToString();
                     control["SessionId"] = session.ID;
                     control["Location"] = session.CurrentLocation;
@@ -94,11 +102,16 @@ namespace Spe.Client.Controls
                     }
                     else
                     {
-                        var escapedId = HttpUtility.JavaScriptStringEncode(session.ID);
+                        // URL-encode the cache key so the `|` and `$` characters in
+                        // `$scriptSession$|<HttpSessionID>|<persistentId>` don't trip
+                        // up the Sheer message-argument parser, and JS-encode the
+                        // result so it can sit inside the onclick string literal.
+                        var encodedKey = HttpUtility.JavaScriptStringEncode(
+                            HttpUtility.UrlEncode(session.Key));
                         control["KillButton"] =
                             $"<span class=\"speSessionKill\" title=\"Close session\" " +
                             $"onclick=\"event.stopPropagation(); " +
-                            $"scForm.getParentForm().invoke('ise:killsessionid(id={escapedId})'); " +
+                            $"scForm.getParentForm().invoke('ise:killsessionid(key={encodedKey})'); " +
                             $"var r=this.closest('.speSessionRow'); if(r){{r.remove();}} " +
                             $"return false;\">&#215;</span>";
                     }

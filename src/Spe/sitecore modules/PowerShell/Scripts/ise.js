@@ -102,6 +102,11 @@
             [].forEach.call(document.querySelectorAll('.scRibbonNavigatorButtonsGroupButtons > a'), function (div) {
                 div.addEventListener("click", function () {
                     spe.updateRibbon();
+                    // Persist the newly-selected strip so the next ISE open
+                    // returns to the same ribbon tab. Defer a tick so
+                    // scActiveRibbonStrip has been updated by Sitecore's
+                    // setActiveStrip handler before we snapshot it.
+                    setTimeout(spe.saveActiveTabs, 0);
                 })
             });
         }
@@ -249,8 +254,16 @@
                 }
             });
 
+            // scActiveRibbonStrip is a hidden input Sitecore keeps in sync
+            // via scContent.setActiveStrip; reading it gives us the currently
+            // selected ribbon tab without having to walk the ribbon DOM.
+            var activeStrip = "";
+            var stripCtl = document.getElementById("scActiveRibbonStrip");
+            if (stripCtl) activeStrip = stripCtl.value || "";
+
             var state = {
                 activeIndex: adjustedActiveIndex,
+                activeStrip: activeStrip,
                 tabs: tabs
             };
 
@@ -303,6 +316,18 @@
 
             if (currentAceEditor) {
                 editor.val(currentAceEditor.session.getValue());
+            }
+
+            // Defer the strip switch one tick so the ribbon DOM (rendered via
+            // RibbonPanel.InnerHtml on the same postback that restored the
+            // tabs) is fully attached before we ask Sitecore to activate a
+            // strip by id. setActiveStrip is a no-op for an unknown id, so a
+            // stale/renamed strip just leaves the default tab selected.
+            if (tabsData.activeStrip && typeof scContent !== "undefined" && scContent.setActiveStrip) {
+                setTimeout(function () {
+                    try { scContent.setActiveStrip(tabsData.activeStrip); }
+                    catch (e) { /* tolerate missing strip id after ribbon changes */ }
+                }, 0);
             }
         };
 
@@ -2082,6 +2107,11 @@
             // application type (ISE) and context item location. The server
             // pushes the current prompt back via spe.setTerminalPrompt.
             scForm.postRequest("", "", "", "ise:initterminal");
+            // If the default session is already executing a script started
+            // elsewhere (another ISE tab, a Runner dialog), mirror the
+            // running state here: disabled ribbon buttons, enabled Abort,
+            // busy indicator on the terminal.
+            scForm.postRequest("", "", "", "ise:attachrunningsession");
         }, 100);
 
         const resizeObserver = new ResizeObserver((entries) => {

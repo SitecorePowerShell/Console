@@ -80,6 +80,19 @@ namespace Spe.Client.Applications
             set => Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty;
         }
 
+        // Session id that this ISE page is passively watching - a session
+        // whose script was started elsewhere (another ISE tab, a Runner
+        // dialog) that we want to mirror "running" UI state for until it
+        // returns to Available. Distinct from Monitor.SessionID, which is
+        // also set here so Abort resolves the right session, but may be
+        // cleared by JobAbort while AttachedSessionId remains for the
+        // polling timer to finish its cleanup.
+        protected string AttachedSessionId
+        {
+            get => StringUtil.GetString(ServerProperties["AttachedSessionId"]);
+            set => ServerProperties["AttachedSessionId"] = value ?? string.Empty;
+        }
+
         protected bool WasElevated
         {
             get => StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1";
@@ -734,9 +747,14 @@ namespace Spe.Client.Applications
                 var tabCount = Tabs.Controls.Count;
                 SelectTabByIndex(Math.Min(activeIndex, tabCount));
 
+                // Forward the last-selected ribbon strip so the client can
+                // restore the active tab (Home/Context/Debug/Plugins/Settings)
+                // the user was looking at before the ISE was last closed.
+                var activeStrip = (string)tabState["activeStrip"] ?? string.Empty;
                 var restoreData = new Newtonsoft.Json.Linq.JObject
                 {
-                    ["tabs"] = restoreInfo
+                    ["tabs"] = restoreInfo,
+                    ["activeStrip"] = activeStrip
                 };
                 var escapedJson = HttpUtility.JavaScriptStringEncode(restoreData.ToString(Newtonsoft.Json.Formatting.None));
                 SheerResponse.Eval($"spe.applyRestoredTabs(JSON.parse(\"{escapedJson}\"));");
@@ -962,6 +980,43 @@ namespace Spe.Client.Applications
         {
             args.Parameters.Add("message", "ise:execute");
             JobExecuteScript(args, Editor.Value, false);
+        }
+
+        [HandleMessage("ise:executerunner", true)]
+        protected virtual void JobExecuteInRunner(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            if (args.IsPostBack) return;
+
+            // Spin up a throwaway session carrying the current editor content as
+            // its JobScript. PowerShellRunner falls back to session.JobScript when
+            // no scriptId/scriptDb query params are supplied, so this is the same
+            // flow Start-ScriptSession -Interactive uses for ad-hoc scripts.
+            // autoDispose = true makes ScriptRunner.Run dispose the session when
+            // the script ends, matching what the Content Editor path does.
+            var session = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
+            session.AutoDispose = true;
+            session.JobScript = Editor.Value;
+            if (UseContext)
+            {
+                session.SetItemLocationContext(ContextItem);
+            }
+
+            var url = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
+            url.Append("sessionKey", session.Key);
+            if (UseContext && ContextItem != null)
+            {
+                url.Append("id", ContextItem.ID.ToString());
+                url.Append("db", ContextItem.Database.Name);
+                url.Append("lang", ContextItem.Language.Name);
+                url.Append("ver", ContextItem.Version.Number.ToString(CultureInfo.InvariantCulture));
+            }
+
+            // Match the dimensions ExecutePowerShellScript uses from Content
+            // Editor so the Runner looks the same here as it will when the
+            // script is invoked from a context menu entry.
+            SheerResponse.ShowModalDialog(url.ToString(), "400", "260", string.Empty, true);
+            args.WaitForPostBack();
         }
 
         /// <summary>
@@ -1374,6 +1429,8 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
+            var wasAttached = !string.IsNullOrEmpty(AttachedSessionId);
+
             if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession currentSession)
             {
                 currentSession.Abort();
@@ -1391,6 +1448,14 @@ namespace Spe.Client.Applications
 
             Monitor.SessionID = string.Empty;
             ScriptRunning = false;
+
+            // When aborting a session we were only watching, settle the UI now
+            // instead of waiting for the next CheckAttachedSession tick - the
+            // ribbon still paints the running state until the timer fires.
+            if (wasAttached)
+            {
+                EndAttachedSessionWatch();
+            }
         }
 
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
@@ -1707,21 +1772,174 @@ namespace Spe.Client.Applications
 
             CurrentSessionId = sessionId;
             SheerResponse.Eval($"spe.changeSessionId('{sessionId}');");
+
+            // Swapping sessions needs to re-synchronize the ISE's running-state
+            // UI with the new target: attach to an already-busy session, or
+            // detach from a previously-watched one when moving to an idle id.
+            if (IsSessionBusy(sessionId))
+            {
+                BeginAttachedSessionWatch(sessionId);
+            }
+            else if (!string.IsNullOrEmpty(AttachedSessionId))
+            {
+                EndAttachedSessionWatch();
+            }
+            else
+            {
+                UpdateRibbon();
+            }
+        }
+
+        /// <summary>
+        ///     True when the named session currently has a script in flight -
+        ///     either running or paused in a nested command (breakpoint). Used
+        ///     to decide whether the ISE should enter the attached-watch state.
+        /// </summary>
+        private static bool IsSessionBusy(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId)) return false;
+            var session = ScriptSessionManager.GetSessionIfExists(sessionId);
+            if (session == null) return false;
+            return session.State == RunspaceAvailability.Busy ||
+                   session.State == RunspaceAvailability.AvailableForNestedCommand;
+        }
+
+        /// <summary>
+        ///     Reflects a session whose script was started elsewhere as if this
+        ///     ISE page were running it: sets ScriptRunning so the ribbon
+        ///     disables Run/Save/etc and enables Abort, wires Monitor.SessionID
+        ///     so Abort resolves the right session, shows the busy spinner in
+        ///     the terminal, and starts a polling timer that tears the state
+        ///     down when the remote script finishes.
+        /// </summary>
+        private void BeginAttachedSessionWatch(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId)) return;
+            if (ScriptRunning &&
+                string.Equals(AttachedSessionId, sessionId, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            AttachedSessionId = sessionId;
+            Monitor.SessionID = sessionId;
+            ScriptRunning = true;
+
+            SheerResponse.Eval("spe.restoreResults();");
+            SheerResponse.Eval("if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
+
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode(
+                "Attached to running session", true);
+            SheerResponse.Eval($"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
+
             UpdateRibbon();
+            SheerResponse.Timer("ise:checkattachedsession", 500);
+        }
+
+        /// <summary>
+        ///     Clears the attached-watch state and returns the ribbon, Abort
+        ///     button, and terminal prompt to idle. Does not emit any script
+        ///     output - that output belongs to the page that started the
+        ///     script, not to this one.
+        /// </summary>
+        private void EndAttachedSessionWatch()
+        {
+            AttachedSessionId = string.Empty;
+            Monitor.SessionID = string.Empty;
+            ScriptRunning = false;
+            UpdateRibbon();
+            SheerResponse.Eval("spe.scriptExecutionEnded();");
+        }
+
+        [HandleMessage("ise:attachrunningsession", true)]
+        protected void AttachRunningSession(ClientPipelineArgs args)
+        {
+            // Called once from the ISE init sequence (after restoreactivetabs
+            // and initterminal) so an ISE opened against an already-running
+            // default session reflects the running state from the start.
+            var sessionId = CurrentSessionId;
+            if (IsSessionBusy(sessionId))
+            {
+                BeginAttachedSessionWatch(sessionId);
+            }
+        }
+
+        [HandleMessage("ise:checkattachedsession", true)]
+        protected void CheckAttachedSession(ClientPipelineArgs args)
+        {
+            var sessionId = AttachedSessionId;
+            if (string.IsNullOrEmpty(sessionId)) return;
+
+            // Pump any output produced by the attached script into the
+            // terminal. Without this the watch only toggles ribbon state and
+            // the terminal would stay silent until the script finished -
+            // which is the gap a user hits when they reload ISE mid-run.
+            var session = ScriptSessionManager.GetSessionIfExists(sessionId) as ScriptSession;
+            if (session != null)
+            {
+                if (session.Output.ConsumeClearPending())
+                {
+                    ClearOutput();
+                    CommittedLineCount = 0;
+                    HasPendingPartial = false;
+                }
+                StreamOutputToTerminal(session);
+            }
+
+            if (IsSessionBusy(sessionId))
+            {
+                SheerResponse.Timer("ise:checkattachedsession", 500);
+                return;
+            }
+
+            // Final drain catches any lines that arrived between the stream
+            // above and the script terminating.
+            if (session != null)
+            {
+                StreamOutputToTerminal(session);
+            }
+            EndAttachedSessionWatch();
         }
 
         [HandleMessage("ise:killsessionid", true)]
         protected void KillSessionId(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            var sessionId = args.Parameters["id"];
-            if (IsHackedParameter(sessionId) || string.IsNullOrEmpty(sessionId))
+
+            ScriptSession session = null;
+            var keyParam = args.Parameters["key"];
+            if (!string.IsNullOrEmpty(keyParam))
+            {
+                if (IsHackedParameter(keyParam)) return;
+                var key = HttpUtility.UrlDecode(keyParam);
+                session = ScriptSessionManager.GetSessionByKey(key);
+            }
+            else
+            {
+                // Backward-compat: older callers may still emit
+                // ise:killsessionid(id=<persistentId>). This path resolves a
+                // session owned by the current browser session only.
+                var sessionId = args.Parameters["id"];
+                if (IsHackedParameter(sessionId) || string.IsNullOrEmpty(sessionId)) return;
+                session = ScriptSessionManager.GetSessionIfExists(sessionId);
+            }
+
+            if (session == null) return;
+
+            // Scope kills to the current Sitecore user. The gallery already
+            // filters to own sessions, so a mismatch here means a crafted
+            // request; refuse rather than remove someone else's runspace.
+            var currentUserName = Sitecore.Context.User?.Name ?? string.Empty;
+            if (!string.Equals(session.UserName, currentUserName, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
-            var session = ScriptSessionManager.GetSessionIfExists(sessionId);
-            if (session == null) return;
+            // Resolve the bound-session identity BEFORE the kill so we can tell
+            // whether we just disposed the session this page is using.
+            var myBoundKey = ScriptSessionManager.GetSessionIfExists(CurrentSessionId)?.Key;
+            var killedOwnBinding = myBoundKey != null &&
+                string.Equals(myBoundKey, session.Key, StringComparison.Ordinal);
 
             // Abort first in case a script is still running in this session,
             // then dispose so the cache entry and runspace are released.
@@ -1729,12 +1947,10 @@ namespace Spe.Client.Applications
             catch { /* session may already be idle; disposal handles the rest */ }
             ScriptSessionManager.RemoveSession(session);
 
-            // If the user killed the session they were bound to, fall back to
-            // the default so the ribbon and the next execution don't reference
-            // an id that no longer exists. The gallery hides the kill button
-            // for the active row, so this branch only fires if the row became
-            // active between render and click.
-            if (string.Equals(sessionId, CurrentSessionId, StringComparison.OrdinalIgnoreCase))
+            // If the user killed the exact session instance this page was
+            // bound to, fall back to the default name so the ribbon and the
+            // next execution don't reference a key that no longer exists.
+            if (killedOwnBinding)
             {
                 CurrentSessionId = DefaultSessionName;
                 SheerResponse.Eval($"spe.changeSessionId('{DefaultSessionName}');");
@@ -1921,15 +2137,23 @@ namespace Spe.Client.Applications
         protected void InitTerminalSession(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            PrimeTerminalSession();
+            // Initial-load priming: also replay the session's accumulated
+            // output so an ISE reload restores the terminal content from the
+            // surviving server-side session.
+            PrimeTerminalSession(replayOutput: true);
         }
 
         /// <summary>
         /// Creates or retrieves the ISE PowerShell session and primes it with the
         /// ISE's context (current item location, interactive flag). Then notifies
-        /// the client terminal so it can fetch the updated prompt.
+        /// the client terminal so it can fetch the updated prompt. When
+        /// <paramref name="replayOutput"/> is true and the session already has
+        /// buffered output, that output is pushed back to the terminal via the
+        /// normal streaming path so a reload can pick up where the previous
+        /// page left off, and subsequent poll cycles only emit genuinely new
+        /// content.
         /// </summary>
-        private void PrimeTerminalSession()
+        private void PrimeTerminalSession(bool replayOutput = false)
         {
             try
             {
@@ -1943,6 +2167,16 @@ namespace Spe.Client.Applications
                 // client-initiated round trip needed since we already have the
                 // session here.
                 PushTerminalPrompt(session);
+                if (replayOutput && session.Output != null && session.Output.Count > 0)
+                {
+                    // Route the full buffer through the normal streaming path.
+                    // That handles partial-line tails, advances
+                    // CommittedLineCount / HasPendingPartial, and keeps the
+                    // OutputBuffer's update pointer in sync so further polls
+                    // (attached-session watch, end-of-run drain) only emit
+                    // genuinely new lines.
+                    StreamOutputToTerminal(session);
+                }
             }
             catch (Exception ex)
             {

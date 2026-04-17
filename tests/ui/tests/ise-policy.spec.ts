@@ -40,7 +40,13 @@ async function setEditorAndRun(page: Page, script: string) {
       document.querySelector(".ace_editor") as HTMLElement
     );
     editor.setValue(s, -1);
+    editor.focus();
   }, script);
+  // After gallery interactions (the Policy dropdown runs inside an iframe)
+  // focus can sit outside the main document, so Ctrl+E keydown never reaches
+  // the ISE shortcut handler and the script doesn't run. Click the editor
+  // to guarantee main-frame focus before dispatching the shortcut.
+  await page.locator(".ace_editor").first().click();
   await page.keyboard.press("Control+e");
 }
 
@@ -48,6 +54,21 @@ async function activateContextTab(page: Page) {
   await page.evaluate(() => {
     const tab = Array.from(document.querySelectorAll('[role="tab"]')).find(
       (t) => t.textContent?.trim() === "Context"
+    ) as HTMLElement | undefined;
+    tab?.click();
+  });
+}
+
+// The ActiveTabs persistence introduced in #1472 restores the last-selected
+// ribbon strip when the ISE reloads, so a prior test that left Context (or
+// any non-Home) strip active would bleed into the next test's starting
+// state. Wait a moment for the restore postback to settle, then force the
+// ribbon onto Home so every test starts from the same baseline.
+async function resetToHomeTab(page: Page) {
+  await page.waitForTimeout(300);
+  await page.evaluate(() => {
+    const tab = Array.from(document.querySelectorAll('[role="tab"]')).find(
+      (t) => t.textContent?.trim() === "Home"
     ) as HTMLElement | undefined;
     tab?.click();
   });
@@ -170,6 +191,7 @@ for (const site of sites) {
 
     test.beforeEach(async ({ page }) => {
       await openIse(page, site);
+      await resetToHomeTab(page);
     });
 
     test("Policy button shows [None] on a fresh ISE session", async ({

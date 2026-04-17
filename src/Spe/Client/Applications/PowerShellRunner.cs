@@ -311,12 +311,27 @@ namespace Spe.Client.Applications
             var args = e as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
 
+            // Result.Value is handed to PowerShellResultViewerText which hosts
+            // a jquery.terminal. Keeping the content in jsterm format (#1458)
+            // lets the terminal render it with its own DOM virtualisation,
+            // which handles very long script output without blowing up the
+            // viewer's DOM the way an equivalent block of rendered HTML
+            // spans would.
             var printResults = result?.Output ??
                                Texts.PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_;
             if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception);
-                printResults += $"<pre style='background:red;'>{error}</pre>";
+                // Match the soft-red error style the ISE and Console terminals
+                // use (#1464 / #1471): light red foreground on the terminal
+                // default background. The error is wrapped in a jsterm color
+                // block so jquery.terminal renders it in the same pass as the
+                // rest of the output. [ and ] need escaping so multi-bracket
+                // error messages don't break jsterm parsing.
+                var escaped = HttpUtility.HtmlEncode(error)
+                    .Replace("[", "&#91;")
+                    .Replace("]", "&#93;");
+                printResults += $"\r\n[[;#FF9494;]{escaped}]\r\n";
             }
             Result.Value = printResults;
                 

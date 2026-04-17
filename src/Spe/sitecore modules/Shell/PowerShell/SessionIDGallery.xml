@@ -18,11 +18,20 @@
           background-color: #eef5ff;
         }
         .speSessionRowSelected {
-          border-left: 2px solid #BCE3EE;
-          background: #f7fcfe;
+          border-left: 4px solid #267F98;
+          background: #DCF1F6;
+          font-weight: 600;
         }
         .speSessionRowSelected:hover {
-          background: #eaf6fb;
+          background: #BCE3EE;
+        }
+        /* Invert the id pill on the active row so the "you are here" marker
+           reads as a solid teal chip against the tinted background, instead
+           of a pale pill that disappears into the row colour. */
+        .speSessionRowSelected .speSessionIdPill {
+          background: #267F98;
+          color: #ffffff;
+          border-color: #267F98;
         }
         .speSessionIcon {
           flex: 0 0 auto;
