@@ -75,7 +75,10 @@ SharedFields:
     
         $xmlString = $reply -replace "\n", "" -replace "\r",""
         $sr = New-Object System.IO.StringReader $xmlString
-        $xr = New-Object System.Xml.XmlTextReader $sr
+        $xrs = New-Object System.Xml.XmlReaderSettings
+        $xrs.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
+        $xrs.XmlResolver = $null
+        $xr = [System.Xml.XmlReader]::Create($sr, $xrs)
         $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Deserializer")
         $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlReader]), $null)
         $deserializer = $ctor.Invoke($xr)

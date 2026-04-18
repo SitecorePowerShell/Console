@@ -19,9 +19,15 @@ namespace Spe.Commands.Remoting
             var type = typeof(PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
             var ctor = type.GetConstructor(commonBindings, null, new[] { typeof(XmlReader) }, null);
 
+            var settings = new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null
+            };
+
             using (var sr = new StringReader(InputObject))
             {
-                using (var xr = new XmlTextReader(sr))
+                using (var xr = XmlReader.Create(sr, settings))
                 {
                     var deserializer = ctor.Invoke(new object[] { xr });
                     while (!(bool)type.InvokeMember("Done", methodBindings, null, deserializer, new object[] { }))

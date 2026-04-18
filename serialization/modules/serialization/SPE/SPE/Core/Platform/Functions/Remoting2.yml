@@ -547,7 +547,10 @@ SharedFields:
             $type = [PSObject].Assembly.GetType('System.Management.Automation.Deserializer')
             $ctor = $type.GetConstructor('instance,nonpublic', $null, @([xml.xmlreader]), $null)
             $sr = New-Object System.IO.StringReader $xmlString
-            $xr = New-Object System.Xml.XmlTextReader $sr
+            $xrs = New-Object System.Xml.XmlReaderSettings
+            $xrs.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
+            $xrs.XmlResolver = $null
+            $xr = [System.Xml.XmlReader]::Create($sr, $xrs)
             $deserializer = $ctor.Invoke($xr)
             $done = $type.GetMethod('Done', [System.Reflection.BindingFlags]'nonpublic,instance')
             while (!$type.InvokeMember("Done", "InvokeMethod,NonPublic,Instance", $null, $deserializer, @()))
