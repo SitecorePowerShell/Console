@@ -1,4 +1,4 @@
----
+﻿---
 ID: "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a"
 Parent: "52ead8ce-f95a-4283-b98b-5264d83e8e58"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -33,6 +33,11 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID -ne "{9DC763FC-E1EA-4B37-8223-EA5A7712D307}") {
+        Close-Window
+        Exit
+    }
+    
     Import-Function -Name DialogBuilder
     
     $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::new()
@@ -71,7 +76,7 @@ SharedFields:
     $policy = Get-Item -Path "master:" -ID "{59B24247-999C-4298-B297-53C548E6D6E9}"
     $dialog | Add-Droplink -Name "policy" -Title "Remoting Policy" -Value $policy `
         -Tooltip "Controls what commands and scripts this key can execute." `
-        -Source "DataSource={59B24247-999C-4298-B297-53C548E6D6E9}&IncludeTemplatesForSelection={AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}" `
+        -Source "script:{1993BD1B-0004-41BD-A857-4D293E4EA884}" `
         -Tab "Authorization"
     
     $dialog | Add-TextField -Name "requestLimit" -Title "Request Limit" -IsNumber `
@@ -142,6 +147,8 @@ SharedFields:
         $item.Editing.EndEdit() > $null
     }
     
+    Invoke-JavaScript -OnScriptEnd -Script "scForm.invoke('item:load(id=$($item.ID),language=$($item.Language),version=$($item.Version))')"
+    
     Close-Window
 Languages:
 - Language: en
@@ -164,16 +171,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "e9c8b857-0964-4157-9b5c-9cbeb0612a7e"
+      Value: "eb531aae-7d09-4bb9-9dc2-6ae327a448f7"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260412T145313Z
-
-
-
-
-
+      Value: 20260418T002049Z

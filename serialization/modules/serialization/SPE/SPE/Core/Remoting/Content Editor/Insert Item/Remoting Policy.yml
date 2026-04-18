@@ -33,7 +33,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    if(-not $SitecoreContextItem) {
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID -ne "{D54B33A4-12FA-4B5E-B18E-B9AA27C33E43}") {
         Close-Window
         Exit
     }
@@ -251,11 +251,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "836e739f-611b-47af-a0aa-26d1cfbed2ed"
+      Value: "54a0a520-25ac-4cae-8b27-906ca855ff67"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\anajmanowicz
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260414T201843Z
+      Value: 20260418T001945Z

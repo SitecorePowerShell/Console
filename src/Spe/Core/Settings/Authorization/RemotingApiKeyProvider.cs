@@ -26,7 +26,7 @@ namespace Spe.Core.Settings.Authorization
 
         /// <summary>
         /// Returns all enabled API Key items. Used for iterative token validation
-        /// when the legacy shared secret doesn't match.
+        /// when the config-based shared secret doesn't match.
         /// </summary>
         /// <summary>
         /// Returns all enabled API Key items.

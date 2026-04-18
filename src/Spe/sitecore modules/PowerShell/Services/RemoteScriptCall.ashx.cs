@@ -266,7 +266,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            // Path B: No kid - try legacy config shared secret only.
+                            // Path B: No kid - config-based shared-secret validation.
+                            //
+                            // Intended for trusted automation: CI/CD pipelines, deployment
+                            // scripts, infrastructure services. The shared secret is a single
+                            // machine credential injected into Sitecore config from a secure
+                            // secret store (Key Vault, GitHub secrets, etc.) and rotated
+                            // operationally. This path is intentionally not rate-limited - a
+                            // single trusted caller in a trusted environment doesn't need
+                            // throttling.
+                            //
+                            // For public consumers - MCP server, third-party integrations,
+                            // individual developers interacting through the API - use API Keys
+                            // (Path A). API Keys provide per-identity credentials, rotation,
+                            // throttling, audit scoping, and expiration.
+                            //
                             // Username (Name claim) is required for this path.
                             try
                             {
@@ -281,7 +295,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
                             catch (SecurityException)
                             {
-                                PowerShellLog.Debug("[Remoting] action=legacySecretFailed");
+                                PowerShellLog.Debug("[Remoting] action=configSecretFailed");
                             }
                         }
 
@@ -538,7 +552,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         /// <summary>
         /// Resolves the active remoting policy from the current HTTP context.
         /// Returns <see cref="RemotingPolicy.Unrestricted"/> when no API key is present
-        /// (legacy shared-secret sessions).
+        /// (config-based shared-secret sessions).
         /// </summary>
         private static RemotingPolicy GetActivePolicy()
         {
@@ -1125,7 +1139,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             // Language mode defaults to FullLanguage; policy may restrict it below
             var languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
 
-            // Resolve remoting policy (API Key > unrestricted for legacy shared-secret)
+            // Resolve remoting policy (API Key > unrestricted for config-based shared-secret)
             var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
 
             RemotingPolicy policy;
@@ -1144,7 +1158,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             else
             {
-                // Legacy shared-secret sessions have no API key - unrestricted
+                // Config-based shared-secret sessions have no API key - unrestricted
                 policy = RemotingPolicy.Unrestricted;
             }
 

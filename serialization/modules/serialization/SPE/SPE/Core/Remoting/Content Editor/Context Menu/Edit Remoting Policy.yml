@@ -1,4 +1,4 @@
----
+﻿---
 ID: "4e7e1cd8-bd37-448a-aa12-46a2f29869ee"
 Parent: "a9153fbe-bea5-44b4-b901-60891b5bda39"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -25,7 +25,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID.ToString() -ne "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}") {
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID -ne "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}") {
         Close-Window
         Exit
     }
@@ -268,14 +268,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "bc67218f-51c3-4c32-aafb-f6bd8f9decc4"
+      Value: "ae510a98-c8d7-4456-bba9-3c008e29454b"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260412T210000Z
-
-
-
+      Value: 20260418T001950Z

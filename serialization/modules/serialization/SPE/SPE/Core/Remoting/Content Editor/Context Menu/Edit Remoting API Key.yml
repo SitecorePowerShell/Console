@@ -1,4 +1,4 @@
----
+﻿---
 ID: "7c3a9b1e-d4f2-4e6a-8b0c-5f1d2e3a4b5c"
 Parent: "a9153fbe-bea5-44b4-b901-60891b5bda39"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -25,7 +25,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID.ToString() -ne "{55AB1AA8-890E-401E-AF06-094CA21E0E2D}") {
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID -ne "{55AB1AA8-890E-401E-AF06-094CA21E0E2D}") {
         Close-Window
         Exit
     }
@@ -128,7 +128,7 @@ SharedFields:
     
     $dialog | Add-Droplink -Name "policy" -Title "Remoting Policy" -Value $currentPolicy `
         -Tooltip "Controls what commands and scripts this key can execute." `
-        -Source "DataSource={59B24247-999C-4298-B297-53C548E6D6E9}&IncludeTemplatesForSelection={AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}" `
+        -Source "script:{1993BD1B-0004-41BD-A857-4D293E4EA884}" `
         -Tab "Authorization"
     
     # --- Throttling ---
@@ -251,15 +251,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "d99027e1-c358-4349-b7df-caf9be1cc9fa"
+      Value: "0fee8b21-26fc-406c-b968-d44b293a8ea9"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260414T011221Z
-
-
-
-
+      Value: 20260418T151623Z

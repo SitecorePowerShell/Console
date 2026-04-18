@@ -127,13 +127,13 @@ $jobResponse = Invoke-ApiKeyRequest -Script 'Start-Job -ScriptBlock { 1 }' -Secr
 Assert-Equal ([int]$jobResponse.StatusCode) 403 "read-only policy blocks Start-Job"
 
 # ============================================================================
-#  Test Group 4: Backward Compatibility (Legacy Shared Secret)
+#  Test Group 4: Backward Compatibility (Config-based Shared Secret)
 # ============================================================================
 Write-Host "`n  [Test Group 4: Backward Compatibility]" -ForegroundColor White
 
-# Legacy shared secret without API Key = no policy = unrestricted
+# Config-based shared secret without API Key = no policy = unrestricted
 $legacyResponse = Invoke-LegacyRequest -Script 'Remove-Item -Path "master:/content/nonexistent" -ErrorAction SilentlyContinue; "OK"'
-Assert-Equal ([int]$legacyResponse.StatusCode) 200 "Legacy shared secret is unrestricted (Remove-Item allowed)"
+Assert-Equal ([int]$legacyResponse.StatusCode) 200 "Config-based shared secret is unrestricted (Remove-Item allowed)"
 
 # Pipeline cmdlets work under read-only policy
 $formatResponse = Invoke-ApiKeyRequest -Script '@(1, 2, 3) | Where-Object { $_ -gt 1 } | ForEach-Object { $_ * 2 } | Measure-Object -Sum | Select-Object -ExpandProperty Sum' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
@@ -235,7 +235,7 @@ Assert-Like $approvedBody "*APPROVED_SCRIPT_OK*" "Approved script output confirm
 $unapprovedResponse = Invoke-ScriptItemRequest -ScriptName "Test-UnapprovedWriteScript" -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
 Assert-Equal ([int]$unapprovedResponse.StatusCode) 403 "Unapproved script denied by policy"
 
-# 9d. Approved script without API Key (legacy secret, no policy) runs unrestricted
+# 9d. Approved script without API Key (config-based secret, no policy) runs unrestricted
 $noKeyApprovedResponse = Invoke-ScriptItemRequest -ScriptName "Test-ApprovedWriteScript"
 Assert-Equal ([int]$noKeyApprovedResponse.StatusCode) 200 "Approved script without API Key runs unrestricted"
 

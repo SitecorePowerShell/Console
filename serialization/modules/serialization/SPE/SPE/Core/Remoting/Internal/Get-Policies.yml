@@ -1,0 +1,41 @@
+﻿---
+ID: "1993bd1b-0004-41bd-a857-4d293e4ea884"
+Parent: "9d41653d-1063-4734-bc35-09752e9ebc0c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Internal/Get-Policies"
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # For use with the Remoting API Key Create/Edit dialogs to list out the available policies.
+    
+    $policiesRootId = "{59B24247-999C-4298-B297-53C548E6D6E9}"
+    $policyTemplateId = "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}"
+    Get-ChildItem -Path "master:" -ID $policiesRootId -Recurse |
+        Where-Object { $_.TemplateId -eq $policyTemplateId }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260417T055717Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "666c10d0-8600-4b1b-a279-e161eeac5593"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260418T001250Z
