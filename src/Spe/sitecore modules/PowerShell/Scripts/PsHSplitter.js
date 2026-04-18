@@ -124,7 +124,9 @@ scHSplitter.prototype.mouseUp = function(tag, evt, id, target, nopost) {
             if (nopost != "nopost") {
                 scForm.postEvent(tag, evt, id + ".Release(\"" + prev.offsetHeight.toString() + "\", \"" + next.offsetHeight.toString() + "\")");
             }
-            spe.saveSplitPosition("horizontal", prev.offsetHeight);
+            var combined = prev.offsetHeight + next.offsetHeight;
+            var ratio = combined > 0 ? prev.offsetHeight / combined : 0.5;
+            spe.saveSplitPosition("horizontal", ratio);
             spe.resizeEditor();
         }
     }
@@ -147,7 +149,7 @@ scHSplitter.prototype.dblClick = function(tag, evt, id, target) {
             next.style.height = half + "px";
         }
 
-        spe.saveSplitPosition("horizontal", half);
+        spe.saveSplitPosition("horizontal", 0.5);
         spe.resizeEditor();
     }
     scForm.browser.clearEvent(evt, true, false);

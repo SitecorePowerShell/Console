@@ -175,6 +175,10 @@
                             <Image ID="ToggleSplitOrientation" src="/~/icon/office/16x16/mirror_vertically.png"
                                    Alt="Switch to vertical split" Title="Switch to vertical split"/>
                         </Border>
+                        <Border class="status-bar-panel status-bar-right-icon">
+                            <Image ID="ClearOutput" src="/~/icon/office/16x16/erase.png"
+                                   Alt="Clear output panel" Title="Clear output panel"/>
+                        </Border>
                         <Border ID="ResultsStatusBarAction" class="status-bar-panel status-bar-right-icon">
                             <Image ID="ShowHideResults" src="/~/icon/office/16x16/text_align_left.png"
                                    Alt="Show/Hide Execution results pane" Title="Show/Hide Execution results pane"/>

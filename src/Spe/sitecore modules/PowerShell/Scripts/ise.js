@@ -1380,7 +1380,48 @@
             
         }
 
+        spe.reapplySplitPosition = function () {
+            var EDITOR_MIN_PX = 200;
+            var OUTPUT_MIN_PX = 100;
+            if (splitOrientation === "vertical" && splitPosition.vertical) {
+                var leftPane = document.getElementById("VerticalLeftPane");
+                var container = leftPane ? leftPane.parentNode : null;
+                if (!leftPane || !container) return;
+                var containerWidth = container.offsetWidth;
+                if (containerWidth <= 0) return;
+                var splitterWidth = 10;
+                var usable = containerWidth - splitterWidth;
+                var target = Math.round(splitPosition.vertical * usable);
+                var editorMin = Math.min(EDITOR_MIN_PX, usable);
+                var editorMax = Math.max(editorMin, usable - OUTPUT_MIN_PX);
+                target = Math.min(Math.max(target, editorMin), editorMax);
+                leftPane.style.flexBasis = target + "px";
+                leftPane.style.flexGrow = "0";
+                leftPane.style.flexShrink = "0";
+            } else if (splitOrientation === "horizontal" && splitPosition.horizontal) {
+                var scriptPane = document.getElementById("ScriptPane");
+                var resultsRow = document.getElementById("ResultsRow");
+                if (!scriptPane) return;
+                if (resultsRow && resultsRow.offsetHeight === 0) return;
+                // Bound total by the viewport: from top of ScriptPane down to
+                // the StatusBar. Using current pane sums would include any
+                // prior over-expansion and let ScriptPane push StatusBar off
+                // screen on shrink.
+                var viewportHeight = $(window).height();
+                var statusBarHeight = $("#StatusBar").outerHeight(true) || 0;
+                var scriptPaneTop = scriptPane.getBoundingClientRect().top;
+                var total = viewportHeight - scriptPaneTop - statusBarHeight - 2 /* splitter */ - 10 /* padding */;
+                if (total <= 0) return;
+                var targetTop = Math.round(splitPosition.horizontal * total);
+                var editorMin = Math.min(EDITOR_MIN_PX, total);
+                var editorMax = Math.max(editorMin, total - OUTPUT_MIN_PX);
+                targetTop = Math.min(Math.max(targetTop, editorMin), editorMax);
+                scriptPane.style.height = targetTop + "px";
+            }
+        };
+
         spe.resizeEditor = function () {
+            spe.reapplySplitPosition();
             if (currentAceEditor !== undefined) {
                 currentAceEditor.resize();
             }
@@ -1804,6 +1845,9 @@
         $("#ToggleSplitOrientation").click(function () {
             spe.toggleSplitOrientation();
         });
+        $("#ClearOutput").click(function () {
+            spe.clearOutput();
+        });
         $("#ResultsSplitter").on("dblclick", function (e) {
             var img = $("#ResultsSplitter img")[0];
             if (img) {
@@ -2074,14 +2118,6 @@
         }
 
         applySplitOrientation(splitOrientation);
-
-        // Restore saved horizontal splitter position
-        if (splitPosition.horizontal && splitOrientation === "horizontal") {
-            var scriptPane = document.getElementById("ScriptPane");
-            if (scriptPane) {
-                scriptPane.style.height = splitPosition.horizontal + "px";
-            }
-        }
 
         $(window).on('resize', function () {
             spe.resizeEditor();
