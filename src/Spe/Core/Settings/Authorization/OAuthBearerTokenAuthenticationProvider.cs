@@ -163,7 +163,10 @@ namespace Spe.Core.Settings.Authorization
             }
             else if (audObj is System.Collections.ArrayList arr)
             {
-                foreach (var item in arr) tokenAudiences.Add(item?.ToString());
+                foreach (var item in arr)
+                {
+                    if (item != null) tokenAudiences.Add(item.ToString());
+                }
             }
 
             foreach (var allowed in AllowedAudiences)
@@ -196,7 +199,10 @@ namespace Spe.Core.Settings.Authorization
             }
             else if (scopeObj is System.Collections.ArrayList arr)
             {
-                foreach (var item in arr) tokenScopes.Add(item?.ToString());
+                foreach (var item in arr)
+                {
+                    if (item != null) tokenScopes.Add(item.ToString());
+                }
             }
 
             foreach (var required in RequiredScopes)
@@ -240,7 +246,7 @@ namespace Spe.Core.Settings.Authorization
         private static byte[] Base64UrlDecode(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                throw new ArgumentException(nameof(input));
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(input));
 
             var output = input
                 .Replace('-', '+')
