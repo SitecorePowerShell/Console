@@ -192,6 +192,10 @@ function Invoke-RemoteScript {
 
     	.LINK
     	    Stop-ScriptSession
+
+        .PARAMETER AccessToken
+            Specifies an external OAuth bearer token to use for authentication.
+            When provided, this value is sent as the Authorization: Bearer header.
     #>
    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
@@ -219,6 +223,10 @@ function Invoke-RemoteScript {
 
         [Parameter(ParameterSetName='Uri')]
         [string]$SharedSecret,
+
+        [Parameter(ParameterSetName='Uri')]
+        [Parameter(ParameterSetName='Session')]
+        [string]$AccessToken,
 
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
@@ -298,6 +306,9 @@ function Invoke-RemoteScript {
             $Username = $Session.Username
             $Password = $Session.Password
             $SharedSecret = $Session.SharedSecret
+            if([string]::IsNullOrEmpty($AccessToken)) {
+                $AccessToken = $Session.AccessToken
+            }
             $SessionId = $Session.SessionId
             $Credential = $Session.Credential
             $UseDefaultCredentials = $Session.UseDefaultCredentials
@@ -324,7 +335,9 @@ function Invoke-RemoteScript {
             $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
             $client = New-Object -TypeName System.Net.Http.Httpclient $handler
 
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
+            if(![string]::IsNullOrEmpty($AccessToken)) {
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
+            } elseif(![string]::IsNullOrEmpty($SharedSecret)) {
                 $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
                 $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
             } else {
@@ -422,6 +435,9 @@ function Invoke-RemoteScriptAsync {
         [hashtable]$Arguments,
 
         [Parameter()]
+        [string]$AccessToken,
+
+        [Parameter()]
         [switch]$Raw
     )
 
@@ -477,6 +493,9 @@ function Invoke-RemoteScriptAsync {
     $newScriptBlock = $scriptBlock.ToString()
     $Username = $Session.Username
     $Password = $Session.Password
+    if([string]::IsNullOrEmpty($AccessToken)) {
+        $AccessToken = $Session.AccessToken
+    }
     $SessionId = $Session.SessionId
     $Credential = $Session.Credential
     $UseDefaultCredentials = $Session.UseDefaultCredentials
@@ -489,8 +508,12 @@ function Invoke-RemoteScriptAsync {
     $handler = New-Object System.Net.Http.HttpClientHandler
     $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
     $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-    $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-    $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+    if(![string]::IsNullOrEmpty($AccessToken)) {
+        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
+    } else {
+        $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+    }
        
     if ($Credential) {
         $handler.Credentials = $Credential
