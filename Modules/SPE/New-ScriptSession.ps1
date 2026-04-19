@@ -23,6 +23,10 @@ function New-ScriptSession {
         .PARAMETER SharedSecret
             Specifies the SharedSecret used to authenticate the identity. 
         
+        .PARAMETER AccessToken
+            Specifies an external OAuth bearer token (e.g. an XM Cloud access token) used for
+            authentication.  When provided, Username/Password and SharedSecret are not required.
+        
         .PARAMETER Timeout
             Specifies the duration of the wait, in seconds.
 
@@ -47,7 +51,8 @@ function New-ScriptSession {
     #>
     [CmdletBinding(DefaultParameterSetName="All")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "Password")]
+        [Parameter(Mandatory = $true, ParameterSetName = "SharedSecret")]
         [ValidateNotNullOrEmpty()]
         [string]$Username = $null,
 
@@ -58,6 +63,10 @@ function New-ScriptSession {
         [Parameter(Mandatory = $true, ParameterSetName = "SharedSecret")]
         [ValidateNotNullOrEmpty()]
         [string]$SharedSecret = $null,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "AccessToken")]
+        [ValidateNotNullOrEmpty()]
+        [string]$AccessToken = $null,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -84,6 +93,7 @@ function New-ScriptSession {
             "Username" = [string]$Username
             "Password" = [string]$Password
             "SharedSecret" = [string]$SharedSecret
+            "AccessToken" = [string]$AccessToken
             "SessionId" = [string]$sessionId
             "Credential" = [System.Management.Automation.PSCredential]$Credential
             "UseDefaultCredentials" = [bool]$UseDefaultCredentials

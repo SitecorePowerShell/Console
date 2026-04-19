@@ -592,6 +592,7 @@
     <Compile Include="Templates.cs" />
     <Compile Include="Texts.cs" />
     <Compile Include="Utility\DateConverter.cs" />
+    <Compile Include="Core\Settings\Authorization\OAuthBearerTokenAuthenticationProvider.cs" />
     <Compile Include="Core\Settings\Authorization\SharedSecretAuthenticationProvider.cs" />
     <Compile Include="Utility\UrlHandleWrapper.cs" />
     <Compile Include="Version.cs" />
@@ -619,6 +620,7 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config" />
     <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
     <Content Include="App_Config\Include\Rainbow.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
