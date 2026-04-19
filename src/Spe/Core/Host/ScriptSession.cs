@@ -250,6 +250,14 @@ namespace Spe.Core.Host
         public bool Debugging { get; set; }
         public string DebugFile { get; set; }
         public RemotingPolicy ActiveRemotingPolicy { get; set; }
+
+        // Ownership marker for remoting-backed sessions. Set on first access
+        // from the remoting endpoint and enforced on subsequent accesses so
+        // a different authenticated identity cannot attach to a session id
+        // created by another caller. Format: "apiKey:&lt;name&gt;" or
+        // "user:&lt;username&gt;". Null/empty for sessions created outside
+        // the remoting pipeline (e.g. interactive ISE).
+        public string CreatedByIdentity { get; set; }
         internal EngineIntrinsics Engine { get; set; }
         public bool DebuggingInBreakpoint { get; private set; }
         public int[] Breakpoints { get; set; } = new int[0];

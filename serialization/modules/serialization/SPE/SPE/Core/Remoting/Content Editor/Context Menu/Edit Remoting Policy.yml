@@ -174,7 +174,7 @@ SharedFields:
     
     $dialog | Add-RadioButtons -Name "languageMode" -Title "Language Mode" -Value $currentMode `
         -Options ([ordered]@{ "Constrained Language (recommended)" = "Constrained"; "Full Language" = "FullLanguage" }) `
-        -Tooltip "Constrained Language restricts scripts to the allowed command list. Full Language permits all commands." `
+        -Tooltip "Constrained Language enforces Allowed Commands and blocks non-core .NET types. Full Language is unrestricted: scripts can instantiate any .NET type (DB connections, file I/O, reflection) regardless of Allowed Commands." `
         -Tab "General" -GroupId 1
     
     $dialog | Add-Dropdown -Name "auditLevel" -Title "Audit Level" -Value $currentAudit `
@@ -192,6 +192,10 @@ SharedFields:
         -Value $additionalText -Placeholder "One command per line" `
         -Tooltip "Add individual commands not covered by the groups above. One command name per line." `
         -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
+    
+    $dialog | Add-InfoText -Name "fullLanguageInfo" -Title "Full Language Mode" `
+        -Value "In Full Language mode, Allowed Commands has no effect. Scripts can instantiate any .NET type (DB connections, file I/O, reflection) directly. Uncheck Full Language to enforce an allowlist and restrict .NET type access." `
+        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "FullLanguage"
     
     # --- Web API tab ---
     $webApiScripts = @(Get-SpeModuleFeatureRoot -Feature "webAPI" |

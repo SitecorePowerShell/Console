@@ -18,6 +18,7 @@ namespace Spe.Core.Processors
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "script", WebServiceSettings.ServiceRemoting },
+            { "wait", WebServiceSettings.ServiceRemoting },
             { "2", WebServiceSettings.ServiceRestfulv2 },
             { "file", WebServiceSettings.ServiceFileDownload },
             { "media", WebServiceSettings.ServiceMediaDownload },
@@ -69,7 +70,8 @@ namespace Spe.Core.Processors
                     localPath.StartsWith("/-/script/media", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase) ||
-                    localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase)
+                    localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase) ||
+                    localPath.StartsWith("/-/script/wait", StringComparison.OrdinalIgnoreCase)
                     )
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split(new []{"/"}, StringSplitOptions.RemoveEmptyEntries);

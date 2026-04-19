@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Management.Automation.Language;
-using Spe.Core.Diagnostics;
 
 namespace Spe.Core.Settings.Authorization
 {
@@ -9,8 +8,12 @@ namespace Spe.Core.Settings.Authorization
         /// <summary>
         /// Validates a script against a remoting policy's command restrictions.
         /// Returns false if the script contains a command not in the policy's allowlist.
+        /// The caller is responsible for auditing rejections - this method no
+        /// longer emits its own audit log because the remoting handler already
+        /// emits [Remoting] action=scriptRejectedByPolicy with richer context
+        /// (user, ip, clientSession, rid) on the same rejection.
         /// </summary>
-        public static bool ValidateScriptAgainstPolicy(RemotingPolicy policy, string script, string userName, string serviceName, out string blockedCommand)
+        public static bool ValidateScriptAgainstPolicy(RemotingPolicy policy, string script, out string blockedCommand)
         {
             blockedCommand = null;
             if (policy == null || string.IsNullOrEmpty(script)) return true;
@@ -29,14 +32,6 @@ namespace Spe.Core.Settings.Authorization
                 if (!isAllowed)
                 {
                     blockedCommand = commandName ?? "(dynamic invocation)";
-
-                    if (policy.AuditLevel >= AuditLevel.Violations)
-                    {
-                        PowerShellLog.Audit(
-                            "[Policy] action=commandBlocked service={0} policy={1} command={2}",
-                            serviceName ?? "unknown", policy.Name, blockedCommand);
-                    }
-
                     return false;
                 }
             }

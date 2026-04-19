@@ -1,4 +1,4 @@
----
+﻿---
 ID: "b7d4f2a1-3c58-4e9d-a612-8f5c7d4e3b2a"
 Parent: "09839331-7544-4431-95ba-3c7c27a0cbef"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
@@ -21,10 +21,10 @@ Languages:
     Value: Full Language
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: Controls the PowerShell language mode for all scripts executed under this policy, whether inline or by reference. When enabled, scripts execute in FullLanguage mode with no language restrictions. When disabled, scripts run in ConstrainedLanguage mode which limits access to .NET types and certain language features.
+    Value: When checked, scripts run in FullLanguage mode and can instantiate any .NET type (database connections, file I/O, reflection). Allowed Commands has no effect in this mode because a script can reach the full .NET surface regardless of which cmdlets are listed. When unchecked (default), scripts run in ConstrainedLanguage: .NET access is limited to core types and only commands listed in Allowed Commands are permitted.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Enable FullLanguage mode for all scripts under this policy. Default is ConstrainedLanguage.
+    Value: Give scripts unrestricted access to the entire .NET surface. When unchecked (ConstrainedLanguage, default), Allowed Commands is enforced and non-core .NET types are blocked.
   Versions:
   - Version: 1
     Fields:

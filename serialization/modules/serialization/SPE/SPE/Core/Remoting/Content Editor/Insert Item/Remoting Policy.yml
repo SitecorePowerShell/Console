@@ -171,6 +171,10 @@ SharedFields:
         -Placeholder "One command per line" `
         -Tooltip "Add individual commands not covered by the groups above. One command name per line." `
         -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
+        
+    $dialog | Add-InfoText -Name "fullLanguageInfo" -Title "Full Language Mode" `
+        -Value "In Full Language mode, Allowed Commands has no effect. Scripts can instantiate any .NET type (DB connections, file I/O, reflection) directly. Uncheck Full Language to enforce an allowlist and restrict .NET type access." `
+        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "FullLanguage"
     
     # --- Web API tab ---
     $webApiScripts = @(Get-SpeModuleFeatureRoot -Feature "webAPI" |
@@ -251,11 +255,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "54a0a520-25ac-4cae-8b27-906ca855ff67"
+      Value: "8d51b117-b1bf-4fb9-8e68-7423ee7219b0"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260418T001945Z
+      Value: 20260418T190732Z

@@ -66,6 +66,7 @@
         '.\ConvertFrom-CliXml.ps1'
         '.\ConvertTo-CliXml.ps1',
         '.\Invoke-RemoteScript.ps1',
+        '.\Invoke-RemoteWait.ps1',
         '.\MediaSyncWatcher.ps1',
         '.\New-Jwt.ps1',
         '.\New-ScriptSession.ps1',

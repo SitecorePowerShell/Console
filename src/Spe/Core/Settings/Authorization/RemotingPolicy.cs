@@ -19,6 +19,40 @@ namespace Spe.Core.Settings.Authorization
         public HashSet<ID> ApprovedScriptIds { get; }
         public AuditLevel AuditLevel { get; }
 
+        // Stream and output cmdlets are treated as implicit-allowed in every
+        // policy. These are I/O primitives, not executable logic. Operators
+        // shouldn't have to opt-in to "scripts may emit log output", and the
+        // allowlist meaningfully polices behavior, not whether a message
+        // reaches the verbose/debug/warning/error/info stream.
+        // Both short-name and module-qualified forms are covered so an
+        // older client that prepends a fully-qualified bootstrap still
+        // passes the scanner.
+        private static readonly HashSet<string> StreamBaseline = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Write-Information",
+            "Write-Debug",
+            "Write-Verbose",
+            "Write-Warning",
+            "Write-Error",
+            "Write-Output",
+            "Write-Host",
+            "Write-Progress",
+            "Out-Default",
+            "Out-Null",
+            "Out-String",
+            "Microsoft.PowerShell.Utility\\Write-Information",
+            "Microsoft.PowerShell.Utility\\Write-Debug",
+            "Microsoft.PowerShell.Utility\\Write-Verbose",
+            "Microsoft.PowerShell.Utility\\Write-Warning",
+            "Microsoft.PowerShell.Utility\\Write-Error",
+            "Microsoft.PowerShell.Utility\\Write-Output",
+            "Microsoft.PowerShell.Utility\\Write-Host",
+            "Microsoft.PowerShell.Utility\\Write-Progress",
+            "Microsoft.PowerShell.Core\\Out-Default",
+            "Microsoft.PowerShell.Core\\Out-Null",
+            "Microsoft.PowerShell.Utility\\Out-String",
+        };
+
         public RemotingPolicy(
             string name,
             bool fullLanguage,
@@ -52,6 +86,7 @@ namespace Spe.Core.Settings.Authorization
         {
             if (!RestrictCommands) return true;
             if (string.IsNullOrEmpty(commandName)) return false;
+            if (StreamBaseline.Contains(commandName)) return true;
             return AllowedCommands.Contains(commandName);
         }
 

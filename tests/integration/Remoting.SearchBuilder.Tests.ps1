@@ -19,6 +19,44 @@ if ($loadResult -ne "OK") {
     return
 }
 
+# Preflight: confirm the search index exists and has documents.
+# Every downstream assertion depends on a populated index; without this gate,
+# a mid-reindex or cleared index fails ~20 assertions with misleading messages.
+$indexStatus = Invoke-RemoteScript -Session $session -ScriptBlock {
+    $indexName = "sitecore_master_index"
+    try {
+        $index = [Sitecore.ContentSearch.ContentSearchManager]::GetIndex($indexName)
+        if (-not $index) { return "MISSING" }
+
+        $ctx = $index.CreateSearchContext()
+        try {
+            $queryable = [Sitecore.ContentSearch.LinqHelper]::CreateQuery(
+                $ctx, [Sitecore.ContentSearch.SearchTypes.SearchResultItem])
+            $count = $queryable.Count()
+        } finally { $ctx.Dispose() }
+
+        if ($count -le 0) { return "EMPTY" }
+        return "OK:$count"
+    } catch {
+        return "ERROR:$($_.Exception.Message)"
+    }
+} -Raw 2>$null
+
+$indexStatus = "$indexStatus".Trim()
+if ($indexStatus -like "OK:*") {
+    Write-Host "    Index sitecore_master_index ready ($indexStatus)" -ForegroundColor Gray
+} else {
+    $reason = switch -Wildcard ($indexStatus) {
+        "MISSING"  { "index 'sitecore_master_index' not registered on server" }
+        "EMPTY"    { "index is empty -- run a reindex before retrying" }
+        "ERROR:*"  { "index probe threw: $($indexStatus.Substring(6))" }
+        default    { "unexpected probe response: $indexStatus" }
+    }
+    Skip-Test "SearchBuilder integration tests" $reason
+    Stop-ScriptSession -Session $session
+    return
+}
+
 # ============================================================
 # Basic search - Find-Item via Invoke-Search
 # ============================================================

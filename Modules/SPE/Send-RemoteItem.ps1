@@ -190,7 +190,7 @@ function Send-RemoteItem {
 
             try {
                 Write-Verbose -Message "Uploading $($Path)"
-                [System.Net.HttpWebResponse]$errorResponse = $null;
+                [System.Net.HttpWebResponse]$errorResponse = $null
 
                 $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
                 $content = New-Object System.Net.Http.StreamContent($fileStream)
@@ -198,7 +198,7 @@ function Send-RemoteItem {
                 $fileStream.Close()
                 $fileStream.Dispose()
 
-                if(!$responseMessage.IsSuccessStatusCode) {
+                if (-not $responseMessage.IsSuccessStatusCode) {
                     Write-Error "Upload failed. $($responseMessage.ReasonPhrase)"
                     return
                 }
@@ -207,16 +207,10 @@ function Send-RemoteItem {
             } catch [System.Net.WebException] {
                 [System.Net.WebException]$script:ex = $_.Exception
                 [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
-                Write-Verbose -Message "Response exception message: $($ex.Message)"
-                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                    Write-Verbose -Message "Check that the service files exist and are properly configured."
-                }
+                Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex
             }
 
-            if($errorResponse){
+            if ($errorResponse) {
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
                     -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }

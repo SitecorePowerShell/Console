@@ -1,6 +1,12 @@
 param(
     [string]$ConnectionUri = "https://spe.dev.local",
-    [string]$TestFile
+    [string]$TestFile,
+    # Skips Phase 2 (token-lifetime enforcement). That phase deploys a
+    # config file, waits for the app-domain recycle, runs
+    # Remoting.Security.Enforced.Tests.ps1, removes the config, and
+    # waits for another recycle. Combined ~60-90s. Use this flag on
+    # iterations that don't touch auth/token-lifetime code.
+    [switch]$SkipSecurityEnforcement
 )
 
 $ErrorActionPreference = "Stop"
@@ -167,7 +173,7 @@ if ($global:isConstrainedLanguage) {
 }
 
 # Run all test files EXCEPT enforced/profiles/DA (those need setup/teardown) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1","Remoting.Expiration.Tests.ps1","Remoting.Expiration.DuplicateKeyId.Tests.ps1" |
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1","Remoting.Expiration.Tests.ps1","Remoting.Expiration.DuplicateKeyId.Tests.ps1","Remoting.ClientRetry.Tests.ps1","Remoting.LongPollWait.Tests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 1b: Delegated access tests (setup -> test -> teardown, no config deploy needed)
@@ -177,26 +183,55 @@ Invoke-TestFile "$PSScriptRoot\Remoting.DelegatedAccess.Tests.ps1"
 . "$PSScriptRoot\Remoting.DelegatedAccess.Teardown.ps1"
 
 # Phase 2: Token lifetime enforcement tests (requires maxTokenLifetimeSeconds config)
-Write-Host "`n=== Phase 2: Token Lifetime Tests (deploying auth config) ===" -ForegroundColor Magenta
-$deployedSecurity = Deploy-TestConfigs -ConfigDir $testConfigDir
-if ($deployedSecurity) {
-    # Config only sets maxTokenLifetimeSeconds (auth provider level, no language mode change)
-    Wait-SitecoreRestart
+# Skipped under -SkipSecurityEnforcement to avoid the deploy + remove recycles
+# (~60-90s combined). That flag is meant for iterations that don't touch auth
+# or token-lifetime code.
+if ($SkipSecurityEnforcement) {
+    Write-Host "`n=== Phase 2: SKIPPED (-SkipSecurityEnforcement) ===" -ForegroundColor Yellow
+    Write-Host "  Remoting.Security.Enforced.Tests.ps1 will not run. Use 'task test' for full coverage." -ForegroundColor Yellow
+} else {
+    Write-Host "`n=== Phase 2: Token Lifetime Tests (deploying auth config) ===" -ForegroundColor Magenta
+    $deployedSecurity = Deploy-TestConfigs -ConfigDir $testConfigDir
+    if ($deployedSecurity) {
+        # Config only sets maxTokenLifetimeSeconds (auth provider level, no language mode change)
+        Wait-SitecoreRestart
+    }
+
+    Invoke-TestFile "$PSScriptRoot\Remoting.Security.Enforced.Tests.ps1"
+
+    # Cleanup Phase 2: remove test configs before Phase 3
+    Remove-TestConfigs -ConfigDir $testConfigDir
 }
-
-Invoke-TestFile "$PSScriptRoot\Remoting.Security.Enforced.Tests.ps1"
-
-# Cleanup Phase 2: remove test configs before Phase 3
-Remove-TestConfigs -ConfigDir $testConfigDir
 
 # Phase 3: Remoting policy tests (item-based, no config deploy needed)
 Write-Host "`n=== Phase 3: Remoting Policy Tests ===" -ForegroundColor Magenta
 
-# Wait for config removal to take effect
-Wait-SitecoreRestart
+# Wait for config removal to take effect (only meaningful if Phase 2 deployed a
+# config that needs to go away).
+if (-not $SkipSecurityEnforcement) {
+    Wait-SitecoreRestart
+}
 
 # Setup: create policy test items
 . "$PSScriptRoot\Remoting.RemotingPolicies.Setup.ps1"
+
+# When -SkipSecurityEnforcement suppressed the Phase 2/3 app-domain recycles,
+# the ApiScripts cache (30-min sliding TTL, never invalidated by item events)
+# still holds its pre-setup snapshot and the new Web API scripts created by
+# RemotingPolicies.Setup won't resolve via /-/script/v2/. Force the cache to
+# flush so Test Group 9 sees the new items.
+if ($SkipSecurityEnforcement) {
+    Write-Host "  Flushing ApiScripts cache (no app-domain recycle this run)..." -ForegroundColor Gray
+    $flushSession = New-ScriptSession -Username "sitecore\admin" -SharedSecret $global:sharedSecret -ConnectionUri $ConnectionUri
+    Invoke-RemoteScript -Session $flushSession -ScriptBlock {
+        # Legacy shared key + per-db keys (Remove is a no-op on missing keys)
+        [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey") | Out-Null
+        [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:master") | Out-Null
+        [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:core") | Out-Null
+        [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:web") | Out-Null
+    } | Out-Null
+    Stop-ScriptSession -Session $flushSession -ErrorAction SilentlyContinue
+}
 
 # Wait for API Key and policy caches to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
 Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
@@ -204,6 +239,9 @@ Start-Sleep -Seconds 12
 
 # Run policy tests (policies are resolved from items, no restart needed)
 Invoke-TestFile "$PSScriptRoot\Remoting.RemotingPolicies.Tests.ps1"
+
+# Long-poll wait + session ownership tests (share Test-ReadOnly API Key from policy setup).
+Invoke-TestFile "$PSScriptRoot\Remoting.LongPollWait.Tests.ps1"
 
 # Teardown: remove test policy items
 . "$PSScriptRoot\Remoting.RemotingPolicies.Teardown.ps1"
@@ -248,5 +286,28 @@ Invoke-TestFile "$PSScriptRoot\Remoting.Expiration.DuplicateKeyId.Tests.ps1"
 . "$PSScriptRoot\Remoting.Expiration.Teardown.ps1"
 
 Write-Host "`n  Expiration test cleanup complete." -ForegroundColor Cyan
+
+# Phase 6: Client-side retry tests (item-based, no config deploy needed)
+# Runs AFTER Phase 5 so expired-key item from Expiration.Setup is still available for
+# Gap 3's X-SPE-AuthFailureReason=expired check. The Expiration teardown above removes
+# the expired key, so re-create it here as part of ClientRetry.Setup.
+Write-Host "`n=== Phase 6: Client-Side Retry Tests ===" -ForegroundColor Magenta
+
+# Re-create the expired key for Gap 3 test (Expiration.Teardown removed it above)
+. "$PSScriptRoot\Remoting.Expiration.Setup.ps1"
+
+# Setup: create client-retry test API Keys (tight window, disabled key)
+. "$PSScriptRoot\Remoting.ClientRetry.Setup.ps1"
+
+Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
+Start-Sleep -Seconds 12
+
+Invoke-TestFile "$PSScriptRoot\Remoting.ClientRetry.Tests.ps1"
+
+# Teardown: remove client-retry test items and the re-created expired key
+. "$PSScriptRoot\Remoting.ClientRetry.Teardown.ps1"
+. "$PSScriptRoot\Remoting.Expiration.Teardown.ps1"
+
+Write-Host "`n  Client-retry test cleanup complete." -ForegroundColor Cyan
 
 Show-TestSummary

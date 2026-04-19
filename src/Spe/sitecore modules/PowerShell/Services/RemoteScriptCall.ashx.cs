@@ -10,6 +10,8 @@ using System.Management.Automation.Language;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
@@ -43,7 +45,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
     ///     The handler allows for execution of scripts stored within Script Library
     ///     it also allows those scripts to be parametrized.
     /// </summary>
-    public class RemoteScriptCall : IHttpHandler, IRequiresSessionState
+    public class RemoteScriptCall : HttpTaskAsyncHandler, IRequiresSessionState
     {
         private const string ApiScriptsKey = "Spe.ApiScriptsKey";
         private const string ExpirationSetting = "Spe.WebApiCacheExpirationSecs";
@@ -59,6 +61,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string ParamRawOutput = "rawOutput";
         private const string ParamOutputFormat = "outputFormat";
         private const string ParamErrorFormat = "errorFormat";
+        private const string ParamCaptureStreams = "captureStreams";
+
+        // Redefines the five Write-* stream cmdlets so their streams route
+        // into the output pipeline (captured in the CliXml response) instead
+        // of being swallowed server-side. Injected only when the client
+        // signals captureStreams=true. Prepended after policy scanning so
+        // the allowlist scanner never sees the inner module-qualified calls.
+        private const string StreamCaptureBootstrap =
+            "if($PSVersionTable.PSVersion.Major -ge 5) {" +
+            "    function Write-Information { param([string]$Message) $InformationPreference = \"Continue\"; Microsoft.PowerShell.Utility\\Write-Information -Message $Message 6>&1 }" +
+            "};" +
+            "function Write-Debug { param([string]$Message) $DebugPreference = \"Continue\"; Microsoft.PowerShell.Utility\\Write-Debug -Message $Message 5>&1 };" +
+            "function Write-Verbose { param([string]$Message) $VerbosePreference = \"Continue\"; Microsoft.PowerShell.Utility\\Write-Verbose -Message $Message 4>&1 };" +
+            "function Write-Warning { param([string]$Message) $WarningPreference = \"Continue\"; Microsoft.PowerShell.Utility\\Write-Warning -Message $Message 3>&1 };" +
+            "function Write-Error { param([string]$Message) $WarningPreference = \"Continue\"; Microsoft.PowerShell.Utility\\Write-Error -Message $Message 2>&1 };";
 
         private const string StructuredErrorScript =
             "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { " +
@@ -103,7 +120,26 @@ namespace Spe.sitecore_modules.PowerShell.Services
             { "GET/file" , WebServiceSettings.ServiceFileDownload },
             { "GET/media" , WebServiceSettings.ServiceMediaDownload },
             { "GET/handle" , WebServiceSettings.ServiceHandleDownload },
+            { "GET/wait" , WebServiceSettings.ServiceRemoting },
         };
+
+        // Async entry point. Long-poll wait route gets true async handling;
+        // every other route delegates to the sync ProcessRequest. Keeping
+        // both paths means touching one handler class instead of deploying
+        // a new .ashx for the async route.
+        public override async Task ProcessRequestAsync(HttpContext context)
+        {
+            var apiVersion = context.Request.Params.Get(ParamApiVersion);
+            var serviceMappingKey = context.Request.HttpMethod + "/" + apiVersion;
+            if (string.Equals(serviceMappingKey, "GET/wait", StringComparison.OrdinalIgnoreCase))
+            {
+                await ProcessWaitAsync(context).ConfigureAwait(false);
+                return;
+            }
+            ProcessRequest(context);
+        }
+
+        public override bool IsReusable => true;
 
         public void ProcessRequest(HttpContext context)
         {
@@ -222,6 +258,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 {
                     var token = authHeader.Substring("Bearer ".Length).Trim();
                     var ip = GetIp(request);
+                    // Populated with expired|disabled|invalid when Path A rejects the request
+                    // so the 401 response can surface it in X-SPE-AuthFailureReason.
+                    string authFailureReason = null;
                     try
                     {
                         var provider = ServiceAuthenticationManager.AuthenticationProvider;
@@ -256,12 +295,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                 if (!isValid)
                                 {
                                     PowerShellLog.Debug($"[Remoting] action=apiKeySignatureFailed kid={kid} apiKey={matchedApiKey.Name}");
+                                    // Collapse bad-signature into 'invalid' alongside unknown-kid to
+                                    // resist Access Key Id enumeration.
+                                    authFailureReason = RemotingApiKeyProvider.AuthFailureReasonInvalid;
                                     matchedApiKey = null;
                                 }
                             }
                             else if (matchedApiKey == null)
                             {
-                                PowerShellLog.Debug($"[Remoting] action=apiKeyNotFound kid={kid}");
+                                // Key was not found in the active index. Consult the parallel
+                                // kid-states index to see if it was filtered out because it is
+                                // expired or disabled.
+                                authFailureReason = RemotingApiKeyProvider.GetAuthFailureReason(kid)
+                                    ?? RemotingApiKeyProvider.AuthFailureReasonInvalid;
+                                PowerShellLog.Debug($"[Remoting] action=apiKeyNotFound kid={kid} reason={authFailureReason}");
                             }
                         }
                         else
@@ -359,6 +406,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         else
                         {
                             PowerShellLog.Audit("[Remoting] action=bearerAuthFailed user={0} ip={1} rid={2}", username ?? "unknown", ip, GetRequestId());
+                            if (!string.IsNullOrEmpty(authFailureReason))
+                            {
+                                context.Response.AddHeader("X-SPE-AuthFailureReason", authFailureReason);
+                            }
                             RejectAuthenticationMethod(context, serviceName, username);
                             return false;
                         }
@@ -366,6 +417,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     catch (Exception ex)
                     {
                         PowerShellLog.Audit("[Remoting] action=bearerAuthError user={0} ip={1} error={2} rid={3}", username ?? "unknown", ip, LogSanitizer.SanitizeValue(ex.Message), GetRequestId());
+                        if (!string.IsNullOrEmpty(authFailureReason))
+                        {
+                            context.Response.AddHeader("X-SPE-AuthFailureReason", authFailureReason);
+                        }
                         RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;
                     }
@@ -511,15 +566,26 @@ namespace Spe.sitecore_modules.PowerShell.Services
             ProcessScript(context, scriptItem, serviceName);
         }
 
+        private const string ClientIpKey = "SpeClientIp";
+
         private static string GetIp(HttpRequest request)
         {
-            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            // Cached per-request: GetIp is called 15+ times along the pipeline
+            // and every uncached call touches ServerVariables, which is a
+            // lazy-populated collection backed by IIS worker-process state.
+            var ctx = HttpContext.Current;
+            if (ctx != null && ctx.Items[ClientIpKey] is string cached) return cached;
 
+            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
             if (string.IsNullOrEmpty(ip))
             {
                 ip = request.ServerVariables["REMOTE_ADDR"];
             }
 
+            if (ctx != null && !string.IsNullOrEmpty(ip))
+            {
+                ctx.Items[ClientIpKey] = ip;
+            }
             return ip;
         }
 
@@ -561,7 +627,266 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return RemotingPolicyManager.ResolvePolicy(apiKey.Policy);
         }
 
-        public bool IsReusable => true;
+        // Build the ownership identity string for the current request. Format
+        // "apiKey:<name>" when an API Key authenticated the request, otherwise
+        // "user:<username>" for config-based shared-secret or Basic auth.
+        private static string GetRequestOwnershipIdentity(HttpContext context)
+        {
+            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            if (apiKey != null)
+            {
+                return "apiKey:" + apiKey.Name;
+            }
+            var user = Sitecore.Context.User?.Name;
+            return string.IsNullOrEmpty(user) ? null : "user:" + user;
+        }
+
+        // Claim the session on first access, enforce ownership afterwards.
+        // Returns true to continue processing, false if ownership check failed
+        // and an error response has already been written.
+        private const string SessionOwnerCacheKey = "SPE.SessionOwner|";
+        private static readonly TimeSpan SessionOwnerTtl = TimeSpan.FromMinutes(30);
+
+        // Claim the session on first access, enforce ownership afterwards.
+        // Ownership is stored in HttpRuntime.Cache keyed on the client-supplied
+        // sessionId so the check is stable across requests regardless of ASP.NET
+        // session-cookie lifecycle. Mirrored onto ScriptSession.CreatedByIdentity
+        // for observability by in-process consumers.
+        private static bool TryEnforceSessionOwnership(HttpContext context, ScriptSession session, string ip)
+        {
+            if (session == null) return true;
+
+            var identity = GetRequestOwnershipIdentity(context);
+            if (string.IsNullOrEmpty(identity)) return true;
+
+            var clientSessionId = session.ID;
+            if (string.IsNullOrEmpty(clientSessionId)) return true;
+
+            var cacheKey = SessionOwnerCacheKey + clientSessionId;
+            var recordedOwner = HttpRuntime.Cache.Get(cacheKey) as string;
+
+            if (string.IsNullOrEmpty(recordedOwner))
+            {
+                HttpRuntime.Cache.Insert(cacheKey, identity, null,
+                    DateTime.UtcNow.Add(SessionOwnerTtl),
+                    System.Web.Caching.Cache.NoSlidingExpiration);
+                session.CreatedByIdentity = identity;
+                return true;
+            }
+
+            if (string.Equals(recordedOwner, identity, StringComparison.Ordinal))
+            {
+                if (string.IsNullOrEmpty(session.CreatedByIdentity))
+                {
+                    session.CreatedByIdentity = recordedOwner;
+                }
+                return true;
+            }
+
+            PowerShellLog.Audit("[Remoting] action=sessionOwnershipMismatch session={0} owner={1} caller={2} ip={3} rid={4}",
+                clientSessionId, recordedOwner, identity, ip, GetRequestId());
+            context.Response.Headers["X-SPE-Restriction"] = "session-not-owned";
+            SetErrorResponse(context, 403, "Session is owned by a different identity.");
+            return false;
+        }
+
+        // GET /-/script/wait/ long-poll endpoint. Holds the request until the
+        // target job (or script session) transitions to done, or until the
+        // caller-provided timeoutSeconds (clamped 1..60) elapses. Returns
+        // JSON so clients can read status without a PS runspace. The
+        // endpoint is throttled, authenticated, and access-controlled via
+        // the same AuthenticateRequest pipeline as every other route.
+        private async Task ProcessWaitAsync(HttpContext context)
+        {
+            var request = context.Request;
+            var serviceName = WebServiceSettings.ServiceRemoting;
+            var origin = request.Headers["Origin"];
+
+            PowerShellLog.Audit($"[Remoting] action=waitRequestReceived service={serviceName} ip={GetIp(request)} rid={GetRequestId()}");
+
+            if (!CheckServiceEnabled(context, serviceName))
+            {
+                return;
+            }
+
+            if (!AuthenticateRequest(context, serviceName, out var identity, out var isAuthenticated))
+            {
+                return;
+            }
+            if (!isAuthenticated || identity == null)
+            {
+                RejectAuthenticationMethod(context, serviceName, null);
+                return;
+            }
+
+            var sessionId = request.QueryString[ParamSessionId];
+            var jobId = request.QueryString["jobId"];
+            var jobType = request.QueryString["jobType"] ?? "scriptsession";
+            var timeoutSecondsRaw = request.QueryString["timeoutSeconds"];
+
+            if (string.IsNullOrEmpty(jobId))
+            {
+                SetErrorResponse(context, 400, "jobId is required.");
+                return;
+            }
+
+            int timeoutSeconds = 30;
+            if (!string.IsNullOrEmpty(timeoutSecondsRaw) && int.TryParse(timeoutSecondsRaw, out var parsed))
+            {
+                timeoutSeconds = parsed;
+            }
+            if (timeoutSeconds < 1) timeoutSeconds = 1;
+            if (timeoutSeconds > 60) timeoutSeconds = 60;
+
+            var deadline = DateTime.UtcNow.AddSeconds(timeoutSeconds);
+            var cancellationToken = context.Response.ClientDisconnectedToken;
+            var started = DateTime.UtcNow;
+
+            string status = "NotFound";
+            string name = jobId;
+            bool isDone = true;
+
+            while (DateTime.UtcNow < deadline)
+            {
+                if (cancellationToken.IsCancellationRequested) return;
+
+                if (string.Equals(jobType, "sitecore", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (TryProbeSitecoreJob(jobId, out status, out name, out isDone))
+                    {
+                        if (isDone) break;
+                    }
+                    else
+                    {
+                        // Unknown handle - uniform response (no 404) to resist enumeration.
+                        status = "NotFound";
+                        isDone = true;
+                        break;
+                    }
+                }
+                else if (string.Equals(jobType, "scriptsession", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (TryProbeScriptSession(context, sessionId, jobId, out status, out name, out isDone, out var ownershipRejected))
+                    {
+                        if (ownershipRejected) return;
+                        if (isDone) break;
+                    }
+                    else
+                    {
+                        status = "NotFound";
+                        isDone = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    SetErrorResponse(context, 400, "Unsupported jobType. Expected 'scriptsession' or 'sitecore'.");
+                    return;
+                }
+
+                try
+                {
+                    await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
+            }
+
+            var elapsed = (int)Math.Round((DateTime.UtcNow - started).TotalSeconds);
+            var json = "{\"isDone\":" + (isDone ? "true" : "false") +
+                       ",\"status\":\"" + JsonEscape(status) + "\"" +
+                       ",\"name\":\"" + JsonEscape(name ?? jobId) + "\"" +
+                       ",\"elapsedSeconds\":" + elapsed + "}";
+            context.Response.ContentType = "application/json";
+            context.Response.Write(json);
+
+            AddCorsHeaders(context, serviceName, origin);
+        }
+
+        private static bool TryProbeSitecoreJob(string jobHandle, out string status, out string name, out bool isDone)
+        {
+            status = "NotFound"; name = jobHandle; isDone = true;
+            try
+            {
+                var handle = Sitecore.Handle.Parse(jobHandle);
+                if (handle == null) return false;
+                var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
+                var job = jobManager?.GetJob(handle);
+                if (job == null) return false;
+                name = job.Name ?? jobHandle;
+                isDone = job.IsDone || job.StatusFailed;
+                status = job.StatusFailed ? "Failed" : (job.IsDone ? "Done" : "Busy");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryProbeScriptSession(HttpContext context, string sessionId, string jobSessionId, out string status, out string name, out bool isDone, out bool ownershipRejected)
+        {
+            status = "NotFound"; name = jobSessionId; isDone = true; ownershipRejected = false;
+
+            // Background -AsJob sessions are keyed with the creating request's
+            // ASP.NET session id - which the current wait request will not share.
+            // Find the session across any user-session by matching on just the
+            // client-supplied persistent id.
+            var targetSession = ScriptSessionManager.GetMatchingSessionsForAnyUserSession(jobSessionId).FirstOrDefault();
+            if (targetSession == null)
+            {
+                targetSession = ScriptSessionManager.GetSessionIfExists(jobSessionId);
+            }
+            if (targetSession == null) return false;
+
+            // Ownership check uses the caller's own sessionId (the outer remoting
+            // session). If omitted, fall back to the job session.
+            ScriptSession ownerCheckSession = null;
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                ownerCheckSession = ScriptSessionManager.GetMatchingSessionsForAnyUserSession(sessionId).FirstOrDefault()
+                    ?? ScriptSessionManager.GetSessionIfExists(sessionId);
+            }
+            if (ownerCheckSession == null) ownerCheckSession = targetSession;
+
+            if (!TryEnforceSessionOwnership(context, ownerCheckSession, GetIp(context.Request)))
+            {
+                ownershipRejected = true;
+                return true;
+            }
+
+            name = targetSession.ID ?? jobSessionId;
+            var state = targetSession.State;
+            isDone = state != System.Management.Automation.Runspaces.RunspaceAvailability.Busy;
+            status = isDone ? "Idle" : "Busy";
+            return true;
+        }
+
+        private static string JsonEscape(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+            var sb = new StringBuilder(value.Length);
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '\\': sb.Append("\\\\"); break;
+                    case '"': sb.Append("\\\""); break;
+                    case '\b': sb.Append("\\b"); break;
+                    case '\f': sb.Append("\\f"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        if (c < 0x20) sb.AppendFormat(CultureInfo.InvariantCulture, "\\u{0:x4}", (int)c);
+                        else sb.Append(c);
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
 
         private static void SetErrorResponse(HttpContext context, int statusCode, string message, bool suppressFormsAuth = false)
         {
@@ -1000,13 +1325,32 @@ namespace Spe.sitecore_modules.PowerShell.Services
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
-        private static byte[] ConvertFromGzipBytes(byte[] gzip)
+        private static string ReadRequestBody(HttpRequest request)
         {
-            using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-            using (var memory = new MemoryStream())
+            // Pre-size to ContentLength (when known) so CopyTo does not re-grow
+            // the internal buffer; then use GetBuffer()+Length to skip the
+            // extra full-body copy that ToArray() performs. For gzip bodies
+            // StreamReader pulls decoded chars straight off GZipStream, so no
+            // intermediate byte[] is materialised either.
+            var capacity = request.ContentLength > 0 ? request.ContentLength : 0;
+            using (var ms = capacity > 0 ? new MemoryStream(capacity) : new MemoryStream())
             {
-                stream.CopyTo(memory);
-                return memory.ToArray();
+                request.InputStream.CopyTo(ms);
+                var length = (int)ms.Length;
+                var buffer = ms.GetBuffer();
+
+                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false;
+                if (shouldDecompress)
+                {
+                    using (var inputMs = new MemoryStream(buffer, 0, length, writable: false))
+                    using (var gz = new GZipStream(inputMs, CompressionMode.Decompress))
+                    using (var reader = new StreamReader(gz, Encoding.UTF8))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+
+                return Encoding.UTF8.GetString(buffer, 0, length);
             }
         }
 
@@ -1068,20 +1412,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             string script = null;
             string cliXmlArgs = null;
-            using (var ms = new MemoryStream())
+            var requestBody = ReadRequestBody(request);
+            var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
+            if (splitBody.Length > 0)
             {
-                request.InputStream.CopyTo(ms);
-                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false ;
-                var bytes = shouldDecompress ? ConvertFromGzipBytes(ms.ToArray()) : ms.ToArray();
-                var requestBody = Encoding.UTF8.GetString(bytes);
-                var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
-                if (splitBody.Length > 0)
+                script = splitBody[0];
+                if (splitBody.Length > 1)
                 {
-                    script = splitBody[0];
-                    if (splitBody.Length > 1)
-                    {
-                        cliXmlArgs = splitBody[1];
-                    }
+                    cliXmlArgs = splitBody[1];
                 }
             }
 
@@ -1126,14 +1464,26 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
             var user = Sitecore.Context.User?.Name ?? "unknown";
             var ip = GetIp(context.Request);
-            var scriptHash = ComputeScriptHash(script);
+            // Lazy: the hash is only consumed inside AuditLevel >= Standard
+            // guards. Skip the SHA256 + hex conversion entirely when the
+            // active policy runs at None or Violations.
+            var scriptHash = new Lazy<string>(() => ComputeScriptHash(script));
             var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
             var clientSession = tokenResult?.ClientSessionId ?? "none";
+
+            // Session ownership: first caller claims the session; subsequent
+            // calls with a different identity are rejected. Prevents a second
+            // authenticated principal (e.g. a different API Key) from
+            // attaching to a session id they did not create.
+            if (!TryEnforceSessionOwnership(context, session, ip))
+            {
+                return;
+            }
 
             if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
             {
                 PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} clientSession={4} rid={5}",
-                    user, ip, session.ID, scriptHash, clientSession, GetRequestId());
+                    user, ip, session.ID, scriptHash.Value, clientSession, GetRequestId());
             }
 
             // Language mode defaults to FullLanguage; policy may restrict it below
@@ -1168,7 +1518,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (isInlineScript)
                 {
                     // Inline scripts (remoting endpoint): enforce command allowlist
-                    if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, user, serviceName, out var policyBlockedCommand))
+                    if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, out var policyBlockedCommand))
                     {
                         if (policy.AuditLevel >= AuditLevel.Violations)
                         {
@@ -1214,7 +1564,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
                     PowerShellLog.Audit("[Remoting] action=policyAudit service={0} policy={1} scriptHash={2} clientSession={3} endpoint={4} rid={5}",
-                        serviceName, policy.Name, scriptHash, clientSession, isInlineScript ? "inline" : "v2", GetRequestId());
+                        serviceName, policy.Name, scriptHash.Value, clientSession, isInlineScript ? "inline" : "v2", GetRequestId());
                 }
 
                 if (policy.AuditLevel >= AuditLevel.Full)
@@ -1222,6 +1572,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     PowerShellLog.Audit("[Remoting] action=scriptDetail scriptLength={0} languageMode={1} rid={2}",
                         script.Length, languageMode, GetRequestId());
                 }
+            }
+
+            // Stream capture bootstrap: injected after policy validation so the
+            // policy scanner never sees the Write-* redefinitions. Only fires
+            // when the client signals it via captureStreams=true, which the
+            // Invoke-RemoteScript module sets when -Verbose or -Debug is used.
+            var captureStreams = string.Equals(context.Request.QueryString[ParamCaptureStreams], "true", StringComparison.OrdinalIgnoreCase);
+            if (captureStreams && isInlineScript && !string.IsNullOrEmpty(script))
+            {
+                script = StreamCaptureBootstrap + script;
             }
 
             try
@@ -1249,21 +1609,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         scriptArguments[param] = paramValue;
                     }
 
+                    // Skip anything IIS populates in ServerVariables (HTTP_*,
+                    // REMOTE_*, SERVER_*, CERT_*, ...) - the old code carried
+                    // a 20-prefix StartsWith chain tested against every key.
+                    // The prefix list tracked ServerVariables anyway, so a
+                    // HashSet of actual ServerVariable names is both faster
+                    // and drift-proof: if IIS adds a new prefix, we skip it
+                    // without a code change.
+                    var serverVarKeys = new HashSet<string>(
+                        context.Request.ServerVariables.AllKeys ?? Array.Empty<string>(),
+                        StringComparer.OrdinalIgnoreCase);
+
                     foreach (var param in context.Request.Params.AllKeys)
                     {
                         if (string.IsNullOrEmpty(param)) continue;
-                        if (param.StartsWith("ALL_") || param.StartsWith("HTTP_") ||
-                            param.StartsWith("SERVER_") || param.StartsWith("REMOTE_") ||
-                            param.StartsWith("LOCAL_") || param.StartsWith("CERT_") ||
-                            param.StartsWith("HTTPS") || param.StartsWith("APP_") ||
-                            param.StartsWith("AUTH_") || param.StartsWith("CONTENT_") ||
-                            param.StartsWith("APPL_") || param.StartsWith("INSTANCE_") ||
-                            param.StartsWith("GATEWAY_") || param.StartsWith("PATH_") ||
-                            param.StartsWith("SCRIPT_") || param.StartsWith("URL") ||
-                            param.StartsWith("CACHE_") || param.StartsWith("LOGON_") ||
-                            param.StartsWith("REQUEST_") || param.StartsWith("UNENCODED_") ||
-                            param.StartsWith("UNMAPPED_"))
-                            continue;
+                        if (serverVarKeys.Contains(param)) continue;
 
                         var paramValue = context.Request.Params[param];
                         if (string.IsNullOrEmpty(paramValue)) continue;
@@ -1404,7 +1764,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
                     PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3} hasErrors={4} clientSession={5} rid={6}",
-                        user, ip, session.ID, scriptHash, session.Output.HasErrors, clientSession, GetRequestId());
+                        user, ip, session.ID, scriptHash.Value, session.Output.HasErrors, clientSession, GetRequestId());
                 }
 
                 if (policy.AuditLevel >= AuditLevel.Full)
@@ -1418,7 +1778,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
                     PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} session={2} scriptHash={3} error={4} clientSession={5} rid={6}",
-                        user, ip, session.ID, scriptHash, ex.GetType().Name, clientSession, GetRequestId());
+                        user, ip, session.ID, scriptHash.Value, ex.GetType().Name, clientSession, GetRequestId());
                 }
                 PowerShellLog.Error("[Remoting] action=scriptFailed error=scriptExecution", ex);
                 context.Response.StatusCode = 424;
@@ -1510,11 +1870,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private static ApiScriptCollection GetApiScripts(string dbName)
         {
             Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
-            if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection cachedScripts) return cachedScripts;
+            // Cache key must include dbName: the populated collection only
+            // covers scripts for the db that triggered the miss, so sharing
+            // one cache entry across databases silently 404s scripts that
+            // exist in the other db until TTL expiry.
+            var cacheKey = ApiScriptsKey + ":" + dbName;
+            if (HttpRuntime.Cache[cacheKey] is ApiScriptCollection cachedScripts) return cachedScripts;
 
             lock (ApiScriptsLock)
             {
-                if (HttpRuntime.Cache[ApiScriptsKey] is ApiScriptCollection doubleCheckScripts) return doubleCheckScripts;
+                if (HttpRuntime.Cache[cacheKey] is ApiScriptCollection doubleCheckScripts) return doubleCheckScripts;
 
                 var apiScripts = new ApiScriptCollection();
 
@@ -1531,7 +1896,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
 
                 var expiration = Settings.GetIntSetting(ExpirationSetting, 30);
-                HttpRuntime.Cache.Add(ApiScriptsKey, apiScripts, null, Cache.NoAbsoluteExpiration,
+                HttpRuntime.Cache.Add(cacheKey, apiScripts, null, Cache.NoAbsoluteExpiration,
                     new TimeSpan(0, 0, expiration), CacheItemPriority.Normal, null);
 
                 return apiScripts;

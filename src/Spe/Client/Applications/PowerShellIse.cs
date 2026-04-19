@@ -1105,8 +1105,12 @@ namespace Spe.Client.Applications
                 return false;
             }
 
-            if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, Context.User?.Name, "ISE", out var blocked))
+            if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, out var blocked))
             {
+                if (policy.AuditLevel >= AuditLevel.Violations)
+                {
+                    PowerShellLog.Audit($"[ISE] action=scriptRejectedByPolicy user={Context.User?.Name} policy={policy.Name} blockedCommand={blocked}");
+                }
                 PrintSessionUpdate($"[[;#FF9494;]Blocked by policy '{policy.Name}': command '{blocked}' is not in AllowedCommands.]");
                 return false;
             }

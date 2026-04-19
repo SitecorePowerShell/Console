@@ -19,6 +19,14 @@ namespace Spe.Core.Settings.Authorization
     {
         private const string CacheKey = "Spe.RemotingApiKeys";
         private const string AccessKeyIndexCacheKey = "Spe.RemotingApiKeys.ByAccessKeyId";
+        private const string KidStatesCacheKey = "Spe.RemotingApiKeys.KidStates";
+
+        // Known values returned by GetAuthFailureReason. The "invalid" bucket
+        // intentionally collapses "unknown kid" and "bad signature" into a single
+        // value to resist enumeration of valid Access Key Ids.
+        public const string AuthFailureReasonExpired  = "expired";
+        public const string AuthFailureReasonDisabled = "disabled";
+        public const string AuthFailureReasonInvalid  = "invalid";
 
         // Throttle state: key name -> (window start, request count)
         private static readonly ConcurrentDictionary<string, ThrottleState> _throttleState =
@@ -70,7 +78,7 @@ namespace Spe.Core.Settings.Authorization
             var index = GetAccessKeyIndex();
             if (index == null) return null;
 
-            if (index.TryGetValue(accessKeyId, out var key) && key.Enabled)
+            if (index.TryGetValue(accessKeyId, out var key) && key.Enabled && !key.IsExpired)
             {
                 return key;
             }
@@ -85,6 +93,28 @@ namespace Spe.Core.Settings.Authorization
         public static bool IsRegistryLoaded()
         {
             return GetAccessKeyIndex() != null;
+        }
+
+        /// <summary>
+        /// Returns the auth-failure reason for a given Access Key Id.
+        /// Known reasons are "expired" and "disabled". Unknown or signature-mismatch
+        /// callers should use AuthFailureReasonInvalid directly (this method returns
+        /// null for unknown kids so the caller can decide between "invalid" vs no header).
+        /// </summary>
+        public static string GetAuthFailureReason(string accessKeyId)
+        {
+            if (string.IsNullOrEmpty(accessKeyId)) return null;
+
+            var states = HttpRuntime.Cache.Get(KidStatesCacheKey) as Dictionary<string, string>;
+            if (states == null)
+            {
+                // Ensure the registry (and the states index alongside it) is built.
+                GetCachedKeys();
+                states = HttpRuntime.Cache.Get(KidStatesCacheKey) as Dictionary<string, string>;
+                if (states == null) return null;
+            }
+
+            return states.TryGetValue(accessKeyId, out var reason) ? reason : null;
         }
 
         /// <summary>
@@ -198,6 +228,9 @@ namespace Spe.Core.Settings.Authorization
 
             // Build Access Key Id index alongside the key list
             var index = new Dictionary<string, RemotingApiKey>(StringComparer.OrdinalIgnoreCase);
+            // Parallel kid-states index so the handler can distinguish expired/disabled
+            // from "unknown kid" when emitting X-SPE-AuthFailureReason on 401 responses.
+            var kidStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var key in keys)
             {
                 if (string.IsNullOrEmpty(key.AccessKeyId)) continue;
@@ -211,9 +244,27 @@ namespace Spe.Core.Settings.Authorization
                 {
                     index[key.AccessKeyId] = key;
                 }
+
+                // Record non-usable states. Expired takes precedence over Disabled so
+                // an operator sees the more informative reason first.
+                if (!kidStates.ContainsKey(key.AccessKeyId))
+                {
+                    if (key.IsExpired)
+                    {
+                        kidStates[key.AccessKeyId] = AuthFailureReasonExpired;
+                    }
+                    else if (!key.Enabled)
+                    {
+                        kidStates[key.AccessKeyId] = AuthFailureReasonDisabled;
+                    }
+                }
             }
 
             HttpRuntime.Cache.Insert(AccessKeyIndexCacheKey, index, null,
+                DateTime.UtcNow.AddSeconds(ttl),
+                System.Web.Caching.Cache.NoSlidingExpiration);
+
+            HttpRuntime.Cache.Insert(KidStatesCacheKey, kidStates, null,
                 DateTime.UtcNow.AddSeconds(ttl),
                 System.Web.Caching.Cache.NoSlidingExpiration);
 
@@ -344,8 +395,11 @@ namespace Spe.Core.Settings.Authorization
                     expires = expiresDate;
                     if (DateTime.UtcNow > expiresDate)
                     {
+                        // Keep the entry in the parsed list with its Expires set. The
+                        // state-of-record is the RemotingApiKey.IsExpired property;
+                        // FindByAccessKeyId excludes IsExpired so expired keys never
+                        // authenticate. They remain visible to GetAuthFailureReason.
                         PowerShellLog.Info($"[ApiKey] action=expired key={item.Name} expires={expiresDate:O}");
-                        return null;
                     }
                 }
             }

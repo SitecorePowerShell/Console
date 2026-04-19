@@ -54,9 +54,25 @@ function Wait-RemoteScriptSession {
         [int]$Delay = 1,
 
         [Parameter()]
-        [switch]$Raw
+        [switch]$Raw,
+
+        [Parameter()]
+        [ValidateRange(0, 10)]
+        [int]$MaxRetries = 2,
+
+        [Parameter()]
+        [ValidateRange(1, 60)]
+        [int]$WaitTimeoutSeconds = 30
     )
 
+    $finishScript = {
+        $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
+        $backgroundScriptSession | Receive-ScriptSession
+    }
+
+    # Legacy fallback scriptblock used when the server doesn't support the
+    # long-poll /-/script/wait/ endpoint (HTTP 404). Kept as a closure so the
+    # rest of the function doesn't need to know about it.
     $doneScript = {
         $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
         $isDone = $backgroundScriptSession -eq $null -or $backgroundScriptSession.State -ne "Busy"
@@ -68,29 +84,54 @@ function Wait-RemoteScriptSession {
             "Status" = $status
         }
     }
-    $finishScript = {
-        $backgroundScriptSession = Get-ScriptSession -Id $using:id -ErrorAction SilentlyContinue
-        $backgroundScriptSession | Receive-ScriptSession
-    }
 
+    $useLongPoll = $true
     $keepRunning = $true
     while($keepRunning) {
-        $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -Verbose
-        if($response -eq $null) {
-            Write-Verbose "Stopped polling job $($id). No results were returned from the service."
-            break
-        } elseif ($response -eq "login failed") {
-            Write-Verbose "Stopped polling job. Login with the specified account failed."
-            break
+        $isDone = $false
+        $statusText = "Unknown"
+
+        if ($useLongPoll) {
+            $wait = Invoke-RemoteWait -Session $session -JobId $id -JobType 'scriptsession' `
+                -TimeoutSeconds $WaitTimeoutSeconds -MaxRetries $MaxRetries
+            if ($wait.NotSupported) {
+                Write-Verbose "Server does not support /-/script/wait/ for job $($id). Falling back to legacy polling."
+                $useLongPoll = $false
+                continue
+            }
+            if ($wait.Status -like 'HttpError_*') {
+                Write-Warning "Stopped polling job $($id). Long-poll returned $($wait.Status)."
+                break
+            }
+            if ($wait.Status -eq 'TransportError') {
+                Start-Sleep -Seconds $Delay
+                continue
+            }
+            $isDone = $wait.IsDone
+            $statusText = $wait.Status
+            Write-Verbose "Polling job $($id). Status : $statusText. Elapsed : $($wait.ElapsedSeconds)s."
+        }
+        else {
+            $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -Verbose -MaxRetries $MaxRetries
+            if($response -eq $null) {
+                Write-Warning "Stopped polling job $($id). Poll call returned no result (rate-limited or auth failure after $MaxRetries retries)."
+                break
+            } elseif ($response -eq "login failed") {
+                Write-Verbose "Stopped polling job. Login with the specified account failed."
+                break
+            }
+            $isDone = [bool]$response.IsDone
+            $statusText = [string]$response.Status
+            Write-Verbose "Polling job $($response.Name). Status : $statusText."
         }
 
-        if($response -and $response.IsDone) {
+        if ($isDone) {
             $keepRunning = $false
-            Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
             Write-Verbose "Finished polling job $($id)."
-            Invoke-RemoteScript -Session $session -ScriptBlock $finishScript -Raw:$Raw.IsPresent
-        } else {
-            Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+            Invoke-RemoteScript -Session $session -ScriptBlock $finishScript -Raw:$Raw.IsPresent -MaxRetries $MaxRetries
+        }
+        elseif (-not $useLongPoll) {
+            # Legacy path paces itself client-side; long-poll path already waited server-side.
             Start-Sleep -Seconds $Delay
         }
     }

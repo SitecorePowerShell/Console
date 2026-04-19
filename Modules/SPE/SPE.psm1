@@ -38,7 +38,12 @@ function New-SpeHttpClient {
         $client = New-Object System.Net.Http.HttpClient $handler
         if ($null -ne $Cache) { $Cache[$cacheKey] = $client }
     }
-    # Auth header is refreshed on every call; JWT tokens expire after 30 seconds
+    # Auth header is refreshed on every call; JWT tokens expire after 30 seconds.
+    # Perf note: every call rebuilds the JWT (ConvertTo-Json x2, Base64 x2, HMACSHA256).
+    # Caching the token for its 30s lifetime cuts ~700 us per call (see
+    # tests/benchmarks/Measure-RemotingPerformance.ps1). Not cached today because
+    # the savings are <2% of end-to-end HTTP latency and no high-frequency caller
+    # has asked for it. Revisit if a workload shows up that makes it measurable.
     if (![string]::IsNullOrEmpty($SharedSecret)) {
         $jwtParams = @{
             Algorithm = $Algorithm
@@ -60,6 +65,27 @@ function New-SpeHttpClient {
         $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
     }
     $client
+}
+
+# Shared verbose logger for the WebException catch block used by Send/Receive-RemoteItem.
+# Note: HttpClient throws HttpRequestException, not WebException, so this is only reached
+# by the legacy HttpWebRequest path. Preserved as-is for back-compat with downstream code
+# that may still funnel WebException through here.
+function Write-RemoteHttpResponseVerbose {
+    param(
+        [System.Net.HttpWebResponse]$Response,
+        [Exception]$Exception
+    )
+    Write-Verbose -Message "Response exception message: $($Exception.Message)"
+    Write-Verbose -Message "Response status description: $($Response.StatusDescription)"
+    switch ($Response.StatusCode) {
+        ([System.Net.HttpStatusCode]::Forbidden) {
+            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+        }
+        ([System.Net.HttpStatusCode]::NotFound) {
+            Write-Verbose -Message "Check that the service files exist and are properly configured."
+        }
+    }
 }
 
 function Resolve-UsingVariables {

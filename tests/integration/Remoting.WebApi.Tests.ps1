@@ -69,6 +69,47 @@ Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/Children
 
 Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NotFound" } "" "Not found script without credentials should throw exception"
 
+Write-Host "`n  [Web API cache key isolation across databases]" -ForegroundColor White
+
+# Regression guard: GetApiScripts must not serve a cache populated by one
+# database to requests for another database. Bug scenario:
+#   1. First v2 call lands with dbName=core (or any non-master db).
+#   2. GetApiScripts populates ApiScriptCollection with core's entries only.
+#   3. Cache is written with the shared key and a 30s TTL.
+#   4. Second call lands with dbName=master inside the TTL window.
+#   5. Cache HIT returns core's collection. master entry is absent -> 404.
+#
+# Reliable reproduction requires a cache-cold start, so we clear the cache
+# in-container before the probe.
+$cacheClearSession = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
+Invoke-RemoteScript -Session $cacheClearSession -ScriptBlock {
+    # Clear both the legacy shared key (pre-fix) and the per-db keys (post-fix).
+    # Remove is a no-op on missing keys.
+    [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey")
+    [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:master")
+    [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:core")
+    [System.Web.HttpRuntime]::Cache.Remove("Spe.ApiScriptsKey:web")
+} | Out-Null
+Stop-ScriptSession -Session $cacheClearSession
+
+# Poison the cache with a non-master dbName. The 404 is expected; the side
+# effect we care about is that the cache is now warm with core's data only.
+try {
+    Invoke-RestMethod -Uri "$protocolHost/-/script/v2/core/nonexistent?user=sitecore%5Cadmin&password=b" -ErrorAction Stop | Out-Null
+} catch {
+    # 404 is expected here - core has no such script. We want the cache side effect.
+}
+
+# Now a master request should succeed. Before the fix the cache collision
+# would cause this to 404 even though ChildrenAsJson exists in master.
+$isolationItems = $null
+try {
+    $isolationItems = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson?user=sitecore%5Cadmin&password=b" -ErrorAction Stop
+} catch {
+    # Capture failure; Assert-NotNull below will report it.
+}
+Assert-NotNull $isolationItems "v2/master/ChildrenAsJson must succeed even when the cache was populated by a prior non-master call"
+
 Write-Host "`n  [Web API Responses - Teardown]" -ForegroundColor White
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost

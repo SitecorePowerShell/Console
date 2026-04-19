@@ -258,5 +258,82 @@ Assert-Equal ([int]$fullResponse.StatusCode) 200 "Full audit policy allows execu
 $fullParamResponse = Invoke-ApiKeyRequest -Script 'param($a) $a' -SecretKey $fullAuditSecret -KeyId $fullAuditKeyId
 Assert-Equal ([int]$fullParamResponse.StatusCode) 200 "Full audit policy handles parameterized scripts"
 
+# ============================================================================
+#  Test Group 11: Stream-Baseline Cmdlets Implicitly Allowed
+#  The policy scanner treats stream/output cmdlets (Write-* and Out-*) as
+#  always-allowed. These are I/O primitives, not executable logic; an
+#  allowlist should police behavior, not whether a script can emit log output.
+#  Test-ReadOnly policy's AllowedCommands contains Get-Item and a few writers
+#  but NOT Write-Verbose, Write-Debug, Write-Warning, Write-Information.
+# ============================================================================
+Write-Host "`n  [Test Group 11: Stream-Baseline Cmdlets Implicitly Allowed]" -ForegroundColor White
+
+# 11a. Write-Verbose not in allowlist -- implicit-allowed baseline cmdlet
+$verboseResponse = Invoke-ApiKeyRequest -Script 'Write-Verbose "hi" -Verbose; "ok"' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$verboseResponse.StatusCode) 200 "Write-Verbose not blocked by scanner despite absence from allowlist"
+
+# 11b. Write-Debug not in allowlist -- implicit-allowed
+$debugResponse = Invoke-ApiKeyRequest -Script 'Write-Debug "d"; "ok"' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$debugResponse.StatusCode) 200 "Write-Debug not blocked by scanner"
+
+# 11c. Write-Warning not in allowlist -- implicit-allowed
+$warnResponse = Invoke-ApiKeyRequest -Script 'Write-Warning "w"; "ok"' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$warnResponse.StatusCode) 200 "Write-Warning not blocked by scanner"
+
+# 11d. Write-Information not in allowlist -- implicit-allowed
+$infoResponse = Invoke-ApiKeyRequest -Script 'Write-Information "i" -InformationAction Continue; "ok"' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$infoResponse.StatusCode) 200 "Write-Information not blocked by scanner"
+
+# 11e. Module-qualified stream cmdlets (as emitted by client bootstrap in backcompat scenario) also implicit-allowed
+$qualifiedScript = 'Microsoft.PowerShell.Utility\Write-Verbose "q" -Verbose; "ok"'
+$qualifiedResponse = Invoke-ApiKeyRequest -Script $qualifiedScript -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$qualifiedResponse.StatusCode) 200 "Module-qualified Microsoft.PowerShell.Utility\Write-Verbose not blocked"
+
+# 11f. Stream cmdlets allowed even inside a function body (backcompat for client-side bootstrap prepend)
+$bootstrapShapedScript = @'
+function Write-Verbose {
+    param([string]$Message)
+    $VerbosePreference = "Continue"
+    Microsoft.PowerShell.Utility\Write-Verbose -Message $Message 4>&1
+}
+Get-Item 'master:/'
+'@
+$bootstrapResponse = Invoke-ApiKeyRequest -Script $bootstrapShapedScript -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$bootstrapResponse.StatusCode) 200 "Client bootstrap (function Write-Verbose wrapping module-qualified call) passes scanner"
+
+# 11g. Non-stream cmdlets NOT implicitly allowed (policy still enforces logic cmdlets)
+$removeResponse = Invoke-ApiKeyRequest -Script 'Remove-Item -Path "master:/content/x"' -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$removeResponse.StatusCode) 403 "Remove-Item still blocked (stream-baseline only covers I/O cmdlets)"
+
+# ============================================================================
+#  Test Group 12: Server-side stream capture (end-to-end via Invoke-RemoteScript)
+#  Invoke-RemoteScript -Verbose against a restrictive policy must:
+#    - pass the policy scanner (no 403),
+#    - execute the user's script in the restricted mode, and
+#    - return the verbose message to the client via the messages channel.
+#  This exercises Part A (scanner) + Part B (client captureStreams + server
+#  bootstrap injection) together.
+# ============================================================================
+Write-Host "`n  [Test Group 12: Invoke-RemoteScript -Verbose End-to-End]" -ForegroundColor White
+
+$readOnlySession = New-ScriptSession -SharedSecret $readOnlySecret -AccessKeyId $readOnlyKeyId -ConnectionUri $protocolHost
+
+# 12a+b. Script runs AND verbose message flows back. CliXml output preserves
+# type info so the client can route VerboseRecord to the verbose stream.
+$captured = @()
+Invoke-RemoteScript -Session $readOnlySession -ScriptBlock {
+    Write-Verbose "hello-from-server"
+    "e2e_ok"
+} -Verbose 4>&1 | ForEach-Object { $captured += $_ } | Out-Null
+
+$outputItem = $captured | Where-Object { $_ -is [string] -and $_ -like "*e2e_ok*" } | Select-Object -First 1
+Assert-Like ([string]$outputItem) "*e2e_ok*" "e2e: restrictive policy + -Verbose returns script output"
+
+$verboseRecords = $captured | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] }
+$verboseText = ($verboseRecords | ForEach-Object { $_.Message }) -join " | "
+Assert-Like $verboseText "*hello-from-server*" "e2e: server-emitted Write-Verbose message reaches client verbose stream"
+
+Stop-ScriptSession -Session $readOnlySession -ErrorAction SilentlyContinue
+
 # Cleanup
 $httpClient.Dispose()

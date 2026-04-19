@@ -47,11 +47,22 @@
         [ValidateNotNull()]
         [string[]]$Ids,
 
-        [int]$Delay = 1
+        [int]$Delay = 1,
+
+        [Parameter()]
+        [ValidateRange(0, 10)]
+        [int]$MaxRetries = 2,
+
+        [Parameter()]
+        [ValidateRange(1, 60)]
+        [int]$WaitTimeoutSeconds = 30
     )
 
-    $doneScript = { $true }
-    $finishScript = {}
+    # Legacy scriptblock retained as a fallback for servers without the
+    # /-/script/wait/ long-poll endpoint. Note: this scriptblock uses .NET
+    # static method calls (JobManager::GetJob, Handle::Parse) which are
+    # blocked in ConstrainedLanguage - fallback only works under FullLanguage
+    # policies. New server + new client avoids this entirely via long-poll.
     $doneScript = {
         $remoteJob = [Sitecore.Jobs.JobManager]::GetJob([Sitecore.Handle]::Parse($using:id))
         $isDone = $remoteJob -eq $null -or $remoteJob.IsDone -or $remoteJob.Status.Failed
@@ -77,21 +88,57 @@
         }
     }
 
-    $keepRunning = 0
-    while($keepRunning -ne $Ids.Count) {
-        foreach ($id in $Ids)
-        {
-                $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript
-                if($response -and $response.IsDone) {
-                    $keepRunning++
-                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
-                    Write-Verbose "Finished polling job $($id)."
-                } else {
-                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+    $useLongPoll = $true
+    $completed = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+
+    while($completed.Count -ne $Ids.Count) {
+        $pollFailed = $false
+        foreach ($id in $Ids) {
+            if ($completed.Contains($id)) { continue }
+
+            if ($useLongPoll) {
+                $wait = Invoke-RemoteWait -Session $session -JobId $id -JobType 'sitecore' `
+                    -TimeoutSeconds $WaitTimeoutSeconds -MaxRetries $MaxRetries
+                if ($wait.NotSupported) {
+                    Write-Verbose "Server does not support /-/script/wait/. Falling back to legacy scriptblock polling (requires FullLanguage policy)."
+                    $useLongPoll = $false
                 }
+                elseif ($wait.Status -like 'HttpError_*') {
+                    Write-Warning "Stopped polling job $($id). Long-poll returned $($wait.Status)."
+                    $pollFailed = $true
+                    break
+                }
+                elseif ($wait.Status -eq 'TransportError') {
+                    # Retry at client cadence.
+                }
+                else {
+                    Write-Verbose "Polling job $($wait.Name). Status : $($wait.Status). Elapsed : $($wait.ElapsedSeconds)s."
+                    if ($wait.IsDone) {
+                        [void]$completed.Add($id)
+                        Write-Verbose "Finished polling job $($id)."
+                    }
+                    continue
+                }
+            }
+
+            # Fallback path: send the legacy scriptblock. Respects -MaxRetries.
+            $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -MaxRetries $MaxRetries
+            if($response -eq $null) {
+                Write-Warning "Stopped polling job $($id). Poll call returned no result after $MaxRetries retries."
+                $pollFailed = $true
+                break
+            }
+            if($response.IsDone) {
+                [void]$completed.Add($id)
+                Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+                Write-Verbose "Finished polling job $($id)."
+            } else {
+                Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+            }
         }
-        if ($keepRunning -ne $Ids.Count) # Only sleep if we're not 'done' waiting for jobs
-        {
+        if ($pollFailed) { break }
+        if ($completed.Count -ne $Ids.Count -and -not $useLongPoll) {
+            # Legacy path paces itself client-side; long-poll held server-side already.
             Start-Sleep -Seconds $Delay
         }
     }

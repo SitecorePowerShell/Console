@@ -2,6 +2,56 @@
 
 Add-Type -AssemblyName System.Net.Http
 
+# Derives the output file path from the destination + Content-Disposition filename.
+# Pulled out of Receive-RemoteItem to flatten the per-download branch.
+function Resolve-ReceivedFilePath {
+    param(
+        [System.Net.Http.HttpResponseMessage]$ResponseMessage,
+        [string]$Destination,
+        [string]$Path,
+        [bool]$Container,
+        [bool]$IsMediaItem
+    )
+
+    $contentDisposition = $ResponseMessage.Content.Headers.GetValues("Content-Disposition")[0]
+    $filename = ""
+    if ($contentDisposition.IndexOf("filename=") -gt -1) {
+        $filename = $contentDisposition.Substring($contentDisposition.IndexOf("filename=") + 10).Replace('"', "")
+        Write-Verbose -Message "Response filename: $filename"
+    }
+
+    $directory = [System.IO.Path]::GetDirectoryName($Destination)
+    if (-not $directory) { $directory = $Destination }
+    if (-not (Test-Path $directory -PathType Container)) {
+        Write-Verbose "Creating a new directory $directory"
+        New-Item -ItemType Directory -Path $directory | Out-Null
+    }
+
+    $output = $Destination
+    if ($Container -and $IsMediaItem) {
+        # Preserve Media Item directory structure.
+        $output = Join-Path -Path $output -ChildPath $Path.Replace('/','\').Replace("\sitecore\media library\", "")
+    }
+
+    # Destination already has an extension -> use it directly.
+    if ([System.IO.Path]::GetExtension($output)) {
+        Write-Verbose "Overriding the filename $filename with $([System.IO.Path]::GetFileName($output))"
+        return $output
+    }
+
+    if (-not [System.IO.Path]::GetExtension($filename)) {
+        Write-Error -Message "The file extension could not be determined."
+    }
+
+    # Media items addressed by name suffix the filename-without-extension onto
+    # $output; strip that before joining the real filename.
+    $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
+    if ($output.EndsWith($filenameWithoutExtension)) {
+        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)
+    }
+    return (Join-Path -Path $output -ChildPath $filename)
+}
+
 function Receive-RemoteItem {
     <#
         .SYNOPSIS
@@ -177,6 +227,7 @@ function Receive-RemoteItem {
             $errorResponse = $null
             $ex = $null
             [System.Net.Http.HttpResponseMessage]$responseMessage = $null
+            $response = $null
 
             try {
                 $responseMessage = $client.GetAsync($url).Result
@@ -184,87 +235,45 @@ function Receive-RemoteItem {
             } catch [System.Net.WebException] {
                 [System.Net.WebException]$ex = $_.Exception
                 [System.Net.HttpWebResponse]$errorResponse = $ex.Response
-                Write-Verbose -Message "Response exception message: $($ex.Message)"
-                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                    Write-Verbose -Message "Check that the service files exist and are properly configured."
-                }
+                Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex
             }
 
-            if($errorResponse){
+            if ($errorResponse) {
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
 
-            if($response -and $response.Length -gt 0 -or $responseMessage.Content.Headers.Count -gt 0) {
-                if(!$responseMessage.IsSuccessStatusCode) {
-                    Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
-                    return
-                }
-                $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
-                $contentDisposition = $responseMessage.Content.Headers.GetValues("Content-Disposition")[0]
-                $filename = ""
-                Write-Verbose -Message "Response content length: $($response.Length) bytes"
-                Write-Verbose -Message "Response content type: $($contentType)"
-
-                if($contentDisposition.IndexOf("filename=") -gt -1) {
-                    $filename = $contentDisposition.Substring($contentDisposition.IndexOf("filename=") + 10).Replace('"', "")
-                    Write-Verbose -Message "Response filename: $($filename)"
-                }
-
-                $directory = [System.IO.Path]::GetDirectoryName($Destination)
-                if(!$directory) {
-                    $directory = $Destination
-                }
-
-                if(!(Test-Path $directory -PathType Container)) {
-                    Write-Verbose "Creating a new directory $($directory)"
-                    New-Item -ItemType Directory -Path $directory | Out-Null
-                }
-
-                $output = $Destination
-                if($Container) {
-                    # Preserve Media Item directory structure
-                    if($isMediaItem) {
-                        $output = Join-Path -Path $output -ChildPath $Path.Replace('/','\').Replace("\sitecore\media library\", "")
-                    }
-                }
-
-                $extension = [System.IO.Path]::GetExtension($output)
-                if(!$extension) {
-                    $extension = [System.IO.Path]::GetExtension($filename)
-
-                    if(!$extension) {
-                        Write-Error -Message "The file extension could not be determined."
-                    }
-
-                    # If a media item is requested it will use the filename as the last part.
-                    $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
-                    if($output.EndsWith($filenameWithoutExtension)) {
-                        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)
-                    }
-                    $output = Join-Path -Path $output -ChildPath $filename
-
-                } else {
-                    Write-Verbose "Overriding the filename $($filename) with $([System.IO.Path]::GetFileName($output))"
-                }
-
-                if(-not(Test-Path $output -PathType Leaf) -or $Force.IsPresent) {
-                    Write-Verbose "Creating a new file $($output)"
-                    New-Item -Path $output -ItemType File -Force | Out-Null
-                    if($response) {
-                        [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
-                    }
-                } else {
-                    Write-Verbose "Skipping the save of $($output) because it already exists."
-                }
-
-                Write-Verbose "Download complete."
-            } else {
+            # Guard: empty response body.
+            $hasBody = ($response -and $response.Length -gt 0) -or $responseMessage.Content.Headers.Count -gt 0
+            if (-not $hasBody) {
                 Write-Verbose -Message "Download failed. No content returned from the web service."
+                continue
             }
+
+            if (-not $responseMessage.IsSuccessStatusCode) {
+                Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
+                return
+            }
+
+            $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
+            Write-Verbose -Message "Response content length: $($response.Length) bytes"
+            Write-Verbose -Message "Response content type: $($contentType)"
+
+            $output = Resolve-ReceivedFilePath -ResponseMessage $responseMessage `
+                -Destination $Destination -Path $Path -Container $Container.IsPresent -IsMediaItem $isMediaItem
+
+            if ((Test-Path $output -PathType Leaf) -and -not $Force.IsPresent) {
+                Write-Verbose "Skipping the save of $($output) because it already exists."
+                Write-Verbose "Download complete."
+                continue
+            }
+
+            Write-Verbose "Creating a new file $output"
+            New-Item -Path $output -ItemType File -Force | Out-Null
+            if ($response) {
+                [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
+            }
+            Write-Verbose "Download complete."
         }
     }
 }
