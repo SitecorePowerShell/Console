@@ -79,6 +79,10 @@ function Send-RemoteItem {
         [string]$Password,
 
         [Parameter(ParameterSetName='Uri')]
+        [Parameter(ParameterSetName='Session')]
+        [string]$AccessToken,
+
+        [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
 
@@ -143,6 +147,9 @@ function Send-RemoteItem {
             $Username = $Session.Username
             $Password = $Session.Password
             $SharedSecret = $Session.SharedSecret
+            if([string]::IsNullOrEmpty($AccessToken)) {
+                $AccessToken = $Session.AccessToken
+            }
             $Credential = $Session.Credential
             $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
@@ -174,7 +181,9 @@ function Send-RemoteItem {
             $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
             $client = New-Object -TypeName System.Net.Http.Httpclient $handler
             
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
+            if(![string]::IsNullOrEmpty($AccessToken)) {
+                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
+            } elseif(![string]::IsNullOrEmpty($SharedSecret)) {
                 $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
                 $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
             } else {

@@ -1,0 +1,89 @@
+<!--
+  Sitecore PowerShell Extensions
+  OAuthBearerTokenAuthenticationProvider configuration
+
+  PURPOSE
+  =======
+  This file replaces the default SharedSecretAuthenticationProvider with
+  OAuthBearerTokenAuthenticationProvider, enabling SPE remoting to accept
+  external OAuth / OIDC bearer tokens (e.g. an XM Cloud access token with
+  scope "xmcloud.cm:admin") instead of requiring a Username/Password or a
+  SharedSecret.
+
+  WHEN TO ENABLE
+  ==============
+  Enable this file (rename to Spe.OAuthBearer.config) on XM Cloud CM instances
+  or any Sitecore Cloud topology where callers already hold a valid OAuth access
+  token issued by the platform's Identity Server.
+
+  SECURITY NOTES
+  ==============
+  * JWT signature verification is intentionally skipped here because in XM Cloud
+    the token has already been validated by the edge/API-gateway layer before
+    reaching the CM instance.  If you run SPE outside such a trusted proxy you
+    must validate signatures at the network boundary (e.g. API Management).
+  * Always configure allowedAudiences and requiredScopes to restrict which tokens
+    are accepted.
+  * Use requireSecureConnection="true" on the remoting service when possible.
+
+  USAGE EXAMPLE (PowerShell client)
+  ==================================
+  $token = "<your-xmcloud-oauth-access-token>"
+  $session = New-ScriptSession -AccessToken $token -ConnectionUri "https://<cm-host>"
+  Invoke-RemoteScript -Session $session -ScriptBlock { Get-Item "master:\content\home" }
+  Stop-ScriptSession -Session $session
+-->
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/"
+               xmlns:role="http://www.sitecore.net/xmlconfig/role/">
+  <sitecore role:require="Standalone or ContentManagement or XMCloud">
+    <powershell>
+      <authenticationProvider type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+
+        <!--
+          allowedAudiences
+          At least one entry in the token's "aud" claim must match an entry here
+          (case-insensitive).  Leave the list empty to accept any audience (not recommended).
+        -->
+        <allowedAudiences hint="list">
+          <!-- For XM Cloud the audience is typically the scope used for CM API access.
+               Adjust to match the audience configured in your Identity Server. -->
+          <audience>xmcloud.cm:admin</audience>
+        </allowedAudiences>
+
+        <!--
+          requiredScopes
+          All listed scopes must be present in the token's "scope" claim.
+          Leave the list empty to skip scope validation (not recommended).
+        -->
+        <requiredScopes hint="list">
+          <scope>xmcloud.cm:admin</scope>
+        </requiredScopes>
+
+        <!--
+          usernameClaim
+          Name of the JWT claim whose value becomes the Sitecore username when
+          serviceAccountUsername is not set.  Common values: sub, email, preferred_username.
+          Ignored when serviceAccountUsername is configured.
+        -->
+        <usernameClaim>sub</usernameClaim>
+
+        <!--
+          serviceAccountUsername
+          When set, every successfully validated token causes SPE to switch to this
+          fixed Sitecore account, ignoring the token's identity claims.
+          Ideal for automation pipelines where a single service account runs all remote scripts.
+          Uncomment and set to the Sitecore account that should own remoting executions.
+        -->
+        <!--<serviceAccountUsername>sitecore\admin</serviceAccountUsername>-->
+
+        <!--
+          detailedAuthenticationErrors
+          Set to true to emit detailed rejection reasons to the Sitecore log.
+          Keep false in production to avoid leaking token information.
+        -->
+        <detailedAuthenticationErrors>false</detailedAuthenticationErrors>
+
+      </authenticationProvider>
+    </powershell>
+  </sitecore>
+</configuration>
