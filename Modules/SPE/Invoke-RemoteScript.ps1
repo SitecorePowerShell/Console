@@ -193,9 +193,9 @@ function Invoke-RemoteScript {
     	.LINK
     	    Stop-ScriptSession
 
-        .PARAMETER AccessToken
-            Specifies an external OAuth bearer token to use for authentication.
-            When provided, this value is sent as the Authorization: Bearer header.
+    .PARAMETER AccessToken
+        Specifies an external OAuth bearer token to use for authentication.
+        When provided, this value is sent as the Authorization: Bearer header.
     #>
    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
