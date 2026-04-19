@@ -620,7 +620,7 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config.disabled" />
+    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config" />
     <Content Include="App_Config\Include\Spe\Spe.Serialization.config" />
     <Content Include="App_Config\Include\Rainbow.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
