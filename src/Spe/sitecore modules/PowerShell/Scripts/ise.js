@@ -508,20 +508,73 @@
                                 range.start.column = data.position;
                                 data.value = data.fullValue;
 
-                                //try trim prefix quotes
-                                range.start.column--;
-                                range.end.column++;
-                                var replacedText = currentAceEditor.session.getTextRange(range);
-                                var charStart = replacedText.charAt(0);
-                                var charEnd = replacedText.charAt(replacedText.length - 1);
-                                if (charStart !== '"' && charStart !== "'") {
-                                    range.start.column++;
+                                var line = currentAceEditor.session.getLine(range.start.row);
+
+                                // Walk from line start to data.position, tracking quote state,
+                                // to determine whether the path sits inside a quoted string.
+                                // Plain prevChar/firstChar checks can't tell an opening quote
+                                // from the closing quote of an earlier token (e.g. the `'` at
+                                // the end of `'master:\...Branches'\` must NOT be treated as
+                                // opening a new string).
+                                var openPos = -1;
+                                var active = "";
+                                for (var qi = 0; qi < range.start.column; qi++) {
+                                    var qc = line.charAt(qi);
+                                    if (!active && (qc === "'" || qc === '"')) {
+                                        active = qc;
+                                        openPos = qi;
+                                    } else if (active && qc === active) {
+                                        active = "";
+                                        openPos = -1;
+                                    }
                                 }
 
-                                //try trim trailing quotes
-                                if (charEnd !== '"' && charEnd !== "'") {
-                                    range.end.column--;
+                                var firstChar = range.start.column < line.length
+                                    ? line.charAt(range.start.column) : "";
+                                var openingChar = "";
+                                if (openPos >= 0) {
+                                    // Already inside a quoted string - absorb the opening quote.
+                                    openingChar = line.charAt(openPos);
+                                    range.start.column = openPos;
+                                } else if (firstChar === "'" || firstChar === '"') {
+                                    // data.position is at the opening quote of a new quoted token.
+                                    openingChar = firstChar;
                                 }
+                                var isQuoted = openingChar !== "";
+
+                                // Ace's default range.end is the cursor, but the path often
+                                // continues past it (e.g. `Get-Item master:\|content\` or a
+                                // quoted path with text after the cursor like
+                                // `' -Filter *`). Extend rightward to consume the rest of
+                                // the token so the old tail isn't left stranded after the
+                                // inserted completion.
+                                var endCol = range.end.column;
+                                if (isQuoted) {
+                                    var searchCol = endCol;
+                                    while (searchCol < line.length && line.charAt(searchCol) !== openingChar) {
+                                        searchCol++;
+                                    }
+                                    if (searchCol < line.length) {
+                                        endCol = searchCol + 1; // absorb closing quote
+                                    } else {
+                                        // No matching closing quote to the right - the quoted
+                                        // assumption was wrong (e.g. cursor sits past an
+                                        // already-closed string). Fall back to unquoted
+                                        // extension so we don't wipe the rest of the line.
+                                        isQuoted = false;
+                                    }
+                                }
+                                if (!isQuoted) {
+                                    while (endCol < line.length) {
+                                        var ch = line.charAt(endCol);
+                                        if (ch === " " || ch === "\t" || ch === ";" || ch === "|" ||
+                                            ch === ")" || ch === "]" || ch === "}" || ch === ",") {
+                                            break;
+                                        }
+                                        endCol++;
+                                    }
+                                }
+                                range.end.column = endCol;
                             } else {
                                 range.start.column -= editor.completer.completions.filterText.length;
                             }
@@ -591,7 +644,91 @@
                     }
                 };
 
-                module.addCompleter(keyWordCompleter);
+                // Surfaces $-variables from two sources:
+                //  1. The authoritative PS session variables via the
+                //     GetSessionVariables endpoint (includes vars created
+                //     by previously executed scripts, Sitecore convenience
+                //     variables, etc).
+                //  2. The current editor buffer, so vars the user is
+                //     still typing and hasn't executed yet are completable.
+                // Session hits get a higher score than buffer hits.
+                // This replaces Ace's default textCompleter, which would
+                // otherwise dump every word in the document into the popup.
+                var speVariableCompleter = {
+                    getCompletions: function (editor, session, pos, prefix, callback) {
+                        // Only surface variables when the user is actually
+                        // typing one. Without this gate, Ctrl+Space inside
+                        // an unrelated token (e.g. a path under `master:\`)
+                        // would dump every session var into the popup.
+                        if (!prefix || prefix.charAt(0) !== "$") {
+                            callback(null, []);
+                            return;
+                        }
+
+                        var seen = {};
+                        var vars = [];
+
+                        var sessionNames = _getSessionVariableNames();
+                        for (var i = 0; i < sessionNames.length; i++) {
+                            var sn = sessionNames[i];
+                            if (seen[sn]) continue;
+                            seen[sn] = true;
+                            vars.push({
+                                caption: sn,
+                                value: sn,
+                                score: 1000,
+                                meta: "variable"
+                            });
+                        }
+
+                        var bufferMatches = session.getValue().match(/\$[A-Za-z_][A-Za-z0-9_:]*/g) || [];
+                        for (var j = 0; j < bufferMatches.length; j++) {
+                            var bn = bufferMatches[j];
+                            if (seen[bn]) continue;
+                            seen[bn] = true;
+                            vars.push({
+                                caption: bn,
+                                value: bn,
+                                score: 500,
+                                meta: "local"
+                            });
+                        }
+
+                        callback(null, vars);
+                    },
+                    id: "speVariableCompleter"
+                };
+
+                // Only surface snippets when the user is actually typing
+                // one. Every SPE snippet uses the `spe-` prefix, and Ace's
+                // default fuzzy filter would otherwise match `spe-foreach`
+                // when the user types `for`. Require the prefix to start
+                // with `spe-` before delegating to the stock completer.
+                var speSnippetCompleter = {
+                    getCompletions: function (editor, session, pos, prefix, callback) {
+                        if (!prefix || prefix.toLowerCase().indexOf("spe-") !== 0) {
+                            callback(null, []);
+                            return;
+                        }
+                        module.snippetCompleter.getCompletions(editor, session, pos, prefix, callback);
+                    },
+                    getDocTooltip: function (item) {
+                        if (module.snippetCompleter.getDocTooltip) {
+                            module.snippetCompleter.getDocTooltip(item);
+                        }
+                    },
+                    id: "speSnippetCompleter"
+                };
+
+                // Replace Ace's default completer stack ([snippetCompleter,
+                // textCompleter, keyWordCompleter]) with only the three
+                // sources SPE wants: snippets, local $-variables, and
+                // server-side PowerShell completions.
+                module.setCompleters([
+                    speSnippetCompleter,
+                    speVariableCompleter,
+                    keyWordCompleter
+                ]);
             });
 
 
@@ -2150,6 +2287,33 @@
                     var data = JSON.parse(json.d);
                     $.tabCompletions = data;
                 });
+        }
+
+        // Sync-fetches the PS session variables via the dedicated
+        // GetSessionVariables endpoint (the same one that feeds the
+        // Variables sidebar). Returns variable names with a `$` prefix.
+        // Used by the autocomplete variables completer so authoritative
+        // session state is surfaced, not just whatever TabExpansion2
+        // happens to include.
+        function _getSessionVariableNames() {
+            var names = [];
+            getPowerShellResponse({"guid": guid}, "GetSessionVariables",
+                function (json) {
+                    try {
+                        var payload = JSON.parse(json.d);
+                        if (payload && payload.status === "ok" && payload.variables) {
+                            for (var i = 0; i < payload.variables.length; i++) {
+                                var v = payload.variables[i];
+                                if (v && v.name) {
+                                    names.push("$" + v.name);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // ignore - return whatever we collected
+                    }
+                });
+            return names;
         }
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {

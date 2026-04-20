@@ -882,3 +882,43 @@ nobr > .scTab_Hover {
     overflow: visible !important;
     text-overflow: clip !important;
 }
+
+/* Subtle autocomplete scrollbar. Ace measures the native scrollbar
+ * width (~17px on Windows) at popup construction and uses it to both
+ * size the scrollbar column AND push back the scroller's right edge
+ * via inline styles. Shrinking only the thumb leaves that reserved
+ * column empty, so override the column width and scroller right edge
+ * too (!important, to trump Ace's inline values). */
+.ace_editor.ace_autocomplete .ace_scroller {
+    right: 10px !important;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v,
+.ace_editor.ace_autocomplete .ace_scrollbar-v .ace_scrollbar-inner {
+    width: 8px !important;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar {
+    width: 8px;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-track {
+    background: transparent;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
