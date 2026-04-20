@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("9.0.0.0")]
 [assembly: AssemblyInformationalVersion("9.0.0.0")]
 [assembly: AssemblyMetadata("BetaVersion", "")]
-[assembly: AssemblyMetadata("CodeName", "Acalari Bomba")]
+[assembly: AssemblyMetadata("CodeName", "πr²")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sitecore PowerShell Extensions Team")]
