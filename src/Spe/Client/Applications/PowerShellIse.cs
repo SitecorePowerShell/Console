@@ -479,6 +479,37 @@ namespace Spe.Client.Applications
             }
         }
 
+        [HandleMessage("ise:gotoscript", true)]
+        protected void GotoScript(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var id = args.Parameters["id"];
+            var db = args.Parameters["db"];
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(db)) return;
+
+            var database = Database.GetDatabase(db);
+            if (database == null) return;
+
+            Item scriptItem;
+            try
+            {
+                scriptItem = database.GetItem(id);
+            }
+            catch
+            {
+                PowerShellLog.Warn($"[ISE] gotoscript: item lookup failed id={id} db={db}");
+                return;
+            }
+
+            if (scriptItem == null || !scriptItem.Access.CanRead() || !scriptItem.IsPowerShellScript())
+            {
+                PowerShellLog.Warn($"[ISE] gotoscript: item not accessible id={id} db={db} user={Sitecore.Context.User?.Name}");
+                return;
+            }
+
+            LoadItem(scriptItem.Database.Name, scriptItem.ID.ToString());
+        }
+
         protected void ContentTreeview_Click()
         {
             var folder = ContentDataContext.GetFolder();

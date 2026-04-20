@@ -832,6 +832,52 @@ nobr > .scTab_Hover {
     background-color: rgb(1, 36, 86);
 }
 
+.spe-goto-underline {
+    text-decoration: underline;
+    cursor: pointer;
+    position: absolute;
+}
+.spe-goto-underline-missing {
+    text-decoration: underline dotted;
+    text-decoration-color: rgba(180, 60, 60, 0.6);
+    position: absolute;
+}
+.spe-goto-tooltip-header {
+    font-weight: 600;
+    margin-bottom: 2px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.35);
+    opacity: 0.85;
+}
+.spe-goto-tooltip-body {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.spe-goto-picker {
+    position: fixed;
+    z-index: 99999;
+    background: #fff;
+    border: 1px solid #888;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    font: 12px "Segoe UI", sans-serif;
+    min-width: 320px;
+    max-width: 640px;
+    max-height: 300px;
+    overflow-y: auto;
+    outline: none;
+}
+.spe-goto-picker-row {
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+.spe-goto-picker-row.selected { background: #e6f0fa; }
+.spe-goto-picker-name { font-weight: 600; }
+.spe-goto-picker-meta { color: #666; font-size: 11px; }
+.spe-goto-picker-path { color: #444; font-size: 11px; margin-top: 2px; }
+
 .ace_autocomplete .ace_line .ace_ {
     overflow: visible !important;
     text-overflow: clip !important;

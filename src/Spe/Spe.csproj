@@ -667,6 +667,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\reports.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\goto_script.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />

@@ -445,6 +445,9 @@
                 editor.val(currentAceEditor.session.getValue());
             });
             currentAceEditor.tokenTooltip = new TokenTooltip(currentAceEditor);
+            if (window.spe && window.spe.gotoScript) {
+                window.spe.gotoScript.attach(currentAceEditor);
+            }
             attachAutocompletePopupAutoWidth(currentAceEditor);
             currentAceEditor.setOption("fontFamily", editorFontFamily);
             currentAceEditor.setOption("fontSize", editorFontSize);
@@ -676,6 +679,15 @@
                     name: "runPlugin",
                     bindKey: {win: "Ctrl-Shift-Alt-I", mac: "Ctrl-Shift-Alt-I"},
                     exec: function () { },
+                    readOnly: true
+                }, {
+                    name: "gotoScriptDefinition",
+                    bindKey: {win: "Ctrl-F12", mac: "Command-F12"},
+                    exec: function (editor) {
+                        if (editor && editor.gotoScript) {
+                            editor.gotoScript.gotoAtCaret();
+                        }
+                    },
                     readOnly: true
                 }
             ];

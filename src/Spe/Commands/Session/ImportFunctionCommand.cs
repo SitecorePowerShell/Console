@@ -21,13 +21,14 @@ namespace Spe.Commands.Session
     [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand
     {
-        class FunctionCacheEntry
+        internal class FunctionCacheEntry
         {
             internal string Name { get; set; }
             internal string Library { get; set; }
             internal string Module { get; set; }
             internal string Database { get; set; }
             internal ID ScriptID { get; set; }
+            internal string Path { get; set; }
         }
 
         private static string[] functions;
@@ -206,12 +207,14 @@ namespace Spe.Commands.Session
                     // We have to traverse the tree.
                     IEnumerable<Item> results = GetAllScriptChildren(root);
                     functionCache.AddRange(results.Select(p =>
-                     new FunctionCacheEntry() { 
+                     new FunctionCacheEntry
+                     {
                         Name = p.Name,
                         Library = GetLibraryName(p.Parent, string.Empty),
                         Database = p.Database.Name,
                         Module = GetModuleName(p.Parent),
-                        ScriptID = p.ID
+                        ScriptID = p.ID,
+                        Path = p.Paths.FullPath
                     }));
                 }
                 catch (Exception ex)
@@ -256,6 +259,36 @@ namespace Spe.Commands.Session
         public static void InvalidateCache(object sender, EventArgs e)
         {
             FunctionCache = null;
+        }
+
+        internal static IReadOnlyList<FunctionCacheEntry> FindFunctionMatches(
+            string name, string module = null, string library = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Array.Empty<FunctionCacheEntry>();
+            }
+
+            if (FunctionCache == null)
+            {
+                UpdateCache();
+            }
+
+            var query = FunctionCache.Where(
+                e => string.Equals(e.Name, name, StringComparison.InvariantCultureIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(module))
+            {
+                query = query.Where(e => string.Equals(e.Module, module, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(library))
+            {
+                query = query.Where(e => e.Library != null &&
+                    e.Library.StartsWith(library, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            return query.ToList();
         }
     }
 }

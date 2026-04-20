@@ -9,18 +9,22 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Services;
+using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Security.Accounts;
 using Sitecore.StringExtensions;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Commands.Session;
 using Spe.Core.Debugging;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
+using Spe.Core.Utility;
 using Spe.Core.VersionDecoupling;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 using PSCustomObject = System.Management.Automation.PSCustomObject;
@@ -472,6 +476,98 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
+        }
+
+        public class ScriptReferenceMatch
+        {
+            public string Id { get; set; }
+            public string Db { get; set; }
+            public string Path { get; set; }
+            public string DisplayName { get; set; }
+            public string Library { get; set; }
+            public string Module { get; set; }
+        }
+
+        public class ScriptReferenceResponse
+        {
+            public ScriptReferenceMatch[] Matches { get; set; }
+        }
+
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object ResolveScriptReference(string guid, string kind, string target, string module, string library)
+        {
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE))
+            {
+                return string.Empty;
+            }
+
+            PowerShellLog.Debug($"[ISE] action=resolveScriptRef session={guid} kind={kind} target={target} user={Sitecore.Context.User?.Name}");
+
+            var response = new ScriptReferenceResponse { Matches = Array.Empty<ScriptReferenceMatch>() };
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                return new JavaScriptSerializer().Serialize(response);
+            }
+
+            if (string.Equals(kind, "function", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Matches = ImportFunctionCommand
+                    .FindFunctionMatches(target, module, library)
+                    .Select(BuildFunctionMatch)
+                    .Where(m => m != null)
+                    .ToArray();
+            }
+            else if (string.Equals(kind, "script", StringComparison.OrdinalIgnoreCase))
+            {
+                var drive = ApplicationSettings.ScriptLibraryDb;
+                var scriptItem = PathUtilities.GetItem(target, drive, ApplicationSettings.ScriptLibraryPath);
+                if (scriptItem != null && scriptItem.Access.CanRead())
+                {
+                    response.Matches = new[]
+                    {
+                        new ScriptReferenceMatch
+                        {
+                            Id = scriptItem.ID.ToString(),
+                            Db = scriptItem.Database.Name,
+                            Path = ToScriptLibraryRelativePath(scriptItem.Paths.FullPath),
+                            DisplayName = scriptItem.Name
+                        }
+                    };
+                }
+            }
+
+            return new JavaScriptSerializer().Serialize(response);
+        }
+
+        private static ScriptReferenceMatch BuildFunctionMatch(ImportFunctionCommand.FunctionCacheEntry entry)
+        {
+            var db = Factory.GetDatabase(entry.Database);
+            var item = db?.GetItem(entry.ScriptID);
+            if (item == null || !item.Access.CanRead()) return null;
+
+            return new ScriptReferenceMatch
+            {
+                Id = entry.ScriptID.ToString(),
+                Db = entry.Database,
+                Path = ToScriptLibraryRelativePath(entry.Path),
+                DisplayName = entry.Name,
+                Library = entry.Library,
+                Module = entry.Module
+            };
+        }
+
+        private static string ToScriptLibraryRelativePath(string fullPath)
+        {
+            if (string.IsNullOrEmpty(fullPath)) return fullPath;
+            var root = ApplicationSettings.ScriptLibraryPath.TrimEnd('/');
+            if (fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+            {
+                var rel = fullPath.Substring(root.Length).TrimStart('/');
+                return rel.Replace('/', '\\');
+            }
+            return fullPath;
         }
 
         [WebMethod(EnableSession = true)]

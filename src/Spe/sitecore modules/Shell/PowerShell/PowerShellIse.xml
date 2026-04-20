@@ -31,6 +31,7 @@
             <Script src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/ace/ext-language_tools.js"></Script>
+            <Script src="/sitecore modules/PowerShell/Scripts/goto_script.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
 
             <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip"/>
