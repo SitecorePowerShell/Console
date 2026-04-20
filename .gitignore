@@ -73,3 +73,4 @@ cli
 # Claude Code
 .claude
 .playwright-mcp
+.vscode/settings.json
