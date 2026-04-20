@@ -449,7 +449,7 @@ a.ps-link {
 }
 
 #TabsPanel {
-    width: calc(100% - 40px);
+    width: 100%;
     height: auto;
     pointer-events: none;
 }
