@@ -125,6 +125,47 @@
             };
         }
 
+        function attachAutocompletePopupAutoWidth(editor) {
+            var patchPopup = function () {
+                var completer = editor.completer;
+                if (!completer || !completer.popup || completer._speAutoWidthDone) return false;
+                completer._speAutoWidthDone = true;
+                var popup = completer.popup;
+                var origSetData = popup.setData.bind(popup);
+                popup.setData = function (list, filterText) {
+                    origSetData(list, filterText);
+                    try {
+                        var style = window.getComputedStyle(popup.container);
+                        var fontSize = parseFloat(style.fontSize) || 12;
+                        var maxChars = 20;
+                        for (var i = 0; i < list.length; i++) {
+                            var item = list[i] || {};
+                            var caption = item.caption || item.value || item.name || "";
+                            var meta = item.meta ? "  " + item.meta : "";
+                            var len = (caption + meta).length;
+                            if (len > maxChars) maxChars = len;
+                        }
+                        var widthPx = Math.min(900, Math.max(300, Math.round(maxChars * fontSize * 0.6 + 40)));
+                        popup.container.style.width = widthPx + "px";
+                        if (popup.renderer && typeof popup.renderer.onResize === "function") {
+                            popup.renderer.onResize(true);
+                        }
+                    } catch (_) { /* best effort */ }
+                };
+                return true;
+            };
+            editor.commands.on("afterExec", function (e) {
+                if (!e || !e.command) return;
+                var n = e.command.name;
+                if (n === "startAutocomplete" || n === "expandSnippet" || n === "Tab") {
+                    if (patchPopup() && editor.completer && editor.completer.popup && editor.completer.popup.isOpen) {
+                        var p = editor.completer.popup;
+                        p.setData(p.data, p.filterText);
+                    }
+                }
+            });
+        }
+
         window.addEventListener("focus", function (event) {
             setFocusOnConsole();
         }, false);
@@ -404,6 +445,7 @@
                 editor.val(currentAceEditor.session.getValue());
             });
             currentAceEditor.tokenTooltip = new TokenTooltip(currentAceEditor);
+            attachAutocompletePopupAutoWidth(currentAceEditor);
             currentAceEditor.setOption("fontFamily", editorFontFamily);
             currentAceEditor.setOption("fontSize", editorFontSize);
             currentAceEditor.setOptions({

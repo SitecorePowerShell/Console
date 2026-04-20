@@ -24,6 +24,9 @@ namespace Spe.Core.Validation
             ["Get-ChildItem:Language"] = "[Spe.Commands.BaseItemCommand]::Cultures",
             ["New-Item:Language"] = "[Spe.Commands.BaseItemCommand]::Cultures",
             ["New-Item:ItemType"] = "[Spe.Core.Validation.MiscAutocompleteSets]::Templates",
+            ["Invoke-Script:Path"] = "[Spe.Commands.Session.InvokeScriptCommand]::ScriptPathsForCompletion() | ForEach-Object { \"'$_'\" }",
+            ["Invoke-Script:FullName"] = "[Spe.Commands.Session.InvokeScriptCommand]::ScriptPathsForCompletion() | ForEach-Object { \"'$_'\" }",
+            ["Invoke-Script:FileName"] = "[Spe.Commands.Session.InvokeScriptCommand]::ScriptPathsForCompletion() | ForEach-Object { \"'$_'\" }",
         };
 
         public static Dictionary<string, string> Completers => completers;

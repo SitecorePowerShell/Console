@@ -831,3 +831,8 @@ nobr > .scTab_Hover {
 .split-orientation-active {
     background-color: rgb(1, 36, 86);
 }
+
+.ace_autocomplete .ace_line .ace_ {
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
