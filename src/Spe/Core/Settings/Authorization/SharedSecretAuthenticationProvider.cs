@@ -13,19 +13,19 @@ namespace Spe.Core.Settings.Authorization
 {
     public class SharedSecretAuthenticationProvider : ISpeAuthenticationProviderEx
     {
-        private const int ClockSkewSeconds = 30;
-
         public string SharedSecret { get; set; }
         public List<string> AllowedIssuers { get; set; }
         public List<string> AllowedAudiences { get; set; }
         public bool DetailedAuthenticationErrors { get; set; }
         public int MaxTokenLifetimeSeconds { get; set; }
         public bool SuppressWarnings { get; set; }
+        public int ClockSkewSeconds { get; set; }
 
         public SharedSecretAuthenticationProvider()
         {
             AllowedIssuers = new List<string>();
             AllowedAudiences = new List<string>();
+            ClockSkewSeconds = 30;
         }
 
         public bool Validate(string token, string authority, out string username)
@@ -109,50 +109,6 @@ namespace Spe.Core.Settings.Authorization
             return false;
         }
 
-        private bool IsValidAudience(string audience, string authority)
-        {
-            PowerShellLog.Debug($"[JWT] action=audienceCheck audience={LogSanitizer.SanitizeValue(audience)} authority={LogSanitizer.SanitizeValue(authority)}");
-            var isValid = !string.IsNullOrEmpty(audience) &&
-                          (audience.Is(authority) ||
-                           AllowedAudiences.Any() &&
-                           AllowedAudiences.Contains(audience));
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=audienceNotAllowed audience={LogSanitizer.SanitizeValue(audience)} authority={LogSanitizer.SanitizeValue(authority)}");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException("The Token Audience is not allowed.");
-
-            return false;
-        }
-
-        private bool IsValidIssuer(string issuer)
-        {
-            var isValid = !string.IsNullOrEmpty(issuer) &&
-                          AllowedIssuers.Any() &&
-                          AllowedIssuers.Contains(issuer);
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuerNotAllowed issuer={LogSanitizer.SanitizeValue(issuer)}");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException("The Token Issuer is not allowed.");
-
-            return false;
-        }
-
-        private bool IsValidExpiration(long expiration)
-        {
-            var nowUtc = DateTime.UtcNow;
-            var expireUtc = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiration);
-            var isValid = nowUtc < expireUtc;
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=tokenExpired expiry={expireUtc:O}");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException("The Token Expiration has passed.");
-
-            return false;
-        }
-
         private bool IsValidSignature(string providedSignature, string testSignature)
         {
             var isValid = SecureCompare.FixedTimeEquals(providedSignature, testSignature);
@@ -175,72 +131,6 @@ namespace Spe.Core.Settings.Authorization
                 throw new SecurityException("The name provided must be a valid username.");
 
             return false;
-        }
-
-        private bool IsValidNotBefore(long nbf)
-        {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            var nbfUtc = epoch.AddSeconds(nbf);
-            var isValid = DateTime.UtcNow >= nbfUtc.AddSeconds(-ClockSkewSeconds);
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=notYetValid nbf={nbfUtc:O}");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException("The Token is not yet valid (nbf claim).");
-
-            return false;
-        }
-
-        private bool IsValidIssuedAt(long iat)
-        {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            var iatUtc = epoch.AddSeconds(iat);
-            var isValid = DateTime.UtcNow >= iatUtc.AddSeconds(-ClockSkewSeconds);
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=issuedInFuture iat={iatUtc:O}");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException("The Token issued-at time is in the future (iat claim).");
-
-            return false;
-        }
-
-        private bool IsValidTokenLifetime(long exp, long iat)
-        {
-            var lifetime = exp - iat;
-            var isValid = lifetime <= MaxTokenLifetimeSeconds;
-            if (isValid) return true;
-
-            if (!SuppressWarnings) PowerShellLog.Warn($"[JWT] action=validationFailed reason=lifetimeExceeded lifetime={lifetime}s maximum={MaxTokenLifetimeSeconds}s");
-            if (DetailedAuthenticationErrors)
-                throw new SecurityException($"The Token lifetime ({lifetime}s) exceeds the maximum allowed ({MaxTokenLifetimeSeconds}s).");
-
-            return false;
-        }
-
-        private static byte[] Decode(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                throw new ArgumentException(nameof(input));
-
-            var output = input;
-            output = output.Replace('-', '+'); // 62nd char of encoding
-            output = output.Replace('_', '/'); // 63rd char of encoding
-            switch (output.Length % 4) // Pad with trailing '='s
-            {
-                case 0:
-                    break; // No pad chars in this case
-                case 2:
-                    output += "==";
-                    break; // Two pad chars
-                case 3:
-                    output += "=";
-                    break; // One pad char
-                default:
-                    throw new FormatException("Illegal base64url string.");
-            }
-            var converted = Convert.FromBase64String(output); // Standard base64 decoder
-            return converted;
         }
 
         private static readonly HashSet<string> AllowedAlgorithms =
@@ -275,18 +165,33 @@ namespace Spe.Core.Settings.Authorization
         /// </summary>
         public static string ExtractKeyId(string token)
         {
-            if (string.IsNullOrEmpty(token)) return null;
+            return ExtractHeader(token)?.Kid;
+        }
 
+        /// <summary>
+        /// Extracts the alg (algorithm) claim from a JWT header without
+        /// performing signature validation. The handler uses this for
+        /// algorithm-based provider dispatch (HS* -> SharedSecret,
+        /// RS*/ES* -> OAuth bearer). Returns null if the token is
+        /// malformed.
+        /// </summary>
+        public static string ExtractAlgorithm(string token)
+        {
+            return ExtractHeader(token)?.Alg;
+        }
+
+        private static TokenHeader ExtractHeader(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return null;
             try
             {
                 var parts = token.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length != 3) return null;
 
-                var decodedHeader = Decode(parts[0]);
+                var decodedHeader = JwtClaimValidator.Decode(parts[0]);
                 var header = Encoding.UTF8.GetString(decodedHeader);
                 var serializer = new JavaScriptSerializer();
-                var tokenHeader = serializer.Deserialize<TokenHeader>(header);
-                return tokenHeader?.Kid;
+                return serializer.Deserialize<TokenHeader>(header);
             }
             catch
             {
@@ -313,7 +218,7 @@ namespace Spe.Core.Settings.Authorization
                 var serializer = new JavaScriptSerializer();
 
                 var headerJsonBase64 = parts[0];
-                var decodedHeader = Decode(headerJsonBase64);
+                var decodedHeader = JwtClaimValidator.Decode(headerJsonBase64);
                 var header = Encoding.UTF8.GetString(decodedHeader);
                 var tokenHeader = serializer.Deserialize<TokenHeader>(header);
 
@@ -323,7 +228,7 @@ namespace Spe.Core.Settings.Authorization
                 if (!IsValidSharedSecret(effectiveSecret, tokenHeader.Alg)) return false;
 
                 var payloadJsonBase64 = parts[1];
-                var decodedPayload = Decode(payloadJsonBase64);
+                var decodedPayload = JwtClaimValidator.Decode(payloadJsonBase64);
                 var payload = Encoding.UTF8.GetString(decodedPayload);
                 var tokenPayload = serializer.Deserialize<TokenPayload>(payload);
 
@@ -342,12 +247,18 @@ namespace Spe.Core.Settings.Authorization
 
                 if (!IsValidSignature(signature, testSignature)) return false;
 
-                if (!IsValidExpiration(tokenPayload.Exp)) return false;
-                if (tokenPayload.Nbf > 0 && !IsValidNotBefore(tokenPayload.Nbf)) return false;
-                if (tokenPayload.Iat > 0 && !IsValidIssuedAt(tokenPayload.Iat)) return false;
-                if (MaxTokenLifetimeSeconds > 0 && tokenPayload.Iat > 0 && !IsValidTokenLifetime(tokenPayload.Exp, tokenPayload.Iat)) return false;
-                if (!IsValidAudience(tokenPayload.Aud, authority)) return false;
-                if (!IsValidIssuer(tokenPayload.Iss)) return false;
+                // Preserve historical behaviour: SharedSecret does not apply clock skew to exp.
+                if (!JwtClaimValidator.IsValidExpiration(tokenPayload.Exp, 0, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (tokenPayload.Nbf > 0 && !JwtClaimValidator.IsValidNotBefore(tokenPayload.Nbf, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (tokenPayload.Iat > 0 && !JwtClaimValidator.IsValidIssuedAt(tokenPayload.Iat, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (MaxTokenLifetimeSeconds > 0 && tokenPayload.Iat > 0 && !JwtClaimValidator.IsValidTokenLifetime(tokenPayload.Exp, tokenPayload.Iat, MaxTokenLifetimeSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+
+                // Authority is implicitly added to the allowed audience list so existing deployments
+                // that rely on audience == request URL keep working without explicit AllowedAudiences config.
+                var effectiveAudiences = new List<string>(AllowedAudiences ?? new List<string>());
+                if (!string.IsNullOrEmpty(authority)) effectiveAudiences.Add(authority);
+                if (!JwtClaimValidator.IsValidAudience(tokenPayload.Aud, effectiveAudiences, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (!JwtClaimValidator.IsValidIssuer(tokenPayload.Iss, AllowedIssuers, SuppressWarnings, DetailedAuthenticationErrors)) return false;
 
                 if (!skipUsernameValidation)
                 {

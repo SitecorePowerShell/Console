@@ -24,7 +24,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     if (-not $policiesFolder -or -not $apiKeysFolder) { return "ERROR:FOLDERS_NOT_FOUND" }
 
     # Clean up leftover test items
@@ -37,7 +37,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"
+    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
 
     # Create an unrestricted policy for expiration tests
     $policy = New-Item -Path "master:$($policiesFolder.Paths.FullPath)/Test-ExpirationPolicy" -ItemType $policyTemplate

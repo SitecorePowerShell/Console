@@ -26,9 +26,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         PolicyAuditLevel     = "{FB657388-BF96-475D-AE69-EBF028F47432}"
     }
 
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/API Keys" -ItemType "Common/Folder"
+        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
     if (-not $policiesFolder) {
@@ -42,7 +42,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         Where-Object { $_.Name -like "Test-ClientRetry*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"
+    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
 
     $policy = New-Item -Path "master:$($policiesFolder.Paths.FullPath)/Test-ClientRetryPolicy" -ItemType $policyTemplate

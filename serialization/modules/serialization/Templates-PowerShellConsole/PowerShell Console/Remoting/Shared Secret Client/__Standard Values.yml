@@ -1,0 +1,35 @@
+﻿---
+ID: "aaaaaaaa-0004-0004-0004-000000000004"
+Parent: "55ab1aa8-890e-401e-af06-094ca21e0e2d"
+Template: "55ab1aa8-890e-401e-af06-094ca21e0e2d"
+Path: /sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client/__Standard Values
+SharedFields:
+- ID: "8d158fca-e8f3-4d94-8469-c782b099ec07"
+  Hint: Enabled
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260323T210000Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "184838dd-570f-48f7-85d8-894bb8ff5921"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260411T191912Z

@@ -5,7 +5,7 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 
 Invoke-RemoteScript -Session $session -ScriptBlock {
     $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
 
     if ($apiKeysFolder) {

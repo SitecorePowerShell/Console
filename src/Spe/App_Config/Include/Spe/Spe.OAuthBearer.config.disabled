@@ -1,0 +1,109 @@
+<!--
+    Sitecore PowerShell Extensions - OAuth Bearer Token Authentication
+
+    Opt-in authentication provider that validates externally-issued RS256 /
+    RS384 / RS512 / ES256 JWTs via a configured JWKS endpoint. Use for
+    XM Cloud style integrations where tokens come from an identity provider
+    (Sitecore Identity Server, Auth0, Microsoft Entra ID, Keycloak, Okta)
+    rather than being minted client-side with a shared secret.
+
+    Distributed with a .disabled suffix by default. Rename to remove the
+    .disabled suffix to activate.
+
+    Activation is ADDITIVE: the SharedSecret provider (defined in Spe.config)
+    remains registered. The remoting handler dispatches incoming tokens by
+    the JWT header "alg" claim - HS* tokens go through SharedSecret;
+    RS* / ES* tokens are validated here.
+
+    ==== Multiple IdPs ====
+
+    You can declare more than one <oauthBearer> entry (under different
+    element names) to accept tokens from multiple identity providers
+    concurrently - e.g. Sitecore Identity Server AND Auth0. The handler
+    picks the provider whose <allowedIssuers> list contains the token's
+    iss claim, so routing is deterministic rather than last-declared-wins.
+    Each entry keeps its own <jwksUri>, <allowedAudiences>, <requiredScopes>,
+    and cache. OAuth Client items are already (iss, client_id)-keyed so they
+    automatically associate with the correct provider.
+
+    Example:
+      <authenticationProviders>
+        <oauthBearerIds type="...">
+          <jwksUri>https://idp1/.well-known/openid-configuration/jwks</jwksUri>
+          <allowedIssuers hint="list"><issuer>https://idp1</issuer></allowedIssuers>
+          ...
+        </oauthBearerIds>
+        <oauthBearerAuth0 type="...">
+          <jwksUri>https://tenant.us.auth0.com/.well-known/jwks.json</jwksUri>
+          <allowedIssuers hint="list"><issuer>https://tenant.us.auth0.com/</issuer></allowedIssuers>
+          ...
+        </oauthBearerAuth0>
+      </authenticationProviders>
+
+    ==== Required configuration (no defaults) ====
+
+    Three values must be populated for this provider to validate any token.
+    Identity comes from the OAuth Client content item matched via
+    (issuer, client_id), not from this config - the item's Impersonated User
+    field supplies the Sitecore identity.
+
+    ==== Optional overrides ====
+
+    Tunables not listed here - allowedAlgorithms, usernameClaim,
+    jwksCacheSeconds, maxTokenLifetimeSeconds, clockSkewSeconds,
+    detailedAuthenticationErrors, suppressWarnings - default to safe values
+    in the OAuthBearerTokenAuthenticationProvider class. Add them under
+    <oauthBearer> below if you need to override.
+
+    NOTE: This provider does not support skipping signature validation.
+    There is no "skip" flag. Tokens whose signature cannot be verified
+    against the configured JWKS are rejected.
+-->
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/"
+               xmlns:role="http://www.sitecore.net/xmlconfig/role/"
+               xmlns:security="http://www.sitecore.net/xmlconfig/security/">
+  <sitecore role:require="Standalone or ContentManagement or XMCloud"
+            security:require="Sitecore">
+    <powershell>
+      <authenticationProviders>
+        <oauthBearer type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+          <!-- The JWKS URL published by the identity provider, typically
+               <idp-authority>/.well-known/openid-configuration/jwks.
+               Required. Example values:
+                 Auth0:           https://<tenant>.auth0.com/.well-known/jwks.json
+                 Entra ID:        https://login.microsoftonline.com/<tenant>/discovery/v2.0/keys
+                 Sitecore Identity: https://<sitecore-id-host>/.well-known/openid-configuration/jwks
+          -->
+          <jwksUri></jwksUri>
+
+          <!-- The iss claim(s) issued tokens will carry. Required.
+               Example:
+                 <issuer>https://auth.sitecorecloud.io/</issuer>
+          -->
+          <allowedIssuers hint="list">
+          </allowedIssuers>
+
+          <!-- The aud claim value(s) SPE will accept. Required.
+               Typically the audience identifier you registered with the IdP.
+               Some IdPs (like Sitecore Identity Server) automatically include
+               an "<authority>/resources" audience alongside your registered
+               value; list both if so.
+               Example:
+                 <audience>spe-remoting</audience>
+          -->
+          <allowedAudiences hint="list">
+          </allowedAudiences>
+
+          <!-- Optional: scope values that every token must carry. When set,
+               a token without every required scope is rejected. Leave empty
+               to skip scope enforcement.
+               Example:
+                 <scope>spe.remoting</scope>
+          -->
+          <requiredScopes hint="list">
+          </requiredScopes>
+        </oauthBearer>
+      </authenticationProviders>
+    </powershell>
+  </sitecore>
+</configuration>

@@ -166,15 +166,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return;
             }
 
-            var authenticatedApiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
-            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name} apiKey={authenticatedApiKey?.Name ?? "none"} rid={GetRequestId()}");
+            var authenticatedApiKey = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
+            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name} remotingClient={authenticatedApiKey?.Name ?? "none"} rid={GetRequestId()}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
 
             AddCorsHeaders(context, serviceName, origin);
         }
 
-        private static void AddThrottleHeaders(HttpResponse response, RemotingApiKeyProvider.ThrottleResult throttle)
+        private static void AddThrottleHeaders(HttpResponse response, RemotingClientProvider.ThrottleResult throttle)
         {
             if (!throttle.HasLimit) return;
 
@@ -263,99 +263,162 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     string authFailureReason = null;
                     try
                     {
-                        var provider = ServiceAuthenticationManager.AuthenticationProvider;
-                        var sharedSecretProvider = provider as SharedSecretAuthenticationProvider;
                         TokenValidationResult tokenResult = null;
-                        RemotingApiKey matchedApiKey = null;
+                        RemotingClient matchedApiKey = null;
                         var isValid = false;
+                        string authKind = null;
 
-                        // Extract kid (Key ID) from JWT header to determine auth path
-                        var kid = SharedSecretAuthenticationProvider.ExtractKeyId(token);
                         var authority = request.Url.GetLeftPart(UriPartial.Authority);
 
-                        if (!string.IsNullOrEmpty(kid))
+                        // Algorithm-based dispatch (RFC 8725). Each provider owns
+                        // a disjoint algorithm family; the handler picks one based
+                        // on the JWT header, never fallthrough between providers.
+                        //
+                        //   HS256 / HS384 / HS512         -> SharedSecret provider
+                        //   RS256 / RS384 / RS512 / ES*   -> first OAuth provider
+                        //                                    that accepts the alg
+                        var alg = SharedSecretAuthenticationProvider.ExtractAlgorithm(token);
+
+                        if (!string.IsNullOrEmpty(alg) && alg.StartsWith("HS", StringComparison.Ordinal))
                         {
-                            // Path A: kid present - O(1) lookup by Access Key Id.
-                            // Only API Key items are checked; no exhaustive enumeration.
-                            if (!RemotingApiKeyProvider.IsRegistryLoaded())
+                            // ---- SharedSecret provider (HMAC) ----
+                            // Iterate providers in reverse so entries under the plural
+                            // <authenticationProviders> list take priority over the
+                            // singular back-compat <authenticationProvider> slot. An
+                            // operator who adds a plural SharedSecret entry (whether
+                            // or not they delete the singular) has expressed a more
+                            // deliberate intent than the default config; the plural
+                            // entry wins when both accept the same alg family.
+                            SharedSecretAuthenticationProvider sharedSecretProvider = null;
+                            var providers = ServiceAuthenticationManager.AuthenticationProviders;
+                            for (int i = providers.Count - 1; i >= 0; i--)
                             {
-                                PowerShellLog.Warn($"[Remoting] action=coldStart ip={ip} rid={GetRequestId()}");
-                                context.Response.AddHeader("Retry-After", "2");
-                                SetErrorResponse(context, 503, "Service is starting. Please retry.");
-                                return false;
-                            }
-
-                            matchedApiKey = RemotingApiKeyProvider.FindByAccessKeyId(kid);
-                            if (matchedApiKey != null && sharedSecretProvider != null)
-                            {
-                                isValid = sharedSecretProvider.ValidateToken(
-                                    token, authority, out username, out tokenResult,
-                                    matchedApiKey.SharedSecret, skipUsernameValidation: true);
-
-                                if (!isValid)
+                                if (providers[i] is SharedSecretAuthenticationProvider ss)
                                 {
-                                    PowerShellLog.Debug($"[Remoting] action=apiKeySignatureFailed kid={kid} apiKey={matchedApiKey.Name}");
-                                    // Collapse bad-signature into 'invalid' alongside unknown-kid to
-                                    // resist Access Key Id enumeration.
-                                    authFailureReason = RemotingApiKeyProvider.AuthFailureReasonInvalid;
-                                    matchedApiKey = null;
+                                    sharedSecretProvider = ss;
+                                    break;
                                 }
                             }
-                            else if (matchedApiKey == null)
+                            if (sharedSecretProvider != null)
                             {
-                                // Key was not found in the active index. Consult the parallel
-                                // kid-states index to see if it was filtered out because it is
-                                // expired or disabled.
-                                authFailureReason = RemotingApiKeyProvider.GetAuthFailureReason(kid)
-                                    ?? RemotingApiKeyProvider.AuthFailureReasonInvalid;
-                                PowerShellLog.Debug($"[Remoting] action=apiKeyNotFound kid={kid} reason={authFailureReason}");
+                                var kid = SharedSecretAuthenticationProvider.ExtractKeyId(token);
+
+                                if (!string.IsNullOrEmpty(kid))
+                                {
+                                    authKind = "sharedSecretClient";
+
+                                    // Path A: per-item Shared Secret Client lookup by Access Key Id.
+                                    if (!RemotingClientProvider.IsRegistryLoaded())
+                                    {
+                                        PowerShellLog.Warn($"[Remoting] action=coldStart ip={ip} rid={GetRequestId()}");
+                                        context.Response.AddHeader("Retry-After", "2");
+                                        SetErrorResponse(context, 503, "Service is starting. Please retry.");
+                                        return false;
+                                    }
+
+                                    matchedApiKey = RemotingClientProvider.FindByAccessKeyId(kid);
+                                    if (matchedApiKey != null)
+                                    {
+                                        isValid = sharedSecretProvider.ValidateToken(
+                                            token, authority, out username, out tokenResult,
+                                            matchedApiKey.SharedSecret, skipUsernameValidation: true);
+
+                                        if (!isValid)
+                                        {
+                                            PowerShellLog.Debug($"[Remoting] action=clientSignatureFailed kid={kid} remotingClient={matchedApiKey.Name}");
+                                            authFailureReason = RemotingClientProvider.AuthFailureReasonInvalid;
+                                            matchedApiKey = null;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        authFailureReason = RemotingClientProvider.GetAuthFailureReason(kid)
+                                            ?? RemotingClientProvider.AuthFailureReasonInvalid;
+                                        PowerShellLog.Debug($"[Remoting] action=clientNotFound kid={kid} reason={authFailureReason}");
+                                    }
+                                }
+                                else
+                                {
+                                    // Path B: No kid - config-level shared-secret validation.
+                                    // Intended for trusted automation. Not rate-limited.
+                                    authKind = "configSecret";
+                                    try
+                                    {
+                                        isValid = sharedSecretProvider.Validate(token, authority, out username, out tokenResult);
+                                    }
+                                    catch (SecurityException)
+                                    {
+                                        PowerShellLog.Debug("[Remoting] action=configSecretFailed");
+                                    }
+                                }
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(alg))
+                        {
+                            // ---- OAuth bearer provider (asymmetric) ----
+                            // Route by iss to support multiple IdPs side by side
+                            // (e.g. Sitecore IDS + Auth0, both signing with RS256).
+                            // SelectProvider picks the OAuth provider whose
+                            // AllowedIssuers contains the token's iss AND whose
+                            // AllowedAlgorithms accepts the token's alg, so an
+                            // RS-signed token can't route through an ES-only
+                            // provider. Tokens with no iss or an unrecognised iss
+                            // return null and fall through to 401.
+                            var providers = ServiceAuthenticationManager.AuthenticationProviders;
+                            OAuthBearerTokenAuthenticationProvider oauthProvider = null;
+                            if (OAuthBearerTokenAuthenticationProvider.TryPeekIssuer(token, out var peekedIssuer))
+                            {
+                                oauthProvider = OAuthBearerTokenAuthenticationProvider.SelectProvider(
+                                    providers, alg, peekedIssuer);
+                            }
+
+                            if (oauthProvider != null)
+                            {
+                                authKind = "oauthClient";
+                                try
+                                {
+                                    isValid = oauthProvider.Validate(token, authority, out username, out tokenResult);
+                                }
+                                catch (SecurityException)
+                                {
+                                    PowerShellLog.Debug("[Remoting] action=oauthValidationFailed");
+                                }
+
+                                if (isValid)
+                                {
+                                    var issuer = tokenResult?.Issuer;
+                                    var resolvedCid = tokenResult?.ClientId;
+                                    matchedApiKey = RemotingClientProvider.FindByIssuerAndClientId(issuer, resolvedCid);
+
+                                    if (matchedApiKey == null)
+                                    {
+                                        PowerShellLog.Debug($"[Remoting] action=clientNotFound issuer={LogSanitizer.SanitizeValue(issuer)} clientId={LogSanitizer.SanitizeValue(resolvedCid)}");
+                                        authFailureReason = RemotingClientProvider.AuthFailureReasonInvalid;
+                                        isValid = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PowerShellLog.Debug($"[Remoting] action=bearerProviderMissing alg={LogSanitizer.SanitizeValue(alg)} iss={LogSanitizer.SanitizeValue(peekedIssuer ?? "none")}");
                             }
                         }
                         else
                         {
-                            // Path B: No kid - config-based shared-secret validation.
-                            //
-                            // Intended for trusted automation: CI/CD pipelines, deployment
-                            // scripts, infrastructure services. The shared secret is a single
-                            // machine credential injected into Sitecore config from a secure
-                            // secret store (Key Vault, GitHub secrets, etc.) and rotated
-                            // operationally. This path is intentionally not rate-limited - a
-                            // single trusted caller in a trusted environment doesn't need
-                            // throttling.
-                            //
-                            // For public consumers - MCP server, third-party integrations,
-                            // individual developers interacting through the API - use API Keys
-                            // (Path A). API Keys provide per-identity credentials, rotation,
-                            // throttling, audit scoping, and expiration.
-                            //
-                            // Username (Name claim) is required for this path.
-                            try
-                            {
-                                if (provider is ISpeAuthenticationProviderEx providerEx)
-                                {
-                                    isValid = providerEx.Validate(token, authority, out username, out tokenResult);
-                                }
-                                else
-                                {
-                                    isValid = provider.Validate(token, authority, out username);
-                                }
-                            }
-                            catch (SecurityException)
-                            {
-                                PowerShellLog.Debug("[Remoting] action=configSecretFailed");
-                            }
+                            // Missing or unrecognised alg - fall through to 401.
+                            PowerShellLog.Debug("[Remoting] action=unrecognizedAlg");
                         }
 
                         if (isValid)
                         {
-                            // API Keys require an Impersonate User for identity
+                            // API Keys require an Impersonated User for identity
                             if (matchedApiKey != null)
                             {
                                 if (!matchedApiKey.HasImpersonation)
                                 {
-                                    PowerShellLog.Audit("[Remoting] action=apiKeyDenied reason=noImpersonateUser apiKey={0} ip={1} rid={2}",
+                                    PowerShellLog.Audit("[Remoting] action=clientDenied reason=noImpersonateUser remotingClient={0} ip={1} rid={2}",
                                         matchedApiKey.Name, ip, GetRequestId());
-                                    SetErrorResponse(context, 403, "API Key requires an Impersonate User. Configure the field on the API Key item.");
+                                    SetErrorResponse(context, 403, "API Key requires an Impersonated User. Configure the field on the API Key item.");
                                     return false;
                                 }
 
@@ -365,7 +428,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             // Throttle check
                             if (matchedApiKey != null)
                             {
-                                var throttle = RemotingApiKeyProvider.CheckThrottle(matchedApiKey);
+                                var throttle = RemotingClientProvider.CheckThrottle(matchedApiKey);
                                 AddThrottleHeaders(context.Response, throttle);
 
                                 if (!throttle.Allowed)
@@ -375,7 +438,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                     {
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Standard)
                                         {
-                                            PowerShellLog.Audit("[Remoting] action=throttleBypassed apiKey={0} ip={1} rid={2}",
+                                            PowerShellLog.Audit("[Remoting] action=throttleBypassed remotingClient={0} ip={1} rid={2}",
                                                 matchedApiKey.Name, ip, GetRequestId());
                                         }
                                     }
@@ -383,7 +446,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                     {
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Violations)
                                         {
-                                            PowerShellLog.Audit("[Remoting] action=throttled apiKey={0} ip={1} rid={2}",
+                                            PowerShellLog.Audit("[Remoting] action=throttled remotingClient={0} ip={1} rid={2}",
                                                 matchedApiKey.Name, ip, GetRequestId());
                                         }
                                         SetErrorResponse(context, 429, "Rate limit exceeded.");
@@ -393,19 +456,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess user={username} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} apiKey={matchedApiKey?.Name ?? "none"}");
+                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={username} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={matchedApiKey?.Name ?? "none"} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
                             }
                             if (matchedApiKey != null)
                             {
-                                HttpContext.Current.Items["SpeApiKey"] = matchedApiKey;
+                                HttpContext.Current.Items["SpeRemotingClient"] = matchedApiKey;
                             }
                         }
                         else
                         {
-                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed user={0} ip={1} rid={2}", username ?? "unknown", ip, GetRequestId());
+                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed authKind={0} user={1} ip={2} remotingClient={3} clientId={4} rid={5}",
+                                authKind ?? "none", username ?? "unknown", ip, matchedApiKey?.Name ?? "none",
+                                LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none"), GetRequestId());
                             if (!string.IsNullOrEmpty(authFailureReason))
                             {
                                 context.Response.AddHeader("X-SPE-AuthFailureReason", authFailureReason);
@@ -622,7 +687,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         /// </summary>
         private static RemotingPolicy GetActivePolicy()
         {
-            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            var apiKey = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
             if (apiKey == null) return RemotingPolicy.Unrestricted;
             return RemotingPolicyManager.ResolvePolicy(apiKey.Policy);
         }
@@ -632,7 +697,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         // "user:<username>" for config-based shared-secret or Basic auth.
         private static string GetRequestOwnershipIdentity(HttpContext context)
         {
-            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            var apiKey = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
             if (apiKey != null)
             {
                 return "apiKey:" + apiKey.Name;
@@ -1490,7 +1555,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var languageMode = System.Management.Automation.PSLanguageMode.FullLanguage;
 
             // Resolve remoting policy (API Key > unrestricted for config-based shared-secret)
-            var apiKey = HttpContext.Current?.Items["SpeApiKey"] as RemotingApiKey;
+            var apiKey = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
 
             RemotingPolicy policy;
             if (apiKey != null)
@@ -1498,7 +1563,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (!apiKey.HasPolicy)
                 {
                     PowerShellLog.Audit(
-                        "[Remoting] action=apiKeyDenied reason=noPolicyAssigned apiKey={0} user={1} ip={2} rid={3}",
+                        "[Remoting] action=clientDenied reason=noPolicyAssigned remotingClient={0} user={1} ip={2} rid={3}",
                         apiKey.Name, user, ip, GetRequestId());
                     SetErrorResponse(context, 403, "The request is not authorized. A remoting policy is required.");
                     return;

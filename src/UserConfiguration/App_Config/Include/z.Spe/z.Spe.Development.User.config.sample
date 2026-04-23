@@ -33,6 +33,45 @@
           <audience>https://spe.dev.local</audience>
         </allowedAudiences>
       </authenticationProvider>
+      <!--
+        OAuth bearer providers. Opt-in. Ensure Spe.OAuthBearer.config.disabled
+        has been renamed off the .disabled suffix so the provider type is
+        registered. Declare one <oauthBearer*> entry per IdP; the remoting
+        handler routes incoming tokens to the provider whose <allowedIssuers>
+        contains the token's iss claim, so multiple IdPs coexist cleanly.
+        Replace the Auth0 tenant below with your own, or delete the
+        <oauthBearerAuth0> block if you only want IDS.
+      -->
+      <authenticationProviders>
+        <!-- Sitecore Identity Server (bundled docker service) -->
+        <oauthBearerIds type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+          <jwksUri>http://id/.well-known/openid-configuration/jwks</jwksUri>
+          <allowedIssuers hint="list">
+            <issuer>https://speid.dev.local</issuer>
+          </allowedIssuers>
+          <allowedAudiences hint="list">
+            <audience>spe-remoting</audience>
+            <audience>https://speid.dev.local/resources</audience>
+          </allowedAudiences>
+          <requiredScopes hint="list">
+            <scope>spe.remoting</scope>
+          </requiredScopes>
+        </oauthBearerIds>
+        <!-- Auth0 (replace the tenant below) -->
+        <oauthBearerAuth0 type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+          <jwksUri>https://YOUR-TENANT.us.auth0.com/.well-known/jwks.json</jwksUri>
+          <allowedIssuers hint="list">
+            <issuer>https://YOUR-TENANT.us.auth0.com/</issuer>
+          </allowedIssuers>
+          <allowedAudiences hint="list">
+            <audience>spe-remoting</audience>
+            <audience>https://spe-remoting</audience>
+          </allowedAudiences>
+          <requiredScopes hint="list">
+            <scope>spe.remoting</scope>
+          </requiredScopes>
+        </oauthBearerAuth0>
+      </authenticationProviders>
       <userAccountControl>
         <!-- In development, remove default elevationActions -->
         <tokens>

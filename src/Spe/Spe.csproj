@@ -129,6 +129,7 @@
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.PowerShell.5.1.ReferenceAssemblies.1.0.0\lib\net461\System.Management.Automation.dll</HintPath>
       <Private>False</Private>
@@ -170,6 +171,9 @@
     <Compile Include="Client\Commands\WebEditScriptCommand.cs" />
     <Compile Include="Client\Controls\LanguageHistory.cs" />
     <Compile Include="Client\Controls\BucketlistExtended.cs" />
+    <Compile Include="Client\Controls\LookupExExtended.cs" />
+    <Compile Include="Client\Controls\GroupedDroplinkExtended.cs" />
+    <Compile Include="Client\Controls\GroupedDroplistExtended.cs" />
     <Compile Include="Client\Controls\Marquee.cs" />
     <Compile Include="Client\Controls\SessionCompleteEventArgs.cs" />
     <Compile Include="Client\Controls\MultiRootTreeList.cs" />
@@ -248,8 +252,11 @@
     <Compile Include="Core\Settings\Authorization\RemotingPolicy.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingPolicyManager.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingItemEventHandler.cs" />
-    <Compile Include="Core\Settings\Authorization\RemotingApiKey.cs" />
-    <Compile Include="Core\Settings\Authorization\RemotingApiKeyProvider.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingClient.cs" />
+    <Compile Include="Core\Settings\Authorization\RemotingClientProvider.cs" />
+    <Compile Include="Core\Settings\Authorization\JwtClaimValidator.cs" />
+    <Compile Include="Core\Settings\Authorization\JwksKeyResolver.cs" />
+    <Compile Include="Core\Settings\Authorization\OAuthBearerTokenAuthenticationProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
     <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
@@ -628,6 +635,7 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config.disabled" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <Content Include="sitecore modules\items\core\items.core.spe.dat.tmp" />

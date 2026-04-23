@@ -36,9 +36,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     # Ensure API Keys folder exists
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/API Keys" -ItemType "Common/Folder"
+        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
 
     # Clean up any leftover from previous test runs
@@ -59,7 +59,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"
+    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $scriptTemplate = "/sitecore/templates/Modules/PowerShell Console/PowerShell Script"
     $scriptLibraryTemplate = "/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library"
 

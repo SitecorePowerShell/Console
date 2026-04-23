@@ -27,9 +27,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     # Ensure API Keys folder exists
-    $apiKeysFolder = Get-Item -Path "$remotingPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/API Keys" -ItemType "Common/Folder"
+        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
 
     # Ensure Policies folder exists
@@ -47,7 +47,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         Where-Object { $_.Name -like "Test-Throttle*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"
+    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
 
     # =========================================================================

@@ -20,10 +20,10 @@ $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         KeyImpersonateUser = "{5EB16BF4-605A-457C-8588-5D9833FF4DD9}"
     }
 
-    $apiKeysFolder = Get-Item -Path "$securityPath/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "$securityPath/Remoting Clients" -ErrorAction SilentlyContinue
     if (-not $apiKeysFolder) { return "ERROR:FOLDER_NOT_FOUND" }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting API Key"
+    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $duplicateKeyId = "spe_test_duplicate_check_001"
 
     # Clean up leftovers

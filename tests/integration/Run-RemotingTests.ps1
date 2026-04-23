@@ -6,7 +6,14 @@ param(
     # Remoting.Security.Enforced.Tests.ps1, removes the config, and
     # waits for another recycle. Combined ~60-90s. Use this flag on
     # iterations that don't touch auth/token-lifetime code.
-    [switch]$SkipSecurityEnforcement
+    [switch]$SkipSecurityEnforcement,
+    # Runs Phase 7 (OAuth bearer integration tests) at the end. Requires the
+    # CM container to have SITECORE_SPE_OAUTH=true and Spe.OAuthBearer.config
+    # populated (jwksUri, allowedIssuers, allowedAudiences) and the IDS
+    # container to have the SpeRemoting client registered. Off by default
+    # because enabling SITECORE_SPE_OAUTH replaces the SharedSecret provider
+    # and would break Phases 1-6.
+    [switch]$IncludeOAuth
 )
 
 $ErrorActionPreference = "Stop"
@@ -173,7 +180,7 @@ if ($global:isConstrainedLanguage) {
 }
 
 # Run all test files EXCEPT enforced/profiles/DA (those need setup/teardown) and maintenance
-Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1","Remoting.Expiration.Tests.ps1","Remoting.Expiration.DuplicateKeyId.Tests.ps1","Remoting.ClientRetry.Tests.ps1","Remoting.LongPollWait.Tests.ps1" |
+Get-ChildItem "$PSScriptRoot\*.Tests.ps1" -Exclude "Remoting.Maintenance.Tests.ps1","Remoting.Security.Enforced.Tests.ps1","Remoting.RemotingPolicies.Tests.ps1","Remoting.DelegatedAccess.Tests.ps1","Remoting.Throttle.Tests.ps1","Remoting.Expiration.Tests.ps1","Remoting.Expiration.DuplicateKeyId.Tests.ps1","Remoting.ClientRetry.Tests.ps1","Remoting.LongPollWait.Tests.ps1","Remoting.OAuthBearer.Tests.ps1","Remoting.OAuthBearer.ValidatorTests.ps1" |
     ForEach-Object { Invoke-TestFile $_.FullName }
 
 # Phase 1b: Delegated access tests (setup -> test -> teardown, no config deploy needed)
@@ -309,5 +316,30 @@ Invoke-TestFile "$PSScriptRoot\Remoting.ClientRetry.Tests.ps1"
 . "$PSScriptRoot\Remoting.Expiration.Teardown.ps1"
 
 Write-Host "`n  Client-retry test cleanup complete." -ForegroundColor Cyan
+
+# Phase 7: OAuth bearer tests (opt-in). Under three-mode coexistence the
+# OAuth and SharedSecret providers run concurrently - enabling one no
+# longer disables the other, so Phase 7 needs no provider swap, no app-
+# domain recycle, and no pre/post state assertion. Setup/Teardown use
+# the same SharedSecret remoting path as all other phases; only the
+# runtime tests use OAuth tokens.
+if ($IncludeOAuth) {
+    Write-Host "`n=== Phase 7: OAuth Bearer Tests ===" -ForegroundColor Magenta
+
+    try {
+        Invoke-TestFile "$PSScriptRoot\Remoting.OAuthBearer.ValidatorTests.ps1"
+
+        . "$PSScriptRoot\Remoting.OAuthBearer.Setup.ps1"
+        try {
+            Invoke-TestFile "$PSScriptRoot\Remoting.OAuthBearer.Tests.ps1"
+        } finally {
+            . "$PSScriptRoot\Remoting.OAuthBearer.Teardown.ps1"
+        }
+    } catch {
+        Write-Host "`n  Phase 7 ABORTED: $($_.Exception.Message)" -ForegroundColor Red
+    }
+} else {
+    Write-Host "`n=== Phase 7: OAuth Bearer Tests SKIPPED (-IncludeOAuth not set) ===" -ForegroundColor Yellow
+}
 
 Show-TestSummary

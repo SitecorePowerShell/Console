@@ -65,7 +65,7 @@
             </Border>
             <Border Class="DialogHeaderDescription">
               <Literal
-                Text="Performing '{0}' action on a script requires an elevated session state."
+                Text="Performing '{0}' action on this item requires an elevated session state."
                 ID="DialogDescription" />
             </Border>
           </Border>
@@ -80,8 +80,8 @@
               </Border>
             </Border>
             <Border style="padding: 15px 5px;">
-              <Literal Text="Enter your credentials to validate access to {0} a script." ID="DialogMessage" />
-              <Literal Text="Confirm to validate access to {0} a script." ID="DialogMessageConfirm" Visible="false" />
+              <Literal Text="Enter your credentials to validate access to {0} this item." ID="DialogMessage" />
+              <Literal Text="Confirm to validate access to {0} this item." ID="DialogMessageConfirm" Visible="false" />
             </Border>
             <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" Columns="2">
               <Literal GridPanel.style="text-align: right; padding: 10px 4px 20px 4px;" Text="Username:" />

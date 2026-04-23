@@ -10,10 +10,31 @@ namespace Spe.Core.Extensions
 {
     public static class ItemExtensions
     {
+        private const string AccessRightsPath = "/sitecore/system/Modules/PowerShell/Settings/Access";
+        private const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library";
+
         public static bool InheritsFrom(this Item item, ID templateId)
         {
             return item != null && TemplateManager.GetTemplate(item) is Template template &&
                    template.InheritsFrom(templateId);
+        }
+
+        public static bool IsUnderPath(this Item item, string path)
+        {
+            if (item == null || path == null) return false;
+            var itemPath = item.Paths.Path;
+            return itemPath.Equals(path, StringComparison.OrdinalIgnoreCase)
+                || itemPath.StartsWith(path + "/", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsUnderAccessRights(this Item item)
+        {
+            return item.IsUnderPath(AccessRightsPath);
+        }
+
+        public static bool IsUnderScriptLibrary(this Item item)
+        {
+            return item.IsUnderPath(ScriptLibraryPath);
         }
 
         public static bool IsPowerShellScript(this Item item)

@@ -22,7 +22,7 @@ $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     # Clean up API Key items
-    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/API Keys" -ErrorAction SilentlyContinue
+    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients" -ErrorAction SilentlyContinue
     if ($apiKeysFolder) {
         $items = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-*" }

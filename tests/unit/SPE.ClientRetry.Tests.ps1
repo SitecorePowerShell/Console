@@ -65,11 +65,13 @@ namespace Spe.Tests {
 # Tests swap $global:__speMockHandler before each Invoke-RemoteScript call.
 $global:__speMockHandler = $null
 
-$__originalNewSpeHttpClient = Get-Command New-SpeHttpClient -ErrorAction SilentlyContinue
+# Capture the ScriptBlock value (not the FunctionInfo) because FunctionInfo.ScriptBlock
+# is evaluated at access time and would resolve to the override after Set-Item below.
+$__originalNewSpeHttpClient = (Get-Command New-SpeHttpClient -ErrorAction SilentlyContinue).ScriptBlock
 
 # Override New-SpeHttpClient to return a client wired to the current mock handler.
 Set-Item "function:global:New-SpeHttpClient" -Value {
-    param($Username, $Password, $SharedSecret, $AccessKeyId, $Credential, $UseDefaultCredentials, $Uri, $Cache, $Algorithm)
+    param($Username, $Password, $SharedSecret, $AccessKeyId, $AccessToken, $Credential, $UseDefaultCredentials, $Uri, $Cache, $Algorithm)
     return New-Object System.Net.Http.HttpClient($global:__speMockHandler)
 }
 
@@ -197,7 +199,7 @@ try {
 
 } finally {
     if ($__originalNewSpeHttpClient) {
-        Set-Item "function:global:New-SpeHttpClient" $__originalNewSpeHttpClient.ScriptBlock
+        Set-Item "function:global:New-SpeHttpClient" $__originalNewSpeHttpClient
     }
     $global:__speMockHandler = $null
 }
