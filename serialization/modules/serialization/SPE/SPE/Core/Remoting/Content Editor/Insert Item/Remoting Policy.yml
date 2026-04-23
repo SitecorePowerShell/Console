@@ -38,195 +38,28 @@ SharedFields:
         Exit
     }
     
-    Import-Function -Name DialogBuilder
+    $mode = "Insert"
+    $item = $null
+    $existingNames = $SitecoreContextItem.Children.Name
+    $dialogIcon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     
-    $commandGroups = [ordered]@{
-        "Inert: Item Discovery and Inspection" = @(
-            "Find-Item", "Get-ChildItem", "Get-Item",
-            "Get-ItemClone", "Get-ItemCloneNotification", "Get-ItemField",
-            "Get-ItemReference", "Get-ItemReferrer", "Get-ItemTemplate",
-            "Get-ItemWorkflowEvent", "Get-LockedChildItem",
-            "Initialize-Item", "Test-BaseTemplate"
-        )
-        "Inert: Presentation and Layout" = @(
-            "Get-Layout", "Get-LayoutDevice", "Get-PlaceholderSetting",
-            "Get-Preset", "Get-Rendering", "Get-RenderingParameter"
-        )
-        "Inert: System and Security Audit" = @(
-            "Get-Archive", "Get-ArchiveItem", "Get-Cache", "Get-Database",
-            "Get-Domain", "Get-ItemAcl", "Get-Package", "Get-PackageItem",
-            "Get-Role", "Get-RoleMember", "Get-ScriptSession",
-            "Get-SearchIndex", "Get-Session", "Get-SitecoreJob",
-            "Get-SpeModule", "Get-SpeModuleFeatureRoot", "Get-TaskSchedule",
-            "Get-UpdatePackageDiff", "Get-User", "Get-UserAgent",
-            "Test-Account", "Test-ItemAcl", "Test-Rule"
-        )
-        "Inert: Search" = @(
-            "Add-DateRangeFilter", "Add-FieldContains", "Add-FieldEquals",
-            "Add-SearchFilter", "Add-SearchFilterGroup", "Add-TemplateFilter",
-            "Get-SearchFilter", "Get-SearchIndexField", "Invoke-Search",
-            "New-SearchBuilder", "New-SearchFilterGroup", "New-SearchPredicate",
-            "Reset-SearchBuilder"
-        )
-        "Inert: Data Transformation" = @(
-            "Compare-Object", "ConvertFrom-CliXml", "ConvertFrom-Csv",
-            "ConvertFrom-Json", "ConvertTo-CliXml", "ConvertTo-Csv",
-            "ConvertTo-Json", "ConvertTo-Xml", "ForEach-Object",
-            "Format-Custom", "Format-List", "Format-Table", "Format-Wide",
-            "Group-Object", "Measure-Object", "New-PSObject",
-            "Select-Object", "Sort-Object", "Where-Object"
-        )
-        "Inert: Output and Diagnostics" = @(
-            "Out-Null", "Out-String", "Resolve-Error",
-            "Write-Debug", "Write-Error", "Write-Host", "Write-Log",
-            "Write-Output", "Write-Verbose", "Write-Warning"
-        )
-        "Inert: Variables and Utilities" = @(
-            "Compress-Archive", "Expand-Archive", "Get-Content",
-            "Get-Date", "Get-Member", "Get-Random", "Get-Variable",
-            "New-Object", "New-UsingBlock", "Resolve-Path",
-            "Set-Variable", "Start-Sleep", "Test-Path"
-        )
-        "State Change: Content and Structure" = @(
-            "Add-BaseTemplate", "Add-ItemVersion", "Clear-Archive",
-            "Copy-Item", "Expand-Token", "Lock-Item", "Move-Item",
-            "New-Item", "New-ItemClone", "New-ItemWorkflowEvent",
-            "Protect-Item", "Receive-ItemCloneNotification",
-            "Remove-ArchiveItem", "Remove-BaseTemplate", "Remove-Item",
-            "Remove-ItemVersion", "Reset-ItemField", "Restore-ArchiveItem",
-            "Set-ItemTemplate", "Unlock-Item", "Unprotect-Item",
-            "Update-ItemReferrer"
-        )
-        "State Change: Presentation and Layout" = @(
-            "Add-PlaceholderSetting", "Add-Rendering", "Merge-Layout",
-            "New-PlaceholderSetting", "New-Rendering", "Remove-Layout",
-            "Remove-PlaceholderSetting", "Remove-Rendering",
-            "Remove-RenderingParameter", "Reset-Layout", "Set-Layout",
-            "Set-Rendering", "Set-RenderingParameter", "Switch-Rendering"
-        )
-        "State Change: Security" = @(
-            "Add-ItemAcl", "Add-RoleMember", "Clear-ItemAcl",
-            "Disable-User", "Enable-User", "New-Domain", "New-ItemAcl",
-            "New-Role", "New-User", "Remove-Domain", "Remove-Role",
-            "Remove-RoleMember", "Remove-User", "Set-ItemAcl",
-            "Set-User", "Set-UserPassword", "Unlock-User"
-        )
-        "State Change: Publishing and Indexing" = @(
-            "Initialize-SearchIndex", "Initialize-SearchIndexItem",
-            "Publish-Item", "Remove-SearchIndexItem", "Resume-SearchIndex",
-            "Stop-SearchIndex", "Suspend-SearchIndex", "Update-SearchIndexItem"
-        )
-        "State Change: Packages" = @(
-            "Export-Item", "Export-Package", "Export-Role",
-            "Export-UpdatePackage", "Export-User", "Import-Item",
-            "Import-Role", "Import-User", "Install-Package",
-            "Install-UpdatePackage", "New-ExplicitFileSource",
-            "New-ExplicitItemSource", "New-FileSource", "New-ItemSource",
-            "New-Package", "New-PackagePostStep", "New-SecuritySource"
-        )
-        "State Change: Sessions" = @(
-            "Remove-ScriptSession", "Remove-Session",
-            "Stop-ScriptSession", "Wait-ScriptSession"
-        )
-        "Script Execution" = @(
-            "Import-Function", "Invoke-Script", "Invoke-SqlCommand",
-            "Invoke-Workflow", "Start-ScriptSession", "Start-TaskSchedule"
-        )
-    }
+    Get-Item -Path "master:" -ID "{B1DA4078-58B8-4A95-AB55-359720B8409B}" | Invoke-Script
     
-    $checklistOptions = [ordered]@{}
-    $checklistTooltips = [ordered]@{}
-    foreach($key in $commandGroups.Keys) {
-        $checklistOptions[$key] = $key
-        $cmds = $commandGroups[$key]
-        $preview = ($cmds | Select-Object -First 4) -join ", "
-        if($cmds.Count -gt 4) { $preview += " (+$($cmds.Count - 4) more)" }
-        $checklistTooltips[$key] = $preview
-    }
-    
-    $dialog = New-DialogBuilder -Title "Create Remoting Policy" `
-        -Description "Creates a new Remoting Policy that controls which commands and scripts are permitted for API key holders." `
-        -Width 750 -Height 700 -OkButtonName "Create" -ShowHints `
-        -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
-    
-    $dialog | Add-TextField -Name "name" -Title "Name" -Placeholder "My Policy" `
-        -Tooltip "A descriptive name for this remoting policy." -Mandatory -Tab "General"
-    
-    $dialog | Add-RadioButtons -Name "languageMode" -Title "Language Mode" -Value "Constrained" `
-        -Options ([ordered]@{ "Constrained Language (recommended)" = "Constrained"; "Full Language" = "FullLanguage" }) `
-        -Tooltip "Constrained Language restricts scripts to the allowed command list. Full Language permits all commands." `
-        -Tab "General" -GroupId 1
-    
-    $dialog | Add-Dropdown -Name "auditLevel" -Title "Audit Level" -Value "Violations" `
-        -Options ([ordered]@{ "None" = "None"; "Violations" = "Violations"; "Standard" = "Standard"; "Full" = "Full" }) `
-        -Tooltip "Controls how much detail is logged. None disables logging; Violations logs only blocked actions; Standard logs key operations; Full logs everything." `
-        -Tab "General"
-    
-    $dialog | Add-Checklist -Name "allowedCommands" -Title "Allowed Commands" -Value @() `
-        -Options $checklistOptions -OptionTooltips $checklistTooltips `
-        -Tooltip "Select command groups to allow for inline scripts. Only applies in Constrained Language mode." `
-        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
-    
-    $dialog | Add-MultiLineTextField -Name "additionalCommands" -Title "Additional Commands" `
-        -Placeholder "One command per line" `
-        -Tooltip "Add individual commands not covered by the groups above. One command name per line." `
-        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "Constrained"
-        
-    $dialog | Add-InfoText -Name "fullLanguageInfo" -Title "Full Language Mode" `
-        -Value "In Full Language mode, Allowed Commands has no effect. Scripts can instantiate any .NET type (DB connections, file I/O, reflection) directly. Uncheck Full Language to enforce an allowlist and restrict .NET type access." `
-        -Tab "Inline Remoting" -ParentGroupId 1 -ShowOnValue "FullLanguage"
-    
-    # --- Web API tab ---
-    $webApiScripts = @(Get-SpeModuleFeatureRoot -Feature "webAPI" |
-        ForEach-Object { Get-ChildItem -Path "$($_.Database.Name):$($_.Paths.Path)" -Recurse } |
-        Where-Object { $_.TemplateID -eq "{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" })
-    if($webApiScripts.Count -gt 0) {
-        $scriptOptions = [ordered]@{}
-        foreach($s in $webApiScripts) { $scriptOptions[$s.Name] = $s.ID.ToString() }
-        $dialog | Add-Checklist -Name "approvedScripts" -Title "Approved Scripts" -Value @() `
-            -Options $scriptOptions `
-            -Tooltip "Web API scripts permitted for execution by name. Only selected scripts can be invoked through the v2 endpoint." `
-            -Tab "Web API"
-    } else {
-        $dialog | Add-InfoText -Name "noScriptsInfo" -Title "Approved Scripts" `
-            -Value "No Web API scripts found. Add scripts to a module's Web API library to enable approval." `
-            -Tab "Web API"
-    }
-    
-    $validator = {
-        $proposedName = $variables.name.Value
-        if($existingNames | Where-Object { $_ -eq $proposedName }) {
-            $variables.name.Error = "An item named '$proposedName' already exists."
-        }
-    }
-    
-    $result = $dialog | Invoke-Dialog -Validator $validator -ValidatorParameters @{ existingNames = $SitecoreContextItem.Children.Name }
-    
-    if($result.Result -ne "ok") {
+    if($dialogResult -ne "ok") {
         Close-Window
         Exit
     }
-    
-    $selectedCommands = @()
-    foreach($group in $allowedCommands) {
-        $selectedCommands += $commandGroups[$group]
-    }
-    $extraCommands = ($additionalCommands -split "`n") |
-        ForEach-Object { $_.Trim() } | Where-Object { $_ }
-    $allCommands = @($selectedCommands) + @($extraCommands) |
-        Sort-Object -Unique
-    $commandText = $allCommands -join "`n"
     
     $item = New-Item -Path $SitecoreContextItem.ProviderPath -Name $name -ItemType "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}"
     New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
         $item.Editing.BeginEdit()
         if($languageMode -eq "FullLanguage") {
-            $item["Full Language"] = "1"
+            $item["FullLanguage"] = "1"
         }
-        $item["Allowed Commands"] = $commandText
-        $item["Audit Level"] = $auditLevel
+        $item["AllowedCommands"] = $commandText
+        $item["AuditLevel"] = $auditLevel
         if($approvedScripts) {
-            $item["Approved Scripts"] = ($approvedScripts -join "|")
+            $item["ApprovedScripts"] = ($approvedScripts -join "|")
         }
         $item.Editing.EndEdit() > $null
     }
@@ -262,4 +95,5 @@ Languages:
         sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260418T190732Z
+      Value: 20260422T230000Z
+    

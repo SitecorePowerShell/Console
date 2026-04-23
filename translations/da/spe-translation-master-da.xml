@@ -200,16 +200,16 @@
   <phrase updated="20211124T185715Z" fieldid="__Short description" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
     <da>Når man angiver karaterene "\" eller "-", så vil man aktivere auto-fuldfør (kan resultere i en midlertidig forsinkelse i svar fra editoren)</da>
   </phrase>
-  <phrase updated="20220921T015659Z" fieldid="Title" itemid="{464C9789-617A-4CE6-988C-8AF421B6D385}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/Enabled">
+  <phrase updated="20220921T015659Z" fieldid="Title" itemid="{464C9789-617A-4CE6-988C-8AF421B6D385}" key="Enabled" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Status/Enabled">
     <da>** Enable the delegated access **</da>
   </phrase>
-  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{A0506748-B498-49C9-8B25-23F9030C1A98}" key="ElevatedRole" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ElevatedRole">
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{A0506748-B498-49C9-8B25-23F9030C1A98}" key="ElevatedRole" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Runtime/ElevatedRole">
     <da>** Elevated Role (the current user must be a member) **</da>
   </phrase>
-  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{FF4855AB-377F-4CF5-94C7-4A8EE32D143F}" key="ImpersonatedUser" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ImpersonatedUser">
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{FF4855AB-377F-4CF5-94C7-4A8EE32D143F}" key="ImpersonatedUser" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Runtime/ImpersonatedUser">
     <da>** Impersonated User (scripts will be executed as this user) **</da>
   </phrase>
-  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{75560CD0-EB3F-45D4-AB41-4B37DDE1C741}" key="ScriptItem" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/ScriptItem">
+  <phrase updated="20220921T015700Z" fieldid="Title" itemid="{75560CD0-EB3F-45D4-AB41-4B37DDE1C741}" key="ScriptItem" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Runtime/ScriptItem">
     <da>** Script Item (one or more scripts to delegate access) **</da>
   </phrase>
   <phrase updated="20211124T185657Z" fieldid="Title" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">

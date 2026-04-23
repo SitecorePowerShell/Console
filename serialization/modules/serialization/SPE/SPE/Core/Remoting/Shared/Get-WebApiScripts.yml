@@ -1,8 +1,8 @@
 ﻿---
 ID: "632c75c4-7a4f-47dd-8ae8-dcf2dd3b5179"
-Parent: "bc04225a-db28-457e-bb7e-6cb3c4d84b0a"
+Parent: "413963a3-16d0-4f9d-bf66-03a84fcf4e59"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Get-WebApiScripts"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Shared/Get-WebApiScripts"
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon

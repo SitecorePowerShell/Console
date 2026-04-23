@@ -63,8 +63,8 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     $f1["Shared"] = "1"
     $f1.Editing.EndEdit() | Out-Null
 
-    # Field: Full Language
-    $f2 = New-Item -Path "$($section.Paths.FullPath)/Full Language" -ItemType $fieldTemplate
+    # Field: FullLanguage
+    $f2 = New-Item -Path "$($section.Paths.FullPath)/FullLanguage" -ItemType $fieldTemplate
     $f2.Editing.BeginEdit()
     $f2["Type"] = "Checkbox"
     $f2["Title"] = "Full Language"
@@ -72,8 +72,8 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     $f2["Shared"] = "1"
     $f2.Editing.EndEdit() | Out-Null
 
-    # Field: Allowed Commands
-    $f3 = New-Item -Path "$($section.Paths.FullPath)/Allowed Commands" -ItemType $fieldTemplate
+    # Field: AllowedCommands
+    $f3 = New-Item -Path "$($section.Paths.FullPath)/AllowedCommands" -ItemType $fieldTemplate
     $f3.Editing.BeginEdit()
     $f3["Type"] = "Multi-Line Text"
     $f3["Title"] = "Allowed Commands"
@@ -81,8 +81,8 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     $f3["Shared"] = "1"
     $f3.Editing.EndEdit() | Out-Null
 
-    # Field: Approved Scripts
-    $f4 = New-Item -Path "$($section.Paths.FullPath)/Approved Scripts" -ItemType $fieldTemplate
+    # Field: ApprovedScripts
+    $f4 = New-Item -Path "$($section.Paths.FullPath)/ApprovedScripts" -ItemType $fieldTemplate
     $f4.Editing.BeginEdit()
     $f4["Type"] = "Treelist"
     $f4["Title"] = "Approved Scripts"
@@ -91,8 +91,8 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     $f4["Shared"] = "1"
     $f4.Editing.EndEdit() | Out-Null
 
-    # Field: Audit Level
-    $f5 = New-Item -Path "$($section.Paths.FullPath)/Audit Level" -ItemType $fieldTemplate
+    # Field: AuditLevel
+    $f5 = New-Item -Path "$($section.Paths.FullPath)/AuditLevel" -ItemType $fieldTemplate
     $f5.Editing.BeginEdit()
     $f5["Type"] = "Droplist"
     $f5["Title"] = "Audit Level"
@@ -124,10 +124,10 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
         TemplatePath = $template.Paths.FullPath
         Fields = @(
             @{ Name = "Enabled"; Id = $f1.ID.ToString() }
-            @{ Name = "Full Language"; Id = $f2.ID.ToString() }
-            @{ Name = "Allowed Commands"; Id = $f3.ID.ToString() }
-            @{ Name = "Approved Scripts"; Id = $f4.ID.ToString() }
-            @{ Name = "Audit Level"; Id = $f5.ID.ToString() }
+            @{ Name = "FullLanguage"; Id = $f2.ID.ToString() }
+            @{ Name = "AllowedCommands"; Id = $f3.ID.ToString() }
+            @{ Name = "ApprovedScripts"; Id = $f4.ID.ToString() }
+            @{ Name = "AuditLevel"; Id = $f5.ID.ToString() }
         )
     } | ConvertTo-Json -Depth 3
 } -Raw

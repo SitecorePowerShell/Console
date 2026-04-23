@@ -12,8 +12,8 @@ if (Test-Path $fullPath) {
 $policy = New-Item -Path $policiesPath -Name $testName -ItemType $templatePath
 
 $policy.Editing.BeginEdit() | Out-Null
-$policy["Full Language"]   = ""
-$policy["Allowed Commands"] = "Get-Item`nGet-ChildItem`nOut-Default"
+$policy["FullLanguage"]   = ""
+$policy["AllowedCommands"] = "Get-Item`nGet-ChildItem`nOut-Default"
 $policy.Editing.EndEdit()  | Out-Null
 
 [Spe.Core.Settings.Authorization.RemotingPolicyManager]::Invalidate()

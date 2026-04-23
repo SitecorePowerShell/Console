@@ -1,0 +1,299 @@
+﻿---
+ID: "c7e162cd-9b30-4db6-b156-ba8dcb7d3b75"
+Parent: "413963a3-16d0-4f9d-bf66-03a84fcf4e59"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Shared/Remoting Client Editor
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/keys.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # Shared Remoting Client dialog (Shared Secret + OAuth, Insert + Edit).
+    # Caller sets $mode ("Insert" | "Edit"), $isOAuth, $item (Edit), $existingNames
+    # (Insert), $dialogIcon, then invokes this script. On return, caller reads
+    # $dialogResult, $name, $enabled, plus kind-specific values ($finalKeyId /
+    # $finalSecret for Shared Secret, $allowedIssuer / $oauthClientIds for OAuth),
+    # and common values ($impersonateUser, $policy, $expires, $requestLimit,
+    # $throttleWindow, $throttleAction).
+    
+    Import-Function -Name DialogBuilder
+    
+    $policyTemplateId = "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}"
+    $clientKind = if($isOAuth) { "OAuth Client" } else { "Shared Secret Client" }
+    
+    # --- Read current values (Edit) or set defaults (Insert) ---
+    
+    $currentName = ""
+    $currentEnabled = $false
+    $currentUser = $null
+    $currentRequestLimit = ""
+    $currentThrottleWindow = ""
+    $currentThrottleAction = ""
+    $currentExpires = [DateTime]::MinValue
+    $currentPolicy = $null
+    $currentAccessKeyId = ""
+    $currentSecret = ""
+    $currentAllowedIssuer = ""
+    $currentOAuthClientIds = ""
+    
+    if($mode -eq "Edit" -and $item) {
+        $currentName = $item.Name
+        $currentEnabled = [Sitecore.MainUtil]::GetBool($item["Enabled"], $false)
+        $currentUser = $item["ImpersonatedUser"]
+        $currentRequestLimit = $item["RequestLimit"]
+        $currentThrottleWindow = $item["ThrottleWindow"]
+        $currentThrottleAction = $item["ThrottleAction"]
+    
+        $currentExpiresStr = $item["Expires"]
+        if(-not [string]::IsNullOrEmpty($currentExpiresStr)) {
+            $parsed = [Sitecore.DateUtil]::IsoDateToDateTime($currentExpiresStr, [DateTime]::MinValue)
+            if($parsed -ne [DateTime]::MinValue) { $currentExpires = $parsed }
+        }
+    
+        $currentPolicyId = $item["Policy"]
+        if(-not [string]::IsNullOrEmpty($currentPolicyId)) {
+            $resolved = Get-Item -Path "master:" -ID $currentPolicyId -ErrorAction SilentlyContinue
+            if($resolved) { $currentPolicy = $resolved }
+        }
+    
+        if($isOAuth) {
+            $currentAllowedIssuer = $item["AllowedIssuer"]
+            $currentOAuthClientIds = $item["OAuthClientIds"]
+        } else {
+            $currentAccessKeyId = $item["AccessKeyId"]
+            $currentSecret = $item["SharedSecret"]
+        }
+    }
+    
+    # --- Generate new credentials (Shared Secret only) ---
+    
+    $generatedAccessKeyId = ""
+    $generatedSecret = ""
+    if(-not $isOAuth) {
+        $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::new()
+        $kidBytes = New-Object byte[] 12
+        $rng.GetBytes($kidBytes)
+        $generatedAccessKeyId = "spe_" + [System.BitConverter]::ToString($kidBytes).Replace("-","").ToLower()
+        $secretBytes = New-Object byte[] 32
+        $rng.GetBytes($secretBytes)
+        $generatedSecret = [System.BitConverter]::ToString($secretBytes).Replace("-","")
+        $rng.Dispose()
+    }
+    
+    # --- Build dialog ---
+    
+    $title = if($mode -eq "Insert") { "Create $clientKind" } else { "Edit $clientKind" }
+    $okButton = if($mode -eq "Insert") { "Create" } else { "Save" }
+    $description = if($mode -eq "Insert") {
+        if($isOAuth) {
+            "Creates a new OAuth Client identity that validates externally-issued bearer tokens (RS256 / ES256 JWTs) against the configured issuer and JWKS."
+        } else {
+            "Creates a new Shared Secret Client for SPE Remoting HMAC authentication. The Access Key Id is included in the JWT header; the Shared Secret is the HMAC signing key."
+        }
+    } else {
+        "Modify the $clientKind '$($item.Name)'."
+    }
+    
+    $dialog = New-DialogBuilder -Title $title -Description $description `
+        -Width 700 -Height 620 -OkButtonName $okButton -ShowHints -Icon $dialogIcon
+    
+    # Status tab
+    
+    if($mode -eq "Insert") {
+        $placeholder = if($isOAuth) { "OAuth Client" } else { "Shared Secret Client" }
+        $dialog | Add-TextField -Name "name" -Title "Name" -Value "" -Placeholder $placeholder `
+            -Tooltip "A descriptive name for this $clientKind." -Mandatory -Tab "Status"
+    }
+    
+    $dialog | Add-Checkbox -Name "enabled" -Title "Enabled" -Value $currentEnabled `
+        -Tooltip "Disabled clients cannot authenticate. Use to revoke access without deleting the item." `
+        -Tab "Status"
+    
+    # Authentication tab
+    
+    if($isOAuth) {
+        $dialog | Add-TextField -Name "allowedIssuer" -Title "Allowed Issuer" -Value $currentAllowedIssuer `
+            -Tooltip "The exact iss claim expected on incoming tokens (e.g. https://your-idp). Required - tokens whose iss claim does not match exactly are rejected. Prevents client_id collisions across IdPs." `
+            -Mandatory -Tab "Authentication"
+    
+        $dialog | Add-MultiLineTextField -Name "oauthClientIds" -Title "OAuth Client Ids" -Value $currentOAuthClientIds `
+            -Tooltip "One client_id per line. A token whose client_id claim matches any entry authenticates as this client. Multiple entries let one client cover multiple IdP registrations." `
+            -Tab "Authentication" -Lines 6
+    } elseif($mode -eq "Insert") {
+        $dialog | Add-InfoText -Name "secretWarning" -Title "Copy the Shared Secret before clicking Create" `
+            -Value "This is the only time the Shared Secret is shown in plain text. The Edit dialog hides the field. To rotate the secret, use Edit or create a new Shared Secret Client." `
+            -Tab "Authentication"
+    
+        $dialog | Add-TextField -Name "accessKeyId" -Title "Access Key Id" -Value $generatedAccessKeyId `
+            -Tooltip "Unique identifier sent in the JWT kid header. Auto-generated but can be customized." `
+            -Mandatory -Tab "Authentication"
+    
+        $dialog | Add-TextField -Name "sharedSecret" -Title "Shared Secret" -Value $generatedSecret `
+            -Tooltip "HMAC signing key shared between client and server. Auto-generated (64 hex chars, 256 bits). RFC 7518 minimums: HS256 = 32, HS384 = 48, HS512 = 64." `
+            -Mandatory -Tab "Authentication"
+    } else {
+        $dialog | Add-RadioButtons -Name "keyIdAction" -Title "Access Key Id" -Value "Keep" `
+            -Options ([ordered]@{ "Keep: $currentAccessKeyId" = "Keep"; "Rotate (generate new)" = "Rotate"; "Custom" = "Custom" }) `
+            -Tooltip "The Access Key Id is sent in the JWT kid header. Changing it requires updating all callers." `
+            -Tab "Authentication" -GroupId 1
+    
+        $dialog | Add-InfoText -Name "newKeyIdInfo" -Title "New Access Key Id" `
+            -Value "$generatedAccessKeyId" `
+            -Tab "Authentication" -ParentGroupId 1 -ShowOnValue "Rotate"
+    
+        $dialog | Add-TextField -Name "customKeyId" -Title "Custom Access Key Id" -Value $currentAccessKeyId `
+            -Tooltip "Enter a custom Access Key Id. Must be at least 8 characters." `
+            -Tab "Authentication" -ParentGroupId 1 -ShowOnValue "Custom"
+    
+        $dialog | Add-RadioButtons -Name "secretAction" -Title "Shared Secret" -Value "Keep" `
+            -Options ([ordered]@{ "Keep current (hidden)" = "Keep"; "Rotate (generate new)" = "Rotate" }) `
+            -Tooltip "The Shared Secret is the HMAC signing key. The current value is never displayed. Rotating generates a new secret shown once after save - all callers must be updated." `
+            -Tab "Authentication" -GroupId 2
+    
+        $dialog | Add-InfoText -Name "newSecretInfo" -Title "New Shared Secret (shown once after Save)" `
+            -Value "$generatedSecret" `
+            -Tab "Authentication" -ParentGroupId 2 -ShowOnValue "Rotate"
+    }
+    
+    # Runtime tab
+    
+    $dialog | Add-UserPicker -Name "impersonateUser" -Title "Impersonated User" -Value $currentUser `
+        -Tooltip "The Sitecore user identity used when executing scripts with this client." `
+        -Mandatory -Tab "Runtime"
+    
+    $dialog | Add-Droplink -Name "policy" -Title "Remoting Policy" -Value $currentPolicy -AllowNone `
+        -Tooltip "Controls what commands and scripts this client can execute." `
+        -Source "script:{1993BD1B-0004-41BD-A857-4D293E4EA884}" `
+        -Tab "Runtime"
+    
+    $dialog | Add-DateTimePicker -Name "expires" -Title "Expires" -Value $currentExpires `
+        -Tooltip "Optional expiration date. After this date the client is automatically rejected. Leave empty for no expiration." `
+        -Tab "Runtime"
+    
+    # Throttling tab
+    
+    $currentLimitInt = 0
+    $currentWindowInt = 0
+    if($currentRequestLimit)  { [int]::TryParse($currentRequestLimit, [ref]$currentLimitInt) > $null }
+    if($currentThrottleWindow){ [int]::TryParse($currentThrottleWindow, [ref]$currentWindowInt) > $null }
+    
+    $dialog | Add-TextField -Name "requestLimit" -Title "Request Limit" `
+        -Value $(if($currentLimitInt -gt 0) { $currentRequestLimit } else { "" }) -IsNumber `
+        -Tooltip "Maximum requests allowed within the throttle window. Leave empty to disable rate limiting." `
+        -Tab "Throttling"
+    
+    $dialog | Add-TextField -Name "throttleWindow" -Title "Throttle Window (seconds)" `
+        -Value $(if($currentWindowInt -gt 0) { $currentThrottleWindow } else { "" }) -IsNumber `
+        -Tooltip "Duration in seconds for the rate limiting window (e.g. 60 for per-minute limiting)." `
+        -Tab "Throttling"
+    
+    $dialog | Add-Dropdown -Name "throttleAction" -Title "Throttle Action" -Value $currentThrottleAction `
+        -Options ([ordered]@{ "Block (HTTP 429)" = "Block"; "Bypass (allow but log)" = "Bypass" }) `
+        -Placeholder "Select an action" `
+        -Tooltip "Block rejects with HTTP 429. Bypass allows the request through and logs that the limit was exceeded." `
+        -Tab "Throttling"
+    
+    # --- Validator ---
+    
+    $validator = {
+        if($variables.name) {
+            $proposedName = $variables.name.Value
+            if([string]::IsNullOrWhiteSpace($proposedName)) {
+                $variables.name.Error = "Name is required."
+            } elseif($existingNames -and ($existingNames | Where-Object { $_ -eq $proposedName })) {
+                $variables.name.Error = "An item named '$proposedName' already exists."
+            }
+        }
+        if($variables.accessKeyId) {
+            if($variables.accessKeyId.Value.Length -lt 8) {
+                $variables.accessKeyId.Error = "Access Key Id must be at least 8 characters."
+            }
+        }
+        if($variables.sharedSecret) {
+            if($variables.sharedSecret.Value.Length -lt 32) {
+                $variables.sharedSecret.Error = "Shared Secret must be at least 32 characters. RFC 7518 minimums: HS256 = 32, HS384 = 48, HS512 = 64."
+            }
+        }
+        if($variables.keyIdAction -and $variables.keyIdAction.Value -eq "Custom") {
+            if($variables.customKeyId.Value.Length -lt 8) {
+                $variables.customKeyId.Error = "Access Key Id must be at least 8 characters."
+            }
+        }
+        if($variables.allowedIssuer) {
+            if([string]::IsNullOrWhiteSpace($variables.allowedIssuer.Value)) {
+                $variables.allowedIssuer.Error = "Allowed Issuer is required."
+            }
+        }
+        if([string]::IsNullOrEmpty($variables.impersonateUser.Value)) {
+            $variables.impersonateUser.Error = "Impersonated User is required."
+        }
+        $pTid = "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}"
+        if(!$variables.policy.Value -or $variables.policy.Value.TemplateID.ToString() -ne $pTid) {
+            $variables.policy.Error = "Please select a Remoting Policy."
+        }
+        $limit = $variables.requestLimit.Value
+        $window = $variables.throttleWindow.Value
+        if($limit -gt 0 -and $window -le 0) {
+            $variables.throttleWindow.Error = "Throttle Window is required when Request Limit is set."
+        }
+    }
+    
+    $validatorParams = @{}
+    if($existingNames) { $validatorParams.existingNames = $existingNames }
+    
+    $result = $dialog | Invoke-Dialog -Validator $validator -ValidatorParameters $validatorParams
+    $dialogResult = $result.Result
+    if($dialogResult -ne "ok") { return }
+    
+    # --- Compute derived values for Shared Secret Edit ---
+    
+    $finalKeyId = $null
+    $finalSecret = $null
+    if(-not $isOAuth) {
+        if($mode -eq "Insert") {
+            $finalKeyId = $accessKeyId
+            $finalSecret = $sharedSecret
+        } else {
+            $finalKeyId = switch($keyIdAction) {
+                "Rotate" { $generatedAccessKeyId }
+                "Custom" { $customKeyId }
+                default  { $currentAccessKeyId }
+            }
+            $finalSecret = if($secretAction -eq "Rotate") { $generatedSecret } else { $null }
+        }
+    }
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Shared dialog logic for creating and editing Remoting Client items.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Remoting Client Editor
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260422T153215Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "59656645-eb96-4841-895b-ac066b2d72e2"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260423T164555Z

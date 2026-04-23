@@ -1,8 +1,8 @@
 ﻿---
 ID: "1714dbb1-2a36-44be-a7af-ee73a5f8b69b"
-Parent: "80ba923c-9eb8-408d-b980-dceb7d95ecc5"
+Parent: "ea6ff7ac-1a1b-4941-896d-ef59671ec8fb"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
-Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development/Delegated Access Editor
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Delegated Access/Shared/Delegated Access Editor
 SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script

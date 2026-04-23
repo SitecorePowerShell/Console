@@ -1,15 +1,15 @@
 ﻿---
 ID: "464c9789-617a-4ce6-988c-8af421b6d385"
-Parent: "ea02ce21-8a4b-43d5-9ff2-2f39d4895505"
+Parent: "6315d9c0-a937-47b2-bfa9-17d12402a635"
 Template: "455a3e98-a627-4b40-8035-e683a0331ac7"
-Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Access Mapping/Enabled
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Delegated Access/Status/Enabled
 SharedFields:
 - ID: "ab162cc0-dc80-4abf-8871-998ee5d7ba32"
   Hint: Type
   Value: Checkbox
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 50
+  Value: 100
 - ID: "be351a73-fcb0-4213-93fa-c302d8ab4f51"
   Hint: Shared
   Value: 1
@@ -24,7 +24,7 @@ Languages:
     Value: Disable to suspend elevated execution without removing the mapping. The selected scripts will continue to run but under the caller's own permissions.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: When disabled, scripts run under the current user context
+    Value: When disabled, scripts run under the current user context.
   Versions:
   - Version: 1
     Fields:
