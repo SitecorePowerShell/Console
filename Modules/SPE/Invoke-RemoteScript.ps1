@@ -315,6 +315,14 @@ function Invoke-RemoteScript {
             sitecore\admin           sitecore     True            False
 
         .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -Current }
+
+        .EXAMPLE
             The following remotely executes a script in Sitecore with the $Using variable.
 
             $date = [datetime]::Now
@@ -488,6 +496,7 @@ function Invoke-RemoteScript {
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
             $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
             $SessionId            = $sd.SessionId
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
@@ -496,6 +505,7 @@ function Invoke-RemoteScript {
             $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
+            $AccessToken = ""
             $SessionId = [guid]::NewGuid()
             $PersistentSession = $false
             $Algorithm = "HS256"
@@ -521,7 +531,7 @@ function Invoke-RemoteScript {
 
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
             $errorResponse = $null

@@ -5,6 +5,7 @@ function Expand-ScriptSession {
         Password              = $Session.Password
         SharedSecret          = $Session.SharedSecret
         AccessKeyId           = $Session.AccessKeyId
+        AccessToken           = $Session.AccessToken
         SessionId             = $Session.SessionId
         Credential            = $Session.Credential
         UseDefaultCredentials = [bool]$Session.UseDefaultCredentials
@@ -21,6 +22,7 @@ function New-SpeHttpClient {
         [string]$Password,
         [string]$SharedSecret,
         [string]$AccessKeyId,
+        [string]$AccessToken,
         [System.Management.Automation.PSCredential]$Credential,
         [bool]$UseDefaultCredentials,
         [Uri]$Uri,
@@ -44,7 +46,10 @@ function New-SpeHttpClient {
     # tests/benchmarks/Measure-RemotingPerformance.ps1). Not cached today because
     # the savings are <2% of end-to-end HTTP latency and no high-frequency caller
     # has asked for it. Revisit if a workload shows up that makes it measurable.
-    if (![string]::IsNullOrEmpty($SharedSecret)) {
+    if (![string]::IsNullOrEmpty($AccessToken)) {
+        # Externally-issued bearer token (OAuth / OIDC). No client-side minting.
+        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
+    } elseif (![string]::IsNullOrEmpty($SharedSecret)) {
         $jwtParams = @{
             Algorithm = $Algorithm
             Issuer = 'SPE Remoting'

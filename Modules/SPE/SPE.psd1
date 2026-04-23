@@ -64,6 +64,8 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules = @(
         '.\ConvertFrom-CliXml.ps1'
+        '.\ConvertFrom-JwtHeader.ps1',
+        '.\ConvertFrom-JwtPayload.ps1',
         '.\ConvertTo-CliXml.ps1',
         '.\Invoke-RemoteScript.ps1',
         '.\Invoke-RemoteWait.ps1',
@@ -77,10 +79,12 @@
         '.\Wait-RemoteScriptSession.ps1',
         '.\Wait-RemoteSitecoreJob.ps1'
     )
-    
+
     # Functions to export from this module
     FunctionsToExport = @(
         'ConvertFrom-CliXml'
+        'ConvertFrom-JwtHeader',
+        'ConvertFrom-JwtPayload',
         'ConvertTo-CliXml',
         'Invoke-RemoteScript',
         'New-Jwt',

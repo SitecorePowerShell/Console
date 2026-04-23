@@ -13,9 +13,17 @@ function New-ScriptSession {
 
             New-ScriptSession -AccessKeyId "spe_a3f7b2c891d4e6f0a1b2c3d4" -SharedSecret $secret -ConnectionUri https://remotesitecore
 
+        .EXAMPLE
+            The following remotely connects using an externally-issued OAuth bearer token
+            (RS256/ES256 JWT from Sitecore Identity Server, Auth0, Entra ID, etc.). The
+            server must have the OAuth bearer authentication provider enabled.
+
+            New-ScriptSession -AccessToken $token -ConnectionUri https://remotesitecore
+
         .PARAMETER Username
             Specifies the Sitecore identity used for connecting to a remote instance.
-            Required for Password and SharedSecret parameter sets. Not used with AccessKey.
+            Required for Password and SharedSecret parameter sets. Not used with AccessKey
+            or AccessToken (identity comes from the API Key item or token claims).
 
         .PARAMETER Password
             Specifies the Sitecore password associated with the identity.
@@ -27,6 +35,12 @@ function New-ScriptSession {
             Specifies the Access Key Id of a Remoting API Key item. When provided, the
             JWT includes a kid header for direct key lookup. Username is not required
             because identity is determined by the Impersonate User field on the API Key item.
+
+        .PARAMETER AccessToken
+            Specifies an externally-issued OAuth bearer token (RS256/ES256 JWT). Use when
+            the server has the OAuth bearer authentication provider enabled and tokens are
+            minted by an identity provider (Sitecore Identity Server, Auth0, Entra ID,
+            Keycloak). The token is sent verbatim; no client-side JWT minting occurs.
 
         .PARAMETER Timeout
             Specifies the duration of the wait, in seconds.
@@ -71,6 +85,10 @@ function New-ScriptSession {
         [ValidateNotNullOrEmpty()]
         [string]$AccessKeyId = $null,
 
+        [Parameter(Mandatory = $true, ParameterSetName = "AccessToken")]
+        [ValidateNotNullOrEmpty()]
+        [string]$AccessToken = $null,
+
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [Uri[]]$ConnectionUri = $null,
@@ -102,6 +120,7 @@ function New-ScriptSession {
             "Password" = [string]$Password
             "SharedSecret" = [string]$SharedSecret
             "AccessKeyId" = [string]$AccessKeyId
+            "AccessToken" = [string]$AccessToken
             "SessionId" = [string]$sessionId
             "Credential" = [System.Management.Automation.PSCredential]$Credential
             "UseDefaultCredentials" = [bool]$UseDefaultCredentials

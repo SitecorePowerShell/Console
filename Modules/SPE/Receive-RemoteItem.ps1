@@ -107,6 +107,14 @@ function Receive-RemoteItem {
                     Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
             } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
 
+        .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
+
         .LINK
             Send-RemoteItem
 
@@ -191,12 +199,14 @@ function Receive-RemoteItem {
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
             $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
             $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
+            $AccessToken = ""
             $Algorithm = "HS256"
             $clientCache = @{}
         }
@@ -221,7 +231,7 @@ function Receive-RemoteItem {
             Write-Verbose -Message "Preparing to download remote item from the url $($url)"
             Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
             $errorResponse = $null

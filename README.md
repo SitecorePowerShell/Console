@@ -185,6 +185,175 @@ Get-ChildItem -Path "master:\media library\Images" |
     ForEach-Object { Rename-Item -Path $_.ItemPath -NewName ($_.Name + "-old") }
 ```
 
+## Remoting Authentication
+
+SPE remoting accepts three authentication modes. They coexist: the server looks at each incoming request's token shape and dispatches to the matching provider, so you can mix modes in the same deployment and migrate one consumer at a time.
+
+| Mode | Where credentials live | When to pick it | Token shape |
+|---|---|---|---|
+| Config-level shared secret | A single secret in `Spe.config` (or a patch) | Simplest setup for trusted automation where one CI pipeline calls SPE | Client mints HS256 JWT from the shared secret |
+| Shared Secret Client (per-item) | A `Shared Secret Client` item under `/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients` | Multiple consumers that each need their own secret, policy, impersonated user, or throttling limits | HMAC JWT with a `kid` header pointing at the item's Access Key Id |
+| OAuth Client (per-item) | An `OAuth Client` item mapped to a JWT `(iss, client_id)` pair | XM Cloud style integrations against an external IdP (Sitecore Identity Server, Auth0, Entra ID, Okta, Keycloak) | Externally-issued RS256 / RS384 / RS512 / ES256 JWT validated via JWKS |
+
+The three modes run concurrently. Dispatch is driven by the JWT's `alg` header: HMAC algorithms route to the shared-secret provider (which then chooses config-level vs per-item by `kid`), and the RSA/EC algorithms route to the OAuth provider. Existing shared-secret deployments keep working unchanged when OAuth is activated.
+
+### Remoting Client items
+
+Per-item modes use Sitecore items under `/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients` that derive from the abstract `Remoting Client` template. Common fields (Impersonated User, Policy, Enabled, Expires, Throttling) live on the base. The concrete subtypes add mode-specific fields:
+
+- **Shared Secret Client** - `Access Key Id`, `Shared Secret`
+- **OAuth Client** - `Allowed Issuer`, `OAuth Client Ids` (multi-line; one client_id per line)
+
+Each item also picks a Remoting Policy (allowlist + language mode + audit level), which applies regardless of auth mode.
+
+Save-time validators reject wildcard / reserved / shorter-than-8 `client_id` values and duplicate `(iss, client_id)` pairs across items. Saving an item invalidates the server-side cache so Enabled=false takes effect on the next request.
+
+### How config and items layer
+
+Both shared-secret modes (config-level and per-item) flow through the same `<authenticationProvider>` instance registered in `Spe.config`. Items contribute the credential and identity; config contributes the token-validation policy. A few consequences worth knowing before provisioning:
+
+- **The config-level provider must be registered for any HS\* token to validate.** A Shared Secret Client item does not stand on its own: it supplies the secret, `kid`, Impersonated User, policy, throttle, and expiry. Every other validation knob (`<allowedIssuers>`, `<allowedAudiences>`, `<maxTokenLifetimeSeconds>`, `<clockSkewSeconds>`, `<detailedAuthenticationErrors>`) is read from the config-level provider. The default Spe.config already registers it, so this is usually invisible.
+- **The `<sharedSecret>` element is not required for item auth.** It stays commented out in the default config and only powers the legacy no-`kid` path. Item-based clients never consult it.
+- **No per-item override of validation policy.** Issuer / audience lists, token lifetime, and clock skew are one-size-fits-all across the deployment. The templates do not express, for example, a short-lived CI key alongside a long-lived automation key.
+- **`iss` / `aud` are not a per-client security boundary for HMAC.** The caller mints its own token and writes whatever `iss` / `aud` it wants, so those lists cannot isolate one Shared Secret Client from another - the shared secret itself is what makes the token unforgeable. The lists still provide a useful cross-deployment sanity check (a token stamped for deployment A will not validate at deployment B if they use different values), which is why they are kept global.
+- **Defaults typically work out of the box.** The shipped `<allowedIssuers>` contains `SPE Remoting` and `Web API`, `<allowedAudiences>` is empty (the request authority is auto-accepted), and the SPE PowerShell client mints with matching values. Operators adding Shared Secret Client items usually do not need to edit `Spe.config` at all; edits are only needed when tokens come from a non-default minter.
+
+OAuth Clients follow the same split: per-item `Allowed Issuer` and `OAuth Client Ids` route the incoming token to a Sitecore identity, while the cryptographic / claim policy (`<jwksUri>`, `<allowedIssuers>`, `<allowedAudiences>`, `<requiredScopes>`) lives on the `<oauthBearer>` config entry.
+
+### OAuth bearer setup
+
+The provider ships as `App_Config/Include/Spe/Spe.OAuthBearer.config.disabled`. Rename off the `.disabled` suffix to activate. Unlike earlier drafts of this feature, activating OAuth does **not** replace the shared-secret provider - both providers register side by side under a plural `<authenticationProviders>` list.
+
+Populate the four required fields before activating: `<jwksUri>`, `<allowedIssuers>`, `<allowedAudiences>`, `<requiredScopes>`. The provider validates `exp`, `nbf`, `iat`, lifetime, `iss`, `aud`, scopes, and the cryptographic signature against keys fetched from the JWKS endpoint. The Impersonated User for the authenticated session comes from the matched OAuth Client item, not the config.
+
+The client-side entry point is `New-ScriptSession -AccessToken <jwt>`. The session reuses the token across `Invoke-RemoteScript`, `Send-RemoteItem`, and `Receive-RemoteItem` calls.
+
+### Local testing against Sitecore Identity Server
+
+The Docker stack already runs Sitecore Identity Server at `https://speid.dev.local`. `docker-compose.override.yml` registers a `spe-remoting` client that issues RS256 JWTs signed by IDS. This is the same IdP shape that SCS CLI authenticates against on-prem.
+
+One-time setup:
+
+```
+task init                                                                # seeds SPE_OAUTH_CLIENT_SECRET in .env
+task up && task deploy                                                   # or 'docker compose up -d id' if already up
+# Activate the OAuth provider (inside the deploy output so the file watcher picks it up):
+mv "docker/deploy/App_Config/Include/Spe/Spe.OAuthBearer.config.disabled" \
+   "docker/deploy/App_Config/Include/Spe/Spe.OAuthBearer.config"
+```
+
+Fetch a token and open a remoting session (PowerShell 7+). Substitute the literal client secret below, or load `SPE_OAUTH_CLIENT_SECRET` from `.env` into the current shell first:
+
+```powershell
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = "spe-remoting"
+    client_secret = $env:SPE_OAUTH_CLIENT_SECRET
+    scope         = "spe.remoting"
+}
+$token = (Invoke-RestMethod -Uri "https://speid.dev.local/connect/token" -Method POST `
+    -ContentType "application/x-www-form-urlencoded" -Body $body -SkipCertificateCheck).access_token
+
+$session = New-ScriptSession -ConnectionUri https://spe.dev.local -AccessToken $token
+Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -Current }
+```
+
+Contributors working inside the SPE repo can skip the `Invoke-RestMethod` boilerplate and use `scripts/Get-SpeOAuthToken.ps1`, which reads `.env` and trusts the dev cert automatically.
+
+The dev-stack defaults (`jwksUri`, `allowedIssuers`, `allowedAudiences`, `requiredScopes`) live in `z.Spe.Development.OAuth.config` and patch the provider automatically when it's activated. `jwksUri` uses container-internal DNS (`http://id/...`) so CM can reach IDS without the Traefik-fronted hostname. Two audiences are listed - `spe-remoting` and `https://speid.dev.local/resources` - because IDS includes both in the token's `aud` array.
+
+Run the integration test phase with `Run-RemotingTests.ps1 -IncludeOAuth`.
+
+### Inspecting tokens
+
+The SPE Remoting module ships two diagnostic cmdlets that base64url-decode a JWT so you can confirm its claims match what your `<oauthBearer>` config expects. Neither cmdlet validates the signature - they exist solely to answer "does this token actually carry the `iss` / `aud` / `scope` I think it does?" when a 401 needs triaging.
+
+Given a JWT string in `$token` (from any of the examples above or below):
+
+```powershell
+$token | ConvertFrom-JwtPayload           # iss, aud, exp, scope, azp, sub, ...
+$token | ConvertFrom-JwtHeader            # alg, kid, typ
+$token | ConvertFrom-JwtPayload -Raw      # decoded JSON string for piping
+(ConvertFrom-JwtPayload -Token $token).aud   # pick a single claim
+```
+
+No token handy? Paste this synthetic JWT (all `example.com` values, `exp` is year 2286, opaque signature) to see the cmdlets work end-to-end without standing up an IdP:
+
+```powershell
+$sample = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRlbW8ta2V5In0." +
+          "eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tLyIsImF1ZCI6WyJzcGUtcmVtb3RpbmciLCJodHRwczovL2V4YW1wbGUuY29tL3Jlc291cmNlcyJdLCJzY29wZSI6InNwZS5yZW1vdGluZyIsImV4cCI6OTk5OTk5OTk5OX0." +
+          "ZGVtby1zaWduYXR1cmUtbm90LXZlcmlmaWVk"
+
+$sample | ConvertFrom-JwtHeader    # alg=RS256, typ=JWT, kid=demo-key
+$sample | ConvertFrom-JwtPayload   # iss, aud (array), scope, exp
+```
+
+The array `aud` deliberately mirrors the IDS / Auth0 shape so the example also illustrates how that claim comes back.
+
+### Other identity providers
+
+Pointing the provider at an external IdP is a config-only change: update `<jwksUri>`, `<allowedIssuers>`, and `<allowedAudiences>` and restart the app domain. The validation pipeline does not depend on which IdP issued the token.
+
+- **Auth0 dev tenant** is the closest match for the `auth.sitecorecloud.io` identity flow used by Sitecore XM Cloud, since the Cloud Portal itself is Auth0-backed. Create an API with identifier `spe-remoting` (becomes `aud`), define a scope `spe.remoting`, and authorize a Machine-to-Machine application.
+- **Microsoft Entra ID** works for enterprise-federated scenarios. Note that the `iss` claim format differs between v1.0 and v2.0 endpoints (`sts.windows.net/{tenant}/` vs `https://login.microsoftonline.com/{tenant}/v2.0`); add both to `<allowedIssuers>` if you support both endpoints.
+- **Keycloak / Okta / any OIDC provider** works as long as it exposes a JWKS endpoint and signs with RS256 / RS384 / RS512 / ES256.
+
+### Fetching a client-credentials token
+
+The token-fetch call varies per IdP. Once you have a token, pass it verbatim to `New-ScriptSession -AccessToken`. The snippets below cover the three request shapes SPE is most likely to encounter. Each is illustrative - check your IdP's current docs before adapting to production.
+
+**Sitecore Identity Server** (and most IdentityServer-based deployments):
+
+```powershell
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = "spe-remoting"
+    client_secret = $env:SPE_OAUTH_CLIENT_SECRET
+    scope         = "spe.remoting"
+}
+$resp = Invoke-RestMethod -Uri "https://speid.dev.local/connect/token" -Method POST `
+    -ContentType "application/x-www-form-urlencoded" -Body $body
+$token = $resp.access_token
+```
+
+**Auth0** (closest analogue to the Cloud Portal / auth.sitecorecloud.io flow):
+
+```powershell
+$resp = Invoke-RestMethod -Uri "https://<tenant>.us.auth0.com/oauth/token" -Method POST `
+    -ContentType "application/json" -Body (@{
+        grant_type    = "client_credentials"
+        client_id     = "<m2m-app-client-id>"
+        client_secret = "<m2m-app-client-secret>"
+        audience      = "https://spe-remoting"
+        scope         = "spe.remoting"
+    } | ConvertTo-Json)
+$token = $resp.access_token
+```
+
+**Microsoft Entra ID** (v2.0 endpoint):
+
+```powershell
+$tenant = "<tenant-id>"
+$appIdUri = "api://<spe-api-app-id>"
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = "<m2m-app-client-id>"
+    client_secret = "<m2m-app-client-secret>"
+    scope         = "$appIdUri/.default"
+}
+$resp = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$tenant/oauth2/v2.0/token" `
+    -Method POST -ContentType "application/x-www-form-urlencoded" -Body $body
+$token = $resp.access_token
+```
+
+Shape differences worth flagging:
+
+- **Body format.** Auth0 accepts JSON; IdentityServer and Entra require form-urlencoded per RFC 6749.
+- **Audience carriage.** Auth0 uses a dedicated `audience` parameter; Entra folds the audience into `scope` as `<app-id-uri>/.default`; IdentityServer derives it from the API resource the scope belongs to.
+- **Issuer format.** Auth0 issuers always end with a trailing slash (`https://<tenant>.us.auth0.com/`). Entra v1 and v2 issuers differ by endpoint - add every shape you accept to `<allowedIssuers>`.
+
+After fetching, `$token | ConvertFrom-JwtPayload` is the fastest way to confirm the token carries the `iss` / `aud` / `scope` your `<oauthBearer>` config is configured to accept.
+
 ### Resources
 
 * Download from the [Releases page](https://github.com/SitecorePowerShell/Console/releases). Note that the Marketplace site is no longer maintained, and should not be used.

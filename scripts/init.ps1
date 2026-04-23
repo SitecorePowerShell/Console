@@ -143,6 +143,14 @@ if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SPE_SHARED_SECRET"))) {
     Set-EnvFileVariable "SPE_SHARED_SECRET" -Value ([BitConverter]::ToString($bytes) -replace '-','')
 }
 
+# SPE_OAUTH_CLIENT_SECRET = random 64-char hex string for the IDS test client
+# that issues bearer tokens for the OAuth provider integration tests.
+if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SPE_OAUTH_CLIENT_SECRET"))) {
+    $bytes = [byte[]]::new(32)
+    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    Set-EnvFileVariable "SPE_OAUTH_CLIENT_SECRET" -Value ([BitConverter]::ToString($bytes) -replace '-','')
+}
+
 # SITECORE_LICENSE_LOCATION and SITECORE_LICENSE_PATH
 $licenseLocation = Get-EnvFileVariable -Variable "SITECORE_LICENSE_LOCATION" -Path $envPath
 if([string]::IsNullOrEmpty($licenseLocation)) {

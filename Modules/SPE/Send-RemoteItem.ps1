@@ -55,6 +55,14 @@ function Send-RemoteItem {
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
 
+        .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\temp\data1.xml"
+
         .LINK
             Receive-RemoteItem
 
@@ -153,12 +161,14 @@ function Send-RemoteItem {
             $Password             = $sd.Password
             $SharedSecret         = $sd.SharedSecret
             $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
             $Credential           = $sd.Credential
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
             $Algorithm            = $sd.Algorithm
             $clientCache          = $sd.HttpClients
         } else {
+            $AccessToken = ""
             $Algorithm = "HS256"
             $clientCache = @{}
         }
@@ -185,7 +195,7 @@ function Send-RemoteItem {
 
             Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
             $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-                -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
             try {

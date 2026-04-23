@@ -11,3 +11,23 @@ services:
       - .\modules:C:\modules:ro
       - .\docker\tools:C:\tools:ro
     entrypoint: powershell -Command "& C:/tools/entrypoints/iis/Development.ps1 -WatchDirectoryParameters @{ 'Path' = 'C:/deploy'; 'Destination' = 'C:/inetpub/wwwroot'; 'DefaultExcludedFiles'= @('*.user', '*.cs', '*.csproj', 'packages.config', '*ncrunch*', '.gitignore', '.gitkeep', '.dockerignore', '*.example');}"
+  id:
+    environment:
+      # SPE OAuth bearer test client. Issues RS256 JWTs signed by IDS so the
+      # SPE OAuth bearer authentication provider can validate them via JWKS.
+      # Aud claim = spe-remoting (matches AllowedAudiences in Spe.OAuthBearer.config).
+      Sitecore_Sitecore__IdentityServer__ApiResources__SpeRemoting__Name: spe-remoting
+      Sitecore_Sitecore__IdentityServer__ApiResources__SpeRemoting__DisplayName: SPE Remoting
+      Sitecore_Sitecore__IdentityServer__ApiResources__SpeRemoting__Scopes__0: spe.remoting
+      Sitecore_Sitecore__IdentityServer__ApiScopes__SpeRemoting__Name: spe.remoting
+      Sitecore_Sitecore__IdentityServer__ApiScopes__SpeRemoting__DisplayName: SPE Remoting
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__ClientId: spe-remoting
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__ClientName: SPE Remoting Bearer Test Client
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__AccessTokenType: 0
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__AccessTokenLifetimeInSeconds: 3600
+      # Duende validates IdentityTokenLifetime > 0 even for client_credentials clients
+      # that never issue id_tokens. Sitecore's IDS schema uses the InSeconds suffix.
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__IdentityTokenLifetimeInSeconds: 300
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__AllowedGrantTypes__0: client_credentials
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__AllowedScopes__0: spe.remoting
+      Sitecore_Sitecore__IdentityServer__Clients__SpeRemoting__ClientSecrets__ClientSecret1: ${SPE_OAUTH_CLIENT_SECRET}
