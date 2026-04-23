@@ -284,7 +284,11 @@ description Full DialogBuilder demo with every control type, tabs, and condition
 	\\$item = Get-Item -Path "master:\\content\\Home"\n\
 	\\$items = Get-ChildItem -Path "master:\\templates\\Modules\\PowerShell Console\\PowerShell Script*"\n\
 	\\$items2 = \\$items\n\
-	\\$items3 = \\$items\n\
+	\\$droplistItem = \\$items | Select-Object -First 1\n\
+	\\$droplinkItem = \\$items | Select-Object -First 1\n\
+	\\$droptreeItem = \\$items | Select-Object -First 1\n\
+	\\$selectedGroupedDroplink = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"\n\
+	\\$selectedGroupedDroplist = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"\n\
 	\\$parent = Get-Item -Path . | Select-Object -Expand Parent\n\
 	\\$checklistItems = @(4,16)\n\
 	\\$radioListItems = 3\n\
@@ -326,9 +330,17 @@ description Full DialogBuilder demo with every control type, tabs, and condition
 	# --- Tab: More Items ---\n\
 	\\$dialog | Add-MultiList -Name "items2" -Title "Bunch of Templates - multilist" -Value \\$items2 -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Height "300px" -Tab "More Items"\n\
 	\\$dialog | Add-DialogField -Name "items4" -Title "Bunch of Templates with Search - multilist search" -Editor "multilist search" -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Height "300px" -Tab "More Items"\n\
-	\\$dialog | Add-Droplist -Name "items3" -Title "Pick One Template - droplist" -Source "DataSource=/sitecore/templates/user defined&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
-	\\$dialog | Add-GroupedDroplink -Name "selectedGroupedDroplink" -Title "Pick One Template - groupeddroplink" -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
-	\\$dialog | Add-GroupedDroplist -Name "selectedGroupedDroplist" -Title "Pick One Template - groupeddroplist" -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-Droplist -Name "droplistItem" -Title "Pick One Template - droplist" -Value \\$droplistItem -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-Droplink -Name "droplinkItem" -Title "Pick One Template - droplink" -Value \\$droplinkItem -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-Droptree -Name "droptreeItem" -Title "Pick One Template - droptree" -Value \\$droptreeItem -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-GroupedDroplink -Name "selectedGroupedDroplink" -Title "Pick One Template - groupeddroplink" -Value \\$selectedGroupedDroplink -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-GroupedDroplist -Name "selectedGroupedDroplist" -Title "Pick One Template - groupeddroplist" -Value \\$selectedGroupedDroplist -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -Tab "More Items"\n\
+	\\$dialog | Add-Droplist -Name "optionalLayout" -Title "Optional Layout - droplist + AllowNone" -Value \\$null -Source "DataSource=/sitecore/layout/layouts" -AllowNone -Placeholder "Select a layout..." -Tab "More Items"\n\
+	\\$dialog | Add-Droplink -Name "optionalDroplink" -Title "Optional Template - droplink + AllowNone" -Value \\$null -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -AllowNone -Placeholder "Select a template..." -Tab "More Items"\n\
+	\\$dialog | Add-Droptree -Name "optionalDroptree" -Title "Optional Template - droptree + AllowNone" -Value \\$null -Source "DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -AllowNone -Tab "More Items"\n\
+	\\$dialog | Add-GroupedDroplink -Name "optionalGroupedDroplink" -Title "Optional Template - groupeddroplink + AllowNone" -Value \\$null -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -AllowNone -Placeholder "Select a template..." -Tab "More Items"\n\
+	\\$dialog | Add-GroupedDroplist -Name "optionalGroupedDroplist" -Title "Optional Template - groupeddroplist + AllowNone" -Value \\$null -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -AllowNone -Placeholder "Select a template..." -Tab "More Items"\n\
+	\\$dialog | Add-ItemPicker -Name "optionalStart" -Title "Optional Start Item - item + AllowNone" -Value \\$null -Root "/sitecore/content" -AllowNone -Tab "More Items"\n\
 	\n\
 	# --- Tab: Rights ---\n\
 	\\$dialog | Add-UserPicker -Name "user" -Title "Select User" -Value \\$me -Tooltip "Tooltip for user" -Multiple -Tab "Rights"\n\
@@ -444,27 +456,35 @@ description Date-only picker (no time). Returns DateTime.\n\
 	\\$dialog | Add-DateTimePicker -Name "${1:fieldName}" -Title "${2:Select Date}" -DateOnly\n\
 \n\
 snippet spe-dialogitempicker\n\
-description Tree-based single item picker. Returns Item.\n\
+description Tree-based single item picker. Returns Item. Add -AllowNone for optional selection.\n\
 	\\$dialog | Add-ItemPicker -Name "${1:fieldName}" -Title "${2:Select Item}" -Root "${3:/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplink\n\
-description Flat dropdown, single item selection. Returns Item.\n\
+description Flat dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
 	\\$dialog | Add-Droplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
+snippet spe-dialogdroplinkoptional\n\
+description Flat dropdown with blank first option. Returns Item or \\$null.\n\
+	\\$dialog | Add-Droplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
+\n\
 snippet spe-dialogdroptree\n\
-description Tree dropdown, single item selection. Returns Item.\n\
+description Tree dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
 	\\$dialog | Add-Droptree -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplist\n\
-description Flat dropdown, single item selection. Returns string (ID).\n\
+description Flat dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
 	\\$dialog | Add-Droplist -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
+snippet spe-dialogdroplistoptional\n\
+description Flat dropdown with blank first option. Returns Item or \\$null.\n\
+	\\$dialog | Add-Droplist -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
+\n\
 snippet spe-dialoggroupeddroplink\n\
-description Grouped dropdown by parent folder. Returns Item.\n\
+description Grouped dropdown by parent folder. Returns Item. Add -AllowNone to allow blank.\n\
 	\\$dialog | Add-GroupedDroplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
 \n\
 snippet spe-dialoggroupeddroplist\n\
-description Grouped dropdown by parent folder. Returns string (ID).\n\
+description Grouped dropdown by parent folder. Returns Item. Add -AllowNone to allow blank.\n\
 	\\$dialog | Add-GroupedDroplist -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
 \n\
 snippet spe-dialogdropdown\n\

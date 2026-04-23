@@ -1,4 +1,4 @@
----
+﻿---
 ID: "9d311b90-0de4-42fd-b150-cf1591597394"
 Parent: "a0371a90-d4b0-4e07-9245-c9f07f86d0d6"
 Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
@@ -344,9 +344,13 @@ SharedFields:
             $Title = $Name
         }
     
-        # Auto-initialize Item value if needed (Invoke-Dialog handles scope injection)
-        if ($null -eq $Value -and
-            $Editor -match "^(item|droplist|droptree|groupeddroplink|groupeddroplist)") {
+        # Auto-initialize Item value only when the caller did not pass -Value at
+        # all. An explicit -Value $null (or the "allownone" editor flag) means
+        # the caller wants no pre-selection - honor that.
+        if (-not $PSBoundParameters.ContainsKey('Value') -and
+            $null -eq $Value -and
+            $Editor -match "^(item|droplist|droptree|groupeddroplink|groupeddroplist)" -and
+            $Editor -notmatch "allownone") {
             $Value = Get-Item -Path "master:/sitecore" -ErrorAction SilentlyContinue
         }
     
@@ -752,6 +756,39 @@ SharedFields:
             }
         }
     
+        # Check Value type for item-picker editors. A non-Item Value silently
+        # breaks pre-selection because Read-Variable unwraps via BaseObject
+        # and only reacts when the result is a Sitecore.Data.Items.Item.
+        $singleItemEditors = @('droplink', 'droplist', 'droptree', 'groupeddroplink', 'item', 'itempicker')
+        $multiItemEditors  = @('treelist', 'treelist search', 'multilist', 'multilist search', 'multiroottreelist', 'bucketlist')
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if (-not $param.ContainsKey('Value') -or $null -eq $param.Value) { continue }
+    
+            if ($singleItemEditors -contains $editor) {
+                if ($param.Value -isnot [Sitecore.Data.Items.Item]) {
+                    Write-Error "Field '$($param.Name)' uses editor '$editor' which requires a [Sitecore.Data.Items.Item] Value, but got '$($param.Value.GetType().FullName)'. Pre-selection will not work."
+                    $hasErrors = $true
+                }
+            }
+            elseif ($multiItemEditors -contains $editor) {
+                if ($param.Value -is [string] -or -not ($param.Value -is [System.Collections.IEnumerable])) {
+                    Write-Error "Field '$($param.Name)' uses multi-item editor '$editor' which requires an IEnumerable of [Sitecore.Data.Items.Item], but got '$($param.Value.GetType().FullName)'."
+                    $hasErrors = $true
+                } else {
+                    $idx = 0
+                    foreach ($v in $param.Value) {
+                        if ($null -ne $v -and $v -isnot [Sitecore.Data.Items.Item]) {
+                            Write-Error "Field '$($param.Name)' uses multi-item editor '$editor': element [$idx] is of type '$($v.GetType().FullName)', expected [Sitecore.Data.Items.Item]."
+                            $hasErrors = $true
+                            break
+                        }
+                        $idx++
+                    }
+                }
+            }
+        }
+    
         # Summary
         Write-Host ""
         if ($hasErrors) {
@@ -1051,8 +1088,16 @@ SharedFields:
         .SYNOPSIS
             Adds an item picker field.
     
+        .DESCRIPTION
+            Renders a tree-based item picker. Pass -AllowNone to let the user clear the
+            selection (returns $null). Sitecore's TreePicker renders its own "None" button
+            when AllowNone is set; -Placeholder is not supported on this editor.
+    
         .EXAMPLE
             $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-ItemPicker -Name "optional" -Root "/sitecore/content" -Value $null -AllowNone
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1063,6 +1108,7 @@ SharedFields:
             [Sitecore.Data.Items.Item]$Value = $null,
             [string]$Root = "/sitecore/content/",
             [string]$Tooltip = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1075,15 +1121,23 @@ SharedFields:
         if (-not $PSBoundParameters.ContainsKey('Root')) {
             $PSBoundParameters['Root'] = $Root
         }
-        # Initialize Value if not provided
-        if (!$PSBoundParameters.ContainsKey("Value") -and $null -eq $Value) {
+        # Only auto-seed Value when the caller did not pass it and did not opt
+        # into AllowNone. Explicit -Value $null or -AllowNone means "no default".
+        if (-not $PSBoundParameters.ContainsKey("Value") -and
+            $null -eq $Value -and
+            -not $AllowNone.IsPresent) {
             $Value = Get-Item -Path $Root -ErrorAction SilentlyContinue
             if ($Value) {
                 $PSBoundParameters["Value"] = $Value
             }
         }
     
-        Add-DialogField @PSBoundParameters
+        $PSBoundParameters.Remove("AllowNone") > $null
+        if ($AllowNone.IsPresent) {
+            Add-DialogField @PSBoundParameters -Editor "item allownone"
+        } else {
+            Add-DialogField @PSBoundParameters
+        }
     }
     
     function Add-Droplink {
@@ -1096,8 +1150,14 @@ SharedFields:
             This is a simpler alternative to the tree-based item picker for scenarios where you
             want a compact dropdown interface.
     
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The Value returned will be $null.
+    
         .EXAMPLE
             $dialog | Add-Droplink -Name "template" -Title "Template" -Source "DataSource=/sitecore/templates"
+    
+        .EXAMPLE
+            $dialog | Add-Droplink -Name "template" -Source "DataSource=/sitecore/templates" -Value $null -AllowNone -Placeholder "Select a template..."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1109,6 +1169,8 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Source,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1118,15 +1180,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        # Initialize Value if not provided
-        if (!$PSBoundParameters.ContainsKey("Value") -and $null -eq $Value) {
-            $Value = Get-Item -Path "master:/sitecore" -ErrorAction SilentlyContinue
-            if ($Value) {
-                $PSBoundParameters["Value"] = $Value
-            }
-        }
-    
-        Add-DialogField @PSBoundParameters -Editor "droplink"
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droplink allownone" } else { "droplink" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
     }
     
     function Add-Droptree {
@@ -1138,8 +1194,13 @@ SharedFields:
             Returns the selected Sitecore Item object. Displays a tree structure within a dropdown
             control, allowing navigation through the content hierarchy in a compact interface.
     
+            Pass -AllowNone to leave the tree unselected by default.
+    
         .EXAMPLE
             $dialog | Add-Droptree -Name "parent" -Title "Parent Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-Droptree -Name "parent" -Source "DataSource=/sitecore/content" -Value $null -AllowNone
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1151,6 +1212,8 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Source,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1160,7 +1223,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        Add-DialogField @PSBoundParameters -Editor "droptree"
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droptree allownone" } else { "droptree" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
     }
     
     function Add-Droplist {
@@ -1169,12 +1234,16 @@ SharedFields:
             Adds a droplist field for single item selection from a flat dropdown list.
     
         .DESCRIPTION
-            Returns a string representation (path or ID) of the selected item. Items are displayed
-            in a flat dropdown list. Use this when you only need the item path/ID rather than the
-            full Item object.
+            Returns the selected Sitecore Item object. Items are displayed in a flat dropdown list.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The Value returned will be $null.
     
         .EXAMPLE
             $dialog | Add-Droplist -Name "layout" -Title "Layout" -Source "DataSource=/sitecore/layout"
+    
+        .EXAMPLE
+            $dialog | Add-Droplist -Name "layout" -Source "DataSource=/sitecore/layout" -Value $null -AllowNone -Placeholder "Select a layout..."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1182,10 +1251,12 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Name,
             [string]$Title = "",
-            [string]$Value = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
             [Parameter(Mandatory = $true)]
             [string]$Source,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1195,7 +1266,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        Add-DialogField @PSBoundParameters -Editor "droplist"
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droplist allownone" } else { "droplist" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
     }
     
     function Add-GroupedDroplink {
@@ -1207,8 +1280,13 @@ SharedFields:
             Returns the selected Sitecore Item object. Items are grouped by their parent folders
             making it easier to navigate large item sets.
     
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option.
+    
         .EXAMPLE
             $dialog | Add-GroupedDroplink -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplink -Name "item" -Source "DataSource=/sitecore/content" -Value $null -AllowNone -Placeholder "Pick one..."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1220,6 +1298,8 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Source,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1229,7 +1309,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        Add-DialogField @PSBoundParameters -Editor "groupeddroplink"
+        $effectiveEditor = if ($AllowNone.IsPresent) { "groupeddroplink allownone" } else { "groupeddroplink" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
     }
     
     function Add-GroupedDroplist {
@@ -1238,11 +1320,18 @@ SharedFields:
             Adds a grouped droplist field that displays items organized by parent folders.
     
         .DESCRIPTION
-            Returns a string representation (path or ID) of the selected item. Items are grouped
+            Returns a string representation (item name) of the selected item. Items are grouped
             by their parent folders making it easier to navigate large item sets.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The returned Value will be $null.
+            Pre-seed with an Item (not a string) if you want a specific option selected.
     
         .EXAMPLE
             $dialog | Add-GroupedDroplist -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplist -Name "item" -Source "DataSource=/sitecore/content" -Value $null -AllowNone -Placeholder "Pick one..."
         #>
         param(
             [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1250,10 +1339,12 @@ SharedFields:
             [Parameter(Mandatory = $true)]
             [string]$Name,
             [string]$Title = "",
-            [string]$Value = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
             [Parameter(Mandatory = $true)]
             [string]$Source,
             [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
             [switch]$Mandatory,
             [string]$Tab = "",
             [int]$Columns = 0,
@@ -1263,7 +1354,9 @@ SharedFields:
             [string]$ShowOnValue = ""
         )
     
-        Add-DialogField @PSBoundParameters -Editor "groupeddroplist"
+        $effectiveEditor = if ($AllowNone.IsPresent) { "groupeddroplist allownone" } else { "groupeddroplist" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
     }
     
     function Add-Dropdown {
@@ -1940,9 +2033,9 @@ Languages:
       Hint: __Updated
       Value: 20260331T120000Z
     
-
-
-
-
-
+    
+    
+    
+    
+    
     

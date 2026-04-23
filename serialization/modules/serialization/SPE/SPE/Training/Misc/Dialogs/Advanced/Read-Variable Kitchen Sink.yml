@@ -10,8 +10,19 @@ SharedFields:
     $item = Get-Item -Path "master:\content\Home"
     $items = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
     $items2 = $items
-    $items3 = $items
-    $parent = Get-Item -Path . | Select-Object -Expand Parent 
+    $droplistItem = $items | Select-Object -First 1
+    $droplinkItem = $items | Select-Object -First 1
+    $droptreeItem = $items | Select-Object -First 1
+    $selectedGroupedDroplink = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
+    $selectedGroupedDroplist = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
+    # Optional (AllowNone) pickers start null so the blank first option is selected.
+    $optionalDroplistItem = $null
+    $optionalDroplinkItem = $null
+    $optionalDroptreeItem = $null
+    $optionalGroupedDroplink = $null
+    $optionalGroupedDroplist = $null
+    $optionalItem = $null
+    $parent = Get-Item -Path . | Select-Object -Expand Parent
     $checklistItems =  @(4,16)
     $radioListItems = 3
     # Task Management Context Menu option for Run Scheduled Tasks.
@@ -25,53 +36,78 @@ SharedFields:
         @{ Name = "toggleVisible"; Value=$true; Title="Show Controls - checkbox"; Tooltip="Checking or unchecking will change hidden state"; Editor="checkbox"; Tab="Simple"; Columns = 4; GroupId=1; },
         @{ Name = "marquee"; Title="Fascinating Message - marquee"; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
         @{ Name = "Info"; Title="Information - info"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Tooltip="Enter username here"; Placeholder="You see this when text box is empty"; Columns = 6; ParentGroupId=1; HideOnValue = "0"; }, 
+        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; },
+        @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Tooltip="Enter username here"; Placeholder="You see this when text box is empty"; Columns = 6; ParentGroupId=1; HideOnValue = "0"; },
         @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"; Columns = 6; ParentGroupId=1; HideOnValue = "0"; }
     )
     
     $optionsTab = @(
-        @{ Name = "anOption"; Value="1"; Title="An Option - combo"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Editor="combo"; Tab="Options"; GroupId = 2; }, 
-        @{ Name = "checklistItems"; Title="Multiple options - checklist"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
+        @{ Name = "anOption"; Value="1"; Title="An Option - combo"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Editor="combo"; Tab="Options"; GroupId = 2; },
+        @{ Name = "checklistItems"; Title="Multiple options - checklist"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; },
         @{ Name = "radioListItems"; Title="Radio selection - radio"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }
     )
     
     $timeTab = @(
-        @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"; }, 
+        @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"; },
         @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"; }
     )
     
     $itemsTab = @(
         @{ Name = "item"; Title="Start Item - item"; Root="/sitecore/content/"; Tab="Items"; },
         @{ Variable = Get-Variable "Parent"; Title="Parent - variable"; Tab="Items"; },
-        @{ Name = "items"; Title="Bunch of Templates - treelist"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        @{ Name = "items"; Title="Bunch of Templates - treelist";
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
             editor="treelist"; Tab="Items"; }
     )
     
     $moreItemsTab = @(
-        @{ Name = "items2"; Title="Bunch of Templates - multilist"; 
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        @{ Name = "items2"; Title="Bunch of Templates - multilist";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
             editor="multilist"; Tab="More Items"; Height="300px"; },
-        @{ Name = "items4"; Title="Bunch of Templates with Search - multilist search"; 
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        @{ Name = "items4"; Title="Bunch of Templates with Search - multilist search";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
             editor="multilist search"; Tab="More Items"; Height="300px"; },
-        @{ Name = "items3"; Title="Pick One Template - droplist"; 
-            Source="DataSource=/sitecore/templates/user defined&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="droplist"; Tab="More Items"; }, 
-        @{ Name = "selectedGroupedDroplink"; Title="Pick One Template - groupeddroplink"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        @{ Name = "droplistItem"; Title="Pick One Template - droplist";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droplist"; Tab="More Items"; },
+        @{ Name = "droplinkItem"; Title="Pick One Template - droplink";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droplink"; Tab="More Items"; },
+        @{ Name = "droptreeItem"; Title="Pick One Template - droptree";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droptree"; Tab="More Items"; },
+        @{ Name = "selectedGroupedDroplink"; Title="Pick One Template - groupeddroplink";
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
             editor="groupeddroplink"; Tab="More Items"; },
-        @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="groupeddroplist"; Tab="More Items"; }
+        @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist";
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="groupeddroplist"; Tab="More Items"; },
+        # Raw "<editor> allownone" form renders a blank first option and lets
+        # the user clear the selection. Placeholder hashtable key feeds the
+        # blank option's label.
+        @{ Name = "optionalDroplistItem"; Title="Optional Template - droplist allownone";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droplist allownone"; Placeholder="Select a template..."; Tab="More Items"; },
+        @{ Name = "optionalDroplinkItem"; Title="Optional Template - droplink allownone";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droplink allownone"; Placeholder="Select a template..."; Tab="More Items"; },
+        @{ Name = "optionalDroptreeItem"; Title="Optional Template - droptree allownone";
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="droptree allownone"; Tab="More Items"; },
+        @{ Name = "optionalGroupedDroplink"; Title="Optional Template - groupeddroplink allownone";
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="groupeddroplink allownone"; Placeholder="Select a template..."; Tab="More Items"; },
+        @{ Name = "optionalGroupedDroplist"; Title="Optional Template - groupeddroplist allownone";
+            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
+            editor="groupeddroplist allownone"; Placeholder="Select a template..."; Tab="More Items"; },
+        @{ Name = "optionalItem"; Title="Optional Start Item - item allownone"; Root="/sitecore/content/"; editor="item allownone"; Tab="More Items"; }
     )
     
     $rightsTab = @(
-        @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"; }, 
+        @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"; },
         @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"; },
         @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"; }
     )
@@ -86,7 +122,7 @@ SharedFields:
     $dialogProps = @{
         Title = "Kitchen Sink Demo"
         Description = "The dialog demonstrates the use of all available controls grouped into tabs."
-        Width = 650 
+        Width = 650
         Height = 700
         OkButtonName = "Continue"
         CancelButtonName = "Cancel"
@@ -109,9 +145,9 @@ SharedFields:
         OkButtonName = "Finish"
         CancelButtonName = "Cancel"
         Parameters = @(
-            @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
-            @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You see this when text box is empty"}, 
-            @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
+            @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"},
+            @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You see this when text box is empty"},
+            @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"},
             @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
             @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"}
         )
@@ -180,7 +216,13 @@ SharedFields:
     $items2 | Out-Default
     
     Write-Host 'Editor droplist: returns an Item' -ForegroundColor Green
-    $items3 | Out-Default
+    $droplistItem | Out-Default
+    
+    Write-Host 'Editor droplink: returns an Item' -ForegroundColor Green
+    $droplinkItem | Out-Default
+    
+    Write-Host 'Editor droptree: returns an Item' -ForegroundColor Green
+    $droptreeItem | Out-Default
     
     Write-Host 'Editor multilist search: returns an array of Item' -ForegroundColor Green
     $items4 | Out-Default
@@ -190,6 +232,25 @@ SharedFields:
     
     Write-Host 'Editor GroupedDroplink: returns an Item' -ForegroundColor Green
     $selectedGroupedDroplink | Out-Default
+    
+    # Optional (AllowNone) picker returns $null when the blank option is selected.
+    Write-Host 'Editor droplist allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalDroplistItem | Out-Default
+    
+    Write-Host 'Editor droplink allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalDroplinkItem | Out-Default
+    
+    Write-Host 'Editor droptree allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalDroptreeItem | Out-Default
+    
+    Write-Host 'Editor groupeddroplink allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalGroupedDroplink | Out-Default
+    
+    Write-Host 'Editor groupeddroplist allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalGroupedDroplist | Out-Default
+    
+    Write-Host 'Editor item allownone: returns an Item or $null' -ForegroundColor Green
+    $optionalItem | Out-Default
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100
@@ -207,11 +268,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "b3a862b1-9a6c-47a3-9681-cbfd0b94556c"
+      Value: "8986e324-6d63-47a3-af4d-5e23c6e03134"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214514Z
+      Value: 20260423T004553Z

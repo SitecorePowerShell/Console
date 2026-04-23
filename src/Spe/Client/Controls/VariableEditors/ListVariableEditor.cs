@@ -73,7 +73,7 @@ namespace Spe.Client.Controls.VariableEditors
                     ItemID = Sitecore.ItemIDs.RootID.ToString(),
                     Source = variable["Source"] as string ?? "/sitecore"
                 };
-                multiList.SetLanguage(Sitecore.Context.Language.Name);
+                multiList.SetLanguage(item?.Language.Name ?? Sitecore.Context.Language.Name);
 
                 multiList.Class += "  treePicker";
 
@@ -95,16 +95,27 @@ namespace Spe.Client.Controls.VariableEditors
                     };
                 }
 
+                var lookupSource = variable["Source"] as string ?? "/sitecore";
+                var scriptedItems = BaseScriptedDataSource.IsScripted(lookupSource)
+                    ? BaseScriptedDataSource.RunEnumeration(lookupSource, item).ToArray()
+                    : null;
+
+                var allowNone = editor.IndexOf("allownone", StringComparison.OrdinalIgnoreCase) > -1;
+                var placeholder = variable["Placeholder"] as string ?? string.Empty;
+
                 if (editor.HasWord("groupeddroplist"))
                 {
-                    var groupedDroplist = new GroupedDroplist
+                    var groupedDroplist = new GroupedDroplistExtended
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
                         ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                        Source = variable["Source"] as string ?? "/sitecore",
-                        ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
+                        Source = lookupSource,
+                        ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name,
+                        Value = item?.Name ?? string.Empty,
+                        ScriptedItems = scriptedItems,
+                        AllowNone = allowNone,
+                        Placeholder = placeholder
                     };
 
                     return groupedDroplist;
@@ -112,27 +123,37 @@ namespace Spe.Client.Controls.VariableEditors
 
                 if (editor.HasWord("groupeddroplink"))
                 {
-                    var groupedDroplink = new GroupedDroplink
+                    var groupedDroplink = new GroupedDroplinkExtended
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
                         ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                        Source = variable["Source"] as string ?? "/sitecore",
-                        ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
+                        Source = lookupSource,
+                        ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name,
+                        Value = allowNone
+                            ? (item?.ID.ToString() ?? string.Empty)
+                            : (item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()),
+                        ScriptedItems = scriptedItems,
+                        AllowNone = allowNone,
+                        Placeholder = placeholder
                     };
 
                     return groupedDroplink;
                 }
 
-                var lookup = new LookupEx
+                var lookup = new LookupExExtended
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Database = dbName,
                     ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
-                    Source = variable["Source"] as string ?? "/sitecore",
-                    ItemLanguage = Sitecore.Context.Language.Name,
-                    Value = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()
+                    Source = lookupSource,
+                    ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name,
+                    Value = allowNone
+                        ? (item?.ID.ToString() ?? string.Empty)
+                        : (item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()),
+                    ScriptedItems = scriptedItems,
+                    AllowNone = allowNone,
+                    Placeholder = placeholder
                 };
                 lookup.Class += " textEdit";
 
@@ -148,7 +169,7 @@ namespace Spe.Client.Controls.VariableEditors
                     ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.Null.ToString(),
                     Source = variable["Source"] as string ?? "",
                     Value = item?.ID.ToString() ?? "",
-                    ItemLanguage = Sitecore.Context.Language.Name
+                    ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name
                 };
                 tree.Class += " textEdit";
 

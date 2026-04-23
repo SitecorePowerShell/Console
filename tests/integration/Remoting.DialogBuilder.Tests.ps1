@@ -453,6 +453,144 @@ Assert-True $result.IsNull "Empty DateTimePicker has null value"
 Assert-True ($null -ne $result.SetValue) "Set DateTimePicker has non-null value"
 
 # ============================================================
+# Test-DialogBuilder - item-picker Value type validation
+# ============================================================
+Write-Host "`n  [Test-DialogBuilder - item-picker Value type]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $homeItem = Get-Item -Path "master:/sitecore/content/Home"
+
+    $okBuilder = New-DialogBuilder -Title "OK"
+    $okBuilder | Add-Droplink -Name "item" -Source "/sitecore/content" -Value $homeItem
+    $okValid = $okBuilder | Test-DialogBuilder 2>$null
+
+    # Force a non-Item Value onto a droplink to simulate accidental misuse
+    $badBuilder = New-DialogBuilder -Title "Bad"
+    $badBuilder | Add-Droplink -Name "item" -Source "/sitecore/content" -Value $homeItem
+    $badBuilder._Parameters[0].Value = $homeItem.ID.ToString()
+    $badValid = $badBuilder | Test-DialogBuilder 2>$null
+
+    # Multi-item editor with a mixed array
+    $badMulti = New-DialogBuilder -Title "BadMulti"
+    $badMulti | Add-DialogField -Name "items" -Editor "treelist" -Value @($homeItem, "not-an-item")
+    $multiValid = $badMulti | Test-DialogBuilder 2>$null
+
+    @{
+        OkValid    = $okValid
+        BadValid   = $badValid
+        MultiValid = $multiValid
+    }
+}
+
+Assert-True $result.OkValid "Droplink with Item Value passes validation"
+Assert-Equal $result.BadValid $false "Droplink with string Value fails validation"
+Assert-Equal $result.MultiValid $false "Treelist with non-Item element fails validation"
+
+# ============================================================
+# Null Value propagation through item-picker wrappers
+# ============================================================
+Write-Host "`n  [Add-Dropl* - null Value propagates (no auto-init)]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "NullValue"
+    $db | Add-Droplink        -Name "dlink"  -Source "DataSource=/sitecore/content" -Value $null
+    $db | Add-Droplist        -Name "dlist"  -Source "DataSource=/sitecore/content" -Value $null
+    $db | Add-Droptree        -Name "dtree"  -Source "DataSource=/sitecore/content" -Value $null
+    $db | Add-GroupedDroplink -Name "gdlink" -Source "DataSource=/sitecore/content" -Value $null
+    $db | Add-GroupedDroplist -Name "gdlist" -Source "DataSource=/sitecore/content" -Value $null
+
+    @{
+        DroplinkValue        = $db._Parameters[0].Value
+        DroplistValue        = $db._Parameters[1].Value
+        DroptreeValue        = $db._Parameters[2].Value
+        GroupedDroplinkValue = $db._Parameters[3].Value
+        GroupedDroplistValue = $db._Parameters[4].Value
+    }
+}
+
+Assert-True ($null -eq $result.DroplinkValue)        "Add-Droplink -Value `$null propagates null"
+Assert-True ($null -eq $result.DroplistValue)        "Add-Droplist -Value `$null propagates null"
+Assert-True ($null -eq $result.DroptreeValue)        "Add-Droptree -Value `$null propagates null"
+Assert-True ($null -eq $result.GroupedDroplinkValue) "Add-GroupedDroplink -Value `$null propagates null"
+Assert-True ($null -eq $result.GroupedDroplistValue) "Add-GroupedDroplist -Value `$null propagates null"
+
+# ============================================================
+# -AllowNone switch appends "allownone" to editor string
+# ============================================================
+Write-Host "`n  [Add-Dropl* - AllowNone appends editor suffix]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "AllowNone"
+    $db | Add-Droplink        -Name "dlink"  -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $db | Add-Droplist        -Name "dlist"  -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $db | Add-Droptree        -Name "dtree"  -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $db | Add-GroupedDroplink -Name "gdlink" -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $db | Add-GroupedDroplist -Name "gdlist" -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $db | Add-ItemPicker      -Name "item"   -Value $null -AllowNone
+
+    @{
+        DroplinkEditor        = $db._Parameters[0].Editor
+        DroplistEditor        = $db._Parameters[1].Editor
+        DroptreeEditor        = $db._Parameters[2].Editor
+        GroupedDroplinkEditor = $db._Parameters[3].Editor
+        GroupedDroplistEditor = $db._Parameters[4].Editor
+        ItemEditor            = $db._Parameters[5].Editor
+    }
+}
+
+Assert-Equal $result.DroplinkEditor        "droplink allownone"        "Add-Droplink -AllowNone emits 'droplink allownone'"
+Assert-Equal $result.DroplistEditor        "droplist allownone"        "Add-Droplist -AllowNone emits 'droplist allownone'"
+Assert-Equal $result.DroptreeEditor        "droptree allownone"        "Add-Droptree -AllowNone emits 'droptree allownone'"
+Assert-Equal $result.GroupedDroplinkEditor "groupeddroplink allownone" "Add-GroupedDroplink -AllowNone emits suffix"
+Assert-Equal $result.GroupedDroplistEditor "groupeddroplist allownone" "Add-GroupedDroplist -AllowNone emits suffix"
+Assert-Equal $result.ItemEditor            "item allownone"            "Add-Item -AllowNone emits 'item allownone'"
+
+# ============================================================
+# -Placeholder stores value on parameter hashtable
+# ============================================================
+Write-Host "`n  [Add-Dropl* - Placeholder attaches to parameter]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "Placeholder"
+    $db | Add-Droplist -Name "layout" -Source "DataSource=/sitecore/layout" -Value $null -AllowNone -Placeholder "Select a layout..."
+    $db | Add-Droplist -Name "nolabel" -Source "DataSource=/sitecore/layout" -Value $null -AllowNone
+
+    @{
+        WithLabel       = $db._Parameters[0].Placeholder
+        WithoutLabelKey = $db._Parameters[1].ContainsKey("Placeholder")
+    }
+}
+
+Assert-Equal $result.WithLabel "Select a layout..." "Placeholder text stored on parameter hashtable"
+Assert-True (-not $result.WithoutLabelKey) "Omitted Placeholder not added as empty string"
+
+# ============================================================
+# Test-DialogBuilder accepts null Value on item-picker editors
+# ============================================================
+Write-Host "`n  [Test-DialogBuilder - null Value on item-picker accepted]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $db = New-DialogBuilder -Title "NullTolerated"
+    $db | Add-Droplink -Name "opt" -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+    $nullValid = $db | Test-DialogBuilder 2>$null
+    @{
+        Valid = $nullValid
+    }
+}
+
+Assert-True $result.Valid "Test-DialogBuilder passes on null Value with AllowNone"
+
+# ============================================================
 # Cleanup
 # ============================================================
 Stop-ScriptSession -Session $session
