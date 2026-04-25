@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Xml;
 using Sitecore.Configuration;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.Diagnostics;
 
 namespace Spe.Core.Settings.Authorization
 {
@@ -52,6 +53,14 @@ namespace Spe.Core.Settings.Authorization
 
             AuthenticationProviders = providers;
             AuthenticationProvider = primary;
+
+            // Startup audit: emit Warn-level findings for misconfigurations
+            // that route deterministically but probably weren't intentional.
+            // Never refuses to start; operator decides what to do.
+            foreach (var warning in AuthProviderConfigValidator.FindWarnings(providers))
+            {
+                PowerShellLog.Warn($"[AuthConfig] action=startupWarning detail={warning}");
+            }
         }
 
         /// <summary>

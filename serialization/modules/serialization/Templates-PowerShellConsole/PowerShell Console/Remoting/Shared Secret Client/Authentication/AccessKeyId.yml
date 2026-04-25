@@ -30,10 +30,10 @@ Languages:
     Value: Access Key Id
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: "Sent in the JWT kid header so the server can look up this key directly. The Insert Item wizard auto-generates it as spe_ followed by 24 hex characters. Must not collide with any other API key."
+    Value: "Sent in the JWT kid header so the server can look up this client directly. The Insert Item wizard auto-generates it as spe_ followed by 24 hex characters. Must not collide with any other Shared Secret Client."
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Required. Unique identifier for this API key.
+    Value: Required. Unique identifier for this Shared Secret Client.
   Versions:
   - Version: 1
     Fields:

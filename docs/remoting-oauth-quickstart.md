@@ -15,8 +15,8 @@ issuer trailing slash, `azp` client id claim), see
 
 One-time setup, performed by whoever administers the CM:
 
-1. Rename `App_Config/Include/Spe/Spe.OAuthBearer.config.disabled` to
-   `Spe.OAuthBearer.config`.
+1. Copy `App_Config/Include/Spe/Spe.OAuthBearer.config.example` to
+   `Spe.OAuthBearer.config` (drop the `.example` suffix).
 2. Populate three values inside the `<oauthBearer>` element:
    - `<jwksUri>` - your IdP's JWKS endpoint, e.g.
      `https://<identity-host>/.well-known/openid-configuration/jwks`
@@ -207,14 +207,21 @@ When a request is rejected, the CM log writes a single diagnostic line:
 
 Common reasons and fixes:
 
-| Reason                          | Fix                                                              |
-| ------------------------------- | ---------------------------------------------------------------- |
-| `signature`                     | `jwksUri` is wrong, unreachable, or the IdP rotated keys.        |
-| `iss`                           | `Allowed Issuer` on the item does not match the token's `iss`.   |
-| `aud`                           | Add the token's `aud` value to `<allowedAudiences>` in config.   |
-| `scope`                         | Token is missing a scope listed in `<requiredScopes>`.           |
-| `clientNotFound`                | `(iss, client_id)` pair does not match any enabled OAuth Client. |
-| `disabled` or `expired`         | The OAuth Client item's Enabled flag is off or Expires is past.  |
+| Reason                                       | Fix                                                              |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| `signatureInvalid`, `keyNotResolved`         | `<jwksUri>` is wrong, unreachable, or the IdP rotated keys.      |
+| `audienceNotAllowed`, `missingAudience`      | Add the token's `aud` value to `<allowedAudiences>`.             |
+| `missingScope`                               | Token is missing a scope listed in `<requiredScopes>`.           |
+| `clientNotFound`                             | `(iss, client_id)` pair does not match any enabled OAuth Client. |
+| `disabled` or `expired`                      | The OAuth Client item's Enabled flag is off or Expires is past.  |
+| `tokenReplay`, `missingJti`                  | Token replayed within its lifetime (or IdP omits `jti`). Only when `<jtiReplayCacheEnabled>` is on. |
+| `accessTokenTypeRequired`, `invalidTokenType`| Token's `typ` header is not `at+jwt`. Only fails when `<requireAccessTokenType>` is on. |
+| `azpMismatch`                                | Token's `azp` claim does not match the resolved `client_id`. Only when `<requireAzpWhenMultiAudience>` is on and `aud` has more than one value. |
+
+For a 401 response with no detailed log line, check the response headers:
+the `X-SPE-AuthFailureReason` and `WWW-Authenticate` headers identify the
+classified failure. See [Remoting Authentication
+Troubleshooting](remoting-troubleshooting.md) for the full reference.
 
 After editing the OAuth Client item or the config, the change is picked up
 immediately (item) or on the next config reload (config).

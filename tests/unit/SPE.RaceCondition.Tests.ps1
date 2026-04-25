@@ -1,4 +1,4 @@
-# Unit tests for H1: Race condition in API key authentication (#1439)
+# Unit tests for H1: Race condition in Shared Secret Client authentication (#1439)
 # Verifies that SharedSecretAuthenticationProvider.ValidateToken with
 # sharedSecretOverride is thread-safe and does not mutate the singleton.
 
@@ -206,7 +206,7 @@ $tokenD = New-TestJwt -Secret $secretD -Username "sitecore\userD"
 $iterations = 200
 $errors = [System.Collections.Concurrent.ConcurrentBag[string]]::new()
 
-# Simulate the fixed TryApiKeyAuthentication pattern:
+# Simulate the fixed TrySharedSecretClientAuthentication pattern:
 # Each thread passes the secret as an override parameter instead of mutating the singleton.
 $runspace = [runspacefactory]::CreateRunspacePool(1, 10)
 $runspace.Open()
@@ -229,7 +229,7 @@ for ($i = 0; $i -lt $iterations; $i++) {
         $parts = $Token.Split('.')
         $toBeSigned = "$($parts[0]).$($parts[1])"
 
-        # Validate with the correct secret (simulates the right API key match)
+        # Validate with the correct secret (simulates the right Shared Secret Client match)
         $hmac = New-Object System.Security.Cryptography.HMACSHA256
         $hmac.Key = [Text.Encoding]::UTF8.GetBytes($CorrectSecret)
         $sigBytes = $hmac.ComputeHash([Text.Encoding]::UTF8.GetBytes($toBeSigned))
@@ -291,10 +291,10 @@ if ($errorList.Count -gt 0) {
 # ============================================================
 # Test: Two different tokens, each validates only with its own secret via override
 # ============================================================
-Write-Host "`n  [ValidateToken - API key probing pattern]" -ForegroundColor White
+Write-Host "`n  [ValidateToken - Shared Secret Client probing pattern]" -ForegroundColor White
 
-# Simulates the fixed TryApiKeyAuthentication loop: iterate keys, pass each secret as override
-$apiKeys = @(
+# Simulates the fixed TrySharedSecretClientAuthentication loop: iterate keys, pass each secret as override
+$clients = @(
     @{ Name = "KeyC"; Secret = $secretC }
     @{ Name = "KeyD"; Secret = $secretD }
 )
@@ -303,27 +303,27 @@ $providerSecret = "OriginalProviderSecretThatShouldNeverBeUsedForAPIKeys"
 
 # Token signed with secretC should match KeyC
 $matchedKey = $null
-foreach ($key in $apiKeys) {
+foreach ($key in $clients) {
     $r = Test-TokenValidation -Token $tokenC -SharedSecret $providerSecret -SharedSecretOverride $key.Secret
     if ($r.IsValid) {
         $matchedKey = $key.Name
         break
     }
 }
-Assert-Equal $matchedKey "KeyC" "API key probe: tokenC matches KeyC"
+Assert-Equal $matchedKey "KeyC" "Shared Secret Client probe: tokenC matches KeyC"
 
 # Token signed with secretD should match KeyD
 $matchedKey2 = $null
-foreach ($key in $apiKeys) {
+foreach ($key in $clients) {
     $r2 = Test-TokenValidation -Token $tokenD -SharedSecret $providerSecret -SharedSecretOverride $key.Secret
     if ($r2.IsValid) {
         $matchedKey2 = $key.Name
         break
     }
 }
-Assert-Equal $matchedKey2 "KeyD" "API key probe: tokenD matches KeyD"
+Assert-Equal $matchedKey2 "KeyD" "Shared Secret Client probe: tokenD matches KeyD"
 
 # Verify provider secret was never changed
 $finalCheck = Test-TokenValidation -Token $tokenC -SharedSecret $providerSecret
-Assert-Equal $finalCheck.ProviderSecret $providerSecret "Provider secret unchanged after all API key probes"
-Assert-True (-not $finalCheck.IsValid) "Token does not validate with original provider secret (not the API key secret)"
+Assert-Equal $finalCheck.ProviderSecret $providerSecret "Provider secret unchanged after all Shared Secret Client probes"
+Assert-True (-not $finalCheck.IsValid) "Token does not validate with original provider secret (not the Shared Secret Client secret)"

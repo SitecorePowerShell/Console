@@ -169,3 +169,9 @@ tasks:
     desc: Clean build artifacts
     cmds:
       - powershell -File scripts/clean.ps1
+
+  clean:logs:
+    desc: Clean CM container logs
+    cmds:
+      - cmd: powershell -Command "if (Test-Path 'docker\data\cm') { Get-ChildItem 'docker\data\cm' -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }; exit 0"
+        ignore_error: true

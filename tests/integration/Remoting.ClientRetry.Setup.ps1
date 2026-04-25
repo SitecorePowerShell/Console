@@ -1,11 +1,11 @@
 # Remoting.ClientRetry.Setup.ps1
-# Creates test API Keys for client-side retry behavior tests.
+# Creates test Shared Secret Clients for client-side retry behavior tests.
 # Short ThrottleWindow (3s) keeps test duration manageable.
 # Called by Run-RemotingTests.ps1 before the client-retry test phase.
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
-Write-Host "`n  [ClientRetry Setup: creating test API Keys]" -ForegroundColor Cyan
+Write-Host "`n  [ClientRetry Setup: creating test Shared Secret Clients]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
@@ -26,9 +26,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         PolicyAuditLevel     = "{FB657388-BF96-475D-AE69-EBF028F47432}"
     }
 
-    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
-    if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
+    $clientsFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
+    if (-not $clientsFolder) {
+        $clientsFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
     if (-not $policiesFolder) {
@@ -38,11 +38,11 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $existingPolicies = Get-ChildItem -Path "master:$($policiesFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-ClientRetry*" }
     if ($existingPolicies) { $existingPolicies | Remove-Item -Force }
-    $existingKeys = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $existingKeys = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-ClientRetry*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
+    $sharedSecretClientTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
 
     $policy = New-Item -Path "master:$($policiesFolder.Paths.FullPath)/Test-ClientRetryPolicy" -ItemType $policyTemplate
@@ -52,7 +52,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $policy.Editing.EndEdit() | Out-Null
 
     # Tight-window key: RequestLimit=1, Window=3s (Retry-After will be 1-3s)
-    $retryKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ClientRetryQuick" -ItemType $apiKeyTemplate
+    $retryKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ClientRetryQuick" -ItemType $sharedSecretClientTemplate
     $retryKey.Editing.BeginEdit()
     $retryKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $retryKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_client_retry_01"
@@ -65,7 +65,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $retryKey.Editing.EndEdit() | Out-Null
 
     # Observability key: RequestLimit=5, Window=60s (for Gap 4 rate-limit verbose tests)
-    $obsKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ClientRetryObs" -ItemType $apiKeyTemplate
+    $obsKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ClientRetryObs" -ItemType $sharedSecretClientTemplate
     $obsKey.Editing.BeginEdit()
     $obsKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $obsKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_client_obs_01"
@@ -78,7 +78,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $obsKey.Editing.EndEdit() | Out-Null
 
     # Disabled key (for Gap 3 - X-SPE-AuthFailureReason=disabled)
-    $disabledKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ClientRetryDisabled" -ItemType $apiKeyTemplate
+    $disabledKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ClientRetryDisabled" -ItemType $sharedSecretClientTemplate
     $disabledKey.Editing.BeginEdit()
     $disabledKey.Fields[$fieldIds.KeyEnabled].Value = "0"
     $disabledKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_client_disabled_01"

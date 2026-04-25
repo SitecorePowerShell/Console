@@ -1,5 +1,5 @@
 # Remoting.RemotingPolicies.Setup.ps1
-# Creates test policy, API Key, and script items for remoting policy enforcement tests.
+# Creates test policy, Shared Secret Client, and script items for remoting policy enforcement tests.
 # Called by Run-RemotingTests.ps1 before the policy test phase.
 # Requires: SPE Remoting enabled, shared secret configured
 
@@ -19,7 +19,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         PolicyAllowedCmds    = "{5E01F1C2-27A3-4A38-8A3E-6F7E09BDE34F}"
         PolicyApprovedScripts= "{E3A9C1B4-7D56-4F28-9E83-2A1B5C6D8F47}"
         PolicyAuditLevel     = "{FB657388-BF96-475D-AE69-EBF028F47432}"
-        # RemotingApiKey.Fields
+        # RemotingClient.Fields
         KeyAccessKeyId       = "{C4D5E6F7-8A9B-4C0D-1E2F-3A4B5C6D7E8F}"
         KeySharedSecret      = "{BBF52C26-7825-4F7B-88FF-2DB2785C5954}"
         KeyEnabled           = "{8D158FCA-E8F3-4D94-8469-C782B099EC07}"
@@ -35,10 +35,10 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         $policiesFolder = New-Item -Path "$remotingPath/Policies" -ItemType "Common/Folder"
     }
 
-    # Ensure API Keys folder exists
-    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
-    if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
+    # Ensure Remoting Clients folder exists
+    $clientsFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
+    if (-not $clientsFolder) {
+        $clientsFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
 
     # Clean up any leftover from previous test runs
@@ -46,7 +46,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         Where-Object { $_.Name -like "Test-*" }
     if ($existing) { $existing | Remove-Item -Force }
 
-    $existingKeys = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $existingKeys = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
@@ -59,7 +59,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
+    $sharedSecretClientTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $scriptTemplate = "/sitecore/templates/Modules/PowerShell Console/PowerShell Script"
     $scriptLibraryTemplate = "/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library"
 
@@ -150,47 +150,47 @@ Publish-Item
     $fullAudit.Editing.EndEdit() | Out-Null
 
     # =========================================================================
-    # 3. Create API Keys
+    # 3. Create Shared Secret Clients
     # =========================================================================
 
-    # API Key bound to the read-only policy (Droplink stores item ID)
-    $apiKeyReadOnly = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ReadOnlyKey" -ItemType $apiKeyTemplate
-    $apiKeyReadOnly.Editing.BeginEdit()
-    $apiKeyReadOnly.Fields[$fieldIds.KeyEnabled].Value = "1"
-    $apiKeyReadOnly.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_readonly_key_001"
-    $apiKeyReadOnly.Fields[$fieldIds.KeySharedSecret].Value = "Test-ReadOnly-Secret-K3y!-LongEnough-For-Validation"
-    $apiKeyReadOnly.Fields[$fieldIds.KeyPolicy].Value = $readOnly.ID.ToString()
-    $apiKeyReadOnly.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
-    $apiKeyReadOnly.Editing.EndEdit() | Out-Null
+    # Shared Secret Client bound to the read-only policy (Droplink stores item ID)
+    $clientReadOnly = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ReadOnlyKey" -ItemType $sharedSecretClientTemplate
+    $clientReadOnly.Editing.BeginEdit()
+    $clientReadOnly.Fields[$fieldIds.KeyEnabled].Value = "1"
+    $clientReadOnly.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_readonly_key_001"
+    $clientReadOnly.Fields[$fieldIds.KeySharedSecret].Value = "Test-ReadOnly-Secret-K3y!-LongEnough-For-Validation"
+    $clientReadOnly.Fields[$fieldIds.KeyPolicy].Value = $readOnly.ID.ToString()
+    $clientReadOnly.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
+    $clientReadOnly.Editing.EndEdit() | Out-Null
 
-    # API Key with no policy assigned - should be denied (policy required)
-    $apiKeyNoPolicy = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-NoPolicyKey" -ItemType $apiKeyTemplate
-    $apiKeyNoPolicy.Editing.BeginEdit()
-    $apiKeyNoPolicy.Fields[$fieldIds.KeyEnabled].Value = "1"
-    $apiKeyNoPolicy.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_nopolicy_key_001"
-    $apiKeyNoPolicy.Fields[$fieldIds.KeySharedSecret].Value = "Test-NoPolicy-Secret-K3y!-LongEnough-For-Validation"
-    $apiKeyNoPolicy.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
-    $apiKeyNoPolicy.Editing.EndEdit() | Out-Null
+    # Shared Secret Client with no policy assigned - should be denied (policy required)
+    $clientNoPolicy = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-NoPolicyKey" -ItemType $sharedSecretClientTemplate
+    $clientNoPolicy.Editing.BeginEdit()
+    $clientNoPolicy.Fields[$fieldIds.KeyEnabled].Value = "1"
+    $clientNoPolicy.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_nopolicy_key_001"
+    $clientNoPolicy.Fields[$fieldIds.KeySharedSecret].Value = "Test-NoPolicy-Secret-K3y!-LongEnough-For-Validation"
+    $clientNoPolicy.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
+    $clientNoPolicy.Editing.EndEdit() | Out-Null
 
-    # API Key bound to the standard audit policy
-    $apiKeyStandardAudit = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-StandardAuditKey" -ItemType $apiKeyTemplate
-    $apiKeyStandardAudit.Editing.BeginEdit()
-    $apiKeyStandardAudit.Fields[$fieldIds.KeyEnabled].Value = "1"
-    $apiKeyStandardAudit.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_stdaudit_key_001"
-    $apiKeyStandardAudit.Fields[$fieldIds.KeySharedSecret].Value = "Test-StandardAudit-Secret-K3y!-LongEnough-For-Validation"
-    $apiKeyStandardAudit.Fields[$fieldIds.KeyPolicy].Value = $standardAudit.ID.ToString()
-    $apiKeyStandardAudit.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
-    $apiKeyStandardAudit.Editing.EndEdit() | Out-Null
+    # Shared Secret Client bound to the standard audit policy
+    $clientStandardAudit = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-StandardAuditKey" -ItemType $sharedSecretClientTemplate
+    $clientStandardAudit.Editing.BeginEdit()
+    $clientStandardAudit.Fields[$fieldIds.KeyEnabled].Value = "1"
+    $clientStandardAudit.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_stdaudit_key_001"
+    $clientStandardAudit.Fields[$fieldIds.KeySharedSecret].Value = "Test-StandardAudit-Secret-K3y!-LongEnough-For-Validation"
+    $clientStandardAudit.Fields[$fieldIds.KeyPolicy].Value = $standardAudit.ID.ToString()
+    $clientStandardAudit.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
+    $clientStandardAudit.Editing.EndEdit() | Out-Null
 
-    # API Key bound to the full audit policy
-    $apiKeyFullAudit = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-FullAuditKey" -ItemType $apiKeyTemplate
-    $apiKeyFullAudit.Editing.BeginEdit()
-    $apiKeyFullAudit.Fields[$fieldIds.KeyEnabled].Value = "1"
-    $apiKeyFullAudit.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_fullaudit_key_001"
-    $apiKeyFullAudit.Fields[$fieldIds.KeySharedSecret].Value = "Test-FullAudit-Secret-K3y!-LongEnough-For-Validation"
-    $apiKeyFullAudit.Fields[$fieldIds.KeyPolicy].Value = $fullAudit.ID.ToString()
-    $apiKeyFullAudit.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
-    $apiKeyFullAudit.Editing.EndEdit() | Out-Null
+    # Shared Secret Client bound to the full audit policy
+    $clientFullAudit = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-FullAuditKey" -ItemType $sharedSecretClientTemplate
+    $clientFullAudit.Editing.BeginEdit()
+    $clientFullAudit.Fields[$fieldIds.KeyEnabled].Value = "1"
+    $clientFullAudit.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_fullaudit_key_001"
+    $clientFullAudit.Fields[$fieldIds.KeySharedSecret].Value = "Test-FullAudit-Secret-K3y!-LongEnough-For-Validation"
+    $clientFullAudit.Fields[$fieldIds.KeyPolicy].Value = $fullAudit.ID.ToString()
+    $clientFullAudit.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
+    $clientFullAudit.Editing.EndEdit() | Out-Null
 
     @(
         "CREATED"
@@ -198,10 +198,10 @@ Publish-Item
         "Unrestricted=$($unrestricted.ID)"
         "StandardAudit=$($standardAudit.ID)"
         "FullAudit=$($fullAudit.ID)"
-        "ApiKeyReadOnly=$($apiKeyReadOnly.ID)"
-        "ApiKeyNoPolicy=$($apiKeyNoPolicy.ID)"
-        "ApiKeyStandardAudit=$($apiKeyStandardAudit.ID)"
-        "ApiKeyFullAudit=$($apiKeyFullAudit.ID)"
+        "ClientReadOnly=$($clientReadOnly.ID)"
+        "ClientNoPolicy=$($clientNoPolicy.ID)"
+        "ClientStandardAudit=$($clientStandardAudit.ID)"
+        "ClientFullAudit=$($clientFullAudit.ID)"
         "ApprovedScript=$($approvedScript.ID)"
         "UnapprovedScript=$($unapprovedScript.ID)"
         "ScriptFolder=$($webApiRoot.Paths.FullPath)"

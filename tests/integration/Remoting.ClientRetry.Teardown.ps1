@@ -5,11 +5,11 @@ $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSec
 
 Invoke-RemoteScript -Session $session -ScriptBlock {
     $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
-    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
+    $clientsFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
 
-    if ($apiKeysFolder) {
-        Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    if ($clientsFolder) {
+        Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-ClientRetry*" } |
             Remove-Item -Force
     }

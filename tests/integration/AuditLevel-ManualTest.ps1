@@ -1,5 +1,5 @@
 # AuditLevel-ManualTest.ps1
-# Cycles through all 8 audit test API keys, sending both an allowed and blocked command.
+# Cycles through all 8 audit test Shared Secret Clients, sending both an allowed and blocked command.
 # Review SPE.log after running to confirm expected audit events per level.
 
 Import-Module SPE -Force
@@ -65,7 +65,7 @@ foreach ($key in $keys) {
 
 Write-Host "`n=== Done ===" -ForegroundColor Cyan
 Write-Host "Review SPE.log for audit entries. Expected per level:"
-Write-Host "  None:       Only unconditional (requestReceived, auth, apiKeyValidated)"
+Write-Host "  None:       Only unconditional (requestReceived, auth, clientValidated)"
 Write-Host "  Violations: + commandBlocked, scriptRejectedByPolicy"
 Write-Host "  Standard:   + scriptStarting, scriptCompleted, connectionTest, sessionCleanup, policyAudit"
 Write-Host "  Full:       + scriptDetail (length, languageMode), responseDetail, requestDetail"

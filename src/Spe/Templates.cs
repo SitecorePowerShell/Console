@@ -99,9 +99,6 @@ namespace Spe
 
         public readonly struct SharedSecretClient
         {
-            // Same template GUID as the legacy "Remoting API Key" template; the
-            // display name, path, and inheritance changed in Phase 1d so existing
-            // items keep resolving without a re-template migration.
             public static readonly ID Id = new ID("{55AB1AA8-890E-401E-AF06-094CA21E0E2D}");
 
             public struct Fields

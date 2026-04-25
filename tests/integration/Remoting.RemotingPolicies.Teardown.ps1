@@ -1,5 +1,5 @@
 # Remoting.RemotingPolicies.Teardown.ps1
-# Removes test policy, API Key, and script items AFTER the policy tests complete.
+# Removes test policy, Shared Secret Client, and script items AFTER the policy tests complete.
 # Called by Run-RemotingTests.ps1 after the policy phase.
 # Requires: SPE Remoting enabled, shared secret configured
 
@@ -21,10 +21,10 @@ $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         }
     }
 
-    # Clean up API Key items
-    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients" -ErrorAction SilentlyContinue
-    if ($apiKeysFolder) {
-        $items = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    # Clean up Shared Secret Client items
+    $clientsFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients" -ErrorAction SilentlyContinue
+    if ($clientsFolder) {
+        $items = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-*" }
         if ($items) {
             $deleted += ($items | Measure-Object).Count

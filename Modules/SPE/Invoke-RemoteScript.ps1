@@ -83,9 +83,9 @@ function Resolve-HttpErrorResponse {
     if ($status -eq 401) {
         $reasonCode = Get-HttpHeaderValue $ErrorResponse.Headers "X-SPE-AuthFailureReason"
         $msg = switch ($reasonCode) {
-            "expired"  { "Authentication failed: the API Key has expired. Rotate the key or update its Expires field." }
-            "disabled" { "Authentication failed: the API Key is disabled. Enable it on the API Key item to allow access." }
-            "invalid"  { "Authentication failed: credentials are invalid (unknown key or bad signature)." }
+            "expired"  { "Authentication failed: the Shared Secret Client has expired. Rotate its secret or update its Expires field." }
+            "disabled" { "Authentication failed: the Shared Secret Client is disabled. Enable it on the client item to allow access." }
+            "invalid"  { "Authentication failed: the credentials were rejected. Check the access key, shared secret, or access token." }
             default    { "Authentication failed. Check that the proper credentials are provided." }
         }
         Write-Error -Message $msg -Category AuthenticationError `

@@ -164,7 +164,7 @@ SharedFields:
     $title = if($mode -eq "Insert") { "Create Remoting Policy" } else { "Edit Remoting Policy" }
     $okButton = if($mode -eq "Insert") { "Create" } else { "Save" }
     $description = if($mode -eq "Insert") {
-        "Creates a new Remoting Policy that controls which commands and scripts are permitted for API key holders."
+        "Creates a new Remoting Policy that controls which commands and scripts are permitted for Remoting Clients."
     } else {
         "Modify the remoting policy '$($item.Name)' to control permitted commands and scripts."
     }

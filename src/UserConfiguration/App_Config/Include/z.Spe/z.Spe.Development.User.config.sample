@@ -34,9 +34,9 @@
         </allowedAudiences>
       </authenticationProvider>
       <!--
-        OAuth bearer providers. Opt-in. Ensure Spe.OAuthBearer.config.disabled
-        has been renamed off the .disabled suffix so the provider type is
-        registered. Declare one <oauthBearer*> entry per IdP; the remoting
+        OAuth bearer providers. Opt-in. Ensure Spe.OAuthBearer.config.example
+        has been copied to Spe.OAuthBearer.config (drop the .example suffix)
+        so the provider type is registered. Declare one <oauthBearer*> entry per IdP; the remoting
         handler routes incoming tokens to the provider whose <allowedIssuers>
         contains the token's iss claim, so multiple IdPs coexist cleanly.
         Replace the Auth0 tenant below with your own, or delete the

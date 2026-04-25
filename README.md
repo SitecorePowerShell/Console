@@ -222,7 +222,7 @@ OAuth Clients follow the same split: per-item `Allowed Issuer` and `OAuth Client
 
 ### OAuth bearer setup
 
-The provider ships as `App_Config/Include/Spe/Spe.OAuthBearer.config.disabled`. Rename off the `.disabled` suffix to activate. Unlike earlier drafts of this feature, activating OAuth does **not** replace the shared-secret provider - both providers register side by side under a plural `<authenticationProviders>` list.
+The provider ships as `App_Config/Include/Spe/Spe.OAuthBearer.config.example`. Copy it to `Spe.OAuthBearer.config` (drop the `.example` suffix) to activate. Unlike earlier drafts of this feature, activating OAuth does **not** replace the shared-secret provider - both providers register side by side under a plural `<authenticationProviders>` list.
 
 Populate the four required fields before activating: `<jwksUri>`, `<allowedIssuers>`, `<allowedAudiences>`, `<requiredScopes>`. The provider validates `exp`, `nbf`, `iat`, lifetime, `iss`, `aud`, scopes, and the cryptographic signature against keys fetched from the JWKS endpoint. The Impersonated User for the authenticated session comes from the matched OAuth Client item, not the config.
 
@@ -238,7 +238,7 @@ One-time setup:
 task init                                                                # seeds SPE_OAUTH_CLIENT_SECRET in .env
 task up && task deploy                                                   # or 'docker compose up -d id' if already up
 # Activate the OAuth provider (inside the deploy output so the file watcher picks it up):
-mv "docker/deploy/App_Config/Include/Spe/Spe.OAuthBearer.config.disabled" \
+cp "docker/deploy/App_Config/Include/Spe/Spe.OAuthBearer.config.example" \
    "docker/deploy/App_Config/Include/Spe/Spe.OAuthBearer.config"
 ```
 

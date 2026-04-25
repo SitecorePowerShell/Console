@@ -222,7 +222,7 @@ Editor, or ISE). They will fail or have no effect through remoting or Web API.
 |--------|--------|
 | Close-Window | Closes a Sheer UI window |
 | Invoke-JavaScript | Injects JavaScript into a Sheer UI page |
-| Login-User | Performs an interactive Sitecore login; remoting uses API key auth |
+| Login-User | Performs an interactive Sitecore login; remoting uses Shared Secret Client auth |
 | Logout-User | Ends an interactive Sitecore session |
 | Out-Download | Streams a file download to the browser |
 | Read-Variable | Opens the Sheer UI variable-entry dialog |

@@ -59,7 +59,7 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
     $f1.Editing.BeginEdit()
     $f1["Type"] = "Checkbox"
     $f1["Title"] = "Enabled"
-    $f1["__Short description"] = "When checked, this policy is active and can be assigned to API Keys."
+    $f1["__Short description"] = "When checked, this policy is active and can be assigned to Remoting Clients."
     $f1["Shared"] = "1"
     $f1.Editing.EndEdit() | Out-Null
 

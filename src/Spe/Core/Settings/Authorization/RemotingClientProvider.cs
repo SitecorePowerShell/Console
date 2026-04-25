@@ -11,10 +11,12 @@ using Spe.Core.Diagnostics;
 namespace Spe.Core.Settings.Authorization
 {
     /// <summary>
-    /// Loads and caches SPE Remoting API Key items from the content tree.
-    /// Provides lookup by shared secret for authentication and per-key throttling.
+    /// Loads and caches SPE Remoting Client items from the content tree
+    /// (both Shared Secret Clients and OAuth Clients). Provides lookup by
+    /// access key id for shared-secret auth, by (issuer, client_id) for
+    /// OAuth, and per-client throttling.
     ///
-    /// API Key items live under the Security/API Keys node, resolved by item ID.
+    /// Items live under the Security/Remoting Clients node, resolved by item ID.
     /// </summary>
     public static class RemotingClientProvider
     {
@@ -35,14 +37,12 @@ namespace Spe.Core.Settings.Authorization
             new ConcurrentDictionary<string, ThrottleState>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Returns all enabled API Key items. Used for iterative token validation
-        /// when the config-based shared secret doesn't match.
-        /// </summary>
-        /// <summary>
-        /// Returns all enabled API Key items.
+        /// Returns all enabled Shared Secret Client items.
         /// Sets <paramref name="registryLoaded"/> to true when the registry was
-        /// successfully loaded from the database (even if no enabled keys exist).
-        /// Returns null when no enabled keys are found or the registry could not load.
+        /// successfully loaded from the database (even if none are enabled).
+        /// Returns null when no enabled clients are found or the registry could
+        /// not load. Used for iterative token validation when the config-based
+        /// shared secret doesn't match.
         /// </summary>
         public static List<RemotingClient> FindAllEnabled(out bool registryLoaded)
         {
@@ -156,45 +156,45 @@ namespace Spe.Core.Settings.Authorization
         }
 
         /// <summary>
-        /// Checks throttle state for the given API Key.
+        /// Checks throttle state for the given Remoting Client.
         /// Returns a ThrottleResult with allowed/denied status and rate limit info for headers.
         /// </summary>
-        public static ThrottleResult CheckThrottle(RemotingClient apiKey)
+        public static ThrottleResult CheckThrottle(RemotingClient client)
         {
-            if (!apiKey.HasThrottle)
+            if (!client.HasThrottle)
             {
                 return ThrottleResult.Unlimited;
             }
 
             var now = DateTime.UtcNow;
-            var state = _throttleState.GetOrAdd(apiKey.Name, _ => new ThrottleState(now, 0));
+            var state = _throttleState.GetOrAdd(client.Name, _ => new ThrottleState(now, 0));
 
             lock (state)
             {
-                var windowEnd = state.WindowStart.AddSeconds(apiKey.ThrottleWindowSeconds);
+                var windowEnd = state.WindowStart.AddSeconds(client.ThrottleWindowSeconds);
                 if (now >= windowEnd)
                 {
                     // New window
                     state.WindowStart = now;
                     state.RequestCount = 1;
-                    windowEnd = now.AddSeconds(apiKey.ThrottleWindowSeconds);
+                    windowEnd = now.AddSeconds(client.ThrottleWindowSeconds);
 
-                    return new ThrottleResult(true, apiKey.RequestLimit,
-                        apiKey.RequestLimit - 1, windowEnd, apiKey.ThrottleAction);
+                    return new ThrottleResult(true, client.RequestLimit,
+                        client.RequestLimit - 1, windowEnd, client.ThrottleAction);
                 }
 
                 state.RequestCount++;
-                var remaining = Math.Max(0, apiKey.RequestLimit - state.RequestCount);
+                var remaining = Math.Max(0, client.RequestLimit - state.RequestCount);
 
-                if (state.RequestCount <= apiKey.RequestLimit)
+                if (state.RequestCount <= client.RequestLimit)
                 {
-                    return new ThrottleResult(true, apiKey.RequestLimit, remaining, windowEnd, apiKey.ThrottleAction);
+                    return new ThrottleResult(true, client.RequestLimit, remaining, windowEnd, client.ThrottleAction);
                 }
 
                 PowerShellLog.Warn(
-                    $"[RemotingClient] action=throttleExceeded remotingClient={apiKey.Name} count={state.RequestCount} limit={apiKey.RequestLimit} window={apiKey.ThrottleWindowSeconds}");
+                    $"[RemotingClient] action=throttleExceeded remotingClient={client.Name} count={state.RequestCount} limit={client.RequestLimit} window={client.ThrottleWindowSeconds}");
 
-                return new ThrottleResult(false, apiKey.RequestLimit, 0, windowEnd, apiKey.ThrottleAction);
+                return new ThrottleResult(false, client.RequestLimit, 0, windowEnd, client.ThrottleAction);
             }
         }
 
@@ -368,7 +368,7 @@ namespace Spe.Core.Settings.Authorization
                 Item settingsFolder;
                 using (new SecurityDisabler())
                 {
-                    settingsFolder = db.GetItem(ItemIDs.ApiKeys);
+                    settingsFolder = db.GetItem(ItemIDs.RemotingClients);
                 }
                 if (settingsFolder == null) return null;
 
@@ -489,7 +489,7 @@ namespace Spe.Core.Settings.Authorization
                 Item settingsFolder;
                 using (new SecurityDisabler())
                 {
-                    settingsFolder = db.GetItem(ItemIDs.ApiKeys);
+                    settingsFolder = db.GetItem(ItemIDs.RemotingClients);
                 }
 
                 if (settingsFolder == null)
@@ -501,7 +501,7 @@ namespace Spe.Core.Settings.Authorization
                 var keys = new List<RemotingClient>();
                 using (new SecurityDisabler())
                 {
-                    CollectApiKeysRecursive(settingsFolder, keys);
+                    CollectSharedSecretClientsRecursive(settingsFolder, keys);
                 }
 
                 PowerShellLog.Debug($"[RemotingClient] action=registryLoaded count={keys.Count}");
@@ -514,7 +514,7 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        private static void CollectApiKeysRecursive(Item folder, List<RemotingClient> keys)
+        private static void CollectSharedSecretClientsRecursive(Item folder, List<RemotingClient> keys)
         {
             foreach (Item child in folder.GetChildren())
             {
@@ -522,7 +522,7 @@ namespace Spe.Core.Settings.Authorization
                 {
                     try
                     {
-                        var key = ParseApiKey(child);
+                        var key = ParseSharedSecretClient(child);
                         if (key != null)
                         {
                             keys.Add(key);
@@ -537,12 +537,12 @@ namespace Spe.Core.Settings.Authorization
                 }
                 else if (child.HasChildren)
                 {
-                    CollectApiKeysRecursive(child, keys);
+                    CollectSharedSecretClientsRecursive(child, keys);
                 }
             }
         }
 
-        private static RemotingClient ParseApiKey(Item item)
+        private static RemotingClient ParseSharedSecretClient(Item item)
         {
             var accessKeyId = item.Fields[Templates.SharedSecretClient.Fields.AccessKeyId]?.Value?.Trim();
             if (string.IsNullOrEmpty(accessKeyId))

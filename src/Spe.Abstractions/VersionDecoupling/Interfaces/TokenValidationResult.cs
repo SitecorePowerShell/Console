@@ -21,5 +21,13 @@ namespace Spe.Abstractions.VersionDecoupling.Interfaces
         /// scope OAuth Client item lookups.
         /// </summary>
         public string ClientId { get; set; }
+
+        /// <summary>
+        /// Short tag describing why validation failed when an authentication
+        /// provider sets it on rejection. Surfaces as the X-SPE-AuthFailureReason
+        /// response header on 401s. Known values include "expired", "disabled",
+        /// "invalid", "replay".
+        /// </summary>
+        public string FailureReason { get; set; }
     }
 }

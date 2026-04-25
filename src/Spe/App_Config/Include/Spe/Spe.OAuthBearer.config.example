@@ -7,8 +7,8 @@
     (Sitecore Identity Server, Auth0, Microsoft Entra ID, Keycloak, Okta)
     rather than being minted client-side with a shared secret.
 
-    Distributed with a .disabled suffix by default. Rename to remove the
-    .disabled suffix to activate.
+    Distributed with a .example suffix by default. Copy to
+    Spe.OAuthBearer.config (drop the .example) to activate.
 
     Activation is ADDITIVE: the SharedSecret provider (defined in Spe.config)
     remains registered. The remoting handler dispatches incoming tokens by
@@ -49,10 +49,10 @@
 
     ==== Optional overrides ====
 
-    Tunables not listed here - allowedAlgorithms, usernameClaim,
-    jwksCacheSeconds, maxTokenLifetimeSeconds, clockSkewSeconds,
-    detailedAuthenticationErrors, suppressWarnings - default to safe values
-    in the OAuthBearerTokenAuthenticationProvider class. Add them under
+    Tunables not listed here - allowedAlgorithms, jwksCacheSeconds,
+    maxTokenLifetimeSeconds, clockSkewSeconds, detailedAuthenticationErrors,
+    suppressWarnings - default to safe values in the
+    OAuthBearerTokenAuthenticationProvider class. Add them under
     <oauthBearer> below if you need to override.
 
     NOTE: This provider does not support skipping signature validation.
@@ -102,6 +102,81 @@
           -->
           <requiredScopes hint="list">
           </requiredScopes>
+
+          <!-- Optional: when enabled, the token's typ header MUST be
+               "at+jwt" (RFC 9068). Closes the OIDC ID-token-as-access-token
+               confusion class on IdPs that distinguish the two.
+
+               Compatibility:
+                 Safe to enable: Okta, Duende IdentityServer v5+, Keycloak
+                                 20+ (with the at+jwt configuration), Ping.
+                 Unsafe to enable: Auth0, Microsoft Entra ID (v1 and v2),
+                                   IdentityServer4 / older Sitecore IDS -
+                                   these stamp typ=JWT on access tokens.
+
+               Default: false (accepts typ=JWT, typ=at+jwt, or no typ).
+          -->
+          <requireAccessTokenType>false</requireAccessTokenType>
+
+          <!-- Optional: when enabled and the token's aud claim has more than
+               one value, the azp claim must be present and must match the
+               resolved client_id used for OAuth Client item lookup
+               (OIDC Core 2 Section 3.1.3.7, RFC 7519 Section 4.1.3).
+               No effect on single-audience tokens.
+
+               All common IdPs (Auth0, Okta, Entra, Sitecore IDS, Keycloak)
+               emit azp on multi-audience tokens, so this is generally safe
+               to enable wherever multi-aud tokens are expected.
+
+               Default: false.
+          -->
+          <requireAzpWhenMultiAudience>false</requireAzpWhenMultiAudience>
+
+          <!-- Optional: replay protection. When enabled, every accepted
+               token's (iss, jti) pair is recorded for the remainder of its
+               lifetime; a second presentation of the same token returns
+               401 with X-SPE-AuthFailureReason: replay. Tokens missing the
+               jti claim are also rejected when this is on.
+
+               Cache is process-local. On a multi-node CM cluster, a captured
+               token can still be replayed against a sibling node until it
+               sees the token. Use a sticky-session load balancer (or accept
+               the small replay window between nodes) until distributed
+               cache lands.
+
+               Compatibility: every common IdP (Sitecore IDS, Auth0, Okta,
+               Entra ID v1/v2, Keycloak, Ping) emits jti by default. Custom
+               IdPs that omit jti will fail when this is on.
+
+               Default: off.
+          -->
+          <jtiReplayCacheEnabled>false</jtiReplayCacheEnabled>
+
+          <!-- Soft cap on the number of (iss, jti) entries kept in memory.
+               Expired entries are swept lazily; a sustained over-cap state
+               is logged once per minute. At ~150 bytes per entry, the
+               default of 10000 costs about 1.5 MB. Bump if your worst-case
+               concurrent-token count is higher. -->
+          <jtiReplayCacheMaxEntries>10000</jtiReplayCacheMaxEntries>
+
+          <!-- Optional: when true, allows http://localhost, 127.0.0.1, and
+               [::1] for the JwksUri (every fetch logs a warn). When false
+               (the default), http:// is rejected regardless of host -
+               JwksUri must be HTTPS. Never enable this in production; the
+               standard dev stack already serves IDS over HTTPS via Traefik.
+          -->
+          <jwksAllowLoopbackHttp>false</jwksAllowLoopbackHttp>
+
+          <!-- JWKS fetch hardening (always on, no operator knobs):
+
+               1. Response-size cap: 1 MB. A JWKS document larger than this
+                  is rejected. A healthy keyset is well under 10 KB.
+               2. HTTPS required: http:// JwksUri values are rejected
+                  unless jwksAllowLoopbackHttp is set above.
+               3. Negative cache: a failed fetch suppresses retries for
+                  15 seconds. Prevents repeated 10-second timeouts when
+                  the IdP is unreachable.
+          -->
         </oauthBearer>
       </authenticationProviders>
     </powershell>

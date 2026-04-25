@@ -254,8 +254,10 @@
     <Compile Include="Core\Settings\Authorization\RemotingItemEventHandler.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingClient.cs" />
     <Compile Include="Core\Settings\Authorization\RemotingClientProvider.cs" />
+    <Compile Include="Core\Settings\Authorization\AuthProviderConfigValidator.cs" />
     <Compile Include="Core\Settings\Authorization\JwtClaimValidator.cs" />
     <Compile Include="Core\Settings\Authorization\JwksKeyResolver.cs" />
+    <Compile Include="Core\Settings\Authorization\JtiReplayCache.cs" />
     <Compile Include="Core\Settings\Authorization\OAuthBearerTokenAuthenticationProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
     <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
@@ -635,7 +637,7 @@
     <Content Include="App_Config\Include\Spe\Spe.IdentityServer.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config.disabled" />
+    <Content Include="App_Config\Include\Spe\Spe.OAuthBearer.config.example" />
     <None Include="packages.config" />
     <Content Include="App_Config\Include\z.Spe\z.Spe.config" />
     <Content Include="sitecore modules\items\core\items.core.spe.dat.tmp" />

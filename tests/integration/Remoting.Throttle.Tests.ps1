@@ -1,9 +1,9 @@
 # Remoting Tests - Throttle Action Enforcement
-# Tests that throttle actions (Block, Bypass) work correctly per API Key.
-# API Keys are created by Remoting.Throttle.Setup.ps1 before these tests run.
+# Tests that throttle actions (Block, Bypass) work correctly per Shared Secret Client.
+# Shared Secret Clients are created by Remoting.Throttle.Setup.ps1 before these tests run.
 # Each key has RequestLimit=3, ThrottleWindow=60s.
 # Run via: .\Run-RemotingTests.ps1 (automatically run in the throttle phase)
-# Requires: Throttle test API Keys created, SPE Remoting enabled
+# Requires: Throttle test Shared Secret Clients created, SPE Remoting enabled
 
 $serviceUrl = "$protocolHost/-/script/script/"
 

@@ -19,9 +19,9 @@ $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         }
     }
 
-    $apiKeysFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients" -ErrorAction SilentlyContinue
-    if ($apiKeysFolder) {
-        $items = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $clientsFolder = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients" -ErrorAction SilentlyContinue
+    if ($clientsFolder) {
+        $items = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
             Where-Object { $_.Name -like "Test-Expir*" -or $_.Name -like "Test-NoExpiry*" }
         if ($items) {
             $deleted += ($items | Measure-Object).Count

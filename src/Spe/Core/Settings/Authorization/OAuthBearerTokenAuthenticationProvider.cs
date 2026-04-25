@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web.Script.Serialization;
 using Sitecore.Exceptions;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
@@ -21,14 +22,19 @@ namespace Spe.Core.Settings.Authorization
         public List<string> AllowedIssuers { get; set; }
         public List<string> RequiredScopes { get; set; }
         public List<string> AllowedAlgorithms { get; set; }
-        public string UsernameClaim { get; set; }
-        public string ServiceAccountUsername { get; set; }
         public string JwksUri { get; set; }
         public int JwksCacheSeconds { get; set; }
         public int MaxTokenLifetimeSeconds { get; set; }
         public bool DetailedAuthenticationErrors { get; set; }
         public bool SuppressWarnings { get; set; }
         public int ClockSkewSeconds { get; set; }
+        public bool JtiReplayCacheEnabled { get; set; }
+        public int JtiReplayCacheMaxEntries { get; set; }
+        public bool RequireAccessTokenType { get; set; }
+        public bool RequireAzpWhenMultiAudience { get; set; }
+        public bool JwksAllowLoopbackHttp { get; set; }
+
+        private JtiReplayCache _replayCache;
 
         public OAuthBearerTokenAuthenticationProvider()
         {
@@ -36,11 +42,25 @@ namespace Spe.Core.Settings.Authorization
             AllowedIssuers = new List<string>();
             RequiredScopes = new List<string>();
             AllowedAlgorithms = new List<string> { "RS256", "RS384", "RS512", "ES256" };
-            UsernameClaim = "sub";
             JwksCacheSeconds = 600;
             MaxTokenLifetimeSeconds = 3600;
             ClockSkewSeconds = 30;
+            JtiReplayCacheMaxEntries = 10000;
         }
+
+        // Lazy: Sitecore Factory.CreateObject sets properties post-construction,
+        // so we cannot materialise the cache in the constructor and read the
+        // operator-supplied MaxEntries value.
+        private JtiReplayCache GetReplayCache()
+        {
+            if (!JtiReplayCacheEnabled) return null;
+            return LazyInitializer.EnsureInitialized(
+                ref _replayCache,
+                () => new JtiReplayCache(JtiReplayCacheMaxEntries));
+        }
+
+        // Test seam.
+        internal JtiReplayCache ReplayCache => _replayCache;
 
         public bool Validate(string token, string authority, out string username)
         {
@@ -78,15 +98,17 @@ namespace Spe.Core.Settings.Authorization
                 var headerJson = Encoding.UTF8.GetString(JwtClaimValidator.Decode(headerJsonBase64));
                 var header = serializer.Deserialize<Dictionary<string, object>>(headerJson);
 
-                // typ is optional per RFC 7519. When present, accept "JWT" (legacy)
-                // and "at+jwt" (RFC 9068, emitted by Duende / Sitecore Identity Server).
+                // typ is optional per RFC 7519. Default accepts no typ, "JWT", or
+                // "at+jwt" (RFC 9068, emitted by Duende / Sitecore Identity Server).
+                // RequireAccessTokenType narrows to "at+jwt" only - closes the OIDC
+                // ID-token-as-access-token confusion class on IdPs that stamp at+jwt
+                // for access tokens (Okta, Duende v5+, Ping).
                 var typ = header.TryGetValue("typ", out var typObj) ? typObj?.ToString() : null;
-                if (!string.IsNullOrEmpty(typ) &&
-                    !string.Equals(typ, "JWT", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(typ, "at+jwt", StringComparison.OrdinalIgnoreCase))
+                if (!JwtClaimValidator.IsValidTokenType(typ, RequireAccessTokenType))
                 {
-                    if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=invalidTokenType type={LogSanitizer.SanitizeValue(typ)}");
-                    if (DetailedAuthenticationErrors) throw new SecurityException("The Token Type is incorrect.");
+                    var reason = RequireAccessTokenType ? "accessTokenTypeRequired" : "invalidTokenType";
+                    if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason={reason} type={LogSanitizer.SanitizeValue(typ)}");
+                    if (DetailedAuthenticationErrors) throw new SecurityException(RequireAccessTokenType ? "The Token Type must be at+jwt." : "The Token Type is incorrect.");
                     return false;
                 }
 
@@ -156,15 +178,32 @@ namespace Spe.Core.Settings.Authorization
                     return false;
                 }
 
-                // Identity resolution: the handler looks up an OAuth Client item
-                // via (iss, client_id) and uses its ImpersonateUser field as the
-                // authoritative username. Any username we return here is only a
-                // best-effort fallback - empty string is fine, the handler will
-                // reject with 401 when no item match supplies identity.
-                username = !string.IsNullOrEmpty(ServiceAccountUsername)
-                    ? ServiceAccountUsername
-                    : (payload.TryGetValue(UsernameClaim ?? "sub", out var nameObj) ? nameObj?.ToString() : null)
-                      ?? string.Empty;
+                var replayCache = GetReplayCache();
+                if (replayCache != null)
+                {
+                    var jti = payload.TryGetValue("jti", out var jtiObj) ? jtiObj?.ToString() : null;
+                    if (string.IsNullOrEmpty(jti))
+                    {
+                        if (!SuppressWarnings) PowerShellLog.Warn("[OAuthBearer] action=validationFailed reason=missingJti");
+                        if (DetailedAuthenticationErrors) throw new SecurityException("The Token jti claim is required when replay protection is enabled.");
+                        return false;
+                    }
+
+                    if (!replayCache.TryClaim(issuer, jti, exp))
+                    {
+                        result = new TokenValidationResult { Issuer = issuer, FailureReason = "replay" };
+                        if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=tokenReplay jti={LogSanitizer.SanitizeValue(jti)}");
+                        if (DetailedAuthenticationErrors) throw new SecurityException("The Token has already been used (jti replay).");
+                        return false;
+                    }
+                }
+
+                // Identity comes from the OAuth Client item's ImpersonateUser
+                // field, looked up by the handler via (iss, client_id) after
+                // we return. We don't compute a fallback username from token
+                // claims - if no item match supplies identity, the handler
+                // rejects with 401.
+                username = string.Empty;
 
                 var clientId = ResolveClientId(payload);
                 result = new TokenValidationResult
@@ -202,17 +241,37 @@ namespace Spe.Core.Settings.Authorization
                 return false;
             }
 
+            var matched = false;
             foreach (var candidate in candidates)
             {
                 if (JwtClaimValidator.IsValidAudience(candidate, AllowedAudiences, suppressWarnings: true, detailedErrors: false))
                 {
-                    return true;
+                    matched = true;
+                    break;
                 }
             }
 
-            if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=audienceNotAllowed audience={LogSanitizer.SanitizeValue(string.Join(",", candidates))}");
-            if (DetailedAuthenticationErrors) throw new SecurityException("The Token Audience is not allowed.");
-            return false;
+            if (!matched)
+            {
+                if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=audienceNotAllowed audience={LogSanitizer.SanitizeValue(string.Join(",", candidates))}");
+                if (DetailedAuthenticationErrors) throw new SecurityException("The Token Audience is not allowed.");
+                return false;
+            }
+
+            // Multi-audience azp check. Skipped when single-aud or flag off.
+            if (RequireAzpWhenMultiAudience && candidates.Count > 1)
+            {
+                var azp = payload.TryGetValue("azp", out var azpObj) ? azpObj?.ToString() : null;
+                var resolvedClientId = ResolveClientId(payload);
+                if (!JwtClaimValidator.IsValidAzp(candidates, azp, resolvedClientId, true))
+                {
+                    if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=azpMismatch azp={LogSanitizer.SanitizeValue(azp)} clientId={LogSanitizer.SanitizeValue(resolvedClientId)}");
+                    if (DetailedAuthenticationErrors) throw new SecurityException("The Token azp claim is missing or does not match the resolved client_id.");
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private bool ValidateScopes(Dictionary<string, object> payload)
@@ -270,7 +329,7 @@ namespace Spe.Core.Settings.Authorization
                 return false;
             }
 
-            var key = JwksKeyResolver.GetKey(JwksUri, kid, JwksCacheSeconds);
+            var key = JwksKeyResolver.GetKey(JwksUri, kid, JwksCacheSeconds, JwksAllowLoopbackHttp);
             if (key == null)
             {
                 if (!SuppressWarnings) PowerShellLog.Warn($"[OAuthBearer] action=validationFailed reason=keyNotResolved kid={LogSanitizer.SanitizeValue(kid)}");

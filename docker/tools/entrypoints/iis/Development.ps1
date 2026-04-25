@@ -12,6 +12,15 @@ $timeFormat = "HH:mm:ss:fff"
 # Print start message
 Write-Host "$(Get-Date -Format $timeFormat): Development ENTRYPOINT: starting..."
 
+$devCert = "C:\certs\devcert.cer"
+if (Test-Path -Path $devCert) {
+    $thumb = (Get-PfxCertificate -FilePath $devCert).Thumbprint
+    if (-not (Test-Path "Cert:\LocalMachine\Root\$thumb")) {
+        Import-Certificate -FilePath $devCert -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
+        Write-Host "$(Get-Date -Format $timeFormat): Imported dev CA $thumb into LocalMachine\Root"
+    }
+}
+
 # Check to see if we should start the Watch-Directory.ps1 script
 $watchDirectoryJobName = "Watch-Directory.ps1"
 $useWatchDirectory = $null -ne $WatchDirectoryParameters -bor (Test-Path -Path "C:\deploy" -PathType "Container") -eq $true

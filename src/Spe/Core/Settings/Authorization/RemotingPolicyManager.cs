@@ -42,21 +42,21 @@ namespace Spe.Core.Settings.Authorization
 
         /// <summary>
         /// Resolves the effective policy for a request.
-        /// API keys without a policy are denied.
+        /// Remoting Clients without a policy are denied.
         /// </summary>
-        public static RemotingPolicy ResolvePolicy(string apiKeyPolicy)
+        public static RemotingPolicy ResolvePolicy(string clientPolicy)
         {
-            if (!string.IsNullOrEmpty(apiKeyPolicy))
+            if (!string.IsNullOrEmpty(clientPolicy))
             {
-                var keyPolicy = GetPolicy(apiKeyPolicy);
-                if (keyPolicy != null) return keyPolicy;
+                var resolved = GetPolicy(clientPolicy);
+                if (resolved != null) return resolved;
 
                 PowerShellLog.Error(
-                    $"[Policy] action=unknownPolicy source=apiKey policy={apiKeyPolicy}");
+                    $"[Policy] action=unknownPolicy source=remotingClient policy={clientPolicy}");
                 return RemotingPolicy.DenyAll;
             }
 
-            PowerShellLog.Error("[Policy] action=noPolicy reason=API key has no policy assigned");
+            PowerShellLog.Error("[Policy] action=noPolicy reason=Remoting Client has no policy assigned");
             return RemotingPolicy.DenyAll;
         }
 

@@ -1,5 +1,5 @@
-# Remoting Tests - API Key Expiration Enforcement
-# Tests that expired API keys are rejected and valid/no-expiry keys work.
+# Remoting Tests - Shared Secret Client Expiration Enforcement
+# Tests that expired Shared Secret Clients are rejected and valid/no-expiry clients work.
 # Items created by Remoting.Expiration.Setup.ps1 before these tests run.
 # Run via: .\Run-RemotingTests.ps1 (automatically run in the expiration phase)
 

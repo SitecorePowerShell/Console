@@ -1,11 +1,11 @@
 # Remoting.Throttle.Setup.ps1
-# Creates test API Key items with throttle settings for Block and Bypass actions.
+# Creates test Shared Secret Client items with throttle settings for Block and Bypass actions.
 # Called by Run-RemotingTests.ps1 before the throttle test phase.
 # Requires: SPE Remoting enabled, shared secret configured
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
-Write-Host "`n  [Throttle Setup: creating test API Keys]" -ForegroundColor Cyan
+Write-Host "`n  [Throttle Setup: creating test Shared Secret Clients]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
@@ -26,10 +26,10 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         PolicyAuditLevel     = "{FB657388-BF96-475D-AE69-EBF028F47432}"
     }
 
-    # Ensure API Keys folder exists
-    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
-    if (-not $apiKeysFolder) {
-        $apiKeysFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
+    # Ensure Remoting Clients folder exists
+    $clientsFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
+    if (-not $clientsFolder) {
+        $clientsFolder = New-Item -Path "$remotingPath/Remoting Clients" -ItemType "Common/Folder"
     }
 
     # Ensure Policies folder exists
@@ -43,11 +43,11 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         Where-Object { $_.Name -like "Test-Throttle*" }
     if ($existingPolicies) { $existingPolicies | Remove-Item -Force }
 
-    $existingKeys = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $existingKeys = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-Throttle*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
+    $sharedSecretClientTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
 
     # =========================================================================
@@ -60,9 +60,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $policy.Editing.EndEdit() | Out-Null
 
     # =========================================================================
-    # 1. API Key with Block throttle action (limit=3, window=60s)
+    # 1. Shared Secret Client with Block throttle action (limit=3, window=60s)
     # =========================================================================
-    $blockKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ThrottleBlock" -ItemType $apiKeyTemplate
+    $blockKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ThrottleBlock" -ItemType $sharedSecretClientTemplate
     $blockKey.Editing.BeginEdit()
     $blockKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $blockKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_throttle_block_01"
@@ -75,9 +75,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $blockKey.Editing.EndEdit() | Out-Null
 
     # =========================================================================
-    # 2. API Key with Bypass throttle action (limit=3, window=60s)
+    # 2. Shared Secret Client with Bypass throttle action (limit=3, window=60s)
     # =========================================================================
-    $bypassKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ThrottleBypass" -ItemType $apiKeyTemplate
+    $bypassKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ThrottleBypass" -ItemType $sharedSecretClientTemplate
     $bypassKey.Editing.BeginEdit()
     $bypassKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $bypassKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_throttle_bypass01"
@@ -90,9 +90,9 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $bypassKey.Editing.EndEdit() | Out-Null
 
     # =========================================================================
-    # 3. API Key with default throttle action (no value set -- should default to Block)
+    # 3. Shared Secret Client with default throttle action (no value set -- should default to Block)
     # =========================================================================
-    $defaultKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ThrottleDefault" -ItemType $apiKeyTemplate
+    $defaultKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ThrottleDefault" -ItemType $sharedSecretClientTemplate
     $defaultKey.Editing.BeginEdit()
     $defaultKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $defaultKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_throttle_deflt_01"

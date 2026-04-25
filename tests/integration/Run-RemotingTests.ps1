@@ -240,14 +240,14 @@ if ($SkipSecurityEnforcement) {
     Stop-ScriptSession -Session $flushSession -ErrorAction SilentlyContinue
 }
 
-# Wait for API Key and policy caches to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+# Wait for Shared Secret Client and policy caches to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
 Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
 Start-Sleep -Seconds 12
 
 # Run policy tests (policies are resolved from items, no restart needed)
 Invoke-TestFile "$PSScriptRoot\Remoting.RemotingPolicies.Tests.ps1"
 
-# Long-poll wait + session ownership tests (share Test-ReadOnly API Key from policy setup).
+# Long-poll wait + session ownership tests (share Test-ReadOnly Shared Secret Client from policy setup).
 Invoke-TestFile "$PSScriptRoot\Remoting.LongPollWait.Tests.ps1"
 
 # Teardown: remove test policy items
@@ -258,10 +258,10 @@ Write-Host "`n  Policy test cleanup complete." -ForegroundColor Cyan
 # Phase 4: Throttle action tests (item-based, no config deploy needed)
 Write-Host "`n=== Phase 4: Throttle Action Tests ===" -ForegroundColor Magenta
 
-# Setup: create throttle test API Keys
+# Setup: create throttle test Shared Secret Clients
 . "$PSScriptRoot\Remoting.Throttle.Setup.ps1"
 
-# Wait for API Key cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+# Wait for Shared Secret Client cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
 Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
 Start-Sleep -Seconds 12
 
@@ -273,13 +273,13 @@ Invoke-TestFile "$PSScriptRoot\Remoting.Throttle.Tests.ps1"
 
 Write-Host "`n  Throttle test cleanup complete." -ForegroundColor Cyan
 
-# Phase 5: API Key expiration and duplicate key tests (item-based, no config deploy needed)
-Write-Host "`n=== Phase 5: API Key Expiration and Validation Tests ===" -ForegroundColor Magenta
+# Phase 5: Shared Secret Client expiration and duplicate key tests (item-based, no config deploy needed)
+Write-Host "`n=== Phase 5: Shared Secret Client Expiration and Validation Tests ===" -ForegroundColor Magenta
 
-# Setup: create expiration test API Keys
+# Setup: create expiration test Shared Secret Clients
 . "$PSScriptRoot\Remoting.Expiration.Setup.ps1"
 
-# Wait for API Key cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
+# Wait for Shared Secret Client cache to expire (TTL = AuthorizationCacheExpirationSecs, default 10s)
 Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray
 Start-Sleep -Seconds 12
 
@@ -303,7 +303,7 @@ Write-Host "`n=== Phase 6: Client-Side Retry Tests ===" -ForegroundColor Magenta
 # Re-create the expired key for Gap 3 test (Expiration.Teardown removed it above)
 . "$PSScriptRoot\Remoting.Expiration.Setup.ps1"
 
-# Setup: create client-retry test API Keys (tight window, disabled key)
+# Setup: create client-retry test Shared Secret Clients (tight window, disabled key)
 . "$PSScriptRoot\Remoting.ClientRetry.Setup.ps1"
 
 Write-Host "  Waiting for authorization cache to expire..." -ForegroundColor Gray

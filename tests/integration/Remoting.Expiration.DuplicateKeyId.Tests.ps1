@@ -1,5 +1,5 @@
 # Remoting Tests - Duplicate Access Key Id Rejection
-# Tests that the save handler rejects API keys with duplicate Access Key Ids.
+# Tests that the save handler rejects Shared Secret Clients with duplicate Access Key Ids.
 # Run via: .\Run-RemotingTests.ps1 (run in the expiration phase)
 # Requires: SPE Remoting enabled, shared secret configured
 
@@ -20,19 +20,19 @@ $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         KeyImpersonateUser = "{5EB16BF4-605A-457C-8588-5D9833FF4DD9}"
     }
 
-    $apiKeysFolder = Get-Item -Path "$securityPath/Remoting Clients" -ErrorAction SilentlyContinue
-    if (-not $apiKeysFolder) { return "ERROR:FOLDER_NOT_FOUND" }
+    $clientsFolder = Get-Item -Path "$securityPath/Remoting Clients" -ErrorAction SilentlyContinue
+    if (-not $clientsFolder) { return "ERROR:FOLDER_NOT_FOUND" }
 
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
+    $sharedSecretClientTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
     $duplicateKeyId = "spe_test_duplicate_check_001"
 
     # Clean up leftovers
-    $existing = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $existing = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-Duplicate*" }
     if ($existing) { $existing | Remove-Item -Force }
 
     # Create the first key
-    $key1 = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-DuplicateFirst" -ItemType $apiKeyTemplate
+    $key1 = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-DuplicateFirst" -ItemType $sharedSecretClientTemplate
     $key1.Editing.BeginEdit()
     $key1.Fields[$fieldIds.KeyAccessKeyId].Value = $duplicateKeyId
     $key1.Fields[$fieldIds.KeySharedSecret].Value = "Test-Duplicate-First-Secret-LongEnough-For-Validation"
@@ -41,7 +41,7 @@ $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $key1.Editing.EndEdit() | Out-Null
 
     # Create a second key with the same Access Key Id - should be blocked by save handler
-    $key2 = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-DuplicateSecond" -ItemType $apiKeyTemplate
+    $key2 = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-DuplicateSecond" -ItemType $sharedSecretClientTemplate
     $key2.Editing.BeginEdit()
     $key2.Fields[$fieldIds.KeyAccessKeyId].Value = $duplicateKeyId
     $key2.Fields[$fieldIds.KeySharedSecret].Value = "Test-Duplicate-Second-Secret-LongEnough-For-Valid"
@@ -54,7 +54,7 @@ $duplicateResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $key2SavedKeyId = $key2Reloaded.Fields[$fieldIds.KeyAccessKeyId].Value
 
     # Create a third key with a unique Access Key Id - should succeed
-    $key3 = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-DuplicateUnique" -ItemType $apiKeyTemplate
+    $key3 = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-DuplicateUnique" -ItemType $sharedSecretClientTemplate
     $key3.Editing.BeginEdit()
     $key3.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_unique_check_001"
     $key3.Fields[$fieldIds.KeySharedSecret].Value = "Test-Unique-Secret-K3y!-LongEnough-For-Validation"

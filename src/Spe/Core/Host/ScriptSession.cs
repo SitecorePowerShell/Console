@@ -254,7 +254,7 @@ namespace Spe.Core.Host
         // Ownership marker for remoting-backed sessions. Set on first access
         // from the remoting endpoint and enforced on subsequent accesses so
         // a different authenticated identity cannot attach to a session id
-        // created by another caller. Format: "apiKey:&lt;name&gt;" or
+        // created by another caller. Format: "remotingClient:&lt;name&gt;" or
         // "user:&lt;username&gt;". Null/empty for sessions created outside
         // the remoting pipeline (e.g. interactive ISE).
         public string CreatedByIdentity { get; set; }

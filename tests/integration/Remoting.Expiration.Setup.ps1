@@ -1,11 +1,11 @@
 # Remoting.Expiration.Setup.ps1
-# Creates test API Keys with expiration dates for key expiration enforcement tests.
+# Creates test Shared Secret Clients with expiration dates for key expiration enforcement tests.
 # Called by Run-RemotingTests.ps1 before the expiration test phase.
 # Requires: SPE Remoting enabled, shared secret configured
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
-Write-Host "`n  [Expiration Setup: creating test API Keys]" -ForegroundColor Cyan
+Write-Host "`n  [Expiration Setup: creating test Shared Secret Clients]" -ForegroundColor Cyan
 
 $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $remotingPath = "master:/sitecore/system/Modules/PowerShell/Settings/Access"
@@ -14,7 +14,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         # RemotingPolicy.Fields
         PolicyFullLanguage = "{B7D4F2A1-3C58-4E9D-A612-8F5C7D4E3B2A}"
         PolicyAuditLevel   = "{FB657388-BF96-475D-AE69-EBF028F47432}"
-        # RemotingApiKey.Fields
+        # SharedSecretClient.Fields
         KeyAccessKeyId     = "{C4D5E6F7-8A9B-4C0D-1E2F-3A4B5C6D7E8F}"
         KeySharedSecret    = "{BBF52C26-7825-4F7B-88FF-2DB2785C5954}"
         KeyEnabled         = "{8D158FCA-E8F3-4D94-8469-C782B099EC07}"
@@ -24,20 +24,20 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     }
 
     $policiesFolder = Get-Item -Path "$remotingPath/Policies" -ErrorAction SilentlyContinue
-    $apiKeysFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
-    if (-not $policiesFolder -or -not $apiKeysFolder) { return "ERROR:FOLDERS_NOT_FOUND" }
+    $clientsFolder = Get-Item -Path "$remotingPath/Remoting Clients" -ErrorAction SilentlyContinue
+    if (-not $policiesFolder -or -not $clientsFolder) { return "ERROR:FOLDERS_NOT_FOUND" }
 
     # Clean up leftover test items
     $existing = Get-ChildItem -Path "master:$($policiesFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-Expir*" }
     if ($existing) { $existing | Remove-Item -Force }
 
-    $existingKeys = Get-ChildItem -Path "master:$($apiKeysFolder.Paths.FullPath)" -Recurse |
+    $existingKeys = Get-ChildItem -Path "master:$($clientsFolder.Paths.FullPath)" -Recurse |
         Where-Object { $_.Name -like "Test-Expir*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
     $policyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Remoting Policy"
-    $apiKeyTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
+    $sharedSecretClientTemplate = "/sitecore/templates/Modules/PowerShell Console/Remoting/Shared Secret Client"
 
     # Create an unrestricted policy for expiration tests
     $policy = New-Item -Path "master:$($policiesFolder.Paths.FullPath)/Test-ExpirationPolicy" -ItemType $policyTemplate
@@ -46,8 +46,8 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $policy.Fields[$fieldIds.PolicyAuditLevel].Value = "None"
     $policy.Editing.EndEdit() | Out-Null
 
-    # API Key that expired yesterday
-    $expiredKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ExpiredKey" -ItemType $apiKeyTemplate
+    # Shared Secret Client that expired yesterday
+    $expiredKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ExpiredKey" -ItemType $sharedSecretClientTemplate
     $expiredKey.Editing.BeginEdit()
     $expiredKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $expiredKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_expired_key_001"
@@ -57,8 +57,8 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $expiredKey.Fields[$fieldIds.KeyExpires].Value = [Sitecore.DateUtil]::ToIsoDate([DateTime]::UtcNow.AddDays(-1))
     $expiredKey.Editing.EndEdit() | Out-Null
 
-    # API Key that expires tomorrow (still valid)
-    $validKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ExpirationValidKey" -ItemType $apiKeyTemplate
+    # Shared Secret Client that expires tomorrow (still valid)
+    $validKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ExpirationValidKey" -ItemType $sharedSecretClientTemplate
     $validKey.Editing.BeginEdit()
     $validKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $validKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_expvalid_key_001"
@@ -68,8 +68,8 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $validKey.Fields[$fieldIds.KeyExpires].Value = [Sitecore.DateUtil]::ToIsoDate([DateTime]::UtcNow.AddDays(1))
     $validKey.Editing.EndEdit() | Out-Null
 
-    # API Key with no expiration (empty field, should work)
-    $noExpiryKey = New-Item -Path "master:$($apiKeysFolder.Paths.FullPath)/Test-ExpirationNoExpiry" -ItemType $apiKeyTemplate
+    # Shared Secret Client with no expiration (empty field, should work)
+    $noExpiryKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ExpirationNoExpiry" -ItemType $sharedSecretClientTemplate
     $noExpiryKey.Editing.BeginEdit()
     $noExpiryKey.Fields[$fieldIds.KeyEnabled].Value = "1"
     $noExpiryKey.Fields[$fieldIds.KeyAccessKeyId].Value = "spe_test_noexpiry_key_001"

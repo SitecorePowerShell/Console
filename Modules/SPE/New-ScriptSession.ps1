@@ -9,7 +9,7 @@ function New-ScriptSession {
             New-ScriptSession -Username admin -SharedSecret $secret -ConnectionUri https://remotesitecore
 
         .EXAMPLE
-            The following remotely connects using an API Key (Access Key Id).
+            The following remotely connects using a Shared Secret Client (Access Key Id).
 
             New-ScriptSession -AccessKeyId "spe_a3f7b2c891d4e6f0a1b2c3d4" -SharedSecret $secret -ConnectionUri https://remotesitecore
 
@@ -23,7 +23,7 @@ function New-ScriptSession {
         .PARAMETER Username
             Specifies the Sitecore identity used for connecting to a remote instance.
             Required for Password and SharedSecret parameter sets. Not used with AccessKey
-            or AccessToken (identity comes from the API Key item or token claims).
+            or AccessToken (identity comes from the client item or token claims).
 
         .PARAMETER Password
             Specifies the Sitecore password associated with the identity.
@@ -32,9 +32,9 @@ function New-ScriptSession {
             Specifies the shared secret used for HMAC authentication.
 
         .PARAMETER AccessKeyId
-            Specifies the Access Key Id of a Remoting API Key item. When provided, the
+            Specifies the Access Key Id of a Shared Secret Client item. When provided, the
             JWT includes a kid header for direct key lookup. Username is not required
-            because identity is determined by the Impersonate User field on the API Key item.
+            because identity is determined by the Impersonate User field on the client item.
 
         .PARAMETER AccessToken
             Specifies an externally-issued OAuth bearer token (RS256/ES256 JWT). Use when

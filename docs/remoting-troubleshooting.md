@@ -36,11 +36,28 @@ of:
 | --- | --- |
 | `expired` | Token's `exp` claim is in the past (beyond clock skew). |
 | `disabled` | Matched a Remoting Client item but the item is disabled. |
+| `replay` | Token already used (its `jti` was seen earlier within its lifetime). Only emitted when `<jtiReplayCacheEnabled>` is on. |
 | `invalid` | Signature, issuer, audience, scope, or client lookup failed. |
 
 The header is only set when the handler has enough information to classify the
 failure. For unclassified failures (unrecognised alg, no provider configured,
 etc.) the header is absent and only the server log has the reason.
+
+## Response header: `WWW-Authenticate`
+
+Bearer-rejection 401s also carry an RFC 6750 `WWW-Authenticate` header so
+standard OAuth client libraries can react automatically (refresh, prompt,
+abort). Mapping from internal reason to header value:
+
+| Internal reason | `WWW-Authenticate` value |
+| --- | --- |
+| `expired` | `Bearer error="invalid_token", error_description="The access token expired"` |
+| `replay` | `Bearer error="invalid_token", error_description="The access token has already been used"` |
+| missing scope | `Bearer error="insufficient_scope"` |
+| `invalid`, `disabled`, anything else | `Bearer error="invalid_token"` |
+
+`disabled` collapses to bare `invalid_token` deliberately so the response does
+not leak that a client item exists but is currently disabled.
 
 ## Decision tree: "My request returns 401"
 
@@ -105,8 +122,9 @@ Symptom: debug log shows `bearerProviderMissing alg=RS256` (or other `RS*` /
 Check these in order:
 
 1. **The config that registers the provider type is enabled.**
-   `App_Config/Include/Spe/Spe.OAuthBearer.config.disabled` must be renamed
-   to `Spe.OAuthBearer.config`. This file supplies the `type=` attribute on
+   `App_Config/Include/Spe/Spe.OAuthBearer.config.example` must be copied
+   to `Spe.OAuthBearer.config` (drop the `.example` suffix). This file
+   supplies the `type=` attribute on
    the `<oauthBearer>` element. Patch files that only set child fields (such
    as `z.Spe.Development.OAuth.config`) assume the parent already exists with
    a `type`; they do not register the provider on their own.
@@ -131,6 +149,75 @@ Check these in order:
 4. **The app pool was recycled after the rename.** Provider discovery runs in
    the static constructor of `ServiceAuthenticationManager`; config changes
    do not take effect until the AppDomain reloads.
+
+## Opt-in hardening flags
+
+Four flags in `Spe.OAuthBearer.config` are off by default. If a previously
+working token starts being rejected after an operator turned one on, the
+debug log identifies which:
+
+| Flag | Reason in debug log when this is the cause |
+| --- | --- |
+| `<jtiReplayCacheEnabled>` | `reason=tokenReplay jti=<value>`, or `reason=missingJti` if the token has no `jti` claim |
+| `<requireAccessTokenType>` | `reason=accessTokenTypeRequired type=<value>` (Auth0, Entra, IdentityServer4 stamp `typ=JWT` and will fail this check) |
+| `<requireAzpWhenMultiAudience>` | `reason=azpMismatch azp=<value> clientId=<value>` (only triggers when the token's `aud` claim has more than one value) |
+| `<jwksAllowLoopbackHttp>` | `[JWKS] action=jwksUriRejected reason=schemeNotAllowed` (this flag must be `true` AND the JwksUri host must be a literal loopback address) |
+
+Flip the flag back to `false` and the rejection should stop. If you need the
+flag on, the issuing IdP must emit the corresponding claim. See the inline
+notes in `Spe.OAuthBearer.config.example` for the per-IdP compatibility
+matrix.
+
+## JWKS over HTTPS in the local Docker dev stack
+
+The dev stack (`docker-compose.yml` + `docker-compose.override.yml`) reaches
+the Sitecore Identity Server container as `id` on the internal Docker
+network. Because the JWKS resolver requires HTTPS for non-loopback hosts,
+`http://id/...` is rejected with
+`[JWKS] action=jwksUriRejected reason=schemeNotAllowed`. `Uri.IsLoopback`
+only returns true for `localhost` / `127.0.0.1` / `[::1]`, so
+`<jwksAllowLoopbackHttp>` does not help with the `id` hostname.
+
+The fix is to point `<jwksUri>` at the Traefik-fronted hostname
+(`speid.dev.local` by default, set by `${ID_HOST}` in `.env`):
+
+```xml
+<jwksUri>https://speid.dev.local/.well-known/openid-configuration/jwks</jwksUri>
+```
+
+For that to work from inside the CM container you need both DNS and trust:
+
+1. **Network alias on Traefik** so the Docker DNS for `speid.dev.local`
+   resolves to the Traefik container. In `docker-compose.yml`:
+   ```yaml
+   traefik:
+     networks:
+       default:
+         aliases:
+           - ${ID_HOST}
+           - ${CM_HOST}
+   ```
+2. **Dev CA imported into LocalMachine\Root** of the CM container so the
+   Traefik-served leaf cert validates. Mount `./docker/traefik/certs` into
+   the CM service in `docker-compose.override.yml` and add an idempotent
+   import in `docker/tools/entrypoints/iis/Development.ps1`:
+   ```powershell
+   $devCert = "C:\certs\devcert.cer"
+   if (Test-Path $devCert) {
+       $thumb = (Get-PfxCertificate -FilePath $devCert).Thumbprint
+       if (-not (Test-Path "Cert:\LocalMachine\Root\$thumb")) {
+           Import-Certificate -FilePath $devCert -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
+       }
+   }
+   ```
+
+Verify from inside the CM before touching `<jwksUri>`:
+
+```powershell
+docker compose exec cm powershell -c "iwr https://speid.dev.local/.well-known/openid-configuration/jwks -UseBasicParsing | Select StatusCode"
+```
+
+A `200` confirms both DNS and trust are good.
 
 ## "Authenticated user is unauthorized"
 

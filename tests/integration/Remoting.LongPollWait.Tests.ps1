@@ -66,7 +66,7 @@ $contentA2 = New-Object System.Net.Http.StringContent('"OWNER_A_2"', [System.Tex
 $respA2 = $hc.PostAsync($urlA, $contentA2).Result
 Assert-Equal ([int]$respA2.StatusCode) 200 "Identity A: subsequent call with same identity succeeds"
 
-# Second caller: use the Test-ReadOnly API Key (different identity). Expect 403.
+# Second caller: use the Test-ReadOnly Shared Secret Client (different identity). Expect 403.
 $readOnlySecret = "Test-ReadOnly-Secret-K3y!-LongEnough-For-Validation"
 $readOnlyKeyId  = "spe_test_readonly_key_001"
 $jwtB = New-Jwt -Algorithm HS256 -Issuer 'SPE Remoting' -Audience $protocolHost -KeyId $readOnlyKeyId -SecretKey $readOnlySecret

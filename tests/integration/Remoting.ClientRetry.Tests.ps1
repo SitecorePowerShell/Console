@@ -1,6 +1,6 @@
 # Remoting Tests - Client-Side Retry Behavior
 # Tests that Invoke-RemoteScript retries on 429/503 when -MaxRetries is set.
-# API Keys created by Remoting.ClientRetry.Setup.ps1 before these tests run.
+# Shared Secret Clients created by Remoting.ClientRetry.Setup.ps1 before these tests run.
 # Run via: .\Run-RemotingTests.ps1 (automatically run in the client-retry phase)
 
 # ============================================================================

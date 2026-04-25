@@ -1,10 +1,17 @@
 services:
+  traefik:
+    networks:
+      default:
+        aliases:
+          - ${CM_HOST}
+          - ${ID_HOST}
   cm:
     environment:
       Sitecore_AppSettings_role:define: Standalone
       SITECORE_SPE_ADMIN_PAGE_ENABLED: ${SPE_ADMIN_PAGE_ENABLED}
       SITECORE_DEVELOPMENT_PATCHES: CustomErrorsOff,DebugOn,DevEnvOn,DeviceDetectionOff,HttpErrorsDetailed,InitMessagesOff
     volumes:
+      - .\docker\traefik\certs:C:\certs:ro
       - .\docker\deploy:C:\deploy
       - .\translations:C:\inetpub\wwwroot\App_Data\Translations
       - .\_output:C:\inetpub\wwwroot\App_Data\packages

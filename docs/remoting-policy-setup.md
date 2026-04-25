@@ -6,9 +6,9 @@ You have a Sitecore instance with PowerShell Extensions installed. A developer n
 
 ## The pieces
 
-**API Key** — Think of this as credentials for the developer. It contains a shared secret (like a password) that the developer uses to authenticate. You create one per consumer.
+**Shared Secret Client** — Think of this as credentials for the developer. It contains a shared secret (like a password) that the developer uses to authenticate. You create one per consumer. (For OAuth/IdP-issued tokens, use an OAuth Client instead.)
 
-**Remoting Policy** — Think of this as a permission set. It controls what the developer is allowed to do. An API Key does nothing without one — the developer can log in but can't run anything until you attach a policy.
+**Remoting Policy** — Think of this as a permission set. It controls what the developer is allowed to do. A Remoting Client does nothing without one - the developer can log in but can't run anything until you attach a policy.
 
 **The policy has three parts:**
 
@@ -34,19 +34,19 @@ Go to `/sitecore/system/Modules/PowerShell/Settings/Access/Policies/`. Right-cli
   ```
 - In **Approved Scripts**, select any Web API scripts they should be able to call by name
 
-### 2. Create an API Key
+### 2. Create a Shared Secret Client
 
-Go to `/sitecore/system/Modules/PowerShell/Settings/Access/API Keys/`. Right-click, Insert, choose "Remoting API Key."
+Go to `/sitecore/system/Modules/PowerShell/Settings/Access/Remoting Clients/`. Right-click, Insert, choose "Shared Secret Client."
 
 - Check **Enabled**
-- Set a **Shared Secret** — a long, random string. Give this to the developer securely
-- Set **Policy** — pick the policy you just created. **This is required.** Without it, every request gets denied.
+- Set a **Shared Secret** - a long, random string. Give this to the developer securely
+- Set **Policy** - pick the policy you just created. **This is required.** Without it, every request gets denied.
 
 ### 3. Give the developer their credentials
 
 They need:
 - Your Sitecore hostname (e.g., `https://spe.dev.local`)
-- The shared secret you set on their API Key
+- The shared secret you set on their client item
 
 They'll use these to authenticate when calling the remoting endpoints.
 
@@ -64,7 +64,7 @@ Either way, the Full Language setting controls how much power the script has whe
 
 ## Common mistakes
 
-- **API Key with no policy** — The developer authenticates fine but every request returns 403. Assign a policy.
+- **Remoting Client with no policy** - The developer authenticates fine but every request returns 403. Assign a policy.
 - **Script not in Approved Scripts** — The developer calls a Web API script by name and gets 403. You need to select it in the policy's Approved Scripts field.
 - **Command not in Allowed Commands** — The developer's inline script fails with 403 naming the blocked command. Add it to the list.
 - **Full Language unchecked but script needs .NET** — The script errors out at runtime. Only check Full Language if you understand what the script does and trust it.

@@ -37,8 +37,8 @@ Auth0 differences.
 
 ## 2. On the Sitecore CM
 
-Rename `App_Config/Include/Spe/Spe.OAuthBearer.config.disabled` to
-`Spe.OAuthBearer.config` and set:
+Copy `App_Config/Include/Spe/Spe.OAuthBearer.config.example` to
+`Spe.OAuthBearer.config` (drop the `.example` suffix) and set:
 
 ```xml
 <oauthBearer>
@@ -140,7 +140,16 @@ signature verification, claim validation, and client matching all passed.
   and SPE's JWKS validation will fail with `reason=signature`. Always pass
   `audience`.
 - **Trailing slash on `iss`**: Auth0 includes it; Sitecore Identity Server
-  does not. A mismatch produces `reason=iss` in the CM log.
+  does not. SPE canonicalizes both ends of the comparison (lowercase
+  scheme + host, strip trailing slash) before matching, so a stored
+  `https://tenant.us.auth0.com` and a token-stamped
+  `https://tenant.us.auth0.com/` resolve to the same issuer. Pasting the
+  exact value Auth0 emits is still the cleanest setup.
+- **`<requireAccessTokenType>` is unsafe for Auth0**: Auth0 stamps
+  `typ=JWT` on access tokens, not `typ=at+jwt`. If you turn this flag on,
+  every Auth0 token is rejected with
+  `reason=accessTokenTypeRequired type=JWT`. Leave the flag off (the
+  default) when Auth0 is in the IdP mix.
 - **Client id claim is `azp`** on Auth0 tokens. SPE's client id resolver
   tries `client_id`, then `azp`, then `appid` (Azure v1), then `cid` (Okta) -
   so for Auth0 you paste `azp` into `OAuthClientIds`. No Auth0 Action to
