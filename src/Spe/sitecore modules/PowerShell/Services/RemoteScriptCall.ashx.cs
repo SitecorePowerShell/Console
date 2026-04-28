@@ -648,17 +648,24 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var ctx = HttpContext.Current;
             if (ctx != null && ctx.Items[ClientIpKey] is string cached) return cached;
 
-            var ip = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-            if (string.IsNullOrEmpty(ip))
-            {
-                ip = request.ServerVariables["REMOTE_ADDR"];
-            }
+            var ip = ResolveIp(request);
 
             if (ctx != null && !string.IsNullOrEmpty(ip))
             {
                 ctx.Items[ClientIpKey] = ip;
             }
             return ip;
+        }
+
+        private static string ResolveIp(HttpRequest request)
+        {
+            if (WebServiceSettings.UseForwardedHeaders)
+            {
+                var forwarded = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+                if (ForwardedHeaderHelper.TryGetClientIp(forwarded, out var clientIp))
+                    return clientIp;
+            }
+            return request.ServerVariables["REMOTE_ADDR"];
         }
 
         private static string ComputeScriptHash(string script)

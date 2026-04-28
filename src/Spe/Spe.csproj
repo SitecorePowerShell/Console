@@ -260,6 +260,7 @@
     <Compile Include="Core\Settings\Authorization\JtiReplayCache.cs" />
     <Compile Include="Core\Settings\Authorization\OAuthBearerTokenAuthenticationProvider.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptValidator.cs" />
+    <Compile Include="Core\Settings\Authorization\ForwardedHeaderHelper.cs" />
     <Compile Include="Core\Settings\Authorization\SecureCompare.cs" />
     <Compile Include="Core\Settings\Authorization\DelegatedAccessMonitor.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthenticationManager.cs" />

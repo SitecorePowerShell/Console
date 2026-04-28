@@ -27,6 +27,13 @@ namespace Spe.Core.Settings.Authorization
 
         private static readonly Dictionary<string, ServiceState> services = new Dictionary<string, ServiceState>();
 
+        // Spe.Remoting.UseForwardedHeaders governs whether X-Forwarded-Proto and
+        // X-Forwarded-For are trusted. Default true preserves pre-9.0 behavior;
+        // hardened mode (false) is opt-in for direct-IIS deployments. Cached
+        // once at static-ctor time, matching the rest of this class - flipping
+        // the setting requires an app-domain recycle.
+        public static bool UseForwardedHeaders { get; private set; }
+
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
@@ -92,6 +99,29 @@ namespace Spe.Core.Settings.Authorization
             var settingStr = Sitecore.Configuration.Settings.GetSetting("Spe.SerializationSizeBuffer", "5KB");
             var sizeLong = StringUtil.ParseSizeString(settingStr);
             SerializationSizeBuffer = (int)(sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
+
+            UseForwardedHeaders = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.UseForwardedHeaders", true);
+
+            // Operators on direct-IIS (no reverse proxy) should set
+            // Spe.Remoting.UseForwardedHeaders=false so spoofed headers cannot bypass
+            // requireSecureConnection or pollute audit logs. Warn once if the
+            // setting is at its default and any service requires TLS.
+            var explicitSetting = Sitecore.Configuration.Settings.GetSetting("Spe.Remoting.UseForwardedHeaders", null);
+            if (string.IsNullOrEmpty(explicitSetting) && UseForwardedHeaders)
+            {
+                foreach (var entry in services)
+                {
+                    if (entry.Value.RequireSecureConnection)
+                    {
+                        Sitecore.Diagnostics.Log.Warn(
+                            $"[SPE] Spe.Remoting.UseForwardedHeaders is at its default (true) and service '{entry.Key}' has requireSecureConnection=true. " +
+                            "If this server has no reverse proxy in front of it, set Spe.Remoting.UseForwardedHeaders=false to reject spoofed X-Forwarded-Proto and X-Forwarded-For headers. " +
+                            "The default flips to false in 10.0.",
+                            typeof(WebServiceSettings));
+                        break;
+                    }
+                }
+            }
         }
 
         public static int CommandWaitMillis { get; private set; }
@@ -121,26 +151,14 @@ namespace Spe.Core.Settings.Authorization
 
         private static bool CheckSecureConnectionRequirement(ServiceState stateOfService)
         {
-            if (HttpContext.Current == null || HttpContext.Current.Request == null)
-            {
-                return true;
-            }
+            var request = HttpContext.Current?.Request;
+            if (request == null) return true;
 
-            if (!stateOfService.RequireSecureConnection)
-            {
-                return true;
-            }
-
-            if (HttpContext.Current.Request.IsSecureConnection == true)
-            {
-                return true;
-            }
-            else
-            {
-                // Check if request was offloaded on edge web server.
-                // Trusts X-Forwarded-Proto header - assumes a trusted reverse proxy strips/sets this header.
-                return string.Equals(HttpContext.Current.Request.Headers["X-Forwarded-Proto"], Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
-            }
+            return ForwardedHeaderHelper.ShouldAcceptForwardedProto(
+                stateOfService.RequireSecureConnection,
+                request.IsSecureConnection,
+                request.Headers["X-Forwarded-Proto"],
+                UseForwardedHeaders);
         }
 
     }
