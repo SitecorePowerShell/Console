@@ -1955,11 +1955,61 @@
             return data;
         };
 
+        spe._sanitizeHelpHtml = function (html) {
+            if (typeof html !== "string" || html.length === 0) {
+                return "";
+            }
+            var doc = new DOMParser().parseFromString(html, "text/html");
+            var dangerous = doc.body.querySelectorAll("script, iframe, object, embed, form, style, link, meta, base");
+            for (var i = 0; i < dangerous.length; i++) {
+                if (dangerous[i].parentNode) {
+                    dangerous[i].parentNode.removeChild(dangerous[i]);
+                }
+            }
+            // Strict whitelist for the related-topics onclick produced by the
+            // Command Help script. Strings that try to break out of the quoted
+            // argument fail the anchored pattern and fall through to attribute
+            // removal.
+            var helpCommandPattern = /^\s*javascript:return\s+Spe\.showCommandHelp\(\s*"([\w.\-]+)"\s*\)\s*;?\s*$/i;
+            var elements = doc.body.querySelectorAll("*");
+            for (var j = 0; j < elements.length; j++) {
+                var el = elements[j];
+                var attrs = Array.prototype.slice.call(el.attributes);
+                for (var k = 0; k < attrs.length; k++) {
+                    var name = attrs[k].name;
+                    var value = attrs[k].value;
+                    var lname = name.toLowerCase();
+                    if (lname.indexOf("on") === 0) {
+                        if (lname === "onclick" && el.tagName === "A") {
+                            var match = helpCommandPattern.exec(value);
+                            if (match) {
+                                el.setAttribute("data-spe-help-command", match[1]);
+                            }
+                        }
+                        el.removeAttribute(name);
+                        continue;
+                    }
+                    if (lname === "href" || lname === "src" || lname === "xlink:href") {
+                        var trimmed = value.replace(/\s+/g, "").toLowerCase();
+                        if (trimmed.indexOf("javascript:") === 0 || trimmed.indexOf("data:") === 0 || trimmed.indexOf("vbscript:") === 0) {
+                            el.removeAttribute(name);
+                        }
+                    }
+                }
+            }
+            return doc.body.innerHTML;
+        };
+
         spe.showCommandHelp = function (command) {
             _getCommandHelp(command);
             if (spe.ajaxDialog)
                 spe.ajaxDialog.remove();
             spe.ajaxDialog = $("<div id=\"ajax-dialog\"/>").append("<div id=\"HelpClose\">X</div>").append($.commandHelp).appendTo("body");
+            spe.ajaxDialog.on("click", "a[data-spe-help-command]", function (e) {
+                e.preventDefault();
+                spe.showCommandHelp($(this).attr("data-spe-help-command"));
+                return false;
+            });
             spe.ajaxDialog.dialog({
                 modal: true,
                 open: function () {
@@ -2277,7 +2327,7 @@
             getPowerShellResponse({"guid": guid, "command": str}, "GetHelpForCommand",
                 function (json) {
                     var data = JSON.parse(json.d);
-                    $.commandHelp = data[0];
+                    $.commandHelp = spe._sanitizeHelpHtml(data[0]);
                 });
         }
 
