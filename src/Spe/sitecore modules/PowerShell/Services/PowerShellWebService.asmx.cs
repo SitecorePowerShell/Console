@@ -207,7 +207,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (debugVariable == null)
                 {
                     return "<div class='undefinedVariableType'>undefined</div>" +
-                           $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
+                           $"<div class='variableLine'><span class='varName'>${HttpUtility.HtmlEncode(variableName)}</span> : <span class='varValue'>$null</span></div>";
                 }
 
                 var defaultProps = new string[0];
@@ -242,7 +242,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 var details = new VariableDetails("$" + variableName, variable);
                 var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
                 varValue +=
-                    $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
+                    $"<div class='variableLine'><span class='varName'>${HttpUtility.HtmlEncode(variableName)}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
 
                 if (!details.IsExpandable)
                 {
@@ -261,7 +261,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         ImportantProperties.Contains(child.Name, StringComparer.OrdinalIgnoreCase))
                     {
                         varValue +=
-                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
+                            $"<span class='varChild'><span class='childName'>{HttpUtility.HtmlEncode(child.Name)}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
                     }
                     else
                     {
@@ -270,13 +270,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             continue;
                         }
                         varValue +=
-                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
+                            $"<span class='varChild'><span class='childName'>{HttpUtility.HtmlEncode(child.Name)}</span> : <span class='childValue'>{{";
                         foreach (var subChild in child.GetChildren())
                         {
                             if (!subChild.IsExpandable)
                             {
                                 varValue +=
-                                    $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
+                                    $"<span class='childName'>{HttpUtility.HtmlEncode(subChild.Name)}</span> : {subChild.HtmlEncodedValueString}, ";
                             }
                         }
                         varValue = varValue.TrimEnd(' ', ',');
