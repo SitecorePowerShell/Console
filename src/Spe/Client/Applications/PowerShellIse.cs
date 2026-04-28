@@ -1070,6 +1070,22 @@ namespace Spe.Client.Applications
             {
                 TerminalCommand.Value = string.Empty;
             }
+
+            if (!string.IsNullOrEmpty(command))
+            {
+                var runningSession = ScriptSessionManager.GetSessionIfExists(Monitor.SessionID);
+                if (runningSession != null && runningSession.DebuggingInBreakpoint)
+                {
+                    runningSession.TryInvokeInRunningSession(command);
+                    // Poll loop is stopped during a breakpoint pause. Fire a
+                    // single tick so the typed command's output drains, then
+                    // it goes silent again - ScheduleCallback is a no-op
+                    // while Monitor.Active stays false.
+                    SheerResponse.Timer("pstaskmonitor:check", 200);
+                    return;
+                }
+            }
+
             JobExecuteScript(args, command, false);
         }
 
@@ -2282,6 +2298,11 @@ namespace Spe.Client.Applications
             var endColumn = args.Parameters["EndColumn"];
             var jobId = args.Parameters["JobId"];
             InBreakpoint = true;
+            // The job thread is parked in EnterDebugger; nothing new can
+            // arrive on its message queue until either the user resumes or
+            // types a terminal command. Stop the poll loop entirely; we
+            // re-arm it explicitly in those two paths below.
+            Monitor.Active = false;
             UpdateRibbon();
             SheerResponse.Eval(
                 $"$ise(function() {{ spe.breakpointHit({line}, {column}, {endLine}, {endColumn}, '{jobId}'); }});");
@@ -2308,6 +2329,9 @@ namespace Spe.Client.Applications
             session.TryInvokeInRunningSession(args.Parameters["action"]);
             SheerResponse.Eval("$ise(function() { spe.breakpointHandled(); });");
             InBreakpoint = false;
+            // The script is resuming; restart the poll loop so output and
+            // the next breakpoint hit stream back at the normal cadence.
+            Monitor.Active = true;
         }
 
         public void SessionElevationPipeline(ClientPipelineArgs args)
