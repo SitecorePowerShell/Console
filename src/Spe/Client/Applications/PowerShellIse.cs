@@ -1205,6 +1205,14 @@ namespace Spe.Client.Applications
 
             scriptSession.Interactive = true;
 
+            // Surface the selected policy as $RemotingPolicy in the runspace so
+            // user scripts (and discovery probes from external consumers like the
+            // SPE MCP server) can introspect what's allowed without a separate
+            // round-trip. Mirrors the remoting handler's call site so behavior is
+            // identical across remote and ISE-driven sessions.
+            RemotingPolicyManager.ApplyPolicyToSession(scriptSession,
+                RemotingPolicyManager.GetPolicyFromItem(ResolveCurrentPolicyItem()));
+
             JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose, debug);
         }
 

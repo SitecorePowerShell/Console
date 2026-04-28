@@ -278,8 +278,15 @@ namespace Spe.Client.Applications
                 jobName = $"SPE - \"{scriptItem?.Name}\"";
                 scriptSession.SetExecutedScript(scriptItem);
 
-                jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
-                PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Runner");
+                if (DelegatedAccessManager.IsElevated(jobUser, scriptItem))
+                {
+                    jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
+                    PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Runner");
+                }
+                else
+                {
+                    PowerShellLog.Audit($"[Runner] action=executing user={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\"");
+                }
             }
             else
             {

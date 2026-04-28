@@ -1667,7 +1667,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 context.Response.ContentType = "text/plain";
                 context.Response.Headers["X-SPE-LanguageMode"] = languageMode.ToString();
-                session.ActiveRemotingPolicy = policy;
+                RemotingPolicyManager.ApplyPolicyToSession(session, policy);
 
                 if (streams != null)
                 {

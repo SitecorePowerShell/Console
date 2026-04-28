@@ -354,7 +354,7 @@ namespace Spe.Core.Host
         /// </summary>
         private static readonly HashSet<string> SpeBuiltInVariableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "me", "HostSettings", "ScriptSession", "SitecoreAuthority",
+            "me", "HostSettings", "RemotingPolicy", "ScriptSession", "SitecoreAuthority",
             "AppPath", "AppVPath", "tempPath", "tmpPath",
             "SitecoreDataFolder", "SitecoreDebugFolder", "SitecoreLayoutFolder",
             "SitecoreLogFolder", "SitecoreMediaFolder", "SitecorePackageFolder",

@@ -121,43 +121,44 @@ description Move an item to a new location.\n\
 \n\
 snippet spe-finditem\n\
 description Search index query with single filter.\n\
-	Find-Item -Index "${1:sitecore_master_index}" \\\\\n\
-	    -Criteria @{Filter = "Equals"; Field = "${2:_templatename}"; Value = "${3:Sample Item}"} \\\\\n\
+	Find-Item -Index "${1:sitecore_master_index}" `\n\
+	    -Criteria @{Filter = "Equals"; Field = "${2:_templatename}"; Value = "${3:Sample Item}"} `\n\
 	    | Initialize-Item\n\
 \n\
 snippet spe-findcriteria\n\
 description Search index query with multiple criteria.\n\
-	Find-Item -Index "${1:sitecore_master_index}" \\\\\n\
-	    -Criteria @{Filter = "Equals"; Field = "${2:_templatename}"; Value = "${3:Sample Item}"}, \\\\\n\
-	              @{Filter = "Contains"; Field = "${4:_fullpath}"; Value = "${5:/sitecore/content}"} \\\\\n\
+	Find-Item -Index "${1:sitecore_master_index}" `\n\
+	    -Criteria @{Filter = "Equals"; Field = "${2:_templatename}"; Value = "${3:Sample Item}"}, `\n\
+	              @{Filter = "Contains"; Field = "${4:_fullpath}"; Value = "${5:/sitecore/content}"} `\n\
 	    | Initialize-Item\n\
 \n\
 # SPE Dialogs\n\
 \n\
 snippet spe-readvariable\n\
 description Raw Read-Variable call with inline parameter hashtable.\n\
-	\\$result = Read-Variable -Parameters \\\\\n\
-	    @{ Name = "${1:selectedItem}"; Title = "${2:Choose Item}"; Source = "${3:DataSource=/sitecore/content}"; Editor = "${4:droptree}" } \\\\\n\
-	    -Description "${5:Dialog description}" \\\\\n\
-	    -Title "${6:Dialog title}" \\\\\n\
+	\\$result = Read-Variable -Parameters `\n\
+	    @{ Name = "${1:selectedItem}"; Title = "${2:Choose Item}"; Source = "${3:DataSource=/sitecore/content}"; Editor = "${4:droptree}" } `\n\
+	    -Description "${5:Dialog description}" `\n\
+	    -Title "${6:Dialog title}" `\n\
 	    -OkButtonName "OK" -CancelButtonName "Cancel"\n\
 	if (\\$result -ne "ok") { exit }\n\
 \n\
 snippet spe-showlistview\n\
 description Display items in an interactive list view report.\n\
-	\\$${1:items} = Get-ChildItem -Path "${2:master:${3:/sitecore/content}}" -Recurse\n\
-	\\$${1:items} | Show-ListView -Property @{Label="Name"; Expression={\\$_.DisplayName}}, \\\\\n\
-	    @{Label="Path"; Expression={\\$_.ItemPath}}, \\\\\n\
-	    @{Label="Updated"; Expression={\\$_.__Updated}} \\\\\n\
+	\\$${1:items} = Get-ChildItem -Path "${2:master}:${3:/sitecore/content}" -Recurse\n\
+	\\$${1:items} | Show-ListView -Property `\n\
+	    @{Label="Name"; Expression={\\$_.DisplayName}}, `\n\
+	    @{Label="Path"; Expression={\\$_.ItemPath}}, `\n\
+	    @{Label="Updated"; Expression={\\$_.__Updated}} `\n\
 	    -Title "${4:Report title}"\n\
 	Close-Window\n\
 \n\
-snippet spe-dialogtreelist\n\
+snippet spe-dialogtreeliststarter\n\
 description Full DialogBuilder script with a treelist picker.\n\
 	Import-Function -Name DialogBuilder\n\
-	\\$dialog = New-DialogBuilder -Title "${1:Treelist Dialog}" \\\\\n\
+	\\$dialog = New-DialogBuilder -Title "${1:Treelist Dialog}" `\n\
 	    -Description "${2:Pick one or more items from the tree.}"\n\
-	\\$dialog | Add-TreeList -Name "${3:items}" -Title "${4:Select Items}" \\\\\n\
+	\\$dialog | Add-TreeList -Name "${3:items}" -Title "${4:Select Items}" `\n\
 	    -Source "${5:DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template}"\n\
 	\\$result = \\$dialog | Invoke-Dialog\n\
 	if (\\$result.Result -ne "ok") { exit }\n\
@@ -168,8 +169,8 @@ description Compact DialogBuilder demo with common controls and tabs.\n\
 	\\$options = [ordered]@{"Option A" = 1; "Option B" = 2; "Option C" = 4}\n\
 	\\$selection = [ordered]@{"None" = 1; "Checklist" = 2; "Radio" = 3}\n\
 	\n\
-	\\$dialog = New-DialogBuilder -Title "Kitchen Sink Demo" \\\\\n\
-	    -Description "Demonstrates all available DialogBuilder controls." \\\\\n\
+	\\$dialog = New-DialogBuilder -Title "Kitchen Sink Demo" `\n\
+	    -Description "Demonstrates all available DialogBuilder controls." `\n\
 	    -Width 650 -Height 700 -ShowHints\n\
 	\n\
 	# Simple tab\n\
@@ -190,11 +191,11 @@ description Compact DialogBuilder demo with common controls and tabs.\n\
 	\n\
 	# Items tab\n\
 	\\$dialog | Add-Droptree -Name "item" -Title "Item" -Root "/sitecore/content/" -Tab "Items"\n\
-	\\$dialog | Add-TreeList -Name "items" -Title "Treelist" \\\\\n\
-	    -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" \\\\\n\
+	\\$dialog | Add-TreeList -Name "items" -Title "Treelist" `\n\
+	    -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" `\n\
 	    -Tab "Items"\n\
-	\\$dialog | Add-MultiList -Name "items2" -Title "Multilist" \\\\\n\
-	    -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" \\\\\n\
+	\\$dialog | Add-MultiList -Name "items2" -Title "Multilist" `\n\
+	    -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" `\n\
 	    -Tab "Items"\n\
 	\n\
 	# Rights tab\n\
@@ -269,11 +270,11 @@ snippet spe-dialogbuilder\n\
 description DialogBuilder starter template with one field.\n\
 	Import-Function -Name DialogBuilder\n\
 	\\$dialog = New-DialogBuilder -Title "${1:Dialog Title}" -Description "${2:Description}" -ShowHints\n\
-	\\$dialog | Add-TextField -Name "${3:fieldName}" -Title "${4:Field Label}" -Mandatory\n\
+	\\$dialog | Add-TextField -Name "${3:firstField}" -Title "${4:Field Label}" -Mandatory\n\
 	${0}\n\
 	\\$result = \\$dialog | Invoke-Dialog\n\
 	if (\\$result.Result -eq "ok") {\n\
-	    Write-Host "Value: \\$${3:fieldName}"\n\
+	    Write-Host "Value: \\$${3:firstField}"\n\
 	}\n\
 \n\
 snippet spe-dialogkitchensink\n\
@@ -421,19 +422,19 @@ description Full DialogBuilder demo with every control type, tabs, and condition
 \n\
 snippet spe-dialogfield\n\
 description Single-line text input. Returns string.\n\
-	\\$dialog | Add-TextField -Name "${1:fieldName}" -Title "${2:Field Label}" -Value "${3}" -Tooltip "${4:Help text}"\n\
+	\\$dialog | Add-TextField -Name "${1:someText}" -Title "${2:Field Label}" -Value "${3}" -Tooltip "${4:Help text}"\n\
 \n\
 snippet spe-dialogpassword\n\
 description Masked password input. Returns string.\n\
-	\\$dialog | Add-TextField -Name "${1:fieldName}" -Title "${2:Password}" -IsPassword\n\
+	\\$dialog | Add-TextField -Name "${1:password}" -Title "${2:Password}" -IsPassword\n\
 \n\
 snippet spe-dialogemail\n\
 description Email input with browser validation. Returns string.\n\
-	\\$dialog | Add-TextField -Name "${1:fieldName}" -Title "${2:Email}" -IsEmail -Placeholder "${3:user@example.com}"\n\
+	\\$dialog | Add-TextField -Name "${1:email}" -Title "${2:Email}" -IsEmail -Placeholder "${3:user@example.com}"\n\
 \n\
 snippet spe-dialognumber\n\
 description Numeric input. Returns string (use [int] cast).\n\
-	\\$dialog | Add-TextField -Name "${1:fieldName}" -Title "${2:Count}" -IsNumber -Value ${3:0}\n\
+	\\$dialog | Add-TextField -Name "${1:number}" -Title "${2:Count}" -IsNumber -Value ${3:0}\n\
 \n\
 snippet spe-dialogmaxlength\n\
 description Text field with character limit and live counter.\n\
@@ -441,107 +442,107 @@ description Text field with character limit and live counter.\n\
 \n\
 snippet spe-dialogmultiline\n\
 description Multi-line textarea. Returns string.\n\
-	\\$dialog | Add-MultiLineTextField -Name "${1:fieldName}" -Title "${2:Description}" -Lines ${3:3} -Placeholder "${4:Enter text}"\n\
+	\\$dialog | Add-MultiLineTextField -Name "${1:multiText}" -Title "${2:Description}" -Lines ${3:3} -Placeholder "${4:Enter text}"\n\
 \n\
 snippet spe-dialogcheckbox\n\
 description Boolean checkbox. Returns bool.\n\
-	\\$dialog | Add-Checkbox -Name "${1:fieldName}" -Title "${2:Field Label}" -Value \\$${3:false}\n\
+	\\$dialog | Add-Checkbox -Name "${1:toggleEnabled}" -Title "${2:Field Label}" -Value \\$${3:false}\n\
 \n\
 snippet spe-dialogdate\n\
 description Date and time picker. Returns DateTime.\n\
-	\\$dialog | Add-DateTimePicker -Name "${1:fieldName}" -Title "${2:Select Date}" -Value ([DateTime]::Now)\n\
+	\\$dialog | Add-DateTimePicker -Name "${1:from}" -Title "${2:Select Date}" -Value ([DateTime]::Now)\n\
 \n\
 snippet spe-dialogdateonly\n\
 description Date-only picker (no time). Returns DateTime.\n\
-	\\$dialog | Add-DateTimePicker -Name "${1:fieldName}" -Title "${2:Select Date}" -DateOnly\n\
+	\\$dialog | Add-DateTimePicker -Name "${1:fromDate}" -Title "${2:Select Date}" -DateOnly\n\
 \n\
 snippet spe-dialogitempicker\n\
 description Tree-based single item picker. Returns Item. Add -AllowNone for optional selection.\n\
-	\\$dialog | Add-ItemPicker -Name "${1:fieldName}" -Title "${2:Select Item}" -Root "${3:/sitecore/content}"\n\
+	\\$dialog | Add-ItemPicker -Name "${1:item}" -Title "${2:Select Item}" -Root "${3:/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplink\n\
 description Flat dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
-	\\$dialog | Add-Droplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}"\n\
+	\\$dialog | Add-Droplink -Name "${1:droplinkItem}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplinkoptional\n\
 description Flat dropdown with blank first option. Returns Item or \\$null.\n\
-	\\$dialog | Add-Droplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
+	\\$dialog | Add-Droplink -Name "${1:optionalDroplink}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
 \n\
 snippet spe-dialogdroptree\n\
 description Tree dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
-	\\$dialog | Add-Droptree -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
+	\\$dialog | Add-Droptree -Name "${1:droptreeItem}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplist\n\
 description Flat dropdown, single item selection. Returns Item. Add -AllowNone to allow blank.\n\
-	\\$dialog | Add-Droplist -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
+	\\$dialog | Add-Droplist -Name "${1:droplistItem}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialogdroplistoptional\n\
 description Flat dropdown with blank first option. Returns Item or \\$null.\n\
-	\\$dialog | Add-Droplist -Name "${1:fieldName}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
+	\\$dialog | Add-Droplist -Name "${1:optionalDroplist}" -Title "${2:Choose Item}" -Source "${3:DataSource=/sitecore/content}" -Value \\$null -AllowNone -Placeholder "${4:Select...}"\n\
 \n\
 snippet spe-dialoggroupeddroplink\n\
 description Grouped dropdown by parent folder. Returns Item. Add -AllowNone to allow blank.\n\
-	\\$dialog | Add-GroupedDroplink -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
+	\\$dialog | Add-GroupedDroplink -Name "${1:groupedDroplink}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
 \n\
 snippet spe-dialoggroupeddroplist\n\
 description Grouped dropdown by parent folder. Returns Item. Add -AllowNone to allow blank.\n\
-	\\$dialog | Add-GroupedDroplist -Name "${1:fieldName}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
+	\\$dialog | Add-GroupedDroplist -Name "${1:groupedDroplist}" -Title "${2:Select Item}" -Source "${3:DataSource=/sitecore/templates}"\n\
 \n\
 snippet spe-dialogdropdown\n\
 description Dropdown from custom options hashtable. Returns string.\n\
-	\\$dialog | Add-Dropdown -Name "${1:fieldName}" -Title "${2:Field Label}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2}\n\
+	\\$dialog | Add-Dropdown -Name "${1:dropdownChoice}" -Title "${2:Field Label}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2}\n\
 \n\
 snippet spe-dialogradio\n\
 description Radio button group from options hashtable. Returns string.\n\
-	\\$dialog | Add-RadioButtons -Name "${1:fieldName}" -Title "${2:Choose One}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2}\n\
+	\\$dialog | Add-RadioButtons -Name "${1:radioChoice}" -Title "${2:Choose One}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2}\n\
 \n\
 snippet spe-dialogchecklist\n\
 description Checklist with select/unselect all. Returns string[].\n\
-	\\$dialog | Add-Checklist -Name "${1:fieldName}" -Title "${2:Select Multiple}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2; "${5:Option C}" = 4}\n\
+	\\$dialog | Add-Checklist -Name "${1:checklistItems}" -Title "${2:Select Multiple}" -Options @{"${3:Option A}" = 1; "${4:Option B}" = 2; "${5:Option C}" = 4}\n\
 \n\
 snippet spe-dialogtreelist\n\
 description Dual-pane tree list for multi-item selection. Returns Item[].\n\
-	\\$dialog | Add-TreeList -Name "${1:fieldName}" -Title "${2:Select Items}" -Source "${3:DataSource=/sitecore/content}"\n\
+	\\$dialog | Add-TreeList -Name "${1:treelistItems}" -Title "${2:Select Items}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialogmultilist\n\
 description Dual-list for multi-item selection. Returns Item[].\n\
-	\\$dialog | Add-MultiList -Name "${1:fieldName}" -Title "${2:Select Items}" -Source "${3:DataSource=/sitecore/content}"\n\
+	\\$dialog | Add-MultiList -Name "${1:multilistItems}" -Title "${2:Select Items}" -Source "${3:DataSource=/sitecore/content}"\n\
 \n\
 snippet spe-dialoguserpicker\n\
 description User account picker. Returns string or string[].\n\
-	\\$dialog | Add-UserPicker -Name "${1:fieldName}" -Title "${2:Select User}" -Multiple\n\
+	\\$dialog | Add-UserPicker -Name "${1:user}" -Title "${2:Select User}" -Multiple\n\
 \n\
 snippet spe-dialogrolepicker\n\
 description Security role picker. Returns string or string[].\n\
-	\\$dialog | Add-RolePicker -Name "${1:fieldName}" -Title "${2:Select Role}" -Domain "${3:sitecore}"\n\
+	\\$dialog | Add-RolePicker -Name "${1:role}" -Title "${2:Select Role}" -Domain "${3:sitecore}"\n\
 \n\
 snippet spe-dialoguserrolepicker\n\
 description Combined user and role picker. Returns string or string[].\n\
-	\\$dialog | Add-UserRolePicker -Name "${1:fieldName}" -Title "${2:Select User or Role}" -Multiple\n\
+	\\$dialog | Add-UserRolePicker -Name "${1:userOrRole}" -Title "${2:Select User or Role}" -Multiple\n\
 \n\
 snippet spe-dialoginfo\n\
 description Read-only informational text (not editable).\n\
-	\\$dialog | Add-InfoText -Name "${1:fieldName}" -Title "${2:Notice}" -Value "${3:Important information here.}"\n\
+	\\$dialog | Add-InfoText -Name "${1:info}" -Title "${2:Notice}" -Value "${3:Important information here.}"\n\
 \n\
 snippet spe-dialogmarquee\n\
 description Scrolling marquee text display.\n\
-	\\$dialog | Add-Marquee -Name "${1:fieldName}" -Value "${2:Scrolling message...}"\n\
+	\\$dialog | Add-Marquee -Name "${1:marquee}" -Value "${2:Scrolling message...}"\n\
 \n\
 snippet spe-dialoglink\n\
 description Link/URL text input field.\n\
-	\\$dialog | Add-LinkField -Name "${1:fieldName}" -Title "${2:URL}" -Placeholder "${3:https://example.com}"\n\
+	\\$dialog | Add-LinkField -Name "${1:linkUrl}" -Title "${2:URL}" -Placeholder "${3:https://example.com}"\n\
 \n\
 snippet spe-dialogtristate\n\
 description Three-state checkbox: Yes, No, or Not Set. Returns 1, 0, or null.\n\
-	\\$dialog | Add-TristateCheckbox -Name "${1:fieldName}" -Title "${2:Override Default}"\n\
+	\\$dialog | Add-TristateCheckbox -Name "${1:triState}" -Title "${2:Override Default}"\n\
 \n\
 snippet spe-dialogrule\n\
 description Sitecore rules condition editor. Returns XML string.\n\
-	\\$dialog | Add-RuleField -Name "${1:fieldName}" -Title "${2:Conditions}"\n\
+	\\$dialog | Add-RuleField -Name "${1:rule}" -Title "${2:Conditions}"\n\
 \n\
 snippet spe-dialogruleaction\n\
 description Sitecore rules condition and action editor. Returns XML string.\n\
-	\\$dialog | Add-RuleActionField -Name "${1:fieldName}" -Title "${2:Actions}"\n\
+	\\$dialog | Add-RuleActionField -Name "${1:ruleAction}" -Title "${2:Actions}"\n\
 \n\
 snippet spe-dialogtabs\n\
 description Place fields on different tabs using the -Tab parameter.\n\
@@ -671,6 +672,14 @@ description Write a message to the SPE log.\n\
 snippet spe-importfunction\n\
 description Import a shared SPE function by name.\n\
 	Import-Function -Name ${1:FunctionName}\n\
+\n\
+# SPE Sitecore\n\
+\n\
+snippet spe-getservice\n\
+description Resolve a service from the Sitecore DI container and invoke a method.\n\
+	\\$${1:serviceType} = [${2:Namespace.IServiceInterface}]\n\
+	\\$${3:service} = [Sitecore.DependencyInjection.ServiceLocator]::ServiceProvider.GetService(\\$${1:serviceType}) -as \\$${1:serviceType}\n\
+	\\$${3:service}.${4:MethodName}()\n\
 \n\
 # SPE Advanced Functions\n\
 \n\

@@ -32,6 +32,8 @@ SharedFields:
     if($result -eq "cancel"){
         exit
     }
+    if($selectedSnippet -eq $null) { exit }
+    
     $content = $selectedSnippet.Fields[$snippetFieldId].Value
     
     Send-SheerMessage -Name "ise:plugininsert" -Parameters @{ "script" = $content }
@@ -84,11 +86,11 @@ Languages:
         sitecore\Admin
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "10ffc2e0-f1a5-41d2-a68a-d0e5501a170e"
+      Value: "ee6cfd6e-7e1c-4af5-ab9d-869025972db1"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\unicorn
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20230122T214514Z
+      Value: 20260426T212800Z

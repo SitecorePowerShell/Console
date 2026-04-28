@@ -15,6 +15,7 @@ using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Client.Controls;
 using Spe.Commands.Interactive;
@@ -516,8 +517,17 @@ namespace Spe.Client.Applications
             ScriptSessionId = scriptSession.ID;
             scriptSession.PrivateData.DeferredMessages.Clear();
 
-            var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-            PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Report");
+            User jobUser;
+            if (DelegatedAccessManager.IsElevated(Context.User, scriptItem))
+            {
+                jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
+                PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Report");
+            }
+            else
+            {
+                jobUser = Context.User;
+                PowerShellLog.Audit($"[Report] action=executing user={Context.User.Name} script=\"{scriptItem.Name} {scriptItem.ID}\"");
+            }
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
             Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
             LvProgressOverlay.Visible = false;

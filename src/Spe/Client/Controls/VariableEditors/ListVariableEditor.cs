@@ -130,9 +130,7 @@ namespace Spe.Client.Controls.VariableEditors
                         ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
                         Source = lookupSource,
                         ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name,
-                        Value = allowNone
-                            ? (item?.ID.ToString() ?? string.Empty)
-                            : (item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()),
+                        Value = item?.ID.ToString() ?? string.Empty,
                         ScriptedItems = scriptedItems,
                         AllowNone = allowNone,
                         Placeholder = placeholder
@@ -148,9 +146,7 @@ namespace Spe.Client.Controls.VariableEditors
                     ItemID = item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString(),
                     Source = lookupSource,
                     ItemLanguage = item?.Language.Name ?? Sitecore.Context.Language.Name,
-                    Value = allowNone
-                        ? (item?.ID.ToString() ?? string.Empty)
-                        : (item?.ID.ToString() ?? Sitecore.ItemIDs.RootID.ToString()),
+                    Value = item?.ID.ToString() ?? string.Empty,
                     ScriptedItems = scriptedItems,
                     AllowNone = allowNone,
                     Placeholder = placeholder

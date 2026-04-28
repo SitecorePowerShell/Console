@@ -335,5 +335,81 @@ Assert-Like $verboseText "*hello-from-server*" "e2e: server-emitted Write-Verbos
 
 Stop-ScriptSession -Session $readOnlySession -ErrorAction SilentlyContinue
 
+# ============================================================================
+#  Test Group 13: $RemotingPolicy session variable for discovery
+#  The handler injects $RemotingPolicy into every runspace so external
+#  consumers (e.g. the SPE MCP server) can introspect what is allowed
+#  without a separate policy-fetch round-trip. Surface contract:
+#    Always-present: Name (string), FullLanguage (bool),
+#                    HasApprovedScripts (bool), AuditLevel (string)
+#    Conditional:    AllowedCommands (string[]) - present ONLY when not
+#                    FullLanguage. Property absence is the gate signal.
+#  ApprovedScripts GUIDs are intentionally omitted - HasApprovedScripts
+#  is the only signal of elevation existence to deny remote enumeration.
+# ============================================================================
+Write-Host "`n  [Test Group 13: `$RemotingPolicy session variable]" -ForegroundColor White
+
+# 13a. Under a ConstrainedLanguage policy with a populated allowlist
+# (Test-ReadOnly), the variable surfaces the allowlist contents. The probe
+# script uses ConvertTo-Json which is on the Test-ReadOnly allowlist (line 122
+# of Setup) so the script itself passes policy validation.
+$probeScript = '$RemotingPolicy | ConvertTo-Json -Depth 3 -Compress'
+$probeResponse = Invoke-ClientRequest -Script $probeScript -SecretKey $readOnlySecret -KeyId $readOnlyKeyId
+Assert-Equal ([int]$probeResponse.StatusCode) 200 "ReadOnly policy: probe script returns 200"
+
+$probeBody = $probeResponse.Content.ReadAsStringAsync().Result
+# The CliXml-wrapped body contains the JSON payload as a string. Strip CliXml
+# scaffolding by extracting the largest brace-bounded substring.
+$jsonStart = $probeBody.IndexOf('{')
+$jsonEnd = $probeBody.LastIndexOf('}')
+Assert-True ($jsonStart -ge 0 -and $jsonEnd -gt $jsonStart) "ReadOnly probe: body contains a JSON object"
+
+if ($jsonStart -ge 0 -and $jsonEnd -gt $jsonStart) {
+    $jsonText = $probeBody.Substring($jsonStart, $jsonEnd - $jsonStart + 1)
+    # CliXml may wrap the JSON in escape sequences - decode if present.
+    $jsonText = $jsonText -replace '_x000D__x000A_', '' -replace '\\u003c', '<' -replace '\\u003e', '>'
+    $policy = $jsonText | ConvertFrom-Json -ErrorAction SilentlyContinue
+    Assert-True ($null -ne $policy) "ReadOnly probe: JSON deserializes"
+
+    if ($policy) {
+        $propertyNames = $policy.PSObject.Properties.Name
+        Assert-Equal $policy.Name "Test-ReadOnly" "ReadOnly probe: Name field"
+        Assert-True (-not $policy.FullLanguage) "ReadOnly probe: FullLanguage=false"
+        Assert-True ($propertyNames -contains 'AllowedCommands') "ReadOnly probe: AllowedCommands property is present (CLM gate signal)"
+        Assert-True ($policy.AllowedCommands -contains "Get-Item") "ReadOnly probe: AllowedCommands includes Get-Item"
+        Assert-True ($policy.AllowedCommands -contains "ConvertTo-Json") "ReadOnly probe: AllowedCommands includes ConvertTo-Json"
+        Assert-True $policy.HasApprovedScripts "ReadOnly probe: HasApprovedScripts=true (one approved script in setup)"
+        Assert-Equal $policy.AuditLevel "Violations" "ReadOnly probe: AuditLevel=Violations"
+        # Defense-in-depth: GUIDs of approved scripts must NOT be exposed.
+        $hasGuidProperty = $propertyNames -contains 'ApprovedScripts' -or $propertyNames -contains 'ApprovedScriptIds'
+        Assert-True (-not $hasGuidProperty) "ReadOnly probe: ApprovedScripts GUID list is NOT exposed (recon-deny)"
+        # RestrictCommands was dropped from the surface - it's redundant with !FullLanguage.
+        Assert-True (-not ($propertyNames -contains 'RestrictCommands')) "ReadOnly probe: RestrictCommands property is NOT exposed (redundant with !FullLanguage)"
+    }
+}
+
+# 13b. Under a FullLanguage policy with no allowlist (Test-StandardAudit),
+# AllowedCommands is absent entirely - that's how consumers detect "no
+# command filtering applies."
+$probeResponse = Invoke-ClientRequest -Script $probeScript -SecretKey $standardAuditSecret -KeyId $standardAuditKeyId
+Assert-Equal ([int]$probeResponse.StatusCode) 200 "StandardAudit policy: probe script returns 200"
+
+$probeBody = $probeResponse.Content.ReadAsStringAsync().Result
+$jsonStart = $probeBody.IndexOf('{')
+$jsonEnd = $probeBody.LastIndexOf('}')
+if ($jsonStart -ge 0 -and $jsonEnd -gt $jsonStart) {
+    $jsonText = $probeBody.Substring($jsonStart, $jsonEnd - $jsonStart + 1)
+    $jsonText = $jsonText -replace '_x000D__x000A_', '' -replace '\\u003c', '<' -replace '\\u003e', '>'
+    $policy = $jsonText | ConvertFrom-Json -ErrorAction SilentlyContinue
+    if ($policy) {
+        $propertyNames = $policy.PSObject.Properties.Name
+        Assert-Equal $policy.Name "Test-StandardAudit" "StandardAudit probe: Name field"
+        Assert-True $policy.FullLanguage "StandardAudit probe: FullLanguage=true"
+        Assert-True (-not ($propertyNames -contains 'AllowedCommands')) "StandardAudit probe: AllowedCommands property is ABSENT (FullLanguage = no command filter applies)"
+        Assert-True (-not $policy.HasApprovedScripts) "StandardAudit probe: HasApprovedScripts=false"
+        Assert-True (-not ($propertyNames -contains 'RestrictCommands')) "StandardAudit probe: RestrictCommands property is NOT exposed"
+    }
+}
+
 # Cleanup
 $httpClient.Dispose()

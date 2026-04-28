@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 using System.Web;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.SecurityModel;
 using Spe.Core.Diagnostics;
+using Spe.Core.Host;
 
 namespace Spe.Core.Settings.Authorization
 {
@@ -181,18 +184,33 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        private static RemotingPolicy ParsePolicy(Item item)
+        /// <summary>
+        /// Pure-function helper that normalizes the policy's Full Language flag and
+        /// raw Allowed Commands text into the (RestrictCommands, AllowedCommands) pair
+        /// stored on a <see cref="RemotingPolicy"/>.
+        ///
+        /// Under FullLanguage the allowlist is unconditionally ignored: callers can
+        /// bypass <c>CommandAst</c>-based validation through type expressions
+        /// (<c>[System.IO.File]::WriteAllText</c>), <c>[Activator]::CreateInstance</c>,
+        /// <c>[ScriptBlock]::Create</c>, direct .NET method calls, etc. Pretending an
+        /// allowlist enforces under FullLanguage is security theater - operators who
+        /// want command filtering must use ConstrainedLanguage.
+        ///
+        /// Under ConstrainedLanguage the allowlist is always honored. An empty
+        /// allowlist denies every inline command except the implicit
+        /// <see cref="RemotingPolicy.StreamBaseline"/> (Write-* / Out-*).
+        ///
+        /// Extracted from <see cref="ParsePolicy"/> so the FullLanguage matrix can
+        /// be exercised in unit tests without mocking a Sitecore <see cref="Item"/>.
+        /// </summary>
+        public static CommandAllowlist NormalizeAllowedCommands(bool fullLanguage, string allowedCommandsText)
         {
-            var fullLanguageField = item.Fields[Templates.RemotingPolicy.Fields.FullLanguage];
-            var fullLanguage = fullLanguageField != null && fullLanguageField.Value == "1";
+            if (fullLanguage)
+            {
+                return new CommandAllowlist(false, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            }
 
-            // Parse allowed commands (multi-line text, one per line)
-            // When Full Language is unchecked (CLM), commands are always restricted.
-            // An empty allowlist under CLM means no inline commands are permitted.
-            var allowedCommandsText = item.Fields[Templates.RemotingPolicy.Fields.AllowedCommands]?.Value;
-            var restrictCommands = !fullLanguage;
             var allowedCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
             if (!string.IsNullOrEmpty(allowedCommandsText))
             {
                 var lines = allowedCommandsText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -204,13 +222,62 @@ namespace Spe.Core.Settings.Authorization
                         allowedCommands.Add(cmd);
                     }
                 }
-                if (allowedCommands.Count > 0)
-                {
-                    restrictCommands = true;
-                }
             }
+            return new CommandAllowlist(true, allowedCommands);
+        }
 
-            // Parse approved scripts (Treelist — pipe-delimited item IDs)
+        /// <summary>
+        /// Attaches the resolved policy to a script session: stores it on
+        /// <see cref="ScriptSession.ActiveRemotingPolicy"/> for the C# enforcement
+        /// path and surfaces a read-friendly <c>$RemotingPolicy</c> variable so
+        /// scripts (and external consumers like the SPE MCP server) can introspect
+        /// what they're allowed to do without needing a discovery round-trip.
+        ///
+        /// The injected variable is a PSObject with NoteProperties for ergonomic
+        /// dot-access. The shape is conditional: <c>AllowedCommands</c> is present
+        /// only when the policy actually constrains commands (ConstrainedLanguage),
+        /// and absent under FullLanguage where the field is meaningless. Consumers
+        /// can use the property's existence as the gate
+        /// (<c>if ($RemotingPolicy.AllowedCommands) { ... }</c>) instead of a
+        /// separate flag.
+        ///
+        /// Always-present fields: Name, FullLanguage, HasApprovedScripts, AuditLevel.
+        /// Conditional: AllowedCommands (only when not FullLanguage).
+        ///
+        /// The approved-scripts GUID list is intentionally omitted - only the
+        /// boolean <c>HasApprovedScripts</c> is exposed, to deny remote callers a
+        /// free enumeration of elevation targets. The actual enforcement still
+        /// reads <see cref="RemotingPolicy.ApprovedScriptIds"/> directly from the
+        /// cached policy object, so omitting the IDs from the script-side variable
+        /// does not weaken authorization.
+        /// </summary>
+        public static void ApplyPolicyToSession(ScriptSession session, RemotingPolicy policy)
+        {
+            if (session == null || policy == null) return;
+
+            session.ActiveRemotingPolicy = policy;
+
+            var view = new PSObject();
+            view.Properties.Add(new PSNoteProperty("Name", policy.Name));
+            view.Properties.Add(new PSNoteProperty("FullLanguage", policy.FullLanguage));
+            if (policy.RestrictCommands)
+            {
+                view.Properties.Add(new PSNoteProperty("AllowedCommands", policy.AllowedCommands.ToArray()));
+            }
+            view.Properties.Add(new PSNoteProperty("HasApprovedScripts", policy.ApprovedScriptIds.Count > 0));
+            view.Properties.Add(new PSNoteProperty("AuditLevel", policy.AuditLevel.ToString()));
+            session.SetVariable("RemotingPolicy", view);
+        }
+
+        private static RemotingPolicy ParsePolicy(Item item)
+        {
+            var fullLanguageField = item.Fields[Templates.RemotingPolicy.Fields.FullLanguage];
+            var fullLanguage = fullLanguageField != null && fullLanguageField.Value == "1";
+
+            var allowedCommandsText = item.Fields[Templates.RemotingPolicy.Fields.AllowedCommands]?.Value;
+            var allowlist = NormalizeAllowedCommands(fullLanguage, allowedCommandsText);
+
+            // Parse approved scripts (Treelist - pipe-delimited item IDs)
             var approvedScriptsText = item.Fields[Templates.RemotingPolicy.Fields.ApprovedScripts]?.Value;
             var approvedScriptIds = new HashSet<ID>();
             if (!string.IsNullOrEmpty(approvedScriptsText))
@@ -238,7 +305,22 @@ namespace Spe.Core.Settings.Authorization
             }
 
             return new RemotingPolicy(
-                item.Name, fullLanguage, restrictCommands, allowedCommands, approvedScriptIds, auditLevel);
+                item.Name, fullLanguage, allowlist.RestrictCommands, allowlist.AllowedCommands, approvedScriptIds, auditLevel);
+        }
+    }
+
+    /// <summary>
+    /// Result of <see cref="RemotingPolicyManager.NormalizeAllowedCommands"/>.
+    /// </summary>
+    public sealed class CommandAllowlist
+    {
+        public bool RestrictCommands { get; }
+        public HashSet<string> AllowedCommands { get; }
+
+        public CommandAllowlist(bool restrictCommands, HashSet<string> allowedCommands)
+        {
+            RestrictCommands = restrictCommands;
+            AllowedCommands = allowedCommands ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
     }
 }

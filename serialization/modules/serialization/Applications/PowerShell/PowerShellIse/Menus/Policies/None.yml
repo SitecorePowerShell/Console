@@ -1,4 +1,4 @@
----
+﻿---
 ID: "9eda2aa7-ecee-450b-a8c4-3a5130eb1874"
 Parent: "024739e0-48f1-42f9-b85b-1b69e0220f86"
 Template: "998b965e-6ab8-4568-810f-8101d60d0cc3"
@@ -6,10 +6,10 @@ Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Policies/Non
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Applications/16x16/delete.png
+  Value: Office/32x32/sign_forbidden.png
 - ID: "335c6760-6c0e-4c6c-814c-a53d203f553e"
   Hint: Icon
-  Value: Applications/16x16/delete.png
+  Value: Office/32x32/sign_forbidden.png
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100
@@ -34,11 +34,11 @@ Languages:
         sitecore\anajmanowicz
     - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
       Hint: __Revision
-      Value: "9b315b79-6653-4890-898b-dcc3c056e73a"
+      Value: "2b47ad6d-4588-4fc4-8fc2-84bdfa44e9f9"
     - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
       Hint: __Updated by
       Value: |
-        sitecore\anajmanowicz
+        sitecore\Admin
     - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
       Hint: __Updated
-      Value: 20260416T090000Z
+      Value: 20260428T010050Z
