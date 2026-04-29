@@ -141,7 +141,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         public override bool IsReusable => true;
 
-        public void ProcessRequest(HttpContext context)
+        public override void ProcessRequest(HttpContext context)
         {
             var request = context.Request;
             var origin = request.Headers["Origin"];
