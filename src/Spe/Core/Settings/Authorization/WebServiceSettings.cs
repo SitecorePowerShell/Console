@@ -52,6 +52,15 @@ namespace Spe.Core.Settings.Authorization
         // in the audit log; operators correlate by rid.
         public static bool DetailedErrors { get; private set; }
 
+        // When true (default) requests carrying credentials in the query
+        // string (?user=&password=) are warned and allowed through, matching
+        // pre-9.0 behavior. Set to false to reject these requests with 401.
+        // Query-string credentials are persisted in IIS access logs, browser
+        // history, proxies, and Referer headers; flipping this off is the
+        // hardened posture for any deployment whose callers can use the
+        // Authorization header.
+        public static bool AllowQueryStringCredentials { get; private set; }
+
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
@@ -124,6 +133,8 @@ namespace Spe.Core.Settings.Authorization
                 Sitecore.Configuration.Settings.GetSetting("Spe.Remoting.AllowedFileRoots", string.Empty));
 
             DetailedErrors = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.DetailedErrors", false);
+
+            AllowQueryStringCredentials = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.AllowQueryStringCredentials", true);
 
             // Operators on direct-IIS (no reverse proxy) should set
             // Spe.Remoting.UseForwardedHeaders=false so spoofed headers cannot bypass

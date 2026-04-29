@@ -260,6 +260,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
             {
+                if (!WebServiceSettings.AllowQueryStringCredentials)
+                {
+                    PowerShellLog.Warn($"[Remoting] action=credentialRejected service={serviceName} ip={GetIp(request)} user={LogSanitizer.SanitizeValue(username)} reason=queryStringCredentials");
+                    // Sanitized form mirrors RejectAuthenticationMethod verbatim so the
+                    // response surface is indistinguishable from a normal auth failure -
+                    // the gate's existence is not leaked to unauthenticated callers.
+                    // Verbose form adds a non-disclosing hint for dev operators; the
+                    // setting name stays in the audit log only.
+                    var errorMessage = WebServiceSettings.DetailedErrors
+                        ? $"Unauthorized request to the {serviceName} service. Use the Authorization header."
+                        : $"Unauthorized request to the {serviceName} service.";
+                    SetErrorResponse(context, 401, errorMessage, true);
+                    return false;
+                }
+
                 PowerShellLog.Warn($"[Remoting] action=deprecatedAuth service={serviceName} ip={GetIp(request)} user={LogSanitizer.SanitizeValue(username)} reason=queryStringCredentials");
             }
 
