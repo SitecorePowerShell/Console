@@ -220,9 +220,20 @@ The JSON body is the same envelope on success and on script failure:
 
 `output` carries whatever the script wrote to the pipeline, serialized via
 `ConvertTo-Json -Depth 3`. `errors` is an array of strings by default. Add
-`&errorFormat=structured` to receive each error as an object with
-`message`, `errorCategory`, `categoryReason`, `fullyQualifiedErrorId`,
-`exceptionType`, `scriptStackTrace`, and `invocationInfo` instead.
+`&errorFormat=structured` to receive each error as an object. The fields
+present depend on the `Spe.Remoting.DetailedErrors` setting:
+
+- Default (`false`): each error is `{ correlationId, errorCategory,
+  fullyQualifiedErrorId, message }` where `message` is a fixed template
+  ("Script error. See SPE log id=&lt;rid&gt;.") that quotes the
+  correlationId so the SPE module's `Write-Error` path still surfaces
+  something useful. `correlationId` is the per-request id (also visible
+  as `rid` in the audit log) - operators trace the full PowerShell
+  error record by looking up that id in the SPE log.
+- Verbose (`true`): each error includes `message`, `errorCategory`,
+  `categoryReason`, `fullyQualifiedErrorId`, `exceptionType`,
+  `scriptStackTrace`, and `invocationInfo` instead. Useful in dev; not
+  recommended in production.
 
 | Status | Meaning                                                           |
 | ------ | ----------------------------------------------------------------- |

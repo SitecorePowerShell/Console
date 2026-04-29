@@ -80,6 +80,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string StructuredErrorScript =
             "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { " +
             "$err = $_; $h = @{ " +
+            "correlationId = $rid; " +
             "message = $err.ToString(); " +
             "errorCategory = \"$($err.CategoryInfo.Category)\"; " +
             "categoryReason = $err.CategoryInfo.Reason; " +
@@ -98,6 +99,26 @@ namespace Spe.sitecore_modules.PowerShell.Services
             "line = $err.InvocationInfo.Line; " +
             "positionMessage = $err.InvocationInfo.PositionMessage " +
             "} }; $h }) } | ConvertTo-Json -Depth 4 -Compress";
+
+        // Sanitized counterpart used when Spe.Remoting.DetailedErrors=false.
+        // Keeps the PS-provided category and FullyQualifiedErrorId (callers can
+        // produce these themselves via their own script - leaking them tells
+        // the caller nothing they didn't already know) plus the per-request
+        // correlationId so operators can match a complaint to an audit-log
+        // entry. The message is a fixed template that quotes the
+        // correlationId so the SPE client's Write-JsonErrors path (which
+        // reads exceptionMessage / message and fullyQualifiedErrorId) still
+        // surfaces something meaningful via Write-Error. Drops everything
+        // else: stack traces, exception types, invocation info, position
+        // messages.
+        private const string SanitizedStructuredErrorScript =
+            "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { " +
+            "@{ " +
+            "correlationId = $rid; " +
+            "errorCategory = \"$($_.CategoryInfo.Category)\"; " +
+            "fullyQualifiedErrorId = $_.FullyQualifiedErrorId; " +
+            "message = \"Script error. See SPE log id=$rid.\" " +
+            "} }) } | ConvertTo-Json -Depth 3 -Compress";
 
         private const string FlatErrorScript =
             "@{ output = @($outObjects); errors = @($errorObjects | ForEach-Object { $_.ToString() }) } | ConvertTo-Json -Depth 3 -Compress";
@@ -993,19 +1014,31 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 var useStructured = context.Request.QueryString[ParamErrorFormat].Is("structured");
                 if (useStructured)
                 {
+                    var errorCategory = statusCode == 401 || statusCode == 403 ? "SecurityError" : "ConnectionError";
+                    var rid = GetRequestId();
+                    var errorEntry = new Hashtable
+                    {
+                        ["correlationId"] = rid,
+                        ["errorCategory"] = errorCategory,
+                        ["fullyQualifiedErrorId"] = $"Spe.Remoting.Http{statusCode}",
+                        ["message"] = $"Remoting request rejected with HTTP {statusCode}. See SPE log id={rid}."
+                    };
+                    if (WebServiceSettings.DetailedErrors)
+                    {
+                        // Verbose form keeps the SPE-controlled message and the
+                        // pseudo exceptionType for backward compat with callers
+                        // that read those fields. The message itself is whatever
+                        // the caller of SetErrorResponse passed in - typically
+                        // SPE-internal text but in some sites (e.g. policy block)
+                        // it carries policy and command names.
+                        errorEntry["message"] = message;
+                        errorEntry["exceptionType"] = "System.Web.HttpException";
+                        errorEntry["exceptionMessage"] = message;
+                    }
                     var errorBody = new Hashtable
                     {
                         ["output"] = new object[0],
-                        ["errors"] = new[]
-                        {
-                            new Hashtable
-                            {
-                                ["message"] = message,
-                                ["errorCategory"] = statusCode == 401 || statusCode == 403 ? "SecurityError" : "ConnectionError",
-                                ["exceptionType"] = "System.Web.HttpException",
-                                ["exceptionMessage"] = message
-                            }
-                        }
+                        ["errors"] = new[] { errorEntry }
                     };
                     context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
                 }
@@ -1339,10 +1372,17 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 context.Response.TransmitFile(file);
             }
-            catch (IOException _)
+            catch (IOException ex)
             {
+                // ex.Message can carry the absolute server path in the file-
+                // share / locked-file cases ("The process cannot access the
+                // file 'C:\inetpub\...'..."). Audit log keeps the detail;
+                // client gets a generic phrase unless DetailedErrors is on.
+                PowerShellLog.Error($"[Remoting] action=transmitFileFailed file=\"{file}\" rid={GetRequestId()}", ex);
                 context.Response.StatusCode = 500;
-                context.Response.StatusDescription = _.Message;
+                context.Response.StatusDescription = WebServiceSettings.DetailedErrors
+                    ? ex.Message
+                    : "Read error";
             }
         }
 
@@ -1718,10 +1758,25 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             PowerShellLog.Audit("[Remoting] action=scriptRejectedByPolicy user={0} ip={1} policy={2} blockedCommand={3} clientSession={4} rid={5}",
                                 user, ip, policy.Name, policyBlockedCommand, clientSession, GetRequestId());
                         }
+                        // X-SPE-Restriction is the category and stays visible
+                        // unconditionally - the client (Invoke-RemoteScript)
+                        // uses it to pick a friendly error path. The specific
+                        // command and policy name leak details an
+                        // unauthenticated probe could use to enumerate the
+                        // allowlist; gate them on Spe.Remoting.DetailedErrors
+                        // so the audit log keeps the truth and ops can still
+                        // turn the headers back on for dev troubleshooting.
                         context.Response.Headers["X-SPE-Restriction"] = "policy-blocked";
-                        context.Response.Headers["X-SPE-BlockedCommand"] = policyBlockedCommand;
-                        context.Response.Headers["X-SPE-Policy"] = policy.Name;
-                        SetErrorResponse(context, 403, $"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
+                        if (WebServiceSettings.DetailedErrors)
+                        {
+                            context.Response.Headers["X-SPE-BlockedCommand"] = policyBlockedCommand;
+                            context.Response.Headers["X-SPE-Policy"] = policy.Name;
+                            SetErrorResponse(context, 403, $"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
+                        }
+                        else
+                        {
+                            SetErrorResponse(context, 403, "Script blocked by remoting policy.");
+                        }
                         return;
                     }
                 }
@@ -1917,9 +1972,17 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             errorObjects.AddRange(session.LastErrors);
                         }
                         session.SetVariable("errorObjects", errorObjects);
+                        session.SetVariable("rid", GetRequestId());
 
                         session.Output.Clear();
-                        session.ExecuteScriptPart(useStructuredErrors ? StructuredErrorScript : FlatErrorScript);
+                        // Gate the verbose structured form behind Spe.Remoting.DetailedErrors.
+                        // FlatErrorScript path is unchanged - it returns just the message
+                        // string, which is the legacy contract. Verbose / sanitized split
+                        // only applies when the caller explicitly asked for structured.
+                        var structuredScript = WebServiceSettings.DetailedErrors
+                            ? StructuredErrorScript
+                            : SanitizedStructuredErrorScript;
+                        session.ExecuteScriptPart(useStructuredErrors ? structuredScript : FlatErrorScript);
 
                         foreach (var outputBuffer in session.Output)
                         {
@@ -1982,29 +2045,41 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     context.Response.ContentType = "application/json";
                     if (useStructuredErrors)
                     {
+                        var rid = GetRequestId();
+                        var errorEntry = new Hashtable
+                        {
+                            ["correlationId"] = rid,
+                            ["errorCategory"] = "NotSpecified",
+                            ["fullyQualifiedErrorId"] = "Spe.Remoting.ScriptExecutionFailed",
+                            ["message"] = $"Script execution failed. See SPE log id={rid}."
+                        };
+                        if (WebServiceSettings.DetailedErrors)
+                        {
+                            errorEntry["message"] = ex.Message;
+                            errorEntry["exceptionType"] = ex.GetType().FullName;
+                            errorEntry["exceptionMessage"] = ex.Message;
+                            errorEntry["scriptStackTrace"] = ex.StackTrace;
+                        }
                         var errorBody = new Hashtable
                         {
                             ["output"] = new object[0],
-                            ["errors"] = new[]
-                            {
-                                new Hashtable
-                                {
-                                    ["message"] = ex.Message,
-                                    ["errorCategory"] = "NotSpecified",
-                                    ["exceptionType"] = ex.GetType().FullName,
-                                    ["exceptionMessage"] = ex.Message,
-                                    ["scriptStackTrace"] = ex.StackTrace
-                                }
-                            }
+                            ["errors"] = new[] { errorEntry }
                         };
                         context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
                     }
                     else
                     {
+                        // Flat form: the message itself is the only field.
+                        // When DetailedErrors=false, return the rid so the
+                        // caller can quote it to an admin instead of an
+                        // ex.Message that may carry server-internal detail.
+                        var errorText = WebServiceSettings.DetailedErrors
+                            ? ex.Message
+                            : $"Script execution failed. correlationId={GetRequestId()}";
                         var errorBody = new Hashtable
                         {
                             ["output"] = new object[0],
-                            ["errors"] = new[] { ex.Message }
+                            ["errors"] = new[] { errorText }
                         };
                         context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
                     }

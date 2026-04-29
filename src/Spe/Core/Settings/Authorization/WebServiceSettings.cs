@@ -44,6 +44,14 @@ namespace Spe.Core.Settings.Authorization
         // separator so prefix matching cannot leak across siblings.
         public static string[] AllowedFileRoots { get; private set; }
 
+        // When true, remoting error responses expose full exception details
+        // (scriptStackTrace, exception type/message, blocked-command + policy
+        // names, IOException text). When false (default) the response carries
+        // only a correlation id (the per-request rid), the PowerShell
+        // ErrorCategory, and the FullyQualifiedErrorId. The full details stay
+        // in the audit log; operators correlate by rid.
+        public static bool DetailedErrors { get; private set; }
+
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
@@ -114,6 +122,8 @@ namespace Spe.Core.Settings.Authorization
 
             AllowedFileRoots = ParseAllowedFileRoots(
                 Sitecore.Configuration.Settings.GetSetting("Spe.Remoting.AllowedFileRoots", string.Empty));
+
+            DetailedErrors = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.DetailedErrors", false);
 
             // Operators on direct-IIS (no reverse proxy) should set
             // Spe.Remoting.UseForwardedHeaders=false so spoofed headers cannot bypass

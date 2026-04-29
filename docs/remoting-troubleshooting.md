@@ -418,14 +418,17 @@ you can classify the failure without parsing the body.
 
 | `X-SPE-Restriction` | Cause | Audit action |
 | --- | --- | --- |
-| `policy-blocked` | Script contains a cmdlet not on the policy's allowlist. The blocked cmdlet name is on the response in `X-SPE-BlockedCommand`, the policy name in `X-SPE-Policy`. | `scriptRejectedByPolicy` |
+| `policy-blocked` | Script contains a cmdlet not on the policy's allowlist. With `Spe.Remoting.DetailedErrors=true` the blocked cmdlet name is exposed in `X-SPE-BlockedCommand` and the policy name in `X-SPE-Policy`; otherwise both headers are suppressed and the audit log carries the detail. | `scriptRejectedByPolicy` |
 | `session-not-owned` | A second identity tried to attach to a `sessionId` the first caller already claimed. | `sessionOwnershipMismatch` |
 
 For `policy-blocked`, fix by editing the matching policy at
 `/sitecore/system/Modules/PowerShell/Settings/Access/Policies` to allow
 the cmdlet, or by switching the Remoting Client item to a less restrictive
 policy (see `remoting-policy-setup.md`). For `session-not-owned`, see the
-decision tree above.
+decision tree above. If `Spe.Remoting.DetailedErrors` is at its default
+(`false`), the response is sanitized; grep the audit log for the request
+`rid` (returned as `correlationId` in JSON error bodies) to recover the
+blocked cmdlet and policy name.
 
 A separate, related case is `action=userUnauthorized` (covered under
 "Authenticated user is unauthorized" below): the impersonated user exists
@@ -439,10 +442,18 @@ parses; SPE captures the error as part of the standard envelope:
 
 - With `outputFormat=json` (default for raw HTTP callers): the body is
   `{ "output": [...], "errors": [...] }`. Add `&errorFormat=structured` to
-  receive each error as an object with `message`, `errorCategory`,
-  `categoryReason`, `fullyQualifiedErrorId`, `exceptionType`, and
-  `scriptStackTrace` instead of the bare string form. See
-  `remoting-raw-http.md` for the full envelope reference.
+  receive each error as an object. The shape depends on
+  `Spe.Remoting.DetailedErrors`:
+  - `false` (default): each error is `{ correlationId, errorCategory,
+    fullyQualifiedErrorId, message }` where `message` is a fixed template
+    that quotes the correlationId. The full PowerShell error record
+    stays in the audit log, keyed by the same `rid` that appears as
+    `correlationId`.
+  - `true`: each error includes `message`, `errorCategory`,
+    `categoryReason`, `fullyQualifiedErrorId`, `exceptionType`,
+    `scriptStackTrace`, and `invocationInfo` - useful for dev environments,
+    not recommended in production. See `remoting-raw-http.md` for the full
+    envelope reference.
 - With `outputFormat=clixml` (the SPE module path): error records are
   appended to the CliXml document; the module surfaces them as
   PowerShell error objects.
