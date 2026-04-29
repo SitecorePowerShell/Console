@@ -239,7 +239,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             if (!string.IsNullOrEmpty(request.QueryString[ParamUser]) || !string.IsNullOrEmpty(request.QueryString[ParamPassword]))
             {
-                PowerShellLog.Warn($"[Remoting] action=deprecatedAuth service={serviceName} ip={GetIp(request)} user={username} reason=queryStringCredentials");
+                PowerShellLog.Warn($"[Remoting] action=deprecatedAuth service={serviceName} ip={GetIp(request)} user={LogSanitizer.SanitizeValue(username)} reason=queryStringCredentials");
             }
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
@@ -325,7 +325,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                                         if (!isValid)
                                         {
-                                            PowerShellLog.Debug($"[Remoting] action=clientSignatureFailed kid={kid} remotingClient={matchedClient.Name}");
+                                            PowerShellLog.Debug($"[Remoting] action=clientSignatureFailed kid={LogSanitizer.SanitizeValue(kid)} remotingClient={matchedClient.Name}");
                                             authFailureReason = RemotingClientProvider.AuthFailureReasonInvalid;
                                             matchedClient = null;
                                         }
@@ -334,7 +334,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                     {
                                         authFailureReason = RemotingClientProvider.GetAuthFailureReason(kid)
                                             ?? RemotingClientProvider.AuthFailureReasonInvalid;
-                                        PowerShellLog.Debug($"[Remoting] action=clientNotFound kid={kid} reason={authFailureReason}");
+                                        PowerShellLog.Debug($"[Remoting] action=clientNotFound kid={LogSanitizer.SanitizeValue(kid)} reason={authFailureReason}");
                                     }
                                 }
                                 else
@@ -461,7 +461,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={username} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={matchedClient?.Name ?? "none"} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
+                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={LogSanitizer.SanitizeValue(username)} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={matchedClient?.Name ?? "none"} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
@@ -474,7 +474,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         else
                         {
                             PowerShellLog.Audit("[Remoting] action=bearerAuthFailed authKind={0} user={1} ip={2} remotingClient={3} clientId={4} rid={5}",
-                                authKind ?? "none", username ?? "unknown", ip, matchedClient?.Name ?? "none",
+                                authKind ?? "none", LogSanitizer.SanitizeValue(username ?? "unknown"), ip, matchedClient?.Name ?? "none",
                                 LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none"), GetRequestId());
                             context.Response.AddHeader("WWW-Authenticate", JwtClaimValidator.BuildWwwAuthenticate(authFailureReason));
                             if (!string.IsNullOrEmpty(authFailureReason))
@@ -507,7 +507,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return false;
             }
 
-            identity = new AccountIdentity(authUserName);
+            try
+            {
+                identity = new AccountIdentity(authUserName);
+            }
+            catch (ArgumentException ex)
+            {
+                // AccountIdentity rejects malformed usernames with an
+                // ArgumentException whose message echoes the raw input.
+                // Letting it propagate routes the unsanitized name through
+                // Sitecore's default Application error logger, bypassing
+                // PowerShellLog + LogSanitizer. Catch here so the sanitized
+                // path in RejectAuthenticationMethod handles the audit.
+                RejectAuthenticationMethod(context, serviceName, authUserName, ex);
+                return false;
+            }
             if (!string.IsNullOrEmpty(password))
             {
                 try
@@ -1056,12 +1070,18 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var ip = GetIp(context.Request);
             var errorMessage = $"Unauthorized request to the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Audit($"[Remoting] action=authRejected service={serviceName} ip={ip} user={username ?? "unknown"} rid={GetRequestId()}");
+            PowerShellLog.Audit($"[Remoting] action=authRejected service={serviceName} ip={ip} user={LogSanitizer.SanitizeValue(username ?? "unknown")} rid={GetRequestId()}");
 
             if (ex != null)
             {
-                context.Response.StatusDescription += $" {ex.Message}";
-                PowerShellLog.Error($"[Remoting] action=authRejected error={ex.Message}");
+                // Sanitize before StatusDescription assignment: HttpResponse
+                // throws HttpException on CR/LF in the reason phrase, and the
+                // AccountIdentity ArgumentException message contains literal
+                // newlines. Sanitized form also prevents response-splitting
+                // via attacker-controlled exception text.
+                var safeMessage = LogSanitizer.SanitizeValue(ex.Message);
+                context.Response.StatusDescription += $" {safeMessage}";
+                PowerShellLog.Error($"[Remoting] action=authRejected error={safeMessage}");
             }
         }
 
@@ -1073,7 +1093,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var ip = GetIp(context.Request);
             var errorMessage = $"The specified user is not authorized for the {serviceName} service.";
             SetErrorResponse(context, 401, errorMessage, true);
-            PowerShellLog.Audit($"[Remoting] action=userUnauthorized service={serviceName} ip={ip} user={authUserName} rid={GetRequestId()}");
+            PowerShellLog.Audit($"[Remoting] action=userUnauthorized service={serviceName} ip={ip} user={LogSanitizer.SanitizeValue(authUserName)} rid={GetRequestId()}");
 
             return false;
         }
@@ -1408,7 +1428,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (String.IsNullOrEmpty(fileName))
                 {
-                    PowerShellLog.Warn($"[Remoting] action=undeterminedFilename entry={fileName}");
+                    PowerShellLog.Warn($"[Remoting] action=undeterminedFilename entry={LogSanitizer.SanitizeValue(originalPath)}");
                     return;
                 }
 
@@ -1427,7 +1447,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     mc.CreateFromStream(ms, fileName, mco);
                     if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
                     {
-                        PowerShellLog.Audit($"[Remoting] action=mediaUploaded service={serviceName} file={fileName} size={ms.Length} destination=\"{mco.Destination}\" rid={GetRequestId()}");
+                        PowerShellLog.Audit($"[Remoting] action=mediaUploaded service={serviceName} file={LogSanitizer.SanitizeValue(fileName)} size={ms.Length} destination=\"{mco.Destination}\" rid={GetRequestId()}");
                     }
                 }
             }

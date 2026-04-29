@@ -105,7 +105,7 @@ namespace Spe.Core.Diagnostics
             return messagePrefix != string.Empty ? messagePrefix + message : message;
         }
 
-        private static JObject ToJson(string message)
+        internal static JObject ToJson(string message)
         {
             var json = new JObject();
             var categoryMatch = CategoryPattern.Match(message);
