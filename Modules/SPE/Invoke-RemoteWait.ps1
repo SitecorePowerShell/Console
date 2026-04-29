@@ -26,6 +26,12 @@ function Invoke-RemoteWait {
 
         .PARAMETER MaxRetries
             Number of retries on 429/503 before giving up. Default 2.
+
+        .PARAMETER Cursor
+            Opaque server-issued cursor that tells the wait endpoint where to
+            resume reading the script session's stream-record buffer. Pass the
+            cursor returned by the previous Invoke-RemoteWait call. Omit on the
+            first call to read from the start of the buffer.
     #>
     [CmdletBinding()]
     param(
@@ -46,7 +52,10 @@ function Invoke-RemoteWait {
 
         [Parameter()]
         [ValidateRange(0, 10)]
-        [int]$MaxRetries = 2
+        [int]$MaxRetries = 2,
+
+        [Parameter()]
+        [string]$Cursor
     )
 
     $sd = Expand-ScriptSession -Session $Session
@@ -66,6 +75,9 @@ function Invoke-RemoteWait {
     # that would turn the Params lookup into "wait,wait" and miss the route.
     $url = $connectionUri.AbsoluteUri.TrimEnd('/') +
         "/-/script/wait/?sessionId=$($sd.SessionId)&jobId=$([uri]::EscapeDataString($JobId))&jobType=$JobType&timeoutSeconds=$TimeoutSeconds"
+    if ($Cursor) {
+        $url += "&cursor=$([uri]::EscapeDataString($Cursor))"
+    }
 
     $attempt = 0
     while ($true) {
@@ -114,12 +126,32 @@ function Invoke-RemoteWait {
             return [PSCustomObject]@{ IsDone = $true; Status = 'MalformedResponse'; Name = $JobId; ElapsedSeconds = 0; NotSupported = $false }
         }
 
+        # Streams (Verbose/Information/Progress/Warning) are present only when the
+        # server supports the tee feature and recorded any new records since the
+        # caller's cursor. Older servers omit these fields - returning empty array
+        # and $null cursor keeps the contract uniform for downstream consumers.
+        $streamRecords = @()
+        if ($parsed.PSObject.Properties['streams'] -and $parsed.streams) {
+            $streamRecords = @($parsed.streams)
+        }
+        $newCursor = $null
+        if ($parsed.PSObject.Properties['cursor']) {
+            $newCursor = [string]$parsed.cursor
+        }
+        $droppedCount = 0
+        if ($parsed.PSObject.Properties['droppedCount']) {
+            $droppedCount = [long]$parsed.droppedCount
+        }
+
         return [PSCustomObject]@{
-            IsDone = [bool]$parsed.isDone
-            Status = [string]$parsed.status
-            Name = [string]$parsed.name
+            IsDone         = [bool]$parsed.isDone
+            Status         = [string]$parsed.status
+            Name           = [string]$parsed.name
             ElapsedSeconds = [int]$parsed.elapsedSeconds
-            NotSupported = $false
+            NotSupported   = $false
+            Streams        = $streamRecords
+            Cursor         = $newCursor
+            DroppedCount   = $droppedCount
         }
     }
 }

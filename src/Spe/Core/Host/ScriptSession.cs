@@ -68,6 +68,13 @@ namespace Spe.Core.Host
         private bool isRunspaceOpenedOrBroken;
         private System.Management.Automation.PowerShell powerShell;
         private ScriptingHostPrivateData privateData;
+        private readonly StreamRecordRing streamRing = new StreamRecordRing();
+
+        // Captured runspace streams (Verbose/Information/Progress/Warning) live here
+        // for the lifetime of the session so the wait endpoint can drain them
+        // mid-flight. Subscriptions are wired per-PowerShell-instance in
+        // ExecuteScriptPart and torn down implicitly when each instance is disposed.
+        internal StreamRecordRing StreamRing => streamRing;
 
         internal string JobScript { get; set; }
         internal IJobOptions JobOptions { get; set; }
@@ -841,6 +848,10 @@ namespace Spe.Core.Host
                     using (powerShell = NewPowerShell())
                     {
                         powerShell.Commands.AddScript(script);
+                        if (!internalScript)
+                        {
+                            SubscribeStreamsToRing(powerShell);
+                        }
                         return ExecuteCommand(stringOutput, marshalResults);
                     }
                 }
@@ -849,6 +860,61 @@ namespace Spe.Core.Host
                     powerShell = _pipeline;
                 }
             });
+        }
+
+        // Routes Verbose/Information/Progress/Warning records emitted during this
+        // PowerShell invocation into the per-session ring buffer so the wait
+        // endpoint can drain them mid-flight. The PowerShell instance is disposed
+        // at the end of the surrounding using block, which detaches all event
+        // handlers automatically, so explicit unsubscription is unnecessary.
+        private void SubscribeStreamsToRing(System.Management.Automation.PowerShell ps)
+        {
+            ps.Streams.Verbose.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddVerbose(rec.Message);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=verbose ex={ex.Message}"); }
+            };
+            ps.Streams.Information.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<InformationRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddInformation(rec.MessageData?.ToString() ?? string.Empty);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=information ex={ex.Message}"); }
+            };
+            ps.Streams.Warning.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<WarningRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddWarning(rec.Message);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=warning ex={ex.Message}"); }
+            };
+            ps.Streams.Progress.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<ProgressRecord>)sender)[e.Index];
+                    if (rec != null)
+                    {
+                        streamRing.AddProgress(
+                            rec.Activity ?? string.Empty,
+                            rec.StatusDescription ?? string.Empty,
+                            rec.PercentComplete,
+                            rec.CurrentOperation ?? string.Empty,
+                            rec.SecondsRemaining,
+                            rec.ParentActivityId,
+                            rec.RecordType.ToString());
+                    }
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=progress ex={ex.Message}"); }
+            };
         }
 
         internal List<object> ExecuteCommand(Command command, bool stringOutput, bool internalScript)

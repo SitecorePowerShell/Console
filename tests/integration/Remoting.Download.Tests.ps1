@@ -1,8 +1,4 @@
 # Remoting Tests - Download with RemoteScriptCall
-# Converted from Pester to custom assert format
-#
-# TODO: Download test crashes with "Not Found" -- the fileDownload service endpoint
-# is not reachable in the current Docker environment. Investigate routing/deployment.
 
 Write-Host "`n  [Download with RemoteScriptCall - Single File]" -ForegroundColor White
 
@@ -100,61 +96,34 @@ if ($coverExists -eq "True") {
     Skip-Test "download from media path with GUID in master changing filename" "cover media item not found in instance"
 }
 
-Write-Host "`n  [Download with RemoteScriptCall - Advanced/mixed scenarios]" -ForegroundColor White
+Write-Host "`n  [Download with RemoteScriptCall - Server-generated absolute-path artifact]" -ForegroundColor White
 
-# TODO: This block is skipped because the download endpoint returns "Not Found"
-# for log files resolved relative to SitecoreLogFolder in the current environment.
-# Likely a log-rotation/file-lock race between Get-ChildItem and Receive-RemoteItem.
-# See TODO at top of file.
-try {
-    $files = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | Select-Object -Expand Name -First 3
-    }
+# Roundtrip a server-generated artifact via absolute-path download. Replaces an
+# earlier block that compressed live SPE logs (racy against log rotation). The
+# fixture path lives under C:\inetpub\wwwroot\App_Data - covered by the
+# Spe.Remoting.AllowedFileRoots entry in tests/configs/deploy/z.Spe.Security.Disabler.config.
+# Alias-based downloads are exercised by the rootPaths loop above;
+# absolute-path rejection cases are covered by Remoting.FileSecurity.Tests.ps1.
 
-    $files |
-        ForEach-Object {
-            $destination = Join-Path -Path $destinationMediaPath -ChildPath $_
-            Receive-RemoteItem -Session $session -Destination $destination -Path $_ -RootPath Log
-            Assert-True (Test-Path -Path $destination) "Download log file $_"
-        }
+$serverArtifactPath = 'C:\inetpub\wwwroot\App_Data\spe-download-roundtrip.txt'
+$expectedPayload = "spe-download-roundtrip-$(Get-Date -Format 'yyyyMMddHHmmssfff')"
 
-    $archiveFileName = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Import-Function -Name Compress-Archive
-
-        Get-ChildItem -Path "$($SitecoreLogFolder)" -File | Where-Object { $_.Name -match "spe.log." } |
-            Compress-Archive -DestinationPath "$($SitecoreTempFolder)\archived.SPE.logs.zip" | Select-Object -Expand FullName
-    }
-
-    Assert-NotNull $archiveFileName "Download all SPE log files as ZIP - archive created"
-
-    $destination = Join-Path -Path $destinationMediaPath -ChildPath (Split-Path -Path $archiveFileName -Leaf)
-    Receive-RemoteItem -Session $session -Destination $destination -Path $archiveFileName
-
-    Assert-True (Test-Path -Path $destination) "Download all SPE log files as ZIP - file received"
-
-    $cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Remove-Item -Path "$($using:archiveFileName)"
-        Test-Path "$($using:archiveFileName)"
-    }
-    Assert-Equal $cleanupResult $false "Download all SPE log files as ZIP - remote cleanup"
-
-    $mediaItemNames = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | Where-Object { $_.Size -gt 0 } |
-        Select-Object -First 10 | Foreach-Object { "$($_.ItemPath).$($_.Extension)" }
-    }
-
-    $mediaItemNames | Foreach-Object {
-        $source = Join-Path ([System.IO.Path]::GetDirectoryName($_)) ([System.IO.Path]::GetFileNameWithoutExtension($_))
-        $destination = Join-Path -Path $destinationMediaPath -ChildPath $_
-        Receive-RemoteItem -Session $session -Destination $destination -Path $source -Database master
-        Assert-True (Test-Path -Path $destination) "Download Media Item $_"
-    }
-} catch {
-    if ("$_" -match "Not Found|Forbidden") {
-        Skip-Test "Advanced/mixed download scenarios" "file download endpoint returned Not Found - see TODO at top of file"
-    } else {
-        throw
-    }
+Invoke-RemoteScript -Session $session -ScriptBlock {
+    if (Test-Path $using:serverArtifactPath) { Remove-Item $using:serverArtifactPath -Force }
+    Set-Content -Path $using:serverArtifactPath -Value $using:expectedPayload -Encoding Ascii
 }
+
+$destination = Join-Path -Path $destinationMediaPath -ChildPath (Split-Path -Path $serverArtifactPath -Leaf)
+Receive-RemoteItem -Session $session -Destination $destination -Path $serverArtifactPath
+Assert-True (Test-Path -Path $destination) "Server-generated artifact: downloaded"
+
+$downloadedPayload = (Get-Content -Path $destination -Raw).Trim()
+Assert-Equal $downloadedPayload $expectedPayload "Server-generated artifact: payload matches"
+
+$cleanupResult = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Remove-Item -Path $using:serverArtifactPath -Force
+    Test-Path $using:serverArtifactPath
+}
+Assert-Equal $cleanupResult $false "Server-generated artifact: remote cleanup"
 
 Stop-ScriptSession -Session $session

@@ -62,7 +62,29 @@ function Wait-RemoteScriptSession {
 
         [Parameter()]
         [ValidateRange(1, 60)]
-        [int]$WaitTimeoutSeconds = 30
+        [int]$WaitTimeoutSeconds = 30,
+
+        # Callbacks for the four PowerShell streams emitted by the background
+        # runspace. Each receives one PSCustomObject per record:
+        #   Verbose / Information / Warning -> { Stream, Sequence, TimeUtc, Message }
+        #   Progress                         -> { Stream, Sequence, TimeUtc, Activity,
+        #                                          StatusDescription, PercentComplete,
+        #                                          CurrentOperation, SecondsRemaining,
+        #                                          ParentActivityId, RecordType }
+        # When none of the -On* scriptblocks is supplied, the wait endpoint is
+        # called without a cursor and any returned stream records are silently
+        # discarded. Output stream still drains via Receive-ScriptSession at end.
+        [Parameter()]
+        [scriptblock]$OnVerbose,
+
+        [Parameter()]
+        [scriptblock]$OnInformation,
+
+        [Parameter()]
+        [scriptblock]$OnProgress,
+
+        [Parameter()]
+        [scriptblock]$OnWarning
     )
 
     $finishScript = {
@@ -87,13 +109,24 @@ function Wait-RemoteScriptSession {
 
     $useLongPoll = $true
     $keepRunning = $true
+    $cursor = $null
+    $lastDropped = 0
+    $wantsStreams = $OnVerbose -or $OnInformation -or $OnProgress -or $OnWarning
     while($keepRunning) {
         $isDone = $false
         $statusText = "Unknown"
 
         if ($useLongPoll) {
-            $wait = Invoke-RemoteWait -Session $session -JobId $id -JobType 'scriptsession' `
-                -TimeoutSeconds $WaitTimeoutSeconds -MaxRetries $MaxRetries
+            $waitArgs = @{
+                Session        = $session
+                JobId          = $id
+                JobType        = 'scriptsession'
+                TimeoutSeconds = $WaitTimeoutSeconds
+                MaxRetries     = $MaxRetries
+            }
+            if ($wantsStreams -and $cursor) { $waitArgs['Cursor'] = $cursor }
+            elseif ($wantsStreams)          { $waitArgs['Cursor'] = '' }
+            $wait = Invoke-RemoteWait @waitArgs
             if ($wait.NotSupported) {
                 Write-Verbose "Server does not support /-/script/wait/ for job $($id). Falling back to legacy polling."
                 $useLongPoll = $false
@@ -110,6 +143,33 @@ function Wait-RemoteScriptSession {
             $isDone = $wait.IsDone
             $statusText = $wait.Status
             Write-Verbose "Polling job $($id). Status : $statusText. Elapsed : $($wait.ElapsedSeconds)s."
+
+            if ($wantsStreams) {
+                if ($wait.Cursor) { $cursor = $wait.Cursor }
+                if ($wait.DroppedCount -gt $lastDropped) {
+                    Write-Warning "Stream buffer for job $($id) dropped $($wait.DroppedCount - $lastDropped) record(s) due to rate or size cap."
+                    $lastDropped = $wait.DroppedCount
+                }
+                foreach ($record in $wait.Streams) {
+                    switch ([string]$record.stream) {
+                        'verbose'     { if ($OnVerbose)     { & $OnVerbose     ([PSCustomObject]@{ Stream = 'verbose';     Sequence = $record.sequence; TimeUtc = $record.timeUtc; Message = $record.message }) } }
+                        'information' { if ($OnInformation) { & $OnInformation ([PSCustomObject]@{ Stream = 'information'; Sequence = $record.sequence; TimeUtc = $record.timeUtc; Message = $record.message }) } }
+                        'warning'     { if ($OnWarning)     { & $OnWarning     ([PSCustomObject]@{ Stream = 'warning';     Sequence = $record.sequence; TimeUtc = $record.timeUtc; Message = $record.message }) } }
+                        'progress'    { if ($OnProgress)    { & $OnProgress    ([PSCustomObject]@{
+                                            Stream            = 'progress'
+                                            Sequence          = $record.sequence
+                                            TimeUtc           = $record.timeUtc
+                                            Activity          = $record.activity
+                                            StatusDescription = $record.statusDescription
+                                            PercentComplete   = $record.percentComplete
+                                            CurrentOperation  = $record.currentOperation
+                                            SecondsRemaining  = $record.secondsRemaining
+                                            ParentActivityId  = $record.parentActivityId
+                                            RecordType        = $record.recordType
+                                        }) } }
+                    }
+                }
+            }
         }
         else {
             $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -Verbose -MaxRetries $MaxRetries

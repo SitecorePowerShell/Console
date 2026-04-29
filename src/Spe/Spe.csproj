@@ -525,12 +525,14 @@
     <Compile Include="Core\Settings\DelegatedAccessManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
+    <Compile Include="Core\Host\CursorSigner.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />
     <Compile Include="Core\Host\ScriptingHostPrivateData.cs" />
     <Compile Include="Core\Host\ScriptingHostRawUserInterface.cs" />
     <Compile Include="Core\Host\ScriptingHostUserInterface.cs" />
     <Compile Include="Core\Host\ScriptSession.cs" />
     <Compile Include="Core\Host\ScriptSessionManager.cs" />
+    <Compile Include="Core\Host\StreamRecordRing.cs" />
     <Compile Include="Core\Modules\IntegrationPoint.cs" />
     <Compile Include="Core\Modules\IntegrationPoints.cs" />
     <Compile Include="Core\Modules\Module.cs" />
