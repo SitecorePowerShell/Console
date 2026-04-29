@@ -219,7 +219,11 @@ function Receive-RemoteItem {
             $serviceUrl += "/media/" + $Database + "/" + $Path + "/?"
             $itemType = "media"
         } else {
-            $serviceUrl += "/file/" + $RootPath + "/?path=" + $Path + "&"
+            # When the caller passes a rooted Path without -RootPath, route the
+            # request through origin=custom so the server-side allowlist
+            # (Spe.Remoting.AllowedFileRoots) decides whether to honor it.
+            $rootSegment = if ([string]::IsNullOrEmpty($RootPath)) { "custom" } else { $RootPath }
+            $serviceUrl += "/file/" + $rootSegment + "/?path=" + $Path + "&"
             $itemType = "file"
         }
 

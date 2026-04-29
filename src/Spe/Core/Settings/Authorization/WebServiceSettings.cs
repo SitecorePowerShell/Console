@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Web;
 using System.Xml;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.IO;
 using Spe.Core.Extensions;
 
 namespace Spe.Core.Settings.Authorization
@@ -33,6 +36,13 @@ namespace Spe.Core.Settings.Authorization
         // once at static-ctor time, matching the rest of this class - flipping
         // the setting requires an app-domain recycle.
         public static bool UseForwardedHeaders { get; private set; }
+
+        // Pipe-delimited absolute paths that fileDownload/fileUpload may serve
+        // when the caller passes an unrecognized origin (e.g. "custom").
+        // Default empty: any non-alias origin paired with an absolute path is
+        // rejected. Each entry is canonicalized + suffixed with the platform
+        // separator so prefix matching cannot leak across siblings.
+        public static string[] AllowedFileRoots { get; private set; }
 
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
@@ -102,6 +112,9 @@ namespace Spe.Core.Settings.Authorization
 
             UseForwardedHeaders = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.UseForwardedHeaders", true);
 
+            AllowedFileRoots = ParseAllowedFileRoots(
+                Sitecore.Configuration.Settings.GetSetting("Spe.Remoting.AllowedFileRoots", string.Empty));
+
             // Operators on direct-IIS (no reverse proxy) should set
             // Spe.Remoting.UseForwardedHeaders=false so spoofed headers cannot bypass
             // requireSecureConnection or pollute audit logs. Warn once if the
@@ -147,6 +160,55 @@ namespace Spe.Core.Settings.Authorization
             }
             var service = services[serviceName];
             return service.Enabled && CheckSecureConnectionRequirement(service);
+        }
+
+        // True for paths with an explicit Windows drive letter ("C:\foo", "C:foo")
+        // or UNC root ("\\server\share", "//server/share"). False for Sitecore-
+        // relative paths like "/App_Data" - those are rooted in .NET's eyes
+        // (Path.IsPathRooted returns true) but should be resolved through
+        // FileUtil.MapPath against the application root, not Path.GetFullPath
+        // against the current drive.
+        internal static bool HasExplicitDriveOrUnc(string path)
+        {
+            if (string.IsNullOrEmpty(path) || path.Length < 2) return false;
+            if (path[1] == ':') return true;
+            if ((path[0] == '\\' || path[0] == '/') && path[0] == path[1]) return true;
+            return false;
+        }
+
+        private static string[] ParseAllowedFileRoots(string rawSetting)
+        {
+            if (string.IsNullOrWhiteSpace(rawSetting))
+            {
+                return Array.Empty<string>();
+            }
+
+            var roots = new List<string>();
+            foreach (var raw in rawSetting.Split('|'))
+            {
+                var trimmed = raw.Trim();
+                if (string.IsNullOrEmpty(trimmed)) continue;
+
+                string resolved;
+                try
+                {
+                    resolved = HasExplicitDriveOrUnc(trimmed)
+                        ? Path.GetFullPath(trimmed)
+                        : Path.GetFullPath(FileUtil.MapPath(trimmed));
+                }
+                catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
+                {
+                    Sitecore.Diagnostics.Log.Warn(
+                        $"[SPE] Spe.Remoting.AllowedFileRoots ignored invalid entry '{trimmed}': {ex.Message}",
+                        typeof(WebServiceSettings));
+                    continue;
+                }
+
+                roots.Add(resolved.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    + Path.DirectorySeparatorChar);
+            }
+
+            return roots.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         }
 
         private static bool CheckSecureConnectionRequirement(ServiceState stateOfService)

@@ -1078,74 +1078,174 @@ namespace Spe.sitecore_modules.PowerShell.Services
             return false;
         }
 
-        private static string GetPathFromParameters(string originParam, string pathParam)
+        // Resolves the on-disk file path for fileDownload/fileUpload. Returns null
+        // when the request must be rejected; rejectReason names the audit code.
+        // Two cases:
+        //   1. Origin matches a built-in alias (data, log, media, ...): combine
+        //      alias root + relative path, canonicalize, require canonical path
+        //      to stay under the alias root. Catches encoded traversal that a
+        //      simple ".." string check would miss.
+        //   2. Origin is unknown (or empty): only honored when pathParam is an
+        //      absolute path AND that path canonicalizes under one of the
+        //      Spe.Remoting.AllowedFileRoots entries. Default allowlist is empty
+        //      so unknown-origin absolute paths are rejected (#1443).
+        private static string GetPathFromParameters(string originParam, string pathParam, out string rejectReason)
         {
-            var folder = string.Empty;
+            rejectReason = null;
 
+            var aliasFolder = ResolveAliasFolder(originParam);
+            if (aliasFolder != null)
+            {
+                return ResolveUnderRoot(aliasFolder, pathParam, out rejectReason);
+            }
+
+            if (string.IsNullOrEmpty(pathParam) || !Path.IsPathRooted(pathParam))
+            {
+                rejectReason = "unknownOrigin";
+                return null;
+            }
+
+            return ResolveAgainstAllowlist(pathParam, out rejectReason);
+        }
+
+        private static string ResolveAliasFolder(string originParam)
+        {
             switch (originParam)
             {
-                case "data":
-                    folder = Settings.DataFolder;
-                    break;
-                case "log":
-                    folder = Settings.LogFolder;
-                    break;
-                case "media":
-                    folder = Settings.MediaFolder;
-                    break;
-                case "package":
-                    folder = Settings.PackagePath;
-                    break;
-                case "serialization":
-                    folder = Settings.SerializationFolder;
-                    break;
-                case "temp":
-                    folder = Settings.TempFolderPath;
-                    break;
-                case "debug":
-                    folder = Settings.DebugFolder;
-                    break;
-                case "layout":
-                    folder = Settings.LayoutFolder;
-                    break;
-                case "app":
-                    folder = HttpRuntime.AppDomainAppPath;
-                    break;
-                default:
-                    if (Path.IsPathRooted(pathParam))
-                    {
-                        folder = pathParam;
-                    }
-                    break;
+                case "data":          return Settings.DataFolder;
+                case "log":           return Settings.LogFolder;
+                case "media":         return Settings.MediaFolder;
+                case "package":       return Settings.PackagePath;
+                case "serialization": return Settings.SerializationFolder;
+                case "temp":          return Settings.TempFolderPath;
+                case "debug":         return Settings.DebugFolder;
+                case "layout":        return Settings.LayoutFolder;
+                case "app":           return HttpRuntime.AppDomainAppPath;
+                default:              return null;
             }
+        }
 
-            if (folder != pathParam && !string.IsNullOrEmpty(pathParam))
+        // Canonicalize a path. Returns true on success; on failure sets reason
+        // to "invalidPath" so callers can surface a uniform audit code.
+        // Sitecore-relative paths (e.g. "/App_Data" from Settings.DataFolder)
+        // are routed through FileUtil.MapPath. Path.IsPathRooted alone is not
+        // enough - it returns true for "/App_Data" on Windows, which would
+        // misroute the alias to "C:\App_Data" via Path.GetFullPath instead of
+        // the real "C:\inetpub\wwwroot\App_Data".
+        private static bool TryCanonicalize(string input, out string canonical, out string rejectReason)
+        {
+            try
             {
-                var relativePath = pathParam.TrimStart('/', '\\');
-                if (Path.IsPathRooted(folder))
+                canonical = WebServiceSettings.HasExplicitDriveOrUnc(input)
+                    ? Path.GetFullPath(input)
+                    : Path.GetFullPath(FileUtil.MapPath(StringUtil.EnsurePostfix('/', input)));
+                rejectReason = null;
+                return true;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
+            {
+                canonical = null;
+                rejectReason = "invalidPath";
+                return false;
+            }
+        }
+
+        // True when canonical is exactly rootAbsolute or sits beneath it. Caller
+        // must pass already-canonicalized inputs (no `..`, no trailing separator
+        // ambiguity). Compares with a separator suffix so siblings can't match
+        // (e.g. "C:\Data" must not match "C:\DataLeak").
+        private static bool IsUnderRoot(string canonical, string rootAbsolute)
+        {
+            if (string.Equals(canonical, rootAbsolute, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            var rootWithSep = rootAbsolute.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                + Path.DirectorySeparatorChar;
+            return canonical.StartsWith(rootWithSep, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string ResolveUnderRoot(string folder, string pathParam, out string rejectReason)
+        {
+            if (!TryCanonicalize(folder, out var rootAbsolute, out rejectReason))
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(pathParam))
+            {
+                return rootAbsolute;
+            }
+
+            string canonical;
+            try
+            {
+                canonical = Path.GetFullPath(Path.Combine(rootAbsolute, pathParam.TrimStart('/', '\\')));
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
+            {
+                rejectReason = "invalidPath";
+                return null;
+            }
+
+            if (!IsUnderRoot(canonical, rootAbsolute))
+            {
+                rejectReason = "outsideRoot";
+                return null;
+            }
+
+            return canonical;
+        }
+
+        private static string ResolveAgainstAllowlist(string pathParam, out string rejectReason)
+        {
+            var allowedRoots = WebServiceSettings.AllowedFileRoots;
+            if (allowedRoots == null || allowedRoots.Length == 0)
+            {
+                rejectReason = "unknownOrigin";
+                return null;
+            }
+
+            if (!TryCanonicalize(pathParam, out var canonical, out rejectReason))
+            {
+                return null;
+            }
+
+            // AllowedFileRoots entries are pre-canonicalized at startup
+            // (WebServiceSettings.ParseAllowedFileRoots), so each is already
+            // an absolute path. Reuse the same comparator the alias path uses.
+            foreach (var root in allowedRoots)
+            {
+                if (IsUnderRoot(canonical, root))
                 {
-                    folder = Path.GetFullPath(Path.Combine(folder, relativePath));
-                }
-                else
-                {
-                    folder = FileUtil.MapPath(StringUtil.EnsurePostfix('/', folder) + relativePath);
+                    return canonical;
                 }
             }
 
-            return folder;
+            rejectReason = "outsideRoot";
+            return null;
+        }
+
+        // Single entry point for file uploads and downloads. Resolves the path
+        // through the alias-or-allowlist policy and writes a 403 + audit on
+        // rejection. Returns false when the caller should stop processing.
+        private static bool TryResolveFilePath(HttpContext context, string serviceName, string originParam, string pathParam, out string file)
+        {
+            file = GetPathFromParameters(originParam, pathParam, out var rejectReason);
+            if (!string.IsNullOrEmpty(file))
+            {
+                return true;
+            }
+
+            var ip = GetIp(context.Request);
+            PowerShellLog.Audit($"[Remoting] action=fileAccessDenied reason={rejectReason ?? "unknownOrigin"} service={serviceName} ip={ip} origin={originParam ?? string.Empty} path=\"{pathParam ?? string.Empty}\" rid={GetRequestId()}");
+            SetErrorResponse(context, 403, "Path is not allowed.");
+            return false;
         }
 
         private static void ProcessFile(HttpContext context, string serviceName, bool isUpload, string originParam, string pathParam)
         {
-            if (!string.IsNullOrEmpty(pathParam) && pathParam.Contains(".."))
-            {
-                var ip = GetIp(context.Request);
-                PowerShellLog.Audit($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip} path=\"{pathParam}\" rid={GetRequestId()}");
-                PowerShellLog.Error($"[Remoting] action=pathTraversalBlocked service={serviceName} ip={ip}");
-                SetErrorResponse(context, 403, "Path traversal is not allowed.");
-                return;
-            }
-
             if (isUpload)
             {
                 ProcessFileUpload(context, serviceName, originParam, pathParam);
@@ -1158,10 +1258,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessFileUpload(HttpContext context, string serviceName, string originParam, string pathParam)
         {
-            var file = GetPathFromParameters(originParam, pathParam);
-            if (string.IsNullOrEmpty(file))
+            if (!TryResolveFilePath(context, serviceName, originParam, pathParam, out var file))
             {
-                SetErrorResponse(context, 400, "Unable to resolve the upload path.");
                 return;
             }
 
@@ -1200,35 +1298,31 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessFileDownload(HttpContext context, string serviceName, string originParam, string pathParam)
         {
-            var file = GetPathFromParameters(originParam, pathParam);
+            if (!TryResolveFilePath(context, serviceName, originParam, pathParam, out var file))
+            {
+                return;
+            }
 
-            if (string.IsNullOrEmpty(file))
+            if (!File.Exists(file))
             {
                 SetErrorResponse(context, 404, "The specified path is invalid.");
+                return;
             }
-            else
-            {
-                if (!File.Exists(file))
-                {
-                    SetErrorResponse(context, 404, "The specified path is invalid.");
-                    return;
-                }
 
-                var fileInfo = new FileInfo(file);
-                AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
-                if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
-                {
-                    PowerShellLog.Audit($"[Remoting] action=fileDownloaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\" rid={GetRequestId()}");
-                }
-                try
-                {
-                    context.Response.TransmitFile(file);
-                }
-                catch (IOException _)
-                {
-                    context.Response.StatusCode = 500;
-                    context.Response.StatusDescription = _.Message;
-                }
+            var fileInfo = new FileInfo(file);
+            AddContentHeaders(context, fileInfo.Name, fileInfo.Length);
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Violations)
+            {
+                PowerShellLog.Audit($"[Remoting] action=fileDownloaded service={serviceName} file={fileInfo.Name} size={fileInfo.Length} path=\"{file}\" rid={GetRequestId()}");
+            }
+            try
+            {
+                context.Response.TransmitFile(file);
+            }
+            catch (IOException _)
+            {
+                context.Response.StatusCode = 500;
+                context.Response.StatusDescription = _.Message;
             }
         }
 

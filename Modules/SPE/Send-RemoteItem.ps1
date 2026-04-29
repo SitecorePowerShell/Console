@@ -178,7 +178,11 @@ function Send-RemoteItem {
         if($isMediaItem) {
             $serviceUrl += "/media/master/" + $output + "/?"
         } else {
-            $serviceUrl += "/file/" + $RootPath + "/?path=" + $output + "&"
+            # When the caller passes a rooted Destination without -RootPath, route
+            # the request through origin=custom so the server-side allowlist
+            # (Spe.Remoting.AllowedFileRoots) decides whether to honor it.
+            $rootSegment = if ([string]::IsNullOrEmpty($RootPath)) { "custom" } else { $RootPath }
+            $serviceUrl += "/file/" + $rootSegment + "/?path=" + $output + "&"
         }
 
         if($PSBoundParameters.SkipUnpack.IsPresent) {
