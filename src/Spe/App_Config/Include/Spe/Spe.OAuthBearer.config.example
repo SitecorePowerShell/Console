@@ -51,9 +51,14 @@
 
     Tunables not listed here - allowedAlgorithms, jwksCacheSeconds,
     maxTokenLifetimeSeconds, clockSkewSeconds, detailedAuthenticationErrors,
-    suppressWarnings - default to safe values in the
+    suppressWarnings, requireIat - default to safe values in the
     OAuthBearerTokenAuthenticationProvider class. Add them under
     <oauthBearer> below if you need to override.
+
+    requireIat defaults to true (RFC 9068 Section 2.2 lists iat as REQUIRED
+    for JWT access tokens). Add <requireIat>false</requireIat> only if your
+    IdP is non-compliant and cannot emit iat - this is a security weakening:
+    maxTokenLifetimeSeconds becomes unenforceable for tokens missing iat.
 
     NOTE: This provider does not support skipping signature validation.
     There is no "skip" flag. Tokens whose signature cannot be verified

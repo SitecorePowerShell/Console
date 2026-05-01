@@ -22,7 +22,7 @@ function New-Jwt {
         [Parameter()]
         [string]$ClientSessionId,
         [Parameter()]
-        [switch]$IncludeIssuedAt,
+        [switch]$NoIssuedAt,
         [Parameter()]
         [long]$NotBefore = 0,
         [Parameter()]
@@ -35,10 +35,12 @@ function New-Jwt {
     $payload = [ordered]@{iss = $Issuer; exp = $exp; aud = $Audience}
     if ($Name) { $payload['name'] = $Name }
     if ($ClientSessionId) { $payload['client_session'] = $ClientSessionId }
-    if ($IncludeIssuedAt -and $IssuedAt -eq 0) {
-        $payload['iat'] = [datetimeoffset]::UtcNow.ToUnixTimeSeconds()
-    } elseif ($IssuedAt -ne 0) {
+    # iat is emitted by default so MaxTokenLifetimeSeconds (when configured server-side)
+    # has a value to compare against. Pass -NoIssuedAt to opt out for third-party compat scenarios.
+    if ($IssuedAt -ne 0) {
         $payload['iat'] = $IssuedAt
+    } elseif (-not $NoIssuedAt) {
+        $payload['iat'] = [datetimeoffset]::UtcNow.ToUnixTimeSeconds()
     }
     if ($NotBefore -ne 0) { $payload['nbf'] = $NotBefore }
 

@@ -33,6 +33,10 @@ namespace Spe.Core.Settings.Authorization
         public bool RequireAccessTokenType { get; set; }
         public bool RequireAzpWhenMultiAudience { get; set; }
         public bool JwksAllowLoopbackHttp { get; set; }
+        // RFC 9068 Section 2.2 lists iat as REQUIRED for JWT access tokens. Default true.
+        // Set false only when an IdP is non-compliant and cannot emit iat - the
+        // MaxTokenLifetimeSeconds ceiling becomes unenforceable for those tokens.
+        public bool RequireIat { get; set; } = true;
 
         private JtiReplayCache _replayCache;
 
@@ -137,19 +141,24 @@ namespace Spe.Core.Settings.Authorization
                     return false;
                 }
 
-                if (!TryGetLong(payload, "iat", out var iat))
+                var hasIat = TryGetLong(payload, "iat", out var iat);
+                if (!hasIat)
                 {
-                    if (!SuppressWarnings) PowerShellLog.Warn("[OAuthBearer] action=validationFailed reason=missingIat");
-                    if (DetailedAuthenticationErrors) throw new SecurityException("The Token iat claim is required.");
+                    if (RequireIat)
+                    {
+                        if (!SuppressWarnings) PowerShellLog.Warn("[OAuthBearer] action=validationFailed reason=missingIat");
+                        if (DetailedAuthenticationErrors) throw new SecurityException("The Token iat claim is required.");
+                        return false;
+                    }
+                    iat = 0;
+                }
+
+                if (hasIat && !JwtClaimValidator.IsValidIssuedAt(iat, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors))
+                {
                     return false;
                 }
 
-                if (!JwtClaimValidator.IsValidIssuedAt(iat, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors))
-                {
-                    return false;
-                }
-
-                if (MaxTokenLifetimeSeconds > 0 &&
+                if (MaxTokenLifetimeSeconds > 0 && hasIat &&
                     !JwtClaimValidator.IsValidTokenLifetime(exp, iat, MaxTokenLifetimeSeconds, SuppressWarnings, DetailedAuthenticationErrors))
                 {
                     return false;

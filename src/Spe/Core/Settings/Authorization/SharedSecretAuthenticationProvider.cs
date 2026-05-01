@@ -20,6 +20,15 @@ namespace Spe.Core.Settings.Authorization
         public int MaxTokenLifetimeSeconds { get; set; }
         public bool SuppressWarnings { get; set; }
         public int ClockSkewSeconds { get; set; }
+        // Default true (secure if config is stripped). OOTB Spe.config sets this
+        // to false on the SharedSecret provider so 8.x upgrades don't break
+        // third-party clients that omit iat. Operators flip to true (or remove
+        // the OOTB override) to enable hardened mode.
+        public bool RequireIat { get; set; } = true;
+
+        // Process-wide flag so a deployment with MaxTokenLifetimeSeconds set but
+        // clients not emitting iat doesn't spam the log on every request. Resets on AppDomain recycle.
+        private static int _missingIatWarningEmitted;
 
         public SharedSecretAuthenticationProvider()
         {
@@ -250,8 +259,23 @@ namespace Spe.Core.Settings.Authorization
                 // Preserve historical behaviour: SharedSecret does not apply clock skew to exp.
                 if (!JwtClaimValidator.IsValidExpiration(tokenPayload.Exp, 0, SuppressWarnings, DetailedAuthenticationErrors)) return false;
                 if (tokenPayload.Nbf > 0 && !JwtClaimValidator.IsValidNotBefore(tokenPayload.Nbf, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (RequireIat && tokenPayload.Iat == 0)
+                {
+                    if (!SuppressWarnings) PowerShellLog.Warn($"[Auth] action=authFailed reason=missingIatClaim issuer={LogSanitizer.SanitizeValue(tokenPayload.Iss)}");
+                    return false;
+                }
                 if (tokenPayload.Iat > 0 && !JwtClaimValidator.IsValidIssuedAt(tokenPayload.Iat, ClockSkewSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
-                if (MaxTokenLifetimeSeconds > 0 && tokenPayload.Iat > 0 && !JwtClaimValidator.IsValidTokenLifetime(tokenPayload.Exp, tokenPayload.Iat, MaxTokenLifetimeSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                if (MaxTokenLifetimeSeconds > 0)
+                {
+                    if (tokenPayload.Iat > 0)
+                    {
+                        if (!JwtClaimValidator.IsValidTokenLifetime(tokenPayload.Exp, tokenPayload.Iat, MaxTokenLifetimeSeconds, SuppressWarnings, DetailedAuthenticationErrors)) return false;
+                    }
+                    else if (!SuppressWarnings && System.Threading.Interlocked.CompareExchange(ref _missingIatWarningEmitted, 1, 0) == 0)
+                    {
+                        PowerShellLog.Warn($"[Auth] action=tokenLifetimeCheckSkipped reason=missingIatClaim issuer={LogSanitizer.SanitizeValue(tokenPayload.Iss)} hint=Update client to emit iat or unset MaxTokenLifetimeSeconds.");
+                    }
+                }
 
                 // Authority is implicitly added to the allowed audience list so existing deployments
                 // that rely on audience == request URL keep working without explicit AllowedAudiences config.

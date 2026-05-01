@@ -41,9 +41,9 @@ function Send-JwtRequest {
 # ============================================================================
 Write-Host "`n  [Test Group 1: Backward Compatibility - No iat/nbf]" -ForegroundColor White
 
-# 1a. Token without iat/nbf still works (existing behavior)
+# 1a. Token without iat/nbf still works (third-party / pre-9.0 client compat)
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret
+    -Name "sitecore\admin" -SecretKey $sharedSecret -NoIssuedAt
 $response = Send-JwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 200 "Token without iat/nbf is accepted (backward compatible)"
 
@@ -52,9 +52,9 @@ Assert-Equal ([int]$response.StatusCode) 200 "Token without iat/nbf is accepted 
 # ============================================================================
 Write-Host "`n  [Test Group 2: Valid iat/nbf Claims]" -ForegroundColor White
 
-# 2a. Token with valid iat (current time)
+# 2a. Token with valid iat (current time, default behaviour)
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -IncludeIssuedAt
+    -Name "sitecore\admin" -SecretKey $sharedSecret
 $response = Send-JwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 200 "Token with valid iat (now) is accepted"
 
@@ -67,7 +67,7 @@ Assert-Equal ([int]$response.StatusCode) 200 "Token with valid nbf (now) is acce
 
 # 2c. Token with both iat and nbf set to current time
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -IncludeIssuedAt -NotBefore $now
+    -Name "sitecore\admin" -SecretKey $sharedSecret -NotBefore $now
 $response = Send-JwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 200 "Token with both iat and nbf (now) is accepted"
 
@@ -128,16 +128,16 @@ Assert-Equal ([int]$response.StatusCode) 200 "Token with iat 10s in future is ac
 # ============================================================================
 Write-Host "`n  [Test Group 5: New-Jwt iat/nbf Parameters]" -ForegroundColor White
 
-# 5a. New-Jwt with -IncludeIssuedAt includes iat claim
+# 5a. New-Jwt includes iat claim by default
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -IncludeIssuedAt
+    -Name "sitecore\admin" -SecretKey $sharedSecret
 $payloadBase64 = $token.Split('.')[1]
 switch ($payloadBase64.Length % 4) {
     2 { $payloadBase64 += "==" }
     3 { $payloadBase64 += "=" }
 }
 $payloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payloadBase64.Replace('-','+').Replace('_','/')))
-Assert-Like $payloadJson '*"iat":*' "New-Jwt -IncludeIssuedAt includes iat claim in payload"
+Assert-Like $payloadJson '*"iat":*' "New-Jwt includes iat claim by default"
 
 # 5b. New-Jwt with -NotBefore includes nbf claim
 $nbfValue = [datetimeoffset]::UtcNow.ToUnixTimeSeconds()
@@ -163,16 +163,16 @@ switch ($payloadBase64.Length % 4) {
 $payloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payloadBase64.Replace('-','+').Replace('_','/')))
 Assert-Like $payloadJson '*"iat":1700000000*' "New-Jwt -IssuedAt uses the explicit value"
 
-# 5d. New-Jwt without iat/nbf params omits those claims
+# 5d. New-Jwt with -NoIssuedAt omits iat; without -NotBefore omits nbf
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret
+    -Name "sitecore\admin" -SecretKey $sharedSecret -NoIssuedAt
 $payloadBase64 = $token.Split('.')[1]
 switch ($payloadBase64.Length % 4) {
     2 { $payloadBase64 += "==" }
     3 { $payloadBase64 += "=" }
 }
 $payloadJson = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payloadBase64.Replace('-','+').Replace('_','/')))
-Assert-True ($payloadJson -notlike '*"iat"*') "New-Jwt without -IncludeIssuedAt omits iat claim"
+Assert-True ($payloadJson -notlike '*"iat"*') "New-Jwt -NoIssuedAt omits iat claim"
 Assert-True ($payloadJson -notlike '*"nbf"*') "New-Jwt without -NotBefore omits nbf claim"
 
 # Cleanup

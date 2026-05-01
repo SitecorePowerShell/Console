@@ -1,5 +1,6 @@
-# Remoting Tests - Security Enforcement (Issue #1419)
-# Tests that REQUIRE the security test config (maxTokenLifetimeSeconds).
+# Remoting Tests - Security Enforcement (Issues #1419, #1451)
+# Tests that REQUIRE the security test config: hardened mode where
+# maxTokenLifetimeSeconds=300 AND requireIat=true.
 # These are run AFTER tests/configs/test/ configs are deployed and the app has restarted.
 # Run via: .\Run-RemotingTests.ps1 (automatically deployed and run in the enforced phase)
 # Requires: z.SPE.Security.Tests.config deployed, SPE Remoting enabled, shared secret configured
@@ -47,27 +48,33 @@ Write-Host "`n  [Test Group 1: Max Token Lifetime Enforcement]" -ForegroundColor
 
 # 1a. Token with short lifetime (30s, default) and iat - should pass
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 30 -IncludeIssuedAt
+    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 30
 $response = Send-CustomJwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 200 "Token with 30s lifetime accepted (under 300s max)"
 
 # 1b. Token with lifetime at the limit (300s) and iat - should pass
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 300 -IncludeIssuedAt
+    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 300
 $response = Send-CustomJwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 200 "Token with 300s lifetime accepted (at max limit)"
 
 # 1c. Token with excessive lifetime (3600s) and iat - should be rejected
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 3600 -IncludeIssuedAt
+    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 3600
 $response = Send-CustomJwtRequest -Token $token
 Assert-Equal ([int]$response.StatusCode) 401 "Token with 3600s lifetime rejected (exceeds 300s max)"
 
-# 1d. Token with excessive lifetime but NO iat - should pass (iat required for enforcement)
+# 1d. Token without iat - should be rejected (RequireIat=true is enforced in this hardened config).
 $token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
-    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 3600
+    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 30 -NoIssuedAt
 $response = Send-CustomJwtRequest -Token $token
-Assert-Equal ([int]$response.StatusCode) 200 "Token with 3600s lifetime but no iat accepted (lifetime check skipped)"
+Assert-Equal ([int]$response.StatusCode) 401 "Token without iat is rejected when RequireIat=true"
+
+# 1e. Token with iat at the lifetime ceiling and RequireIat enforced - should pass.
+$token = New-Jwt -Algorithm HS256 -Issuer "SPE Remoting" -Audience $protocolHost `
+    -Name "sitecore\admin" -SecretKey $sharedSecret -ValidForSeconds 60
+$response = Send-CustomJwtRequest -Token $token
+Assert-Equal ([int]$response.StatusCode) 200 "Token with iat and 60s lifetime accepted under hardened config"
 
 # Cleanup
 $httpClient.Dispose()
