@@ -128,6 +128,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
         private const string ParamScDatabase = "sc_database";
         private static readonly Regex GuidRegex = new Regex(@"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly object ApiScriptsLock = new object();
+
+        // Process-wide flags so a misconfigured deployment surfaces the OAuth
+        // dispatch failure once at Warn level (visible without enabling Debug)
+        // instead of silently rejecting every request. Reset on AppDomain recycle.
+        private static int _oauthUnregisteredWarningEmitted;
+        private static int _oauthIssuerMissingWarningEmitted;
+        private static int _oauthNotMatchedWarningEmitted;
         private static readonly Dictionary<string, string> ApiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
@@ -402,7 +409,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             // return null and fall through to 401.
                             var providers = ServiceAuthenticationManager.AuthenticationProviders;
                             OAuthBearerTokenAuthenticationProvider oauthProvider = null;
-                            if (OAuthBearerTokenAuthenticationProvider.TryPeekIssuer(token, out var peekedIssuer))
+                            string peekedIssuer = null;
+                            var hasIssuer = OAuthBearerTokenAuthenticationProvider.TryPeekIssuer(token, out peekedIssuer);
+                            if (hasIssuer)
                             {
                                 oauthProvider = OAuthBearerTokenAuthenticationProvider.SelectProvider(
                                     providers, alg, peekedIssuer);
@@ -441,7 +450,48 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
                             else
                             {
-                                PowerShellLog.Debug($"[Remoting] action=bearerProviderMissing alg={LogSanitizer.SanitizeValue(alg)} iss={LogSanitizer.SanitizeValue(peekedIssuer ?? "none")}");
+                                // Diagnose dispatch failure for the operator. Each root cause
+                                // logs once at Warn level (visible at default log level), then
+                                // suppresses follow-on noise. AppDomain recycle resets the gate.
+                                var sanitizedAlg = LogSanitizer.SanitizeValue(alg);
+                                var sanitizedIss = LogSanitizer.SanitizeValue(peekedIssuer ?? "missing");
+                                if (!hasIssuer)
+                                {
+                                    if (Interlocked.CompareExchange(ref _oauthIssuerMissingWarningEmitted, 1, 0) == 0)
+                                    {
+                                        PowerShellLog.Warn($"[Remoting] action=oauthDispatchFailed reason=tokenIssuerMissing alg={sanitizedAlg} hint=Token has no iss claim or payload is malformed; OAuth routing requires iss.");
+                                    }
+                                    else
+                                    {
+                                        PowerShellLog.Debug($"[Remoting] action=oauthDispatchFailed reason=tokenIssuerMissing alg={sanitizedAlg}");
+                                    }
+                                }
+                                else
+                                {
+                                    var oauthCount = providers.Count(p => p is OAuthBearerTokenAuthenticationProvider);
+                                    if (oauthCount == 0)
+                                    {
+                                        if (Interlocked.CompareExchange(ref _oauthUnregisteredWarningEmitted, 1, 0) == 0)
+                                        {
+                                            PowerShellLog.Warn($"[Remoting] action=oauthDispatchFailed reason=oauthProviderUnregistered alg={sanitizedAlg} iss={sanitizedIss} hint=Drop the .example suffix from Spe.OAuthBearer.config and configure jwksUri/allowedIssuers/allowedAudiences for your IdP.");
+                                        }
+                                        else
+                                        {
+                                            PowerShellLog.Debug($"[Remoting] action=oauthDispatchFailed reason=oauthProviderUnregistered alg={sanitizedAlg} iss={sanitizedIss}");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Interlocked.CompareExchange(ref _oauthNotMatchedWarningEmitted, 1, 0) == 0)
+                                        {
+                                            PowerShellLog.Warn($"[Remoting] action=oauthDispatchFailed reason=oauthProviderNotMatched alg={sanitizedAlg} iss={sanitizedIss} oauthProviderCount={oauthCount} hint=Verify your <oauthBearer> entries' allowedIssuers and allowedAlgorithms include this token's iss and alg.");
+                                        }
+                                        else
+                                        {
+                                            PowerShellLog.Debug($"[Remoting] action=oauthDispatchFailed reason=oauthProviderNotMatched alg={sanitizedAlg} iss={sanitizedIss} oauthProviderCount={oauthCount}");
+                                        }
+                                    }
+                                }
                             }
                         }
                         else
