@@ -82,3 +82,53 @@ if ($respB.Headers.Contains("X-SPE-Restriction")) {
 Assert-Equal $restrictionB "session-not-owned" "Response includes X-SPE-Restriction: session-not-owned"
 
 $hc.Dispose()
+
+# ============================================================================
+#  Test Group 3: Long-poll wait against a Remoting-Client-bound session
+#
+#  Regression for the ownership false-positive after async continuation.
+#  Pre-fix: the wait endpoint resumes after `await Task.Delay(...).ConfigureAwait(false)`
+#  on a thread-pool continuation where HttpContext.Current is null.
+#  GetRequestOwnershipIdentity used to read Items["SpeRemotingClient"] off
+#  HttpContext.Current (not the parameter), so the computed identity reverted
+#  to "user:sitecore\admin" while the recorded owner was
+#  "remotingClient:Test-StandardAuditKey" - 403, X-SPE-Restriction:session-not-owned.
+#
+#  Group 1 missed this: it uses config-based shared secret, so claim and
+#  check both fall into the "user:" branch. Group 2 missed this: it tests
+#  ownership via the synchronous /-/script/script/ path, no await happens.
+#  This test is the diagonal: Remoting-Client + long-poll wait.
+# ============================================================================
+Write-Host "`n  [Test Group 3: Long-Poll Wait Against Remoting-Client-Bound Session]" -ForegroundColor White
+
+$standardAuditSecret = "Test-StandardAudit-Secret-K3y!-LongEnough-For-Validation"
+$standardAuditKeyId  = "spe_test_stdaudit_key_001"
+
+$sessionRC = New-ScriptSession -AccessKeyId $standardAuditKeyId -SharedSecret $standardAuditSecret -ConnectionUri $protocolHost
+
+$jobIdRC = Invoke-RemoteScript -Session $sessionRC -ScriptBlock {
+    Start-Sleep -Seconds 2
+    "RC_JOB_OK"
+} -AsJob -Raw
+
+Assert-NotNull $jobIdRC "Remoting-Client session: AsJob returned a job id"
+
+$swRC = [System.Diagnostics.Stopwatch]::StartNew()
+$capturedRC = $null
+Wait-RemoteScriptSession -Session $sessionRC -Id $jobIdRC -WaitTimeoutSeconds 30 -Verbose 4>&1 |
+    Tee-Object -Variable capturedRC | Out-Null
+$swRC.Stop()
+Stop-ScriptSession -Session $sessionRC -ErrorAction SilentlyContinue
+
+$warningTextRC = ($capturedRC | Where-Object { $_ -is [System.Management.Automation.WarningRecord] } |
+    ForEach-Object { $_.Message }) -join " | "
+Assert-True (-not ($warningTextRC -like "*HttpError_403*")) "No 403 warning from long-poll wait against Remoting-Client session"
+Assert-True (-not ($warningTextRC -like "*session-not-owned*")) "No session-ownership warning surfaced to client"
+
+# Receive-ScriptSession writes JobResultsStore (List<object>) as a single
+# object; CliXml round-trips it as a deserialized ArrayList rather than a
+# raw string. Stringify each captured item so the assertion does not depend
+# on the wrapping type.
+$outputTextRC = ($capturedRC | ForEach-Object { [string]$_ }) -join " | "
+Assert-True ($outputTextRC -like "*RC_JOB_OK*") "Wait returned the job output via Receive-ScriptSession"
+Assert-True ($swRC.Elapsed.TotalSeconds -lt 15) "Wait completed within long-poll window"

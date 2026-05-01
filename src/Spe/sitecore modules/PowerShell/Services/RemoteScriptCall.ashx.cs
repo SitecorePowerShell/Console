@@ -733,9 +733,14 @@ namespace Spe.sitecore_modules.PowerShell.Services
         /// <summary>
         /// Returns the correlation ID for the current HTTP request, generating one if needed.
         /// </summary>
-        private static string GetRequestId()
+        private static string GetRequestId() => GetRequestId(HttpContext.Current);
+
+        /// <summary>
+        /// Returns the correlation ID for the supplied HTTP request, generating one if needed.
+        /// Prefer this overload from async paths where HttpContext.Current may be null after an await.
+        /// </summary>
+        private static string GetRequestId(HttpContext ctx)
         {
-            var ctx = HttpContext.Current;
             if (ctx == null) return "no-ctx";
             var rid = ctx.Items[RequestIdKey] as string;
             if (rid != null) return rid;
@@ -759,9 +764,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
         // Build the ownership identity string for the current request. Format
         // "remotingClient:<name>" when a Remoting Client authenticated the request,
         // otherwise "user:<username>" for config-based shared-secret or Basic auth.
+        // Reads off the supplied context (not HttpContext.Current) because the
+        // long-poll wait path resumes on a thread-pool continuation where the
+        // ambient HttpContext.Current is null.
         private static string GetRequestOwnershipIdentity(HttpContext context)
         {
-            var client = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
+            var client = context?.Items["SpeRemotingClient"] as RemotingClient;
             if (client != null)
             {
                 return "remotingClient:" + client.Name;
@@ -813,7 +821,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             PowerShellLog.Audit("[Remoting] action=sessionOwnershipMismatch session={0} owner={1} caller={2} ip={3} rid={4}",
-                clientSessionId, recordedOwner, identity, ip, GetRequestId());
+                clientSessionId, recordedOwner, identity, ip, GetRequestId(context));
             context.Response.Headers["X-SPE-Restriction"] = "session-not-owned";
             SetErrorResponse(context, 403, "Session is owned by a different identity.");
             return false;
@@ -852,11 +860,26 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var jobId = request.QueryString["jobId"];
             var jobType = request.QueryString["jobType"] ?? "scriptsession";
             var timeoutSecondsRaw = request.QueryString["timeoutSeconds"];
+            var cursorParam = request.QueryString["cursor"];
 
             if (string.IsNullOrEmpty(jobId))
             {
                 SetErrorResponse(context, 400, "jobId is required.");
                 return;
+            }
+
+            // Cursor (optional): opaque, HMAC-signed by the server. Encodes the
+            // session id and the offset into the per-session StreamRing where the
+            // caller wants to resume. Missing cursor = read from offset 0.
+            // Tampered or stale-key cursor = 400 invalid_cursor.
+            long fromSequence = 0;
+            if (!string.IsNullOrEmpty(cursorParam))
+            {
+                if (!CursorSigner.TryVerify(cursorParam, jobId, out fromSequence))
+                {
+                    SetErrorResponse(context, 400, "invalid_cursor");
+                    return;
+                }
             }
 
             int timeoutSeconds = 30;
@@ -871,9 +894,21 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var cancellationToken = context.Response.ClientDisconnectedToken;
             var started = DateTime.UtcNow;
 
+            // After an app-pool recycle, an Invoke-RemoteScript -AsJob can
+            // return its job id before ScriptSessionManager / HttpRuntime.Cache
+            // make the session visible to GetMatchingSessionsForAnyUserSession.
+            // A wait fired immediately after that AsJob would otherwise see
+            // NotFound and falsely report isDone=true. Treat NotFound as
+            // "registration race, retry" only for the first NotFoundGraceMs of
+            // the held call - after that, NotFound is genuine.
+            const int NotFoundGraceMs = 750;
+
             string status = "NotFound";
             string name = jobId;
             bool isDone = true;
+
+            ScriptSession targetSession = null;
+            StreamSnapshot streams = null;
 
             while (DateTime.UtcNow < deadline)
             {
@@ -885,6 +920,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (isDone) break;
                     }
+                    else if ((DateTime.UtcNow - started).TotalMilliseconds < NotFoundGraceMs)
+                    {
+                        // Registration race - tick and retry the lookup.
+                    }
                     else
                     {
                         // Unknown handle - uniform response (no 404) to resist enumeration.
@@ -895,10 +934,29 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
                 else if (string.Equals(jobType, "scriptsession", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (TryProbeScriptSession(context, sessionId, jobId, out status, out name, out isDone, out var ownershipRejected))
+                    if (TryProbeScriptSession(context, sessionId, jobId, out status, out name, out isDone, out var ownershipRejected, out targetSession))
                     {
                         if (ownershipRejected) return;
+
+                        // Drain any new stream records the script has emitted since
+                        // the caller's cursor. New records short-circuit the wait
+                        // (don't hold the request to the deadline) so progress feels
+                        // real-time on the client.
+                        if (targetSession != null)
+                        {
+                            var snap = targetSession.StreamRing.ReadFrom(fromSequence, 256);
+                            if (snap.Records.Count > 0)
+                            {
+                                streams = snap;
+                                break;
+                            }
+                        }
+
                         if (isDone) break;
+                    }
+                    else if ((DateTime.UtcNow - started).TotalMilliseconds < NotFoundGraceMs)
+                    {
+                        // Registration race - tick and retry the lookup.
                     }
                     else
                     {
@@ -923,15 +981,98 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 }
             }
 
+            // If the loop exited via isDone or deadline (not via streams short-circuit)
+            // and we have a script session, do a final read so the caller gets any
+            // records emitted between the last loop iteration and the exit.
+            if (streams == null && targetSession != null)
+            {
+                var snap = targetSession.StreamRing.ReadFrom(fromSequence, 256);
+                if (snap.ProducedSoFar > 0)
+                {
+                    streams = snap;
+                }
+            }
+
             var elapsed = (int)Math.Round((DateTime.UtcNow - started).TotalSeconds);
-            var json = "{\"isDone\":" + (isDone ? "true" : "false") +
-                       ",\"status\":\"" + JsonEscape(status) + "\"" +
-                       ",\"name\":\"" + JsonEscape(name ?? jobId) + "\"" +
-                       ",\"elapsedSeconds\":" + elapsed + "}";
+            var sb = new StringBuilder(256);
+            sb.Append("{\"isDone\":").Append(isDone ? "true" : "false");
+            sb.Append(",\"status\":\"").Append(JsonEscape(status)).Append("\"");
+            sb.Append(",\"name\":\"").Append(JsonEscape(name ?? jobId)).Append("\"");
+            sb.Append(",\"elapsedSeconds\":").Append(elapsed);
+
+            if (streams != null)
+            {
+                sb.Append(",\"streams\":");
+                AppendStreamsJson(sb, streams.Records);
+                sb.Append(",\"cursor\":\"").Append(CursorSigner.Sign(jobId, streams.NextOffset)).Append("\"");
+                // droppedCount is the sum (back-compat for callers minted pre-split).
+                // droppedRate / droppedSize / truncatedCount let new clients tell the
+                // operator which cap is firing.
+                sb.Append(",\"droppedCount\":").Append(streams.TotalDropped);
+                sb.Append(",\"droppedRate\":").Append(streams.DroppedRate);
+                sb.Append(",\"droppedSize\":").Append(streams.DroppedSize);
+                sb.Append(",\"truncatedCount\":").Append(streams.TruncatedCount);
+
+                if (streams.Records.Count > 0)
+                {
+                    int errorCount = 0;
+                    for (int i = 0; i < streams.Records.Count; i++)
+                    {
+                        if (streams.Records[i].Stream == StreamKinds.Error) errorCount++;
+                    }
+                    PowerShellLog.Audit("[Remoting] action=progressStreamed session={0} count={1} errors={2} dropRate={3} dropSize={4} truncated={5} ip={6} rid={7}",
+                        jobId, streams.Records.Count, errorCount, streams.DroppedRate, streams.DroppedSize, streams.TruncatedCount, GetIp(request), GetRequestId(context));
+                    if (errorCount > 0)
+                    {
+                        PowerShellLog.Audit("[Remoting] action=errorStreamed session={0} count={1} ip={2} rid={3}",
+                            jobId, errorCount, GetIp(request), GetRequestId(context));
+                    }
+                }
+            }
+            sb.Append("}");
+
             context.Response.ContentType = "application/json";
-            context.Response.Write(json);
+            context.Response.Write(sb.ToString());
 
             AddCorsHeaders(context, serviceName, origin);
+        }
+
+        private static void AppendStreamsJson(StringBuilder sb, IReadOnlyList<StreamRecord> records)
+        {
+            sb.Append("[");
+            for (int i = 0; i < records.Count; i++)
+            {
+                if (i > 0) sb.Append(",");
+                var r = records[i];
+                sb.Append("{\"stream\":\"").Append(r.Stream).Append("\"");
+                sb.Append(",\"sequence\":").Append(r.Sequence);
+                sb.Append(",\"timeUtc\":\"").Append(r.TimeUtc.ToString("o")).Append("\"");
+
+                if (r.Payload is ProgressPayload p)
+                {
+                    sb.Append(",\"activity\":\"").Append(JsonEscape(p.Activity ?? string.Empty)).Append("\"");
+                    sb.Append(",\"statusDescription\":\"").Append(JsonEscape(p.Status ?? string.Empty)).Append("\"");
+                    sb.Append(",\"percentComplete\":").Append(p.PercentComplete);
+                    sb.Append(",\"currentOperation\":\"").Append(JsonEscape(p.CurrentOperation ?? string.Empty)).Append("\"");
+                    sb.Append(",\"secondsRemaining\":").Append(p.SecondsRemaining);
+                    sb.Append(",\"parentActivityId\":").Append(p.ParentActivityId);
+                    sb.Append(",\"recordType\":\"").Append(JsonEscape(p.RecordType ?? string.Empty)).Append("\"");
+                }
+                else if (r.Payload is ErrorPayload ep)
+                {
+                    sb.Append(",\"message\":\"").Append(JsonEscape(ep.Message ?? string.Empty)).Append("\"");
+                    sb.Append(",\"fullyQualifiedErrorId\":\"").Append(JsonEscape(ep.FullyQualifiedErrorId ?? string.Empty)).Append("\"");
+                    sb.Append(",\"categoryInfo\":\"").Append(JsonEscape(ep.CategoryInfo ?? string.Empty)).Append("\"");
+                    sb.Append(",\"positionMessage\":\"").Append(JsonEscape(ep.PositionMessage ?? string.Empty)).Append("\"");
+                    sb.Append(",\"scriptStackTrace\":\"").Append(JsonEscape(ep.ScriptStackTrace ?? string.Empty)).Append("\"");
+                }
+                else
+                {
+                    sb.Append(",\"message\":\"").Append(JsonEscape((r.Payload as string) ?? string.Empty)).Append("\"");
+                }
+                sb.Append("}");
+            }
+            sb.Append("]");
         }
 
         private static bool TryProbeSitecoreJob(string jobHandle, out string status, out string name, out bool isDone)
@@ -955,15 +1096,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
         }
 
-        private static bool TryProbeScriptSession(HttpContext context, string sessionId, string jobSessionId, out string status, out string name, out bool isDone, out bool ownershipRejected)
+        private static bool TryProbeScriptSession(HttpContext context, string sessionId, string jobSessionId, out string status, out string name, out bool isDone, out bool ownershipRejected, out ScriptSession targetSession)
         {
             status = "NotFound"; name = jobSessionId; isDone = true; ownershipRejected = false;
+            targetSession = null;
 
             // Background -AsJob sessions are keyed with the creating request's
             // ASP.NET session id - which the current wait request will not share.
             // Find the session across any user-session by matching on just the
             // client-supplied persistent id.
-            var targetSession = ScriptSessionManager.GetMatchingSessionsForAnyUserSession(jobSessionId).FirstOrDefault();
+            targetSession = ScriptSessionManager.GetMatchingSessionsForAnyUserSession(jobSessionId).FirstOrDefault();
             if (targetSession == null)
             {
                 targetSession = ScriptSessionManager.GetSessionIfExists(jobSessionId);
@@ -988,8 +1130,17 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             name = targetSession.ID ?? jobSessionId;
             var state = targetSession.State;
-            isDone = state != System.Management.Automation.Runspaces.RunspaceAvailability.Busy;
-            status = isDone ? "Idle" : "Busy";
+            var notBusy = state != System.Management.Automation.Runspaces.RunspaceAvailability.Busy;
+            // A session whose runspace is Available *and* has never entered
+            // ExecuteScriptPart is still pending - typically the AsJob's
+            // Sitecore Job is queued but has not started running RunJob yet.
+            // Treating that as Done would race the script-not-yet-started
+            // window and trigger an immediate (false) completion. Wait until
+            // we have actually seen the run start, then for it to leave Busy.
+            isDone = targetSession.HasRunStarted && notBusy;
+            if (!notBusy) status = "Busy";
+            else if (!targetSession.HasRunStarted) status = "Pending";
+            else status = "Idle";
             return true;
         }
 
