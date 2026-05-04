@@ -72,15 +72,23 @@ function Wait-RemoteConnection {
     # failure. Inner errors are swallowed via -ErrorAction / 2>$null so
     # the host is not flooded with retry stack traces; the final throw
     # below is the single user-visible failure if the deadline lapses.
+    # Jittered backoff between probe attempts. Without jitter, many CI runners
+    # all kicking off after `task deploy` retry on the same wall-clock tick
+    # and re-stampede a recovering CM. Full-jitter exponential (base 2s,
+    # cap 15s) spreads the storm without slowing single-client recovery.
     $authEverPassed   = $false
     $jobEverDispatched = $false
+    $attempt = 0
     while ((Get-Date) -lt $deadline) {
+        $attempt++
+        $sleepSeconds = Get-SpeBackoffDelay -Attempt $attempt -BaseSeconds 2.0 -CapSeconds 15.0 -ServerHintSeconds 0
+
         # Phase 1: cheap auth probe. Test-RemoteConnection swallows its
         # own HTTP exceptions and returns $false on auth failure.
         $testOk = $false
         try { $testOk = [bool](Test-RemoteConnection -Session $Session -Quiet) } catch { }
         if (-not $testOk) {
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds $sleepSeconds
             continue
         }
         $authEverPassed = $true
@@ -95,7 +103,7 @@ function Wait-RemoteConnection {
                 -AsJob -Raw -ErrorAction SilentlyContinue 2>$null
         } catch { }
         if ([string]::IsNullOrEmpty($jobId)) {
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds $sleepSeconds
             continue
         }
         $jobEverDispatched = $true
@@ -111,7 +119,7 @@ function Wait-RemoteConnection {
             Write-Verbose "Wait-RemoteConnection: background probe succeeded."
             return
         }
-        Start-Sleep -Seconds 2
+        Start-Sleep -Seconds $sleepSeconds
     }
 
     # Deadline lapsed. Surface the most informative diagnostic we can:

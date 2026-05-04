@@ -8,7 +8,7 @@ Import-Module "$moduleRoot\SPE.psd1" -Force
 
 # Create global proxy functions for private module functions used in tests
 $speModule = Get-Module SPE
-foreach ($fnName in @('Get-UsingVariables', 'Get-UsingVariableValues', 'Resolve-UsingVariables', 'Expand-ScriptSession', 'New-SpeHttpClient')) {
+foreach ($fnName in @('Get-UsingVariables', 'Get-UsingVariableValues', 'Resolve-UsingVariables', 'Expand-ScriptSession', 'New-SpeHttpClient', 'Get-SpeBackoffDelay', 'Test-SpeSafeTransportError')) {
     $fn = & $speModule { param($n) Get-Command $n -ErrorAction SilentlyContinue } $fnName
     if ($fn) {
         Set-Item "function:global:$fnName" $fn.ScriptBlock

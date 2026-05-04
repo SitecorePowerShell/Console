@@ -169,3 +169,119 @@ $expMsg = ($expErrors | ForEach-Object { $_.ToString() }) -join " | "
 Assert-Like $expMsg "*expired*" "Client error stream mentions 'expired'"
 
 $hc.Dispose()
+
+# ============================================================================
+#  Test Group 5: Transport-Error Retry against a closed loopback port
+#  Verifies the unambiguous-safe-transport classification end-to-end:
+#  ConnectionRefused on loopback should retry under -MaxRetries and fail
+#  immediately without it. Picks a fresh port via TcpListener+Stop so we
+#  never collide with whatever else the host is running.
+# ============================================================================
+Write-Host "`n  [Test Group 5: Transport-Error Retry (closed port)]" -ForegroundColor White
+
+$tcpProbe = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+$tcpProbe.Start()
+$closedPort = ([System.Net.IPEndPoint]$tcpProbe.LocalEndpoint).Port
+$tcpProbe.Stop()
+$closedUri = "http://127.0.0.1:$closedPort"
+Write-Host "    Selected closed loopback port: $closedPort" -ForegroundColor Gray
+
+$transportSecret = "Transport-Error-Test-Secret-LongEnough-For-Validation-12345"
+
+# Without -MaxRetries: connection-refused fails on the first attempt only.
+# Windows TCP retransmits SYN before reporting refused, so the baseline is
+# typically ~2s on loopback even with no retry layer above.
+$noRetrySw = [System.Diagnostics.Stopwatch]::StartNew()
+$noRetryErrors = @()
+$null = Invoke-RemoteScript -ConnectionUri $closedUri -Username "admin" `
+    -SharedSecret $transportSecret -ScriptBlock { "x" } -Raw `
+    -ErrorAction SilentlyContinue -ErrorVariable noRetryErrors 2>$null
+$noRetrySw.Stop()
+Assert-True ($noRetrySw.Elapsed.TotalSeconds -lt 5.0) "Closed port without -MaxRetries: single attempt (< 5s, got $([Math]::Round($noRetrySw.Elapsed.TotalSeconds, 2))s)"
+
+# With -MaxRetries=2: classifier retries twice. Three connection-refused round
+# trips (~2s each on Windows loopback) plus two jittered backoff sleeps
+# (rand(0.1, 2) + rand(0.1, 4)). Expected ~6-12s, bounded above by ~20s.
+$retrySw = [System.Diagnostics.Stopwatch]::StartNew()
+$null = Invoke-RemoteScript -ConnectionUri $closedUri -Username "admin" `
+    -SharedSecret $transportSecret -ScriptBlock { "x" } -Raw -MaxRetries 2 `
+    -ErrorAction SilentlyContinue 2>$null
+$retrySw.Stop()
+$retryDelta = $retrySw.Elapsed.TotalSeconds - $noRetrySw.Elapsed.TotalSeconds
+Assert-True ($retryDelta -ge 1.5) "Closed port with -MaxRetries=2: extra time vs no-retry indicates retries happened (>= 1.5s extra, got $([Math]::Round($retryDelta, 2))s)"
+Assert-True ($retrySw.Elapsed.TotalSeconds -lt 20.0) "Closed port with -MaxRetries=2: bounded by cap (< 20s, got $([Math]::Round($retrySw.Elapsed.TotalSeconds, 2))s)"
+
+# ============================================================================
+#  Test Group 6: 502 Bad Gateway Retry against a stub HTTP server
+#  Stands up an HttpListener on loopback that returns 502 for the first
+#  request and 200 for the second. Verifies Invoke-RemoteScript retries 502
+#  end-to-end (the unit test mocks the HttpMessageHandler; this exercises
+#  the real HttpClient + sockets + Resolve-HttpErrorResponse path).
+# ============================================================================
+Write-Host "`n  [Test Group 6: 502 Bad Gateway Retry (stub HTTP server)]" -ForegroundColor White
+
+$tcpProbe2 = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+$tcpProbe2.Start()
+$stubPort = ([System.Net.IPEndPoint]$tcpProbe2.LocalEndpoint).Port
+$tcpProbe2.Stop()
+$stubUri = "http://127.0.0.1:$stubPort"
+
+$stubListener = New-Object System.Net.HttpListener
+$stubListener.Prefixes.Add("$stubUri/")
+$stubListener.Start()
+
+$stubState = [hashtable]::Synchronized(@{ Calls = 0; Errors = @() })
+
+$rs = [PowerShell]::Create()
+$null = $rs.AddScript({
+    param($listener, $state)
+    while ($listener.IsListening) {
+        try {
+            $context = $listener.GetContext()
+        } catch {
+            break
+        }
+        try {
+            $state.Calls = $state.Calls + 1
+            if ($state.Calls -le 1) {
+                $context.Response.StatusCode = 502
+                $context.Response.StatusDescription = "Bad Gateway"
+            } else {
+                $body = "STUB_502_OK"
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+                $context.Response.StatusCode = 200
+                $context.Response.ContentType = "text/plain"
+                $context.Response.ContentLength64 = $bytes.Length
+                $context.Response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            $context.Response.OutputStream.Close()
+        } catch {
+            $state.Errors += $_.ToString()
+            try { $context.Response.Abort() } catch {}
+        }
+    }
+}).AddArgument($stubListener).AddArgument($stubState)
+
+$rsHandle = $rs.BeginInvoke()
+
+try {
+    $sw502 = [System.Diagnostics.Stopwatch]::StartNew()
+    $result502 = Invoke-RemoteScript -ConnectionUri $stubUri -Username "admin" `
+        -SharedSecret "Stub-502-Test-Secret-LongEnough-For-Validation-12345" `
+        -ScriptBlock { "x" } -Raw -MaxRetries 1 -ErrorAction SilentlyContinue 2>$null
+    $sw502.Stop()
+
+    Assert-Equal $stubState.Calls 2 "502 stub: server received 2 requests (initial 502 + retry)"
+    Assert-Equal $result502 "STUB_502_OK" "502 retry returns the 200 body from the second request"
+    Assert-True ($sw502.Elapsed.TotalSeconds -lt 15.0) "502 retry completes within ceiling (< 15s, got $([Math]::Round($sw502.Elapsed.TotalSeconds, 2))s)"
+    if ($stubState.Errors.Count -gt 0) {
+        Write-Host "    Stub server errors: $($stubState.Errors -join ' | ')" -ForegroundColor Yellow
+    }
+} finally {
+    $stubListener.Stop()
+    $stubListener.Close()
+    # Give the runspace a moment to exit its loop after Stop() unblocks GetContext.
+    if (-not $rsHandle.IsCompleted) { Start-Sleep -Milliseconds 200 }
+    try { $rs.Stop() } catch {}
+    $rs.Dispose()
+}

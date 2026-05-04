@@ -26,9 +26,11 @@ function Get-HttpHeaderValue {
 
 # Dispatches a non-2xx HttpResponseMessage to the right error path.
 # Returns a result hashtable:
-#   @{ Retryable = bool; WaitSeconds = int; EncounteredError = bool; Handled = bool }
-# When Handled = $true, the caller should clear $errorResponse and either retry
-# (if Retryable) or stop (if EncounteredError).
+#   @{ Retryable = bool; WaitSeconds = int; Cap = int; EncounteredError = bool; Handled = bool }
+# WaitSeconds is the parsed Retry-After value (0 when the header is absent so the
+# caller can switch to full-jitter backoff). Cap is the per-status ceiling for the
+# caller's backoff helper. When Handled = $true, the caller should clear
+# $errorResponse and either retry (if Retryable) or stop (if EncounteredError).
 function Resolve-HttpErrorResponse {
     param(
         [System.Net.Http.HttpResponseMessage]$ErrorResponse,
@@ -40,23 +42,31 @@ function Resolve-HttpErrorResponse {
         [Uri]$Uri,
         [string]$RootPath
     )
-    $result = @{ Retryable = $false; WaitSeconds = 0; EncounteredError = $false; Handled = $false }
+    $result = @{ Retryable = $false; WaitSeconds = 0; Cap = 0; EncounteredError = $false; Handled = $false }
     if (-not $ErrorResponse) { return $result }
 
     $status = [int]$ErrorResponse.StatusCode
 
-    # 429 and 503 share the retry-or-report shape.
-    if ($status -eq 429 -or $status -eq 503) {
+    # 429, 502, and 503 share the retry-or-report shape. 502 is grouped with
+    # 503 because in our typical Traefik / upstream-proxy topology the dominant
+    # cause is "upstream not yet accepting connections" (CM container recycle,
+    # IIS app-pool start). RFC 7231 does not guarantee the request never reached
+    # the origin, so callers passing -MaxRetries should still treat their scripts
+    # as potentially-replayed and design for idempotency. 504 stays out
+    # (post-send ambiguous; opt-in switch deferred).
+    if ($status -eq 429 -or $status -eq 502 -or $status -eq 503) {
         $retryAfter = Get-HttpHeaderValue $ErrorResponse.Headers "Retry-After"
-        $defaultWait = if ($status -eq 503) { 2 } else { 1 }
-        $ceiling = if ($status -eq 503) { $Ceiling503 } else { $Ceiling429 }
+        $ceiling = if ($status -eq 429) { $Ceiling429 } else { $Ceiling503 }
 
         if ($MaxRetries -gt 0 -and $RetryAttempt -lt $MaxRetries) {
             $waitParsed = 0
             [void][int]::TryParse([string]$retryAfter, [ref]$waitParsed)
-            if ($waitParsed -lt 1) { $waitParsed = $defaultWait }
+            if ($waitParsed -lt 0) { $waitParsed = 0 }
             $result.Retryable = $true
+            # WaitSeconds = 0 signals "no Retry-After hint" so the caller's backoff
+            # helper can switch from server-hint jitter to full-jitter exponential.
             $result.WaitSeconds = [Math]::Min($waitParsed, $ceiling)
+            $result.Cap = $ceiling
             $result.Handled = $true
             return $result
         }
@@ -68,6 +78,11 @@ function Resolve-HttpErrorResponse {
             if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
             Write-Error -Message $msg -Category LimitsExceeded `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "TooManyRequests"
+        } elseif ($status -eq 502) {
+            $msg = "Bad Gateway (502). The upstream server is unavailable, restarting, or returned an invalid response."
+            if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
+            Write-Error -Message $msg -Category ConnectionError `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "BadGateway"
         } else {
             $msg = "Service unavailable (503). The server may be starting up."
             if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
@@ -381,6 +396,17 @@ function Invoke-RemoteScript {
             sitecore\admin           sitecore     True            False
             6/25/2015 11:09:17 AM
 
+        .NOTES
+            -MaxRetries enables retries for transient transport / 5xx failures
+            (HTTP 429, 502, 503, plus pre-send socket errors classified safe).
+            502 in particular is retried because Traefik / upstream proxies most
+            commonly emit it for "upstream not accepting connections" during a
+            CM recycle. RFC 7231 does not guarantee the request never reached
+            the origin, so a retry under -MaxRetries can in principle replay a
+            request that was partially processed. Design scripts as idempotent
+            (e.g. New-Item with -ErrorAction guards, set-state instead of
+            increment-state) when running them with -MaxRetries.
+
     	.LINK
     		Wait-RemoteScriptSession
 
@@ -510,6 +536,10 @@ function Invoke-RemoteScript {
             $PersistentSession = $false
             $Algorithm = "HS256"
             $clientCache = @{}
+            # New-SpeHttpClient binds [bool]$UseDefaultCredentials, which rejects
+            # the empty string PowerShell would otherwise leave here when the
+            # caller passes -ConnectionUri without -Session.
+            $UseDefaultCredentials = $false
         }
 
         $serviceUrl = "/-/script/script/?"
@@ -543,6 +573,7 @@ function Invoke-RemoteScript {
             do {
                 $retryable = $false
                 $retryWaitSeconds = 0
+                $retryCap = 0
                 $errorResponse = $null
                 $encounteredError = $false
                 $response = $null
@@ -553,7 +584,11 @@ function Invoke-RemoteScript {
                     $content = Compress-SpeRequestBody -Body $body
 
                     $postResponse = $client.PostAsync($url, $content)
-                    $taskResult = $postResponse.Result
+                    # GetAwaiter().GetResult() unwraps the AggregateException that .Result
+                    # would wrap around the real transport exception, so the catch[HttpRequestException]
+                    # below sees the actual cause (DNS, connection refused, TLS) and the
+                    # safe-transport classifier can decide whether to retry.
+                    $taskResult = $postResponse.GetAwaiter().GetResult()
                     if ($taskResult) {
                         $taskResult.EnsureSuccessStatusCode() > $null
                         $response = $taskResult.Content.ReadAsStringAsync().Result
@@ -576,6 +611,16 @@ function Invoke-RemoteScript {
                     [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
                     if (-not $errorResponse) {
                         Write-Verbose -Message $ex.Message
+                        # Transport failure (no response). Retry only when the failure
+                        # is unambiguously safe: pre-send DNS / connection-refused /
+                        # TLS handshake. Mid-stream resets and post-send timeouts
+                        # are intentionally excluded - they require an opt-in switch.
+                        if ($MaxRetries -gt 0 -and $retryAttempt -lt $MaxRetries -and (Test-SpeSafeTransportError -Exception $ex)) {
+                            $retryable = $true
+                            $retryWaitSeconds = 0     # no server hint -> full-jitter backoff
+                            $retryCap = $retryCeiling503
+                            $encounteredError = $false
+                        }
                     } else {
                         $outcome = Resolve-HttpErrorResponse -ErrorResponse $errorResponse `
                             -MaxRetries $MaxRetries -RetryAttempt $retryAttempt `
@@ -584,6 +629,7 @@ function Invoke-RemoteScript {
                         if ($outcome.Handled) {
                             $retryable = $outcome.Retryable
                             $retryWaitSeconds = $outcome.WaitSeconds
+                            $retryCap = $outcome.Cap
                             $encounteredError = $outcome.EncounteredError
                             $errorResponse = $null
                         }
@@ -594,8 +640,11 @@ function Invoke-RemoteScript {
 
                 if ($retryable -and $retryAttempt -lt $MaxRetries) {
                     $retryAttempt++
-                    Write-Verbose -Message "Retrying after $retryWaitSeconds second(s) (attempt $retryAttempt of $MaxRetries, status $([int]$taskResult.StatusCode))."
-                    Start-Sleep -Seconds $retryWaitSeconds
+                    $cap = if ($retryCap -gt 0) { [double]$retryCap } else { [double]$retryCeiling503 }
+                    $delay = Get-SpeBackoffDelay -Attempt $retryAttempt -BaseSeconds 1.0 -CapSeconds $cap -ServerHintSeconds $retryWaitSeconds
+                    $statusForLog = if ($taskResult) { "status $([int]$taskResult.StatusCode)" } else { "transport error" }
+                    Write-Verbose -Message ("Retrying after {0:N2}s (attempt {1} of {2}, {3})." -f $delay, $retryAttempt, $MaxRetries, $statusForLog)
+                    Start-Sleep -Seconds $delay
                     continue
                 }
                 break

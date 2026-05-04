@@ -1,3 +1,78 @@
+function Get-SpeBackoffDelay {
+    <#
+        .SYNOPSIS
+            Returns a jittered retry delay (seconds) for SPE remoting client retries.
+
+        .DESCRIPTION
+            Two modes:
+              * ServerHintSeconds > 0 (e.g. from Retry-After): returns the hint
+                with +/-20% jitter so concurrent clients that all parsed the same
+                hint do not rebound on the same wall-clock tick.
+              * ServerHintSeconds = 0: full jitter,
+                rand(0.1, min(Cap, Base * 2^min(Attempt,6))) seconds.
+
+            Heuristic values: 20% spread is enough to break synchronization without
+            ignoring the server's hint; the 2^6 ceiling avoids overflow on extreme
+            attempt counts. Re-tune if observed retry storms still cluster.
+    #>
+    [CmdletBinding()]
+    [OutputType([double])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [int]$Attempt,
+        [double]$BaseSeconds = 1.0,
+        [double]$CapSeconds = 30.0,
+        [int]$ServerHintSeconds = 0
+    )
+    if ($ServerHintSeconds -gt 0) {
+        $minMs = [int][Math]::Max(100, $ServerHintSeconds * 800)
+        $maxMs = [int]($ServerHintSeconds * 1200)
+        $delay = (Get-Random -Minimum $minMs -Maximum ($maxMs + 1)) / 1000.0
+        return [Math]::Min($CapSeconds, [Math]::Max(0.1, $delay))
+    }
+    $exp = [Math]::Min($Attempt, 6)
+    $ceiling = [Math]::Min($CapSeconds, $BaseSeconds * [Math]::Pow(2, $exp))
+    if ($ceiling -lt 0.1) { $ceiling = 0.1 }
+    $ceilingMs = [int]($ceiling * 1000)
+    return (Get-Random -Minimum 100 -Maximum ($ceilingMs + 1)) / 1000.0
+}
+
+function Test-SpeSafeTransportError {
+    <#
+        .SYNOPSIS
+            Classifies a remoting failure as unambiguously safe to retry.
+
+        .DESCRIPTION
+            Returns $true only when the request can be proven not to have reached
+            the server, so a retry cannot double-execute a non-idempotent script.
+            Covers: HTTP 502 Bad Gateway (Traefik upstream never accepted),
+            SocketException ConnectionRefused/HostNotFound/TryAgain/NoData.
+
+            Ambiguous failures (504, mid-stream connection reset, post-send
+            timeout, generic IOException) intentionally return $false. Those
+            require an opt-in switch from the caller and are deferred.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param(
+        [System.Exception]$Exception,
+        [int]$StatusCode = 0
+    )
+    if ($StatusCode -eq 502) { return $true }
+    if (-not $Exception) { return $false }
+
+    $cur = $Exception
+    while ($cur) {
+        if ($cur -is [System.Net.Sockets.SocketException]) {
+            $code = [int]$cur.SocketErrorCode
+            # 10061 ConnectionRefused, 11001 HostNotFound, 11002 TryAgain, 11004 NoData
+            return ($code -eq 10061 -or $code -eq 11001 -or $code -eq 11002 -or $code -eq 11004)
+        }
+        $cur = $cur.InnerException
+    }
+    return $false
+}
+
 function Expand-ScriptSession {
     param([pscustomobject]$Session)
     [pscustomobject]@{

@@ -83,7 +83,15 @@ function Invoke-WaitLongPollIteration {
         return [PSCustomObject]@{ Action = 'Stop'; Cursor = $Cursor; LastDropped = $LastDropped }
     }
     if ($wait.Status -eq 'TransportError') {
-        Start-Sleep -Seconds $Delay
+        # Jittered sleep: when many concurrent -AsJob waiters hit the same CM blip,
+        # flat $Delay locks them into lockstep reconnects. Effective spread is
+        # [0.1s, 2*$Delay] (full-jitter with Attempt=1 and BaseSeconds=$Delay
+        # caps at BaseSeconds * 2^1). Per-call retries are not tracked here, so
+        # there is no escalation across iterations - each TransportError uses
+        # the same 2x ceiling.
+        $cap = [double]([Math]::Max($Delay, 1) * 2)
+        $delaySeconds = Get-SpeBackoffDelay -Attempt 1 -BaseSeconds ([double]$Delay) -CapSeconds $cap -ServerHintSeconds 0
+        Start-Sleep -Seconds $delaySeconds
         return [PSCustomObject]@{ Action = 'Retry'; Cursor = $Cursor; LastDropped = $LastDropped }
     }
 
@@ -310,8 +318,11 @@ function Wait-RemoteScriptSession {
         }
 
         # Long-poll already waited server-side; legacy must pace client-side.
+        # Use server-hint jitter (+/-20% around $Delay) so concurrent legacy
+        # pollers don't all hit the server on the same wall-clock tick.
         if (-not $useLongPoll) {
-            Start-Sleep -Seconds $Delay
+            $delaySeconds = Get-SpeBackoffDelay -Attempt 1 -BaseSeconds 1.0 -CapSeconds ([double]([Math]::Max($Delay, 1) * 2)) -ServerHintSeconds $Delay
+            Start-Sleep -Seconds $delaySeconds
         }
     }
 }

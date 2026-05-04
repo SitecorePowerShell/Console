@@ -112,17 +112,18 @@ function Invoke-RemoteWait {
             return [PSCustomObject]@{ IsDone = $false; Status = 'NotSupported'; Name = $JobId; ElapsedSeconds = 0; NotSupported = $true }
         }
 
-        if (($statusCode -eq 429 -or $statusCode -eq 503) -and $attempt -lt $MaxRetries) {
-            $retryAfter = 1
+        if (($statusCode -eq 429 -or $statusCode -eq 502 -or $statusCode -eq 503) -and $attempt -lt $MaxRetries) {
+            $hint = 0
             if ($response.Headers.Contains('Retry-After')) {
                 $rawVal = $response.Headers.GetValues('Retry-After') | Select-Object -First 1
                 $parsed = 0
                 if ([int]::TryParse([string]$rawVal, [ref]$parsed) -and $parsed -ge 1) {
-                    $retryAfter = [Math]::Min($parsed, 60)
+                    $hint = [Math]::Min($parsed, 60)
                 }
             }
-            Write-Verbose "Invoke-RemoteWait: HTTP $statusCode, sleeping $retryAfter s before retry (attempt $($attempt + 1)/$MaxRetries)."
-            Start-Sleep -Seconds $retryAfter
+            $delay = Get-SpeBackoffDelay -Attempt ($attempt + 1) -BaseSeconds 1.0 -CapSeconds 10.0 -ServerHintSeconds $hint
+            Write-Verbose ("Invoke-RemoteWait: HTTP $statusCode, sleeping {0:N2}s before retry (attempt {1}/{2})." -f $delay, ($attempt + 1), $MaxRetries)
+            Start-Sleep -Seconds $delay
             $attempt++
             continue
         }
