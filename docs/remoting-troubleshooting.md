@@ -27,6 +27,48 @@ Most troubleshooting fields only appear at `DEBUG` level. If you only see the
 audit lines, raise the `PowerShellLog` log level (see "Enabling debug logs"
 below) and retry.
 
+### Identity fields on `action=authenticated`
+
+Every authenticated request carries enough on a single line to identify both
+the auth path and the calling principal:
+
+- `user=` resolved Sitecore identity after authentication and impersonation.
+  For OAuth and per-item Shared Secret Client paths this is the
+  `Impersonated User` field on the matched client item.
+- `authKind=` which authentication path the request took. One of
+  `sharedSecretClient`, `configSecret`, `oauthClient`, `basic`, `queryString`,
+  `session`. Lets you triage by path without correlating other lines.
+- `remotingClient=` Sitecore item GUID of the matched Remoting Client item
+  (Shared Secret Client or OAuth Client), in `D` form
+  (`f06dc586-148d-4f96-ada0-68a9c1f2cab9`). Renders the literal `<config>`
+  when no item matched - legacy config-level shared secret, basic auth,
+  query-string credentials, or session auth. The GUID is stable across
+  SSC item renames and free of delimiter characters that would confuse a
+  whitespace-tokenising `key=value` parser; the SSC item display name is
+  not logged here for that reason.
+- `remotingClientKid=` SSC item's Access Key Id (the JWT `kid` claim).
+  Populated only on the SSC kid path; renders `<none>` for OAuth, config
+  secret, basic, query-string, and session.
+- `clientId=` OAuth `client_id` claim from a validated bearer token,
+  sanitised via `LogSanitizer` since the value is IdP-supplied. Populated
+  only on the OAuth path; renders `<none>` otherwise.
+
+Value matrix per auth path:
+
+| `authKind` | `remotingClient` | `remotingClientKid` | `clientId` |
+| --- | --- | --- | --- |
+| `sharedSecretClient` | `<guid>` (SSC item) | `<accessKeyId>` | `<none>` |
+| `configSecret` | `<config>` | `<none>` | `<none>` |
+| `oauthClient` | `<guid>` (OAuth Client item) | `<none>` | `<oauth-client-id>` |
+| `basic` | `<config>` | `<none>` | `<none>` |
+| `queryString` | `<config>` | `<none>` | `<none>` |
+| `session` | `<config>` | `<none>` | `<none>` |
+
+The same `remotingClient=` and `remotingClientKid=` fields also appear on
+operational audit lines further down a request's `rid=` chain
+(`throttled`, `throttleBypassed`, `clientDenied`, `bearerAuthSuccess`,
+`bearerAuthFailed`). They follow the same matrix.
+
 ## Operator-side first checks
 
 Before reading server logs, four checks resolve a large fraction of

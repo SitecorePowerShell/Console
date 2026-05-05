@@ -237,7 +237,7 @@ namespace Spe.Core.Settings.Authorization
             if (HasDuplicateAccessKeyId(item, accessKeyId))
             {
                 PowerShellLog.Error(
-                    $"[RemotingClient] action=saveDenied reason=duplicateAccessKeyId remotingClient={item.Name} accessKeyId={LogSanitizer.SanitizeValue(accessKeyId)}");
+                    $"[RemotingClient] action=saveDenied reason=duplicateAccessKeyId remotingClient={item.ID.Guid:D} accessKeyId={LogSanitizer.SanitizeValue(accessKeyId)}");
                 scArgs.Result.Cancel = true;
                 scArgs.Result.Messages.Add(
                     $"A Shared Secret Client with Access Key Id '{accessKeyId}' already exists. Each client must have a unique Access Key Id.");
@@ -272,7 +272,7 @@ namespace Spe.Core.Settings.Authorization
                 if (reason != null)
                 {
                     PowerShellLog.Error(
-                        $"[RemotingClient] action=saveDenied reason=invalidClientId subReason={reason} remotingClient={item.Name} clientId={LogSanitizer.SanitizeValue(cid)}");
+                        $"[RemotingClient] action=saveDenied reason=invalidClientId subReason={reason} remotingClient={item.ID.Guid:D} clientId={LogSanitizer.SanitizeValue(cid)}");
                     scArgs.Result.Cancel = true;
                     scArgs.Result.Messages.Add(
                         $"OAuth Client Ids entry '{cid}' is not allowed (reason: {reason}). Use a specific client_id of at least {MinClientIdLength} characters; no wildcards or placeholder words.");
@@ -294,7 +294,7 @@ namespace Spe.Core.Settings.Authorization
                 if (duplicate != null)
                 {
                     PowerShellLog.Error(
-                        $"[RemotingClient] action=saveDenied reason=duplicateIssuerClientId remotingClient={item.Name} clientId={LogSanitizer.SanitizeValue(duplicate.Item1)} duplicateOf={LogSanitizer.SanitizeValue(duplicate.Item2)}");
+                        $"[RemotingClient] action=saveDenied reason=duplicateIssuerClientId remotingClient={item.ID.Guid:D} clientId={LogSanitizer.SanitizeValue(duplicate.Item1)} duplicateOf={duplicate.Item3:D}");
                     scArgs.Result.Cancel = true;
                     scArgs.Result.Messages.Add(
                         $"OAuth Client Id '{duplicate.Item1}' is already registered to '{duplicate.Item2}' for issuer '{issuer}'. An (issuer, client_id) pair must resolve to one client.");
@@ -337,7 +337,10 @@ namespace Spe.Core.Settings.Authorization
             return false;
         }
 
-        private static Tuple<string, string> FindDuplicateIssuerClientId(
+        // Returns (matched clientId, duplicate item's display name, duplicate item's GUID).
+        // Name is for the user-facing save error; Guid is for the audit log so the
+        // value cannot be mangled by spaces or '=' in the SSC item name.
+        private static Tuple<string, string, Guid> FindDuplicateIssuerClientId(
             Item currentItem, string issuer, List<string> clientIds)
         {
             using (new SecurityDisabler())
@@ -350,7 +353,7 @@ namespace Spe.Core.Settings.Authorization
             }
         }
 
-        private static Tuple<string, string> FindDuplicateInChildren(
+        private static Tuple<string, string, Guid> FindDuplicateInChildren(
             Item folder, Item excludeItem, string issuer, HashSet<string> candidateClientIds)
         {
             foreach (Item child in folder.GetChildren())
@@ -371,7 +374,7 @@ namespace Spe.Core.Settings.Authorization
                         {
                             if (candidateClientIds.Contains(existingId))
                             {
-                                return Tuple.Create(existingId, child.Name);
+                                return Tuple.Create(existingId, child.Name, child.ID.Guid);
                             }
                         }
                     }

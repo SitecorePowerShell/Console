@@ -10,6 +10,10 @@ namespace Spe.Core.Settings.Authorization
     /// </summary>
     public class RemotingClient
     {
+        // Sitecore item GUID of the SSC item. Stable across renames and free of
+        // delimiter characters, so this is the safe value to emit as the
+        // remotingClient field in audit lines (see Spe.Core.Diagnostics.LogSanitizer).
+        public Guid Id { get; }
         public string Name { get; }
         public string AccessKeyId { get; }
         public string SharedSecret { get; }
@@ -22,6 +26,7 @@ namespace Spe.Core.Settings.Authorization
         public DateTime? Expires { get; }
 
         public RemotingClient(
+            Guid id,
             string name,
             string accessKeyId,
             string sharedSecret,
@@ -33,6 +38,7 @@ namespace Spe.Core.Settings.Authorization
             string throttleAction,
             DateTime? expires)
         {
+            Id = id;
             Name = name;
             AccessKeyId = accessKeyId;
             SharedSecret = sharedSecret;

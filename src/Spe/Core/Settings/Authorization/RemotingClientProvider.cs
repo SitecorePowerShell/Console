@@ -192,7 +192,7 @@ namespace Spe.Core.Settings.Authorization
                 }
 
                 PowerShellLog.Warn(
-                    $"[RemotingClient] action=throttleExceeded remotingClient={client.Name} count={state.RequestCount} limit={client.RequestLimit} window={client.ThrottleWindowSeconds}");
+                    $"[RemotingClient] action=throttleExceeded remotingClient={client.Id:D} count={state.RequestCount} limit={client.RequestLimit} window={client.ThrottleWindowSeconds}");
 
                 return new ThrottleResult(false, client.RequestLimit, 0, windowEnd, client.ThrottleAction);
             }
@@ -289,7 +289,7 @@ namespace Spe.Core.Settings.Authorization
                 if (index.ContainsKey(key.AccessKeyId))
                 {
                     PowerShellLog.Warn(
-                        $"[RemotingClient] action=duplicateAccessKeyId accessKeyId={key.AccessKeyId} remotingClient={key.Name} duplicateOf={index[key.AccessKeyId].Name}");
+                        $"[RemotingClient] action=duplicateAccessKeyId accessKeyId={key.AccessKeyId} remotingClient={key.Id:D} duplicateOf={index[key.AccessKeyId].Id:D}");
                 }
                 else
                 {
@@ -334,7 +334,7 @@ namespace Spe.Core.Settings.Authorization
                         if (issuerClientIdIndex.ContainsKey(indexKey))
                         {
                             PowerShellLog.Warn(
-                                $"[RemotingClient] action=duplicateIssuerClientId issuer={LogSanitizer.SanitizeValue(entry.Issuer)} clientId={LogSanitizer.SanitizeValue(cid)} remotingClient={entry.Client.Name} duplicateOf={issuerClientIdIndex[indexKey].Name}");
+                                $"[RemotingClient] action=duplicateIssuerClientId issuer={LogSanitizer.SanitizeValue(entry.Issuer)} clientId={LogSanitizer.SanitizeValue(cid)} remotingClient={entry.Client.Id:D} duplicateOf={issuerClientIdIndex[indexKey].Id:D}");
                         }
                         else
                         {
@@ -401,7 +401,7 @@ namespace Spe.Core.Settings.Authorization
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Error($"[RemotingClient] action=oauthEntryLoadFailed remotingClient={child.Name}", ex);
+                        PowerShellLog.Error($"[RemotingClient] action=oauthEntryLoadFailed remotingClient={child.ID.Guid:D}", ex);
                     }
                 }
                 else if (child.HasChildren)
@@ -416,7 +416,7 @@ namespace Spe.Core.Settings.Authorization
             var issuer = item.Fields[Templates.OAuthClient.Fields.AllowedIssuer]?.Value?.Trim();
             if (string.IsNullOrEmpty(issuer))
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noAllowedIssuer remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noAllowedIssuer remotingClient={item.ID.Guid:D}");
                 return null;
             }
 
@@ -430,7 +430,7 @@ namespace Spe.Core.Settings.Authorization
 
             if (clientIds.Count == 0)
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noOAuthClientIds remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noOAuthClientIds remotingClient={item.ID.Guid:D}");
                 return null;
             }
 
@@ -449,14 +449,14 @@ namespace Spe.Core.Settings.Authorization
                 else
                 {
                     policy = $"__deleted:{policyId}";
-                    PowerShellLog.Warn($"[RemotingClient] action=policyItemMissing remotingClient={item.Name} policyId={policyId}");
+                    PowerShellLog.Warn($"[RemotingClient] action=policyItemMissing remotingClient={item.ID.Guid:D} policyId={policyId}");
                 }
             }
 
             var impersonateUser = item.Fields[Templates.RemotingClient.Fields.ImpersonateUser]?.Value?.Trim();
             if (enabled && string.IsNullOrEmpty(impersonateUser))
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noImpersonateUser remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noImpersonateUser remotingClient={item.ID.Guid:D}");
             }
 
             int.TryParse(item.Fields[Templates.RemotingClient.Fields.RequestLimit]?.Value, out var requestLimit);
@@ -473,7 +473,7 @@ namespace Spe.Core.Settings.Authorization
 
             // OAuth Client items don't carry AccessKeyId / SharedSecret; leave those empty.
             var client = new RemotingClient(
-                item.Name, "", "", enabled, policy, impersonateUser,
+                item.ID.Guid, item.Name, "", "", enabled, policy, impersonateUser,
                 requestLimit, throttleWindow, throttleAction, expires);
 
             return new OAuthClientEntry { Client = client, Issuer = issuer, ClientIds = clientIds };
@@ -527,12 +527,12 @@ namespace Spe.Core.Settings.Authorization
                         {
                             keys.Add(key);
                             PowerShellLog.Debug(
-                                $"[RemotingClient] action=entryLoaded remotingClient={key.Name} enabled={key.Enabled} profile={key.Policy ?? "none"}");
+                                $"[RemotingClient] action=entryLoaded remotingClient={key.Id:D} enabled={key.Enabled} profile={key.Policy ?? "none"}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        PowerShellLog.Error($"[RemotingClient] action=entryLoadFailed remotingClient={child.Name}", ex);
+                        PowerShellLog.Error($"[RemotingClient] action=entryLoadFailed remotingClient={child.ID.Guid:D}", ex);
                     }
                 }
                 else if (child.HasChildren)
@@ -547,19 +547,19 @@ namespace Spe.Core.Settings.Authorization
             var accessKeyId = item.Fields[Templates.SharedSecretClient.Fields.AccessKeyId]?.Value?.Trim();
             if (string.IsNullOrEmpty(accessKeyId))
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noAccessKeyId remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noAccessKeyId remotingClient={item.ID.Guid:D}");
             }
 
             var sharedSecret = item.Fields[Templates.SharedSecretClient.Fields.SharedSecret]?.Value?.Trim();
             if (string.IsNullOrEmpty(sharedSecret))
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noSecret remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noSecret remotingClient={item.ID.Guid:D}");
                 return null;
             }
 
             if (sharedSecret.Length < 32)
             {
-                PowerShellLog.Warn($"[RemotingClient] action=secretTooShort remotingClient={item.Name} length={sharedSecret.Length} minimum=32");
+                PowerShellLog.Warn($"[RemotingClient] action=secretTooShort remotingClient={item.ID.Guid:D} length={sharedSecret.Length} minimum=32");
             }
 
             var enabledField = item.Fields[Templates.RemotingClient.Fields.Enabled];
@@ -580,13 +580,13 @@ namespace Spe.Core.Settings.Authorization
                 else
                 {
                     policy = $"__deleted:{policyId}";
-                    PowerShellLog.Warn($"[RemotingClient] action=policyItemMissing remotingClient={item.Name} policyId={policyId}");
+                    PowerShellLog.Warn($"[RemotingClient] action=policyItemMissing remotingClient={item.ID.Guid:D} policyId={policyId}");
                 }
             }
             var impersonateUser = item.Fields[Templates.RemotingClient.Fields.ImpersonateUser]?.Value?.Trim();
             if (enabled && string.IsNullOrEmpty(impersonateUser))
             {
-                PowerShellLog.Warn($"[RemotingClient] action=noImpersonateUser remotingClient={item.Name}");
+                PowerShellLog.Warn($"[RemotingClient] action=noImpersonateUser remotingClient={item.ID.Guid:D}");
             }
 
             int.TryParse(item.Fields[Templates.RemotingClient.Fields.RequestLimit]?.Value, out var requestLimit);
@@ -607,13 +607,13 @@ namespace Spe.Core.Settings.Authorization
                         // state-of-record is the RemotingClient.IsExpired property;
                         // FindByAccessKeyId excludes IsExpired so expired keys never
                         // authenticate. They remain visible to GetAuthFailureReason.
-                        PowerShellLog.Info($"[RemotingClient] action=expired remotingClient={item.Name} expires={expiresDate:O}");
+                        PowerShellLog.Info($"[RemotingClient] action=expired remotingClient={item.ID.Guid:D} expires={expiresDate:O}");
                     }
                 }
             }
 
             return new RemotingClient(
-                item.Name, accessKeyId, sharedSecret, enabled, policy, impersonateUser,
+                item.ID.Guid, item.Name, accessKeyId, sharedSecret, enabled, policy, impersonateUser,
                 requestLimit, throttleWindow, throttleAction, expires);
         }
 

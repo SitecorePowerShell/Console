@@ -201,7 +201,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             var authenticatedClient = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
-            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} endpoint={endpoint} ip={GetIp(request)} user={identity.Name} remotingClient={FormatRemotingClientName(authenticatedClient)} remotingClientKid={FormatRemotingClientKid(authenticatedClient)} sessionId={TryReadAuditSessionId(request)} rid={GetRequestId()}");
+            var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
+            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} endpoint={endpoint} ip={GetIp(request)} user={identity.Name} authKind={ResolveAuthKindForAudit(HttpContext.Current, request)} remotingClient={FormatRemotingClientId(authenticatedClient)} remotingClientKid={FormatRemotingClientKid(authenticatedClient)} clientId={FormatOAuthClientId(tokenResult)} sessionId={TryReadAuditSessionId(request)} rid={GetRequestId()}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
 
@@ -209,12 +210,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
         }
 
         // Audit field for the SSC item that authenticated this request. Returns
-        // the SSC display name when one matched, or "<config>" when none did
+        // the SSC item GUID when one matched, or "<config>" when none did
         // (config-based shared secret, OAuth bearer without an SSC mapping,
-        // or anonymous/basic auth). Angle brackets distinguish the marker
-        // from a real SSC name.
-        private static string FormatRemotingClientName(RemotingClient client)
-            => client?.Name ?? "<config>";
+        // or anonymous/basic auth). Emitting the GUID rather than the display
+        // name keeps the value free of '=' / space delimiters used by the
+        // structured-log parser (see Spe.Core.Diagnostics.LogSanitizer) and
+        // stable across SSC item renames. Angle brackets distinguish the
+        // sentinel from a real GUID.
+        private static string FormatRemotingClientId(RemotingClient client)
+            => client == null ? "<config>" : client.Id.ToString("D");
 
         // Audit field for the SSC AccessKeyId (the kid the JWT presented).
         // Stable across SSC item renames, so this is the value to use when
@@ -224,6 +228,39 @@ namespace Spe.sitecore_modules.PowerShell.Services
         // both render as "<none>" so the audit log never has a bare "kid=".
         private static string FormatRemotingClientKid(RemotingClient client)
             => string.IsNullOrEmpty(client?.AccessKeyId) ? "<none>" : client.AccessKeyId;
+
+        // Audit field for the OAuth client_id claim. Populated by
+        // OAuthBearerTokenAuthenticationProvider; null on SSC kid, configSecret,
+        // basic, and session paths. Sanitized because the value originates in
+        // an external IdP and may contain delimiter characters.
+        private static string FormatOAuthClientId(TokenValidationResult tokenResult)
+            => string.IsNullOrEmpty(tokenResult?.ClientId) ? "<none>" : LogSanitizer.SanitizeValue(tokenResult.ClientId);
+
+        // Resolves the "authKind" audit field for the top-level
+        // action=authenticated line. Bearer paths stash the value at
+        // HttpContext.Items["SpeAuthKind"]; non-bearer paths are inferred
+        // from the Authorization header / query string. One of:
+        // sharedSecretClient | configSecret | oauthClient | basic | queryString | session.
+        private static string ResolveAuthKindForAudit(HttpContext context, HttpRequest request)
+        {
+            var stashed = context?.Items["SpeAuthKind"] as string;
+            if (!string.IsNullOrEmpty(stashed)) return stashed;
+
+            var authHeader = request?.Headers["Authorization"];
+            if (!string.IsNullOrEmpty(authHeader) &&
+                authHeader.StartsWith("Basic", StringComparison.OrdinalIgnoreCase))
+            {
+                return "basic";
+            }
+
+            if (!string.IsNullOrEmpty(request?.QueryString[ParamUser]) ||
+                !string.IsNullOrEmpty(request?.QueryString[ParamPassword]))
+            {
+                return "queryString";
+            }
+
+            return "session";
+        }
 
         // Audit-safe sessionId extracted from the request query string. The
         // top-of-handler audit lines (requestReceived, authenticated) fire
@@ -403,7 +440,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                                         if (!isValid)
                                         {
-                                            PowerShellLog.Debug($"[Remoting] action=clientSignatureFailed kid={LogSanitizer.SanitizeValue(kid)} remotingClient={matchedClient.Name}");
+                                            PowerShellLog.Debug($"[Remoting] action=clientSignatureFailed kid={LogSanitizer.SanitizeValue(kid)} remotingClient={matchedClient.Id:D}");
                                             authFailureReason = RemotingClientProvider.AuthFailureReasonInvalid;
                                             matchedClient = null;
                                         }
@@ -543,7 +580,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                 if (!matchedClient.HasImpersonation)
                                 {
                                     PowerShellLog.Audit("[Remoting] action=clientDenied reason=noImpersonateUser remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
-                                        FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
+                                        FormatRemotingClientId(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                     SetErrorResponse(context, 403, "This Remoting Client requires an Impersonated User. Configure the field on the client item.");
                                     return false;
                                 }
@@ -565,7 +602,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Standard)
                                         {
                                             PowerShellLog.Audit("[Remoting] action=throttleBypassed remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
-                                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
+                                                FormatRemotingClientId(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                         }
                                     }
                                     else
@@ -573,7 +610,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Violations)
                                         {
                                             PowerShellLog.Audit("[Remoting] action=throttled remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
-                                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
+                                                FormatRemotingClientId(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                         }
                                         SetErrorResponse(context, 429, "Rate limit exceeded.");
                                         return false;
@@ -582,7 +619,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={LogSanitizer.SanitizeValue(username)} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={FormatRemotingClientName(matchedClient)} remotingClientKid={FormatRemotingClientKid(matchedClient)} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
+                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={LogSanitizer.SanitizeValue(username)} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={FormatRemotingClientId(matchedClient)} remotingClientKid={FormatRemotingClientKid(matchedClient)} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
@@ -591,12 +628,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             {
                                 HttpContext.Current.Items["SpeRemotingClient"] = matchedClient;
                             }
+                            // Stash so the top-level action=authenticated audit line
+                            // (which fires after AuthenticateRequest returns) can render
+                            // authKind= without re-deriving it from headers/state.
+                            HttpContext.Current.Items["SpeAuthKind"] = authKind;
                         }
                         else
                         {
                             PowerShellLog.Audit("[Remoting] action=bearerAuthFailed authKind={0} user={1} ip={2} remotingClient={3} remotingClientKid={4} clientId={5} rid={6}",
                                 authKind ?? "none", LogSanitizer.SanitizeValue(username ?? "unknown"), ip,
-                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient),
+                                FormatRemotingClientId(matchedClient), FormatRemotingClientKid(matchedClient),
                                 LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none"), GetRequestId());
                             context.Response.AddHeader("WWW-Authenticate", JwtClaimValidator.BuildWwwAuthenticate(authFailureReason));
                             if (!string.IsNullOrEmpty(authFailureReason))
@@ -2065,7 +2106,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 {
                     PowerShellLog.Audit(
                         "[Remoting] action=clientDenied reason=noPolicyAssigned remotingClient={0} remotingClientKid={1} user={2} ip={3} rid={4}",
-                        FormatRemotingClientName(client), FormatRemotingClientKid(client), user, ip, GetRequestId());
+                        FormatRemotingClientId(client), FormatRemotingClientKid(client), user, ip, GetRequestId());
                     SetErrorResponse(context, 403, "The request is not authorized. A remoting policy is required.");
                     return;
                 }
