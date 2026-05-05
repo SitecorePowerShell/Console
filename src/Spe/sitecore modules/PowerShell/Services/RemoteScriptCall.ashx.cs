@@ -182,7 +182,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 serviceName = string.Empty;
             }
 
-            PowerShellLog.Audit($"[Remoting] action=requestReceived service={serviceName} ip={GetIp(request)} rid={GetRequestId()}");
+            // endpoint is the api-version path token (script / wait / file /
+            // media / handle / cleanup / test / 2), sourced from the ?api=
+            // query param via ParamApiVersion. Sanitised so an unauthenticated
+            // caller cannot inject arbitrary text into the audit log.
+            var endpoint = LogSanitizer.SanitizeValue(apiVersion ?? "?");
+            PowerShellLog.Audit($"[Remoting] action=requestReceived service={serviceName} endpoint={endpoint} ip={GetIp(request)} sessionId={TryReadAuditSessionId(request)} rid={GetRequestId()}");
             PowerShellLog.Debug($"[Remoting] action=requestUrl url={LogSanitizer.RedactUrl(request.Url)}");
 
             if (!CheckServiceEnabled(context, serviceName))
@@ -196,11 +201,40 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
 
             var authenticatedClient = HttpContext.Current?.Items["SpeRemotingClient"] as RemotingClient;
-            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} ip={GetIp(request)} user={identity.Name} remotingClient={authenticatedClient?.Name ?? "none"} rid={GetRequestId()}");
+            PowerShellLog.Audit($"[Remoting] action=authenticated service={serviceName} endpoint={endpoint} ip={GetIp(request)} user={identity.Name} remotingClient={FormatRemotingClientName(authenticatedClient)} remotingClientKid={FormatRemotingClientKid(authenticatedClient)} sessionId={TryReadAuditSessionId(request)} rid={GetRequestId()}");
 
             DispatchRequest(context, request, apiVersion, serviceMappingKey, serviceName, identity, isAuthenticated);
 
             AddCorsHeaders(context, serviceName, origin);
+        }
+
+        // Audit field for the SSC item that authenticated this request. Returns
+        // the SSC display name when one matched, or "<config>" when none did
+        // (config-based shared secret, OAuth bearer without an SSC mapping,
+        // or anonymous/basic auth). Angle brackets distinguish the marker
+        // from a real SSC name.
+        private static string FormatRemotingClientName(RemotingClient client)
+            => client?.Name ?? "<config>";
+
+        // Audit field for the SSC AccessKeyId (the kid the JWT presented).
+        // Stable across SSC item renames, so this is the value to use when
+        // correlating audit lines back to a specific client item. Treats
+        // null AccessKeyId (no client) and empty AccessKeyId (SSC items
+        // with the field unset, e.g. OAuth-bearer-mapped clients) the same:
+        // both render as "<none>" so the audit log never has a bare "kid=".
+        private static string FormatRemotingClientKid(RemotingClient client)
+            => string.IsNullOrEmpty(client?.AccessKeyId) ? "<none>" : client.AccessKeyId;
+
+        // Audit-safe sessionId extracted from the request query string. The
+        // top-of-handler audit lines (requestReceived, authenticated) fire
+        // before per-request validation; running Guid.TryParse here means an
+        // unauthenticated caller cannot inject arbitrary text into the audit
+        // log via the sessionId param.
+        private static string TryReadAuditSessionId(HttpRequest request)
+        {
+            var raw = request?.QueryString?[ParamSessionId];
+            if (string.IsNullOrEmpty(raw)) return "<none>";
+            return Guid.TryParse(raw, out var g) ? g.ToString("D") : "<invalid>";
         }
 
         private static void AddThrottleHeaders(HttpResponse response, RemotingClientProvider.ThrottleResult throttle)
@@ -508,8 +542,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             {
                                 if (!matchedClient.HasImpersonation)
                                 {
-                                    PowerShellLog.Audit("[Remoting] action=clientDenied reason=noImpersonateUser remotingClient={0} ip={1} rid={2}",
-                                        matchedClient.Name, ip, GetRequestId());
+                                    PowerShellLog.Audit("[Remoting] action=clientDenied reason=noImpersonateUser remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
+                                        FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                     SetErrorResponse(context, 403, "This Remoting Client requires an Impersonated User. Configure the field on the client item.");
                                     return false;
                                 }
@@ -530,16 +564,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                     {
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Standard)
                                         {
-                                            PowerShellLog.Audit("[Remoting] action=throttleBypassed remotingClient={0} ip={1} rid={2}",
-                                                matchedClient.Name, ip, GetRequestId());
+                                            PowerShellLog.Audit("[Remoting] action=throttleBypassed remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
+                                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                         }
                                     }
                                     else
                                     {
                                         if (throttlePolicy.AuditLevel >= AuditLevel.Violations)
                                         {
-                                            PowerShellLog.Audit("[Remoting] action=throttled remotingClient={0} ip={1} rid={2}",
-                                                matchedClient.Name, ip, GetRequestId());
+                                            PowerShellLog.Audit("[Remoting] action=throttled remotingClient={0} remotingClientKid={1} ip={2} rid={3}",
+                                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient), ip, GetRequestId());
                                         }
                                         SetErrorResponse(context, 429, "Rate limit exceeded.");
                                         return false;
@@ -548,7 +582,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             }
 
                             authenticationManager.SwitchToUser(username, true);
-                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={LogSanitizer.SanitizeValue(username)} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={matchedClient?.Name ?? "none"} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
+                            PowerShellLog.Debug($"[Remoting] action=bearerAuthSuccess authKind={authKind ?? "none"} user={LogSanitizer.SanitizeValue(username)} ip={ip} clientSession={tokenResult?.ClientSessionId ?? "none"} remotingClient={FormatRemotingClientName(matchedClient)} remotingClientKid={FormatRemotingClientKid(matchedClient)} clientId={LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none")}");
                             if (tokenResult != null)
                             {
                                 HttpContext.Current.Items["SpeTokenResult"] = tokenResult;
@@ -560,8 +594,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         }
                         else
                         {
-                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed authKind={0} user={1} ip={2} remotingClient={3} clientId={4} rid={5}",
-                                authKind ?? "none", LogSanitizer.SanitizeValue(username ?? "unknown"), ip, matchedClient?.Name ?? "none",
+                            PowerShellLog.Audit("[Remoting] action=bearerAuthFailed authKind={0} user={1} ip={2} remotingClient={3} remotingClientKid={4} clientId={5} rid={6}",
+                                authKind ?? "none", LogSanitizer.SanitizeValue(username ?? "unknown"), ip,
+                                FormatRemotingClientName(matchedClient), FormatRemotingClientKid(matchedClient),
                                 LogSanitizer.SanitizeValue(tokenResult?.ClientId ?? "none"), GetRequestId());
                             context.Response.AddHeader("WWW-Authenticate", JwtClaimValidator.BuildWwwAuthenticate(authFailureReason));
                             if (!string.IsNullOrEmpty(authFailureReason))
@@ -890,7 +925,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var serviceName = WebServiceSettings.ServiceRemoting;
             var origin = request.Headers["Origin"];
 
-            PowerShellLog.Audit($"[Remoting] action=waitRequestReceived service={serviceName} ip={GetIp(request)} rid={GetRequestId()}");
+            // Verbose-only: duplicates action=requestReceived emitted at the
+            // top of ProcessRequestAsync, and fires once per stream record on
+            // fast streamers (~20/sec). Gated at Full so default Standard
+            // policies do not carry the per-record line; operators explicitly
+            // tracing remoting traffic raise to Full to opt in.
+            if (GetActivePolicy().AuditLevel >= AuditLevel.Full)
+            {
+                PowerShellLog.Audit($"[Remoting] action=waitRequestReceived service={serviceName} ip={GetIp(request)} rid={GetRequestId()}");
+            }
 
             if (!CheckServiceEnabled(context, serviceName))
             {
@@ -992,7 +1035,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         // Drain any new stream records the script has emitted since
                         // the caller's cursor. New records short-circuit the wait
                         // (don't hold the request to the deadline) so progress feels
-                        // real-time on the client.
+                        // real-time on the client. ReadFrom is cursor-based and
+                        // non-destructive, so two concurrent waiters on the same
+                        // sessionId (e.g. a retry overlapping the original wait)
+                        // both observe the same records via their own fromSequence
+                        // offsets - intentional, no waiter exclusion needed.
                         if (targetSession != null)
                         {
                             var snap = targetSession.StreamRing.ReadFrom(fromSequence, 256);
@@ -1022,9 +1069,27 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     return;
                 }
 
+                var remaining = deadline - DateTime.UtcNow;
+                if (remaining <= TimeSpan.Zero) break;
+
                 try
                 {
-                    await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+                    if (targetSession != null)
+                    {
+                        // Event-driven wake: returns when the session signals
+                        // an update (stream-record enqueue, runspace state /
+                        // availability change, or disposal) or when the
+                        // remaining deadline elapses, whichever comes first.
+                        await targetSession.WaitForUpdateAsync(remaining, cancellationToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // No session bound yet (registration-race grace window
+                        // for jobType=scriptsession) or jobType=sitecore (no
+                        // per-session signal source). 200ms tick so the
+                        // NotFoundGraceMs retry path continues to fire.
+                        await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+                    }
                 }
                 catch (TaskCanceledException)
                 {
@@ -1071,9 +1136,20 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     {
                         if (streams.Records[i].Stream == StreamKinds.Error) errorCount++;
                     }
-                    PowerShellLog.Audit("[Remoting] action=progressStreamed session={0} count={1} errors={2} dropRate={3} dropSize={4} truncated={5} ip={6} rid={7}",
-                        jobId, streams.Records.Count, errorCount, streams.DroppedRate, streams.DroppedSize, streams.TruncatedCount, GetIp(request), GetRequestId(context));
-                    if (errorCount > 0)
+                    var auditPolicy = GetActivePolicy();
+                    // count=1 is the common case for streaming responses, so
+                    // this line is gated at Full to keep default Standard
+                    // policies quiet. Operators tracing streaming forensics
+                    // raise to Full.
+                    if (auditPolicy.AuditLevel >= AuditLevel.Full)
+                    {
+                        PowerShellLog.Audit("[Remoting] action=progressStreamed session={0} count={1} errors={2} dropRate={3} dropSize={4} truncated={5} ip={6} rid={7}",
+                            jobId, streams.Records.Count, errorCount, streams.DroppedRate, streams.DroppedSize, streams.TruncatedCount, GetIp(request), GetRequestId(context));
+                    }
+                    // Errors are rare and forensically critical, so they stay
+                    // visible at Standard alongside other expected-traffic
+                    // audit lines (sessionCleanup, scriptHashLogged, etc.).
+                    if (errorCount > 0 && auditPolicy.AuditLevel >= AuditLevel.Standard)
                     {
                         PowerShellLog.Audit("[Remoting] action=errorStreamed session={0} count={1} ip={2} rid={3}",
                             jobId, errorCount, GetIp(request), GetRequestId(context));
@@ -1858,7 +1934,18 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
         private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession, bool useStructuredErrors = false)
         {
-            if (request?.InputStream == null) return;
+            if (request?.InputStream == null)
+            {
+                // Empty-body POST hits this; without the audit the call shows
+                // only requestReceived + authenticated and looks identical to
+                // a silently-suppressed scriptStarting.
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptRejected reason=missingBody sessionId={0} ip={1} rid={2}",
+                        sessionId ?? "<none>", GetIp(context.Request), GetRequestId(context));
+                }
+                return;
+            }
 
             string script = null;
             string cliXmlArgs = null;
@@ -1907,11 +1994,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (string.IsNullOrEmpty(script))
             {
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptRejected reason=emptyScript sessionId={0} ip={1} rid={2}",
+                        sessionId ?? "<none>", GetIp(context.Request), GetRequestId(context));
+                }
                 SetErrorResponse(context, 400, "The specified script is invalid.");
                 return;
             }
 
-            var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
             var user = Sitecore.Context.User?.Name ?? "unknown";
             var ip = GetIp(context.Request);
             // Lazy: the hash is only consumed inside AuditLevel >= Standard
@@ -1921,19 +2012,44 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var tokenResult = HttpContext.Current?.Items["SpeTokenResult"] as TokenValidationResult;
             var clientSession = tokenResult?.ClientSessionId ?? "none";
 
+            // scriptStarting fires here, before GetSession, so the audit captures
+            // the script-arrived event without waiting on runspace warmup.
+            // GetSession can take seconds on a cold runspace pool (snap-in load,
+            // InitialSessionState build, alias-setup); deferring this audit until
+            // after that left the operator looking at request+auth lines with no
+            // follow-up during the warmup window. The URL sessionId is the same
+            // value that ends up in session.ID for the standard Invoke-RemoteScript
+            // -Session path; for the rare empty-sessionId case the audit shows
+            // "<auto>" and the rest of the request continues to use a server-
+            // generated GUID internally.
+            var auditSessionId = string.IsNullOrEmpty(sessionId) ? "<auto>" : sessionId;
+            var activePolicy = GetActivePolicy();
+            if (activePolicy.AuditLevel >= AuditLevel.Standard)
+            {
+                PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} sessionId={2} scriptHash={3} clientSession={4} rid={5}",
+                    user, ip, auditSessionId, scriptHash.Value, clientSession, GetRequestId());
+            }
+            else
+            {
+                // Diagnostic for "no script-execute audit lines despite policy=Standard"
+                // confusion. Lands in the regular log (log.*.txt) so it does not pollute
+                // the audit stream that operators grep for security events. Tells the
+                // operator exactly which policy resolved and what AuditLevel suppressed
+                // the audit chain.
+                PowerShellLog.Info($"[Remoting] action=auditSuppressed reason=auditLevelBelowStandard policy={activePolicy.Name} auditLevel={activePolicy.AuditLevel} sessionId={auditSessionId} rid={GetRequestId()}");
+            }
+
+            var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
+
             // Session ownership: first caller claims the session; subsequent
             // calls with a different identity are rejected. Prevents a second
             // authenticated principal (e.g. a different Remoting Client) from
-            // attaching to a session id they did not create.
+            // attaching to a session id they did not create. Emits its own
+            // sessionOwnershipMismatch audit when rejecting, so the gap
+            // between scriptStarting and (no scriptCompleted) is explained.
             if (!TryEnforceSessionOwnership(context, session, ip))
             {
                 return;
-            }
-
-            if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
-            {
-                PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} session={2} scriptHash={3} clientSession={4} rid={5}",
-                    user, ip, session.ID, scriptHash.Value, clientSession, GetRequestId());
             }
 
             // Language mode defaults to FullLanguage; policy may restrict it below
@@ -1948,8 +2064,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (!client.HasPolicy)
                 {
                     PowerShellLog.Audit(
-                        "[Remoting] action=clientDenied reason=noPolicyAssigned remotingClient={0} user={1} ip={2} rid={3}",
-                        client.Name, user, ip, GetRequestId());
+                        "[Remoting] action=clientDenied reason=noPolicyAssigned remotingClient={0} remotingClientKid={1} user={2} ip={3} rid={4}",
+                        FormatRemotingClientName(client), FormatRemotingClientKid(client), user, ip, GetRequestId());
                     SetErrorResponse(context, 403, "The request is not authorized. A remoting policy is required.");
                     return;
                 }
@@ -2236,7 +2352,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} session={2} scriptHash={3} hasErrors={4} clientSession={5} rid={6}",
+                    PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} sessionId={2} scriptHash={3} hasErrors={4} clientSession={5} rid={6}",
                         user, ip, session.ID, scriptHash.Value, session.Output.HasErrors, clientSession, GetRequestId());
                 }
 
@@ -2250,7 +2366,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} session={2} scriptHash={3} error={4} clientSession={5} rid={6}",
+                    PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} sessionId={2} scriptHash={3} error={4} clientSession={5} rid={6}",
                         user, ip, session.ID, scriptHash.Value, ex.GetType().Name, clientSession, GetRequestId());
                 }
                 PowerShellLog.Error("[Remoting] action=scriptFailed error=scriptExecution", ex);

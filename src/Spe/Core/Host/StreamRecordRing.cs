@@ -32,9 +32,21 @@ namespace Spe.Core.Host
         private long _truncatedCount;
         private int  _approxBytes;
 
+        // Optional notification fired after a record successfully enqueues
+        // (rate-dropped records do not invoke). ScriptSession attaches its
+        // SignalUpdate so each enqueue wakes any parked wait-endpoint waiter.
+        private readonly Action _onRecordAdded;
+
         // Token bucket for rate limiting.
         private double _tokens = RateBurst;
         private DateTime _lastRefillUtc = DateTime.UtcNow;
+
+        public StreamRecordRing() : this(null) { }
+
+        public StreamRecordRing(Action onRecordAdded)
+        {
+            _onRecordAdded = onRecordAdded;
+        }
 
         public void AddVerbose(string message)     => Add(StreamKinds.Verbose,     message);
         public void AddInformation(string message) => Add(StreamKinds.Information, message);
@@ -79,29 +91,38 @@ namespace Spe.Core.Host
 
         private void Add(string stream, object payload, bool preTruncated = false)
         {
+            bool enqueued = false;
             lock (_gate)
             {
                 if (!RefillAndConsume())
                 {
                     _droppedRate++;
-                    return;
                 }
-
-                bool truncatedHere;
-                payload = MaybeTruncate(payload, out truncatedHere);
-                if (preTruncated || truncatedHere) _truncatedCount++;
-                var bytes = EstimateBytes(payload);
-
-                while (_approxBytes + bytes > TotalByteCap && _records.Count > 0)
+                else
                 {
-                    var oldest = _records.Dequeue();
-                    _approxBytes = Math.Max(0, _approxBytes - EstimateBytes(oldest.Payload));
-                    _droppedSize++;
-                }
+                    bool truncatedHere;
+                    payload = MaybeTruncate(payload, out truncatedHere);
+                    if (preTruncated || truncatedHere) _truncatedCount++;
+                    var bytes = EstimateBytes(payload);
 
-                _records.Enqueue(new StreamRecord(stream, _nextSequence++, payload));
-                _approxBytes += bytes;
+                    while (_approxBytes + bytes > TotalByteCap && _records.Count > 0)
+                    {
+                        var oldest = _records.Dequeue();
+                        _approxBytes = Math.Max(0, _approxBytes - EstimateBytes(oldest.Payload));
+                        _droppedSize++;
+                    }
+
+                    _records.Enqueue(new StreamRecord(stream, _nextSequence++, payload));
+                    _approxBytes += bytes;
+                    enqueued = true;
+                }
             }
+
+            // Invoke outside the gate so a slow / TCS-handling callback does
+            // not extend the producer's critical section. The TCS continuation
+            // itself queues to the thread pool (RunContinuationsAsynchronously
+            // on the consumer side), so this is fast in steady state.
+            if (enqueued) _onRecordAdded?.Invoke();
         }
 
         /// <summary>

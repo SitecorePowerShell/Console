@@ -8,6 +8,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -68,7 +69,7 @@ namespace Spe.Core.Host
         private bool isRunspaceOpenedOrBroken;
         private System.Management.Automation.PowerShell powerShell;
         private ScriptingHostPrivateData privateData;
-        private readonly StreamRecordRing streamRing = new StreamRecordRing();
+        private readonly StreamRecordRing streamRing;
 
         // Captured runspace streams (Verbose/Information/Progress/Warning) live here
         // for the lifetime of the session so the wait endpoint can drain them
@@ -84,7 +85,60 @@ namespace Spe.Core.Host
         // Sitecore Job thread and read from the wait handler's async loop.
         private volatile bool _hasRunStarted;
         internal bool HasRunStarted => _hasRunStarted;
+        // No SignalUpdate here on purpose. MarkRunStarted is called immediately
+        // before the pipeline Invoke, while the runspace is still Available;
+        // signalling here would wake the wait endpoint inside the gap where
+        // (HasRunStarted && state != Busy) is briefly true and cause it to
+        // return isDone=true before the script has actually run. The next
+        // AvailabilityChanged event (Available -> Busy) fires SignalUpdate and
+        // moves the predicate to the correct state.
         internal void MarkRunStarted() => _hasRunStarted = true;
+
+        // Per-session "something changed" signal consumed by the wait endpoint.
+        // Producers (stream-record enqueue, runspace-state change, disposal,
+        // MarkRunStarted) call SignalUpdate; the wait loop awaits it via
+        // WaitForUpdateAsync and re-probes state on each wake.
+        //
+        // RunContinuationsAsynchronously is load-bearing: without it,
+        // SignalUpdate from the runspace pipeline thread would run the wait
+        // endpoint's response-write continuation inline on that thread,
+        // blocking the next stream record. Do not remove.
+        private TaskCompletionSource<bool> _updateSignal = NewSignalTcs();
+
+        private static TaskCompletionSource<bool> NewSignalTcs() =>
+            new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        internal void SignalUpdate()
+        {
+            Volatile.Read(ref _updateSignal).TrySetResult(true);
+        }
+
+        internal async Task WaitForUpdateAsync(TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            var current = Volatile.Read(ref _updateSignal);
+            if (current.Task.IsCompleted)
+            {
+                // A producer signalled before the caller entered this wait.
+                // Consume by swapping in a fresh TCS and return immediately
+                // so the caller re-probes state.
+                Interlocked.CompareExchange(ref _updateSignal, NewSignalTcs(), current);
+                return;
+            }
+
+            using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+            {
+                var winner = await Task.WhenAny(current.Task, Task.Delay(timeout, cts.Token)).ConfigureAwait(false);
+                cts.Cancel();
+                if (winner == current.Task)
+                {
+                    // Consume the signal so subsequent producers fire on a
+                    // fresh TCS. Two concurrent waiters racing here both call
+                    // CompareExchange; only one swap takes effect, the other
+                    // is a no-op - both proceed to re-probe.
+                    Interlocked.CompareExchange(ref _updateSignal, NewSignalTcs(), current);
+                }
+            }
+        }
 
         internal string JobScript { get; set; }
         internal IJobOptions JobOptions { get; set; }
@@ -118,13 +172,23 @@ namespace Spe.Core.Host
 
         internal ScriptSession(string applianceType, bool personalizedSettings)
         {
-            // Create and open a PowerShell runspace.  A runspace is a container 
+            // Create and open a PowerShell runspace.  A runspace is a container
             // that holds PowerShell pipelines, and provides access to the state
             // of the Runspace session (aka SessionState.)
+            //
+            // streamRing is wired with SignalUpdate so every successful record
+            // enqueue wakes any parked wait-endpoint waiter immediately.
+            streamRing = new StreamRecordRing(SignalUpdate);
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
             host = new ScriptingHost(Settings, SpeInitialSessionState);
+            // StateChanged covers Opened/Closed/Broken lifecycle transitions;
+            // AvailabilityChanged covers Busy <-> Available <-> AvailableForNestedCommand.
+            // Both feed SignalUpdate so the wait endpoint wakes on whichever
+            // edge moves the "isDone" predicate (HasRunStarted && state != Busy),
+            // including for scripts that produce no stream output.
             host.Runspace.StateChanged += OnRunspaceStateEvent;
+            host.Runspace.AvailabilityChanged += OnRunspaceAvailabilityEvent;
             powerShell = NewPowerShell();
 
             host.Runspace.Open();
@@ -153,8 +217,20 @@ namespace Spe.Core.Host
             Output.ClearSilent();
         }
 
+        private void OnRunspaceAvailabilityEvent(object sender, RunspaceAvailabilityEventArgs e)
+        {
+            // Wake the wait endpoint on every Busy <-> Available transition so
+            // a script's completion is reflected in the next wait response
+            // within one round-trip. Cheap and idempotent.
+            SignalUpdate();
+        }
+
         private void OnRunspaceStateEvent(object sender, RunspaceStateEventArgs e)
         {
+            // Lifecycle edges (Opened / Closed / Broken) also wake the wait
+            // endpoint so a runspace teardown does not leave a waiter parked.
+            SignalUpdate();
+
             //! Carefully process events other than 'Opened'.
             if (e.RunspaceStateInfo.State != RunspaceState.Opened)
             {
@@ -1203,6 +1279,11 @@ namespace Spe.Core.Host
         {
             if (!disposed)
             {
+                // Wake any wait-endpoint waiter so it re-probes, sees the
+                // session removed from the cache, and exits cleanly instead
+                // of holding the request open until the deadline.
+                SignalUpdate();
+
                 if (disposing)
                 {
                     // Dispose managed resources.
