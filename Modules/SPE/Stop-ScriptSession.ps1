@@ -84,6 +84,7 @@ function Stop-ScriptSession {
         $Password             = $sd.Password
         $SharedSecret         = $sd.SharedSecret
         $AccessKeyId          = $sd.AccessKeyId
+        $AccessToken          = $sd.AccessToken
         $SessionId            = $sd.SessionId
         $Credential           = $sd.Credential
         $UseDefaultCredentials = $sd.UseDefaultCredentials
@@ -92,6 +93,7 @@ function Stop-ScriptSession {
         $clientCache          = $sd.HttpClients
     } else {
         $SharedSecret = $null
+        $AccessToken = ""
         $UseDefaultCredentials = $false
         $Algorithm = "HS256"
         $clientCache = @{}
@@ -104,7 +106,7 @@ function Stop-ScriptSession {
 
         Write-Verbose -Message "Sending cleanup request to $url"
         $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
-            -AccessKeyId $AccessKeyId -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+            -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
             -Uri $uri -Cache $clientCache -Algorithm $Algorithm
 
         try {

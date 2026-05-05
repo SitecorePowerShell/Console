@@ -66,7 +66,7 @@ function Invoke-RemoteWait {
     }
 
     $client = New-SpeHttpClient -Username $sd.Username -Password $sd.Password `
-        -SharedSecret $sd.SharedSecret -AccessKeyId $sd.AccessKeyId `
+        -SharedSecret $sd.SharedSecret -AccessKeyId $sd.AccessKeyId -AccessToken $sd.AccessToken `
         -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials `
         -Uri $connectionUri -Cache $clientCache -Algorithm $sd.Algorithm
 
