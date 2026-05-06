@@ -7,6 +7,7 @@ using System.Xml;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.IO;
+using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 
 namespace Spe.Core.Settings.Authorization
@@ -61,6 +62,16 @@ namespace Spe.Core.Settings.Authorization
         // Authorization header.
         public static bool AllowQueryStringCredentials { get; private set; }
 
+        // Hard cap on the decoded size of inline-script POST bodies. ASP.NET's
+        // maxRequestLength bounds the compressed POST only; without a cap on
+        // the decoded side a small gzipped payload can expand to GBs and
+        // OOM the appdomain before the script runs. 16MB is well above any
+        // real script (largest committed module is under 1MB) but small
+        // enough that an authenticated bomb fails fast. Scope is the
+        // apiVersion=script POST body; sibling caps (media, file, output)
+        // would be separate settings so each can carry its own ceiling.
+        public static int MaxScriptBodySize { get; private set; }
+
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
@@ -99,8 +110,8 @@ namespace Spe.Core.Settings.Authorization
 
                         if (allowCredentials && allowAnyOrigin)
                         {
-                            Sitecore.Diagnostics.Log.Warn(
-                                "[SPE] CORS misconfiguration: allowCredentials cannot be used with wildcard allowedOrigins. Credentials will not be allowed.", typeof(WebServiceSettings));
+                            PowerShellLog.Warn(
+                                "CORS misconfiguration: allowCredentials cannot be used with wildcard allowedOrigins. Credentials will not be allowed.");
                             allowCredentials = false;
                         }
 
@@ -136,6 +147,18 @@ namespace Spe.Core.Settings.Authorization
 
             AllowQueryStringCredentials = Sitecore.Configuration.Settings.GetBoolSetting("Spe.Remoting.AllowQueryStringCredentials", true);
 
+            const int maxBodyDefault = 16 * 1024 * 1024;
+            var maxBodyStr = Sitecore.Configuration.Settings.GetSetting("Spe.Remoting.MaxScriptBodySize", "16MB");
+            var maxBodyLong = StringUtil.ParseSizeString(maxBodyStr);
+            if (maxBodyLong <= 0)
+            {
+                PowerShellLog.Warn(
+                    $"Spe.Remoting.MaxScriptBodySize value '{maxBodyStr}' is invalid; falling back to 16MB. " +
+                    "Set a positive size string (e.g. '16MB') to silence this warning.");
+                maxBodyLong = maxBodyDefault;
+            }
+            MaxScriptBodySize = (int)(maxBodyLong < int.MaxValue ? maxBodyLong : int.MaxValue);
+
             // Operators on direct-IIS (no reverse proxy) should set
             // Spe.Remoting.UseForwardedHeaders=false so spoofed headers cannot bypass
             // requireSecureConnection or pollute audit logs. Warn once if the
@@ -147,11 +170,10 @@ namespace Spe.Core.Settings.Authorization
                 {
                     if (entry.Value.RequireSecureConnection)
                     {
-                        Sitecore.Diagnostics.Log.Warn(
-                            $"[SPE] Spe.Remoting.UseForwardedHeaders is at its default (true) and service '{entry.Key}' has requireSecureConnection=true. " +
+                        PowerShellLog.Warn(
+                            $"Spe.Remoting.UseForwardedHeaders is at its default (true) and service '{entry.Key}' has requireSecureConnection=true. " +
                             "If this server has no reverse proxy in front of it, set Spe.Remoting.UseForwardedHeaders=false to reject spoofed X-Forwarded-Proto and X-Forwarded-For headers. " +
-                            "The default flips to false in 10.0.",
-                            typeof(WebServiceSettings));
+                            "The default flips to false in 10.0.");
                         break;
                     }
                 }
@@ -219,9 +241,8 @@ namespace Spe.Core.Settings.Authorization
                 }
                 catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
                 {
-                    Sitecore.Diagnostics.Log.Warn(
-                        $"[SPE] Spe.Remoting.AllowedFileRoots ignored invalid entry '{trimmed}': {ex.Message}",
-                        typeof(WebServiceSettings));
+                    PowerShellLog.Warn(
+                        $"Spe.Remoting.AllowedFileRoots ignored invalid entry '{trimmed}': {ex.Message}");
                     continue;
                 }
 

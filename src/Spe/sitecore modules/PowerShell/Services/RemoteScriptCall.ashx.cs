@@ -1893,32 +1893,87 @@ namespace Spe.sitecore_modules.PowerShell.Services
             WebUtil.TransmitStream(mediaStream, context.Response, Settings.Media.StreamBufferSize);
         }
 
+        // Thrown when the decoded request body would exceed
+        // WebServiceSettings.MaxScriptBodySize. ASP.NET's
+        // maxRequestLength bounds the compressed POST only; this is the
+        // bound on the decoded side. Translated to 413 at the call site.
+        private sealed class RequestBodyTooLargeException : Exception
+        {
+            public RequestBodyTooLargeException(int cap)
+                : base($"Request body exceeds the configured cap of {cap} bytes.") { }
+        }
+
+        // Read-only stream wrapper that throws once cumulative bytes pulled
+        // through it exceed the cap. Wrapping GZipStream with this lets the
+        // downstream StreamReader.ReadToEnd fail fast on a decompression
+        // bomb instead of allocating until the appdomain OOMs.
+        private sealed class LimitedReadStream : Stream
+        {
+            private readonly Stream _inner;
+            private readonly int _cap;
+            private long _read;
+
+            public LimitedReadStream(Stream inner, int cap)
+            {
+                _inner = inner;
+                _cap = cap;
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                var n = _inner.Read(buffer, offset, count);
+                if (n <= 0) return n;
+                _read += n;
+                if (_read > _cap)
+                {
+                    throw new RequestBodyTooLargeException(_cap);
+                }
+                return n;
+            }
+
+            public override bool CanRead => true;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotSupportedException();
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+            public override void Flush() { }
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        }
+
         private static string ReadRequestBody(HttpRequest request)
         {
-            // Pre-size to ContentLength (when known) so CopyTo does not re-grow
-            // the internal buffer; then use GetBuffer()+Length to skip the
-            // extra full-body copy that ToArray() performs. For gzip bodies
-            // StreamReader pulls decoded chars straight off GZipStream, so no
-            // intermediate byte[] is materialised either.
-            var capacity = request.ContentLength > 0 ? request.ContentLength : 0;
-            using (var ms = capacity > 0 ? new MemoryStream(capacity) : new MemoryStream())
+            // Both branches stream through LimitedReadStream so the cap
+            // applies before allocation: the gzip path bounds the decoded
+            // bytes (compressed bytes are bounded by ASP.NET maxRequestLength),
+            // and the plaintext path bounds the read of request.InputStream
+            // itself, fail-fasting before StreamReader materialises the body
+            // as a string. leaveOpen on GZipStream keeps request.InputStream
+            // alive for ASP.NET to dispose.
+            var cap = WebServiceSettings.MaxScriptBodySize;
+            var encoding = request.Headers["Content-Encoding"];
+            var isGzip = !string.IsNullOrEmpty(encoding) &&
+                         encoding.IndexOf("gzip", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            if (isGzip)
             {
-                request.InputStream.CopyTo(ms);
-                var length = (int)ms.Length;
-                var buffer = ms.GetBuffer();
-
-                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false;
-                if (shouldDecompress)
+                using (var gz = new GZipStream(request.InputStream, CompressionMode.Decompress, leaveOpen: true))
+                using (var capped = new LimitedReadStream(gz, cap))
+                using (var reader = new StreamReader(capped, Encoding.UTF8))
                 {
-                    using (var inputMs = new MemoryStream(buffer, 0, length, writable: false))
-                    using (var gz = new GZipStream(inputMs, CompressionMode.Decompress))
-                    using (var reader = new StreamReader(gz, Encoding.UTF8))
-                    {
-                        return reader.ReadToEnd();
-                    }
+                    return reader.ReadToEnd();
                 }
+            }
 
-                return Encoding.UTF8.GetString(buffer, 0, length);
+            using (var capped = new LimitedReadStream(request.InputStream, cap))
+            using (var reader = new StreamReader(capped, Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
             }
         }
 
@@ -1991,7 +2046,37 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             string script = null;
             string cliXmlArgs = null;
-            var requestBody = ReadRequestBody(request);
+            string requestBody;
+            try
+            {
+                requestBody = ReadRequestBody(request);
+            }
+            catch (RequestBodyTooLargeException)
+            {
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptRejected reason=bodyTooLarge cap={0} sessionId={1} ip={2} rid={3}",
+                        WebServiceSettings.MaxScriptBodySize, sessionId ?? "<none>", GetIp(context.Request), GetRequestId(context));
+                }
+                var sizeMsg = WebServiceSettings.DetailedErrors
+                    ? $"Request body exceeds the configured cap of {WebServiceSettings.MaxScriptBodySize} bytes."
+                    : "The request body could not be processed.";
+                SetErrorResponse(context, 413, sizeMsg);
+                return;
+            }
+            catch (InvalidDataException)
+            {
+                if (GetActivePolicy().AuditLevel >= AuditLevel.Standard)
+                {
+                    PowerShellLog.Audit("[Remoting] action=scriptRejected reason=malformedBody sessionId={0} ip={1} rid={2}",
+                        sessionId ?? "<none>", GetIp(context.Request), GetRequestId(context));
+                }
+                var formatMsg = WebServiceSettings.DetailedErrors
+                    ? "The request body could not be decompressed."
+                    : "The request body could not be processed.";
+                SetErrorResponse(context, 400, formatMsg);
+                return;
+            }
             var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
             if (splitBody.Length > 0)
             {
