@@ -146,7 +146,8 @@ Write-Host "`n  [Audit Shape (correlation by sessionId)]" -ForegroundColor White
 # elsewhere in Run-RemotingTests.ps1 for container interaction. Read the
 # whole file because line 4 onwards may be elsewhere on disk depending on
 # rotation; filter by sessionId to scope to this test's calls.
-$auditRaw = docker exec spe-cm-1 powershell -NoProfile -Command "Get-ChildItem C:/inetpub/wwwroot/App_Data/logs/SPE.log.*.txt | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | ForEach-Object { Get-Content `$_.FullName }"
+. "$PSScriptRoot\_helpers\Audit.ps1"
+$auditRaw = Get-SpeAuditTail
 $mySessionLines = @($auditRaw | Where-Object { $_ -match "sessionId=$callerSessionId" })
 
 Write-Host ("  Audit lines correlated by sessionId={0}: {1}" -f $callerSessionId, $mySessionLines.Count)

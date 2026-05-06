@@ -197,14 +197,20 @@ Write-Host "`n  [Source guards: ToJson contract + RemoteScriptCall sanitization 
 $repoRoot           = "$PSScriptRoot\..\.."
 $powerShellLogPath  = "$repoRoot\src\Spe\Core\Diagnostics\PowerShellLog.cs"
 $remoteScriptCall   = "$repoRoot\src\Spe\sitecore modules\PowerShell\Services\RemoteScriptCall.ashx.cs"
+# Audit call sites moved out of the .ashx during the per-route processor
+# split; concatenate every .cs under Processors/ so the regression sweep
+# still sees them.
+$processorsDir      = "$repoRoot\src\Spe\sitecore modules\PowerShell\Services\Processors"
 
-if (-not (Test-Path $powerShellLogPath) -or -not (Test-Path $remoteScriptCall)) {
+if (-not (Test-Path $powerShellLogPath) -or -not (Test-Path $remoteScriptCall) -or -not (Test-Path $processorsDir)) {
     Skip-Test "Source-regression guards" "Source files not found - run from a checked-out tree"
     return
 }
 
 $logSrc      = Get-Content -Raw $powerShellLogPath
-$callsiteSrc = Get-Content -Raw $remoteScriptCall
+$callsiteSrc = (Get-Content -Raw $remoteScriptCall) +
+               ((Get-ChildItem -Path $processorsDir -Filter *.cs -File |
+                 ForEach-Object { Get-Content -Raw $_.FullName }) -join "`n")
 
 # Duplicate-key hardening: ToJson must check for an existing key before
 # assigning, otherwise injected key=value pairs overwrite legitimate ones.
@@ -245,13 +251,22 @@ Assert-True ($callsiteSrc -match 'identity = new AccountIdentity\(authUserName\)
 Assert-True ($callsiteSrc -match 'StatusDescription \+= \$" \{safeMessage\}"') `
     "REGRESSION GUARD: StatusDescription receives sanitized message (closes response-splitting via ex.Message)"
 
-Assert-Sanitized "deprecatedAuth"          "username from query string"
-Assert-Sanitized "clientSignatureFailed"   "kid from JWT header"
-Assert-Sanitized "clientNotFound kid"      "kid from JWT header"
-Assert-Sanitized "bearerAuthSuccess"       "username after impersonation switch"
-Assert-Sanitized "bearerAuthFailed"        "username on failed bearer auth"
-Assert-Sanitized "authRejected service"    "username on rejected auth"
-Assert-Sanitized "authRejected error"      "exception message on auth failure"
-Assert-Sanitized "userUnauthorized"        "authUserName on authorization failure"
-Assert-Sanitized "undeterminedFilename"    "media-upload originalPath (zip-entry name)"
-Assert-Sanitized "mediaUploaded"           "media-upload fileName"
+# Output-capture coverage in tests/integration/Remoting.AuditSanitization.Tests.ps1
+# replaces the source-regex guards for the four sites that flow attacker
+# payloads into audit fields at runtime: query-string credentials
+# (deprecatedAuth + credentialRejected share the user= sanitize call),
+# authRejected (both the user= field and the catch block's error= field
+# from AccountIdentity ArgumentException), and mediaUploaded file=.
+#
+# The remaining six sites are not naturally exercisable by an attacker
+# request - either the username is replaced by a server-controlled value
+# before logging, the line emits at Debug/Warn level which the default
+# log4net pipeline filters, or the path requires custom role/SSC fixtures.
+# Source-regex guards stay in place for these so a future refactor that
+# accidentally drops the SanitizeValue call still trips a test.
+Assert-Sanitized "clientSignatureFailed"   "kid from JWT header (Debug-level, filtered by default)"
+Assert-Sanitized "clientNotFound kid"      "kid from JWT header (Debug-level, filtered by default)"
+Assert-Sanitized "bearerAuthSuccess"       "username after impersonation switch (requires real Sitecore user)"
+Assert-Sanitized "bearerAuthFailed"        "username on failed bearer auth (logs 'unknown' on bad-signature path)"
+Assert-Sanitized "userUnauthorized"        "authUserName on authorization failure (requires role fixtures)"
+Assert-Sanitized "undeterminedFilename"    "media-upload originalPath - zip-entry name (Warn-level, filtered by default)"

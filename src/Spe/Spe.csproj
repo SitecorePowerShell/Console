@@ -604,6 +604,26 @@
     <Compile Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx.cs">
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\HttpResponseHelpers.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ContentDispositionHelpers.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\RequestBodyTooLargeException.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\LimitedReadStream.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ApiScript.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ApiScriptCollection.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\OriginAliasFolders.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\FilePathResolver.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\RemotingHttpContextKeys.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\RemotingRequestContext.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\RemotingAuditFormat.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ErrorResponseWriter.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\BuiltinActionProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\HandleProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\FileProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\MediaProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\WaitProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\AuthProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ScriptProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\SessionOwnershipGuard.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates.cs" />

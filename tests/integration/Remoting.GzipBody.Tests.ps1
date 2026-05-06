@@ -81,9 +81,12 @@ function Send-RawBodyRequest {
     }
 }
 
-function Get-RecentAuditLines {
-    docker exec spe-cm-1 powershell -NoProfile -Command "Get-ChildItem C:/inetpub/wwwroot/App_Data/logs/SPE.log.*.txt | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | ForEach-Object { Get-Content `$_.FullName }"
-}
+. "$PSScriptRoot\_helpers\Audit.ps1"
+
+# Shared with Remoting.WaitEventWake and Remoting.AuditSanitization:
+# Get-SpeAuditTail returns the most recent SPE.log.*.txt content. Local
+# alias keeps the per-test grep blocks below readable.
+function Get-RecentAuditLines { Get-SpeAuditTail }
 
 # ============================================================================
 #  Test Group 1: Decompression bomb cap

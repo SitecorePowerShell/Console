@@ -89,8 +89,8 @@ $hc.Dispose()
 #  Regression for the ownership false-positive after async continuation.
 #  Pre-fix: the wait endpoint resumes after `await Task.Delay(...).ConfigureAwait(false)`
 #  on a thread-pool continuation where HttpContext.Current is null.
-#  GetRequestOwnershipIdentity used to read Items["SpeRemotingClient"] off
-#  HttpContext.Current (not the parameter), so the computed identity reverted
+#  GetRequestOwnershipIdentity used to read the RemotingHttpContextKeys.RemotingClient
+#  entry off HttpContext.Current (not the parameter), so the computed identity reverted
 #  to "user:sitecore\admin" while the recorded owner was
 #  "remotingClient:Test-StandardAuditKey" - 403, X-SPE-Restriction:session-not-owned.
 #

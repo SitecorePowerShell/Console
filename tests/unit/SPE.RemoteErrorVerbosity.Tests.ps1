@@ -15,17 +15,24 @@
 
 Write-Host "`n  [Spe.Remoting.DetailedErrors source guards]" -ForegroundColor White
 
-$repoRoot = Resolve-Path "$PSScriptRoot\..\.."
-$handler  = Join-Path $repoRoot "src\Spe\sitecore modules\PowerShell\Services\RemoteScriptCall.ashx.cs"
-$settings = Join-Path $repoRoot "src\Spe\Core\Settings\Authorization\WebServiceSettings.cs"
-$config   = Join-Path $repoRoot "src\Spe\App_Config\Include\Spe\Spe.config"
+$repoRoot      = Resolve-Path "$PSScriptRoot\..\.."
+$handler       = Join-Path $repoRoot "src\Spe\sitecore modules\PowerShell\Services\RemoteScriptCall.ashx.cs"
+$settings      = Join-Path $repoRoot "src\Spe\Core\Settings\Authorization\WebServiceSettings.cs"
+$config        = Join-Path $repoRoot "src\Spe\App_Config\Include\Spe\Spe.config"
+# DetailedErrors gates and the script-block constants moved out of the
+# .ashx during the per-route processor split. Treat the .ashx + every
+# .cs under Processors/ as a single logical "handler source" for these
+# regex sweeps.
+$processorsDir = Join-Path $repoRoot "src\Spe\sitecore modules\PowerShell\Services\Processors"
 
-if (-not (Test-Path $handler) -or -not (Test-Path $settings) -or -not (Test-Path $config)) {
+if (-not (Test-Path $handler) -or -not (Test-Path $settings) -or -not (Test-Path $config) -or -not (Test-Path $processorsDir)) {
     Skip-Test "All DetailedErrors source guards" "Source files not found"
     return
 }
 
-$handlerSrc  = Get-Content $handler  -Raw
+$handlerSrc  = (Get-Content $handler -Raw) +
+               ((Get-ChildItem -Path $processorsDir -Filter *.cs -File |
+                 ForEach-Object { Get-Content -Raw $_.FullName }) -join "`n")
 $settingsSrc = Get-Content $settings -Raw
 $configSrc   = Get-Content $config   -Raw
 
@@ -67,9 +74,12 @@ if ($sanitizedMatch.Success) {
     Assert-True ($body -match 'fullyQualifiedErrorId|errorId')       "Sanitized script emits errorId / FullyQualifiedErrorId"
 }
 
-# Line 1922 site picks the variant by flag (and falls back to FlatErrorScript
-# for non-structured callers - that branch is unchanged).
-Assert-True ($handlerSrc -match 'WebServiceSettings\.DetailedErrors\s*\?\s*StructuredErrorScript\s*:\s*SanitizedStructuredErrorScript') `
+# ProcessScript site picks the variant by flag (and falls back to FlatErrorScript
+# for non-structured callers - that branch is unchanged). The script blocks live
+# as private const on the consuming processor, so the ternary references each
+# constant unqualified; the optional class qualifier in the regex covers earlier
+# layouts where the constants sat on a separate helper class.
+Assert-True ($handlerSrc -match 'WebServiceSettings\.DetailedErrors\s*\?\s*(?:[\w.]+\.)?StructuredErrorScript\s*:\s*(?:[\w.]+\.)?SanitizedStructuredErrorScript') `
     "ProcessScript picks StructuredErrorScript vs SanitizedStructuredErrorScript by WebServiceSettings.DetailedErrors"
 
 # SetErrorResponse: structured branch consults the flag before exposing
