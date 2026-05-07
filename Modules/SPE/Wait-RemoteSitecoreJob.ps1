@@ -90,8 +90,11 @@
 
     $useLongPoll = $true
     $completed = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    $pollCount = 0
+    $totalSw = [System.Diagnostics.Stopwatch]::StartNew()
 
     while($completed.Count -ne $Ids.Count) {
+        $pollCount++
         $pollFailed = $false
         foreach ($id in $Ids) {
             if ($completed.Contains($id)) { continue }
@@ -141,5 +144,10 @@
             # Legacy path paces itself client-side; long-poll held server-side already.
             Start-Sleep -Seconds $Delay
         }
+    }
+
+    if ($completed.Count -eq $Ids.Count) {
+        $totalSw.Stop()
+        Write-Verbose ("Finished waiting on {0} job{1} after {2} poll{3} ({4:N1}s total)." -f $Ids.Count, $(if ($Ids.Count -eq 1) { "" } else { "s" }), $pollCount, $(if ($pollCount -eq 1) { "" } else { "s" }), $totalSw.Elapsed.TotalSeconds)
     }
 }

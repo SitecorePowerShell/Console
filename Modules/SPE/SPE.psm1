@@ -320,6 +320,77 @@ function Invoke-SpeHttpRequest {
     return $ClientInfo.Client.SendAsync($req, $CancellationToken)
 }
 
+# ----------------------------------------------------------------------
+# Shared -Verbose helpers used by every HttpClient-based remoting cmdlet
+# (Invoke-RemoteScript, Test-RemoteConnection, Stop-ScriptSession,
+# Invoke-RemoteWait, Send/Receive-RemoteItem, Wait-Remote*). Live here
+# rather than inside one cmdlet file so the verbose surface stays
+# consistent across the suite. None are exported.
+# ----------------------------------------------------------------------
+
+# Pulls an HTTP header value (first match) or returns $null. Works against
+# both HttpResponseHeaders and HttpContentHeaders since both expose the
+# same Contains / GetValues shape.
+function Get-HttpHeaderValue {
+    param($Headers, [string]$Name)
+    if (-not $Headers -or -not $Headers.Contains($Name)) { return $null }
+    return ($Headers.GetValues($Name) | Select-Object -First 1)
+}
+
+# Formats the X-Spe-Request-Id correlation header as a " (rid=xxxxx)"
+# suffix, or empty string when absent. Lets every error-message builder
+# tag its message with the audit-log rid without repeating the lookup.
+function Format-RidSuffix {
+    param($Headers)
+    $rid = Get-HttpHeaderValue $Headers "X-Spe-Request-Id"
+    if ($rid) { return " (rid=$rid)" }
+    return ""
+}
+
+# Names the auth method this call uses, for -Verbose output only. Mirrors
+# the precedence used inside New-SpeHttpClient. Identity is included; the
+# secret itself is not.
+function Get-AuthDescription {
+    param([string]$Username, $Password, [string]$SharedSecret, [string]$AccessKeyId, [string]$AccessToken, $Credential, [bool]$UseDefaultCredentials)
+    if ($AccessToken)                    { return "OAuth(Bearer)" }
+    if ($SharedSecret -and $AccessKeyId) { return "SharedSecret($AccessKeyId)" }
+    if ($SharedSecret)                   { return "SharedSecret(HMAC,$Username)" }
+    if ($UseDefaultCredentials)          { return "Windows(default)" }
+    if ($Credential)                     { return "Credential($($Credential.UserName))" }
+    if ($Username)                       { return "Basic($Username)" }
+    return "Anonymous"
+}
+
+# Format the request-body line so callers can verify the gzip threshold
+# fired the way they expect and see the wire bytes leaving the cmdlet.
+function Format-BodyShape {
+    param([System.Net.Http.ByteArrayContent]$Content, [int]$RawBytes)
+    $wireBytes = $Content.Headers.ContentLength
+    if ($null -eq $wireBytes -or $wireBytes -le 0) {
+        $wireBytes = $Content.ReadAsByteArrayAsync().Result.Length
+    }
+    $isGzip = $Content.Headers.ContentEncoding -and
+              $Content.Headers.ContentEncoding.Count -gt 0 -and
+              ($Content.Headers.ContentEncoding | Select-Object -First 1) -eq 'gzip'
+    if ($isGzip) { return "Body: $RawBytes bytes raw -> $wireBytes bytes gzip" }
+    return "Body: $RawBytes bytes plaintext (gzip skipped)"
+}
+
+# Format the response line: status, wall-clock time, server-side time
+# (X-Spe-Duration-Ms), audit-log rid. Wall - server is roughly the
+# network + queue overhead the call paid on top of script execution.
+function Format-ResponseLine {
+    param([System.Net.Http.HttpResponseMessage]$Response, [double]$WallMs)
+    $status   = [int]$Response.StatusCode
+    $reason   = $Response.ReasonPhrase
+    $duration = Get-HttpHeaderValue $Response.Headers "X-Spe-Duration-Ms"
+    $rid      = Get-HttpHeaderValue $Response.Headers "X-Spe-Request-Id"
+    $line = "Response: $status $reason in {0:N0}ms" -f $WallMs
+    if ($duration) { $line += " server={0}ms" -f $duration }
+    if ($rid)      { $line += " rid=$rid" }
+    return $line
+}
+
 # Shared verbose logger for the WebException catch block used by Send/Receive-RemoteItem.
 # Note: HttpClient throws HttpRequestException, not WebException, so this is only reached
 # by the legacy HttpWebRequest path. Preserved as-is for back-compat with downstream code

@@ -73,6 +73,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
         // a new .ashx for the async route.
         public override async Task ProcessRequestAsync(HttpContext context)
         {
+            // Stamp every response with the correlation id used by the audit
+            // log. Callers can quote it back when reporting an issue, and the
+            // header lands here (before any processor runs) because once a
+            // response body starts writing the headers are frozen.
+            context.Response.Headers["X-Spe-Request-Id"] = RemotingRequestContext.GetRequestId(context);
+
             var apiVersion = context.Request.Params.Get(ParamApiVersion);
             var serviceMappingKey = context.Request.HttpMethod + "/" + apiVersion;
             if (string.Equals(serviceMappingKey, "GET/wait", StringComparison.OrdinalIgnoreCase))

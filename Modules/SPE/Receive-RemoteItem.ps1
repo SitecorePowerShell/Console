@@ -230,25 +230,35 @@ function Receive-RemoteItem {
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
-            Write-Verbose -Message "Preparing to download remote item from the url $($url)"
-            Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
             $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Algorithm $Algorithm
+
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "GET $url auth=$authDesc"
 
             $errorResponse = $null
             $ex = $null
             [System.Net.Http.HttpResponseMessage]$responseMessage = $null
             $response = $null
+            $wallSw = $null
 
             try {
+                $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
                 $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
                     -Method ([System.Net.Http.HttpMethod]::Get) -Url $url).Result
+                $wallSw.Stop()
                 [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result
             } catch [System.Net.WebException] {
+                if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
                 [System.Net.WebException]$ex = $_.Exception
                 [System.Net.HttpWebResponse]$errorResponse = $ex.Response
                 Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex
+            }
+
+            if ($responseMessage) {
+                Write-Verbose -Message (Format-ResponseLine -Response $responseMessage -WallMs $wallSw.Elapsed.TotalMilliseconds)
             }
 
             if ($errorResponse) {
@@ -264,13 +274,13 @@ function Receive-RemoteItem {
             }
 
             if (-not $responseMessage.IsSuccessStatusCode) {
-                Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
+                $ridSuffix = Format-RidSuffix $responseMessage.Headers
+                Write-Error ("Download failed. $($responseMessage.ReasonPhrase)" + $ridSuffix)
                 return
             }
 
             $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
-            Write-Verbose -Message "Response content length: $($response.Length) bytes"
-            Write-Verbose -Message "Response content type: $($contentType)"
+            Write-Verbose -Message "Body: $($response.Length) bytes received (Content-Type=$contentType, item=$itemType)"
 
             $output = Resolve-ReceivedFilePath -ResponseMessage $responseMessage `
                 -Destination $Destination -Path $Path -Container $Container.IsPresent -IsMediaItem $isMediaItem

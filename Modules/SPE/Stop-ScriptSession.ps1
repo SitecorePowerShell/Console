@@ -102,17 +102,23 @@ function Stop-ScriptSession {
     foreach ($uri in $ConnectionUri) {
         $url = $uri.AbsoluteUri.TrimEnd("/") + $cleanupUrl
 
-        Write-Verbose -Message "Sending cleanup request to $url"
         $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
             -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
             -Uri $uri -Algorithm $Algorithm
 
+        $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+            -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+        Write-Verbose -Message "POST $url auth=$authDesc"
+
         try {
             $content = New-Object System.Net.Http.StringContent("", [System.Text.Encoding]::UTF8, "text/plain")
+            $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
             $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
                 -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
-            Write-Verbose -Message "Cleanup response: $([int]$response.StatusCode)"
+            $wallSw.Stop()
+            Write-Verbose -Message (Format-ResponseLine -Response $response -WallMs $wallSw.Elapsed.TotalMilliseconds)
         } catch {
+            if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
             Write-Warning "Failed to clean up session $SessionId on $uri : $_"
         }
     }

@@ -51,15 +51,23 @@ function Test-RemoteConnection {
                 -AccessKeyId $sd.AccessKeyId -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials `
                 -Uri $uri -Algorithm $sd.Algorithm
 
+            $authDesc = Get-AuthDescription -Username $sd.Username -Password $sd.Password -SharedSecret $sd.SharedSecret `
+                -AccessKeyId $sd.AccessKeyId -AccessToken $sd.AccessToken -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials
+            Write-Verbose -Message "POST $url auth=$authDesc"
+
             try {
                 $content = New-Object System.Net.Http.StringContent("", [System.Text.Encoding]::UTF8, "text/plain")
+                $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
                 $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
                     -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
+                $wallSw.Stop()
+                Write-Verbose -Message (Format-ResponseLine -Response $response -WallMs $wallSw.Elapsed.TotalMilliseconds)
                 if ($response.IsSuccessStatusCode) {
                     $body = $response.Content.ReadAsStringAsync().Result
                     $result = $body | ConvertFrom-Json
                 }
             } catch {
+                if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
                 Write-Verbose "Connection test failed for $uri : $_"
             }
         }

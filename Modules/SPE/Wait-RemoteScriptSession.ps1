@@ -289,7 +289,10 @@ function Wait-RemoteScriptSession {
     $lastDropped = 0
     $wantsStreams = $OnVerbose -or $OnInformation -or $OnProgress -or $OnWarning -or $OnError -or $cursor
 
+    $pollCount = 0
+    $totalSw = [System.Diagnostics.Stopwatch]::StartNew()
     while ($true) {
+        $pollCount++
         if ($useLongPoll) {
             $iter = Invoke-WaitLongPollIteration -Session $session -Id $id `
                 -MaxRetries $MaxRetries -WaitTimeoutSeconds $WaitTimeoutSeconds -Delay $Delay `
@@ -312,7 +315,8 @@ function Wait-RemoteScriptSession {
         }
 
         if ($iter.IsDone) {
-            Write-Verbose "Finished polling job $($id)."
+            $totalSw.Stop()
+            Write-Verbose ("Finished polling job {0} after {1} poll{2} ({3:N1}s total)." -f $id, $pollCount, $(if ($pollCount -eq 1) { "" } else { "s" }), $totalSw.Elapsed.TotalSeconds)
             Invoke-RemoteScript -Session $session -ScriptBlock $finishScript -Raw:$Raw.IsPresent -MaxRetries $MaxRetries
             break
         }

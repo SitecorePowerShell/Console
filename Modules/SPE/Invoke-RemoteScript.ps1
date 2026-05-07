@@ -37,12 +37,9 @@ function Compress-SpeRequestBody {
     return $content
 }
 
-# Pulls an HTTP header value (first match) or returns $null.
-function Get-HttpHeaderValue {
-    param($Headers, [string]$Name)
-    if (-not $Headers -or -not $Headers.Contains($Name)) { return $null }
-    return ($Headers.GetValues($Name) | Select-Object -First 1)
-}
+# Get-HttpHeaderValue, Format-RidSuffix, Get-AuthDescription,
+# Format-BodyShape, Format-ResponseLine all live in SPE.psm1 so every
+# HttpClient-based cmdlet shares the same verbose / error surface.
 
 # Dispatches a non-2xx HttpResponseMessage to the right error path.
 # Returns a result hashtable:
@@ -66,6 +63,7 @@ function Resolve-HttpErrorResponse {
     if (-not $ErrorResponse) { return $result }
 
     $status = [int]$ErrorResponse.StatusCode
+    $ridSuffix = Format-RidSuffix $ErrorResponse.Headers
 
     # 429, 502, and 503 share the retry-or-report shape. 502 is grouped with
     # 503 because in our typical Traefik / upstream-proxy topology the dominant
@@ -96,17 +94,17 @@ function Resolve-HttpErrorResponse {
             $msg = "Rate limit exceeded."
             if ($rateLimit) { $msg += " Limit: $rateLimit requests per window." }
             if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
-            Write-Error -Message $msg -Category LimitsExceeded `
+            Write-Error -Message ($msg + $ridSuffix) -Category LimitsExceeded `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "TooManyRequests"
         } elseif ($status -eq 502) {
             $msg = "Bad Gateway (502). The upstream server is unavailable, restarting, or returned an invalid response."
             if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
-            Write-Error -Message $msg -Category ConnectionError `
+            Write-Error -Message ($msg + $ridSuffix) -Category ConnectionError `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "BadGateway"
         } else {
             $msg = "Service unavailable (503). The server may be starting up."
             if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
-            Write-Error -Message $msg -Category ConnectionError `
+            Write-Error -Message ($msg + $ridSuffix) -Category ConnectionError `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "ServiceUnavailable"
         }
         $result.EncounteredError = $true
@@ -123,7 +121,7 @@ function Resolve-HttpErrorResponse {
             "invalid"  { "Authentication failed: the credentials were rejected. Check the access key, shared secret, or access token." }
             default    { "Authentication failed. Check that the proper credentials are provided." }
         }
-        Write-Error -Message $msg -Category AuthenticationError `
+        Write-Error -Message ($msg + $ridSuffix) -Category AuthenticationError `
             -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "Unauthorized"
         $result.EncounteredError = $true
         $result.Handled = $true
@@ -137,14 +135,14 @@ function Resolve-HttpErrorResponse {
         $policyName = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-Policy"
 
         if ($restriction -eq "command-blocked") {
-            Write-Error -Message "Script contains a blocked command: $blockedCmd" -Category SecurityError `
+            Write-Error -Message ("Script contains a blocked command: $blockedCmd" + $ridSuffix) -Category SecurityError `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "CommandBlocked"
             $result.EncounteredError = $true
             $result.Handled = $true
             return $result
         }
         if ($restriction -eq "policy-blocked") {
-            Write-Error -Message "Script blocked by remoting policy '$policyName': $blockedCmd" -Category SecurityError `
+            Write-Error -Message ("Script blocked by remoting policy '$policyName': $blockedCmd" + $ridSuffix) -Category SecurityError `
                 -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "PolicyRestriction"
             $result.EncounteredError = $true
             $result.Handled = $true
@@ -577,10 +575,13 @@ function Invoke-RemoteScript {
             #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
             $body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
 
-            Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
             $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Algorithm $Algorithm
+
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "POST $url auth=$authDesc"
 
             $errorResponse = $null
             $encounteredError = $false
@@ -596,10 +597,14 @@ function Invoke-RemoteScript {
                 $encounteredError = $false
                 $response = $null
                 $taskResult = $null
+                $wallSw = $null
 
                 try {
-                    Write-Verbose -Message "Transferring script to server"
                     $content = Compress-SpeRequestBody -Body $body
+                    $rawBodyBytes = [System.Text.Encoding]::UTF8.GetByteCount($body)
+                    Write-Verbose -Message (Format-BodyShape -Content $content -RawBytes $rawBodyBytes)
+
+                    $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
 
                     # Per-request HttpRequestMessage carries auth so multiple
                     # callers sharing this HttpClient can't race on
@@ -611,10 +616,11 @@ function Invoke-RemoteScript {
                     # below sees the actual cause (DNS, connection refused, TLS) and the
                     # safe-transport classifier can decide whether to retry.
                     $taskResult = $postResponse.GetAwaiter().GetResult()
+                    $wallSw.Stop()
                     if ($taskResult) {
                         $taskResult.EnsureSuccessStatusCode() > $null
                         $response = $taskResult.Content.ReadAsStringAsync().Result
-                        Write-Verbose -Message "Script transfer complete."
+                        Write-Verbose -Message (Format-ResponseLine -Response $taskResult -WallMs $wallSw.Elapsed.TotalMilliseconds)
                     } else {
                         $ex = $postResponse.Exception
                         $reason = $postResponse.Exception.Message
@@ -629,6 +635,7 @@ function Invoke-RemoteScript {
                     }
                 }
                 catch [System.Net.Http.HttpRequestException] {
+                    if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
                     $ex = $_.Exception
                     [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
                     if (-not $errorResponse) {
@@ -644,6 +651,11 @@ function Invoke-RemoteScript {
                             $encounteredError = $false
                         }
                     } else {
+                        # Surface the response shape on error too: status,
+                        # wall-clock and X-Spe-Duration-Ms make it possible to
+                        # diagnose a slow 424 separately from a network-bound
+                        # one without grepping the server log.
+                        Write-Verbose -Message (Format-ResponseLine -Response $errorResponse -WallMs $wallSw.Elapsed.TotalMilliseconds)
                         $outcome = Resolve-HttpErrorResponse -ErrorResponse $errorResponse `
                             -MaxRetries $MaxRetries -RetryAttempt $retryAttempt `
                             -Ceiling429 $retryCeiling429 -Ceiling503 $retryCeiling503 `
@@ -672,8 +684,10 @@ function Invoke-RemoteScript {
                 break
             } while ($true)
 
-            # Surface rate-limit headers from a successful response so callers running
-            # with -Verbose can see remaining budget without triggering a 429.
+            # Surface rate-limit headers from a successful response so callers
+            # running with -Verbose can see remaining budget without
+            # triggering a 429. Status / timing / rid are already on the
+            # Format-ResponseLine emit inside the send loop.
             if (!$encounteredError -and $taskResult -and $taskResult.Headers) {
                 $hasLimit = $taskResult.Headers.Contains("X-RateLimit-Limit")
                 $hasRemaining = $taskResult.Headers.Contains("X-RateLimit-Remaining")
@@ -689,15 +703,13 @@ function Invoke-RemoteScript {
 
             if ($errorResponse) {
                 $encounteredError = $true
-                Write-Error -Message "Server response: $($errorResponse.ReasonPhrase)" -Category ConnectionError `
+                $ridSuffix = Format-RidSuffix $errorResponse.Headers
+                Write-Error -Message ("Server response: $($errorResponse.ReasonPhrase)" + $ridSuffix) -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
 
             if(!$encounteredError) {
-                Write-Verbose -Message "Parsing response from server."
                 Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw ($OutputFormat -eq 'Raw') -OutputFormat $OutputFormat
-            } else {
-                Write-Verbose -Message "Stopping from further execution."
             }
         }
     }

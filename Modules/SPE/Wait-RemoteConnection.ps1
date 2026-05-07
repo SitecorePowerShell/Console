@@ -79,6 +79,7 @@ function Wait-RemoteConnection {
     $authEverPassed   = $false
     $jobEverDispatched = $false
     $attempt = 0
+    $totalSw = [System.Diagnostics.Stopwatch]::StartNew()
     while ((Get-Date) -lt $deadline) {
         $attempt++
         $sleepSeconds = Get-SpeBackoffDelay -Attempt $attempt -BaseSeconds 2.0 -CapSeconds 15.0 -ServerHintSeconds 0
@@ -88,11 +89,12 @@ function Wait-RemoteConnection {
         $testOk = $false
         try { $testOk = [bool](Test-RemoteConnection -Session $Session -Quiet) } catch { }
         if (-not $testOk) {
+            Write-Verbose ("Attempt {0}: auth probe failed, sleeping {1:N1}s" -f $attempt, $sleepSeconds)
             Start-Sleep -Seconds $sleepSeconds
             continue
         }
         $authEverPassed = $true
-        Write-Verbose "Wait-RemoteConnection: auth probe succeeded."
+        Write-Verbose "Attempt $($attempt): auth probe succeeded"
 
         # Phase 2: throw-away -AsJob round-trip. Errors here (auth flap,
         # session-not-yet-registered, brief 503s during warmup) are
@@ -103,11 +105,12 @@ function Wait-RemoteConnection {
                 -AsJob -Raw -ErrorAction SilentlyContinue 2>$null
         } catch { }
         if ([string]::IsNullOrEmpty($jobId)) {
+            Write-Verbose ("Attempt {0}: -AsJob dispatch failed, sleeping {1:N1}s" -f $attempt, $sleepSeconds)
             Start-Sleep -Seconds $sleepSeconds
             continue
         }
         $jobEverDispatched = $true
-        Write-Verbose "Wait-RemoteConnection: -AsJob dispatched ($jobId), waiting for completion."
+        Write-Verbose "Attempt $($attempt): -AsJob dispatched ($jobId), waiting for completion"
 
         $remaining = [int][Math]::Max(15, ($deadline - (Get-Date)).TotalSeconds)
         $output = $null
@@ -116,9 +119,11 @@ function Wait-RemoteConnection {
                 -WaitTimeoutSeconds $remaining -ErrorAction SilentlyContinue 2>$null
         } catch { }
         if ([string]$output -match "warmup-ok") {
-            Write-Verbose "Wait-RemoteConnection: background probe succeeded."
+            $totalSw.Stop()
+            Write-Verbose ("Ready in {0:N1}s ({1} attempt{2})" -f $totalSw.Elapsed.TotalSeconds, $attempt, $(if ($attempt -eq 1) { "" } else { "s" }))
             return
         }
+        Write-Verbose ("Attempt {0}: -AsJob never returned warmup output, sleeping {1:N1}s" -f $attempt, $sleepSeconds)
         Start-Sleep -Seconds $sleepSeconds
     }
 

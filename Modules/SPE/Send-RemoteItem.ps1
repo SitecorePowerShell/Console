@@ -195,29 +195,37 @@ function Send-RemoteItem {
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
-            Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
             $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
                 -Uri $uri -Algorithm $Algorithm
 
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "POST $url auth=$authDesc"
+
             try {
-                Write-Verbose -Message "Uploading $($Path)"
                 [System.Net.HttpWebResponse]$errorResponse = $null
 
-                $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
+                $fileInfo = [System.IO.FileInfo](Get-Item -Path $Path)
+                Write-Verbose -Message "Body: $($fileInfo.Length) bytes binary file ($Path)"
+                $fileStream = $fileInfo.OpenRead()
                 $content = New-Object System.Net.Http.StreamContent($fileStream)
+                $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
                 $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
                     -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
+                $wallSw.Stop()
                 $fileStream.Close()
                 $fileStream.Dispose()
 
+                Write-Verbose -Message (Format-ResponseLine -Response $responseMessage -WallMs $wallSw.Elapsed.TotalMilliseconds)
+
                 if (-not $responseMessage.IsSuccessStatusCode) {
-                    Write-Error "Upload failed. $($responseMessage.ReasonPhrase)"
+                    $ridSuffix = Format-RidSuffix $responseMessage.Headers
+                    Write-Error ("Upload failed. $($responseMessage.ReasonPhrase)" + $ridSuffix)
                     return
                 }
-
-                Write-Verbose -Message "Upload complete."
             } catch [System.Net.WebException] {
+                if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
                 [System.Net.WebException]$script:ex = $_.Exception
                 [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
                 Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex

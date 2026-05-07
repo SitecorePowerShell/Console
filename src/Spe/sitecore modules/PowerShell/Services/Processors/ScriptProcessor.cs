@@ -563,9 +563,15 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                     context.Response.StatusDescription = "Method Failure";
                 }
 
+                // Stop unconditionally so the response header carries the
+                // figure regardless of audit level. ASP.NET buffers the
+                // response by default so headers stay mutable until the
+                // request ends.
+                executionStopwatch.Stop();
+                context.Response.Headers["X-Spe-Duration-Ms"] = executionStopwatch.ElapsedMilliseconds.ToString();
+
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    executionStopwatch.Stop();
                     PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} sessionId={2} scriptHash={3} hasErrors={4} durationMs={5} clientSession={6} rid={7}",
                         user, ip, session.ID, scriptHash.Value, hasErrors, executionStopwatch.ElapsedMilliseconds, clientSession, RemotingRequestContext.GetRequestId());
                 }
@@ -578,9 +584,11 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
             }
             catch (Exception ex)
             {
+                executionStopwatch.Stop();
+                context.Response.Headers["X-Spe-Duration-Ms"] = executionStopwatch.ElapsedMilliseconds.ToString();
+
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    executionStopwatch.Stop();
                     PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} sessionId={2} scriptHash={3} error={4} durationMs={5} clientSession={6} rid={7}",
                         user, ip, session.ID, scriptHash.Value, ex.GetType().Name, executionStopwatch.ElapsedMilliseconds, clientSession, RemotingRequestContext.GetRequestId());
                 }

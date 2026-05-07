@@ -78,6 +78,10 @@ function Invoke-RemoteWait {
         $url += "&cursor=$([uri]::EscapeDataString($Cursor))"
     }
 
+    $authDesc = Get-AuthDescription -Username $sd.Username -Password $sd.Password -SharedSecret $sd.SharedSecret `
+        -AccessKeyId $sd.AccessKeyId -AccessToken $sd.AccessToken -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials
+    Write-Verbose -Message "GET $url auth=$authDesc"
+
     $attempt = 0
     while ($true) {
         # Per-call cancellation: the cached HttpClient is shared with other cmdlets,
@@ -86,7 +90,9 @@ function Invoke-RemoteWait {
         # black-holed proxy never blocks the cmdlet thread past TimeoutSeconds + 5.
         $cts = New-Object System.Threading.CancellationTokenSource
         $cts.CancelAfter([TimeSpan]::FromSeconds($TimeoutSeconds + 5))
+        $wallSw = $null
         try {
+            $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
             # GetAwaiter().GetResult() unwraps the AggregateException that .Result
             # would wrap around the real transport exception, so $_.Exception.Message
             # below names the actual cause (DNS, TLS, cancellation) rather than
@@ -94,10 +100,13 @@ function Invoke-RemoteWait {
             $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
                 -Method ([System.Net.Http.HttpMethod]::Get) -Url $url `
                 -CancellationToken $cts.Token).GetAwaiter().GetResult()
+            $wallSw.Stop()
         } catch [System.OperationCanceledException] {
+            if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
             Write-Verbose "Invoke-RemoteWait: cancelled after $($TimeoutSeconds + 5)s (server-side hold + slack exceeded)."
             return [PSCustomObject]@{ IsDone = $false; Status = 'TransportError'; Name = $JobId; ElapsedSeconds = 0; NotSupported = $false }
         } catch {
+            if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
             # Low-level connection failure. Surface as NotSupported=false, IsDone=false so
             # callers can retry at their own cadence without falling back to legacy polling.
             Write-Verbose "Invoke-RemoteWait: transport error: $($_.Exception.Message)"
@@ -106,6 +115,7 @@ function Invoke-RemoteWait {
             $cts.Dispose()
         }
 
+        Write-Verbose -Message (Format-ResponseLine -Response $response -WallMs $wallSw.Elapsed.TotalMilliseconds)
         $statusCode = [int]$response.StatusCode
 
         if ($statusCode -eq 404) {
@@ -167,6 +177,16 @@ function Invoke-RemoteWait {
         if ($parsed.PSObject.Properties['droppedRate'])    { $droppedRate    = [long]$parsed.droppedRate }
         if ($parsed.PSObject.Properties['droppedSize'])    { $droppedSize    = [long]$parsed.droppedSize }
         if ($parsed.PSObject.Properties['truncatedCount']) { $truncatedCount = [long]$parsed.truncatedCount }
+
+        $waitSummary = "Wait: isDone=$([bool]$parsed.isDone) status=$([string]$parsed.status) records=$($streamRecords.Count)"
+        if ($droppedCount -gt 0 -or $truncatedCount -gt 0) {
+            $waitSummary += " (drops total=$droppedCount"
+            if ($droppedRate -gt 0)    { $waitSummary += " rate=$droppedRate" }
+            if ($droppedSize -gt 0)    { $waitSummary += " size=$droppedSize" }
+            if ($truncatedCount -gt 0) { $waitSummary += " truncated=$truncatedCount" }
+            $waitSummary += ")"
+        }
+        Write-Verbose -Message $waitSummary
 
         return [PSCustomObject]@{
             IsDone         = [bool]$parsed.isDone
