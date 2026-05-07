@@ -204,11 +204,9 @@ function Receive-RemoteItem {
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
             $Algorithm            = $sd.Algorithm
-            $clientCache          = $sd.HttpClients
         } else {
             $AccessToken = ""
             $Algorithm = "HS256"
-            $clientCache = @{}
         }
 
         $itemType = "undetermined"
@@ -234,9 +232,9 @@ function Receive-RemoteItem {
 
             Write-Verbose -Message "Preparing to download remote item from the url $($url)"
             Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
-            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
-                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
+                -Uri $uri -Algorithm $Algorithm
 
             $errorResponse = $null
             $ex = $null
@@ -244,7 +242,8 @@ function Receive-RemoteItem {
             $response = $null
 
             try {
-                $responseMessage = $client.GetAsync($url).Result
+                $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                    -Method ([System.Net.Http.HttpMethod]::Get) -Url $url).Result
                 [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result
             } catch [System.Net.WebException] {
                 [System.Net.WebException]$ex = $_.Exception

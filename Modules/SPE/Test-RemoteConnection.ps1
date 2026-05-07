@@ -47,13 +47,14 @@ function Test-RemoteConnection {
         foreach ($uri in $sd.ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $testUrl
 
-            $client = New-SpeHttpClient -Username $sd.Username -Password $sd.Password -SharedSecret $sd.SharedSecret `
+            $clientInfo = New-SpeHttpClient -Username $sd.Username -Password $sd.Password -SharedSecret $sd.SharedSecret `
                 -AccessKeyId $sd.AccessKeyId -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials `
-                -Uri $uri -Cache $sd.HttpClients -Algorithm $sd.Algorithm
+                -Uri $uri -Algorithm $sd.Algorithm
 
             try {
                 $content = New-Object System.Net.Http.StringContent("", [System.Text.Encoding]::UTF8, "text/plain")
-                $response = $client.PostAsync($url, $content).Result
+                $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                    -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
                 if ($response.IsSuccessStatusCode) {
                     $body = $response.Content.ReadAsStringAsync().Result
                     $result = $body | ConvertFrom-Json

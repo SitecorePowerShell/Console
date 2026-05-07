@@ -84,10 +84,16 @@ $global:__speMockHandler = $null
 # is evaluated at access time and would resolve to the override after Set-Item below.
 $__originalNewSpeHttpClient = (Get-Command New-SpeHttpClient -ErrorAction SilentlyContinue).ScriptBlock
 
-# Override New-SpeHttpClient to return a client wired to the current mock handler.
+# Override New-SpeHttpClient to return @{ Client; AuthHeader } shaped like the
+# real one, with the Client wired to the current mock handler. AuthHeader is
+# set to a dummy bearer so Invoke-SpeHttpRequest exercises the same code path
+# the real cmdlets do, but the mock handler doesn't validate it.
 Set-Item "function:global:New-SpeHttpClient" -Value {
-    param($Username, $Password, $SharedSecret, $AccessKeyId, $AccessToken, $Credential, $UseDefaultCredentials, $Uri, $Cache, $Algorithm)
-    return New-Object System.Net.Http.HttpClient($global:__speMockHandler)
+    param($Username, $Password, $SharedSecret, $AccessKeyId, $AccessToken, $Credential, $UseDefaultCredentials, $Uri, $Algorithm)
+    [pscustomobject]@{
+        Client     = New-Object System.Net.Http.HttpClient($global:__speMockHandler)
+        AuthHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "test-token")
+    }
 }
 
 function script:New-MockHandler {

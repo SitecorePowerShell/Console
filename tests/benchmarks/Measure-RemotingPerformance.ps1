@@ -77,20 +77,18 @@ $results += Measure-Block -Label "New-Jwt (HS256)" -Iterations $Iterations -Bloc
         -Name "bench" -SecretKey $secret -ValidForSeconds 30
 }
 
-# 2. New-SpeHttpClient cost per call with a stable URI cache.
-# Measures the full auth-header refresh path (builds a JWT every call in the
-# pre-caching baseline; amortizes near zero after caching lands).
-$clientCache = @{}
-$results += Measure-Block -Label "New-SpeHttpClient (same uri, stable cache)" -Iterations $Iterations -Block {
+# 2. New-SpeHttpClient cost per call hitting the AppDomain-scoped pool.
+# Measures cache-key derivation + auth-header build (JWT mint per call;
+# the HttpClient itself is reused after the first call).
+$results += Measure-Block -Label "New-SpeHttpClient (same uri, warm pool)" -Iterations $Iterations -Block {
     New-SpeHttpClient -SharedSecret $secret -AccessKeyId $keyId -Uri $uri `
-        -Cache $clientCache -Algorithm "HS256"
+        -Algorithm "HS256"
 }
 
 # 3. New-SpeHttpClient with Name (config-based shared-secret path).
-$clientCache2 = @{}
 $results += Measure-Block -Label "New-SpeHttpClient (name-bound)" -Iterations $Iterations -Block {
     New-SpeHttpClient -Username "sitecore\admin" -SharedSecret $secret -Uri $uri `
-        -Cache $clientCache2 -Algorithm "HS256"
+        -Algorithm "HS256"
 }
 
 $results | Format-Table -AutoSize

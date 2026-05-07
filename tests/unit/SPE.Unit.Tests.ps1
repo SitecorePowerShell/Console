@@ -40,7 +40,6 @@ $mockSession = [pscustomobject]@{
         [pscustomobject]@{ BaseUri = "https://sc2.example.com" }
     )
     PersistentSession     = $true
-    _HttpClients          = @{}
 }
 
 $expanded = Expand-ScriptSession -Session $mockSession
@@ -55,13 +54,12 @@ Assert-Equal $expanded.ConnectionUri.Count 2 "ConnectionUri maps Connection arra
 Assert-Equal $expanded.ConnectionUri[0] "https://sc1.example.com" "First ConnectionUri correct"
 Assert-Equal $expanded.ConnectionUri[1] "https://sc2.example.com" "Second ConnectionUri correct"
 Assert-True $expanded.PersistentSession "PersistentSession preserved"
-Assert-NotNull $expanded.HttpClients "HttpClients mapped from _HttpClients"
 
 # Edge case: empty Connection array
 $emptySession = [pscustomobject]@{
     Username = "u"; Password = "p"; SharedSecret = ""; SessionId = ""
     Credential = $null; UseDefaultCredentials = $false
-    Connection = @(); PersistentSession = $false; _HttpClients = $null
+    Connection = @(); PersistentSession = $false
 }
 $expanded2 = Expand-ScriptSession -Session $emptySession
 Assert-Equal $expanded2.ConnectionUri.Count 0 "Empty Connection produces empty ConnectionUri"

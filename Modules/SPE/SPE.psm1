@@ -87,11 +87,179 @@ function Expand-ScriptSession {
         ConnectionUri         = @($Session.Connection | ForEach-Object { $_.BaseUri })
         Algorithm             = if ($Session.Algorithm) { $Session.Algorithm } else { "HS256" }
         PersistentSession     = $Session.PersistentSession
-        HttpClients           = $Session._HttpClients
     }
 }
 
+# AppDomain-scoped HttpClient pool. Lives on a static .NET type so it survives
+# Remove-Module / Import-Module cycles and is shared by every runspace in the
+# AppDomain (PowerShell module $script: scope is per-runspace, which would
+# defeat sharing across runspace-pool workers).
+#
+# Why include an identity fingerprint in the key: HttpClientHandler binds
+# Credential / UseDefaultCredentials at construction. Two callers with
+# different identities cannot share one handler safely. Keying by URI alone
+# would let session B reuse a connection wired to session A's NetworkCredential.
+#
+# DNS staleness is bounded by max age: every cached client is replaced after
+# SpeHttpClientPool.MaxAgeMinutes, so a moved CM is picked up within that
+# window. .NET Framework 4.8 / Windows PowerShell 5.1 lacks
+# SocketsHttpHandler.PooledConnectionLifetime, so we expire entries ourselves.
+#
+# Why we do not Dispose evicted/aged-out clients: another runspace can be
+# mid-PostAsync against the cached client. Disposing under it would surface
+# as ObjectDisposedException on the in-flight request. Letting GC collect
+# the handler when the last caller drops its reference is correct; the cost
+# is a short-lived memory holdover, not a socket leak.
+if (-not ('Spe.Internal.SpeHttpClientPool' -as [type])) {
+    try {
+        Add-Type -ReferencedAssemblies @('System.Net.Http') -TypeDefinition @'
+namespace Spe.Internal {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Net.Http;
+
+    public sealed class SpeCachedClient {
+        public HttpClient Client;
+        public DateTime CreatedUtc;
+    }
+
+    public static class SpeHttpClientPool {
+        private static readonly ConcurrentDictionary<string, SpeCachedClient> Cache =
+            new ConcurrentDictionary<string, SpeCachedClient>();
+
+        public static int MaxAgeMinutes = 10;
+        public static int MaxEntries    = 64;
+
+        public static int Count { get { return Cache.Count; } }
+
+        public static HttpClient GetOrAdd(string key, Func<HttpClient> factory) {
+            TimeSpan maxAge = TimeSpan.FromMinutes(MaxAgeMinutes);
+            DateTime now = DateTime.UtcNow;
+
+            SpeCachedClient existing;
+            if (Cache.TryGetValue(key, out existing) && now - existing.CreatedUtc <= maxAge) {
+                return existing.Client;
+            }
+
+            HttpClient built = factory();
+            SpeCachedClient candidate = new SpeCachedClient { Client = built, CreatedUtc = now };
+
+            // Atomic add-or-replace-if-stale. The update factory runs under the
+            // dictionary's per-bucket lock, so the freshness check on `prev`
+            // cannot race with another writer. If `prev` is still fresh, our
+            // newly-built client is discarded (GC reclaims it).
+            SpeCachedClient result = Cache.AddOrUpdate(
+                key,
+                candidate,
+                (k, prev) => (now - prev.CreatedUtc > maxAge) ? candidate : prev);
+
+            if (object.ReferenceEquals(result, candidate)) {
+                EvictIfFull();
+            }
+            return result.Client;
+        }
+
+        private static void EvictIfFull() {
+            int over = Cache.Count - MaxEntries;
+            if (over <= 0) return;
+            // Snapshot, sort by CreatedUtc, remove oldest. Best-effort under
+            // concurrent insertion. We deliberately do not Dispose evicted
+            // clients; live callers may still hold references.
+            var arr = Cache.ToArray();
+            Array.Sort(arr, (a, b) => a.Value.CreatedUtc.CompareTo(b.Value.CreatedUtc));
+            int evicted = 0;
+            for (int i = 0; i < arr.Length && evicted < over; i++) {
+                SpeCachedClient removed;
+                if (Cache.TryRemove(arr[i].Key, out removed)) {
+                    evicted++;
+                }
+            }
+        }
+
+        public static void Clear() {
+            Cache.Clear();
+        }
+    }
+}
+'@
+    } catch {
+        # Race during simultaneous first-load from multiple runspaces: another
+        # thread already added the type. Re-check; only swallow the error if
+        # the type really is present now, otherwise rethrow so a real
+        # compilation failure surfaces instead of silently degrading later.
+        if (-not ('Spe.Internal.SpeHttpClientPool' -as [type])) { throw }
+    }
+}
+
+function Get-SpeClientCacheKey {
+    param(
+        [Uri]$Uri,
+        [string]$Username,
+        [string]$SharedSecret,
+        [string]$AccessKeyId,
+        [string]$AccessToken,
+        [System.Management.Automation.PSCredential]$Credential,
+        [bool]$UseDefaultCredentials
+    )
+    # Hash sensitive material: plaintext secrets must not sit in a cache key
+    # that could leak via Get-Variable, debug logs, or memory dumps. SHA256
+    # truncated to 16 bytes; collision risk is negligible for SPE caller counts.
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $material =
+            if ($UseDefaultCredentials) { 'default|' }
+            elseif ($Credential)        { "cred|$($Credential.UserName)" }
+            elseif ($AccessToken)       { "oauth|$AccessToken" }
+            elseif ($SharedSecret)      { "hmac|$AccessKeyId|$Username|$SharedSecret" }
+            else                        { "basic|$Username" }
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($material)
+        $hash  = [System.Convert]::ToBase64String($sha.ComputeHash($bytes), 0, 16)
+        return "$($Uri.AbsoluteUri)|$hash"
+    } finally { $sha.Dispose() }
+}
+
+function New-SpeAuthHeader {
+    # Returns a fresh AuthenticationHeaderValue. Callers must stamp it on the
+    # per-request HttpRequestMessage rather than HttpClient.DefaultRequestHeaders
+    # (mutating defaults on a shared client is not thread-safe and would race
+    # with other callers' requests in flight).
+    param(
+        [string]$Username,
+        [string]$Password,
+        [string]$SharedSecret,
+        [string]$AccessKeyId,
+        [string]$AccessToken,
+        [Uri]$Uri,
+        [string]$Algorithm = "HS256"
+    )
+    if (![string]::IsNullOrEmpty($AccessToken)) {
+        return New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
+    }
+    if (![string]::IsNullOrEmpty($SharedSecret)) {
+        # JWT tokens are short-lived (30 s). Rebuild on every call rather than
+        # caching: New-Jwt costs ~700 us, which is <2% of end-to-end HTTP
+        # latency, and a per-call token avoids the bookkeeping a cache would
+        # need to honor server-side clock skew.
+        $jwtParams = @{
+            Algorithm = $Algorithm
+            Issuer = 'SPE Remoting'
+            Audience = $Uri.GetLeftPart([System.UriPartial]::Authority)
+            SecretKey = $SharedSecret
+            ValidForSeconds = 30
+        }
+        if (![string]::IsNullOrEmpty($AccessKeyId)) { $jwtParams['KeyId'] = $AccessKeyId }
+        if (![string]::IsNullOrEmpty($Username))    { $jwtParams['Name']  = $Username    }
+        $token = New-Jwt @jwtParams
+        return New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
+    }
+    $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("${Username}:${Password}")
+    return New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+}
+
 function New-SpeHttpClient {
+    # Returns @{ Client; AuthHeader }. The Client is shared (AppDomain-scoped
+    # cache); the AuthHeader is per-call and must be applied to a per-request
+    # HttpRequestMessage by the caller, never to client.DefaultRequestHeaders.
     param(
         [string]$Username,
         [string]$Password,
@@ -101,50 +269,55 @@ function New-SpeHttpClient {
         [System.Management.Automation.PSCredential]$Credential,
         [bool]$UseDefaultCredentials,
         [Uri]$Uri,
-        [hashtable]$Cache,
         [string]$Algorithm = "HS256"
     )
-    $cacheKey = $Uri.AbsoluteUri
-    if ($null -ne $Cache -and $Cache.ContainsKey($cacheKey)) {
-        $client = $Cache[$cacheKey]
-    } else {
+
+    $cacheKey = Get-SpeClientCacheKey -Uri $Uri -Username $Username `
+        -SharedSecret $SharedSecret -AccessKeyId $AccessKeyId -AccessToken $AccessToken `
+        -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+
+    # Capture identity into the factory's closure so the C# pool only invokes
+    # it on a true miss. Closure params bind at scriptblock-creation time;
+    # subsequent callers with different identities use a different cache key
+    # and a different factory, so there's no cross-identity leak.
+    $cred = $Credential
+    $useDefault = $UseDefaultCredentials
+    $factory = [System.Func[System.Net.Http.HttpClient]] {
         $handler = New-Object System.Net.Http.HttpClientHandler
         $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-        if ($Credential) { $handler.Credentials = $Credential }
-        if ($UseDefaultCredentials) { $handler.UseDefaultCredentials = $true }
-        $client = New-Object System.Net.Http.HttpClient $handler
-        if ($null -ne $Cache) { $Cache[$cacheKey] = $client }
+        if ($cred) { $handler.Credentials = $cred }
+        if ($useDefault) { $handler.UseDefaultCredentials = $true }
+        New-Object System.Net.Http.HttpClient $handler
     }
-    # Auth header is refreshed on every call; JWT tokens expire after 30 seconds.
-    # Perf note: every call rebuilds the JWT (ConvertTo-Json x2, Base64 x2, HMACSHA256).
-    # Caching the token for its 30s lifetime cuts ~700 us per call (see
-    # tests/benchmarks/Measure-RemotingPerformance.ps1). Not cached today because
-    # the savings are <2% of end-to-end HTTP latency and no high-frequency caller
-    # has asked for it. Revisit if a workload shows up that makes it measurable.
-    if (![string]::IsNullOrEmpty($AccessToken)) {
-        # Externally-issued bearer token (OAuth / OIDC). No client-side minting.
-        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $AccessToken)
-    } elseif (![string]::IsNullOrEmpty($SharedSecret)) {
-        $jwtParams = @{
-            Algorithm = $Algorithm
-            Issuer = 'SPE Remoting'
-            Audience = $Uri.GetLeftPart([System.UriPartial]::Authority)
-            SecretKey = $SharedSecret
-            ValidForSeconds = 30
-        }
-        if (![string]::IsNullOrEmpty($AccessKeyId)) {
-            $jwtParams['KeyId'] = $AccessKeyId
-        }
-        if (![string]::IsNullOrEmpty($Username)) {
-            $jwtParams['Name'] = $Username
-        }
-        $token = New-Jwt @jwtParams
-        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-    } else {
-        $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("${Username}:${Password}")
-        $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+
+    $client = [Spe.Internal.SpeHttpClientPool]::GetOrAdd($cacheKey, $factory)
+
+    $authHeader = New-SpeAuthHeader -Username $Username -Password $Password `
+        -SharedSecret $SharedSecret -AccessKeyId $AccessKeyId -AccessToken $AccessToken `
+        -Uri $Uri -Algorithm $Algorithm
+
+    [pscustomobject]@{
+        Client     = $client
+        AuthHeader = $authHeader
     }
-    $client
+}
+
+function Invoke-SpeHttpRequest {
+    # Convenience wrapper: builds an HttpRequestMessage with the per-call
+    # auth header, sends it, and returns the response. Each request gets a
+    # fresh message because HttpRequestMessage is single-use, and per-request
+    # headers are the only thread-safe way to carry auth on a shared client.
+    param(
+        [Parameter(Mandatory = $true)] [pscustomobject]$ClientInfo,
+        [Parameter(Mandatory = $true)] [System.Net.Http.HttpMethod]$Method,
+        [Parameter(Mandatory = $true)] [string]$Url,
+        [System.Net.Http.HttpContent]$Content,
+        [System.Threading.CancellationToken]$CancellationToken = [System.Threading.CancellationToken]::None
+    )
+    $req = New-Object System.Net.Http.HttpRequestMessage($Method, $Url)
+    $req.Headers.Authorization = $ClientInfo.AuthHeader
+    if ($Content) { $req.Content = $Content }
+    return $ClientInfo.Client.SendAsync($req, $CancellationToken)
 }
 
 # Shared verbose logger for the WebException catch block used by Send/Receive-RemoteItem.
@@ -259,3 +432,7 @@ function Get-UsingVariableValues {
     }
 }
 
+# No OnRemove handler: the HttpClient pool is AppDomain-scoped and shared
+# across runspaces, so a Remove-Module in one runspace must not dispose
+# clients that other runspaces are still using. GC reclaims handlers when
+# the last caller drops its reference.

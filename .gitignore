@@ -70,6 +70,9 @@ docker/traefik/certs/certz.exe
 releases/sat
 cli
 
+# Local benchmark/load-test artifacts
+tests/integration/_loadtest-results/
+
 # Claude Code
 .claude
 .playwright-mcp

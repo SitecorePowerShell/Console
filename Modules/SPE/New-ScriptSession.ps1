@@ -127,7 +127,6 @@ function New-ScriptSession {
             "Algorithm" = [string]$Algorithm
             "Connection" = @()
             "PersistentSession" = $false
-            "_HttpClients" = @{}
         }
     }
 

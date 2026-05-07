@@ -166,11 +166,9 @@ function Send-RemoteItem {
             $UseDefaultCredentials = $sd.UseDefaultCredentials
             $ConnectionUri        = $sd.ConnectionUri
             $Algorithm            = $sd.Algorithm
-            $clientCache          = $sd.HttpClients
         } else {
             $AccessToken = ""
             $Algorithm = "HS256"
-            $clientCache = @{}
         }
 
         $serviceUrl = "/-/script"
@@ -198,9 +196,9 @@ function Send-RemoteItem {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
             Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
-            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
-                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
+                -Uri $uri -Algorithm $Algorithm
 
             try {
                 Write-Verbose -Message "Uploading $($Path)"
@@ -208,7 +206,8 @@ function Send-RemoteItem {
 
                 $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
                 $content = New-Object System.Net.Http.StreamContent($fileStream)
-                $responseMessage = $client.PostAsync($url, $content).Result
+                $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                    -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
                 $fileStream.Close()
                 $fileStream.Dispose()
 

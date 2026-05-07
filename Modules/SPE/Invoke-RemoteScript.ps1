@@ -1,10 +1,30 @@
 Add-Type -AssemblyName System.Net.Http
 
-# GZip-compresses the request body and wraps it in a ByteArrayContent with the
-# correct headers. Pulled out of Invoke-RemoteScript's send loop.
+# Bodies smaller than this skip gzip and ship as plaintext. Below the
+# threshold the gzip header overhead (~18 bytes minimum) plus the
+# constant ~0.2ms CPU cost outweighs the bandwidth saving on a typical
+# LAN, and a small ad-hoc script can ship with the same wire bytes
+# whether gzipped or not. 1024 matches the nginx gzip_min_length
+# default and is well clear of the header-dominated zone where gzip
+# can actually inflate the payload. See
+# tests/benchmarks/Measure-CompressionThreshold.ps1 for the data.
+$script:CompressionThresholdBytes = 1024
+
+# Wraps the request body in a ByteArrayContent with the right headers,
+# gzipping only when the body is large enough that compression actually
+# pays. Pulled out of Invoke-RemoteScript's send loop. The server's
+# ScriptProcessor.ReadRequestBody handles either branch by switching on
+# the Content-Encoding header.
 function Compress-SpeRequestBody {
     param([string]$Body)
     $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($Body)
+
+    if ($messageBytes.Length -lt $script:CompressionThresholdBytes) {
+        $content = New-Object System.Net.Http.ByteArrayContent(@(, $messageBytes))
+        $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
+        return $content
+    }
+
     $ms = New-Object System.IO.MemoryStream
     $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
     $gzip.Write($messageBytes, 0, $messageBytes.Length)
@@ -529,13 +549,11 @@ function Invoke-RemoteScript {
             $ConnectionUri        = $sd.ConnectionUri
             $PersistentSession    = $sd.PersistentSession
             $Algorithm            = $sd.Algorithm
-            $clientCache          = $sd.HttpClients
         } else {
             $AccessToken = ""
             $SessionId = [guid]::NewGuid()
             $PersistentSession = $false
             $Algorithm = "HS256"
-            $clientCache = @{}
             # New-SpeHttpClient binds [bool]$UseDefaultCredentials, which rejects
             # the empty string PowerShell would otherwise leave here when the
             # caller passes -ConnectionUri without -Session.
@@ -560,9 +578,9 @@ function Invoke-RemoteScript {
             $body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
 
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
-            $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
                 -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
-                -Uri $uri -Cache $clientCache -Algorithm $Algorithm
+                -Uri $uri -Algorithm $Algorithm
 
             $errorResponse = $null
             $encounteredError = $false
@@ -583,7 +601,11 @@ function Invoke-RemoteScript {
                     Write-Verbose -Message "Transferring script to server"
                     $content = Compress-SpeRequestBody -Body $body
 
-                    $postResponse = $client.PostAsync($url, $content)
+                    # Per-request HttpRequestMessage carries auth so multiple
+                    # callers sharing this HttpClient can't race on
+                    # DefaultRequestHeaders.
+                    $postResponse = Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                        -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content
                     # GetAwaiter().GetResult() unwraps the AggregateException that .Result
                     # would wrap around the real transport exception, so the catch[HttpRequestException]
                     # below sees the actual cause (DNS, connection refused, TLS) and the

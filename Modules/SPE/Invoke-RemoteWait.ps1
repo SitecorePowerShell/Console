@@ -59,16 +59,15 @@ function Invoke-RemoteWait {
     )
 
     $sd = Expand-ScriptSession -Session $Session
-    $clientCache = $sd.HttpClients
     $connectionUri = @($sd.ConnectionUri)[0]
     if (-not $connectionUri) {
         throw "Session has no ConnectionUri."
     }
 
-    $client = New-SpeHttpClient -Username $sd.Username -Password $sd.Password `
+    $clientInfo = New-SpeHttpClient -Username $sd.Username -Password $sd.Password `
         -SharedSecret $sd.SharedSecret -AccessKeyId $sd.AccessKeyId -AccessToken $sd.AccessToken `
         -Credential $sd.Credential -UseDefaultCredentials $sd.UseDefaultCredentials `
-        -Uri $connectionUri -Cache $clientCache -Algorithm $sd.Algorithm
+        -Uri $connectionUri -Algorithm $sd.Algorithm
 
     # apiVersion is injected by the server-side URL rewriter (derived from the
     # /-/script/wait/ path segment). Omit it here to avoid a duplicated value
@@ -82,7 +81,7 @@ function Invoke-RemoteWait {
     $attempt = 0
     while ($true) {
         # Per-call cancellation: the cached HttpClient is shared with other cmdlets,
-        # so we cannot mutate $client.Timeout safely. A CancellationTokenSource bound
+        # so we cannot mutate Client.Timeout safely. A CancellationTokenSource bound
         # to the server-side hold + a small slack guarantees a frozen connection or
         # black-holed proxy never blocks the cmdlet thread past TimeoutSeconds + 5.
         $cts = New-Object System.Threading.CancellationTokenSource
@@ -92,7 +91,9 @@ function Invoke-RemoteWait {
             # would wrap around the real transport exception, so $_.Exception.Message
             # below names the actual cause (DNS, TLS, cancellation) rather than
             # "One or more errors occurred".
-            $response = $client.GetAsync($url, $cts.Token).GetAwaiter().GetResult()
+            $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                -Method ([System.Net.Http.HttpMethod]::Get) -Url $url `
+                -CancellationToken $cts.Token).GetAwaiter().GetResult()
         } catch [System.OperationCanceledException] {
             Write-Verbose "Invoke-RemoteWait: cancelled after $($TimeoutSeconds + 5)s (server-side hold + slack exceeded)."
             return [PSCustomObject]@{ IsDone = $false; Status = 'TransportError'; Name = $JobId; ElapsedSeconds = 0; NotSupported = $false }

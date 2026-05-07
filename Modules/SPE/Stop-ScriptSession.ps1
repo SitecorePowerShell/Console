@@ -90,13 +90,11 @@ function Stop-ScriptSession {
         $UseDefaultCredentials = $sd.UseDefaultCredentials
         $ConnectionUri        = $sd.ConnectionUri
         $Algorithm            = $sd.Algorithm
-        $clientCache          = $sd.HttpClients
     } else {
         $SharedSecret = $null
         $AccessToken = ""
         $UseDefaultCredentials = $false
         $Algorithm = "HS256"
-        $clientCache = @{}
     }
 
     $cleanupUrl = "/-/script/script/?sessionId=$SessionId&action=cleanup"
@@ -105,13 +103,14 @@ function Stop-ScriptSession {
         $url = $uri.AbsoluteUri.TrimEnd("/") + $cleanupUrl
 
         Write-Verbose -Message "Sending cleanup request to $url"
-        $client = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+        $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
             -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
-            -Uri $uri -Cache $clientCache -Algorithm $Algorithm
+            -Uri $uri -Algorithm $Algorithm
 
         try {
             $content = New-Object System.Net.Http.StringContent("", [System.Text.Encoding]::UTF8, "text/plain")
-            $response = $client.PostAsync($url, $content).Result
+            $response = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
             Write-Verbose -Message "Cleanup response: $([int]$response.StatusCode)"
         } catch {
             Write-Warning "Failed to clean up session $SessionId on $uri : $_"
