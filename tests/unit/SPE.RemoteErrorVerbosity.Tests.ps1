@@ -104,13 +104,13 @@ Assert-True ($handlerSrc -match '\["correlationId"\]') `
 # L7: policy-block headers + 403 body gated on the flag
 $policyBlockedSegment = [regex]::Match(
     $handlerSrc,
-    'X-SPE-Restriction"\]\s*=\s*"policy-blocked".*?return;',
+    'X-Spe-Restriction"\]\s*=\s*"policy-blocked".*?return;',
     [System.Text.RegularExpressions.RegexOptions]::Singleline).Value
 
 Assert-True ([bool]$policyBlockedSegment) "Located policy-blocked branch"
 if ($policyBlockedSegment) {
     Assert-True ($policyBlockedSegment -match 'WebServiceSettings\.DetailedErrors') `
-        "Policy-block branch gates X-SPE-BlockedCommand / X-SPE-Policy on WebServiceSettings.DetailedErrors"
+        "Policy-block branch gates X-Spe-BlockedCommand / X-Spe-Policy on WebServiceSettings.DetailedErrors"
 }
 
 # L8: TransmitFile IOException no longer leaks ex.Message unconditionally.

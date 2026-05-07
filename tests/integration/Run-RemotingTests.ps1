@@ -296,7 +296,7 @@ Write-Host "`n  Expiration test cleanup complete." -ForegroundColor Cyan
 
 # Phase 6: Client-side retry tests (item-based, no config deploy needed)
 # Runs AFTER Phase 5 so expired-key item from Expiration.Setup is still available for
-# Gap 3's X-SPE-AuthFailureReason=expired check. The Expiration teardown above removes
+# Gap 3's X-Spe-AuthFailureReason=expired check. The Expiration teardown above removes
 # the expired key, so re-create it here as part of ClientRetry.Setup.
 Write-Host "`n=== Phase 6: Client-Side Retry Tests ===" -ForegroundColor Magenta
 

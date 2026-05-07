@@ -1,7 +1,7 @@
 # Unit tests for the WWW-Authenticate header value builder (issue #1485
 # follow-up: config hardening, item 5). RFC 6750 Section 3 mandates that
 # bearer-protected endpoints emit `WWW-Authenticate: Bearer ...` on 401.
-# Today we emit only the SPE-specific X-SPE-AuthFailureReason header, which
+# Today we emit only the SPE-specific X-Spe-AuthFailureReason header, which
 # standard libraries do not parse.
 #
 # The helper builds the *header value* string (everything after

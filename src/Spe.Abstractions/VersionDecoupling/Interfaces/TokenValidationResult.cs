@@ -24,7 +24,7 @@ namespace Spe.Abstractions.VersionDecoupling.Interfaces
 
         /// <summary>
         /// Short tag describing why validation failed when an authentication
-        /// provider sets it on rejection. Surfaces as the X-SPE-AuthFailureReason
+        /// provider sets it on rejection. Surfaces as the X-Spe-AuthFailureReason
         /// response header on 401s. Known values include "expired", "disabled",
         /// "invalid", "replay".
         /// </summary>

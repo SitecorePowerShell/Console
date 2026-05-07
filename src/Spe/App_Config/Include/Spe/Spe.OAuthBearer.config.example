@@ -140,7 +140,7 @@
           <!-- Optional: replay protection. When enabled, every accepted
                token's (iss, jti) pair is recorded for the remainder of its
                lifetime; a second presentation of the same token returns
-               401 with X-SPE-AuthFailureReason: replay. Tokens missing the
+               401 with X-Spe-AuthFailureReason: replay. Tokens missing the
                jti claim are also rejected when this is on.
 
                Cache is process-local. On a multi-node CM cluster, a captured

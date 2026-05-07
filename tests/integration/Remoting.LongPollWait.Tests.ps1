@@ -76,10 +76,10 @@ $respB = $hc.PostAsync($urlA, $contentB).Result
 
 Assert-Equal ([int]$respB.StatusCode) 403 "Identity B cannot attach to identity A's session (403)"
 $restrictionB = $null
-if ($respB.Headers.Contains("X-SPE-Restriction")) {
-    $restrictionB = $respB.Headers.GetValues("X-SPE-Restriction") | Select-Object -First 1
+if ($respB.Headers.Contains("X-Spe-Restriction")) {
+    $restrictionB = $respB.Headers.GetValues("X-Spe-Restriction") | Select-Object -First 1
 }
-Assert-Equal $restrictionB "session-not-owned" "Response includes X-SPE-Restriction: session-not-owned"
+Assert-Equal $restrictionB "session-not-owned" "Response includes X-Spe-Restriction: session-not-owned"
 
 $hc.Dispose()
 
@@ -92,7 +92,7 @@ $hc.Dispose()
 #  GetRequestOwnershipIdentity used to read the RemotingHttpContextKeys.RemotingClient
 #  entry off HttpContext.Current (not the parameter), so the computed identity reverted
 #  to "user:sitecore\admin" while the recorded owner was
-#  "remotingClient:Test-StandardAuditKey" - 403, X-SPE-Restriction:session-not-owned.
+#  "remotingClient:Test-StandardAuditKey" - 403, X-Spe-Restriction:session-not-owned.
 #
 #  Group 1 missed this: it uses config-based shared secret, so claim and
 #  check both fall into the "user:" branch. Group 2 missed this: it tests

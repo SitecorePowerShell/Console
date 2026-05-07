@@ -172,10 +172,10 @@ either directly or via role membership. The "Authenticated user is
 unauthorized" section below covers the worked example and the symmetric
 fixes.
 
-## Response header: `X-SPE-AuthFailureReason`
+## Response header: `X-Spe-AuthFailureReason`
 
 Before digging into server logs, check the response. When bearer validation
-fails, the handler sets the `X-SPE-AuthFailureReason` response header to one
+fails, the handler sets the `X-Spe-AuthFailureReason` response header to one
 of:
 
 | Value | Meaning |
@@ -228,13 +228,13 @@ not leak that a client item exists but is currently disabled.
    `/sitecore/system/Modules/PowerShell/Settings/Access/Policies`.
 6. **Session-ownership rejection (raw HTTP callers)** -> server logs
    `action=sessionOwnershipMismatch`, response is 403 with
-   `X-SPE-Restriction: session-not-owned`. Two callers with different
+   `X-Spe-Restriction: session-not-owned`. Two callers with different
    identities tried to use the same `sessionId`. Generate a fresh
    `sessionId` per call when `persistentSession=false`, or do not share
    `sessionId` values across credentials when `persistentSession=true`.
 7. **Script blocked by policy** -> server logs
    `action=scriptRejectedByPolicy`, response is 403 with
-   `X-SPE-Restriction: policy-blocked`. See "Policy denial: 403" below.
+   `X-Spe-Restriction: policy-blocked`. See "Policy denial: 403" below.
 8. **Too many requests** -> server logs `action=throttled`, response is 429
    (not 401). See "Throttling: 429" below.
 
@@ -455,12 +455,12 @@ a starting point for low-risk read-only workloads.
 ## Policy denial: 403
 
 Authentication succeeded but the request was refused before the script ran.
-The handler tags every 403 with an `X-SPE-Restriction` response header so
+The handler tags every 403 with an `X-Spe-Restriction` response header so
 you can classify the failure without parsing the body.
 
-| `X-SPE-Restriction` | Cause | Audit action |
+| `X-Spe-Restriction` | Cause | Audit action |
 | --- | --- | --- |
-| `policy-blocked` | Script contains a cmdlet not on the policy's allowlist. With `Spe.Remoting.DetailedErrors=true` the blocked cmdlet name is exposed in `X-SPE-BlockedCommand` and the policy name in `X-SPE-Policy`; otherwise both headers are suppressed and the audit log carries the detail. | `scriptRejectedByPolicy` |
+| `policy-blocked` | Script contains a cmdlet not on the policy's allowlist. With `Spe.Remoting.DetailedErrors=true` the blocked cmdlet name is exposed in `X-Spe-BlockedCommand` and the policy name in `X-Spe-Policy`; otherwise both headers are suppressed and the audit log carries the detail. | `scriptRejectedByPolicy` |
 | `session-not-owned` | A second identity tried to attach to a `sessionId` the first caller already claimed. | `sessionOwnershipMismatch` |
 
 For `policy-blocked`, fix by editing the matching policy at

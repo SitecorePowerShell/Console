@@ -73,7 +73,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                     var token = authHeader.Substring("Bearer ".Length).Trim();
                     var ip = RemotingRequestContext.GetIp(request);
                     // Populated with expired|disabled|invalid when Path A rejects the request
-                    // so the 401 response can surface it in X-SPE-AuthFailureReason.
+                    // so the 401 response can surface it in X-Spe-AuthFailureReason.
                     string authFailureReason = null;
                     try
                     {
@@ -341,7 +341,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                             context.Response.AddHeader("WWW-Authenticate", JwtClaimValidator.BuildWwwAuthenticate(authFailureReason));
                             if (!string.IsNullOrEmpty(authFailureReason))
                             {
-                                context.Response.AddHeader("X-SPE-AuthFailureReason", authFailureReason);
+                                context.Response.AddHeader("X-Spe-AuthFailureReason", authFailureReason);
                             }
                             RejectAuthenticationMethod(context, serviceName, username);
                             return false;
@@ -353,7 +353,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                         context.Response.AddHeader("WWW-Authenticate", JwtClaimValidator.BuildWwwAuthenticate(authFailureReason));
                         if (!string.IsNullOrEmpty(authFailureReason))
                         {
-                            context.Response.AddHeader("X-SPE-AuthFailureReason", authFailureReason);
+                            context.Response.AddHeader("X-Spe-AuthFailureReason", authFailureReason);
                         }
                         RejectAuthenticationMethod(context, serviceName, username, ex);
                         return false;

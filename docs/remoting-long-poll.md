@@ -138,7 +138,7 @@ The handler is `RemoteScriptCall.ashx.cs ProcessWaitAsync`. Key points:
 - **Same auth as every other route.** `AuthenticateRequest` runs once per
   call. Session ownership is checked too - sessions created by identity A
   cannot be waited on by identity B; mismatch returns 403 with
-  `X-SPE-Restriction: session-not-owned`.
+  `X-Spe-Restriction: session-not-owned`.
 - **Throttle accounting.** One request against the API key's budget per
   held call regardless of hold time. A long job that takes 30 minutes
   costs ~60 budget units long-poll, ~1800 legacy.

@@ -219,7 +219,7 @@ Common reasons and fixes:
 | `azpMismatch`                                | Token's `azp` claim does not match the resolved `client_id`. Only when `<requireAzpWhenMultiAudience>` is on and `aud` has more than one value. |
 
 For a 401 response with no detailed log line, check the response headers:
-the `X-SPE-AuthFailureReason` and `WWW-Authenticate` headers identify the
+the `X-Spe-AuthFailureReason` and `WWW-Authenticate` headers identify the
 classified failure. See [Remoting Authentication
 Troubleshooting](remoting-troubleshooting.md) for the full reference.
 

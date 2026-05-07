@@ -50,7 +50,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
 
             PowerShellLog.Audit("[Remoting] action=sessionOwnershipMismatch session={0} owner={1} caller={2} ip={3} rid={4}",
                 clientSessionId, recordedOwner, identity, ip, RemotingRequestContext.GetRequestId(context));
-            context.Response.Headers["X-SPE-Restriction"] = "session-not-owned";
+            context.Response.Headers["X-Spe-Restriction"] = "session-not-owned";
             ErrorResponseWriter.SetErrorResponse(context, 403, "Session is owned by a different identity.");
             return false;
         }

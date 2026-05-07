@@ -45,7 +45,7 @@ Notes that matter:
   here; see "What else exists").
 - **Status codes:** 200 on success, 424 when the script threw (the JSON
   body still parses and contains the captured output and errors), 401 on
-  auth failure (with `X-SPE-AuthFailureReason` and `WWW-Authenticate`
+  auth failure (with `X-Spe-AuthFailureReason` and `WWW-Authenticate`
   response headers identifying the reason).
 
 ## Authentication: shared-secret HS256
@@ -238,7 +238,7 @@ present depend on the `Spe.Remoting.DetailedErrors` setting:
 | Status | Meaning                                                           |
 | ------ | ----------------------------------------------------------------- |
 | 200    | Script ran. Body is the JSON envelope above.                      |
-| 401    | Authentication failed. Check `X-SPE-AuthFailureReason` and `WWW-Authenticate` response headers for the specific reason. |
+| 401    | Authentication failed. Check `X-Spe-AuthFailureReason` and `WWW-Authenticate` response headers for the specific reason. |
 | 403    | Authentication succeeded but the policy denied the call (cmdlet not allowed, role missing, throttle exceeded). |
 | 424    | The script threw. Body is still the JSON envelope; `errors` contains the captured error records. |
 | 429    | Throttled. `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers say when to retry. |

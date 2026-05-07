@@ -77,7 +77,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $obsKey.Fields[$fieldIds.KeyImpersonateUser].Value = "sitecore\admin"
     $obsKey.Editing.EndEdit() | Out-Null
 
-    # Disabled key (for Gap 3 - X-SPE-AuthFailureReason=disabled)
+    # Disabled key (for Gap 3 - X-Spe-AuthFailureReason=disabled)
     $disabledKey = New-Item -Path "master:$($clientsFolder.Paths.FullPath)/Test-ClientRetryDisabled" -ItemType $sharedSecretClientTemplate
     $disabledKey.Editing.BeginEdit()
     $disabledKey.Fields[$fieldIds.KeyEnabled].Value = "0"

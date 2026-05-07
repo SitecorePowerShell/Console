@@ -114,9 +114,9 @@ function Resolve-HttpErrorResponse {
         return $result
     }
 
-    # 401: auth failure. Read X-SPE-AuthFailureReason for a specific message.
+    # 401: auth failure. Read X-Spe-AuthFailureReason for a specific message.
     if ($status -eq 401) {
-        $reasonCode = Get-HttpHeaderValue $ErrorResponse.Headers "X-SPE-AuthFailureReason"
+        $reasonCode = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-AuthFailureReason"
         $msg = switch ($reasonCode) {
             "expired"  { "Authentication failed: the Shared Secret Client has expired. Rotate its secret or update its Expires field." }
             "disabled" { "Authentication failed: the Shared Secret Client is disabled. Enable it on the client item to allow access." }
@@ -130,11 +130,11 @@ function Resolve-HttpErrorResponse {
         return $result
     }
 
-    # 403: policy/command block. Structured via X-SPE-Restriction.
+    # 403: policy/command block. Structured via X-Spe-Restriction.
     if ($status -eq [int][System.Net.HttpStatusCode]::Forbidden) {
-        $restriction = Get-HttpHeaderValue $ErrorResponse.Headers "X-SPE-Restriction"
-        $blockedCmd = Get-HttpHeaderValue $ErrorResponse.Headers "X-SPE-BlockedCommand"
-        $policyName = Get-HttpHeaderValue $ErrorResponse.Headers "X-SPE-Policy"
+        $restriction = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-Restriction"
+        $blockedCmd = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-BlockedCommand"
+        $policyName = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-Policy"
 
         if ($restriction -eq "command-blocked") {
             Write-Error -Message "Script contains a blocked command: $blockedCmd" -Category SecurityError `

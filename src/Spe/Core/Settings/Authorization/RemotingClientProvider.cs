@@ -280,7 +280,7 @@ namespace Spe.Core.Settings.Authorization
             // Build Access Key Id index alongside the key list
             var index = new Dictionary<string, RemotingClient>(StringComparer.OrdinalIgnoreCase);
             // Parallel kid-states index so the handler can distinguish expired/disabled
-            // from "unknown kid" when emitting X-SPE-AuthFailureReason on 401 responses.
+            // from "unknown kid" when emitting X-Spe-AuthFailureReason on 401 responses.
             var kidStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var key in keys)
             {

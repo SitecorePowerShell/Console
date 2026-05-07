@@ -282,7 +282,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                             PowerShellLog.Audit("[Remoting] action=scriptRejectedByPolicy user={0} ip={1} policy={2} blockedCommand={3} clientSession={4} rid={5}",
                                 user, ip, policy.Name, policyBlockedCommand, clientSession, RemotingRequestContext.GetRequestId());
                         }
-                        // X-SPE-Restriction is the category and stays visible
+                        // X-Spe-Restriction is the category and stays visible
                         // unconditionally - the client (Invoke-RemoteScript)
                         // uses it to pick a friendly error path. The specific
                         // command and policy name leak details an
@@ -290,11 +290,11 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                         // allowlist; gate them on Spe.Remoting.DetailedErrors
                         // so the audit log keeps the truth and ops can still
                         // turn the headers back on for dev troubleshooting.
-                        context.Response.Headers["X-SPE-Restriction"] = "policy-blocked";
+                        context.Response.Headers["X-Spe-Restriction"] = "policy-blocked";
                         if (WebServiceSettings.DetailedErrors)
                         {
-                            context.Response.Headers["X-SPE-BlockedCommand"] = policyBlockedCommand;
-                            context.Response.Headers["X-SPE-Policy"] = policy.Name;
+                            context.Response.Headers["X-Spe-BlockedCommand"] = policyBlockedCommand;
+                            context.Response.Headers["X-Spe-Policy"] = policy.Name;
                             ErrorResponseWriter.SetErrorResponse(context, 403, $"Script blocked by remoting policy '{policy.Name}': {policyBlockedCommand}");
                         }
                         else
@@ -371,7 +371,7 @@ namespace Spe.sitecore_modules.PowerShell.Services.Processors
                 }
 
                 context.Response.ContentType = "text/plain";
-                context.Response.Headers["X-SPE-LanguageMode"] = languageMode.ToString();
+                context.Response.Headers["X-Spe-LanguageMode"] = languageMode.ToString();
                 RemotingPolicyManager.ApplyPolicyToSession(session, policy);
 
                 if (streams != null)

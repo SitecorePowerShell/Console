@@ -82,11 +82,11 @@ Assert-Like $verboseText "*X-RateLimit-Remaining*" "Verbose stream contains X-Ra
 Stop-ScriptSession -Session $obsSession -ErrorAction SilentlyContinue
 
 # ============================================================================
-#  Test Group 4: Gap 3 - 401 diagnostics (X-SPE-AuthFailureReason)
+#  Test Group 4: Gap 3 - 401 diagnostics (X-Spe-AuthFailureReason)
 # ============================================================================
 Write-Host "`n  [Test Group 4: 401 Auth Failure Reason Header]" -ForegroundColor White
 
-# Raw HTTP: expired key returns X-SPE-AuthFailureReason=expired
+# Raw HTTP: expired key returns X-Spe-AuthFailureReason=expired
 $expiredSecret = "Test-Expired-Secret-K3y!-LongEnough-For-Validation"
 $expiredKeyId  = "spe_test_expired_key_001"
 $jwtParams = @{
@@ -107,14 +107,14 @@ $content = New-Object System.Net.Http.StringContent('"x"', [System.Text.Encoding
 $response = $hc.PostAsync($url, $content).Result
 
 Assert-Equal ([int]$response.StatusCode) 401 "Expired key returns 401"
-$hasReasonHeader = $response.Headers.Contains("X-SPE-AuthFailureReason")
-Assert-True $hasReasonHeader "Response includes X-SPE-AuthFailureReason header"
+$hasReasonHeader = $response.Headers.Contains("X-Spe-AuthFailureReason")
+Assert-True $hasReasonHeader "Response includes X-Spe-AuthFailureReason header"
 if ($hasReasonHeader) {
-    $reason = $response.Headers.GetValues("X-SPE-AuthFailureReason") | Select-Object -First 1
-    Assert-Equal $reason "expired" "Expired key: X-SPE-AuthFailureReason is 'expired'"
+    $reason = $response.Headers.GetValues("X-Spe-AuthFailureReason") | Select-Object -First 1
+    Assert-Equal $reason "expired" "Expired key: X-Spe-AuthFailureReason is 'expired'"
 }
 
-# Raw HTTP: disabled key returns X-SPE-AuthFailureReason=disabled
+# Raw HTTP: disabled key returns X-Spe-AuthFailureReason=disabled
 $disabledSecret = "Test-ClientDisabled-Secret-K3y!-LongEnough-For-Validation"
 $disabledKeyId  = "spe_test_client_disabled_01"
 $jwtParams2 = @{
@@ -129,14 +129,14 @@ $content2 = New-Object System.Net.Http.StringContent('"x"', [System.Text.Encodin
 $response2 = $hc.PostAsync($url2, $content2).Result
 
 Assert-Equal ([int]$response2.StatusCode) 401 "Disabled key returns 401"
-$hasReasonHeader2 = $response2.Headers.Contains("X-SPE-AuthFailureReason")
-Assert-True $hasReasonHeader2 "Disabled-key response includes X-SPE-AuthFailureReason header"
+$hasReasonHeader2 = $response2.Headers.Contains("X-Spe-AuthFailureReason")
+Assert-True $hasReasonHeader2 "Disabled-key response includes X-Spe-AuthFailureReason header"
 if ($hasReasonHeader2) {
-    $reason2 = $response2.Headers.GetValues("X-SPE-AuthFailureReason") | Select-Object -First 1
-    Assert-Equal $reason2 "disabled" "Disabled key: X-SPE-AuthFailureReason is 'disabled'"
+    $reason2 = $response2.Headers.GetValues("X-Spe-AuthFailureReason") | Select-Object -First 1
+    Assert-Equal $reason2 "disabled" "Disabled key: X-Spe-AuthFailureReason is 'disabled'"
 }
 
-# Raw HTTP: unknown kid returns X-SPE-AuthFailureReason=invalid (not 'unknown' -- collapsed to resist enumeration)
+# Raw HTTP: unknown kid returns X-Spe-AuthFailureReason=invalid (not 'unknown' -- collapsed to resist enumeration)
 $jwtParams3 = @{
     Algorithm = 'HS256'; Issuer = 'SPE Remoting'
     Audience  = $protocolHost; SecretKey = "Any-Secret-Long-Enough-For-Validation-123"
@@ -150,11 +150,11 @@ $content3 = New-Object System.Net.Http.StringContent('"x"', [System.Text.Encodin
 $response3 = $hc.PostAsync($url3, $content3).Result
 
 Assert-Equal ([int]$response3.StatusCode) 401 "Unknown kid returns 401"
-if ($response3.Headers.Contains("X-SPE-AuthFailureReason")) {
-    $reason3 = $response3.Headers.GetValues("X-SPE-AuthFailureReason") | Select-Object -First 1
-    Assert-Equal $reason3 "invalid" "Unknown kid: X-SPE-AuthFailureReason is 'invalid' (collapsed from unknown+signatureInvalid)"
+if ($response3.Headers.Contains("X-Spe-AuthFailureReason")) {
+    $reason3 = $response3.Headers.GetValues("X-Spe-AuthFailureReason") | Select-Object -First 1
+    Assert-Equal $reason3 "invalid" "Unknown kid: X-Spe-AuthFailureReason is 'invalid' (collapsed from unknown+signatureInvalid)"
 } else {
-    Assert-True $false "Unknown kid: expected X-SPE-AuthFailureReason header"
+    Assert-True $false "Unknown kid: expected X-Spe-AuthFailureReason header"
 }
 
 # Client-side: Invoke-RemoteScript surfaces the reason in the error message
