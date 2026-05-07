@@ -330,6 +330,16 @@ namespace Spe.Core.Host
 
         public List<ErrorRecord> LastErrors { get; set; }
 
+        // Union "did the last script run produce any errors" signal. Covers
+        // both stream errors (Streams.Error) and pipeline-output ErrorRecords
+        // returned through execResults - the latter happens when Out-Default
+        // (added for stringOutput=true) re-emits a parameter binding failure
+        // as an output object instead of routing it to the error stream.
+        // Audit and HTTP-status code paths read this rather than inspecting
+        // LastErrors so the JSON/CliXml branches can keep using LastErrors as
+        // their dedicated "errors" channel without doubling records.
+        public bool LastInvocationHadErrors { get; set; }
+
         public string Key
         {
             get => host.SessionKey;
@@ -912,7 +922,7 @@ namespace Spe.Core.Host
             {
                 return null;
             }
-            
+
             if (Runspace.DefaultRunspace == null)
             {
                 Runspace.DefaultRunspace = host.Runspace;
@@ -939,7 +949,7 @@ namespace Spe.Core.Host
                             SubscribeStreamsToRing(powerShell);
                             MarkRunStarted();
                         }
-                        return ExecuteCommand(stringOutput, marshalResults);
+                        return ExecuteCommand(stringOutput, marshalResults, internalScript);
                     }
                 }
                 finally
@@ -1035,7 +1045,7 @@ namespace Spe.Core.Host
                 using (powerShell = NewPowerShell())
                 {
                     powerShell.Commands.AddCommand(command);
-                    return ExecuteCommand(stringOutput);
+                    return ExecuteCommand(stringOutput, true, internalScript);
                 }
             }
             finally
@@ -1093,7 +1103,7 @@ namespace Spe.Core.Host
             };
 
         
-        private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
+        private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true, bool internalScript = false)
         {
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
@@ -1127,11 +1137,48 @@ namespace Spe.Core.Host
             abortRequested = false;
 
             LastErrors?.Clear();
+            // Only the user-facing call should reset and update the
+            // invocation error flag. Internal scripts (alias setup during
+            // session warmup, post-execution cleanup) run on the same
+            // session and would otherwise clobber a true value set by the
+            // user script just before the audit reads it.
+            if (!internalScript)
+            {
+                LastInvocationHadErrors = false;
+            }
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
             if (powerShell.HadErrors)
             {
+                // LastErrors keeps populating because the JSON / CliXml
+                // response paths in ProcessScript consume it as their
+                // dedicated "errors" channel. The hasErrors signal that
+                // drives 424 deliberately does NOT read this list - a
+                // script that handled its non-terminating errors
+                // (-ErrorAction SilentlyContinue / Ignore, try/catch on
+                // -ErrorAction Stop, 2>$null) still populates Streams.Error
+                // because Sitecore's PSProvider writes errors that bypass
+                // user-level suppression. Counting those as failures gave
+                // every test setup using "if exists" idioms a spurious 424.
                 LastErrors = powerShell.Streams.Error.ToList();
+            }
+
+            // Pipeline-output ErrorRecords don't move HadErrors but still
+            // mean the run failed. Out-Default re-emits a binding failure
+            // as an output object instead of routing it to the error
+            // stream; the script never "handled" that, so 424 is correct.
+            // Mirrors the second loop in LogErrors so the audit signal
+            // matches what already gets warn-logged.
+            if (!internalScript && execResults != null)
+            {
+                foreach (var psObject in execResults)
+                {
+                    if (psObject?.BaseObject is ErrorRecord)
+                    {
+                        LastInvocationHadErrors = true;
+                        break;
+                    }
+                }
             }
 
             LogErrors(powerShell, execResults);

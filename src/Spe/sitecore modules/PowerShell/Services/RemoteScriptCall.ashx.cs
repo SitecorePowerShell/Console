@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -2064,11 +2065,15 @@ namespace Spe.sitecore_modules.PowerShell.Services
             // "<auto>" and the rest of the request continues to use a server-
             // generated GUID internally.
             var auditSessionId = string.IsNullOrEmpty(sessionId) ? "<auto>" : sessionId;
+            // sessionMode mirrors ScriptSessionManager.GetSession's autoDispose
+            // predicate: an empty URL sessionId becomes a one-shot session,
+            // anything else is reused for the lifetime of the cache entry.
+            var sessionMode = string.IsNullOrEmpty(sessionId) ? "transient" : "persistent";
             var activePolicy = GetActivePolicy();
             if (activePolicy.AuditLevel >= AuditLevel.Standard)
             {
-                PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} sessionId={2} scriptHash={3} clientSession={4} rid={5}",
-                    user, ip, auditSessionId, scriptHash.Value, clientSession, GetRequestId());
+                PowerShellLog.Audit("[Remoting] action=scriptStarting user={0} ip={1} sessionId={2} sessionMode={3} scriptHash={4} clientSession={5} rid={6}",
+                    user, ip, auditSessionId, sessionMode, scriptHash.Value, clientSession, GetRequestId());
             }
             else
             {
@@ -2206,6 +2211,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 script = StreamCaptureBootstrap + script;
             }
 
+            // Wall-clock timing for the execute-and-serialize block. Started
+            // here (rather than at scriptStarting) so the figure measures only
+            // what the script and its response shaping consumed - session
+            // warmup, ownership checks, and policy validation are excluded.
+            var executionStopwatch = Stopwatch.StartNew();
             try
             {
                 if (Context.Database != null)
@@ -2325,7 +2335,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                             session.SetVariable("results", convertedObjects);
                             session.Output.Clear();
-                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results", true, true);
 
                             response.Write("<#messages#>");
                             foreach (var outputBuffer in session.Output)
@@ -2356,7 +2366,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         var structuredScript = WebServiceSettings.DetailedErrors
                             ? StructuredErrorScript
                             : SanitizedStructuredErrorScript;
-                        session.ExecuteScriptPart(useStructuredErrors ? structuredScript : FlatErrorScript);
+                        session.ExecuteScriptPart(useStructuredErrors ? structuredScript : FlatErrorScript, true, true);
 
                         foreach (var outputBuffer in session.Output)
                         {
@@ -2375,7 +2385,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         {
                             session.SetVariable("results", outObjects);
                             session.Output.Clear();
-                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results", true, true);
 
                             foreach (var outputBuffer in session.Output)
                             {
@@ -2385,7 +2395,24 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     }
                 }
 
-                if (session.Output.HasErrors)
+                // Two error signals trigger 424:
+                //   * Output.HasErrors - flipped when something rendered
+                //     through the host UI's WriteErrorLine. Default-action
+                //     errors and Write-Error reach the host this way.
+                //   * LastInvocationHadErrors - flipped only when a
+                //     pipeline-output object is an ErrorRecord (Out-Default
+                //     re-emitting a binding failure as output). The script
+                //     can't have handled that case.
+                // We deliberately do NOT read session.LastErrors / Streams.Error
+                // here: Sitecore's PSProvider writes errors that bypass
+                // -ErrorAction Ignore/SilentlyContinue/try-catch, so counting
+                // those gave every "if exists" test setup a spurious 424.
+                // Uncaught terminating exceptions are handled by the
+                // catch (Exception) block below and still set 424.
+                var hasErrors = session.Output.HasErrors
+                    || session.LastInvocationHadErrors;
+
+                if (hasErrors)
                 {
                     context.Response.StatusCode = 424;
                     context.Response.StatusDescription = "Method Failure";
@@ -2393,8 +2420,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} sessionId={2} scriptHash={3} hasErrors={4} clientSession={5} rid={6}",
-                        user, ip, session.ID, scriptHash.Value, session.Output.HasErrors, clientSession, GetRequestId());
+                    executionStopwatch.Stop();
+                    PowerShellLog.Audit("[Remoting] action=scriptCompleted user={0} ip={1} sessionId={2} scriptHash={3} hasErrors={4} durationMs={5} clientSession={6} rid={7}",
+                        user, ip, session.ID, scriptHash.Value, hasErrors, executionStopwatch.ElapsedMilliseconds, clientSession, GetRequestId());
                 }
 
                 if (policy.AuditLevel >= AuditLevel.Full)
@@ -2407,8 +2435,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 if (policy.AuditLevel >= AuditLevel.Standard)
                 {
-                    PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} sessionId={2} scriptHash={3} error={4} clientSession={5} rid={6}",
-                        user, ip, session.ID, scriptHash.Value, ex.GetType().Name, clientSession, GetRequestId());
+                    executionStopwatch.Stop();
+                    PowerShellLog.Audit("[Remoting] action=scriptFailed user={0} ip={1} sessionId={2} scriptHash={3} error={4} durationMs={5} clientSession={6} rid={7}",
+                        user, ip, session.ID, scriptHash.Value, ex.GetType().Name, executionStopwatch.ElapsedMilliseconds, clientSession, GetRequestId());
                 }
                 PowerShellLog.Error("[Remoting] action=scriptFailed error=scriptExecution", ex);
                 context.Response.StatusCode = 424;
