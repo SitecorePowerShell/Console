@@ -8,7 +8,7 @@ SharedFields:
   Hint: Script
   Value: |
     Write-Log "Processing changes to ensure backwards compatibility."
-    $oldVersion = New-Object System.Version(10,0)
+    $oldVersion = New-Object System.Version(10,1)
     if($PSVersionTable["SitecoreVersion"] -lt $oldVersion) {
         $iseButton = Get-Item -Path "core:{bfc79034-857c-4432-a5c2-2d93af784384}"
         $iseButton.Editing.BeginEdit()
