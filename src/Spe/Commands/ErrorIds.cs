@@ -19,6 +19,7 @@ namespace Spe.Commands
         MethodNotFound,
         NewItemIOError,
         OriginatingScriptSessionNotInteractive,
+        PackagesDisabled,
         PlaceholderSettingAlreadyExists,
         PlaceholderSettingNotFound,
         RenderingNotFound,
