@@ -6,7 +6,7 @@ Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Script exe
 SharedFields:
 - ID: "ab51c8b2-f0e1-4471-9aae-cc080d774923"
   Hint: Type
-  Value: Spe.Core.Rules.ScriptResultValueCondition,Spe
+  Value: Spe.Core.Rules.ScriptResultStringValueCondition,Spe
 Languages:
 - Language: en
   Versions:

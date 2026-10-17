@@ -1,0 +1,27 @@
+﻿---
+ID: "ebbbfa17-9acc-4b40-93f3-db13004f5f40"
+Parent: "c84f4255-cf8a-455d-9c11-94a774773aba"
+Template: "f0d16eee-3a05-4e43-a082-795a32b873c0"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Script execution result is true
+SharedFields:
+- ID: "ab51c8b2-f0e1-4471-9aae-cc080d774923"
+  Hint: Type
+  Value: Spe.Core.Rules.ScriptResultBoolValueCondition,Spe
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20261017T120000Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "936a84d4-2728-47b0-9225-4e799f086043"
+    - ID: "af321234-4eb9-4ef5-9197-65903351939c"
+      Hint: Text
+      Value: "where calling the [scriptid,Tree,root={A3572733-5062-43E9-A447-54698BC1C637}&setRootAsSearchRoot=true&selection={DD22F1B3-BD87-4DB2-9E7D-F7A496888D43},specific] PowerShell script returns true"
