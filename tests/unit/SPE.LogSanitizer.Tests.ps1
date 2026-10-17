@@ -29,16 +29,6 @@ if (-not (Test-Path $spePath)) {
 
 try { Add-Type -Path $spePath -ErrorAction SilentlyContinue } catch { }
 
-# Spe.dll references Newtonsoft.Json 13 but no Newtonsoft.Json.dll is
-# checked in; the package is normally satisfied by the Sitecore CM bin
-# folder at runtime. For unit tests, pre-load it from the NuGet cache so
-# PowerShellLog.ToJson can return a JObject without an assembly-load failure.
-$newtonsoftDll = "$env:USERPROFILE\.nuget\packages\newtonsoft.json\13.0.1\lib\net45\Newtonsoft.Json.dll"
-$haveNewtonsoft = Test-Path $newtonsoftDll
-if ($haveNewtonsoft) {
-    try { Add-Type -Path $newtonsoftDll -ErrorAction SilentlyContinue } catch { }
-}
-
 # PowerShellLog is public, LogSanitizer is internal - reach the assembly
 # through the public type, then look up both via reflection.
 $asm = [Spe.Core.Diagnostics.PowerShellLog].Assembly
@@ -147,13 +137,11 @@ Assert-True ($redactedSec -match "apiVersion=2")  "non-sensitive params preserve
 # Probe with a no-op call first; skip cleanly if the type initializer
 # fails. Source-regression guards below cover the duplicate-key contract.
 $canInvokeToJson = $false
-if ($haveNewtonsoft) {
-    try {
-        $null = $toJson.Invoke($null, @(""))
-        $canInvokeToJson = $true
-    } catch {
-        $canInvokeToJson = $false
-    }
+try {
+    $null = $toJson.Invoke($null, @(""))
+    $canInvokeToJson = $true
+} catch {
+    $canInvokeToJson = $false
 }
 
 if (-not $canInvokeToJson) {
@@ -203,7 +191,7 @@ Assert-Null  $j["action"] "uncategorized -> no key=value parsing"
 # ============================================================
 # These read the C# source directly so the duplicate-key contract and the
 # call-site sanitization sweep have a tripwire even when the runtime test
-# above is skipped (no Sitecore available, no Newtonsoft.Json available).
+# above is skipped (no Sitecore available).
 Write-Host "`n  [Source guards: ToJson contract + RemoteScriptCall sanitization sweep]" -ForegroundColor White
 
 $repoRoot           = "$PSScriptRoot\..\.."
@@ -220,8 +208,8 @@ $callsiteSrc = Get-Content -Raw $remoteScriptCall
 
 # Duplicate-key hardening: ToJson must check for an existing key before
 # assigning, otherwise injected key=value pairs overwrite legitimate ones.
-Assert-True ($logSrc -match 'if\s*\(\s*json\[\s*key\s*\]\s*==\s*null\s*\)') `
-    "REGRESSION GUARD: ToJson preserves first occurrence of each key (if (json[key] == null) ...)"
+Assert-True ($logSrc -match 'if\s*\(\s*!\s*json\.ContainsKey\(\s*key\s*\)\s*\)') `
+    "REGRESSION GUARD: ToJson preserves first occurrence of each key (if (!json.ContainsKey(key)) ...)"
 
 # The 10 #1444 call sites must wrap their tainted value in LogSanitizer.
 # Pattern: the action= identifier followed somewhere within the same

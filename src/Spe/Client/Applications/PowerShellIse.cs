@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Script.Serialization;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -577,7 +578,7 @@ namespace Spe.Client.Applications
             }
             try
             {
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<MruEntry>>(json)
+                return new JavaScriptSerializer().Deserialize<System.Collections.Generic.List<MruEntry>>(json)
                        ?? new System.Collections.Generic.List<MruEntry>();
             }
             catch
@@ -588,7 +589,12 @@ namespace Spe.Client.Applications
 
         public static string SerializeMruEntries(System.Collections.Generic.List<MruEntry> entries)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(entries);
+            return new JavaScriptSerializer().Serialize(entries);
+        }
+
+        private static object Get(System.Collections.Generic.IDictionary<string, object> dict, string key)
+        {
+            return dict.TryGetValue(key, out var value) ? value : null;
         }
 
         [HandleMessage("ise:new", true)]
@@ -709,8 +715,10 @@ namespace Spe.Client.Applications
 
             try
             {
-                var tabState = Newtonsoft.Json.Linq.JObject.Parse(settings.ActiveTabs);
-                var tabs = tabState["tabs"] as Newtonsoft.Json.Linq.JArray;
+                var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                var tabState = serializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(settings.ActiveTabs);
+                // JavaScriptSerializer hands nested arrays back as ArrayList.
+                var tabs = Get(tabState, "tabs") as System.Collections.IList;
                 if (tabs == null || tabs.Count == 0)
                 {
                     LoadInitialScript(args);
@@ -723,8 +731,8 @@ namespace Spe.Client.Applications
                     return;
                 }
 
-                var activeIndex = (int?)tabState["activeIndex"] ?? 1;
-                var restoreInfo = new Newtonsoft.Json.Linq.JArray();
+                var activeIndex = Get(tabState, "activeIndex") as int? ?? 1;
+                var restoreInfo = new System.Collections.Generic.List<object>();
 
                 // Don't rely on Editor.Value to carry per-tab content through the
                 // loop - it's a single memo and only the last value survives to the
@@ -732,13 +740,13 @@ namespace Spe.Client.Applications
                 // via a single JS call at the end.
                 Editor.Value = string.Empty;
 
-                foreach (var tabToken in tabs)
+                foreach (var tabToken in tabs.OfType<System.Collections.Generic.Dictionary<string, object>>())
                 {
-                    var db = (string)tabToken["db"] ?? string.Empty;
-                    var id = (string)tabToken["id"] ?? string.Empty;
-                    var modified = (bool?)tabToken["modified"] ?? false;
-                    var content = (string)tabToken["content"];
-                    var tabInfo = new Newtonsoft.Json.Linq.JObject
+                    var db = Get(tabToken, "db") as string ?? string.Empty;
+                    var id = Get(tabToken, "id") as string ?? string.Empty;
+                    var modified = Get(tabToken, "modified") as bool? ?? false;
+                    var content = Get(tabToken, "content") as string;
+                    var tabInfo = new System.Collections.Generic.Dictionary<string, object>
                     {
                         ["modified"] = modified,
                         ["deleted"] = false
@@ -781,13 +789,13 @@ namespace Spe.Client.Applications
                 // Forward the last-selected ribbon strip so the client can
                 // restore the active tab (Home/Context/Debug/Plugins/Settings)
                 // the user was looking at before the ISE was last closed.
-                var activeStrip = (string)tabState["activeStrip"] ?? string.Empty;
-                var restoreData = new Newtonsoft.Json.Linq.JObject
+                var activeStrip = Get(tabState, "activeStrip") as string ?? string.Empty;
+                var restoreData = new System.Collections.Generic.Dictionary<string, object>
                 {
                     ["tabs"] = restoreInfo,
                     ["activeStrip"] = activeStrip
                 };
-                var escapedJson = HttpUtility.JavaScriptStringEncode(restoreData.ToString(Newtonsoft.Json.Formatting.None));
+                var escapedJson = HttpUtility.JavaScriptStringEncode(serializer.Serialize(restoreData));
                 SheerResponse.Eval($"spe.applyRestoredTabs(JSON.parse(\"{escapedJson}\"));");
             }
             catch (Exception ex)

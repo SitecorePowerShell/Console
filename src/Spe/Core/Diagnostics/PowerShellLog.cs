@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 using log4net;
-using Newtonsoft.Json.Linq;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 
@@ -64,11 +65,11 @@ namespace Spe.Core.Diagnostics
             {
                 var json = ToJson(message);
                 json["level"] = "audit";
-                if (json["user"] == null)
+                if (!json.ContainsKey("user"))
                 {
                     json["user"] = user;
                 }
-                Log.Info(json.ToString(Newtonsoft.Json.Formatting.None));
+                Log.Info(new JavaScriptSerializer().Serialize(json));
             }
             else
             {
@@ -99,15 +100,15 @@ namespace Spe.Core.Diagnostics
                 {
                     json["level"] = level;
                 }
-                return json.ToString(Newtonsoft.Json.Formatting.None);
+                return new JavaScriptSerializer().Serialize(json);
             }
 
             return messagePrefix != string.Empty ? messagePrefix + message : message;
         }
 
-        internal static JObject ToJson(string message)
+        internal static Dictionary<string, object> ToJson(string message)
         {
-            var json = new JObject();
+            var json = new Dictionary<string, object>();
             var categoryMatch = CategoryPattern.Match(message);
 
             if (categoryMatch.Success)
@@ -118,7 +119,7 @@ namespace Spe.Core.Diagnostics
                 foreach (Match kv in kvMatches)
                 {
                     var key = kv.Groups[1].Value;
-                    if (json[key] == null)
+                    if (!json.ContainsKey(key))
                     {
                         json[key] = kv.Groups[2].Value;
                     }

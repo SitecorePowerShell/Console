@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using Sitecore;
 using Sitecore.Configuration;
@@ -1256,7 +1257,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         ["output"] = new object[0],
                         ["errors"] = new[] { errorEntry }
                     };
-                    context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                    context.Response.Write(new JavaScriptSerializer().Serialize(errorBody));
                 }
                 else
                 {
@@ -1265,7 +1266,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         ["output"] = new object[0],
                         ["errors"] = new[] { message }
                     };
-                    context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                    context.Response.Write(new JavaScriptSerializer().Serialize(errorBody));
                 }
             }
 
@@ -1852,7 +1853,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
             context.Response.StatusCode = 200;
             context.Response.ContentType = "application/json";
-            context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            context.Response.Write(new JavaScriptSerializer().Serialize(result));
         }
 
         private static void ProcessScript(HttpContext context, HttpRequest request, string serviceName, string outputFormat, string sessionId, bool persistentSession, bool useStructuredErrors = false)
@@ -2281,7 +2282,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             ["output"] = new object[0],
                             ["errors"] = new[] { errorEntry }
                         };
-                        context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                        context.Response.Write(new JavaScriptSerializer().Serialize(errorBody));
                     }
                     else
                     {
@@ -2297,7 +2298,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             ["output"] = new object[0],
                             ["errors"] = new[] { errorText }
                         };
-                        context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(errorBody));
+                        context.Response.Write(new JavaScriptSerializer().Serialize(errorBody));
                     }
                 }
             }
