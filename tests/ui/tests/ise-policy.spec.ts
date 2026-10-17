@@ -160,8 +160,8 @@ async function runSetupOrTeardown(
 }
 
 for (const site of sites) {
-  test.describe.configure({ mode: "serial" });
   test.describe(`ISE Policy Gallery - ${site.url}`, () => {
+    test.describe.configure({ mode: "serial" });
     test.use({ storageState: authStatePath(site) });
 
     test.beforeAll(async ({ browser }) => {
