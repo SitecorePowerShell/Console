@@ -76,3 +76,6 @@ cli
 .vscode/settings.json
 docs/superpowers
 docs/superpowers
+
+# Codex CLI local config
+.codex/
