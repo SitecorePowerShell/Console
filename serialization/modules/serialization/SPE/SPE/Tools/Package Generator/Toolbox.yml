@@ -3,6 +3,23 @@ ID: "a5481454-0c2c-4a54-8beb-1b51030c40c0"
 Parent: "8e4e2be8-5d9f-4934-9421-0a82f1664d94"
 Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
 Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Package Generator/Toolbox
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{0C9DEB35-EF11-4A07-9DA1-D48E10008E13}">
+        <conditions>
+          <condition
+            id="{26C26920-092C-4763-ADDD-78140463A5A0}"
+            uid="BC7124E11C794B5EBE0B26FC1B30FD59"
+            Setting="Sitecore.Packages.Disabled"
+            operatorid="{6A7294DF-ECAE-4D5F-A8D2-C69CB1161C09}"
+            value="true" />
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: da
   Fields:

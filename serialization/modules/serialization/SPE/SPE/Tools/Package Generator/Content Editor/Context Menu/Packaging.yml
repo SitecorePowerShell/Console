@@ -12,7 +12,20 @@ SharedFields:
   Value: Office/32x32/package.png
 - ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
   Hint: ShowRule
-  Value: <ruleset />
+  Value: |
+    <ruleset>
+      <rule
+        uid="{2993694D-E44E-4F91-9375-46B1886C8C4E}">
+        <conditions>
+          <condition
+            id="{26C26920-092C-4763-ADDD-78140463A5A0}"
+            uid="593BD45EC1414D7C8250637C42BEDCB0"
+            Setting="Sitecore.Packages.Disabled"
+            operatorid="{6A7294DF-ECAE-4D5F-A8D2-C69CB1161C09}"
+            value="true" />
+        </conditions>
+      </rule>
+    </ruleset>
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100
