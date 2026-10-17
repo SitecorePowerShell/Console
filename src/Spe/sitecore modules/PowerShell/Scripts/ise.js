@@ -1619,7 +1619,9 @@
             if (splitOrientation === "vertical") {
                 $("#Result").css({ height: "100%", width: "100%" });
             } else {
-                var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
+                // 7 = #Result vertical padding (5) + #ResultsPane bottom padding (2),
+                // so the StatusBar ends exactly at the bottom of the window.
+                var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").outerHeight(true) - resultsBottomOffset - 7;
                 $("#Result").height(resultsHeight);
                 $("#Result").width($(window).width() - $("#Result").offset().left * 2);
                 $("#Result").width($("#ResultsPane").width());

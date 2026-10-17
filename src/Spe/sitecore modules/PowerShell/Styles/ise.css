@@ -188,21 +188,51 @@ a.ps-link {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
 }
 
-#ResultsSplitter {
-    background:
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) calc(50% - 10px) center / 6px 6px no-repeat,
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) 50% center / 6px 6px no-repeat,
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) calc(50% + 10px) center / 6px 6px no-repeat;
-    padding: 0 4px 0 4px;
+/* Pane splitters: editor/output (#ResultsSplitter row when stacked,
+ * #VerticalSplitter when side by side) and editor/sidebar (#TreeSplitterPanel).
+ * A 6px hit area with a 1px line and a short handle in the middle, tinted on hover. */
+#ResultsSplitter td {
+    height: 6px;
+    line-height: 0;
+    font-size: 0;
+    background: linear-gradient(#a8a8a8, #a8a8a8) no-repeat center / 24px 2px,
+                linear-gradient(#d8d8d8, #d8d8d8) no-repeat center / 100% 1px;
+}
+
+#ResultsSplitter img {
+    display: block;
+    height: 6px;
+}
+
+#VerticalSplitter {
+    flex: 0 0 6px;
+    cursor: col-resize;
+}
+
+#TreeSplitterPanel {
+    width: 6px;
+    padding: 0;
+}
+
+#TreeSplitterPanel .scVSplitterImage {
+    width: 100%;
+}
+
+#VerticalSplitter, #TreeSplitterPanel {
+    background: linear-gradient(#a8a8a8, #a8a8a8) no-repeat center / 2px 24px,
+                linear-gradient(#d8d8d8, #d8d8d8) no-repeat center / 1px 100%;
+}
+
+#ResultsSplitter, #VerticalSplitter, #TreeSplitterPanel {
     transition: background-color 0.15s;
 }
 
-#ResultsSplitter:hover {
-    background-color: #e8e8e8;
+#ResultsSplitter:hover, #VerticalSplitter:hover, #TreeSplitterPanel:hover {
+    background-color: #e4e4e4;
 }
 
-#ResultsSplitter:active {
-    background-color: #dcdcdc;
+#ResultsSplitter:active, #VerticalSplitter:active, #TreeSplitterPanel:active {
+    background-color: #d6d6d6;
 }
 
 #HelpClose:active {
@@ -809,23 +839,6 @@ nobr > .scTab_Hover {
     overflow: hidden;
 }
 
-#VerticalSplitter {
-    flex: 0 0 10px;
-    cursor: col-resize;
-    background:
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) center calc(50% - 10px) / 6px 6px no-repeat,
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) center 50% / 6px 6px no-repeat,
-        radial-gradient(circle, #939393 2.5px, transparent 2.5px) center calc(50% + 10px) / 6px 6px no-repeat;
-    transition: background-color 0.15s;
-}
-
-#VerticalSplitter:hover {
-    background-color: #e8e8e8;
-}
-
-#VerticalSplitter:active {
-    background-color: #dcdcdc;
-}
 
 .split-orientation-active {
     background-color: rgb(1, 36, 86);

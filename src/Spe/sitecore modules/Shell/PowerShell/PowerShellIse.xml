@@ -107,7 +107,7 @@
                 </Border>
                 <GridPanel ID="Content" CellPadding="4" GridPanel.Height="100%" Columns="3">
                     <Border ID="Sidebar" GridPanel.Width="200px" GridPanel.Height="100%" GridPanel.ID="SidebarPanel"
-                            style="position:relative;height:100%;border-right:2px solid #474747;background:white;overflow:hidden;">
+                            style="position:relative;height:100%;background:white;overflow:hidden;">
                         <Scrollbox Width="100%" Height="100%" ID="TreeView" Class="scScrollbox scFixSize scFixSize4"
                                    Background="white" Padding="0px">
                             <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"

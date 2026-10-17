@@ -75,38 +75,55 @@ textarea[disabled] {
     width: 300px;
 }
 
+/* Flat bar: panels have no frame, a short 1px line separates neighbours.
+   The line is painted in the first pixel of a panel's left padding, which is
+   1px wider than the right padding, so it sits midway between the contents.
+   border-box because the ListView's flex container forces it (and width: 100%). */
 #StatusBar {
-    height: 22px;
-    margin: 2px 5px 0 8px;
+    box-sizing: border-box;
+    height: 28px;
+    margin: 0;
     overflow: hidden;
-    padding: 0 0 3px 0;
+    padding: 3px;
 }
 
     #StatusBar .status-bar-panel {
         background-color: white;
-        border: solid 1px silver;
-        padding: 2px 2px;
+        border: 0;
+        padding: 3px 6px;
+        height: 16px;
+        line-height: 16px;
+        overflow: hidden;
+    }
+
+        #StatusBar .status-bar-panel img {
+            vertical-align: top;
+        }
+
+    /* Divider on the left of every panel but the leftmost one: in the ISE the
+       text panel is leftmost (the rest float right), in the ListView the
+       first left-floated panel is. */
+    #StatusBar .status-bar-right,
+    #StatusBar .status-bar-right-icon,
+    #StatusBar .status-bar-script,
+    #StatusBar .status-bar-left ~ .status-bar-panel {
+        padding-left: 7px;
+        background: linear-gradient(silver, silver) no-repeat left center / 1px 12px, white;
     }
 
     #StatusBar .status-bar-text {
-        height: 16px;
-        overflow: hidden;
         cursor: pointer;
     }
 
     #StatusBar .status-bar-right {
         float: right;
-        margin-left: 2px;
         width: 50px;
-        height: 16px;
     }
 
     #StatusBar .status-bar-right-icon {
         float: right;
-        margin-left: 2px;
         text-align: center;
         width: 16px;
-        height: 16px;
         cursor: pointer;
     }
 
@@ -117,14 +134,11 @@ textarea[disabled] {
 
     #StatusBar .status-bar-script {
         float: right;
-        margin-left: 2px;
         width: 500px;
     }
 
     #StatusBar .status-bar-left, #StatusBar .status-bar-middle {
         float: left;
-        margin-right: 2px;
-        padding-left: 3px;
         width: 80px;
     }
 
@@ -135,6 +149,20 @@ textarea[disabled] {
 
     #StatusBar #RefreshHint {
         float: right;
+    }
+
+    /* Pinned to the window corner, painted over the status bar. The hit area
+       reaches the corner; the 12px drawing sits 2px in from the right edge
+       and 3px up from the bottom. */
+    #StatusBar .status-bar-grip {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        width: 14px;
+        height: 15px;
+        cursor: se-resize;
+        background: linear-gradient(135deg, transparent 0 45%, #999 45% 52%, transparent 52% 64%, #999 64% 71%, transparent 71% 83%, #999 83% 90%, transparent 90%) no-repeat 0 0 / 12px 12px;
     }
 
     .scRibbonNavigatorButtonsGroupHeader {
