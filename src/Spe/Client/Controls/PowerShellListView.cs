@@ -206,12 +206,12 @@ namespace Spe.Client.Controls
 
             Controls.Clear();
             ColumnNames.Clear();
-            var builder = new ImageBuilder
-            {
-                Src = Images.GetThemedImageSource("OfficeWhite/32x32/checkbox_group.png", ImageDimension.id16x16),
-                Alt = "Click to invert the selection"
-            };
-            ColumnNames.Add("Icon", $"{builder}");
+            // Inline SVG in currentColor so it matches the header text: white on the dark 10.4- headers, dark on the white 10.5+ ones.
+            ColumnNames.Add("Icon",
+                "<svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='1.5' " +
+                "stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle' role='img'>" +
+                "<title>Click to invert the selection</title>" +
+                "<path d='M4.5 1.5h10v10'/><rect x='1.5' y='4.5' width='10' height='10' rx='1'/><path d='M4 9.5l2 2 3.5-4'/></svg>");
 
             if (Data == null)
             {
