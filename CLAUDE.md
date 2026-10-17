@@ -31,10 +31,10 @@ task generate  # Generate .dat files from YAML
 task clean     # Clean build artifacts
 ```
 
-**MSBuild**: Visual Studio 2022 Community Edition.
+**MSBuild**: located via vswhere (any VS edition). `task build` does this for you. To find it manually:
 
 ```
-"C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/MSBuild.exe" Spe.sln -t:Build -p:Configuration=Debug
+"C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe'
 ```
 
 Use dash flags (`-t:Build -p:Configuration=Debug`), not forward-slash flags, when running in bash.

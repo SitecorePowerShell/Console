@@ -27,7 +27,7 @@ tasks:
       - sh: test -f Spe.sln
         msg: "Spe.sln not found. Are you in the repository root?"
     cmds:
-      - powershell -Command "& 'C:/Program Files/Microsoft Visual Studio/18/Community/MSBuild/Current/Bin/MSBuild.exe' Spe.sln -t:Build -p:Configuration=Debug"
+      - powershell -NoProfile -Command "\$m = & \"\${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe\" -latest -products * -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1; if (-not \$m) { Write-Error 'MSBuild not found via vswhere'; exit 1 }; & \$m Spe.sln -t:Build -p:Configuration=Debug; exit \$LASTEXITCODE"
 
   deploy:
     desc: Deploy build output to Docker container
