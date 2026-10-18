@@ -4,7 +4,7 @@
 Write-Host "`n  [Authorization Cache]" -ForegroundColor White
 
 # Test 1: Authorization remains cached across rapid requests
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 $results = @()
 for ($i = 0; $i -lt 10; $i++) {
     $result = Invoke-RemoteScript -Session $session -ScriptBlock { "ok" } -Raw
@@ -18,13 +18,13 @@ Stop-ScriptSession -Session $session
 $jobs = @()
 for ($i = 0; $i -lt 5; $i++) {
     $jobs += Start-Job -ScriptBlock {
-        param($uri)
+        param($uri, $pw)
         Import-Module -Name SPE -Force
-        $s = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $uri
+        $s = New-ScriptSession -Username "sitecore\admin" -Password $pw -ConnectionUri $uri
         $result = Invoke-RemoteScript -Session $s -ScriptBlock { "ok" } -Raw
         Stop-ScriptSession -Session $s
         $result
-    } -ArgumentList $protocolHost
+    } -ArgumentList $protocolHost, $adminPassword
 }
 $jobResults = $jobs | Wait-Job | Receive-Job
 $jobs | Remove-Job
@@ -34,7 +34,7 @@ Assert-Equal $allOk $true "concurrent requests all succeed without cache stamped
 # Test 3: Authorization works after cache eviction (distinct sessions)
 $evictionResults = @()
 for ($i = 0; $i -lt 5; $i++) {
-    $s = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+    $s = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
     $result = Invoke-RemoteScript -Session $s -ScriptBlock { "ok" } -Raw
     $evictionResults += $result
     Stop-ScriptSession -Session $s
@@ -43,7 +43,7 @@ $allOk = ($evictionResults | Where-Object { $_ -eq "ok" }).Count -eq 5
 Assert-Equal $allOk $true "authorization works correctly across distinct sessions"
 
 # Test 4: Expired entries don't block fresh authorization
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 $before = Invoke-RemoteScript -Session $session -ScriptBlock { "before" } -Raw
 Assert-Equal $before "before" "authorization works before expiration"
 Stop-ScriptSession -Session $session
@@ -51,7 +51,7 @@ Stop-ScriptSession -Session $session
 Write-Host "    Waiting for cache expiration (11s)..." -ForegroundColor Gray
 Start-Sleep -Seconds 11
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 $after = Invoke-RemoteScript -Session $session -ScriptBlock { "after" } -Raw
 Assert-Equal $after "after" "authorization works after cache expiration"
 Stop-ScriptSession -Session $session

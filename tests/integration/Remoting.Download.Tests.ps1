@@ -8,7 +8,7 @@ if(Test-Path -Path $destinationMediaPath) {
 }
 New-Item -Path $destinationMediaPath -ItemType Directory | Out-Null
 
-#$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+#$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 
 $rootPaths = @("App", "Data", "Debug", "Layout", "Log", "Media", "Package", "Serialization", "Temp")

@@ -11,8 +11,15 @@ Invoke-RemoteScript -Session $session -ScriptBlock {
     # Advanced Web API
     $advModule = Get-Item "master:" -ID "{CACE2E80-0CD2-48BD-894E-8784B7F2B00B}" -ErrorAction SilentlyContinue
     if ($advModule) { $advModule.Enabled = "1" }
+    # HomeAndDescendants needs Home plus at least one descendant; fresh databases have none
+    $homeItem = Get-Item "master:/sitecore/content/Home"
+    if (-not $homeItem.HasChildren) {
+        New-Item -Path "master:/sitecore/content/Home/SpeWebApiTest" -ItemType $homeItem.Template.FullName | Out-Null
+    }
 }
 Stop-ScriptSession -Session $session
+
+$encodedAdminPassword = [uri]::EscapeDataString($adminPassword)
 
 # After a Sitecore restart, v2 API scripts may not be available immediately.
 # Probe with a short retry before running assertions.
@@ -20,7 +27,7 @@ $webApiReady = $false
 for ($i = 0; $i -lt 3; $i++) {
     try {
         $probe = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson" -method Post `
-            -Body @{user="sitecore\admin"; password="b"; depth=1} -ErrorAction Stop
+            -Body @{user="sitecore\admin"; password=$adminPassword; depth=1} -ErrorAction Stop
         if ($probe) { $webApiReady = $true; break }
     } catch {
         Write-Host "  Web API not ready yet, retrying in 5s..." -ForegroundColor Yellow
@@ -36,15 +43,15 @@ if (-not $webApiReady) {
 
 Write-Host "`n  [POST Methods]" -ForegroundColor White
 
-$postParams = @{user="sitecore\admin"; password="b"; depth=1}
+$postParams = @{user="sitecore\admin"; password=$adminPassword; depth=1}
 $items = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson" -method Post -Body $postParams
 Assert-Equal $items.Count 6 "ChildrenAsJson script should return 6 objects as children to root item"
 
-$postParams = @{user="sitecore\admin"; password="b"}
+$postParams = @{user="sitecore\admin"; password=$adminPassword}
 $html = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml" -method Post -Body $postParams
 Assert-Type $html "XmlDocument" "ChildrenAsHtml Script should return XML Document Object"
 
-$postParams = @{user="sitecore\admin"; password="b"}
+$postParams = @{user="sitecore\admin"; password=$adminPassword}
 $result = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/HomeAndDescendants?offset=0&limit=2&fields=(Name,ItemPath,Id)" -method Post -Body $postParams
 Assert-Type $result "PSCustomObject" "HomeAndDescendants Script should return JSON object"
 Assert-Equal $result.Status "Success" "HomeAndDescendants Status should be Success"
@@ -53,15 +60,15 @@ Assert-Equal $result.Results[0].Name "Home" "HomeAndDescendants first result sho
 
 Write-Host "`n  [GET Methods]" -ForegroundColor White
 
-$items = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson?user=sitecore%5Cadmin&password=b"
+$items = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson?user=sitecore%5Cadmin&password=$encodedAdminPassword"
 Assert-Equal $items.Count 6 "ChildrenAsJson Script - should return 6 objects as children to root item"
 
-$html = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=sitecore%5Cadmin&password=b"
+$html = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=sitecore%5Cadmin&password=$encodedAdminPassword"
 Assert-Type $html "XmlDocument" "ChildrenAsHtml script should return XML Document Object"
 
 Write-Host "`n  [Web API invalid calls]" -ForegroundColor White
 
-Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NonExistingScript?user=sitecore%5Cadmin&password=b" } "404" "Non existing script should throw exception"
+Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/NonExistingScript?user=sitecore%5Cadmin&password=$encodedAdminPassword" } "404" "Non existing script should throw exception"
 
 Assert-Throw { Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsHtml?user=admin&password=invalid" } "401" "Wrong password should throw exception"
 
@@ -95,7 +102,7 @@ Stop-ScriptSession -Session $cacheClearSession
 # Poison the cache with a non-master dbName. The 404 is expected; the side
 # effect we care about is that the cache is now warm with core's data only.
 try {
-    Invoke-RestMethod -Uri "$protocolHost/-/script/v2/core/nonexistent?user=sitecore%5Cadmin&password=b" -ErrorAction Stop | Out-Null
+    Invoke-RestMethod -Uri "$protocolHost/-/script/v2/core/nonexistent?user=sitecore%5Cadmin&password=$encodedAdminPassword" -ErrorAction Stop | Out-Null
 } catch {
     # 404 is expected here - core has no such script. We want the cache side effect.
 }
@@ -104,7 +111,7 @@ try {
 # would cause this to 404 even though ChildrenAsJson exists in master.
 $isolationItems = $null
 try {
-    $isolationItems = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson?user=sitecore%5Cadmin&password=b" -ErrorAction Stop
+    $isolationItems = Invoke-RestMethod -Uri "$protocolHost/-/script/v2/master/ChildrenAsJson?user=sitecore%5Cadmin&password=$encodedAdminPassword" -ErrorAction Stop
 } catch {
     # Capture failure; Assert-NotNull below will report it.
 }
@@ -120,5 +127,6 @@ Invoke-RemoteScript -Session $session -ScriptBlock {
     # Advanced Web API
     $advModule = Get-Item "master:" -ID "{CACE2E80-0CD2-48BD-894E-8784B7F2B00B}" -ErrorAction SilentlyContinue
     if ($advModule) { $advModule.Enabled = "" }
+    Get-Item "master:/sitecore/content/Home/SpeWebApiTest" -ErrorAction SilentlyContinue | Remove-Item -Permanently
 }
 Stop-ScriptSession -Session $session

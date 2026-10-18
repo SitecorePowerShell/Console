@@ -8,7 +8,7 @@ if ($global:isConstrainedLanguage) {
 } else {
     $count = 0
     do {
-        $session = New-ScriptSession -Username "admin" -Password "b" -ConnectionUri $protocolHost
+        $session = New-ScriptSession -Username "admin" -Password $adminPassword -ConnectionUri $protocolHost
 
         $script1 = {
             [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin

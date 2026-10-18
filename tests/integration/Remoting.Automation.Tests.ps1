@@ -3,7 +3,7 @@
 
 Write-Host "`n  [Remote Script]" -ForegroundColor White
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 
 $expected = [datetime]::Today
 $actual = Invoke-RemoteScript -Session $session -ScriptBlock { [datetime]::Today }

@@ -29,6 +29,7 @@ Import-Module "$moduleRoot\SPE.psd1" -Force
 
 $global:protocolHost = $ConnectionUri
 $global:sharedSecret = Get-EnvValue "SPE_SHARED_SECRET"
+$global:adminPassword = Get-EnvValue "SITECORE_ADMIN_PASSWORD"
 
 # Wait for Sitecore to be ready (may still be restarting after task deploy)
 Write-Host "Waiting for Sitecore CM to be ready..." -ForegroundColor Cyan

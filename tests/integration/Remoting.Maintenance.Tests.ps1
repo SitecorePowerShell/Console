@@ -3,7 +3,7 @@
 
 Write-Host "`n  [Long running server jobs]" -ForegroundColor White
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 Test-RemoteConnection -Session $session -Quiet
 
 if ($global:isConstrainedLanguage) {

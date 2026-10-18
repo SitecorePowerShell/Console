@@ -5,9 +5,9 @@
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 $ashxBase = "$protocolHost/-/script"
-$cred = @{ user = "sitecore\admin"; password = "b" }
+$cred = @{ user = "sitecore\admin"; password = $adminPassword }
 $credQs = "user=$($cred.user)&password=$($cred.password)"
-$basicAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\admin:b")) }
+$basicAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\admin:$adminPassword")) }
 
 # ============================================================================
 #  Test Group 1: Path Traversal Protection (P0 -- BUG 1.2)

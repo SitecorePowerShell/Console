@@ -3,7 +3,7 @@
 
 Write-Host "`n  [Structured Errors - Integration]" -ForegroundColor White
 
-$session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
+$session = New-ScriptSession -Username "sitecore\admin" -Password $adminPassword -ConnectionUri $protocolHost
 
 # ============================================================
 # Basic: structured error from unknown command

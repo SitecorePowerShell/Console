@@ -5,7 +5,7 @@
 
 $session = New-ScriptSession -Username "sitecore\admin" -SharedSecret $sharedSecret -ConnectionUri $protocolHost
 $ashxBase = "$protocolHost/-/script"
-$basicAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\admin:b")) }
+$basicAuth = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("sitecore\admin:$adminPassword")) }
 $testOrigin = "https://test-cors.example.com"
 
 # ============================================================================

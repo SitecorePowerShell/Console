@@ -12,7 +12,7 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
     $remoting = Get-Item -Path $remotingPath
     if (-not $remoting) { return "ERROR:REMOTING_NOT_FOUND" }
 
-    # Field IDs from Templates.cs — use IDs instead of names for reliability
+    # Field IDs from Templates.cs - use IDs instead of names for reliability
     $fieldIds = @{
         # RemotingPolicy.Fields
         PolicyFullLanguage   = "{B7D4F2A1-3C58-4E9D-A612-8F5C7D4E3B2A}"
@@ -50,8 +50,23 @@ $createResult = Invoke-RemoteScript -Session $session -ScriptBlock {
         Where-Object { $_.Name -like "Test-*" }
     if ($existingKeys) { $existingKeys | Remove-Item -Force }
 
+    # Ensure the enabled Test module with a Web API library exists (v2 endpoint discovers scripts there)
+    $scriptLibraryPath = "master:/sitecore/system/Modules/PowerShell/Script Library"
+    $testModule = Get-Item -Path "$scriptLibraryPath/Test" -ErrorAction SilentlyContinue
+    if (-not $testModule) {
+        $testModule = New-Item -Path "$scriptLibraryPath/Test" -ItemType "Modules/PowerShell Console/PowerShell Script Module"
+    }
+    if ($testModule["Enabled"] -ne "1") {
+        $testModule.Editing.BeginEdit()
+        $testModule["Enabled"] = "1"
+        $testModule.Editing.EndEdit() | Out-Null
+    }
+    $webApiRoot = Get-Item -Path "$scriptLibraryPath/Test/Web API" -ErrorAction SilentlyContinue
+    if (-not $webApiRoot) {
+        $webApiRoot = New-Item -Path "$scriptLibraryPath/Test/Web API" -ItemType "Modules/PowerShell Console/PowerShell Script Library"
+    }
+
     # Clean up test scripts from previous runs (under Test/Web API for v2 endpoint access)
-    $webApiRoot = Get-Item -Path "master:/sitecore/system/Modules/PowerShell/Script Library/Test/Web API"
     if ($webApiRoot) {
         $existingScripts = Get-ChildItem -Path "master:$($webApiRoot.Paths.FullPath)" |
             Where-Object { $_.Name -like "Test-*" }
