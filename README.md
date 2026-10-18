@@ -24,9 +24,12 @@ The Sitecore PowerShell Extensions module (SPE) provides a robust environment fo
 
 ## Prerequisites
 
-- [Task](https://taskfile.dev/) — install via `winget install Task.Task`, `choco install go-task`, or `scoop install task`
-- Docker Desktop for Windows
+- [Task](https://taskfile.dev/) - install via `winget install Task.Task`, `choco install go-task`, or `scoop install task`
+- Docker Desktop for Windows, switched to Windows containers (Compose v2.30+ for the Solr `post_start` hook)
 - Visual Studio 2022+ with the .NET desktop workload
+
+The Docker stack runs Sitecore XM1 10.5 on `ltsc2022`: Traefik, SQL Server 2025,
+Solr 10, Sitecore Identity Server 9.0, and a CM role.
 
 ## Quick Start
 
@@ -104,14 +107,88 @@ task up
 
 The `cert.ps1` script generates `devcert.pfx` as an RSA certificate with legacy PFX encryption, which is compatible with both Traefik (TLS) and Identity Server (JWT signing).
 
+It also copies the public certificate into `docker/shared/certs`, which is mounted
+as `C:\certs` in the CM container. The Sitecore entrypoints import every `.crt`
+found there into the container's trust store, so CM trusts the dev certificate
+when it self-calls over HTTPS through Traefik.
+
+### SQL Server and TLS
+
+This dev stack does not give SQL Server a custom TLS certificate. The
+`mssql-developer:2025` image registers a mounted PFX into `LocalMachine\My`
+without persisting its private key, so SQL cannot complete a TLS handshake and
+every client connection times out. SQL therefore serves its own self-generated
+certificate, and Identity Server connects with
+`Encrypt=true;TrustServerCertificate=true`. Traffic is still encrypted; the
+certificate is simply not validated, which is acceptable for a local container.
+
+### Upgrading an environment from Sitecore 10.4
+
+**Symptom:** After pulling the 10.5 change, `mssql` fails to attach its databases or
+`solr-init` fails to authenticate.
+
+**Cause:** 10.5 moves to SQL Server 2025 and Solr 10. Database files written by
+SQL Server 2022 and indexes written by Solr 9 are not forward-compatible.
+
+**Fix:** Discard the old data volumes and let the init containers re-seed:
+
+```powershell
+docker compose down -v
+Get-ChildItem docker\data\mssql -Exclude .gitkeep | Remove-Item -Recurse -Force
+Get-ChildItem docker\data\solr  -Exclude .gitkeep | Remove-Item -Recurse -Force
+Remove-Item .env
+task init -- -LicenseXmlPath "C:\path\to\license.xml"
+task up
+```
+
+Deleting `.env` is what picks up the new 10.5 variables from `docker/.env.template`;
+`task init` only fills in values for keys that are already present in the file.
+
+### CM logs 403 errors talking to Solr
+
+**Symptom:** CM logs `HTTP ERROR 403 Unauthorized request` against a URL like
+`/solr/sitecore_core_index/schema`, and index initialization fails.
+
+**Cause:** Usually a *missing collection*, not an authentication problem. Solr 10
+grants the connection user access per collection, so its permission names the
+collection explicitly. If the collection does not exist, no permission matches
+and the request falls through to the catch-all `all` permission, which only the
+admin role has. The result is a 403 rather than the 404 you would expect.
+
+Collections go missing when Solr's data is partially cleared, because
+`solr-init` refuses to run if any Sitecore collection is present. It logs
+`Sitecore collections are already exist` and exits without creating the others.
+
+**Fix:** Check what actually exists, and if any are missing, clear Solr's data
+so `solr-init` can create all of them:
+
+```powershell
+# List collections (SOLR_ADMIN_PASSWORD comes from .env)
+curl -u "admin:<SOLR_ADMIN_PASSWORD>" "http://localhost:8984/solr/admin/collections?action=LIST"
+
+docker compose stop solr
+# docker/data/solr is owned by the container account, so clear it from a container
+docker run --rm -v "${PWD}\docker\data\solr:C:\data" mcr.microsoft.com/powershell:lts-windowsservercore-ltsc2022 `
+  pwsh -NoProfile -Command "Get-ChildItem C:\data -Force | Where-Object Name -ne '.gitkeep' | Remove-Item -Recurse -Force"
+docker compose start solr
+docker compose up -d --force-recreate solr-init
+docker compose restart cm
+```
+
+### Solr admin UI asks for credentials
+
+Solr 10 enables Basic Auth. `task init` generates `SOLR_ADMIN_PASSWORD` in `.env`;
+sign in at `http://localhost:8984` as `SOLR_ADMIN_USERNAME` (`admin` by default).
+Sitecore itself connects as `SOLR_CONNECTION_USERNAME` (`sitecore`).
+
 ### Identity Server container is not healthy
 
 **Symptom:** `docker compose ps` shows the `id` container as unhealthy, and other services that depend on it fail to start or authenticate.
 
 **Common causes:**
-- **Database not ready** — the `mssql-init` container hasn't finished seeding the Core database. Wait and check `docker compose logs mssql-init`.
-- **Certificate issues** — see the JWKS error above.
-- **Missing `.env` values** — ensure `SITECORE_ID_CERTIFICATE`, `SITECORE_ID_CERTIFICATE_PASSWORD`, and `SITECORE_IDSECRET` are set. Run `task init` to regenerate them.
+- **Database not ready** - the `mssql-init` container hasn't finished seeding the Core database. Wait and check `docker compose logs mssql-init`.
+- **Certificate issues** - see the JWKS error above.
+- **Missing `.env` values** - ensure `SITECORE_ID_CERTIFICATE`, `SITECORE_ID_CERTIFICATE_PASSWORD`, and `SITECORE_IDSECRET` are set. Run `task init` to regenerate them.
 
 ## Directory Layout
 

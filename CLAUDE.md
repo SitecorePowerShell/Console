@@ -49,7 +49,7 @@ Use dash flags (`-t:Build -p:Configuration=Debug`), not forward-slash flags, whe
 
 ## Docker Environment
 
-Full stack: Traefik (reverse proxy) + MSSQL 2022 + Solr 8.11.2 + Sitecore Identity Server + Sitecore CM 10.4.
+Full stack: Traefik (reverse proxy) + MSSQL 2025 + Solr 10 + Sitecore Identity Server 9.0 + Sitecore CM 10.5 (XM1, ltsc2022).
 
 - CM host: `spe.dev.local`
 - ID host: `speid.dev.local`

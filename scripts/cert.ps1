@@ -2,11 +2,18 @@
 Param (
     [string]$HostName = "dev.local",
     [switch]$Renew,
-    [string]$CertDir = (Join-Path $PSScriptRoot "..\docker\traefik\certs"),
+    [string]$CertDir,
     [int]$Days = 200
 )
 
 $ErrorActionPreference = "Stop"
+
+# $PSScriptRoot is not reliably populated inside a param() default when the script
+# is invoked with -File, so resolve the default location here instead.
+if (-not $CertDir) {
+    $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+    $CertDir = Join-Path $scriptRoot "..\docker\traefik\certs"
+}
 
 # Pinned certz version
 $certzVersion = "0.4.0"
@@ -88,3 +95,29 @@ if ($Renew) {
 $password = (Get-Content $PasswordFile -Raw).Trim()
 Write-Host "Installing certificate to trusted root store..." -ForegroundColor Green
 & $certz trust add $PfxFile --password $password --store Root --location CurrentUser
+
+##############################################################################
+# Shared trust material for the container roles
+#
+# The Sitecore entrypoints import every .crt found in C:\certs into the
+# container's trusted root store on startup. CM self-calls over HTTPS through
+# Traefik, so it needs the dev certificate there.
+#
+# There is deliberately no SQL Server certificate here. The mssql image
+# registers a mounted PFX into LocalMachine\My without persisting its private
+# key, so SQL cannot complete a TLS handshake and every client connection times
+# out. The dev stack lets SQL use its own self-generated certificate instead and
+# connects with TrustServerCertificate=true.
+##############################################################################
+
+$dockerDir = [System.IO.Path]::GetFullPath((Join-Path $CertDir "..\.."))
+$sharedCertDir = Join-Path $dockerDir "shared\certs"
+
+if (-not (Test-Path $sharedCertDir)) {
+    New-Item -ItemType Directory -Path $sharedCertDir -Force | Out-Null
+}
+
+# certz writes PEM to --cert; copy it in under a .crt name so the import picks it up.
+Copy-Item $CerFile -Destination (Join-Path $sharedCertDir "devcert.crt") -Force
+
+Write-Host "Certificates ready." -ForegroundColor Green

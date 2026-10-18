@@ -11,7 +11,8 @@ services:
       SITECORE_SPE_ADMIN_PAGE_ENABLED: ${SPE_ADMIN_PAGE_ENABLED}
       SITECORE_DEVELOPMENT_PATCHES: CustomErrorsOff,DebugOn,DevEnvOn,DeviceDetectionOff,HttpErrorsDetailed,InitMessagesOff
     volumes:
-      - .\docker\traefik\certs:C:\certs:ro
+      # C:\certs comes from the base file (.\docker\shared\certs) and holds
+      # devcert.crt so CM trusts the Traefik dev certificate.
       - .\docker\deploy:C:\deploy
       - .\translations:C:\inetpub\wwwroot\App_Data\Translations
       - .\_output:C:\inetpub\wwwroot\App_Data\packages

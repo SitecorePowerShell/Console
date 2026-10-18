@@ -84,6 +84,57 @@ function Get-RandomString {
     return -join $result
 }
 
+function Get-RandomHexString {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [int]$ByteCount
+    )
+    # RandomNumberGenerator::Fill is .NET Core only; Create()/GetBytes works on
+    # Windows PowerShell 5.1, which is what the Taskfile invokes.
+    $bytes = [byte[]]::new($ByteCount)
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    try { $rng.GetBytes($bytes) } finally { $rng.Dispose() }
+    return ([BitConverter]::ToString($bytes) -replace '-','')
+}
+
+# Secrets are generated once and preserved across re-runs so an existing
+# environment keeps working after another 'task init'.
+function Set-EnvFileVariableIfEmpty {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [string]$Variable,
+        [Parameter(Mandatory)]
+        [scriptblock]$Generator
+    )
+    if ([string]::IsNullOrEmpty((Get-EnvFileVariable $Variable))) {
+        Set-EnvFileVariable $Variable -Value (& $Generator)
+    }
+}
+
+# Matches SitecoreDockerTools' ConvertTo-CompressedBase64String: GZip then Base64.
+# Sitecore 10.5 takes the license by value in Sitecore_License, not by volume mount.
+function ConvertTo-CompressedBase64String {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [string]$Path
+    )
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $memory = [System.IO.MemoryStream]::new()
+        try {
+            $gzip = [System.IO.Compression.GZipStream]::new($memory, [System.IO.Compression.CompressionLevel]::Optimal, $false)
+            $stream.CopyTo($gzip)
+            # Close (not just flush) so the gzip footer is written before reading the buffer.
+            $gzip.Close()
+            return [System.Convert]::ToBase64String($memory.ToArray())
+        } finally {
+            $memory.Dispose()
+        }
+    } finally {
+        $stream.Dispose()
+    }
+}
+
 if (-not (Test-Path $LicenseXmlPath)) {
     throw "Did not find $LicenseXmlPath"
 }
@@ -121,42 +172,24 @@ if([string]::IsNullOrEmpty($idHost)) {
     Set-EnvFileVariable "ID_HOST" -Value $idHost
 }
 
-# TELERIK_ENCRYPTION_KEY = random 64-128 chars (preserve across re-runs)
-if ([string]::IsNullOrEmpty((Get-EnvFileVariable "TELERIK_ENCRYPTION_KEY"))) {
-    Set-EnvFileVariable "TELERIK_ENCRYPTION_KEY" -Value (Get-RandomString 128)
-}
+Set-EnvFileVariableIfEmpty "TELERIK_ENCRYPTION_KEY" -Generator { Get-RandomString 128 }
+Set-EnvFileVariableIfEmpty "MEDIA_REQUEST_PROTECTION_SHARED_SECRET" -Generator { Get-RandomString 64 }
+Set-EnvFileVariableIfEmpty "SITECORE_IDSECRET" -Generator { Get-RandomString 64 }
 
-# MEDIA_REQUEST_PROTECTION_SHARED_SECRET (preserve across re-runs)
-if ([string]::IsNullOrEmpty((Get-EnvFileVariable "MEDIA_REQUEST_PROTECTION_SHARED_SECRET"))) {
-    Set-EnvFileVariable "MEDIA_REQUEST_PROTECTION_SHARED_SECRET" -Value (Get-RandomString 64)
-}
+# Solr 10 requires Basic Auth. Both passwords end up inside URL-form connection
+# strings, so keep them alphanumeric to avoid escaping issues.
+Set-EnvFileVariableIfEmpty "SOLR_ADMIN_PASSWORD" -Generator { Get-RandomString 32 }
+Set-EnvFileVariableIfEmpty "SOLR_CONNECTION_PASSWORD" -Generator { Get-RandomString 32 }
 
-# SITECORE_IDSECRET = random 64 chars (preserve across re-runs)
-if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SITECORE_IDSECRET"))) {
-    Set-EnvFileVariable "SITECORE_IDSECRET" -Value (Get-RandomString 64)
-}
+Set-EnvFileVariableIfEmpty "SPE_SHARED_SECRET" -Generator { Get-RandomHexString 32 }
 
-# SPE_SHARED_SECRET = random 64-char hex string (preserve across re-runs)
-if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SPE_SHARED_SECRET"))) {
-    $bytes = [byte[]]::new(32)
-    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
-    Set-EnvFileVariable "SPE_SHARED_SECRET" -Value ([BitConverter]::ToString($bytes) -replace '-','')
-}
+# Consumed by the IDS spe-remoting client that issues bearer tokens for the
+# OAuth provider integration tests.
+Set-EnvFileVariableIfEmpty "SPE_OAUTH_CLIENT_SECRET" -Generator { Get-RandomHexString 32 }
 
-# SPE_OAUTH_CLIENT_SECRET = random 64-char hex string for the IDS test client
-# that issues bearer tokens for the OAuth provider integration tests.
-if ([string]::IsNullOrEmpty((Get-EnvFileVariable "SPE_OAUTH_CLIENT_SECRET"))) {
-    $bytes = [byte[]]::new(32)
-    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
-    Set-EnvFileVariable "SPE_OAUTH_CLIENT_SECRET" -Value ([BitConverter]::ToString($bytes) -replace '-','')
-}
-
-# SITECORE_LICENSE_LOCATION and SITECORE_LICENSE_PATH
-$licenseLocation = Get-EnvFileVariable -Variable "SITECORE_LICENSE_LOCATION" -Path $envPath
-if([string]::IsNullOrEmpty($licenseLocation)) {
-    Set-EnvFileVariable "SITECORE_LICENSE_LOCATION" -Value $LicenseXmlPath
-    Set-EnvFileVariable "SITECORE_LICENSE_PATH" -Value ([System.IO.Path]::GetDirectoryName($LicenseXmlPath))
-}
+# SITECORE_LICENSE is refreshed on every run so a renewed license.xml is picked up.
+Write-Host "Encoding license from $LicenseXmlPath..." -ForegroundColor Green
+Set-EnvFileVariable "SITECORE_LICENSE" -Value (ConvertTo-CompressedBase64String $LicenseXmlPath)
 
 ##################################
 # Configure TLS/HTTPS certificates

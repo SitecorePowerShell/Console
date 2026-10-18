@@ -12,3 +12,5 @@
 
 /traefik/certs/*
 !/traefik/certs/.gitkeep
+/shared/certs/*
+!/shared/certs/.gitkeep

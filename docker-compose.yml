@@ -28,10 +28,15 @@ services:
         condition: service_healthy
   mssql:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/mssql-developer:${MSSQL_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/mssql-developer:2025-${EXTERNAL_IMAGE_TAG_SUFFIX}
     environment:
+      NAME: ${SQL_SERVER}
       SA_PASSWORD: ${SQL_SA_PASSWORD}
       ACCEPT_EULA: "Y"
+    # No TLS_CERTIFICATE_PASSWORD or c:\certs mount on purpose. The image registers
+    # a mounted PFX into LocalMachine\My without persisting its private key, after
+    # which SQL cannot complete a TLS handshake and clients time out. SQL uses its
+    # own self-generated certificate instead; clients pass TrustServerCertificate=true.
     ports:
       - "14330:1433"
     volumes:
@@ -64,45 +69,51 @@ services:
 
   solr:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/solr:${SOLR_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}nonproduction/solr:10.0.0-${EXTERNAL_IMAGE_TAG_SUFFIX}
     ports:
       - "8984:8983"
     volumes:
       - type: bind
         source: .\docker\data\solr
         target: c:\data
-    environment:
-      SOLR_MODE: solrcloud
+      - type: bind
+        source: .\docker\solr-security
+        target: c:\solr-config
     healthcheck:
       test:
         [
           "CMD",
           "powershell",
           "-command",
-          "try { $$statusCode = (iwr http://solr:8983/solr/admin/cores?action=STATUS -UseBasicParsing).StatusCode; if ($$statusCode -eq 200) { exit 0 } else { exit 1} } catch { exit 1 }",
+          "try { $$statusCode = (iwr http://solr:8983/solr/admin/info/system -UseBasicParsing -TimeoutSec 10).StatusCode; if ($$statusCode -eq 200) { exit 0 } else { exit 1 } } catch { if ($$_.Exception.Response -and $$_.Exception.Response.StatusCode.value__ -eq 401) { exit 0 } else { exit 1 } }",
         ]
+    post_start:
+      - command: ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\solr-config\\ApplySolrSecurity.ps1", "-Username", "${SOLR_ADMIN_USERNAME}", "-Password", "${SOLR_ADMIN_PASSWORD}", "-SolrBaseUrl", "http://localhost:8983", "-ZkHost", "localhost:9983", "-SecurityJsonPath", "C:/solr-config/security.json"]
   solr-init:
     isolation: ${ISOLATION}
     image: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-solr-init:${SITECORE_VERSION}
     environment:
-      SITECORE_SOLR_CONNECTION_STRING: http://solr:8983/solr
+      SITECORE_SOLR_CONNECTION_STRING: http://${SOLR_ADMIN_USERNAME}:${SOLR_ADMIN_PASSWORD}@solr:8983/solr
+      SOLR_CONNECTION_USERNAME: ${SOLR_CONNECTION_USERNAME}
+      SOLR_CONNECTION_PASSWORD: ${SOLR_CONNECTION_PASSWORD}
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
     depends_on:
       solr:
         condition: service_healthy
   id:
     isolation: ${ISOLATION}
-    image: ${SITECORE_DOCKER_REGISTRY}sitecore-id7:${SITECORE_VERSION}
+    image: ${SITECORE_DOCKER_REGISTRY}sitecore-identity:${SITECORE_ID_VERSION}
     environment:
-      Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
+      # TrustServerCertificate=true because SQL serves its own self-generated
+      # certificate in this dev stack; see the mssql service for why.
+      Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Core;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD};Encrypt=true;TrustServerCertificate=true;
       Sitecore_Sitecore__IdentityServer__AccountOptions__PasswordRecoveryUrl: https://${CM_HOST}/sitecore/login?rc=1
       Sitecore_Sitecore__IdentityServer__Clients__PasswordClient__ClientSecrets__ClientSecret1: ${SITECORE_IDSECRET}
       Sitecore_Sitecore__IdentityServer__Clients__DefaultClient__AllowedCorsOrigins__AllowedCorsOriginsGroup1: https://${CM_HOST}
       Sitecore_Sitecore__IdentityServer__CertificateRawData: ${SITECORE_ID_CERTIFICATE}
       Sitecore_Sitecore__IdentityServer__PublicOrigin: https://${ID_HOST}
       Sitecore_Sitecore__IdentityServer__CertificateRawDataPassword: ${SITECORE_ID_CERTIFICATE_PASSWORD}
-    volumes:
-      - ${SITECORE_LICENSE_PATH}:C:\identity\sitecoreruntime:ro
+      Sitecore_License: ${SITECORE_LICENSE}
     healthcheck:
       test: ["CMD", "pwsh", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
@@ -137,12 +148,12 @@ services:
       Sitecore_ConnectionStrings_Master: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Master;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
       Sitecore_ConnectionStrings_Web: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.Web;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
       Sitecore_ConnectionStrings_ExperienceForms: Data Source=${SQL_SERVER};Initial Catalog=${SQL_DATABASE_PREFIX}.ExperienceForms;User ID=${SQL_SA_LOGIN};Password=${SQL_SA_PASSWORD}
-      Sitecore_ConnectionStrings_Solr.Search: http://solr:8983/solr;solrCloud=true
+      Sitecore_ConnectionStrings_Solr.Search: http://${SOLR_CONNECTION_USERNAME}:${SOLR_CONNECTION_PASSWORD}@solr:8983/solr;solrCloud=true
       Sitecore_ConnectionStrings_Sitecoreidentity.secret: ${SITECORE_IDSECRET}
       Sitecore_AppSettings_Telerik.AsyncUpload.ConfigurationEncryptionKey: ${TELERIK_ENCRYPTION_KEY}
       Sitecore_AppSettings_Telerik.Upload.ConfigurationHashKey: ${TELERIK_ENCRYPTION_KEY}
       Sitecore_AppSettings_Telerik.Web.UI.DialogParametersEncryptionKey: ${TELERIK_ENCRYPTION_KEY}
-      Sitecore_License_Location: ${SITECORE_LICENSE_LOCATION}
+      Sitecore_License: ${SITECORE_LICENSE}
       Sitecore_Identity_Server_Authority: https://${ID_HOST}
       Sitecore_Identity_Server_InternalAuthority: http://id
       Sitecore_Identity_Server_CallbackAuthority: https://${CM_HOST}
@@ -150,8 +161,10 @@ services:
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
       MEDIA_REQUEST_PROTECTION_SHARED_SECRET: ${MEDIA_REQUEST_PROTECTION_SHARED_SECRET}
     volumes:
-      - ${SITECORE_LICENSE_PATH}:${SITECORE_LICENSE_PATH}:ro
       - .\docker\data\cm\:C:\inetpub\wwwroot\App_Data\logs
+      - type: bind
+        source: .\docker\shared\certs
+        target: c:\certs
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
