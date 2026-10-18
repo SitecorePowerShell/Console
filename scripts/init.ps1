@@ -16,7 +16,12 @@ Param (
     # We do not need to use [SecureString] here since the value will be stored unencrypted in .env,
     # and used only for transient local example environment.
     [string]
-    $SqlSaPassword = "Password12345"
+    $SqlSaPassword = "Password12345",
+
+    # Populate .env only. Certificate creation installs a CA into the trust store,
+    # which prompts for confirmation and cannot run unattended.
+    [switch]
+    $SkipCertificates
 )
 
 $ErrorActionPreference = "Stop";
@@ -32,7 +37,10 @@ function Get-EnvFileVariable {
     if (-not (Test-Path $Path)) { return $null }
     foreach ($line in Get-Content $Path) {
         if ($line -match "^$Variable=(.*)$") {
-            return $Matches[1]
+            # Strip whitespace-preceded inline comments the same way Compose's
+            # dotenv parser does, so init.ps1 and Compose agree on the value.
+            # Without this a template placeholder reads back as a real secret.
+            return ($Matches[1] -replace '\s+#.*$', '').Trim()
         }
     }
     return $null
@@ -195,13 +203,21 @@ Set-EnvFileVariable "SITECORE_LICENSE" -Value (ConvertTo-CompressedBase64String 
 # Configure TLS/HTTPS certificates
 ##################################
 
-& "$PSScriptRoot\cert.ps1" -HostName $HostName
+if ($SkipCertificates) {
+    Write-Host "Skipping certificate generation (-SkipCertificates)." -ForegroundColor Yellow
+} else {
+    & "$PSScriptRoot\cert.ps1" -HostName $HostName
+}
 
 # SITECORE_ID_CERTIFICATE -- reuse the Traefik PFX
 $certsDir = Join-Path $projectPath "docker\traefik\certs"
 $certificatePath = Join-Path $certsDir "devcert.pfx"
-$certificatePassword = (Get-Content (Join-Path $certsDir "devcert.password.txt") -Raw).Trim()
-Set-EnvFileVariable "SITECORE_ID_CERTIFICATE" -Value ([Convert]::ToBase64String([IO.File]::ReadAllBytes($certificatePath)))
-Set-EnvFileVariable "SITECORE_ID_CERTIFICATE_PASSWORD" -Value $certificatePassword
+if (Test-Path $certificatePath) {
+    $certificatePassword = (Get-Content (Join-Path $certsDir "devcert.password.txt") -Raw).Trim()
+    Set-EnvFileVariable "SITECORE_ID_CERTIFICATE" -Value ([Convert]::ToBase64String([IO.File]::ReadAllBytes($certificatePath)))
+    Set-EnvFileVariable "SITECORE_ID_CERTIFICATE_PASSWORD" -Value $certificatePassword
+} else {
+    Write-Host "No devcert.pfx yet; SITECORE_ID_CERTIFICATE will be set on the next run without -SkipCertificates." -ForegroundColor Yellow
+}
 
 Write-Host "Done!" -ForegroundColor Green

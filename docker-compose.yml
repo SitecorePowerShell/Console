@@ -51,6 +51,7 @@ services:
       SQL_ADMIN_LOGIN: ${SQL_SA_LOGIN}
       SQL_ADMIN_PASSWORD: ${SQL_SA_PASSWORD}
       SQL_DATABASE_PREFIX: ${SQL_DATABASE_PREFIX}
+      SQL_CUSTOM_DATABASE_PREFIX_UPDATE_FROM: ${SQL_CUSTOM_DATABASE_PREFIX_UPDATE_FROM}
       SITECORE_ADMIN_PASSWORD: ${SITECORE_ADMIN_PASSWORD}
       POST_DEPLOYMENT_WAIT_PERIOD: 300
     healthcheck:
@@ -125,7 +126,7 @@ services:
       - "traefik.http.routers.id-secure.entrypoints=websecure"
       - "traefik.http.routers.id-secure.rule=Host(`${ID_HOST}`)"
       - "traefik.http.routers.id-secure.tls=true"
-      - "traefik.http.services.id-spe.loadbalancer.server.port=80"
+      - "traefik.http.services.id-secure.loadbalancer.server.port=80"
   cm:
     isolation: ${ISOLATION}
     image: ${REGISTRY}${COMPOSE_PROJECT_NAME}-cm:${VERSION:-latest}
@@ -160,6 +161,7 @@ services:
       Sitecore_Identity_Server_Require_Https: "false"
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
       MEDIA_REQUEST_PROTECTION_SHARED_SECRET: ${MEDIA_REQUEST_PROTECTION_SHARED_SECRET}
+      LOG_LEVEL_VALUE: ${LOG_LEVEL_VALUE}
     volumes:
       - .\docker\data\cm\:C:\inetpub\wwwroot\App_Data\logs
       - type: bind
@@ -176,4 +178,4 @@ services:
       - "traefik.http.routers.cm-secure.rule=Host(`${CM_HOST}`)"
       - "traefik.http.routers.cm-secure.tls=true"
       - "traefik.http.routers.cm-secure.middlewares=force-STS-Header"
-      - "traefik.http.services.cm-spe.loadbalancer.server.port=80"
+      - "traefik.http.services.cm-secure.loadbalancer.server.port=80"

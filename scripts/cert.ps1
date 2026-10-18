@@ -86,15 +86,46 @@ if ($Renew) {
     $password = (Get-Content $PasswordFile -Raw).Trim()
     Write-Host "Renewing certificate..." -ForegroundColor Green
     & $certz renew $PfxFile --password $password --days $Days --out $PfxFile
-} else {
+    $devCertChanged = $true
+} elseif (-not (Test-Path $PfxFile)) {
     Write-Host "Generating TLS certificate..." -ForegroundColor Green
     & $certz create dev $HostName --san "*.$HostName" --san "localhost" --key-type RSA --pfx-encryption legacy --file $PfxFile --password-file $PasswordFile --cert $CerFile --key $KeyFile --days $Days
+    $devCertChanged = $true
+} else {
+    # Reusing the existing certificate keeps SITECORE_ID_CERTIFICATE stable and
+    # avoids re-prompting for trust on every 'task init'. Use -Renew to replace it.
+    Write-Host "Reusing existing TLS certificate ($PfxFile)." -ForegroundColor Green
+    $devCertChanged = $false
 }
 
-# Trust the certificate
+# Trust the certificate. Check the Root store rather than keying off whether the
+# certificate was just generated: an interrupted run can leave a regenerated
+# certificate that was never trusted, and keying off $devCertChanged would then
+# skip re-trusting it forever. Checking the store makes this idempotent, and it
+# still avoids the Windows confirmation dialog when trust is already in place.
 $password = (Get-Content $PasswordFile -Raw).Trim()
-Write-Host "Installing certificate to trusted root store..." -ForegroundColor Green
-& $certz trust add $PfxFile --password $password --store Root --location CurrentUser
+$devCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($PfxFile, $password)
+$trusted = $false
+foreach ($location in @('CurrentUser', 'LocalMachine')) {
+    $store = New-Object System.Security.Cryptography.X509Certificates.X509Store('Root', $location)
+    try {
+        $store.Open('ReadOnly')
+        if ($store.Certificates | Where-Object { $_.Thumbprint -eq $devCert.Thumbprint }) { $trusted = $true }
+    } catch {
+        # An unreadable store just means we cannot confirm trust from here.
+    } finally {
+        $store.Close()
+    }
+    if ($trusted) { break }
+}
+
+if ($trusted) {
+    Write-Host "Certificate is already trusted ($($devCert.Thumbprint))." -ForegroundColor Green
+} else {
+    Write-Host "Installing certificate to trusted root store..." -ForegroundColor Green
+    Write-Host "  Windows will ask you to confirm this." -ForegroundColor Yellow
+    & $certz trust add $PfxFile --password $password --store Root --location CurrentUser
+}
 
 ##############################################################################
 # Shared trust material for the container roles
