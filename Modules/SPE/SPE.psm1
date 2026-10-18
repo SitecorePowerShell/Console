@@ -334,7 +334,9 @@ function Invoke-SpeHttpRequest {
 function Get-HttpHeaderValue {
     param($Headers, [string]$Name)
     if (-not $Headers -or -not $Headers.Contains($Name)) { return $null }
-    return ($Headers.GetValues($Name) | Select-Object -First 1)
+    # Index instead of Select-Object -First: on Windows PowerShell 5.1 the
+    # latter leaks StopUpstreamCommandsException into callers' -ErrorVariable.
+    return @($Headers.GetValues($Name))[0]
 }
 
 # Formats the X-Spe-Request-Id correlation header as a " (rid=xxxxx)"
@@ -371,7 +373,7 @@ function Format-BodyShape {
     }
     $isGzip = $Content.Headers.ContentEncoding -and
               $Content.Headers.ContentEncoding.Count -gt 0 -and
-              ($Content.Headers.ContentEncoding | Select-Object -First 1) -eq 'gzip'
+              @($Content.Headers.ContentEncoding)[0] -eq 'gzip'
     if ($isGzip) { return "Body: $RawBytes bytes raw -> $wireBytes bytes gzip" }
     return "Body: $RawBytes bytes plaintext (gzip skipped)"
 }
@@ -427,7 +429,7 @@ function Resolve-UsingVariables {
 
     $usingVariables = @(Get-UsingVariables -ScriptBlock $ScriptBlock |
         Group-Object -Property SubExpression |
-        ForEach-Object { $_.Group | Select-Object -First 1 })
+        ForEach-Object { $_.Group[0] })
 
     if ($usingVariables.Count -eq 0) {
         return [pscustomobject]@{ ScriptText = $ScriptBlock.ToString(); Arguments = $Arguments }

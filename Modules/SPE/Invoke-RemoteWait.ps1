@@ -126,7 +126,7 @@ function Invoke-RemoteWait {
         if (($statusCode -eq 429 -or $statusCode -eq 502 -or $statusCode -eq 503) -and $attempt -lt $MaxRetries) {
             $hint = 0
             if ($response.Headers.Contains('Retry-After')) {
-                $rawVal = $response.Headers.GetValues('Retry-After') | Select-Object -First 1
+                $rawVal = Get-HttpHeaderValue $response.Headers 'Retry-After'
                 $parsed = 0
                 if ([int]::TryParse([string]$rawVal, [ref]$parsed) -and $parsed -ge 1) {
                     $hint = [Math]::Min($parsed, 60)

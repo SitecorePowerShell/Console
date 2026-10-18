@@ -692,9 +692,9 @@ function Invoke-RemoteScript {
                 $hasLimit = $taskResult.Headers.Contains("X-RateLimit-Limit")
                 $hasRemaining = $taskResult.Headers.Contains("X-RateLimit-Remaining")
                 if ($hasLimit -or $hasRemaining) {
-                    $rlLimit = if ($hasLimit) { $taskResult.Headers.GetValues("X-RateLimit-Limit") | Select-Object -First 1 } else { "" }
-                    $rlRemaining = if ($hasRemaining) { $taskResult.Headers.GetValues("X-RateLimit-Remaining") | Select-Object -First 1 } else { "" }
-                    $rlReset = if ($taskResult.Headers.Contains("X-RateLimit-Reset")) { $taskResult.Headers.GetValues("X-RateLimit-Reset") | Select-Object -First 1 } else { "" }
+                    $rlLimit = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Limit"
+                    $rlRemaining = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Remaining"
+                    $rlReset = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Reset"
                     $rlLine = "Rate limit: X-RateLimit-Limit=$rlLimit X-RateLimit-Remaining=$rlRemaining"
                     if ($rlReset) { $rlLine += " X-RateLimit-Reset=$rlReset" }
                     Write-Verbose -Message $rlLine
