@@ -164,6 +164,8 @@ namespace Spe.Client.Applications
                 }
             }
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += (sender, args) => StopWithNotice(Texts.PowerShellRunner_ScriptSessionLost);
+            Monitor.LeaseLost += (sender, args) => StopWithNotice(Texts.PowerShellRunner_ScriptShownElsewhere);
             ListViewer.OnSelectionChanged += SelectionChanged;
 
             if (Context.ClientPage.IsEvent)
@@ -241,6 +243,13 @@ namespace Spe.Client.Applications
                 EmptyPanel.Visible = true;
                 EmptyDataMessageText.Visible = true;
             }
+        }
+
+        private void StopWithNotice(string notice)
+        {
+            LvProgressOverlay.Visible = false;
+            UpdateRibbon();
+            SheerResponse.Alert(notice);
         }
 
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
@@ -529,7 +538,17 @@ namespace Spe.Client.Applications
                 PowerShellLog.Audit($"[Report] action=executing user={Context.User.Name} script=\"{scriptItem.Name} {scriptItem.ID}\"");
             }
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
-            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
+            // Registered as ListView origin: if this window is lost, the job is
+            // re-attached in a Runner since the ListView itself can't be rebuilt.
+            var launchContext = new System.Collections.Specialized.NameValueCollection
+            {
+                ["scriptId"] = scriptItem.ID.ToString(),
+                ["scriptDb"] = scriptItem.Database.Name,
+                ["title"] = scriptItem.DisplayName,
+                ["icon"] = scriptItem.Appearance.Icon
+            };
+            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run,
+                user: jobUser, recoveryOrigin: InteractiveJobOrigin.ListView, launchContext: launchContext);
             LvProgressOverlay.Visible = false;
             Monitor.SessionID = scriptSession.ID;
         }

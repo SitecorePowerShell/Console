@@ -248,6 +248,36 @@
         }
     }
 
+    // Pending poll of a running command. Kept so a tab that comes back from
+    // being hidden or frozen polls at once instead of waiting out a timer the
+    // browser throttled.
+    var pendingPoll = null;
+    var POLL_RETRY_MS = [2000, 5000, 15000, 30000];
+
+    function schedulePoll(fn, wait) {
+        pendingPoll = {
+            fn: fn,
+            timer: setTimeout(function () {
+                pendingPoll = null;
+                fn();
+            }, wait)
+        };
+    }
+
+    function wakePoll() {
+        if (!pendingPoll || document.visibilityState === "hidden") {
+            return;
+        }
+        clearTimeout(pendingPoll.timer);
+        var fn = pendingPoll.fn;
+        pendingPoll = null;
+        fn();
+    }
+
+    document.addEventListener("visibilitychange", wakePoll);
+    document.addEventListener("resume", wakePoll);
+    window.addEventListener("pageshow", wakePoll);
+
     function callPowerShellHost(term, guid, command) {
         // pause(true) keeps the prompt line visible so the animated busy
         // indicator (spe.showBusy below) has somewhere to render.
@@ -265,11 +295,13 @@
                     if (settings.monitorActive) {
                         scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ")");
                     };
+                    var pollFailures = 0;
                     (function poll(wait) {
-                        setTimeout(function() {
+                        schedulePoll(function() {
                             if (settings.monitorActive) {
                                 getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                     function(pollJson) {
+                                        pollFailures = 0;
                                         var jsonData = JSON.parse(pollJson.d);
                                         var finished = false;
                                         if (jsonData["status"] === "working") {
@@ -301,6 +333,13 @@
                                         scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ",finished=" + finished + ")");
                                     },
                                     function(jqXHR, textStatus, errorThrown) {
+                                        // A request that failed while the tab was frozen or the
+                                        // network blinked: the command is still running, so retry
+                                        // before giving up on it.
+                                        if (pollFailures < POLL_RETRY_MS.length) {
+                                            poll(POLL_RETRY_MS[pollFailures++]);
+                                            return;
+                                        }
                                         spe.hideBusy();
                                         term.resume();
                                         spe.preventCloseWhenRunning(false);

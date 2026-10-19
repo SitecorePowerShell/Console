@@ -310,6 +310,8 @@ namespace Spe.Client.Applications
             }
 
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += MonitorOnJobDisappeared;
+            Monitor.LeaseLost += MonitorOnLeaseLost;
             AuxiliaryMonitor.JobFinished += AuxiliaryMonitorOnJobFinished;
 
             Tabs.OnChange += TabsOnChange;
@@ -1089,7 +1091,7 @@ namespace Spe.Client.Applications
                     // single tick so the typed command's output drains, then
                     // it goes silent again - ScheduleCallback is a no-op
                     // while Monitor.Active stays false.
-                    SheerResponse.Timer("pstaskmonitor:check", 200);
+                    Monitor.PollOnce(200);
                     return;
                 }
             }
@@ -1263,7 +1265,8 @@ namespace Spe.Client.Applications
                     : Context.Language,
                 User.Exists(CurrentUser)
                     ? User.FromName(CurrentUser, true)
-                    : Context.User);
+                    : Context.User,
+                recoveryOrigin: InteractiveJobOrigin.Ise);
 
             Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("spe.restoreResults();");
@@ -1924,11 +1927,102 @@ namespace Spe.Client.Applications
             // Called once from the ISE init sequence (after restoreactivetabs
             // and initterminal) so an ISE opened against an already-running
             // default session reflects the running state from the start.
+
+            // A script this tab's previous ISE page started (before a reload or
+            // the browser discarding the tab), or one an abandoned ISE left
+            // behind: take the job over so its dialogs and completion land here.
+            var claimed = InteractiveJobRegistry.ClaimOrphans(Context.User.Name,
+                InteractiveJobRegistry.CurrentTabId, origin => origin == InteractiveJobOrigin.Ise,
+                out var ownTabStillFresh, 1).FirstOrDefault();
+            if (claimed != null)
+            {
+                // Adopting may re-show the dialog the job waits on, and this
+                // init request runs before Sitecore's modal dialog host exists.
+                // Hold the claim and adopt once the page says dialogs are ready.
+                ServerProperties["ClaimedJob"] = claimed.Handle;
+                ServerProperties["ClaimedLease"] = claimed.LeaseToken;
+                SheerResponse.Eval(
+                    "if(window.speJobRecovery){speJobRecovery.postWhenDialogsReady('ise:adoptclaimedjob');}");
+                return;
+            }
+
+            // The page this one replaced polled moments ago; its lease becomes
+            // reclaimable once it has been quiet for OwnTabReclaimSeconds.
+            var attempt = MainUtil.GetInt(ServerProperties["AttachAttempt"], 0);
+            if (ownTabStillFresh && attempt < 4)
+            {
+                ServerProperties["AttachAttempt"] = attempt + 1;
+                SheerResponse.Timer("ise:attachrunningsession", 2000);
+                return;
+            }
+
             var sessionId = CurrentSessionId;
             if (IsSessionBusy(sessionId))
             {
                 BeginAttachedSessionWatch(sessionId);
             }
+        }
+
+        [HandleMessage("ise:adoptclaimedjob", true)]
+        protected void AdoptClaimedJob(ClientPipelineArgs args)
+        {
+            var handle = StringUtil.GetString(ServerProperties["ClaimedJob"]);
+            var lease = StringUtil.GetString(ServerProperties["ClaimedLease"]);
+            ServerProperties["ClaimedJob"] = null;
+            ServerProperties["ClaimedLease"] = null;
+            var entry = InteractiveJobRegistry.TryAdopt(handle, Context.User.Name, lease);
+            if (entry != null)
+            {
+                AdoptJob(entry);
+            }
+        }
+
+        /// <summary>
+        ///     Takes over a job another ISE page of this user started: reflects
+        ///     the running state, replays the session output from the start and
+        ///     binds Monitor to the job, which re-shows a pending dialog and
+        ///     delivers the completion through MonitorOnJobFinished.
+        /// </summary>
+        private void AdoptJob(InteractiveJobEntry entry)
+        {
+            PowerShellLog.Audit($"[ISE] action=reattached user={Context.User?.Name} job={entry.Handle}");
+            CommittedLineCount = 0;
+            HasPendingPartial = false;
+            ScriptRunning = true;
+
+            SheerResponse.Eval("spe.restoreResults();");
+            SheerResponse.Eval("if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode("Re-attached to running script", true);
+            SheerResponse.Eval($"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
+            UpdateRibbon();
+
+            Monitor.Adopt(entry);
+        }
+
+        private void MonitorOnJobDisappeared(object sender, EventArgs e)
+        {
+            EndRunWithNotice(Texts.PowerShellRunner_ScriptSessionLost);
+        }
+
+        private void MonitorOnLeaseLost(object sender, EventArgs e)
+        {
+            EndRunWithNotice(Texts.PowerShellRunner_ScriptShownElsewhere);
+        }
+
+        private void EndRunWithNotice(string notice)
+        {
+            if (HasPendingPartial)
+            {
+                SheerResponse.Eval("spe.finalizePartial();");
+                HasPendingPartial = false;
+            }
+
+            PrintSessionUpdate($"[[;#FF9494;]{notice}]");
+            ProgressOverlay.Visible = false;
+            ScriptRunning = false;
+            Monitor.SessionID = string.Empty;
+            UpdateRibbon();
+            SheerResponse.Eval("spe.scriptExecutionEnded()");
         }
 
         [HandleMessage("ise:checkattachedsession", true)]

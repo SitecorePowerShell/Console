@@ -12,6 +12,8 @@ namespace Spe
         public const string PowerShellRunner_OnLoad_View_script_results_and_errors = "View script results and errors";
         public const string PowerShellRunner_UpdateProgress_Operation_ = "Operation:";
         public const string PowerShellRunner_UpdateProgress_Running_script___ = "Running script...";
+        public const string PowerShellRunner_ScriptSessionLost = "The script session was lost.";
+        public const string PowerShellRunner_ScriptShownElsewhere = "This script is now shown in another window.";
         public const string PowerShellRunner_UpdateProgress_Status_ = "Status:";
         public const string PowerShellRunner_UpdateProgress_Time_remaining_ = "Time remaining:";
 

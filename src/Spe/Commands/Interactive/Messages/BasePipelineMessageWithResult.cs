@@ -4,6 +4,7 @@ using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Client.Applications;
+using Spe.Core.Host;
 using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Interactive.Messages
@@ -13,6 +14,10 @@ namespace Spe.Commands.Interactive.Messages
     {
         private Handle jobHandle;
         [NonSerialized] private readonly MessageQueue messageQueue;
+
+        // Identifies this dialog to InteractiveJobRegistry so a re-attached
+        // page can show it again and only the first answer reaches the job.
+        private readonly string messageId = Guid.NewGuid().ToString("N");
 
         protected Handle JobHandle => jobHandle;
 
@@ -79,6 +84,11 @@ namespace Spe.Commands.Interactive.Messages
                 }
 
                 MonitorActive = false;
+                if (WaitForPostBack && jobHandle != null)
+                {
+                    InteractiveJobRegistry.SetPending(jobHandle.ToString(), this, messageId);
+                }
+
                 ShowUI();
 
                 if (WaitForPostBack)
@@ -92,9 +102,18 @@ namespace Spe.Commands.Interactive.Messages
             }
             else
             {
+                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
+                if (!InteractiveJobRegistry.TryResolvePending(strJobId, messageId))
+                {
+                    // Already answered in another window that re-attached to
+                    // this job; a second PutResult would block on the held
+                    // result and hand this answer to the next dialog.
+                    MonitorActive = true;
+                    return;
+                }
+
                 var processedResult = ProcessResult(args.HasResult, args.Result);
 
-                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
                 if (!String.IsNullOrEmpty(strJobId))
                 {
                     jobHandle = Handle.Parse(strJobId);

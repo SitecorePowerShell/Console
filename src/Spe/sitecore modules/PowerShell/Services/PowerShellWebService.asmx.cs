@@ -123,7 +123,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
 
                 var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-                jobManager.StartJob(jobOptions);
+                var jobHandle = jobManager.StartJob(jobOptions);
+                HoldConsoleJob(GetJobId(guid, handle), jobManager.GetJob(jobHandle));
 
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
                 return PollCommandOutput(guid, handle, stringFormat);
@@ -329,8 +330,6 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 var job = jobManager.GetContextJob();
                 if (job != null)
                 {
-                    job.StatusFailed = true;
-
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
@@ -343,6 +342,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.AddStatusMessage(
                         "We also have a user guide here https://doc.sitecorepowershell.com/.");
+
+                    // Flag the failure only once the messages are in place: a poll
+                    // that sees StatusFailed renders StatusMessages right away, and
+                    // on a cold site the log write above is slow enough for a poll
+                    // to slip in and show just "Job started".
+                    job.StatusFailed = true;
                 }
                 else
                 {
@@ -365,7 +370,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var session = GetScriptSession(guid);
             var result = new Result();
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-            var scriptJob = jobManager.GetJob(GetJobId(guid, handle));
+            var jobId = GetJobId(guid, handle);
+            var scriptJob = jobManager.GetJob(jobId) ??
+                            (HeldConsoleJobs.TryGetValue(jobId, out var held) ? held.Job : null);
             if (scriptJob == null)
             {
                 result.status = StatusError;
@@ -455,10 +462,33 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 session.Output.ClearSilent();
                 state.CommittedLineCount = 0;
                 state.HasPendingPartial = false;
+                HeldConsoleJobs.TryRemove(jobId, out _);
             }
 
             var serializedResult = serializer.Serialize(result);
             return serializedResult;
+        }
+
+        // Console jobs live only 20 seconds after they finish (AfterLife); a
+        // Console tab frozen longer than that would come back to "Can't find
+        // your command result". Holding the IJob until its final poll keeps
+        // the completion reachable; unclaimed ones expire with the same window
+        // as interactive Runner jobs.
+        private static readonly ConcurrentDictionary<string, (IJob Job, DateTime HeldUtc)> HeldConsoleJobs =
+            new ConcurrentDictionary<string, (IJob Job, DateTime HeldUtc)>(StringComparer.OrdinalIgnoreCase);
+
+        private static void HoldConsoleJob(string jobId, IJob job)
+        {
+            var cutoff = DateTime.UtcNow.AddMinutes(-InteractiveJobRegistry.UnattendedRetentionMinutes);
+            foreach (var stale in HeldConsoleJobs.Where(e => e.Value.HeldUtc < cutoff && e.Value.Job.IsDone).ToList())
+            {
+                HeldConsoleJobs.TryRemove(stale.Key, out _);
+            }
+
+            if (job != null)
+            {
+                HeldConsoleJobs[jobId] = (job, DateTime.UtcNow);
+            }
         }
 
         [WebMethod(EnableSession = true)]

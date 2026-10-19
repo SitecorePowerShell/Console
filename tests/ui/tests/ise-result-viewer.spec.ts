@@ -288,6 +288,15 @@ for (const site of sites) {
       // DarkBlue -> #012456 -> rgb(1, 36, 86). Jquery.terminal's default is
       // black; seeing rgb(1, 36, 86) proves the session-colour path is wired.
       expect(state.hostBg).toContain("1, 36, 86");
+
+      // Show-Result -Text blocks the script until the viewer closes. Close it
+      // so the job ends here; an abandoned job is re-attached by the next ISE
+      // page this user opens (#1498) and would leak into other tests.
+      await page.evaluate(() => {
+        const modal = document.getElementById("jqueryModalDialogsFrame") as HTMLIFrameElement;
+        (modal.contentWindow as any).dialogClose();
+      });
+      await page.waitForTimeout(3000);
     });
   });
 }

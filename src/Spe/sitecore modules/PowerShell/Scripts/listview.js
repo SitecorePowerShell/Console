@@ -1,5 +1,12 @@
 ﻿(function($, window, spe, undefined) {
 
+    // SpeJobRecovery.js gave up reviving the poll of a running action script.
+    // Reloading would throw away the list, so only tell the user; the job is
+    // re-attached in a Runner by the next shell page that loads.
+    window.speJobWatchdogLost = function () {
+        alert("Lost contact with the running script. It will reopen in a script runner the next time you load a Sitecore page.");
+    };
+
     spe.updateStatusBarCounters = function (itemCount, currentPage, pageCount) {
         $("#ItemCount").text(itemCount);
         $("#CurrentPage").text(currentPage);

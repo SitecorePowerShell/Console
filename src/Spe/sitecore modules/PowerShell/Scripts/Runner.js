@@ -3,6 +3,17 @@
         scForm.postRequest("", "", "", "psr:execute");
     };
 
+    // SpeJobRecovery.js gave up reviving the poll (page state lost after a
+    // long freeze): reload this Runner re-attached to the same job.
+    window.speJobWatchdogLost = function (id, handle) {
+        if (!handle) {
+            window.location.reload();
+            return;
+        }
+        window.location.href = "/sitecore/shell/default.aspx?xmlcontrol=PowerShellRunner&reattach=" +
+            encodeURIComponent(handle);
+    };
+
     window.onfocus = function () {
         if ($ise("#Closed")[0].innerHTML === "close") {
             scForm.postRequest("", "", "", "psr:delayedclose");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
@@ -173,6 +174,44 @@ namespace Spe.Client.Applications
             set => ServerProperties["RedirectUrl"] = value;
         }
 
+        // Set once the job finished or was lost. Progress messages drained in
+        // the same poll as the completion (a tab that caught up after sleeping)
+        // run after MonitorOnJobFinished and must not repaint the progress.
+        public bool Finished
+        {
+            get => StringUtil.GetString(ServerProperties["Finished"]) == "1";
+            set => ServerProperties["Finished"] = value ? "1" : string.Empty;
+        }
+
+        // Header of the script being run, kept for a Runner that re-attaches.
+        public string ScriptTitle
+        {
+            get => StringUtil.GetString(ServerProperties["ScriptTitle"]);
+            set => ServerProperties["ScriptTitle"] = value;
+        }
+
+        public string ScriptIcon
+        {
+            get => StringUtil.GetString(ServerProperties["ScriptIcon"]);
+            set => ServerProperties["ScriptIcon"] = value;
+        }
+
+        // Set when the Runner was opened to re-attach to a job another page
+        // started (?reattach=<job handle>), instead of running a script.
+        public string ReattachHandle
+        {
+            get => StringUtil.GetString(ServerProperties["ReattachHandle"]);
+            set => ServerProperties["ReattachHandle"] = value;
+        }
+
+        // Lease discovery already claimed for this Runner (?claim=). Empty
+        // when the Runner reloaded itself after losing contact with the job.
+        public string ReattachClaim
+        {
+            get => StringUtil.GetString(ServerProperties["ReattachClaim"]);
+            set => ServerProperties["ReattachClaim"] = value;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
@@ -185,7 +224,11 @@ namespace Spe.Client.Applications
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
 
-            if (!Context.ClientPage.IsEvent)
+            if (!Context.ClientPage.IsEvent && !string.IsNullOrEmpty(WebUtil.GetQueryString("reattach")))
+            {
+                LoadReattachContext();
+            }
+            else if (!Context.ClientPage.IsEvent)
             {
                 ItemId = WebUtil.GetQueryString("id");
                 ItemDb = WebUtil.GetQueryString("db");
@@ -223,6 +266,8 @@ namespace Spe.Client.Applications
                     }
                     scriptItem.Fields.ReadAll();
                     Icon.Src = scriptItem.Appearance.Icon;
+                    ScriptIcon = scriptItem.Appearance.Icon;
+                    ScriptTitle = scriptItem.DisplayName;
 
                     PersistentId = WebUtil.GetQueryString("sessionKey").IfNullOrEmpty(scriptItem[Templates.Script.Fields.PersistentSessionId]);
 
@@ -236,11 +281,6 @@ namespace Spe.Client.Applications
                         : HttpUtility.UrlDecode(WebUtil.GetQueryString("sessionKey"));
                     ScriptContent = ScriptSessionManager.GetSession(PersistentId).JobScript;
                 }
-
-                if (Monitor != null) return;
-
-                Monitor = new SpeJobMonitor {ID = "Monitor"};
-                Context.ClientPage.Controls.Add(Monitor);
             }
             else
             {
@@ -249,7 +289,7 @@ namespace Spe.Client.Applications
                     Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
                 }
 
-                if (Context.ClientPage.ClientRequest.Parameters == "pstaskmonitor:check" &&
+                if (Context.ClientPage.ClientRequest.Parameters.StartsWith("pstaskmonitor:check") &&
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
                     var percentComplete = Int32.Parse(CurrentProgressValue.Text);
@@ -257,7 +297,135 @@ namespace Spe.Client.Applications
                     PreviousProgressValue.Text = CurrentProgressValue.Text;
                 }
             }
+
+            if (Monitor == null && !Context.ClientPage.IsEvent)
+            {
+                Monitor = new SpeJobMonitor {ID = "Monitor"};
+                Context.ClientPage.Controls.Add(Monitor);
+            }
+
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += MonitorOnJobDisappeared;
+            Monitor.LeaseLost += MonitorOnLeaseLost;
+        }
+
+        private void LoadReattachContext()
+        {
+            ReattachHandle = WebUtil.GetQueryString("reattach");
+            ReattachClaim = WebUtil.GetQueryString("claim");
+            ResultsError.Text = Texts.PowerShellRunner_OnLoad_View_script_results_and_errors;
+            ResultsOK.Text = Texts.PowerShellRunner_OnLoad_View_script_results;
+            Copyright.Alt = Texts.PowerShellRunner_OnLoad_Show_copyright__;
+            Title.Text = Texts.PowerShellRunner_UpdateProgress_Running_script___;
+
+            // Only the header is restored here; ownership is checked when
+            // psr:execute claims or adopts the lease.
+            var entry = InteractiveJobRegistry.Get(ReattachHandle);
+            if (entry == null || !InteractiveJobRegistry.BelongsTo(ReattachHandle, Context.User.Name)) return;
+
+            var launch = entry.LaunchContext;
+            ItemId = launch["id"];
+            ItemDb = launch["db"];
+            ItemLang = launch["lang"];
+            ItemVer = launch["ver"];
+            PageId = launch["pageId"];
+            PageLang = launch["pageLang"];
+            PageVer = launch["pageVer"];
+            ScriptId = launch["scriptId"];
+            ScriptDb = launch["scriptDb"];
+            RenderingId = launch["RenderingId"];
+            RedirectUrl = launch["redirectUrl"];
+            PersistentId = launch["persistentId"];
+            CallerFullScreen = launch["cfs"] == "1";
+            ScriptTitle = launch["title"];
+            ScriptIcon = launch["icon"];
+            DialogHeader.Text = ScriptTitle;
+            if (!string.IsNullOrEmpty(ScriptIcon))
+            {
+                Icon.Src = ScriptIcon;
+            }
+        }
+
+        private NameValueCollection GetLaunchContext()
+        {
+            return new NameValueCollection
+            {
+                ["id"] = ItemId,
+                ["db"] = ItemDb,
+                ["lang"] = ItemLang,
+                ["ver"] = ItemVer,
+                ["pageId"] = PageId,
+                ["pageLang"] = PageLang,
+                ["pageVer"] = PageVer,
+                ["scriptId"] = ScriptId,
+                ["scriptDb"] = ScriptDb,
+                ["RenderingId"] = RenderingId,
+                ["redirectUrl"] = RedirectUrl,
+                ["persistentId"] = PersistentId,
+                ["cfs"] = CallerFullScreen ? "1" : string.Empty,
+                ["title"] = ScriptTitle,
+                ["icon"] = ScriptIcon
+            };
+        }
+
+        private void Reattach()
+        {
+            var user = Context.User.Name;
+            var handle = ReattachHandle;
+            var entry = string.IsNullOrEmpty(ReattachClaim)
+                ? InteractiveJobRegistry.TryClaim(handle, user, InteractiveJobRegistry.CurrentTabId)
+                : InteractiveJobRegistry.TryAdopt(handle, user, ReattachClaim);
+
+            if (entry == null)
+            {
+                var existing = InteractiveJobRegistry.Get(handle);
+                if (existing != null && InteractiveJobRegistry.BelongsTo(handle, user))
+                {
+                    ShowMoved();
+                    return;
+                }
+
+                if (existing != null)
+                {
+                    PowerShellLog.Audit($"[Runner] action=reattachDenied user={user} job={handle}");
+                }
+
+                ShowStopped(Texts.PowerShellRunner_ScriptSessionLost);
+                return;
+            }
+
+            PowerShellLog.Audit($"[Runner] action=reattached user={user} job={handle}");
+            Monitor.Adopt(entry);
+        }
+
+        private void MonitorOnJobDisappeared(object sender, EventArgs e)
+        {
+            ShowStopped(Texts.PowerShellRunner_ScriptSessionLost);
+        }
+
+        private void MonitorOnLeaseLost(object sender, EventArgs e)
+        {
+            ShowMoved();
+        }
+
+        private void ShowStopped(string message)
+        {
+            Finished = true;
+            Title.Text = message;
+            PsProgress.Text = string.Empty;
+            PsProgressStatus.Text = "<span class='status'> </span><br/>";
+            OkButton.Visible = true;
+            AbortButton.Visible = false;
+            SheerResponse.Eval("spe.scriptFinished('#progressbar',false,false);");
+        }
+
+        private void ShowMoved()
+        {
+            // Another window owns the job now. Forget the session so OK can
+            // never dispose a session that window is still running.
+            PersistentId = string.Empty;
+            Monitor.SessionID = string.Empty;
+            ShowStopped(Texts.PowerShellRunner_ScriptShownElsewhere);
         }
 
         [HandleMessage("psr:execute", true)]
@@ -268,6 +436,12 @@ namespace Spe.Client.Applications
 
         public void Execute()
         {
+            if (!string.IsNullOrEmpty(ReattachHandle))
+            {
+                Reattach();
+                return;
+            }
+
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
             var jobName = "Interactive Script Execution";
@@ -304,7 +478,7 @@ namespace Spe.Client.Applications
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
             Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, jobUser,
-                scriptSession.JobOptions);
+                scriptSession.JobOptions, InteractiveJobOrigin.Runner, GetLaunchContext());
             Monitor.SessionID = scriptSession.Key;
         }
 
@@ -317,6 +491,7 @@ namespace Spe.Client.Applications
         {
             var args = e as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
+            Finished = true;
 
             // Result.Value is handed to PowerShellResultViewerText which hosts
             // a jquery.terminal. Keeping the content in jsterm format (#1458)
@@ -420,6 +595,8 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:updateprogress", true)]
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
+            if (Finished) return;
+
             var sb = new StringBuilder();
 
             var activity = args.Parameters["Activity"];

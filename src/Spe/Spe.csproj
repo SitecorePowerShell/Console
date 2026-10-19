@@ -305,6 +305,7 @@
     <Compile Include="Client\Commands\MenuItems\EditPowerShellScript.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellScript.cs" />
+    <Compile Include="Client\Commands\ClaimOrphanedJobsCommand.cs" />
     <Compile Include="Client\Commands\MenuItems\ItemNew.cs" />
     <Compile Include="Client\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
     <Compile Include="Client\Commands\DebugQueryState.cs" />
@@ -528,6 +529,7 @@
     <Compile Include="Core\Host\ScriptingHostUserInterface.cs" />
     <Compile Include="Core\Host\ScriptSession.cs" />
     <Compile Include="Core\Host\ScriptSessionManager.cs" />
+    <Compile Include="Core\Host\InteractiveJobRegistry.cs" />
     <Compile Include="Core\Host\StreamRecordRing.cs" />
     <Compile Include="Core\Modules\IntegrationPoint.cs" />
     <Compile Include="Core\Modules\IntegrationPoints.cs" />
@@ -699,6 +701,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\goto_script.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\SpeJobRecovery.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\token_tooltip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\validation.js" />
