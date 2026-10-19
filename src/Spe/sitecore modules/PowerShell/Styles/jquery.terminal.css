@@ -57,6 +57,15 @@
     white-space: pre;
     text-indent: -9999em; /* better cursor hiding for Safari and IE */
 }
+/* Sitecore 10.5 Default.css gives every focused textarea a 2px purple
+ * border marked !important, which shows up as a box next to the prompt
+ * when the terminal focuses this hidden textarea after a click. */
+.terminal .cmd .clipboard:focus,
+.terminal .cmd .clipboard:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
 .terminal img, .terminal value, .terminal audio, .terminal object, .terminal canvas {
     cursor: default;
 }
