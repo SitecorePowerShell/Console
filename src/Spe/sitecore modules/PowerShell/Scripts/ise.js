@@ -1023,7 +1023,9 @@
             }, {
                 greetings: false,
                 prompt: getIsePrompt(),
-                enabled: true,
+                // Start disabled so keystrokes go only to the Ace editor on open;
+                // jquery.terminal enables itself when the user clicks into it.
+                enabled: false,
                 onClear: function () {},
                 completion: iseCompletion,
                 caseSensitiveAutocomplete: false,
