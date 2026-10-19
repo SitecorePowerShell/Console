@@ -1615,6 +1615,9 @@
 
         spe.resizeEditor = function () {
             spe.reapplySplitPosition();
+            // Size the editor container before Ace measures it; tab rows can wrap
+            // differently after a layout change.
+            $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
             if (currentAceEditor !== undefined) {
                 currentAceEditor.resize();
             }
@@ -1637,11 +1640,6 @@
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
             $("#VariablesToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#VariablesToggle").css("left", ($("#TabsPanel").offset().left + 28) + "px");
-            if ($("#TreeView").is(":visible")) {
-
-            }
-            $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
-
         };
 
         function isEmpty(val) {
@@ -1876,6 +1874,13 @@
             applySplitOrientation(splitOrientation);
             // Defer resize to allow the DOM to reflow after layout changes
             setTimeout(function () {
+                // The stacked editor/output table is a Sitecore .scFixSize element
+                // whose pixel height Sitecore only recomputes on window resize. It is
+                // display:none while side by side, so it comes back with a stale
+                // height that pushes the StatusBar off screen. Recompute it first.
+                if (scForm.browser.resizeFixsizeElements) {
+                    scForm.browser.resizeFixsizeElements();
+                }
                 spe.resizeEditor();
             }, 0);
         };
