@@ -9,6 +9,8 @@ namespace Spe.Client.Applications
         public string DialogResult { get; set; }
         public Exception Exception { get; set; }
         public bool HasErrors { get; set; }
+        public int WarningCount { get; set; }
+        public int ErrorCount { get; set; }
         public bool CloseRunner { get; set; }
         public bool ClearHost { get; set; }
         public List<string> DeferredMessages { get; set; }

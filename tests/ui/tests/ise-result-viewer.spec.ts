@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page, Frame } from "@playwright/test";
 import {
   loadTestSites,
   authStatePath,
@@ -129,7 +129,7 @@ for (const site of sites) {
       expect(labels).toContain("Execute in the runner dialog");
     });
 
-    test("Runner's \"View Script Results\" link renders a terminal, not raw jsterm markup", async ({
+    test("Runner shows results in its embedded terminal, rendered not raw", async ({
       page,
     }) => {
       // A tiny script so the runner reaches Done quickly. -ForegroundColor
@@ -140,81 +140,28 @@ for (const site of sites) {
       await waitForExecuteMenu(page);
       await clickMenuItem(page, "Execute in the runner dialog");
 
-      // Wait for the runner to finish and reveal the View Results link.
-      await page.waitForFunction(
-        () => {
-          const modal = document.getElementById(
-            "jqueryModalDialogsFrame"
-          ) as HTMLIFrameElement | null;
-          const runner = modal?.contentDocument?.getElementById(
-            "scContentIframeId0"
-          ) as HTMLIFrameElement | null;
-          const link = (runner?.contentDocument?.getElementById(
-            "ViewButton"
-          ) ||
-            runner?.contentDocument?.getElementById(
-              "ViewErrorsButton"
-            )) as HTMLAnchorElement | null;
-          if (!link || !runner) return false;
-          const cs = runner.contentWindow!.getComputedStyle(link);
-          return cs.display !== "none";
-        },
-        { timeout: 30_000 }
-      );
+      // The runner opens as the first modal; wait for it to finish, when the
+      // toggle carries the verdict.
+      let runner: Frame | undefined;
+      await expect
+        .poll(() => {
+          runner = page.frames().find((f) => /xmlcontrol=PowerShellRunner/i.test(f.url()));
+          return runner ? runner.locator("#OutputToggle").getAttribute("data-status").catch(() => null) : null;
+        }, { timeout: 30_000 })
+        .toBe("ok");
 
-      await page.evaluate(() => {
-        const modal = document.getElementById(
-          "jqueryModalDialogsFrame"
-        ) as HTMLIFrameElement;
-        const runner = modal.contentDocument!.getElementById(
-          "scContentIframeId0"
-        ) as HTMLIFrameElement;
-        const link = (runner.contentDocument!.getElementById("ViewButton") ||
-          runner.contentDocument!.getElementById(
-            "ViewErrorsButton"
-          )) as HTMLAnchorElement;
-        link.click();
-      });
+      await runner!.locator("#OutputToggle").click();
+      const terminal = runner!.locator("#RunnerTerminal .terminal-output");
+      await expect.poll(async () => normalize(await terminal.innerText().catch(() => "")), { timeout: 15_000 })
+        .toContain("runner test");
 
-      // The viewer opens as the next modal in the stack.
-      await page.waitForFunction(
-        () => {
-          const modal = document.getElementById(
-            "jqueryModalDialogsFrame"
-          ) as HTMLIFrameElement | null;
-          const viewer = modal?.contentDocument?.getElementById(
-            "scContentIframeId1"
-          ) as HTMLIFrameElement | null;
-          return !!viewer?.contentDocument?.querySelector(
-            "#resultTerminal .terminal-output"
-          );
-        },
-        { timeout: 10_000 }
-      );
-
-      const state = await page.evaluate(() => {
-        const modal = document.getElementById(
-          "jqueryModalDialogsFrame"
-        ) as HTMLIFrameElement;
-        const viewer = modal.contentDocument!.getElementById(
-          "scContentIframeId1"
-        ) as HTMLIFrameElement;
-        const doc = viewer.contentDocument!;
-        const terminal = doc.querySelector("#resultTerminal") as HTMLElement;
-        return {
-          hasTerminal: !!terminal,
-          innerText: terminal?.innerText ?? "",
-          spanCount: doc.querySelectorAll("#resultTerminal .terminal-output span")
-            .length,
-        };
-      });
-
-      expect(state.hasTerminal).toBe(true);
-      expect(normalize(state.innerText)).toContain("runner test");
+      const innerText = await terminal.innerText();
       // Raw jquery.terminal format strings must not bleed into the rendered
       // output; if they do the echo path is broken.
-      expect(state.innerText).not.toMatch(/\[\[;/);
-      expect(state.spanCount).toBeGreaterThan(0);
+      expect(innerText).not.toMatch(/\[\[;/);
+      expect(await terminal.locator("span").count()).toBeGreaterThan(0);
+      // Results never open the separate viewer any more.
+      expect(page.frames().some((f) => /PowerShellResultViewerText/i.test(f.url()))).toBe(false);
     });
 
     test("Show-Result -Text opens the viewer with the terminal, honoring the session background", async ({

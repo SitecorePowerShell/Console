@@ -106,23 +106,9 @@ namespace Spe.Client.Applications
             set => ServerProperties["ParentFrameName"] = value;
         }
 
-        // Index of the next unread line in session.Output for this ISE
-        // page's streaming drain. All lines at indices < CommittedLineCount
-        // have been sent to the client as committed (non-partial) lines.
-        // When HasPendingPartial is true, the line at CommittedLineCount
-        // is the currently-open partial on the client - it may still grow
-        // on the server and will be re-read on the next poll.
-        private int CommittedLineCount
-        {
-            get => int.TryParse(StringUtil.GetString(ServerProperties["OutputCommittedLineCount"]), out var v) ? v : 0;
-            set => ServerProperties["OutputCommittedLineCount"] = value.ToString();
-        }
-
-        private bool HasPendingPartial
-        {
-            get => StringUtil.GetString(ServerProperties["OutputHasPendingPartial"]) == "1";
-            set => ServerProperties["OutputHasPendingPartial"] = value ? "1" : string.Empty;
-        }
+        // Sends session output to this page's terminal while a script runs;
+        // its tracking state lives in ServerProperties.
+        private readonly TerminalOutputStreamer _outputStreamer = new TerminalOutputStreamer();
 
         public string ScriptItemId
         {
@@ -1235,8 +1221,7 @@ namespace Spe.Client.Applications
             // Reset streaming trackers for the new execution. session.Output
             // is cleared by ScriptRunner's finally (ClearSilent), so we
             // start at zero lines and no pending partial.
-            CommittedLineCount = 0;
-            HasPendingPartial = false;
+            _outputStreamer.Reset();
 
             PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
@@ -1325,112 +1310,12 @@ namespace Spe.Client.Applications
         {
             if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
 
-            // If the script called Clear-Host, purge the browser's terminal
-            // output before appending any new output from this poll cycle.
-            if (session.Output.ConsumeClearPending())
-            {
-                ClearOutput();
-                CommittedLineCount = 0;
-                HasPendingPartial = false;
-            }
-
-            StreamOutputToTerminal(session);
+            _outputStreamer.Poll(session);
         }
 
         // Max per-update buffer size for jsterm output, matching what the
         // standalone SPE Console web service passes (128 KiB).
         private const int JstermBufferSize = 131072;
-
-        /// <summary>
-        ///     Streams pending output to the ISE terminal in jquery.terminal
-        ///     native format (jsterm), supporting inline-append for
-        ///     Write-Host -NoNewline. Iterates session.Output by index,
-        ///     groups lines into batches (up to a terminator or the end of
-        ///     the buffer), and emits:
-        ///       - spe.appendOutput(jsterm)          for terminated batches
-        ///         (new committed line)
-        ///       - spe.commitPartialOutput(jsterm)   when a previously
-        ///         pending partial is now frozen by a terminator
-        ///       - spe.updatePartialOutput(jsterm)   for the unterminated
-        ///         tail (the line may still grow on subsequent polls)
-        ///
-        ///     After the drain, calls session.Output.GetHtmlUpdate() to
-        ///     advance the OutputBuffer.updatePointer so that ScriptRunner's
-        ///     later GetConsoleUpdate drain does not re-emit the same lines.
-        /// </summary>
-        private void StreamOutputToTerminal(ScriptSession session)
-        {
-            var output = session.Output;
-            var committed = CommittedLineCount;
-            var hasPending = HasPendingPartial;
-
-            var totalLines = output.Count;
-
-            // The buffer was cleared since the last poll (e.g. by Clear-Host
-            // or a session reset). Reset our tracking.
-            if (totalLines < committed)
-            {
-                committed = 0;
-                hasPending = false;
-            }
-
-            // Find the boundary between terminated and unterminated content.
-            int lastTerminated = -1;
-            for (int i = totalLines - 1; i >= committed; i--)
-            {
-                if (output[i].Terminated)
-                {
-                    lastTerminated = i;
-                    break;
-                }
-            }
-
-            // Emit all terminated content as a single appendOutput (or
-            // commitPartialOutput if there was a pending partial). One
-            // echo() call with the full concatenated jsterm string.
-            if (lastTerminated >= committed)
-            {
-                var sb = new StringBuilder();
-                for (int i = committed; i <= lastTerminated; i++)
-                {
-                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
-                }
-                var encoded = HttpUtility.JavaScriptStringEncode(sb.ToString(), true);
-                if (hasPending)
-                {
-                    SheerResponse.Eval($"spe.commitPartialOutput({encoded});");
-                    hasPending = false;
-                }
-                else
-                {
-                    SheerResponse.Eval($"spe.appendOutput({encoded});");
-                }
-                committed = lastTerminated + 1;
-            }
-
-            // If there is an unterminated tail, emit it as a partial.
-            if (committed < totalLines)
-            {
-                var sb = new StringBuilder();
-                for (int i = committed; i < totalLines; i++)
-                {
-                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
-                }
-                var encoded = HttpUtility.JavaScriptStringEncode(sb.ToString(), true);
-                SheerResponse.Eval($"spe.updatePartialOutput({encoded});");
-                hasPending = true;
-            }
-
-            // Sync the OutputBuffer's internal updatePointer with what we
-            // have rendered so the ScriptRunner's end-of-run drain (which
-            // uses GetConsoleUpdate) does not re-emit the same lines. The
-            // returned HTML is discarded - we only care about the side
-            // effect of advancing the pointer.
-            var _ = output.GetHtmlUpdate();
-
-            CommittedLineCount = committed;
-            HasPendingPartial = hasPending;
-        }
 
         private static void ClearOutput()
         {
@@ -1533,23 +1418,19 @@ namespace Spe.Client.Applications
             var args = eventArgs as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
 
-            // If the polling drain left a pending partial on the client,
-            // finalize it before emitting anything else - the content the
-            // client has rendered is the final text of that partial, and
-            // subsequent appendOutput calls must start a fresh visual line.
-            if (HasPendingPartial)
-            {
-                SheerResponse.Eval("spe.finalizePartial();");
-                HasPendingPartial = false;
-            }
-
+            // The output the polling drain did not send. A pending partial on
+            // the client is replaced by its final text, then the rest follows.
             if (result != null)
             {
-                if (result.ClearHost)
+                var finish = _outputStreamer.FinishScript(result.Output, result.ClearHost);
+                if (finish.Length > 0)
                 {
-                    ClearOutput();
+                    SheerResponse.Eval(finish);
                 }
-                PrintSessionUpdate(result.Output);
+            }
+            else
+            {
+                _outputStreamer.FinalizePartial();
             }
 
             if (result?.Exception != null)
@@ -1986,8 +1867,7 @@ namespace Spe.Client.Applications
         private void AdoptJob(InteractiveJobEntry entry)
         {
             PowerShellLog.Audit($"[ISE] action=reattached user={Context.User?.Name} job={entry.Handle}");
-            CommittedLineCount = 0;
-            HasPendingPartial = false;
+            _outputStreamer.Reset();
             ScriptRunning = true;
 
             SheerResponse.Eval("spe.restoreResults();");
@@ -2011,11 +1891,7 @@ namespace Spe.Client.Applications
 
         private void EndRunWithNotice(string notice)
         {
-            if (HasPendingPartial)
-            {
-                SheerResponse.Eval("spe.finalizePartial();");
-                HasPendingPartial = false;
-            }
+            _outputStreamer.FinalizePartial();
 
             PrintSessionUpdate($"[[;#FF9494;]{notice}]");
             ProgressOverlay.Visible = false;
@@ -2038,13 +1914,7 @@ namespace Spe.Client.Applications
             var session = ScriptSessionManager.GetSessionIfExists(sessionId) as ScriptSession;
             if (session != null)
             {
-                if (session.Output.ConsumeClearPending())
-                {
-                    ClearOutput();
-                    CommittedLineCount = 0;
-                    HasPendingPartial = false;
-                }
-                StreamOutputToTerminal(session);
+                _outputStreamer.Poll(session);
             }
 
             if (IsSessionBusy(sessionId))
@@ -2057,7 +1927,7 @@ namespace Spe.Client.Applications
             // above and the script terminating.
             if (session != null)
             {
-                StreamOutputToTerminal(session);
+                _outputStreamer.Drain(session);
             }
             EndAttachedSessionWatch();
         }
@@ -2332,11 +2202,11 @@ namespace Spe.Client.Applications
                 {
                     // Route the full buffer through the normal streaming path.
                     // That handles partial-line tails, advances
-                    // CommittedLineCount / HasPendingPartial, and keeps the
+                    // the streamer's committed-line tracking, and keeps the
                     // OutputBuffer's update pointer in sync so further polls
                     // (attached-session watch, end-of-run drain) only emit
                     // genuinely new lines.
-                    StreamOutputToTerminal(session);
+                    _outputStreamer.Drain(session);
                 }
             }
             catch (Exception ex)

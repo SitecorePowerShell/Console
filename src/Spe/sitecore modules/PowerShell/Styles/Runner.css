@@ -43,34 +43,113 @@
     margin-top: 3px;
 }
 
-#AbortButton, #OkButton {
-    display: block;
-    float: right;
-    height: 24px;
-    margin-right: 4px;
-    margin-top: 4px;
-    padding: 0 8px;
-    vertical-align: middle;
+/* Close/Abort keep Sitecore's standard .scButton size, matching the output
+   toggle beside them. */
+
+/* ---- Embedded output terminal ---- */
+
+/* Sitecore's flex.css forces width:100% and zero side margins on every child
+   of .scFlexColumnContainer, so #RunnerOutput spans the dialog and the
+   terminal inside it is inset by Runner.js to the panel's own gutter. */
+#RunnerOutput {
+    display: none;
+    flex: 1 1 0;
+    min-height: 0;
+    position: relative;
 }
 
-a#ViewButton {
-    color: green;
-    display: none;
-    float: left;
-    margin: auto;
-    padding: 0 20px;
-    text-decoration: underline;
-    width: 200px;
+.runnerOutputOpen #RunnerOutput { display: block; }
+.runnerOutputOpen .scFormDialogFooter { flex: none; }
+
+/* open: the progress panel shrinks to its content, the terminal fills the rest */
+.runnerOutputOpen #ValuePanelContainer { flex: none; }
+.runnerOutputOpen #ValuePanel.scStretchAbsolute { position: static !important; }
+/* Sitecore's ProgressDialog.css pins #Progress to 16px and lets the bar and
+   the time remaining / operation lines overflow it; open, the panel must
+   measure them or the terminal covers them. */
+.runnerOutputOpen #ValuePanel #Progress { height: auto; }
+
+#RunnerTerminal {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    bottom: 12px;
+    left: 15px;
+    border-radius: 4px;
+    padding: 6px 4px 6px 10px;
+    --size: 1;
+    font-family: Consolas, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+    font-size: 12px;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
-a#ViewErrorsButton {
-    color: red;
-    display: none;
-    float: left;
-    margin: auto;
-    padding: 0 20px;
-    text-decoration: underline;
-    width: 200px;
+#RunnerTerminal * {
+    font-family: inherit !important;
+    font-size: inherit !important;
+}
+
+/* read-only: no prompt or cursor */
+#RunnerTerminal .cmd { display: none !important; }
+
+/* ---- Output toggle and run verdict ---- */
+
+#OutputToggle {
+    transition: background-color 240ms cubic-bezier(0.25, 1, 0.5, 1),
+        border-color 240ms cubic-bezier(0.25, 1, 0.5, 1),
+        width 240ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#OutputToggle .st:empty { display: none; }
+#OutputToggle[data-status="ok"] .st::after,
+#OutputToggle[data-status="aborted"] .st::after {
+    content: "\00A0\00B7\00A0";
+    color: rgba(0, 0, 0, 0.55);
+}
+
+#OutputToggle[data-status="problems"] .lbl { display: none; }
+
+#OutputToggle .chev::before {
+    content: "\25BE";
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 10px;
+    transition: transform 240ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#OutputToggle[aria-expanded="true"] .chev::before { transform: rotate(180deg); }
+
+#OutputToggle .sep { color: rgba(0, 0, 0, 0.55); }
+#OutputToggle .w { color: #8a5a00; }
+#OutputToggle .e { color: #c62828; font-weight: 600; }
+
+#OutputToggle[data-status="ok"],
+#OutputToggle[data-status="problems"] {
+    background-image: none;
+    box-shadow: none;
+}
+
+#OutputToggle[data-status="ok"] { background-color: #eaf6ea; border-color: #8fc98f; color: #1b6b1b; }
+#OutputToggle[data-status="ok"]:hover { background-color: #dcefdc; }
+#OutputToggle[data-status="ok"] .st { font-weight: 600; }
+
+#OutputToggle[data-status="problems"].warnOnly { background-color: #fff7e0; border-color: #e3b54a; }
+#OutputToggle[data-status="problems"].warnOnly:hover { background-color: #fdeec4; }
+#OutputToggle[data-status="problems"] { background-color: #fdecec; border-color: #e88a8a; }
+#OutputToggle[data-status="problems"]:hover { background-color: #fadcdc; }
+
+#OutputToggle.morph .st,
+#OutputToggle.morph .lbl { animation: runnerMorphIn 320ms cubic-bezier(0.25, 1, 0.5, 1); }
+
+@keyframes runnerMorphIn {
+    from { opacity: 0; filter: blur(3px); }
+    to { opacity: 1; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #OutputToggle,
+    #OutputToggle .chev::before { transition: none; }
+    #OutputToggle.morph .st,
+    #OutputToggle.morph .lbl { animation: none; }
 }
 
 #ValuePanel #Progress {

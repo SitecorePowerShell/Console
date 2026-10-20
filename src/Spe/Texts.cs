@@ -8,8 +8,6 @@ namespace Spe
         public const string General_Operation_failed_wrong_data_template = "Script cannot be executed as it is of a wrong data template!";
 
         public const string PowerShellRunner_OnLoad_Show_copyright__ = "Show copyright..";
-        public const string PowerShellRunner_OnLoad_View_script_results = "View script results";
-        public const string PowerShellRunner_OnLoad_View_script_results_and_errors = "View script results and errors";
         public const string PowerShellRunner_UpdateProgress_Operation_ = "Operation:";
         public const string PowerShellRunner_UpdateProgress_Running_script___ = "Running script...";
         public const string PowerShellRunner_ScriptSessionLost = "The script session was lost.";
@@ -17,8 +15,14 @@ namespace Spe
         public const string PowerShellRunner_UpdateProgress_Status_ = "Status:";
         public const string PowerShellRunner_UpdateProgress_Time_remaining_ = "Time remaining:";
 
-        public const string PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_ =
-            "Script finished - no results to display.";
+        public const string PowerShellRunner_ShowOutput = "Show output";
+        public const string PowerShellRunner_HideOutput = "Hide output";
+        public const string PowerShellRunner_Success = "Success";
+        public const string PowerShellRunner_Aborted = "Aborted";
+        public const string PowerShellRunner_Warning = "{0} warning";
+        public const string PowerShellRunner_Warnings = "{0} warnings";
+        public const string PowerShellRunner_Error = "{0} error";
+        public const string PowerShellRunner_Errors = "{0} errors";
 
         public const string PowerShellResultViewerList_UpdateProgress_remaining = "remaining";
 

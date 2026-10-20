@@ -169,6 +169,7 @@ namespace Spe.Core.Host
                 PrivateData.ErrorForegroundColor,
                 PrivateData.ErrorBackgroundColor, true);
             Output.HasErrors = true;
+            Output.CountErrorLine(value);
             Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Error);
         }
@@ -221,6 +222,7 @@ namespace Spe.Core.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + value, RawUI.BufferSize.Width,
                 PrivateData.WarningForegroundColor, PrivateData.WarningBackgroundColor, true);
+            Output.WarningCount++;
             Output.AddRange(splitter,RawUI.BufferSize.Height);
             WriteToLog(value, LogLevel.Warning);
         }

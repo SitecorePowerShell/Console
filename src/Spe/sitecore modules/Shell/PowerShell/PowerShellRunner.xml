@@ -20,7 +20,7 @@
       <Literal ID="PreviousProgressValue" Visible="false" runat="server" />
       <Literal ID="CurrentProgressValue" Visible="false" runat="server" />
       <Literal ID="Closed" Visible="false" runat="server" />
-      <Literal ID="Result" runat="server" />
+      <Literal ID="OutputOptions" runat="server" />
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
@@ -56,28 +56,18 @@
           </Scrollbox>
         </Scrollbox>
 
+        <!-- #RunnerOutput (the output terminal) is inserted here by Runner.js:
+             Sheer renders empty elements self-closing, which breaks the DOM. -->
         <div Class="scFormDialogFooter">
           <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
                  Title="Show copyright..." />
-          <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
-             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
-            <Literal ID="ResultsOK" Text="View Script Results" />
-          </a>
-          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
-             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
-            <Literal ID="ResultsError" Text="View Script Results and errors"/>
-          </a>
           <div class="footerOkCancel">
+            <button type="button" id="OutputToggle" class="scButton" aria-expanded="false" aria-controls="RunnerOutput"
+                    title="Ctrl+`">Show output</button>
             <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close" />
             <Button ID="AbortButton" Class="scButton scButtonPrimary" Click="AbortClick" Header="Abort" />
           </div>
         </div>
-        <Style ID="ConsoleStyle">
-          .console {
-          color: <Literal ID="ForegroundColor" />;
-          background-color: <Literal ID="BackgroundColor" />;
-          }
-        </Style>
       </Border>
     </FormPage>
   </PowerShellRunner>

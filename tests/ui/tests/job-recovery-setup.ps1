@@ -29,6 +29,7 @@ Start-Sleep -Seconds 6
 "RECOVERY_SHORT_DONE"
 '@
     "RecoveryLong" = @'
+"RECOVERY_LONG_STARTED"
 Start-Sleep -Seconds 150
 "RECOVERY_LONG_DONE"
 '@

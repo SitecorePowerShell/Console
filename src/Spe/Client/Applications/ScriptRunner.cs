@@ -38,6 +38,7 @@ namespace Spe.Client.Applications
             try
             {
                 Context.Language = job?.Options?.ClientLanguage ?? Context.Language;
+                Session.Output.ResetRunState();
                 Method(Session, Script);
                 if (job == null) return;
 
@@ -47,10 +48,11 @@ namespace Spe.Client.Applications
                 // natively, matching what the standalone SPE Console does.
                 // Using GetConsoleUpdate instead of GetHtmlUpdate is also what
                 // gives us correct Write-Host -NoNewline handling via its
-                // "wait for terminator" line-buffering.
+                // "wait for terminator" line-buffering. The script has ended,
+                // so a last line still waiting for its terminator is final too.
                 var clearHost = Session.Output.ConsumeClearPending();
                 var finalOutputBuffer = new System.Text.StringBuilder();
-                Session.Output.GetConsoleUpdate(finalOutputBuffer, 131072);
+                Session.Output.GetConsoleUpdate(finalOutputBuffer, 131072, true);
                 var output = new RunnerOutput
                 {
                     Exception = null,
@@ -58,6 +60,8 @@ namespace Spe.Client.Applications
                     Output = finalOutputBuffer.ToString(),
                     DialogResult = Session.Output.GetDialogRessult(),
                     HasErrors = Session.Output.HasErrors,
+                    WarningCount = Session.Output.WarningCount,
+                    ErrorCount = Session.Output.ErrorCount,
                     CloseRunner = Session.CloseRunner,
                     DeferredMessages = Session.DeferredMessages
                 };
@@ -82,13 +86,16 @@ namespace Spe.Client.Applications
                 {
                     // jsterm format - same as the success-path drain above.
                     var errorOutputBuffer = new System.Text.StringBuilder();
-                    Session.Output.GetConsoleUpdate(errorOutputBuffer, 131072);
+                    Session.Output.GetConsoleUpdate(errorOutputBuffer, 131072, true);
                     var output =  new RunnerOutput
                     {
                         Exception = exc,
                         Output = errorOutputBuffer.ToString(),
                         DialogResult = Session.Output.GetDialogRessult(),
                         HasErrors = true,
+                        WarningCount = Session.Output.WarningCount,
+                        // the unhandled exception itself is one more error
+                        ErrorCount = Session.Output.ErrorCount + 1,
                         CloseRunner = Session.CloseRunner,
                         DeferredMessages = Session.DeferredMessages
                     };

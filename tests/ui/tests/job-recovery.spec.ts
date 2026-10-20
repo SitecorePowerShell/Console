@@ -285,7 +285,16 @@ for (const site of sites) {
         .poll(() => runnerTitle(tabA), { timeout: 40_000, intervals: [500] })
         .toBe("This script is now shown in another window.");
 
+      // The re-attached Runner replays the output written before it took
+      // over once its output terminal is opened.
+      const runnerB = tabB.frames().find((f) => RUNNER.test(f.url()))!;
+      await runnerB.locator("#OutputToggle").click();
+      await expect(runnerB.locator("#RunnerTerminal .terminal-output")).toContainText("RECOVERY_LONG_STARTED", {
+        timeout: 15_000,
+      });
+
       await expectRunnerDone(tabB, 120_000);
+      await expect(runnerB.locator("#RunnerTerminal .terminal-output")).toContainText("RECOVERY_LONG_DONE");
       await tabB.close();
     });
   });
