@@ -5,6 +5,8 @@ import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./siteco
 
 const sites = loadTestSites();
 const modalScript = fs.readFileSync(path.join(__dirname, "status-bar-grip.ps1"), "utf-8");
+// core:/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Console
+const CONSOLE_SHORTCUT_ID = "{1B72C2A5-EAF1-47CE-86FF-4E3C42F1DD84}";
 
 async function waitForFrame(page: Page, re: RegExp, selector: string): Promise<Frame> {
   for (let i = 0; i < 120; i++) {
@@ -78,6 +80,34 @@ for (const site of sites) {
       const min = (await host.boundingBox())!;
       expect(min.width).toBeGreaterThanOrEqual(150);
       expect(min.height).toBeGreaterThanOrEqual(64);
+    });
+
+    test("standalone Console has no grip", async ({ page }) => {
+      await page.goto(`${site.url}/sitecore/shell/Applications/PowerShell/PowerShell-Console`, { waitUntil: "domcontentloaded" });
+      await page.waitForSelector("#terminal .cmd", { timeout: 60_000 });
+      await expect(page.locator("#StatusBarGrip")).toHaveCount(0);
+    });
+
+    test("grip resizes the Console desktop window", async ({ page }) => {
+      await page.goto(`${site.url}/sitecore/shell/default.aspx`, { waitUntil: "domcontentloaded" });
+      await page.waitForFunction(() => (window as any).scManager, null, { timeout: 30_000 });
+      // The Console start menu item sits in the menu's right column; run its shortcut directly.
+      await page.evaluate((id) => (window as any).scForm.postRequest("", "", "", `RunShortcut("${id}")`), CONSOLE_SHORTCUT_ID);
+      const consoleFrame = await waitForFrame(page, /PowerShell-?Console/i, "#terminal .cmd");
+      await expect(consoleFrame.locator("#StatusBarGrip")).toBeVisible();
+      const host = page.locator("iframe[src*='xmlcontrol=Application']").last();
+      const before = (await host.boundingBox())!;
+      const terminalRight = () => consoleFrame.evaluate(() => document.getElementById("terminal")!.getBoundingClientRect().right);
+      const rightBefore = await terminalRight();
+
+      await dragGrip(consoleFrame, 120, 80);
+      await expect.poll(async () => (await host.boundingBox())!.width).toBeGreaterThan(before.width + 100);
+      const after = (await host.boundingBox())!;
+      expect(after.height).toBeGreaterThan(before.height + 60);
+      expect(after.x).toBeCloseTo(before.x, 0);
+      expect(after.y).toBeCloseTo(before.y, 0);
+      // The terminal follows the new frame size.
+      await expect.poll(terminalRight).toBeGreaterThan(rightBefore + 100);
     });
 
     test("grip resizes a modal ListView dialog", async ({ page }) => {

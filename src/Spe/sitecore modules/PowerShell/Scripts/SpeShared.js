@@ -120,9 +120,10 @@ extend(spe, "powershell");
         window.addEventListener("pagehide", function () { style.remove(); });
     }
 
-    spe.initResizeGrip = function () {
-        var statusBar = document.getElementById("StatusBar");
-        if (!statusBar || document.getElementById("StatusBarGrip")) return;
+    // host defaults to #StatusBar; pages without one (Console) pass their own.
+    spe.initResizeGrip = function (host) {
+        host = host || document.getElementById("StatusBar");
+        if (!host || document.getElementById("StatusBarGrip")) return;
         var desktopWindow = findDesktopWindow();
         if (!desktopWindow) {
             if (!findModalDialogHandle()) return;
@@ -133,7 +134,7 @@ extend(spe, "powershell");
         grip.id = "StatusBarGrip";
         grip.className = "status-bar-grip";
         grip.title = "Drag to resize";
-        statusBar.appendChild(grip);
+        host.appendChild(grip);
 
         grip.addEventListener("mousedown", function (e) {
             if (e.button !== 0) return;

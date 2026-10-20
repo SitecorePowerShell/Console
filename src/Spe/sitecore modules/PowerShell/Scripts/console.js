@@ -493,6 +493,8 @@
     var currentYear = (new Date()).getFullYear();
     var greetings = "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
     $(function() {
+        // No status bar here, so the resize grip goes straight on the page.
+        spe.initResizeGrip(document.body);
         terminal =
             $("#terminal").terminal(function(command, term) {
                 if (/^\s*(cls|clear-host)\s*$/i.test(command)) {

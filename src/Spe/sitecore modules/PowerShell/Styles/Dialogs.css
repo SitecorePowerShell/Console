@@ -151,10 +151,10 @@ textarea[disabled] {
         float: right;
     }
 
-    /* Pinned to the window corner, painted over the status bar. The hit area
-       reaches the corner; the 12px drawing sits 2px in from the right edge
-       and 3px up from the bottom. */
-    #StatusBar .status-bar-grip {
+    /* Pinned to the window corner, painted over the status bar (or, in the
+       Console, over the terminal). The hit area reaches the corner; the 12px
+       drawing sits 2px in from the right edge and 3px up from the bottom. */
+    .status-bar-grip {
         position: fixed;
         right: 0;
         bottom: 0;
