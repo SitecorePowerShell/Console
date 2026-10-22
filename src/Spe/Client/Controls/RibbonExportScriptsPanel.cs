@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -67,11 +68,12 @@ namespace Spe.Client.Controls
             {
                 // Stable ID so a resized gallery keeps its size across ribbon re-renders
                 ID = "ExportResultsButton",
-                Header = Translate.Text(current.DisplayName),
+                // LargeComboButton writes Header and ToolTip into the markup unencoded
+                Header = HttpUtility.HtmlEncode(Translate.Text(current.DisplayName)),
                 Icon = enabled
                     ? Images.GetThemedImageSource(current[Sitecore.FieldIDs.Icon], ImageDimension.id32x32)
                     : current[Sitecore.FieldIDs.Icon],
-                ToolTip = current.Appearance.ShortDescription,
+                ToolTip = HttpUtility.HtmlAttributeEncode(current.Appearance.ShortDescription),
                 Command = $"export:results(scriptDb={current.Database.Name},scriptID={current.ID})",
                 Enabled = enabled,
                 Gallery = "Gallery.ExportGallery",

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Web;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
@@ -12,6 +14,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.XmlControls;
 using Spe.Core.Extensions;
+using Spe.Core.Modules;
 
 namespace Spe.Client.Controls
 {
@@ -42,10 +45,14 @@ namespace Spe.Client.Controls
 
             var current = WebUtil.GetQueryString("current");
             var disabled = new ListString(WebUtil.GetQueryString("disabled"));
+            // The query string only narrows the list; never show anything that is not an exporter
+            var exportRoots = ModuleManager.GetFeatureRoots(IntegrationPoints.ReportExportFeature)
+                .Select(root => root.ID)
+                .ToList();
             foreach (var uri in new ListString(WebUtil.GetQueryString("exporters")))
             {
                 var scriptItem = Database.GetItem(ItemUri.Parse(uri));
-                if (!scriptItem.IsPowerShellScript())
+                if (!scriptItem.IsPowerShellScript() || !exportRoots.Contains(scriptItem.ParentID))
                 {
                     continue;
                 }
@@ -58,12 +65,13 @@ namespace Spe.Client.Controls
                 {
                     Src = Images.GetThemedImageSource(scriptItem[FieldIDs.Icon], ImageDimension.id16x16),
                     Class = "scRibbonToolbarSmallGalleryButtonIcon",
-                    Alt = scriptItem.DisplayName
+                    Alt = HttpUtility.HtmlAttributeEncode(scriptItem.DisplayName)
                 };
                 var isDisabled = disabled.Contains(uri);
                 control["Class"] = isDisabled ? "disabled" : scriptItem.ID.ToString() == current ? "selected" : string.Empty;
                 control["ExporterIcon"] = $"<div class=\"versionNum\">{builder}</div>";
-                control["Name"] = Translate.Text(scriptItem.DisplayName);
+                control["Name"] = HttpUtility.HtmlEncode(Translate.Text(scriptItem.DisplayName));
+                // Sheer encodes title attributes itself
                 control["ToolTip"] = scriptItem.Appearance.ShortDescription;
                 control["Click"] = isDisabled
                     ? string.Empty
