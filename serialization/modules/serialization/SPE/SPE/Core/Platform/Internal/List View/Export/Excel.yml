@@ -12,7 +12,6 @@ SharedFields:
   Value: |
     Import-Function -Name ConvertTo-Xlsx
     
-    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     if(!$title){
         $title = "Undefined"
     }
@@ -23,7 +22,7 @@ SharedFields:
         Select-Object -Property $format | 
         ConvertTo-Xlsx 
     
-    Out-Download -Name "report-$datetime.xlsx" -InputObject $outobject
+    Out-Download -Name "$exportFileName.xlsx" -InputObject $outobject
 Languages:
 - Language: da
   Fields:

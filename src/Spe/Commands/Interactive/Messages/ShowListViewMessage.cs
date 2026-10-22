@@ -57,6 +57,7 @@ namespace Spe.Commands.Interactive.Messages
         public string MissingDataIcon { get; set; }
         public ShowListViewFeatures VisibleFeatures { get; set; }
         public string ContextUsername { get; set; }
+        public string ExportFileName { get; set; }
 
         public string FormatProperty
         {

@@ -7,6 +7,7 @@ const sites = loadTestSites();
 // Same content as the filter tests: a few folders under spe-test shown in a ListView.
 const showScript = fs.readFileSync(path.join(__dirname, "listview-filter.ps1"), "utf-8");
 const teardownScript = fs.readFileSync(path.join(__dirname, "listview-filter-teardown.ps1"), "utf-8");
+const fileNameScript = fs.readFileSync(path.join(__dirname, "listview-export-filename.ps1"), "utf-8");
 
 async function openIse(page: Page, site: TestSite) {
   await page.goto(`${site.url}/sitecore/shell/Applications/PowerShell/PowerShellIse`, { waitUntil: "domcontentloaded" });
@@ -24,7 +25,7 @@ async function run(page: Page, script: string) {
 }
 
 // See listview-filter.spec.ts: the ListView only opens via its Application handle URL.
-async function openListView(page: Page, site: TestSite): Promise<Frame> {
+async function openListView(page: Page, site: TestSite, script = showScript): Promise<Frame> {
   const src = new Promise<string>((resolve, reject) => {
     const t = setTimeout(() => reject(new Error("no Broadcast seen")), 60_000);
     page.on("response", async (r) => {
@@ -34,7 +35,7 @@ async function openListView(page: Page, site: TestSite): Promise<Frame> {
       if (m) { clearTimeout(t); resolve(m[1].replace(/&amp;/g, "&")); }
     });
   });
-  await run(page, showScript);
+  await run(page, script);
   const lvPage = await page.context().newPage();
   await lvPage.goto(site.url + (await src), { waitUntil: "domcontentloaded" });
   for (let i = 0; i < 120; i++) {
@@ -47,6 +48,15 @@ async function openListView(page: Page, site: TestSite): Promise<Frame> {
 
 const exportButton = (lv: Frame) =>
   lv.locator(".scRibbonToolbarLargeComboButton").filter({ has: lv.locator("a[onclick*='export:results']") });
+
+async function exportCsvFileName(lv: Frame): Promise<string> {
+  await exportButton(lv).locator(".scRibbonToolbarLargeComboButtonBottom").click();
+  const csv = lv.frameLocator("#ExportResultsButton_frame").locator(".scMenuPanelItem").filter({ hasText: /^\s*CSV\s*$/ });
+  await expect(csv).toBeVisible({ timeout: 15_000 });
+  const download = lv.page().waitForEvent("download", { timeout: 60_000 });
+  await csv.click();
+  return (await download).suggestedFilename();
+}
 
 for (const site of sites) {
   test.describe(`ListView export - ${site.url}`, () => {
@@ -92,6 +102,18 @@ for (const site of sites) {
       await items.filter({ hasText: pick }).first().click();
       await expect(exportButton(lv).locator(".header")).toHaveText(pick, { timeout: 30_000 });
       await expect(exportButton(lv).locator(".scRibbonToolbarLargeComboButtonTop")).toHaveAttribute("onclick", /export:results/);
+    });
+
+    test("export file name defaults to report-<timestamp>", async ({ page }) => {
+      await openIse(page, site);
+      const lv = await openListView(page, site);
+      expect(await exportCsvFileName(lv)).toMatch(/^report-\d{4}-\d{2}-\d{2}_\d{6}\.csv$/);
+    });
+
+    test("-ExportFileName formats the export date and strips invalid characters", async ({ page }) => {
+      await openIse(page, site);
+      const lv = await openListView(page, site, fileNameScript);
+      expect(await exportCsvFileName(lv)).toMatch(/^spe_export-\d{8}\.csv$/);
     });
   });
 }

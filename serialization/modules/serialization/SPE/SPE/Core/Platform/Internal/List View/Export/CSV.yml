@@ -10,14 +10,13 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $format = & ([scriptblock]::Create($exportProperty))
     
     [psCustomObject]$exportData | 
         Select-Object -Property $format | 
         ConvertTo-Csv -NoTypeInformation | 
         Out-String | 
-        Out-Download -Name "report-$datetime.csv"
+        Out-Download -Name "$exportFileName.csv"
     
 Languages:
 - Language: da

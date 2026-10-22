@@ -10,7 +10,6 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $head = '<style>'+
         'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
         'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
@@ -32,7 +31,7 @@ SharedFields:
         ConvertTo-Html -head $head -body $body -Title $title | 
         % { [System.Web.HttpUtility]::HtmlDecode($_) } | 
         Out-String | 
-        Out-Download -Name "report-$datetime.html"
+        Out-Download -Name "$exportFileName.html"
 Languages:
 - Language: da
   Fields:

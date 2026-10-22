@@ -41,7 +41,7 @@ SharedFields:
         $title = "Report"
     }
     
-    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    $datetime = Get-Date -format "yyyy-MM-dd_HHmmss"
     $dialogProps = @{
         Parameters = @(
             @{ Name = "toEmail"; Title="Recipient"; Placeholder="to@email.com"; Columns=6; Validator={ 
@@ -127,7 +127,7 @@ SharedFields:
             
             $contentType = New-Object "System.Net.Mime.ContentType"
             $contentType.MediaType = [System.Net.Mime.MediaTypeNames+Text]::Html
-            $contentType.Name = "$title-$datetime.html"
+            $contentType.Name = "$exportFileName.html"
             $attachment = New-Object System.Net.Mail.Attachment ($memoryStream, $contentType)
             
             $message.Attachments.Add($attachment)

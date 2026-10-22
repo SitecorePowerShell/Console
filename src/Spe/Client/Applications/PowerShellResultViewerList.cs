@@ -407,6 +407,28 @@ namespace Spe.Client.Applications
             ExecuteScriptJob(scriptItem, session, message, true);
         }
 
+        private const string DefaultExportFileName = "report-{0:yyyy-MM-dd_HHmmss}";
+
+        // Resolved at export time so {0} is the moment of the export, not of the report.
+        private static string GetExportFileName(string template)
+        {
+            var now = DateTime.Now;
+            string name;
+            try
+            {
+                name = string.Format(template ?? DefaultExportFileName, now);
+            }
+            catch (FormatException)
+            {
+                name = string.Format(DefaultExportFileName, now);
+            }
+
+            name = System.IO.Path.GetInvalidFileNameChars()
+                .Aggregate(name, (current, c) => current.Replace(c, '_'))
+                .Trim();
+            return string.IsNullOrEmpty(name) ? string.Format(DefaultExportFileName, now) : name;
+        }
+
         private void SetVariables(ScriptSession session, Message message)
         {
             //visible objects in string form for export
@@ -438,6 +460,7 @@ namespace Spe.Client.Applications
             session.SetVariable("title", ListViewer.Data.Title);
             session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
             session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
+            session.SetVariable("exportFileName", GetExportFileName(ListViewer.Data.ExportFileName));
 
             session.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
             session.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
