@@ -959,6 +959,303 @@
             }
         };
 
+        // Write-Progress panel docked at the top of the results pane. The
+        // server sends every progress record as JSON (null hides the panel);
+        // the panel keeps its DOM between records so the bar can animate.
+        var progressIcons = {
+            gear: '<path d="M4 6h8M16 6h4M4 12h2M10 12h10M4 18h11M19 18h1"/><circle cx="14" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+            hairline: '<path d="M5 12h14"/>',
+            segmented: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+            ring: '<path d="M12 3a9 9 0 1 0 9 9"/>',
+            compact: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
+            full: '<path d="M4 5h16M4 12h16M4 19h16"/>',
+            integrated: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/>',
+            overlay: '<path d="M12 4l-8 4l8 4l8-4zM4 12l8 4l8-4M4 16l8 4l8-4"/>'
+        };
+        var progressGroups = [
+            { key: "bar", label: "Bar", options: [["hairline", "Hairline"], ["segmented", "Segmented"], ["ring", "Ring"]] },
+            { key: "detail", label: "Detail", options: [["compact", "Compact"], ["full", "Full"]] },
+            { key: "placement", label: "Placement", options: [["integrated", "Integrated"], ["overlay", "Overlay"]] }
+        ];
+        var progressPrefs = { bar: "hairline", detail: "full", placement: "integrated" };
+        try {
+            var storedProgressPrefs = JSON.parse(localStorage.getItem("spe.ise.progress")) || {};
+            progressGroups.forEach(function (group) {
+                var value = storedProgressPrefs[group.key];
+                if (group.options.some(function (option) { return option[0] === value; })) {
+                    progressPrefs[group.key] = value;
+                }
+            });
+        } catch (e) { }
+        var progressSegmentCount = 24;
+        var progressEase = "cubic-bezier(.16, 1, .3, 1)";
+        var progressPanel = null;
+        var progressRecord = null; // record on screen, null while hidden
+        var progressShown = 0; // percent drawn, eased towards the record
+        var progressFrame = 0;
+        var progressHideAnimation = null;
+        var progressTerminalTop = 0;
+        var progressLeaveTimer = 0;
+
+        function progressIcon(name) {
+            return '<svg viewBox="0 0 24 24" aria-hidden="true">' + progressIcons[name] + '</svg>';
+        }
+
+        function buildProgressPanel() {
+            var menu = progressGroups.map(function (group) {
+                return '<span class="spe-progress-label">' + group.label + '</span>' +
+                    '<span class="spe-progress-choice" role="radiogroup" aria-label="' + group.label + '" data-key="' + group.key + '">' +
+                    '<span class="spe-progress-thumb"></span>' +
+                    group.options.map(function (option) {
+                        return '<button type="button" role="radio" data-key="' + group.key + '" data-value="' + option[0] + '">' +
+                            progressIcon(option[0]) + option[1] + '</button>';
+                    }).join("") + '</span>';
+            }).join("");
+            progressPanel = $('<div id="IseProgress" role="status">' +
+                '<div class="spe-progress-head">' +
+                '<svg class="spe-progress-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle class="spe-progress-arc" cx="9" cy="9" r="7"/></svg>' +
+                '<span class="spe-progress-activity"></span>' +
+                '<span class="spe-progress-status spe-progress-inline"></span>' +
+                '<span class="spe-progress-operation spe-progress-inline"></span>' +
+                '<span class="spe-progress-meta"><span class="spe-progress-eta"></span><span class="spe-progress-percent"></span></span>' +
+                '</div>' +
+                '<div class="spe-progress-status spe-progress-row"></div>' +
+                '<div class="spe-progress-hairline"><i></i></div>' +
+                '<div class="spe-progress-segments">' + new Array(progressSegmentCount + 1).join("<b></b>") + '</div>' +
+                '<div class="spe-progress-operation spe-progress-row"><span></span><span></span></div>' +
+                '<div class="spe-progress-options">' +
+                '<button type="button" class="spe-progress-gear" title="Progress display" aria-label="Progress display options" aria-haspopup="true">' + progressIcon("gear") + '</button>' +
+                '<div class="spe-progress-menu">' + menu + '</div>' +
+                '</div>' +
+                '</div>').prependTo("#Result");
+            progressPanel.on("click", "button[data-key]", function () {
+                progressPrefs[this.getAttribute("data-key")] = this.getAttribute("data-value");
+                try {
+                    localStorage.setItem("spe.ise.progress", JSON.stringify(progressPrefs));
+                } catch (e) { }
+                applyProgressPrefs();
+            });
+            progressPanel.on("click", ".spe-progress-gear", function () {
+                progressPanel.toggleClass("spe-progress-open");
+            });
+            // The gear and its menu linger after the mouse leaves, so a
+            // slightly off path from the gear to the menu doesn't close it.
+            progressPanel.on("mouseenter", function () {
+                clearTimeout(progressLeaveTimer);
+                progressPanel.addClass("spe-progress-active");
+            });
+            progressPanel.on("mouseleave", function () {
+                clearTimeout(progressLeaveTimer);
+                progressLeaveTimer = setTimeout(function () {
+                    progressPanel.removeClass("spe-progress-active spe-progress-open");
+                    // A clicked option keeps focus, which would keep the gear
+                    // showing through :focus-within after the mouse has left.
+                    if (progressPanel[0].contains(document.activeElement)) {
+                        document.activeElement.blur();
+                    }
+                }, 1500);
+            });
+            progressPanel.on("keydown", function (e) {
+                if (e.key === "Escape") {
+                    progressPanel.removeClass("spe-progress-open");
+                }
+            });
+            if (window.ResizeObserver) {
+                new ResizeObserver(layoutProgressTerminal).observe(progressPanel[0]);
+            }
+            applyProgressPrefs();
+        }
+
+        function applyProgressPrefs() {
+            var panel = progressPanel[0];
+            panel.className = panel.className.replace(/\s*spe-progress-(bar|detail|placement)-\S+/g, "") +
+                " spe-progress-bar-" + progressPrefs.bar +
+                " spe-progress-detail-" + progressPrefs.detail +
+                " spe-progress-placement-" + progressPrefs.placement;
+            progressPanel.find(".spe-progress-choice").each(function () {
+                var choice = this;
+                $(choice).find("button").each(function (index) {
+                    var checked = this.getAttribute("data-value") === progressPrefs[choice.getAttribute("data-key")];
+                    this.setAttribute("aria-checked", checked);
+                    if (checked) {
+                        choice.style.setProperty("--spe-choice-index", index);
+                    }
+                });
+            });
+            layoutProgressTerminal();
+        }
+
+        // Integrated placement pushes the terminal down by the panel height.
+        // The jump is played back as a slide (FLIP) so the terminal resizes
+        // once instead of on every animation frame.
+        function layoutProgressTerminal() {
+            var terminal = document.getElementById("ScriptResultCode");
+            if (!terminal || !progressPanel) {
+                return;
+            }
+            var top = progressRecord && progressPrefs.placement === "integrated" ? progressPanel[0].offsetHeight : 0;
+            if (top === progressTerminalTop) {
+                return;
+            }
+            var delta = top - progressTerminalTop;
+            var atBottom = terminal.scrollHeight - terminal.scrollTop - terminal.clientHeight < 20;
+            progressTerminalTop = top;
+            terminal.style.top = top ? top + "px" : "";
+            // The terminal is height:100% (Console.css), so it has to shrink by
+            // the same amount or it overflows #Result and adds a scrollbar.
+            terminal.style.height = top ? "calc(100% - " + top + "px)" : "";
+            // Keep following the newest output when the terminal shrinks.
+            if (atBottom) {
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            if (terminal.animate) {
+                terminal.animate([{ transform: "translateY(" + (-delta) + "px)" }, { transform: "none" }],
+                    { duration: 450, easing: progressEase });
+            }
+        }
+
+        function setProgressText(element, text) {
+            element.text(text).attr("title", text);
+        }
+
+        function formatProgressSeconds(seconds) {
+            var h = Math.floor(seconds / 3600), m = Math.floor(seconds % 3600 / 60), s = seconds % 60;
+            var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+            return (h ? h + ":" + pad(m) : m) + ":" + pad(s);
+        }
+
+        function progressInOut(x) {
+            return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+        }
+
+        function progressTick(time) {
+            progressFrame = 0;
+            if (!progressRecord) {
+                return;
+            }
+            var panel = progressPanel[0];
+            if (progressRecord.percent < 0) {
+                // Indeterminate motion is driven here rather than by CSS
+                // animations so it keeps running when the browser asks pages
+                // to reduce motion (e.g. Windows Server with animations off),
+                // as it is the only sign the script is still alive.
+                var hairline = panel.querySelector(".spe-progress-hairline");
+                hairline.style.backgroundPosition = (time / 50 % 12) + "px 0";
+                hairline.firstChild.style.left = (progressInOut(time / 1300 % 1) * 125 - 25) + "%";
+                var segments = panel.querySelectorAll(".spe-progress-segments b");
+                for (var i = 0; i < segments.length; i++) {
+                    var phase = ((time / 1200 - i / segments.length) % 1 + 1) % 1;
+                    var glow = phase < .15 ? phase / .15 : phase < .4 ? 1 - (phase - .15) / .25 : 0;
+                    segments[i].style.backgroundColor = "rgba(78, 201, 176, " + (.22 + .78 * glow).toFixed(2) + ")";
+                }
+                panel.querySelector(".spe-progress-ring").style.transform = "rotate(" + (time * .45 % 360 - 90) + "deg)";
+            } else {
+                progressShown += (progressRecord.percent - progressShown) * .15;
+                if (Math.abs(progressRecord.percent - progressShown) < .5) {
+                    progressShown = progressRecord.percent;
+                }
+                panel.querySelector(".spe-progress-percent").textContent = Math.round(progressShown) + "%";
+                if (progressShown === progressRecord.percent) {
+                    return;
+                }
+            }
+            progressFrame = requestAnimationFrame(progressTick);
+        }
+
+        function hideIseProgress() {
+            if (!progressRecord) {
+                return;
+            }
+            progressRecord = null;
+            clearTimeout(progressLeaveTimer);
+            progressPanel.removeClass("spe-progress-active spe-progress-open");
+            layoutProgressTerminal();
+            var finish = function () {
+                progressHideAnimation = null;
+                if (!progressRecord) {
+                    progressPanel.removeClass("spe-progress-visible");
+                    progressPanel.find(".spe-progress-hairline i").css("width", "");
+                }
+            };
+            if (progressPanel[0].animate) {
+                progressHideAnimation = progressPanel[0].animate(
+                    [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-8px)" }],
+                    { duration: 250, easing: "ease-in" });
+                progressHideAnimation.onfinish = finish;
+            } else {
+                finish();
+            }
+        }
+
+        spe.updateIseProgress = function (record) {
+            if (!record) {
+                hideIseProgress();
+                return;
+            }
+            if (!progressPanel) {
+                buildProgressPanel();
+            }
+            var panel = progressPanel[0];
+            var appearing = !progressRecord;
+            var indeterminate = record.percent < 0;
+            progressRecord = record;
+
+            progressPanel.toggleClass("spe-progress-indeterminate", indeterminate)
+                .toggleClass("spe-progress-no-operation", !record.operation);
+            setProgressText(progressPanel.find(".spe-progress-activity"), record.activity);
+            setProgressText(progressPanel.find(".spe-progress-status"), record.status);
+            setProgressText(progressPanel.find(".spe-progress-inline.spe-progress-operation"), record.operation);
+            // Ellipsis in the middle of the operation so the last two path
+            // segments (usually the item being processed) stay readable.
+            var operation = record.operation || "";
+            var cut = Math.max(0, operation.lastIndexOf("\\", operation.lastIndexOf("\\") - 1));
+            var operationRow = progressPanel.find(".spe-progress-row.spe-progress-operation").attr("title", operation).children();
+            operationRow.eq(0).text(operation.substring(0, cut));
+            operationRow.eq(1).text(operation.substring(cut));
+            progressPanel.find(".spe-progress-eta").text(record.secondsRemaining >= 0
+                ? formatProgressSeconds(record.secondsRemaining) + " " + record.remainingText
+                : "");
+
+            var hairline = panel.querySelector(".spe-progress-hairline");
+            var arc = panel.querySelector(".spe-progress-arc");
+            var segments = panel.querySelectorAll(".spe-progress-segments b");
+            if (indeterminate) {
+                hairline.firstChild.style.width = "";
+                arc.style.strokeDashoffset = "";
+                panel.querySelector(".spe-progress-percent").textContent = "";
+            } else {
+                hairline.style.backgroundPosition = "";
+                hairline.firstChild.style.left = "";
+                hairline.firstChild.style.width = record.percent + "%";
+                arc.style.strokeDashoffset = 44 - 44 * record.percent / 100;
+                panel.querySelector(".spe-progress-ring").style.transform = "";
+                var lit = Math.round(record.percent / 100 * segments.length);
+                for (var i = 0; i < segments.length; i++) {
+                    segments[i].style.backgroundColor = "";
+                    segments[i].classList.toggle("spe-progress-on", i < lit);
+                }
+            }
+
+            if (appearing) {
+                if (progressHideAnimation) {
+                    progressHideAnimation.cancel();
+                    progressHideAnimation = null;
+                }
+                progressShown = 0;
+                var background = document.getElementById("ScriptResultCode") || document.getElementById("Result");
+                panel.style.setProperty("--spe-progress-bg", getComputedStyle(background).backgroundColor);
+                progressPanel.addClass("spe-progress-visible");
+                if (panel.animate) {
+                    panel.animate([{ opacity: 0, transform: "translateY(-8px)" }, { opacity: 1, transform: "none" }],
+                        { duration: 300, easing: progressEase });
+                }
+            }
+            layoutProgressTerminal();
+            if (!progressFrame) {
+                progressFrame = requestAnimationFrame(progressTick);
+            }
+        };
+
         var iseTabCompletions = null;
         var iseTabCycleIndex = -1;
         var iseTabCycleActive = false;
@@ -1435,6 +1732,7 @@
             // getIsePrompt() using the prompt text the server pushed during
             // MonitorOnJobFinished.
             spe.hideBusy();
+            spe.updateIseProgress(null);
             // Restore the terminal command line now that the script has finished.
             if (iseTerminal) {
                 iseTerminal.resume();
@@ -1631,11 +1929,6 @@
                 $("#Result").width($(window).width() - $("#Result").offset().left * 2);
                 $("#Result").width($("#ResultsPane").width());
             }
-            // ProgressOverlay positioning is handled entirely by CSS now -
-            // it's position:absolute relative to #Result, which is position:relative.
-            // The old JS below used $.offset() (document coordinates) which was
-            // correct when the overlay had no positioned ancestor, but now it
-            // double-offsets the overlay off-screen.
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
             $("#VariablesToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");

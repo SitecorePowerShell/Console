@@ -145,15 +145,6 @@
                                      Height="10px"/>
                         <Border ID="Result" GridPanel.Height="100%" class="console pre results"
                                 GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow">
-                            <Border Id="ProgressOverlay" Visible="false">
-                                <Border>
-                                    <p>
-                                        <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true"
-                                                 GridPanel.VAlign="top"
-                                                 GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
-                                    </p>
-                                </Border>
-                            </Border>
                             <Border ID="ScriptResult" class="console">
                                 <div ID="ScriptResultCode"></div>
                             </Border>

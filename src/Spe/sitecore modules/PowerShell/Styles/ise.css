@@ -242,55 +242,374 @@ a.ps-link {
 
 #ScriptName { display: none; }
 
-.progressActivity { font-weight: bold; }
-
-#ProgressOverlay #progressbar {
-    margin-top: 8px;
-    width: 100%;
-}
-
-/* Ensure both #Result and its containing td are positioning contexts,
- * so the absolutely-positioned ProgressOverlay has a reliable ancestor to
- * anchor to regardless of which of those two elements Sheer UI/GridPanel
- * renders. */
+/* Both #Result and its containing td are positioning contexts, so the
+ * absolutely-positioned progress panel has a reliable ancestor to anchor to
+ * regardless of which of those two elements Sheer UI/GridPanel renders. */
 #ResultsPane,
 #Result {
     position: relative;
 }
 
-#ProgressOverlay {
+/* Write-Progress panel. Built and driven by spe.updateIseProgress in ise.js.
+ * Docked at the top of the results pane: "integrated" pushes the terminal
+ * down by the panel height, "overlay" floats translucent over the output. */
+#IseProgress {
+    display: none;
     position: absolute;
-    top: 2px;
-    left: 4px;
-    right: 2px;
+    top: 0;
+    left: 0;
+    right: 0;
     /* Must be higher than any internal jquery.terminal.css z-index
      * (e.g. .cmd .clipboard at z-index:1000, .tilda at 1100). */
     z-index: 2000;
+    padding: 9px 12px 10px;
+    color: #fff;
+    font: 13px/18px 'Segoe UI', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+    background-color: var(--spe-progress-bg, #012456);
+    background-image: linear-gradient(rgba(255, 255, 255, .06), rgba(255, 255, 255, .06));
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+    transition: background-color .35s, box-shadow .35s;
+}
+
+#IseProgress.spe-progress-visible { display: block; }
+
+#IseProgress.spe-progress-placement-overlay {
+    background-color: color-mix(in srgb, var(--spe-progress-bg, #012456) 55%, transparent);
+    -webkit-backdrop-filter: blur(6px) saturate(1.3);
+    backdrop-filter: blur(6px) saturate(1.3);
+    border-bottom-color: rgba(255, 255, 255, .18);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .28);
+}
+
+#IseProgress .spe-progress-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+#IseProgress .spe-progress-activity {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+}
+
+#IseProgress .spe-progress-status { color: rgba(255, 255, 255, .75); }
+
+#IseProgress .spe-progress-operation {
+    color: rgba(255, 255, 255, .6);
+    font: 12px/16px Consolas, Monaco, Menlo, monospace;
+}
+
+#IseProgress .spe-progress-inline {
+    flex: 0 100 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress .spe-progress-meta {
+    display: flex;
+    flex: none;
+    gap: 10px;
+    margin-left: auto;
+    padding-left: 8px;
+    color: rgba(255, 255, 255, .75);
+    font-variant-numeric: tabular-nums;
+}
+
+#IseProgress .spe-progress-percent {
+    min-width: 34px;
+    color: #4ec9b0;
+    font-weight: 600;
+    text-align: right;
+}
+
+#IseProgress .spe-progress-eta:empty,
+#IseProgress .spe-progress-percent:empty { display: none; }
+
+/* Full detail: activity and status wrap to two lines each, the operation
+ * gets its own row with the ellipsis in the middle so the item name stays. */
+#IseProgress.spe-progress-detail-full .spe-progress-head {
+    align-items: flex-start;
+    white-space: normal;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-activity,
+#IseProgress .spe-progress-row.spe-progress-status {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow-wrap: anywhere;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-activity { flex: 1 1 auto; }
+
+#IseProgress .spe-progress-row.spe-progress-status {
+    margin-top: 2px;
+    overflow: hidden;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation {
+    display: flex;
+    min-width: 0;
+    margin-top: 6px;
+    white-space: nowrap;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation span:last-child {
+    flex: none;
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-inline,
+#IseProgress.spe-progress-detail-compact .spe-progress-row,
+#IseProgress.spe-progress-no-operation .spe-progress-operation { display: none; }
+
+/* Bar styles */
+#IseProgress .spe-progress-hairline {
+    position: relative;
+    height: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .12);
+}
+
+#IseProgress .spe-progress-hairline i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    border-radius: 3px;
+    background: #4ec9b0;
+    transition: width .6s cubic-bezier(.16, 1, .3, 1);
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-hairline {
+    background: repeating-linear-gradient(90deg, rgba(78, 201, 176, .35) 0 6px, transparent 6px 12px);
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-hairline i {
+    width: 25%;
+    transition: none;
+}
+
+#IseProgress .spe-progress-segments {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+}
+
+#IseProgress .spe-progress-segments b {
+    flex: 1;
+    height: 5px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, .12);
+    transition: background-color .3s;
+}
+
+#IseProgress .spe-progress-segments b.spe-progress-on { background: #4ec9b0; }
+
+#IseProgress.spe-progress-indeterminate .spe-progress-segments b { transition: none; }
+
+#IseProgress .spe-progress-ring {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    transform: rotate(-90deg);
+}
+
+#IseProgress .spe-progress-ring circle {
+    fill: none;
+    stroke: rgba(255, 255, 255, .15);
+    stroke-width: 2.5;
+}
+
+#IseProgress .spe-progress-ring .spe-progress-arc {
+    stroke: #4ec9b0;
+    stroke-linecap: round;
+    stroke-dasharray: 44;
+    stroke-dashoffset: 44;
+    transition: stroke-dashoffset .6s cubic-bezier(.16, 1, .3, 1);
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-arc {
+    stroke-dasharray: 11 33;
+    stroke-dashoffset: 0;
+    transition: none;
+}
+
+#IseProgress.spe-progress-bar-hairline .spe-progress-segments,
+#IseProgress.spe-progress-bar-hairline .spe-progress-ring,
+#IseProgress.spe-progress-bar-segmented .spe-progress-hairline,
+#IseProgress.spe-progress-bar-segmented .spe-progress-ring,
+#IseProgress.spe-progress-bar-ring .spe-progress-hairline,
+#IseProgress.spe-progress-bar-ring .spe-progress-segments { display: none; }
+
+/* Display options: a gear on the panel's bottom edge, shown on hover, that
+ * opens a menu of sliding-thumb choices. */
+#IseProgress .spe-progress-options {
+    position: absolute;
+    right: 12px;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(50%) scale(.85);
+    transition: opacity .2s ease, transform .35s cubic-bezier(.16, 1, .3, 1);
+}
+
+#IseProgress.spe-progress-active .spe-progress-options,
+#IseProgress:focus-within .spe-progress-options,
+#IseProgress.spe-progress-open .spe-progress-options {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(50%);
+}
+
+#IseProgress .spe-progress-options button {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+#IseProgress .spe-progress-options button:focus-visible {
+    outline: 1px solid #4ec9b0;
+    outline-offset: 1px;
+}
+
+#IseProgress .spe-progress-options svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#IseProgress .spe-progress-options .spe-progress-gear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 12px;
+    background: #123a74;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .35);
+    color: rgba(255, 255, 255, .8);
+}
+
+#IseProgress .spe-progress-options .spe-progress-gear:hover {
+    border-color: rgba(255, 255, 255, .3);
+    color: #fff;
+}
+
+#IseProgress.spe-progress-open .spe-progress-options .spe-progress-gear {
+    border-color: #4ec9b0;
+    color: #4ec9b0;
+}
+
+#IseProgress .spe-progress-menu {
+    --spe-choice-width: 96px;
+    --spe-choice-gap: 4px;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 10px;
+    background: #123a74;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .45);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity .2s, transform .3s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Invisible bridge over the gap between the gear and the menu, so moving
+ * the mouse down to the menu never crosses empty space. */
+#IseProgress .spe-progress-menu::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    right: 0;
+    left: 0;
+    height: 12px;
+}
+
+#IseProgress.spe-progress-open .spe-progress-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+}
+
+#IseProgress .spe-progress-label {
+    color: rgba(255, 255, 255, .6);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+#IseProgress .spe-progress-choice {
+    position: relative;
+    display: flex;
+    gap: var(--spe-choice-gap);
+    justify-self: start;
+    padding: 3px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px;
+    background: rgba(0, 0, 0, .22);
 }
 
-#OperationProgress {
-    margin: auto;
-    margin-top: 30px;
-    padding-left: 40px;
-    padding-right: 30px;
-    width: 90%;
+#IseProgress .spe-progress-choice button {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: var(--spe-choice-width);
+    height: 24px;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, .65);
+    font-size: 12px;
+    line-height: 16px;
+    transition: color .25s;
 }
 
-#progressbar {
-    background-color: #f7f7f7;
-    border: #e3e3e3 1px solid;
-    margin-top: 4px;
-    border-radius: 4px;
-}
+#IseProgress .spe-progress-choice button:hover,
+#IseProgress .spe-progress-choice button[aria-checked=true] { color: #fff; }
 
-#progressbar div {
-    background: #5E5E5E;
-    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
-    height: 20px;
-    border-radius: 4px;
+#IseProgress .spe-progress-choice button[aria-checked=true] svg { color: #4ec9b0; }
+
+#IseProgress .spe-progress-thumb {
+    position: absolute;
+    top: 3px;
+    left: calc(3px + var(--spe-choice-index, 0) * (var(--spe-choice-width) + var(--spe-choice-gap)));
+    width: var(--spe-choice-width);
+    height: 24px;
+    border-radius: 5px;
+    background: #2a5a9a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: left .38s cubic-bezier(.16, 1, .3, 1);
 }
 
 #Tip .ui-widget-content {

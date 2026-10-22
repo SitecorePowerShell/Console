@@ -56,8 +56,6 @@ namespace Spe.Client.Applications
         protected Memo ScriptItemDbMemo;
         protected Memo ActiveTabsMemo;
         protected Memo TerminalCommand;
-        protected Literal Progress;
-        protected Border ProgressOverlay;
         protected Border RibbonPanel;
         protected Border ScriptResult;
         protected Memo SelectionText;
@@ -1446,7 +1444,6 @@ namespace Spe.Client.Applications
             // HTML path.
             executionResult.GetIseResult(result.CloseRunner).ForEach(PrintHtmlSessionUpdate);
 
-            ProgressOverlay.Visible = false;
             ScriptRunning = false;
 
             // Push the updated prompt before signalling the client that the
@@ -1471,40 +1468,26 @@ namespace Spe.Client.Applications
             var showProgress = ScriptRunning &&
                                !string.Equals(args.Parameters["RecordType"], "Completed",
                                    StringComparison.OrdinalIgnoreCase);
-            ProgressOverlay.Visible = showProgress;
-            var sb = new StringBuilder();
-            if (showProgress)
+            if (!showProgress)
             {
-                sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
-                if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
-                {
-                    sb.AppendFormat("<p>{0}</p>", args.Parameters["StatusDescription"]);
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
-                {
-                    var percentComplete = int.Parse(args.Parameters["PercentComplete"]);
-                    if (percentComplete > -1)
-                        sb.AppendFormat("<div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
-                {
-                    var secondsRemaining = int.Parse(args.Parameters["SecondsRemaining"]);
-                    if (secondsRemaining > -1)
-                        sb.AppendFormat("<p><strong>{0:c} </strong> " +
-                                        Texts.PowerShellIse_UpdateProgress_remaining +
-                                        ".</p>",
-                            new TimeSpan(0, 0, secondsRemaining));
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
-                {
-                    sb.AppendFormat("<p>{0}</p>", args.Parameters["CurrentOperation"]);
-                }
+                SheerResponse.Eval("spe.updateIseProgress(null)");
+                return;
             }
 
-            Progress.Text = sb.ToString();
+            // The panel is rendered client side (ise.js) so it can animate
+            // between records; -1 means "not specified" for both numbers.
+            int.TryParse(args.Parameters["PercentComplete"], out var percentComplete);
+            int.TryParse(args.Parameters["SecondsRemaining"], out var secondsRemaining);
+            var progress = new System.Collections.Generic.Dictionary<string, object>
+            {
+                ["activity"] = args.Parameters["Activity"] ?? string.Empty,
+                ["status"] = args.Parameters["StatusDescription"] ?? string.Empty,
+                ["operation"] = args.Parameters["CurrentOperation"] ?? string.Empty,
+                ["percent"] = string.IsNullOrEmpty(args.Parameters["PercentComplete"]) ? -1 : percentComplete,
+                ["secondsRemaining"] = string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]) ? -1 : secondsRemaining,
+                ["remainingText"] = Texts.PowerShellIse_UpdateProgress_remaining
+            };
+            SheerResponse.Eval($"spe.updateIseProgress({new JavaScriptSerializer().Serialize(progress)})");
         }
 
         [HandleMessage("ise:scriptchanged")]
@@ -1894,7 +1877,6 @@ namespace Spe.Client.Applications
             _outputStreamer.FinalizePartial();
 
             PrintSessionUpdate($"[[;#FF9494;]{notice}]");
-            ProgressOverlay.Visible = false;
             ScriptRunning = false;
             Monitor.SessionID = string.Empty;
             UpdateRibbon();
