@@ -192,6 +192,7 @@
     <Compile Include="Client\Controls\VariableEditors\TextVariableEditor.cs" />
     <Compile Include="Client\Controls\TreelistExtended.cs" />
     <Compile Include="Client\Controls\UserGallery.cs" />
+    <Compile Include="Client\Controls\ExportGallery.cs" />
     <Compile Include="Client\Controls\LanguageGallery.cs" />
     <Compile Include="Client\Controls\PolicyGallery.cs" />
     <Compile Include="Client\Controls\IsePolicyPanel.cs" />
@@ -750,6 +751,8 @@
     <Content Include="sitecore modules\Shell\PowerShell\ContextGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\DownloadFile.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\ExportGallery.Option.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\ExportGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.Option.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PolicyGallery.Option.xml" />

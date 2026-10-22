@@ -14,6 +14,7 @@
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Script src="/sitecore/shell/controls/SitecoreObjects.js"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>

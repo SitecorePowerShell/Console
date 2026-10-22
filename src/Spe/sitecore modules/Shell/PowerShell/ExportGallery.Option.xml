@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
+  <ExportGallery.Option>
+    <Border RollOver="true" Class="$Class scMenuPanelItem" Click="$Click" ToolTip="$ToolTip">
+        <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top" Gridpanel.Width="64px">
+          <Literal Text="$ExporterIcon"/>
+        </Border>
+        <Border Padding="0px 0px 0px 8px" Style="display: inline-block">
+          <div class="name">
+            <Literal Text="$Name"/>
+          </div>
+        </Border>
+    </Border>
+  </ExportGallery.Option>
+</control>

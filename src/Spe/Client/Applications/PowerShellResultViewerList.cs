@@ -398,6 +398,11 @@ namespace Spe.Client.Applications
         {
             var scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             var scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
+            if (scriptItem != null)
+            {
+                Registry.SetString(RibbonExportScriptsPanel.LastExportRegistryKey, scriptItem.ID.ToString());
+                UpdateRibbon();
+            }
             var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true);
             ExecuteScriptJob(scriptItem, session, message, true);
         }
