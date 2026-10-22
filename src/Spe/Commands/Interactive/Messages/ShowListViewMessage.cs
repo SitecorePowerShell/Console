@@ -113,7 +113,9 @@ namespace Spe.Commands.Interactive.Messages
                 {
                     Width = Width,
                     Height = Height,
-                    Header = Title
+                    // The modal host parses features as "key:value;" pairs and drops any pair
+                    // with an extra ':' - swap both delimiters for look-alikes so the header survives.
+                    Header = Title?.Replace(':', '\u2236').Replace(';', '\u037E')
                 };
                 SheerResponse.ShowModalDialog(options);
             }
