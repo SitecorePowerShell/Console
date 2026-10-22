@@ -110,12 +110,25 @@ for (const site of sites) {
       await expect.poll(terminalRight).toBeGreaterThan(rightBefore + 100);
     });
 
-    test("grip resizes a modal ListView dialog", async ({ page }) => {
-      await page.goto(`${site.url}/sitecore/shell/Applications/PowerShell/PowerShellIse`, { waitUntil: "domcontentloaded" });
-      await page.waitForSelector(".ace_editor", { timeout: 15_000 });
-      await page.evaluate((id) => (window as any).scForm.postRequest("", "", "", `ise:setsessionid(id=${id})`), `status-bar-grip-${Date.now()}`);
-      await page.evaluate((s) => (window as any).ace.edit(document.querySelector(".ace_editor") as HTMLElement).setValue(s, -1), modalScript);
-      await page.locator(".ace_editor").first().click();
+    // Standalone ISE page, or the ISE opened in the Sitecore Desktop, where the
+    // modal dialog frame sits under a window that has scManager.
+    for (const host of ["standalone", "desktop"] as const) test(`grip resizes a modal ListView dialog (${host} ISE)`, async ({ page }) => {
+      let ise: Page | Frame = page;
+      if (host === "standalone") {
+        await page.goto(`${site.url}/sitecore/shell/Applications/PowerShell/PowerShellIse`, { waitUntil: "domcontentloaded" });
+        await page.waitForSelector(".ace_editor", { timeout: 15_000 });
+      } else {
+        await page.goto(`${site.url}/sitecore/shell/default.aspx`, { waitUntil: "domcontentloaded" });
+        await page.waitForFunction(() => (window as any).scManager, null, { timeout: 30_000 });
+        await page.evaluate(() => {
+          const td = Array.from(document.querySelectorAll("td.scMenuItemCaption")).find((e) => e.textContent === "PowerShell ISE");
+          (td!.closest("tr") as HTMLElement).click();
+        });
+        ise = await waitForFrame(page, /PowerShellIse/i, ".ace_editor");
+      }
+      await ise.evaluate((id) => (window as any).scForm.postRequest("", "", "", `ise:setsessionid(id=${id})`), `status-bar-grip-${Date.now()}`);
+      await ise.evaluate((s) => (window as any).ace.edit(document.querySelector(".ace_editor") as HTMLElement).setValue(s, -1), modalScript);
+      await ise.locator(".ace_editor").first().click();
       await page.keyboard.press("Control+e");
 
       const lv = await waitForFrame(page, /PowerShell(ListView|ResultViewerList)/i, "#StatusBar");

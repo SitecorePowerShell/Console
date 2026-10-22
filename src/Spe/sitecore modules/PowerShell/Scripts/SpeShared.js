@@ -124,10 +124,14 @@ extend(spe, "powershell");
     spe.initResizeGrip = function (host) {
         host = host || document.getElementById("StatusBar");
         if (!host || document.getElementById("StatusBarGrip")) return;
-        var desktopWindow = findDesktopWindow();
-        if (!desktopWindow) {
-            if (!findModalDialogHandle()) return;
+        // Modal first: in the Desktop the dialog frame's ancestors have scManager too,
+        // so the walk-up would pick the modal dialogs frame as a desktop window.
+        var desktopWindow = null;
+        if (findModalDialogHandle()) {
             yieldDialogCorner();
+        } else {
+            desktopWindow = findDesktopWindow();
+            if (!desktopWindow) return;
         }
 
         var grip = document.createElement("div");
