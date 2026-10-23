@@ -17,6 +17,7 @@ using Sitecore.Exceptions;
 using Sitecore.Install.Serialization;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Debugging;
@@ -162,12 +163,19 @@ namespace Spe.Core.Host
                 PsVersion = (Version)psVersionTable["PSVersion"];
             }
 
-            // Ensure IOUtils created by touching IOUtils.SerializationContext
-            using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+            // Warm up IOUtils as a privileged user; a failure here would break SPE until restart (#1506).
+            try
             {
-                var context = IOUtils.SerializationContext;
+                using (new SecurityDisabler())
+                using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+                {
+                    var context = IOUtils.SerializationContext;
+                }
             }
-            
+            catch (Exception ex)
+            {
+                PowerShellLog.Error("[Session] action=warmUpIOUtils status=failed", ex);
+            }
         }
 
         internal ScriptSession(string applianceType, bool personalizedSettings)
