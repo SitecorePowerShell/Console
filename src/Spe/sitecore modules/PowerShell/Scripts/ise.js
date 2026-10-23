@@ -1021,7 +1021,7 @@
                 '</div>' +
                 '<div class="spe-progress-status spe-progress-row"></div>' +
                 '<div class="spe-progress-hairline"><i></i></div>' +
-                '<div class="spe-progress-segments">' + new Array(progressSegmentCount + 1).join("<b></b>") + '</div>' +
+                '<div class="spe-progress-segments">' + new Array(progressSegmentCount + 1).join("<b><i></i></b>") + '</div>' +
                 '<div class="spe-progress-operation spe-progress-row"><span></span><span></span></div>' +
                 '<div class="spe-progress-options">' +
                 '<button type="button" class="spe-progress-gear" title="Progress display" aria-label="Progress display options" aria-haspopup="true">' + progressIcon("gear") + '</button>' +
@@ -1155,11 +1155,22 @@
                     progressShown = progressRecord.percent;
                 }
                 panel.querySelector(".spe-progress-percent").textContent = Math.round(progressShown) + "%";
+                fillProgressSegments(panel, progressShown);
                 if (progressShown === progressRecord.percent) {
                     return;
                 }
             }
             progressFrame = requestAnimationFrame(progressTick);
+        }
+
+        // Each segment fills by its own share of the progress, so the fill
+        // runs smoothly from one segment into the next.
+        function fillProgressSegments(panel, percent) {
+            var fills = panel.querySelectorAll(".spe-progress-segments i");
+            var filled = percent / 100 * fills.length;
+            for (var i = 0; i < fills.length; i++) {
+                fills[i].style.width = Math.max(0, Math.min(1, filled - i)) * 100 + "%";
+            }
         }
 
         function hideIseProgress() {
@@ -1229,10 +1240,8 @@
                 hairline.firstChild.style.width = record.percent + "%";
                 arc.style.strokeDashoffset = 44 - 44 * record.percent / 100;
                 panel.querySelector(".spe-progress-ring").style.transform = "";
-                var lit = Math.round(record.percent / 100 * segments.length);
                 for (var i = 0; i < segments.length; i++) {
                     segments[i].style.backgroundColor = "";
-                    segments[i].classList.toggle("spe-progress-on", i < lit);
                 }
             }
 

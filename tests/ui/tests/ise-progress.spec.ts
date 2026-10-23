@@ -106,6 +106,14 @@ for (const site of sites) {
       await panel.locator('button[data-value="integrated"]').click();
       await expect.poll(() => page.locator("#ScriptResultCode").evaluate((e) => e.style.top)).not.toBe("");
 
+      // Segmented: a segment fills in proportion to its share of the progress.
+      await panel.locator('button[data-value="segmented"]').click();
+      await expect(panel).toHaveClass(/spe-progress-bar-segmented/);
+      await expect.poll(() => panel.locator(".spe-progress-segments i").evaluateAll((fills) =>
+        fills.some((f) => { const w = parseFloat((f as HTMLElement).style.width); return w > 0 && w < 100; })
+      ), { timeout: 10_000 }).toBe(true);
+      await panel.locator('button[data-value="hairline"]').click();
+
       // ...and closes a moment later.
       await page.mouse.move(5, 5);
       await expect(panel).not.toHaveClass(/spe-progress-open/, { timeout: 3_000 });

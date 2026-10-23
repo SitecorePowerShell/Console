@@ -414,14 +414,25 @@ a.ps-link {
 }
 
 #IseProgress .spe-progress-segments b {
+    position: relative;
     flex: 1;
     height: 5px;
+    overflow: hidden;
     border-radius: 2px;
     background: rgba(255, 255, 255, .12);
     transition: background-color .3s;
 }
 
-#IseProgress .spe-progress-segments b.spe-progress-on { background: #4ec9b0; }
+#IseProgress .spe-progress-segments i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    background: #4ec9b0;
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-segments i { display: none; }
 
 #IseProgress.spe-progress-indeterminate .spe-progress-segments b { transition: none; }
 
