@@ -30,7 +30,7 @@ namespace Spe.Integrations.Gutters
                 var scriptId = new ID(Parameters["scriptId"]);
                 var scriptDb = string.IsNullOrEmpty(Parameters["scriptDb"])
                     ? ApplicationSettings.ScriptLibraryDb
-                    : Parameters["scriptId"];
+                    : Parameters["scriptDb"];
 
                 var db = Factory.GetDatabase(scriptDb);
                 var scriptItem = db.GetItem(scriptId);
