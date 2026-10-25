@@ -1788,13 +1788,88 @@
                 "</i>" +
                 "<span class=\"closeTab\" onclick=\"javascript:spe.closeTab(event, #tabindex#)\">&nbsp;</span>";
             const newWindowTitle = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span> <i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i> - ";
+            editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span><span class=\"speWindowPath\"><span><i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i></span></span>";
             editorSession.tabTitleHtml = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
             editorSession.scriptId = scriptId;
             editorSession.scriptDb = scriptDb;
             editorSession.startBarHtml = startBarHtml;
             var openedScripts = editorSessions.map(session => session.path + ":" + session.index).join('\n');
             openedScriptsMemo.val(openedScripts);
+        }
+
+        // The Desktop window caption is laid out by Styles/WindowCaption.css. Setup lives in the window
+        // document, so a reloaded ISE finds it in place and only rewrites the title.
+        var windowCaptionObserved = false;
+        function setupWindowCaption(windowCaption) {
+            var caption = windowCaption.parentElement;
+            var doc = caption.ownerDocument;
+            if (!doc.getElementById("speWindowCaptionStyles")) {
+                var link = doc.createElement("link");
+                link.id = "speWindowCaptionStyles";
+                link.rel = "stylesheet";
+                link.href = "/sitecore modules/PowerShell/Styles/WindowCaption.css";
+                doc.head.appendChild(link);
+            }
+            if (!windowCaption.querySelector(".speWindowMain")) {
+                // Sitecore renders the app name as bare text after the title; it moves inside so it can wrap away.
+                var appName = windowCaption.nextSibling;
+                windowCaption.innerHTML = "<span class=\"speWindowMain\"></span>";
+                if (appName && appName.nodeType === 3 && appName.textContent.trim()) {
+                    var appNameSpan = doc.createElement("span");
+                    appNameSpan.className = "speWindowAppName";
+                    appNameSpan.textContent = appName.textContent.trim();
+                    windowCaption.appendChild(appNameSpan);
+                    caption.removeChild(appName);
+                }
+            }
+            if (!windowCaptionObserved) {
+                windowCaptionObserved = true;
+                observeWindowButtons(windowCaption);
+            }
+            return windowCaption.querySelector(".speWindowMain");
+        }
+
+        // CSS cannot see where Sitecore or a theme put the absolutely positioned window buttons, so this
+        // publishes the room they leave the title as --spe-title-max / --spe-title-inset.
+        function observeWindowButtons(windowCaption) {
+            var caption = windowCaption.parentElement;
+            var bar = caption.parentElement;
+            var buttons = bar.querySelector(".standartWindowButtons");
+            var doc = caption.ownerDocument;
+            var px = function (cs, prop) { return parseFloat(cs[prop]) || 0; };
+            var measure = function () {
+                var cs = getComputedStyle(caption);
+                var box = caption.getBoundingClientRect();
+                var left = box.left + px(cs, "borderLeftWidth") + px(cs, "paddingLeft");
+                var contentLeft = left;
+                var right = box.right - px(cs, "borderRightWidth") - px(cs, "paddingRight");
+                if (cs.display.indexOf("inline") === 0) {
+                    // A shrink-wrapping caption can grow up to the end of the bar.
+                    var barCs = getComputedStyle(bar);
+                    right = bar.getBoundingClientRect().right - px(barCs, "borderRightWidth") - px(barCs, "paddingRight") - px(cs, "marginRight");
+                }
+                var b = buttons && buttons.getBoundingClientRect();
+                if (b && b.width && b.bottom > box.top && b.top < box.bottom && b.right > left && b.left < right) {
+                    // The buttons overlap the title: give up the side they sit on.
+                    if (b.left + b.right > left + right) right = b.left - 8;
+                    else left = b.right + 8;
+                }
+                windowCaption.style.setProperty("--spe-title-max", Math.max(0, right - left) + "px");
+                windowCaption.style.setProperty("--spe-title-inset", left - contentLeft + "px");
+            };
+            // Window resizes, theme switches and late-loading button images all move the buttons or the caption.
+            var resizeObserver = new ResizeObserver(measure);
+            [bar, caption, buttons].forEach(function (el) { if (el) resizeObserver.observe(el); });
+            var mutationObserver = new MutationObserver(measure);
+            mutationObserver.observe(doc.documentElement, { attributes: true });
+            mutationObserver.observe(doc.head, { childList: true });
+            $(buttons).find("img").on("load", measure);
+            window.addEventListener("pagehide", function () {
+                resizeObserver.disconnect();
+                mutationObserver.disconnect();
+                $(buttons).find("img").off("load", measure);
+            });
+            measure();
         }
 
         spe.applyWindowTitle = function (codeEditorIndex) {
@@ -1807,7 +1882,7 @@
                 if (editorSession.isDeleted) {
                     windowHtml = windowHtml.replace("\u2B24", "\u2716");
                 }
-                windowCaption[0].innerHTML = windowHtml;
+                setupWindowCaption(windowCaption[0]).innerHTML = windowHtml;
             }
 
             var styles = $("#ModifiedStatusStyles");

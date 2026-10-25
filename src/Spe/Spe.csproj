@@ -729,6 +729,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\reports.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\WindowCaption.css" />
     <Content Include="sitecore\admin\PowerShell.aspx" />
     <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
     <Content Include="sitecore modules\PowerShell\Scripts\purl.js" />

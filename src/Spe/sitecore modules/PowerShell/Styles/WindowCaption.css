@@ -1,0 +1,47 @@
+/* ISE title in the Sitecore Desktop window caption (#WindowCaption), linked into the window by ise.js.
+   The title is one clipped line that wraps: when it does not fit, the app name wraps onto the hidden
+   second line first, then the path is cut with an ellipsis on its left (start) side.
+   ise.js publishes the room left by the window buttons as --spe-title-max / --spe-title-inset. */
+
+#WindowCaption {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    overflow: hidden;
+    height: 1lh;
+    min-width: 0;
+    max-width: var(--spe-title-max, 100%);
+    margin-left: var(--spe-title-inset, 0);
+    vertical-align: top;
+}
+
+/* The modified mark and the path are one item, so the path always starts the first line and shrinks there. */
+.speWindowMain {
+    display: flex;
+    min-width: 0;
+}
+
+.speWindowMain .scriptModified {
+    flex: none;
+    margin-right: 0.3em;
+}
+
+.speWindowPath {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+}
+
+.speWindowPath > span {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+.speWindowAppName {
+    flex: none;
+}
+
+.speWindowAppName::before {
+    content: "\00a0- ";
+}
