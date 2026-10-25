@@ -10,15 +10,6 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    <#
-    Get-Item -Path "master:" -ID "{A6F2C29F-2797-4105-B714-034248D523AB}" | Remove-Item -Force
-    exit
-    $item = Get-Item -Path "master:" -ID "{6DFDBCED-9059-4700-9D3B-C3A9C6EA301C}"
-    $newTemplate = Get-Item -Path "master:" -ID "{B0B6FB08-6BBE-43F2-8E36-FCE228325B63}"
-    
-    Set-ItemTemplate -ID $item.ID -TemplateItem $newTemplate
-    #>
-    
     Import-Function -Name Invoke-SqlCommand
     
     $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
@@ -31,7 +22,10 @@ SharedFields:
     $items = [System.Collections.ArrayList]@()
     foreach($record in $records) {
         $item = Get-Item -Path "master:" -ID $record.ID
-        $items.Add($item) > $null
+        # SQL can't see templates stored in IAR resource files; the API can
+        if($item -and -not $item.Template) {
+            $items.Add($item) > $null
+        }
     }
     
     $reportProps = @{
