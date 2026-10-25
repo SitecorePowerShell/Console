@@ -95,30 +95,37 @@ namespace Spe.Commands.Serialization
             else
             {
                 var userReference = new UserReference(user.Name);
-                if (string.IsNullOrEmpty(Path))
+                var path = Path;
+                if (string.IsNullOrEmpty(path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        Path = pathResolver.GetFilePath(userReference.ToString());
+                        path = pathResolver.GetFilePath(userReference.ToString());
                     }
                     else
                     {
-                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        var target = StringUtil.EnsurePostfix('\\', System.IO.Path.GetFullPath(Root));
+                        path = System.IO.Path.GetFullPath(target + userReference.ToString().Replace('/', System.IO.Path.DirectorySeparatorChar));
+                        if (!path.StartsWith(target, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            WriteError(typeof(PSSecurityException), $"User '{user.Name}' resolves outside of '{target}'.",
+                                ErrorIds.FileNameInvalid, ErrorCategory.SecurityError, user);
+                            return;
+                        }
                     }
-                    if (!System.IO.Path.HasExtension(Path))
+                    if (!System.IO.Path.HasExtension(path))
                     {
-                        Path += pathResolver.UserExtension;
+                        path += pathResolver.UserExtension;
                     }
                 }
 
-                if (ShouldProcess(user.Name, string.Format("Serializing role to '{0}'", Path)))
+                if (ShouldProcess(user.Name, string.Format("Serializing user to '{0}'", path)))
                 {
-                    var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
+                    var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    serializationManager.DumpUser(Path, user);
-                    WriteObject(Path);
+                    serializationManager.DumpUser(path, user);
+                    WriteObject(path);
                 }
             }
         }

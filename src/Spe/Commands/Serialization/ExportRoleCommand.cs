@@ -83,29 +83,36 @@ namespace Spe.Commands.Serialization
             else
             {
                 var roleReference = new RoleReference(role.Name);
-                if (string.IsNullOrEmpty(Path))
+                var path = Path;
+                if (string.IsNullOrEmpty(path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        Path = pathResolver.GetFilePath(roleReference.ToString());
+                        path = pathResolver.GetFilePath(roleReference.ToString());
                     }
                     else
                     {
-                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        var target = StringUtil.EnsurePostfix('\\', System.IO.Path.GetFullPath(Root));
+                        path = System.IO.Path.GetFullPath(target + roleReference.ToString().Replace('/', System.IO.Path.DirectorySeparatorChar));
+                        if (!path.StartsWith(target, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            WriteError(typeof(PSSecurityException), $"Role '{role.Name}' resolves outside of '{target}'.",
+                                ErrorIds.FileNameInvalid, ErrorCategory.SecurityError, role);
+                            return;
+                        }
                     }
-                    if (!System.IO.Path.HasExtension(Path))
+                    if (!System.IO.Path.HasExtension(path))
                     {
-                        Path += pathResolver.RoleExtension;
+                        path += pathResolver.RoleExtension;
                     }
                 }
-                if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", Path)))
+                if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", path)))
                 {
-                    var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
+                    var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    serializationManager.DumpRole(Path, role);
-                    WriteObject(Path);
+                    serializationManager.DumpRole(path, role);
+                    WriteObject(path);
                 }
             }
         }
