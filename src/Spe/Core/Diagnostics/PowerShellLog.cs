@@ -106,6 +106,46 @@ namespace Spe.Core.Diagnostics
             return messagePrefix != string.Empty ? messagePrefix + message : message;
         }
 
+        public static void Script(LogNotificationLevel level, string message)
+        {
+            Assert.IsNotNull(Log, "Logger implementation was not initialized");
+            switch (level)
+            {
+                case LogNotificationLevel.Debug:
+                    Log.Debug(FormatScriptMessage(message, "debug", UseJsonFormat));
+                    break;
+                case LogNotificationLevel.Error:
+                    Log.Error(FormatScriptMessage(message, "error", UseJsonFormat));
+                    break;
+                case LogNotificationLevel.Fatal:
+                    Log.Fatal(FormatScriptMessage(message, "fatal", UseJsonFormat));
+                    break;
+                case LogNotificationLevel.Warning:
+                    Log.Warn(FormatScriptMessage(message, "warn", UseJsonFormat));
+                    break;
+                default:
+                    Log.Info(FormatScriptMessage(message, "info", UseJsonFormat));
+                    break;
+            }
+        }
+
+        // Script-authored text is tagged, kept on one line and never parsed into fields, so it can't pose as a system event (#1455)
+        internal static string FormatScriptMessage(string message, string level, bool json)
+        {
+            message = (message ?? string.Empty).Replace("\r", " ").Replace("\n", " ");
+            if (json)
+            {
+                return new JavaScriptSerializer().Serialize(new Dictionary<string, object>
+                {
+                    ["type"] = "Script",
+                    ["message"] = message,
+                    ["level"] = level
+                });
+            }
+
+            return $"{messagePrefix}[Script] {message}";
+        }
+
         internal static Dictionary<string, object> ToJson(string message)
         {
             var json = new Dictionary<string, object>();

@@ -184,7 +184,27 @@ $j = ToJson "this is a plain log line"
 Assert-Equal $j["message"].ToString() "this is a plain log line" "uncategorized -> single 'message' field"
 Assert-Null  $j["action"] "uncategorized -> no key=value parsing"
 
+Write-Host "`n  [FormatScriptMessage: Write-Log output is tagged and single-line (#1455)]" -ForegroundColor White
+
+$formatScript = $logType.GetMethod("FormatScriptMessage",
+    [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Static)
+$forged = "benign`r`n[Session] action=loginSuccess user=admin"
+
+$kv = $formatScript.Invoke($null, @($forged, "info", $false))
+Assert-True ($kv.EndsWith("[Script] benign  [Session] action=loginSuccess user=admin")) "keyvalue: [Script] tag, CR/LF flattened"
+Assert-True ($kv -notmatch "[\r\n]") "keyvalue: no line break survives"
+
+$j = (New-Object System.Web.Script.Serialization.JavaScriptSerializer).DeserializeObject(
+    $formatScript.Invoke($null, @($forged, "warn", $true)))
+Assert-Equal $j["type"]    "Script" "json: type is Script"
+Assert-Equal $j["level"]   "warn"   "json: level carried"
+Assert-Equal $j["message"] "benign  [Session] action=loginSuccess user=admin" "json: text kept verbatim in message"
+Assert-Null  $j["action"] "json: script text is not parsed into fields"
+
 }  # end of ToJson runtime-invocation block
+
+Assert-True ((Get-Content "$PSScriptRoot\..\..\src\Spe\Commands\Diagnostics\WriteLogCommand.cs" -Raw) -match 'PowerShellLog\.Script\(') `
+    "REGRESSION GUARD: Write-Log routes through PowerShellLog.Script (#1455)"
 
 # ============================================================
 # Source-regression guards (always run, do not need a Sitecore runtime)
