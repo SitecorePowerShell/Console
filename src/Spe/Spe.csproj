@@ -699,7 +699,6 @@
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.terminal.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
-    <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\reports.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\goto_script.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
@@ -777,7 +776,6 @@
     </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellSessionElevation.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PsHSplitter.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.Option.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile.aspx" />

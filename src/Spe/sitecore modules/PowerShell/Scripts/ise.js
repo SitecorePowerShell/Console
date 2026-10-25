@@ -1880,45 +1880,101 @@
             
         }
 
-        spe.reapplySplitPosition = function () {
-            var EDITOR_MIN_PX = 200;
-            var OUTPUT_MIN_PX = 100;
-            if (splitOrientation === "vertical" && splitPosition.vertical) {
+        // Editor pane size range along the split axis. Dragging and reapplying both
+        // clamp through this, so the drag ghost always lands where the split ends up.
+        function splitLimits(orientation) {
+            var total;
+            if (orientation === "vertical") {
                 var leftPane = document.getElementById("VerticalLeftPane");
-                var container = leftPane ? leftPane.parentNode : null;
-                if (!leftPane || !container) return;
-                var containerWidth = container.offsetWidth;
-                if (containerWidth <= 0) return;
-                var splitterWidth = 10;
-                var usable = containerWidth - splitterWidth;
-                var target = Math.round(splitPosition.vertical * usable);
-                var editorMin = Math.min(EDITOR_MIN_PX, usable);
-                var editorMax = Math.max(editorMin, usable - OUTPUT_MIN_PX);
-                target = Math.min(Math.max(target, editorMin), editorMax);
-                leftPane.style.flexBasis = target + "px";
-                leftPane.style.flexGrow = "0";
-                leftPane.style.flexShrink = "0";
-            } else if (splitOrientation === "horizontal" && splitPosition.horizontal) {
+                var rightPane = document.getElementById("VerticalRightPane");
+                if (!leftPane || !$(rightPane).is(":visible")) return null;
+                total = leftPane.parentNode.offsetWidth - document.getElementById("VerticalSplitter").offsetWidth;
+            } else {
                 var scriptPane = document.getElementById("ScriptPane");
                 var resultsRow = document.getElementById("ResultsRow");
-                if (!scriptPane) return;
-                if (resultsRow && resultsRow.offsetHeight === 0) return;
-                // Bound total by the viewport: from top of ScriptPane down to
-                // the StatusBar. Using current pane sums would include any
-                // prior over-expansion and let ScriptPane push StatusBar off
-                // screen on shrink.
-                var viewportHeight = $(window).height();
-                var statusBarHeight = $("#StatusBar").outerHeight(true) || 0;
-                var scriptPaneTop = scriptPane.getBoundingClientRect().top;
-                var total = viewportHeight - scriptPaneTop - statusBarHeight - 2 /* splitter */ - 10 /* padding */;
-                if (total <= 0) return;
-                var targetTop = Math.round(splitPosition.horizontal * total);
-                var editorMin = Math.min(EDITOR_MIN_PX, total);
-                var editorMax = Math.max(editorMin, total - OUTPUT_MIN_PX);
-                targetTop = Math.min(Math.max(targetTop, editorMin), editorMax);
-                scriptPane.style.height = targetTop + "px";
+                if (!scriptPane || !resultsRow || resultsRow.offsetHeight === 0) return null;
+                // Measured against the viewport, not the current pane sizes, so a
+                // previously overgrown pane cannot push the StatusBar off screen.
+                total = $(window).height() - scriptPane.getBoundingClientRect().top
+                    - ($("#StatusBar").outerHeight(true) || 0) - 2 /* splitter */ - 10 /* padding */;
             }
+            if (total <= 0) return null;
+            var min = Math.min(200, total);
+            return { total: total, min: min, max: Math.max(min, total - 100) };
+        }
+
+        function editorPaneSize(orientation) {
+            return orientation === "vertical"
+                ? document.getElementById("VerticalLeftPane").offsetWidth
+                : $("#ScriptPane").height();
+        }
+
+        function setEditorPaneSize(orientation, size) {
+            if (orientation === "vertical") {
+                var leftPane = document.getElementById("VerticalLeftPane");
+                leftPane.style.flexBasis = size + "px";
+                leftPane.style.flexGrow = "0";
+                leftPane.style.flexShrink = "0";
+            } else {
+                document.getElementById("ScriptPane").style.height = size + "px";
+            }
+        }
+
+        spe.reapplySplitPosition = function () {
+            var ratio = splitPosition[splitOrientation];
+            var limits = ratio && splitLimits(splitOrientation);
+            if (!limits) return;
+            var size = Math.min(Math.max(Math.round(ratio * limits.total), limits.min), limits.max);
+            setEditorPaneSize(splitOrientation, size);
         };
+
+        // Drags show a ghost bar clamped to splitLimits and apply the split on release.
+        function initSplitter(handle, orientation) {
+            var vertical = orientation === "vertical";
+            var ghost, limits, start, startSize, size;
+            handle.title = "Drag to resize, double-click to reset";
+
+            handle.addEventListener("pointerdown", function (e) {
+                if (e.button !== 0) return;
+                limits = splitLimits(orientation);
+                if (!limits) return;
+                start = vertical ? e.clientX : e.clientY;
+                startSize = size = editorPaneSize(orientation);
+                var rect = handle.getBoundingClientRect();
+                ghost = document.createElement("div");
+                ghost.className = "spe-split-ghost";
+                ghost.style.left = rect.left + "px";
+                ghost.style.top = rect.top + "px";
+                ghost.style.width = rect.width + "px";
+                ghost.style.height = rect.height + "px";
+                document.body.appendChild(ghost);
+                handle.setPointerCapture(e.pointerId);
+                e.preventDefault();
+            });
+
+            handle.addEventListener("pointermove", function (e) {
+                if (!ghost) return;
+                var pos = vertical ? e.clientX : e.clientY;
+                size = Math.min(Math.max(startSize + pos - start, limits.min), limits.max);
+                ghost.style.transform = (vertical ? "translateX(" : "translateY(") + (size - startSize) + "px)";
+            });
+
+            // Fires after pointerup and also when the drag is cancelled.
+            handle.addEventListener("lostpointercapture", function () {
+                if (!ghost) return;
+                ghost.remove();
+                ghost = null;
+                if (size !== startSize) {
+                    spe.saveSplitPosition(orientation, size / limits.total);
+                    spe.resizeEditor();
+                }
+            });
+
+            handle.addEventListener("dblclick", function () {
+                spe.saveSplitPosition(orientation, 0.5);
+                spe.resizeEditor();
+            });
+        }
 
         spe.resizeEditor = function () {
             spe.reapplySplitPosition();
@@ -1975,21 +2031,8 @@
                 iseTerminal.pause(true);
             }
             if (splitOrientation === "vertical") {
-                // Restore left pane flex from saved splitter position
-                var leftPane = document.getElementById("VerticalLeftPane");
-                if (leftPane && splitPosition.vertical) {
-                    var containerWidth = leftPane.parentNode.offsetWidth;
-                    var minWidth = Math.round(containerWidth * 0.25);
-                    var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
-                    restoredWidth = Math.max(minWidth, Math.min(restoredWidth, containerWidth - minWidth - 10));
-                    leftPane.style.flexBasis = restoredWidth + "px";
-                    leftPane.style.flexGrow = "0";
-                    leftPane.style.flexShrink = "0";
-                } else if (leftPane) {
-                    leftPane.style.flexBasis = "";
-                    leftPane.style.flexGrow = "";
-                    leftPane.style.flexShrink = "";
-                }
+                // Undo the full-width flex from closeResults; resizeEditor reapplies a saved split.
+                $("#VerticalLeftPane").css({ flexBasis: "", flexGrow: "", flexShrink: "" });
                 $("#VerticalSplitter").show();
                 $("#VerticalRightPane").show();
             } else {
@@ -2048,7 +2091,6 @@
 
                 var splitter = document.createElement("div");
                 splitter.id = "VerticalSplitter";
-                splitter.title = "Drag to resize, double-click to reset";
 
                 var rightPane = document.createElement("div");
                 rightPane.id = "VerticalRightPane";
@@ -2068,8 +2110,7 @@
                 // Override the GridPanel inline height
                 editingArea.style.height = "100%";
 
-                // Set up vertical splitter drag
-                initVerticalSplitter(splitter, leftPane);
+                initSplitter(splitter, "vertical");
 
                 if (toggleBtn) {
                     toggleBtn.parentNode.classList.add("split-orientation-active");
@@ -2111,64 +2152,6 @@
             splitPosition[orientation] = value;
             localStorage.setItem("spe::ise.splitPosition", JSON.stringify(splitPosition));
         };
-
-        function initVerticalSplitter(splitter, leftPane) {
-            var dragging = false;
-            var startX, startWidth;
-            var minPanePct = 0.25; // 25% minimum pane width
-
-            // Restore saved position
-            if (splitPosition.vertical) {
-                var containerWidth = leftPane.parentNode.offsetWidth;
-                var minWidth = Math.round(containerWidth * minPanePct);
-                var restoredWidth = Math.round(splitPosition.vertical * containerWidth);
-                restoredWidth = Math.max(minWidth, Math.min(restoredWidth, containerWidth - minWidth - 10));
-                leftPane.style.flexBasis = restoredWidth + "px";
-                leftPane.style.flexGrow = "0";
-                leftPane.style.flexShrink = "0";
-            }
-
-            splitter.addEventListener("mousedown", function (e) {
-                dragging = true;
-                startX = e.clientX;
-                startWidth = leftPane.offsetWidth;
-                document.body.style.cursor = "col-resize";
-                document.body.style.userSelect = "none";
-                e.preventDefault();
-            });
-
-            splitter.addEventListener("dblclick", function (e) {
-                leftPane.style.flexBasis = "";
-                leftPane.style.flexGrow = "";
-                leftPane.style.flexShrink = "";
-                spe.saveSplitPosition("vertical", 0.5);
-                spe.resizeEditor();
-                e.preventDefault();
-            });
-
-            document.addEventListener("mousemove", function (e) {
-                if (!dragging) return;
-                var dx = e.clientX - startX;
-                var containerWidth = leftPane.parentNode.offsetWidth;
-                var minWidth = Math.round(containerWidth * minPanePct);
-                var maxWidth = containerWidth - minWidth - 10;
-                var newWidth = Math.max(minWidth, Math.min(startWidth + dx, maxWidth));
-                leftPane.style.flexBasis = newWidth + "px";
-                leftPane.style.flexGrow = "0";
-                leftPane.style.flexShrink = "0";
-                e.preventDefault();
-            });
-
-            document.addEventListener("mouseup", function (e) {
-                if (!dragging) return;
-                dragging = false;
-                document.body.style.cursor = "";
-                document.body.style.userSelect = "";
-                var containerWidth = leftPane.parentNode.offsetWidth;
-                spe.saveSplitPosition("vertical", leftPane.offsetWidth / containerWidth);
-                spe.resizeEditor();
-            });
-        }
 
         spe.toggleSplitOrientation = function () {
             splitOrientation = splitOrientation === "horizontal" ? "vertical" : "horizontal";
@@ -2400,12 +2383,7 @@
         $("#ClearOutput").click(function () {
             spe.clearOutput();
         });
-        $("#ResultsSplitter").on("dblclick", function (e) {
-            var img = $("#ResultsSplitter img")[0];
-            if (img) {
-                scHSplit.dblClick(img, e, "IDEXsltBottom", "top");
-            }
-        });
+        initSplitter(document.getElementById("ResultsSplitter"), "horizontal");
         // Tree view and Variables panel share the same sidebar cell (#SidebarPanel)
         // and are mutually exclusive. The sidebar uses the existing #TreeSplitter
         // for resizing - since both panels live in the same cell, they inherently

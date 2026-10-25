@@ -204,6 +204,21 @@ a.ps-link {
     height: 6px;
 }
 
+#ResultsSplitter {
+    cursor: row-resize;
+}
+
+#ResultsSplitter, #VerticalSplitter {
+    touch-action: none;
+}
+
+.spe-split-ghost {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    background-color: rgba(128, 128, 128, 0.7);
+}
+
 #VerticalSplitter {
     flex: 0 0 6px;
     cursor: col-resize;

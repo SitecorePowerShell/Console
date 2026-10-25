@@ -140,9 +140,7 @@
                                    Title="Toggle Variables Panel"/>
                             <Border ID="CodeEditors"/>
                         </Border>
-                        <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top"
-                                     GridPanel.Row.ID="ResultsSplitter"
-                                     Height="10px"/>
+                        <Space GridPanel.Row.ID="ResultsSplitter" GridPanel.Height="6" Width="100%" Height="6"/>
                         <Border ID="Result" GridPanel.Height="100%" class="console pre results"
                                 GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow">
                             <Border ID="ScriptResult" class="console">
