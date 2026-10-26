@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("9.0.0.*")]
 [assembly: AssemblyFileVersion("9.0.0.0")]
 [assembly: AssemblyInformationalVersion("9.0.0.0")]
-[assembly: AssemblyMetadata("BetaVersion", "")]
+[assembly: AssemblyMetadata("BetaVersion", "RC-1")]
 [assembly: AssemblyMetadata("CodeName", "πr²")]
 
 [assembly: AssemblyConfiguration("")]
