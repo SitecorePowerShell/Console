@@ -70,5 +70,31 @@ for (const site of sites) {
         await page.evaluate(() => localStorage.removeItem("spe::ise.splitOrientation"));
       });
     }
+
+    test("vertical: tabs span the editor and output, and move back on toggle", async ({ page }) => {
+      await page.setViewportSize({ width: 1400, height: 900 });
+      const url = `${site.url}/sitecore/shell/Applications/PowerShell/PowerShellIse`;
+      await page.goto(url, { waitUntil: "domcontentloaded" });
+      await page.waitForSelector("#CodeEditor1", { timeout: 15_000 });
+      await page.evaluate(() => localStorage.setItem("spe::ise.splitOrientation", "vertical"));
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.waitForSelector("#VerticalSplitter", { state: "visible", timeout: 15_000 });
+
+      const tabs = await rect(page, "#TabsPanel");
+      const left = await rect(page, "#VerticalLeftPane");
+      const right = await rect(page, "#VerticalRightPane");
+      expect(Math.abs(tabs.x - left.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(tabs.x + tabs.w - (right.x + right.w))).toBeLessThanOrEqual(1);
+      expect(left.y).toBeGreaterThanOrEqual(tabs.y + tabs.h - 1);
+      expect(right.y).toBeGreaterThanOrEqual(tabs.y + tabs.h - 1);
+      const editor = await rect(page, "#CodeEditors");
+      expect(editor.y + editor.h).toBeLessThanOrEqual(left.y + left.h + 1);
+
+      await page.locator("#ToggleSplitOrientation").click();
+      await expect(page.locator("#EditingArea > #TabsPanel")).toHaveCount(1);
+      await expect(page.locator("#VerticalSplitContainer")).toHaveCount(0);
+
+      await page.evaluate(() => localStorage.removeItem("spe::ise.splitOrientation"));
+    });
   });
 }

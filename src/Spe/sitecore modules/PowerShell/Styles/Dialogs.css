@@ -88,7 +88,6 @@ textarea[disabled] {
 }
 
     #StatusBar .status-bar-panel {
-        background-color: white;
         border: 0;
         padding: 3px 6px;
         height: 16px;
@@ -108,7 +107,7 @@ textarea[disabled] {
     #StatusBar .status-bar-script,
     #StatusBar .status-bar-left ~ .status-bar-panel {
         padding-left: 7px;
-        background: linear-gradient(silver, silver) no-repeat left center / 1px 12px, white;
+        background: linear-gradient(silver, silver) no-repeat left center / 1px 12px;
     }
 
     #StatusBar .status-bar-text {

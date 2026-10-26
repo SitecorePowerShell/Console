@@ -2055,7 +2055,9 @@
             spe.reapplySplitPosition();
             // Size the editor container before Ace measures it; tab rows can wrap
             // differently after a layout change.
-            $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
+            // Side by side, the tabs sit above the split row rather than inside #EditingArea.
+            var tabsHeight = splitOrientation === "vertical" ? 0 : $("#TabsPanel").height() + 5;
+            $("#CodeEditors").css("height", "calc(100% - " + tabsHeight + "px");
             if (currentAceEditor !== undefined) {
                 currentAceEditor.resize();
             }
@@ -2157,9 +2159,12 @@
                 // Save original inline height set by GridPanel
                 editingArea.dataset.originalHeight = editingArea.style.height;
 
-                // Create flex container with left pane, splitter, right pane
+                // Tabs span the full width above a flex row of left pane, splitter, right pane
                 container = document.createElement("div");
                 container.id = "VerticalSplitContainer";
+
+                var row = document.createElement("div");
+                row.id = "VerticalSplitRow";
 
                 var leftPane = document.createElement("div");
                 leftPane.id = "VerticalLeftPane";
@@ -2174,9 +2179,12 @@
                 leftPane.appendChild(editingArea);
                 rightPane.appendChild(result);
 
-                container.appendChild(leftPane);
-                container.appendChild(splitter);
-                container.appendChild(rightPane);
+                row.appendChild(leftPane);
+                row.appendChild(splitter);
+                row.appendChild(rightPane);
+
+                container.appendChild(editingArea.querySelector("#TabsPanel"));
+                container.appendChild(row);
 
                 // Hide table, insert container
                 table.style.display = "none";
@@ -2207,6 +2215,7 @@
                 }
 
                 // Move content back to original table positions
+                if (editingArea) editingArea.insertBefore(document.getElementById("TabsPanel"), editingArea.firstChild);
                 if (editingArea && scriptPaneTd) scriptPaneTd.appendChild(editingArea);
                 if (result && resultsPaneTd) resultsPaneTd.appendChild(result);
 
