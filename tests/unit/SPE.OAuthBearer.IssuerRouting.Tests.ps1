@@ -147,3 +147,16 @@ $list = [System.Collections.Generic.List[Spe.Abstractions.VersionDecoupling.Inte
 [void]$list.Add($shared); [void]$list.Add($oauth)
 $r = $selectMethod.Invoke($null, [object[]]@($list, "RS256", "https://speid.dev.local"))
 Assert-Equal $r $oauth "SharedSecret providers are skipped when selecting an OAuth provider"
+
+Write-Host "`n  [SelectProvider - issuer compared in canonical form, like IsValidIssuer]" -ForegroundColor White
+$p = New-Provider -Issuers @("https://tenant.idp.example")
+$list = [System.Collections.Generic.List[Spe.Abstractions.VersionDecoupling.Interfaces.ISpeAuthenticationProvider]]::new()
+[void]$list.Add($p)
+$r = $selectMethod.Invoke($null, [object[]]@($list, "RS256", "https://tenant.idp.example/"))
+Assert-Equal $r $p "Trailing slash on the token iss still routes to the provider"
+
+$p = New-Provider -Issuers @("https://idp.example/realms/Prod")
+$list = [System.Collections.Generic.List[Spe.Abstractions.VersionDecoupling.Interfaces.ISpeAuthenticationProvider]]::new()
+[void]$list.Add($p)
+$r = $selectMethod.Invoke($null, [object[]]@($list, "RS256", "https://idp.example/realms/prod"))
+Assert-True ($null -eq $r) "Issuer path case is significant, so realm Prod does not route tokens from realm prod"

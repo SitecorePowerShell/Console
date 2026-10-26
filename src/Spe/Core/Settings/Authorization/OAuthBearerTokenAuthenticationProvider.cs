@@ -60,7 +60,7 @@ namespace Spe.Core.Settings.Authorization
             if (!JtiReplayCacheEnabled) return null;
             return LazyInitializer.EnsureInitialized(
                 ref _replayCache,
-                () => new JtiReplayCache(JtiReplayCacheMaxEntries));
+                () => new JtiReplayCache(JtiReplayCacheMaxEntries, ClockSkewSeconds));
         }
 
         // Test seam.
@@ -439,6 +439,8 @@ namespace Spe.Core.Settings.Authorization
                 return null;
             }
 
+            // Canonical form, same as IsValidIssuer, so routing never rejects a token validation would accept.
+            var canonicalIssuer = JwtClaimValidator.CanonicalizeIssuer(issuer);
             foreach (var candidate in providers)
             {
                 if (!(candidate is OAuthBearerTokenAuthenticationProvider oauth)) continue;
@@ -446,7 +448,7 @@ namespace Spe.Core.Settings.Authorization
                 if (oauth.AllowedIssuers == null) continue;
                 foreach (var allowed in oauth.AllowedIssuers)
                 {
-                    if (string.Equals(allowed, issuer, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(JwtClaimValidator.CanonicalizeIssuer(allowed), canonicalIssuer, StringComparison.Ordinal))
                     {
                         return oauth;
                     }

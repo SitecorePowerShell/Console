@@ -24,8 +24,16 @@ namespace Spe.Core.Settings.Authorization
         // lockouts from misconfig.
         private const int NegativeCacheSeconds = 15;
 
+        // A token's kid is unauthenticated, so an unknown kid may refetch the
+        // keyset at most this often per JWKS URL; otherwise forged tokens with
+        // made-up kids turn every request into a call to the IdP.
+        private const int MinForcedRefreshSeconds = 30;
+
         private static readonly ConcurrentDictionary<string, CacheEntry> Cache =
             new ConcurrentDictionary<string, CacheEntry>(StringComparer.Ordinal);
+
+        private static readonly ConcurrentDictionary<string, object> RefreshLocks =
+            new ConcurrentDictionary<string, object>(StringComparer.Ordinal);
 
         private static readonly ConcurrentDictionary<string, DateTime> NegativeCache =
             new ConcurrentDictionary<string, DateTime>(StringComparer.Ordinal);
@@ -58,6 +66,7 @@ namespace Spe.Core.Settings.Authorization
 
         private sealed class CacheEntry
         {
+            public DateTime FetchedUtc;
             public DateTime ExpiresUtc;
             public Dictionary<string, JsonWebKey> KeysByKid;
         }
@@ -103,8 +112,19 @@ namespace Spe.Core.Settings.Authorization
             if (entry == null) return null;
             if (entry.KeysByKid.TryGetValue(kid, out var key)) return key;
 
-            // Unknown kid against a cached document: try one forced refresh in case keys rotated.
-            entry = Refresh(jwksUri, cacheSeconds, isLoopbackHttp);
+            // Unknown kid: refetch in case keys rotated. The lock makes concurrent
+            // misses share one fetch; the interval check caps fetches per URL.
+            lock (RefreshLocks.GetOrAdd(jwksUri, _ => new object()))
+            {
+                if (Cache.TryGetValue(jwksUri, out var current) && current != entry)
+                {
+                    entry = current;
+                }
+                else if (CanForceRefresh(entry.FetchedUtc, DateTime.UtcNow))
+                {
+                    entry = Refresh(jwksUri, cacheSeconds, isLoopbackHttp);
+                }
+            }
             if (entry != null && entry.KeysByKid.TryGetValue(kid, out key)) return key;
 
             PowerShellLog.Warn($"[JWKS] action=keyNotFound kid={LogSanitizer.SanitizeValue(kid)} uri={LogSanitizer.SanitizeValue(jwksUri)}");
@@ -154,6 +174,7 @@ namespace Spe.Core.Settings.Authorization
 
                 var entry = new CacheEntry
                 {
+                    FetchedUtc = DateTime.UtcNow,
                     ExpiresUtc = DateTime.UtcNow.AddSeconds(cacheSeconds > 0 ? cacheSeconds : 600),
                     KeysByKid = doc.Keys
                         .Where(k => !string.IsNullOrEmpty(k?.Kid))
@@ -171,6 +192,11 @@ namespace Spe.Core.Settings.Authorization
                 PowerShellLog.Warn($"[JWKS] action=fetchFailed uri={LogSanitizer.SanitizeValue(jwksUri)} error={LogSanitizer.SanitizeValue(ex.GetType().Name)}");
                 return null;
             }
+        }
+
+        internal static bool CanForceRefresh(DateTime lastFetchUtc, DateTime nowUtc)
+        {
+            return nowUtc - lastFetchUtc >= TimeSpan.FromSeconds(MinForcedRefreshSeconds);
         }
 
         private static void RecordFailure(string jwksUri)

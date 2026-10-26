@@ -84,3 +84,16 @@ $provider = $providerType::new()
 $provider.JtiReplayCacheEnabled = $false
 $disabled = $replayProp.GetValue($provider)
 Assert-Null $disabled "ReplayCache is null when JtiReplayCacheEnabled=false"
+
+# Validation accepts a token until exp + clock skew, so the cache must keep
+# the jti at least that long or the token can be replayed inside the skew window.
+Write-Host "`n  [JtiReplayCache: entries outlive exp by the clock skew]" -ForegroundColor White
+
+$skewCtor = $cacheType.GetConstructor($bindAll, $null, [Type[]]@([int], [int]), $null)
+Assert-NotNull $skewCtor "JtiReplayCache(maxEntries, clockSkewSeconds) exists"
+if ($skewCtor) {
+    $skewCache = $skewCtor.Invoke(@([int]100, [int]30))
+    $justExpired = [DateTimeOffset]::UtcNow.AddSeconds(-5).ToUnixTimeSeconds()
+    Assert-True ($tryClaim.Invoke($skewCache, @("https://idp", "skew-1", [long]$justExpired))) "Token inside the skew window is accepted once"
+    Assert-True (-not $tryClaim.Invoke($skewCache, @("https://idp", "skew-1", [long]$justExpired))) "Replay inside the skew window is rejected"
+}

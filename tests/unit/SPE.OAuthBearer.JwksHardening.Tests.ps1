@@ -87,3 +87,17 @@ Assert-True (-not $r.Acceptable) "ftp scheme rejected even with loopback opt-in"
 
 $r = Check-Uri "file:///etc/passwd" -AllowLoopbackHttp $true
 Assert-True (-not $r.Acceptable) "file scheme rejected even with loopback opt-in"
+
+# Unknown kids must not trigger a JWKS download per request: a forged token
+# with a made-up kid would otherwise make every request hit the IdP. GetKey
+# itself logs through PowerShellLog, so only the refresh decision is unit-testable.
+Write-Host "`n  [JwksKeyResolver: unknown kid refetch is rate limited]" -ForegroundColor White
+
+$canForce = $resolverType.GetMethod("CanForceRefresh",
+    [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Static)
+Assert-NotNull $canForce "CanForceRefresh exists on JwksKeyResolver"
+if ($canForce) {
+    $now = [DateTime]::UtcNow
+    Assert-True (-not $canForce.Invoke($null, @($now.AddSeconds(-5), $now))) "Forced refresh refused 5s after the last fetch"
+    Assert-True ($canForce.Invoke($null, @($now.AddSeconds(-31), $now))) "Forced refresh allowed 31s after the last fetch, so key rotation is still picked up"
+}

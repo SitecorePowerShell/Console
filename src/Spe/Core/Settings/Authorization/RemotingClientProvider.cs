@@ -108,20 +108,26 @@ namespace Spe.Core.Settings.Authorization
             if (index == null) return null;
 
             var key = MakeIssuerClientIdKey(issuer, clientId);
-            if (index.TryGetValue(key, out var client) && client.Enabled && !client.IsExpired)
+            if (index.TryGetValue(key, out var client))
             {
-                return client;
+                return client.Enabled && !client.IsExpired ? client : null;
+            }
+
+            if (index.Keys.Any(k => string.Equals(k, key, StringComparison.OrdinalIgnoreCase)))
+            {
+                PowerShellLog.Warn($"[RemotingClient] action=clientNotFound reason=caseMismatch issuer={LogSanitizer.SanitizeValue(issuer)} clientId={LogSanitizer.SanitizeValue(clientId)} hint=Issuer path and OAuth Client Ids are case-sensitive; match the casing the IdP emits.");
             }
 
             return null;
         }
 
-        private static string MakeIssuerClientIdKey(string issuer, string clientId)
+        // Issuer in canonical form (same rule as IsValidIssuer); client_id is
+        // case-sensitive, so IdP clients that differ only by case stay separate.
+        internal static readonly StringComparer IssuerClientIdComparer = StringComparer.Ordinal;
+
+        internal static string MakeIssuerClientIdKey(string issuer, string clientId)
         {
-            // Lowercase issuer to normalise host-case differences (IdPs rarely
-            // vary issuer casing, but a single comparison convention is safer).
-            // client_id casing is preserved - IdPs do treat it as case-sensitive.
-            return (issuer ?? string.Empty).Trim().ToLowerInvariant() + "|" + (clientId ?? string.Empty).Trim();
+            return JwtClaimValidator.CanonicalizeIssuer((issuer ?? string.Empty).Trim()) + "|" + (clientId ?? string.Empty).Trim();
         }
 
         /// <summary>
@@ -323,7 +329,7 @@ namespace Spe.Core.Settings.Authorization
             // Client items. Build a parallel (issuer, client_id) index for
             // the OAuth provider's lookup path.
             var oauthEntries = LoadOAuthClients();
-            var issuerClientIdIndex = new Dictionary<string, RemotingClient>(StringComparer.OrdinalIgnoreCase);
+            var issuerClientIdIndex = new Dictionary<string, RemotingClient>(IssuerClientIdComparer);
             if (oauthEntries != null)
             {
                 foreach (var entry in oauthEntries)
@@ -567,7 +573,7 @@ namespace Spe.Core.Settings.Authorization
 
             // Policy field is a Droplink (stores item ID). Resolve to the policy item name.
             // If the Droplink references a deleted/missing item, use a sentinel name
-            // that won't match any policy — RemotingPolicyManager.ResolvePolicy will DenyAll.
+            // that won't match any policy - RemotingPolicyManager.ResolvePolicy will DenyAll.
             string policy = null;
             var policyFieldValue = item.Fields[Templates.RemotingClient.Fields.Policy]?.Value?.Trim();
             if (!string.IsNullOrEmpty(policyFieldValue) && Sitecore.Data.ID.TryParse(policyFieldValue, out var policyId))

@@ -21,9 +21,18 @@ namespace Spe.Core.Settings.Authorization
 
         public int MaxEntries { get; }
 
-        public JtiReplayCache(int maxEntries)
+        // Validation accepts a token until exp + clock skew, so entries are kept
+        // that long too; dropping them at exp would reopen the skew window to replay.
+        private readonly int _clockSkewSeconds;
+
+        public JtiReplayCache(int maxEntries) : this(maxEntries, 0)
+        {
+        }
+
+        public JtiReplayCache(int maxEntries, int clockSkewSeconds)
         {
             MaxEntries = maxEntries > 0 ? maxEntries : 10000;
+            _clockSkewSeconds = clockSkewSeconds > 0 ? clockSkewSeconds : 0;
         }
 
         // Returns true on first use of (iss, jti) within the token's exp
@@ -34,6 +43,7 @@ namespace Spe.Core.Settings.Authorization
 
             var key = iss + "|" + jti;
             var nowSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            expUnixSeconds += _clockSkewSeconds;
 
             if (Interlocked.Increment(ref _operationCount) % SweepInterval == 0)
             {
