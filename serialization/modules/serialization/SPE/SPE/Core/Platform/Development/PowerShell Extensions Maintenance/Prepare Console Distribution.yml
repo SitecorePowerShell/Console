@@ -138,6 +138,7 @@ SharedFields:
         "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons",
         "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE",
         "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
+        "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System",
         "/sitecore/system/Settings/Rules/PowerShell"
     ) | ForEach-Object { $rulesItems += Get-ChildItem "master:$_" -Recurse }
     $rulesItems | New-ExplicitItemSource -Name "Spe.Rules" -InstallMode Overwrite | ForEach-Object { $package.Sources.Add($_) }
