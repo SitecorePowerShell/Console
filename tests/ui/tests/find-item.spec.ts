@@ -8,6 +8,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 const sites = loadTestSites();
+// Match Done! as its own output line; the console also echoes the script text, which contains it.
+const DONE_LINE = /^Done!\s*$/m;
 const findItemScript = fs.readFileSync(
   path.join(__dirname, "find-item.ps1"),
   "utf-8"
@@ -53,7 +55,8 @@ for (const site of sites) {
         (window as any).jQuery("#terminal").terminal().exec(s);
       }, findItemScript);
 
-      await expect(page.locator(".terminal-output")).toContainText("Done!", {
+      await expect(page.locator(".terminal-output")).toContainText(DONE_LINE, {
+        useInnerText: true,
         timeout: 120_000,
       });
 

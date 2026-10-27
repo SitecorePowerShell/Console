@@ -8,6 +8,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 const sites = loadTestSites();
+// Match Done! as its own output line; the console also echoes the script text, which contains it.
+const DONE_LINE = /^Done!\s*$/m;
 const testScript = fs.readFileSync(
   path.join(__dirname, "console.ps1"),
   "utf-8"
@@ -77,7 +79,8 @@ for (const site of sites) {
       await waitForConsoleReady(page);
       await executeInConsole(page, testScript);
 
-      await expect(page.locator(".terminal-output")).toContainText("Done!", {
+      await expect(page.locator(".terminal-output")).toContainText(DONE_LINE, {
+        useInnerText: true,
         timeout: 90_000,
       });
 
@@ -126,7 +129,8 @@ for (const site of sites) {
       await waitForConsoleReady(page);
       await executeInConsole(page, multilineScript);
 
-      await expect(page.locator(".terminal-output")).toContainText("Done!", {
+      await expect(page.locator(".terminal-output")).toContainText(DONE_LINE, {
+        useInnerText: true,
         timeout: 30_000,
       });
 
@@ -181,7 +185,8 @@ for (const site of sites) {
       await waitForConsoleReady(page);
       await executeInConsole(page, newlineScript);
 
-      await expect(page.locator(".terminal-output")).toContainText("Done!", {
+      await expect(page.locator(".terminal-output")).toContainText(DONE_LINE, {
+        useInnerText: true,
         timeout: 30_000,
       });
 
