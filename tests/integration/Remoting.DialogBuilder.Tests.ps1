@@ -591,6 +591,71 @@ $result = Invoke-RemoteScript -Session $session -ScriptBlock {
 Assert-True $result.Valid "Test-DialogBuilder passes on null Value with AllowNone"
 
 # ============================================================
+# Image and General Link fields (#1508, #1509)
+# ============================================================
+Write-Host "`n  [Add-ImageField / Add-GeneralLinkField - pass-through]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $imageXml = '<image mediaid="{11111111-1111-1111-1111-111111111111}" alt="alt" />'
+    $linkXml = '<link linktype="external" url="https://doc.sitecorepowershell.com/" text="docs" />'
+    $db = New-DialogBuilder -Title "Fields"
+    $db | Add-ImageField -Name "image" -Value $imageXml -Source "/sitecore/media library/Images"
+    $db | Add-GeneralLinkField -Name "link" -Value $linkXml -Source "/sitecore/content"
+    $db | Add-ImageField -Name "emptyImage"
+    $valid = $db | Test-DialogBuilder 2>$null
+
+    @{
+        ImageEditor = $db._Parameters[0].Editor
+        ImageSource = $db._Parameters[0].Source
+        ImageValue  = $db._Parameters[0].Value
+        LinkEditor  = $db._Parameters[1].Editor
+        LinkSource  = $db._Parameters[1].Source
+        LinkValue   = $db._Parameters[1].Value
+        Valid       = $valid
+    }
+}
+
+Assert-Equal $result.ImageEditor "image" "Add-ImageField uses the image editor"
+Assert-Equal $result.ImageSource "/sitecore/media library/Images" "Add-ImageField passes Source through"
+Assert-Equal $result.ImageValue '<image mediaid="{11111111-1111-1111-1111-111111111111}" alt="alt" />' "Add-ImageField passes the field XML through"
+Assert-Equal $result.LinkEditor "generallink" "Add-GeneralLinkField uses the generallink editor"
+Assert-Equal $result.LinkSource "/sitecore/content" "Add-GeneralLinkField passes Source through"
+Assert-Equal $result.LinkValue '<link linktype="external" url="https://doc.sitecorepowershell.com/" text="docs" />' "Add-GeneralLinkField passes the field XML through"
+Assert-True $result.Valid "Field XML and empty values pass validation"
+
+Write-Host "`n  [Test-DialogBuilder - image and general link Value type]" -ForegroundColor White
+
+$result = Invoke-RemoteScript -Session $session -ScriptBlock {
+    Import-Function -Name DialogBuilder
+
+    $homeItem = Get-Item -Path "master:/sitecore/content/Home"
+    $check = {
+        param($editor, $value)
+        $db = New-DialogBuilder -Title "Bad"
+        $db | Add-DialogField -Name "field" -Editor $editor -Value $value
+        $db | Test-DialogBuilder 2>$null
+    }
+
+    @{
+        ImageItem    = & $check "image" $homeItem
+        ImageField   = & $check "image" $homeItem.Fields["__Display name"]
+        ImageNotXml  = & $check "image" "/sitecore/media library/Images/logo"
+        ImageLinkXml = & $check "image" '<link linktype="external" url="https://x" />'
+        LinkItem     = & $check "generallink" $homeItem
+        LinkNotXml   = & $check "generallink" "https://doc.sitecorepowershell.com/"
+    }
+}
+
+Assert-Equal $result.ImageItem $false "Image field with an Item Value fails validation"
+Assert-Equal $result.ImageField $false "Image field with a Field object Value fails validation"
+Assert-Equal $result.ImageNotXml $false "Image field with a media path Value fails validation"
+Assert-Equal $result.ImageLinkXml $false "Image field with link XML fails validation"
+Assert-Equal $result.LinkItem $false "General Link field with an Item Value fails validation"
+Assert-Equal $result.LinkNotXml $false "General Link field with a bare URL fails validation"
+
+# ============================================================
 # Cleanup
 # ============================================================
 Stop-ScriptSession -Session $session

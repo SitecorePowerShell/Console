@@ -17,6 +17,8 @@ SharedFields:
     $selectedGroupedDroplist = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
     # Image field raw value, e.g. $item.Fields["Image"].Value; empty means no image.
     $image = ""
+    # General Link field raw value, e.g. $item.Fields["Link"].Value; empty means no link.
+    $generalLink = ""
     $parent = Get-Item -Path . | Select-Object -Expand Parent
     $checklistItems =  @(4,16)
     $radioListItems = 3
@@ -58,8 +60,9 @@ SharedFields:
             editor="treelist"; Tab="Items 1"; }
     )
     
-    $mediaTab = @(
-        @{ Name = "image"; Title="Image field value - image"; Tooltip="Pick an image from the media library"; Source="/sitecore/media library"; Editor="image"; Tab="Media"; }
+    $linksTab = @(
+        @{ Name = "image"; Title="Image field value - image"; Source="/sitecore/media library"; Editor="image"; Tab="Links"; },
+        @{ Name = "generalLink"; Title="General Link field value - generallink"; Editor="generallink"; Tab="Links"; }
     )
     
     $items2Tab = @(
@@ -102,7 +105,7 @@ SharedFields:
         @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; }
     )
     
-    $allTabs = $simpleTab + $optionsTab + $timeTab + $items1Tab + $items2Tab + $items3Tab + $mediaTab + $rightsTab + $rulesTab
+    $allTabs = $simpleTab + $optionsTab + $timeTab + $items1Tab + $items2Tab + $items3Tab + $linksTab + $rightsTab + $rulesTab
     
     $dialogProps = @{
         Title = "Kitchen Sink Demo"
@@ -196,6 +199,7 @@ SharedFields:
     
     Write-Host 'Editor image: returns the image field value as a string' -ForegroundColor Green
     $image | Out-Default
+    $generalLink | Out-Default
     
     Write-Host 'Editor treelist: returns an array of Item' -ForegroundColor Green
     $items | Out-Default

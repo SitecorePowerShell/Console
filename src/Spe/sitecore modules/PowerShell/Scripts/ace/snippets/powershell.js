@@ -198,6 +198,10 @@ description Compact DialogBuilder demo with common controls and tabs.\n\
 	    -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" `\n\
 	    -Tab "Items"\n\
 	\n\
+	# Links tab\n\
+	\\$dialog | Add-ImageField -Name "image" -Title "Image" -Source "/sitecore/media library" -Tab "Links"\n\
+	\\$dialog | Add-GeneralLinkField -Name "generalLink" -Title "General Link" -Tab "Links"\n\
+	\n\
 	# Rights tab\n\
 	\\$dialog | Add-UserPicker -Name "user" -Title "User" -Tab "Rights"\n\
 	\\$dialog | Add-RolePicker -Name "role" -Title "Role" -Tab "Rights"\n\
@@ -343,6 +347,10 @@ description Full DialogBuilder demo with every control type, tabs, and condition
 	\\$dialog | Add-GroupedDroplist -Name "optionalGroupedDroplist" -Title "Optional Template - groupeddroplist + AllowNone" -Value \\$null -Source "DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template" -AllowNone -Placeholder "Select a template..." -Tab "More Items"\n\
 	\\$dialog | Add-ItemPicker -Name "optionalStart" -Title "Optional Start Item - item + AllowNone" -Value \\$null -Root "/sitecore/content" -AllowNone -Tab "More Items"\n\
 	\n\
+	# --- Tab: Links ---\n\
+	\\$dialog | Add-ImageField -Name "image" -Title "Image field value - image" -Source "/sitecore/media library" -Tab "Links"\n\
+	\\$dialog | Add-GeneralLinkField -Name "generalLink" -Title "General Link field value - generallink" -Tab "Links"\n\
+	\n\
 	# --- Tab: Rights ---\n\
 	\\$dialog | Add-UserPicker -Name "user" -Title "Select User" -Value \\$me -Tooltip "Tooltip for user" -Multiple -Tab "Rights"\n\
 	\\$dialog | Add-RolePicker -Name "role" -Title "Select Role" -Tooltip "Tooltip for role" -Multiple -Domain "sitecore" -Tab "Rights"\n\
@@ -419,6 +427,10 @@ description Full DialogBuilder demo with every control type, tabs, and condition
 	\\$selectedGroupedDroplist | Out-Default\n\
 	Write-Host \'Editor GroupedDroplink: returns an Item\' -ForegroundColor Green\n\
 	\\$selectedGroupedDroplink | Out-Default\n\
+	Write-Host \'Editor image: returns the image field XML string\' -ForegroundColor Green\n\
+	\\$image | Out-Default\n\
+	Write-Host \'Editor generallink: returns the link field XML string\' -ForegroundColor Green\n\
+	\\$generalLink | Out-Default\n\
 \n\
 snippet spe-dialogfield\n\
 description Single-line text input. Returns string.\n\
@@ -531,6 +543,14 @@ description Scrolling marquee text display.\n\
 snippet spe-dialoglink\n\
 description Link/URL text input field.\n\
 	\\$dialog | Add-LinkField -Name "${1:linkUrl}" -Title "${2:URL}" -Placeholder "${3:https://example.com}"\n\
+\n\
+snippet spe-dialogimage\n\
+description Content Editor Image field editor. Takes and returns the image field XML.\n\
+	\\$dialog | Add-ImageField -Name "${1:image}" -Title "${2:Image}" -Value \\$${3:item}.Fields["${4:Image}"].Value -Source "${5:/sitecore/media library}"\n\
+\n\
+snippet spe-dialoggenerallink\n\
+description Content Editor General Link field editor. Takes and returns the link field XML.\n\
+	\\$dialog | Add-GeneralLinkField -Name "${1:generalLink}" -Title "${2:Link}" -Value \\$${3:item}.Fields["${4:Link}"].Value\n\
 \n\
 snippet spe-dialogtristate\n\
 description Three-state checkbox: Yes, No, or Not Set. Returns 1, 0, or null.\n\

@@ -35,11 +35,14 @@ SharedFields:
     .NOTES
         Usage: You must call Import-Function -Name DialogBuilder before using any of these functions.
     
-        Version: 3.2.0
-        Date: 2026-04-15
+        Version: 3.3.0
+        Date: 2026-10-31
         Author: SPE Community
     
         Changelog:
+        - v3.3.0: Added Add-ImageField and Add-GeneralLinkField for the Read-Variable
+                  image and generallink editors (#1508, #1509). Test-DialogBuilder flags
+                  a Value on those fields that is not the field's raw XML string.
         - v3.2.0: Added MaxLength parameter to Add-DialogField, Add-TextField, and
                   Add-MultiLineTextField. When set, enforces a browser-level character
                   limit and shows a live character counter on text and multitext fields.
@@ -786,6 +789,24 @@ SharedFields:
                         $idx++
                     }
                 }
+            }
+        }
+    
+        # Image and General Link editors take the field's raw XML, e.g. $item.Fields["Image"].Value.
+        # An Item or Field object passed instead silently shows an empty editor.
+        $fieldXmlEditors = @{ 'image' = 'image'; 'generallink' = 'link'; 'general link' = 'link' }
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if (-not $fieldXmlEditors.ContainsKey($editor) -or $null -eq $param.Value) { continue }
+    
+            $tag = $fieldXmlEditors[$editor]
+            if ($param.Value -isnot [string]) {
+                Write-Error "Field '$($param.Name)' uses editor '$editor' which requires the field's raw XML string (for example `$item.Fields[`"Field`"].Value), but got '$($param.Value.GetType().FullName)'."
+                $hasErrors = $true
+            }
+            elseif ($param.Value -ne "" -and $param.Value -notmatch "^\s*<$tag[\s/>]") {
+                Write-Error "Field '$($param.Name)' uses editor '$editor' which requires <$tag> field XML, but the Value does not start with <$tag."
+                $hasErrors = $true
             }
         }
     
@@ -1745,6 +1766,92 @@ SharedFields:
         )
     
         Add-DialogField @PSBoundParameters -Editor "link"
+    }
+    
+    function Add-ImageField {
+        <#
+        .SYNOPSIS
+            Adds an Image field editor.
+    
+        .DESCRIPTION
+            Shows the Content Editor Image field control with its Browse, Properties,
+            Clear and Refresh buttons, or the control and buttons of a module that
+            replaces it, such as the Sitecore Content Hub DAM connector.
+            Returns the image field XML, ready to assign to an Image field.
+    
+        .PARAMETER Value
+            The image field's raw XML, for example $item.Fields["Image"].Value.
+            Pass the field value, not the Item or the Field object.
+    
+        .PARAMETER Source
+            The media library folder the Browse dialog opens in.
+    
+        .EXAMPLE
+            $dialog | Add-ImageField -Name "image" -Title "Image" -Value $item.Fields["Image"].Value -Source "/sitecore/media library/Images"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "image"
+    }
+    
+    function Add-GeneralLinkField {
+        <#
+        .SYNOPSIS
+            Adds a General Link field editor.
+    
+        .DESCRIPTION
+            Shows the Content Editor General Link field control with its Insert link,
+            Insert media link, Insert external link, Insert anchor, Insert email,
+            Insert JavaScript, Follow and Clear buttons, plus any a module adds, such
+            as Insert DAM link from the Sitecore Content Hub DAM connector.
+            Returns the link field XML, ready to assign to a General Link field.
+            For a plain URL text box use Add-LinkField instead.
+    
+        .PARAMETER Value
+            The link field's raw XML, for example $item.Fields["Link"].Value.
+            Pass the field value, not the Item or the Field object.
+    
+        .PARAMETER Source
+            The root item the internal and media link dialogs open in.
+    
+        .EXAMPLE
+            $dialog | Add-GeneralLinkField -Name "link" -Title "Link" -Value $item.Fields["Link"].Value
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "generallink"
     }
     
     function Add-TristateCheckbox {
