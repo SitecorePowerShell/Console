@@ -15,13 +15,8 @@ SharedFields:
     $droptreeItem = $items | Select-Object -First 1
     $selectedGroupedDroplink = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
     $selectedGroupedDroplist = Get-Item -Path "master:" -ID "{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}"
-    # Optional (AllowNone) pickers start null so the blank first option is selected.
-    $optionalDroplistItem = $null
-    $optionalDroplinkItem = $null
-    $optionalDroptreeItem = $null
-    $optionalGroupedDroplink = $null
-    $optionalGroupedDroplist = $null
-    $optionalItem = $null
+    # Image field raw value, e.g. $item.Fields["Image"].Value; empty means no image.
+    $image = ""
     $parent = Get-Item -Path . | Select-Object -Expand Parent
     $checklistItems =  @(4,16)
     $radioListItems = 3
@@ -55,55 +50,45 @@ SharedFields:
         @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"; }
     )
     
-    $itemsTab = @(
-        @{ Name = "item"; Title="Start Item - item"; Root="/sitecore/content/"; Tab="Items"; },
-        @{ Variable = Get-Variable "Parent"; Title="Parent - variable"; Tab="Items"; },
+    $items1Tab = @(
+        @{ Name = "item"; Title="Start Item - item allownone"; Root="/sitecore/content/"; editor="item allownone"; Tab="Items 1"; },
+        @{ Variable = Get-Variable "Parent"; Title="Parent - variable"; Tab="Items 1"; },
         @{ Name = "items"; Title="Bunch of Templates - treelist";
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="treelist"; Tab="Items"; }
+            editor="treelist"; Tab="Items 1"; }
     )
     
-    $moreItemsTab = @(
+    $mediaTab = @(
+        @{ Name = "image"; Title="Image field value - image"; Tooltip="Pick an image from the media library"; Source="/sitecore/media library"; Editor="image"; Tab="Media"; }
+    )
+    
+    $items2Tab = @(
         @{ Name = "items2"; Title="Bunch of Templates - multilist";
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="multilist"; Tab="More Items"; Height="300px"; },
+            editor="multilist"; Tab="Items 2"; Height="250px"; },
         @{ Name = "items4"; Title="Bunch of Templates with Search - multilist search";
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="multilist search"; Tab="More Items"; Height="300px"; },
-        @{ Name = "droplistItem"; Title="Pick One Template - droplist";
+            editor="multilist search"; Tab="Items 2"; Height="250px"; }
+    )
+    
+    # "<editor> allownone" adds a blank first option so the user can clear the
+    # selection; Placeholder labels that blank option.
+    $items3Tab = @(
+        @{ Name = "droplistItem"; Title="Pick One Template - droplist allownone";
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droplist"; Tab="More Items"; },
-        @{ Name = "droplinkItem"; Title="Pick One Template - droplink";
+            editor="droplist allownone"; Placeholder="Select a template..."; Tab="Items 3"; },
+        @{ Name = "droplinkItem"; Title="Pick One Template - droplink allownone";
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droplink"; Tab="More Items"; },
-        @{ Name = "droptreeItem"; Title="Pick One Template - droptree";
+            editor="droplink allownone"; Placeholder="Select a template..."; Tab="Items 3"; },
+        @{ Name = "droptreeItem"; Title="Pick One Template - droptree allownone";
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droptree"; Tab="More Items"; },
-        @{ Name = "selectedGroupedDroplink"; Title="Pick One Template - groupeddroplink";
+            editor="droptree allownone"; Tab="Items 3"; },
+        @{ Name = "selectedGroupedDroplink"; Title="Pick One Template - groupeddroplink allownone";
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="groupeddroplink"; Tab="More Items"; },
-        @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist";
+            editor="groupeddroplink allownone"; Placeholder="Select a template..."; Tab="Items 3"; },
+        @{ Name = "selectedGroupedDroplist"; Title="Pick One Template - groupeddroplist allownone";
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="groupeddroplist"; Tab="More Items"; },
-        # Raw "<editor> allownone" form renders a blank first option and lets
-        # the user clear the selection. Placeholder hashtable key feeds the
-        # blank option's label.
-        @{ Name = "optionalDroplistItem"; Title="Optional Template - droplist allownone";
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droplist allownone"; Placeholder="Select a template..."; Tab="More Items"; },
-        @{ Name = "optionalDroplinkItem"; Title="Optional Template - droplink allownone";
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droplink allownone"; Placeholder="Select a template..."; Tab="More Items"; },
-        @{ Name = "optionalDroptreeItem"; Title="Optional Template - droptree allownone";
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="droptree allownone"; Tab="More Items"; },
-        @{ Name = "optionalGroupedDroplink"; Title="Optional Template - groupeddroplink allownone";
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="groupeddroplink allownone"; Placeholder="Select a template..."; Tab="More Items"; },
-        @{ Name = "optionalGroupedDroplist"; Title="Optional Template - groupeddroplist allownone";
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template";
-            editor="groupeddroplist allownone"; Placeholder="Select a template..."; Tab="More Items"; },
-        @{ Name = "optionalItem"; Title="Optional Start Item - item allownone"; Root="/sitecore/content/"; editor="item allownone"; Tab="More Items"; }
+            editor="groupeddroplist allownone"; Placeholder="Select a template..."; Tab="Items 3"; }
     )
     
     $rightsTab = @(
@@ -117,13 +102,13 @@ SharedFields:
         @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; }
     )
     
-    $allTabs = $simpleTab + $optionsTab + $timeTab + $itemsTab + $moreItemsTab + $rightsTab + $rulesTab
+    $allTabs = $simpleTab + $optionsTab + $timeTab + $items1Tab + $items2Tab + $items3Tab + $mediaTab + $rightsTab + $rulesTab
     
     $dialogProps = @{
         Title = "Kitchen Sink Demo"
         Description = "The dialog demonstrates the use of all available controls grouped into tabs."
-        Width = 650
-        Height = 700
+        Width = 820
+        Height = 800
         OkButtonName = "Continue"
         CancelButtonName = "Cancel"
         ShowHints = $true
@@ -161,7 +146,7 @@ SharedFields:
     Write-Host 'Editor date: returns a DateTime value' -ForegroundColor Green
     $fromDate | Out-Default
     
-    Write-Host 'Editor item: returns an Item' -ForegroundColor Green
+    Write-Host 'Editor item allownone: returns an Item or $null' -ForegroundColor Green
     $item | Out-Default
     
     Write-Host 'Variable: returns an Item' -ForegroundColor Green
@@ -209,48 +194,32 @@ SharedFields:
     Write-Host 'Editor rule action: returns a string field value' -ForegroundColor Green
     $rulewithaction | Out-Default
     
+    Write-Host 'Editor image: returns the image field value as a string' -ForegroundColor Green
+    $image | Out-Default
+    
     Write-Host 'Editor treelist: returns an array of Item' -ForegroundColor Green
     $items | Out-Default
     
     Write-Host 'Editor multilist: returns an array of Item' -ForegroundColor Green
     $items2 | Out-Default
     
-    Write-Host 'Editor droplist: returns an Item' -ForegroundColor Green
+    Write-Host 'Editor droplist allownone: returns an Item or $null' -ForegroundColor Green
     $droplistItem | Out-Default
     
-    Write-Host 'Editor droplink: returns an Item' -ForegroundColor Green
+    Write-Host 'Editor droplink allownone: returns an Item or $null' -ForegroundColor Green
     $droplinkItem | Out-Default
     
-    Write-Host 'Editor droptree: returns an Item' -ForegroundColor Green
+    Write-Host 'Editor droptree allownone: returns an Item or $null' -ForegroundColor Green
     $droptreeItem | Out-Default
     
     Write-Host 'Editor multilist search: returns an array of Item' -ForegroundColor Green
     $items4 | Out-Default
     
-    Write-Host 'Editor GroupedDroplist: returns the string value' -ForegroundColor Green
+    Write-Host 'Editor groupeddroplist allownone: returns the string value or $null' -ForegroundColor Green
     $selectedGroupedDroplist | Out-Default
     
-    Write-Host 'Editor GroupedDroplink: returns an Item' -ForegroundColor Green
-    $selectedGroupedDroplink | Out-Default
-    
-    # Optional (AllowNone) picker returns $null when the blank option is selected.
-    Write-Host 'Editor droplist allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalDroplistItem | Out-Default
-    
-    Write-Host 'Editor droplink allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalDroplinkItem | Out-Default
-    
-    Write-Host 'Editor droptree allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalDroptreeItem | Out-Default
-    
     Write-Host 'Editor groupeddroplink allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalGroupedDroplink | Out-Default
-    
-    Write-Host 'Editor groupeddroplist allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalGroupedDroplist | Out-Default
-    
-    Write-Host 'Editor item allownone: returns an Item or $null' -ForegroundColor Green
-    $optionalItem | Out-Default
+    $selectedGroupedDroplink | Out-Default
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100

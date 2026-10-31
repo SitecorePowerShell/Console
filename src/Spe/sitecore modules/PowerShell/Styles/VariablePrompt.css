@@ -197,6 +197,9 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
     margin: 2px 0px 4px 2px;
 }
 .scContentButton { color:#dc291e }
+.imageWrapper a.scContentButton { display: inline-block; white-space: nowrap; border-right: 1px solid #ccc; padding: 0 14px 0 15px; }
+.imageWrapper a.scContentButton:first-child { padding-left: 0; }
+.imageWrapper a.scContentButton:last-child { border-right: 0; }
 .validator { color: red; margin-top:4px; float: left; }
 .varCharCounter { display: block; clear: both; float: left; width: 100%; text-align: right; font-size: 11px; color: #888; margin-top: 2px; }
 .varCharCounterOver { color: red; font-weight: bold; }

@@ -182,6 +182,7 @@
     <Compile Include="Client\Controls\VariableEditors\ItemVariableEditor.cs" />
     <Compile Include="Client\Controls\VariableEditors\BoolVariableEditor.cs" />
     <Compile Include="Client\Controls\VariableEditors\SecurityVariableEditor.cs" />
+    <Compile Include="Client\Controls\VariableEditors\ImageVariableEditor.cs" />
     <Compile Include="Client\Controls\VariableEditors\InfoVariableEditor.cs" />
     <Compile Include="Client\Controls\VariableEditors\MarqueeVariableEditor.cs" />
     <Compile Include="Client\Controls\VariableEditors\MemoVariableEditor.cs" />

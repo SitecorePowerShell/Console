@@ -38,6 +38,7 @@ namespace Spe.Client.Applications
         {
             new DateTimeVariableEditor(),
             new RuleVariableEditor(),
+            new ImageVariableEditor(),
             new ListVariableEditor(),
             new ItemVariableEditor(),
             new BoolVariableEditor(),
