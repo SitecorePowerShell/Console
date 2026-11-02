@@ -705,6 +705,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeJobRecovery.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\SpeStartMenu.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\token_tooltip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\validation.js" />
