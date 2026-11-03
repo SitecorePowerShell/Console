@@ -48,9 +48,10 @@ textarea[disabled] {
 
 .scEditorInformation {
     background-color: #d9edf7;
+    color: #1C6E91;
 }
 
-.spe-secured-app .scEditorWarningTitle, .spe-secured-app .scEditorWarningHelp, .spe-secured-app .scWizardWarning, .scEditorWarning, .scEditorInformation {
+.spe-secured-app .scEditorWarningTitle, .spe-secured-app .scEditorWarningHelp, .spe-secured-app .scWizardWarning, .scEditorWarning {
     color: #897B2F;
 }
 
