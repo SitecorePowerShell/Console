@@ -623,6 +623,7 @@
     <Compile Include="sitecore modules\PowerShell\Services\Processors\ErrorResponseWriter.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\Processors\BuiltinActionProcessor.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\Processors\HandleProcessor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\Processors\ItemSourceProcessor.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\Processors\FileProcessor.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\Processors\MediaProcessor.cs" />
     <Compile Include="sitecore modules\PowerShell\Services\Processors\WaitProcessor.cs" />

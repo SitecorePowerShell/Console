@@ -43,6 +43,7 @@ API endpoint (`/-/script/v2/`).
 | File Download | `/-/script/file/{root}/` | `<fileDownload>` |
 | Media Download | `/-/script/media/{db}/` | `<mediaDownload>` |
 | Handle Download | `/-/script/handle/` | `<handleDownload>` |
+| Item Source | `/-/script/itemsource/{db}/?id={id}` | `<itemSource>` |
 
 Each service is configured independently. A service without a `<cors>` element will
 not include any CORS headers in its responses.

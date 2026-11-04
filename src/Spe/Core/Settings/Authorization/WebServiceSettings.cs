@@ -82,6 +82,7 @@ namespace Spe.Core.Settings.Authorization
         public const string ServiceMediaDownload = "mediaDownload";
         public const string ServiceMediaUpload = "mediaUpload";
         public const string ServiceHandleDownload = "handleDownload";
+        public const string ServiceItemSource = "itemSource";
 
         static WebServiceSettings()
         {

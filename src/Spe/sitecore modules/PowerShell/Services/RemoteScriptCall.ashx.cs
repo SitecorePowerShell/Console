@@ -64,6 +64,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             { "GET/file" , WebServiceSettings.ServiceFileDownload },
             { "GET/media" , WebServiceSettings.ServiceMediaDownload },
             { "GET/handle" , WebServiceSettings.ServiceHandleDownload },
+            { "GET/itemsource" , WebServiceSettings.ServiceItemSource },
             { "GET/wait" , WebServiceSettings.ServiceRemoting },
         };
 
@@ -165,6 +166,12 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var unpackZip = requestParameters.Get(ParamSkipUnpack).IsNot("true");
             var skipExisting = requestParameters.Get(ParamSkipExisting).Is("true");
             var scDb = requestParameters.Get(ParamScDatabase);
+
+            if (apiVersion.Is("itemsource"))
+            {
+                ItemSourceProcessor.ProcessItemSource(context, originParam, requestParameters.Get("id"));
+                return;
+            }
 
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");

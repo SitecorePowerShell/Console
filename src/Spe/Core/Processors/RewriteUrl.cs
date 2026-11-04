@@ -23,6 +23,7 @@ namespace Spe.Core.Processors
             { "file", WebServiceSettings.ServiceFileDownload },
             { "media", WebServiceSettings.ServiceMediaDownload },
             { "handle", WebServiceSettings.ServiceHandleDownload },
+            { "itemsource", WebServiceSettings.ServiceItemSource },
         };
 
         public override void Process(PreprocessRequestArgs arguments)
@@ -70,6 +71,7 @@ namespace Spe.Core.Processors
                     localPath.StartsWith("/-/script/media", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase) ||
+                    localPath.StartsWith("/-/script/itemsource", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/wait", StringComparison.OrdinalIgnoreCase)
                     )
@@ -89,7 +91,7 @@ namespace Spe.Core.Processors
                     var length = sourceArray.Length - 4;
                     var destinationArray = new string[length];
                     var origin = sourceArray[3].ToLowerInvariant();
-                    var database = apiVersion.Is("file") || apiVersion.Is("handle") ? string.Empty : origin;
+                    var database = apiVersion.Is("file") || apiVersion.Is("handle") || apiVersion.Is("itemsource") ? string.Empty : origin;
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
                     var scriptPath = $"/{string.Join("/", destinationArray)}";
                     var query = url.Query.TrimStart('?');
