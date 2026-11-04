@@ -613,7 +613,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             PowerShellLog.Debug($"[Console] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
-            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
+            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
         }
 

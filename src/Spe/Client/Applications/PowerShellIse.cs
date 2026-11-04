@@ -2216,12 +2216,14 @@ namespace Spe.Client.Applications
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
+            var foregroundColor = OutputLine.ProcessHtmlColor(settings.ForegroundColor);
             var bottomPadding = 0;
             SheerResponse.Eval(
                 $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, " +
                 $"'{backgroundColor}', {bottomPadding}," +
                 $" {settings.LiveAutocompletion.ToString().ToLower()}," +
-                $" {settings.PerTabOutput.ToString().ToLower()});");
+                $" {settings.PerTabOutput.ToString().ToLower()}," +
+                $" '{foregroundColor}');");
 
             var session = ScriptSessionManager.GetSession(CurrentSessionId, ApplicationNames.ISE, true);
             session.PrivateData.BackgroundColor = settings.BackgroundColor;

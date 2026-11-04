@@ -708,6 +708,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\SpeJobRecovery.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeStartMenu.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\TerminalCompletionMenu.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\token_tooltip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\validation.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
@@ -731,6 +732,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
     <Content Include="sitecore modules\PowerShell\Styles\reports.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\TerminalCompletionMenu.css" />
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
     <Content Include="sitecore modules\PowerShell\Styles\WindowCaption.css" />
     <Content Include="sitecore\admin\PowerShell.aspx" />

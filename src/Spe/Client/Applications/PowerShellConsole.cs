@@ -79,6 +79,7 @@ namespace Spe.Client.Applications
                                WebServiceSettings.InitialPollMillis + @", maxPoll: " +
                                WebServiceSettings.MaxmimumPollMillis + @", fontSize: " +
                                settings.FontSize + $", fontFamily: '{settings.FontFamilyStyle}'" +
+                               $", liveAutocompletion: {settings.LiveAutocompletion.ToString().ToLower()}" +
                                @", busyMessages: " + busyMessagesJson + @" });});</script>" +
                                @"<style>#terminal {" +
                                $"color: {OutputLine.ProcessHtmlColor(settings.ForegroundColor)};" +

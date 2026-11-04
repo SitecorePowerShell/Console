@@ -5,7 +5,8 @@
         keepAliveInterval: 60000, // 60 * 1000 - every minute
         keepAliveCheck: 2000, // 2 * 1000 - every 2 seconds
         monitorActive: true,
-        busyMessages: []
+        busyMessages: [],
+        liveAutocompletion: false
     };
 
     var settings = defaults;
@@ -165,13 +166,6 @@
         }
     }
 
-    function escapeHtml(str) {
-        var div = document.createElement("div");
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-    }
-
-    var tabCompletions = null;
     var lastUpdate = 0;
     var attempts = 0;
     var pausedCommand = null;
@@ -410,86 +404,9 @@
         $("html").animate({ scrollTop: $(document).height() }, "slow");
     }
 
-    var sigHint = "";
-    var tabCycleIndex = -1;
-    var tabCycleActive = false;
-
-    function completion(command, callback) {
-        var term = this;
-        var fullCommand = term.get_command();
-        if (tabCycleActive && tabCompletions && tabCompletions.length > 0) {
-            tabCycleIndex = (tabCycleIndex + 1) % tabCompletions.length;
-            term.set_command(tabCompletions[tabCycleIndex]);
-            return;
-        }
-        tabCompletionInit(fullCommand, function () {
-            if (tabCompletions) {
-                if (tabCompletions.length === 0) {
-                    tabCompletionNoHints();
-                } else if (tabCompletions.length === 1) {
-                    term.set_command(tabCompletions[0]);
-                } else {
-                    tabCycleIndex = 0;
-                    tabCycleActive = true;
-                    term.set_command(tabCompletions[0]);
-                }
-            }
-        });
-    }
-
-    function tabCompletionInit(command, callback) {
-        getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
-            function (json) {
-                var data = JSON.parse(json.d);
-                sigHint = "";
-                tabCompletions = data.filter(function (hint) {
-                    var isSignature = hint.indexOf("Signature|") === 0;
-                    if (isSignature) {
-                        var hintParts = hint.split("|");
-                        sigHint += escapeHtml(hintParts[1]) + "<br/>";
-                    }
-                    return !isSignature;
-                }).map(function (hint) {
-                    var hintParts = hint.split("|");
-                    if (hintParts[0] === "Type") {
-                        return "[" + hintParts[3];
-                    }                    
-                    return hint;
-                    });
-                if (callback) {
-                    callback();
-                }
-                console.log("[spe] setting tabCompletions to: ", tabCompletions);
-            });
-        console.log("[spe] initializing tab completion");
-        return (tabCompletions) ? tabCompletions.length : 0;
-    }
-
-    function tabCompletionNoHints() {
-
-        var tips = $(".tip_no_hints");
-        var tip = tips[0];
-        var tipInterval = 1000;
-        if (sigHint === "") {
-            tip.innerHTML = "No hints found";
-            tips.addClass("no_hints").removeClass("signature");
-        } else {
-            tipInterval = 5000;
-            tip.innerHTML = sigHint;
-            tips.addClass("signature").removeClass("no_hints");
-        }
-        //Absolute position the tooltip according to mouse position
-        tips.css({ top: 10, left: 10 });
-
-        tips.fadeIn(function () {
-            window.setTimeout(function () {
-                tips.fadeOut("slow");
-            }, tipInterval);
-        });
-    }
-
     var guid = getSessionId();
     var terminal;
+    var completionMenu = null;
     var currentYear = (new Date()).getFullYear();
     var greetings = "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
     $(function() {
@@ -522,15 +439,18 @@
             }, {
                 greetings: greetings,
                 name: "mainConsole",
-                completion: completion,
-                caseSensitiveAutocomplete: false,
                 keydown: function (e) {
-                    if (e.which !== 9) {
-                        tabCycleActive = false;
-                        tabCompletions = null;
-                    }
-                }
+                    return completionMenu ? completionMenu.keydown(e) : undefined;
+                },
+                onPause: function () { if (completionMenu) completionMenu.close(); },
+                onBlur: function () { if (completionMenu) completionMenu.close(); }
                 });
+        completionMenu = spe.attachCompletionMenu(terminal, {
+            endpoint: "CompleteCommand",
+            guid: function () { return guid; },
+            live: function () { return !!settings.liveAutocompletion; },
+            onNotElevated: function () { spe.elevateSession(); }
+        });
         // Expose the terminal reference to the spe streaming/busy helpers
         // defined at the top of this IIFE.
         consoleTerminal = terminal;

@@ -314,18 +314,6 @@ html {
 
 .terminal .terminal-output div a, .terminal .terminal-output div a:hover, .terminal .terminal-output div a:visited { color: yellow; }
 
-.tip_no_hints {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    background: #fff;
-    border-radius: 3px;
-    color: #1d1d1d;
-    display: none;
-    padding: 10px;
-    position: fixed;
-    z-index: 1000;
-}
-
 #working {
     bottom: 0;
     display: none;
@@ -360,14 +348,3 @@ html {
 #Progress p { margin: 0 2px; }
 #Progress h2 { margin: 0; font-size: 1.5em;}
 
-.tip_no_hints.no_hints {
-    background-color: #FFEFEF;
-    border: #FFEFEF 1px solid;
-    color: #ff5a5a;
-}
-
-.tip_no_hints.signature {
-    background-color: #FFFBE6;
-    border: #F4BC01 1px solid;
-    color: #5C3B00;
-}

@@ -1265,45 +1265,6 @@
             }
         };
 
-        var iseTabCompletions = null;
-        var iseTabCycleIndex = -1;
-        var iseTabCycleActive = false;
-
-        function iseCompletion(command, callback) {
-            var term = this;
-            var fullCommand = term.get_command();
-            if (iseTabCycleActive && iseTabCompletions && iseTabCompletions.length > 0) {
-                iseTabCycleIndex = (iseTabCycleIndex + 1) % iseTabCompletions.length;
-                term.set_command(iseTabCompletions[iseTabCycleIndex]);
-                return;
-            }
-            console.log("[spe] initializing tab completion");
-            getPowerShellResponseAsync({ "guid": guid, "command": fullCommand }, "CompleteCommand",
-                function (json) {
-                    var data = JSON.parse(json.d);
-                    iseTabCompletions = data.filter(function (hint) {
-                        return hint.indexOf("Signature|") !== 0;
-                    }).map(function (hint) {
-                        var hintParts = hint.split("|");
-                        if (hintParts[0] === "Type") {
-                            return "[" + hintParts[3];
-                        }
-                        return hint;
-                    });
-                    console.log("[spe] setting tabCompletions to: ", iseTabCompletions);
-                    if (iseTabCompletions.length === 0) {
-                        // no completions
-                    } else if (iseTabCompletions.length === 1) {
-                        term.set_command(iseTabCompletions[0]);
-                    } else {
-                        iseTabCycleIndex = 0;
-                        iseTabCycleActive = true;
-                        term.set_command(iseTabCompletions[0]);
-                    }
-                }
-            );
-        }
-
         function initIseTerminal() {
             var target = $("#ScriptResultCode");
             if (!target.length) {
@@ -1333,16 +1294,24 @@
                 // jquery.terminal enables itself when the user clicks into it.
                 enabled: false,
                 onClear: function () {},
-                completion: iseCompletion,
-                caseSensitiveAutocomplete: false,
                 keydown: function (e) {
-                    if (e.which !== 9) {
-                        iseTabCycleActive = false;
-                        iseTabCompletions = null;
-                    }
-                }
+                    return iseCompletionMenu ? iseCompletionMenu.keydown(e) : undefined;
+                },
+                onPause: function () { if (iseCompletionMenu) iseCompletionMenu.close(); },
+                onBlur: function () { if (iseCompletionMenu) iseCompletionMenu.close(); }
+            });
+            iseCompletionMenu = spe.attachCompletionMenu(iseTerminal, {
+                endpoint: "CompleteAceCommand",
+                guid: function () { return guid; },
+                // Debug-time completion shares one ImmediateCommand slot with the editor; keep it to Tab.
+                live: function () { return editorLiveAutocompletion && !iseDebugActive; },
+                foreground: function () { return iseForegroundColor; },
+                onNotElevated: function () { spe.requestElevation(); }
             });
         }
+
+        var iseCompletionMenu = null;
+        var iseForegroundColor = null;
 
         // Silently updates the terminal prompt without pausing the UI.
         // Used during debug breakpoints where we want to refresh the prompt
@@ -1596,8 +1565,9 @@
             $("#ScriptResultCode").css({"background-color": setting});
         };
 
-        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
+        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput, foregroundColor) {
             spe.changeBackgroundColor(backgroundColor);
+            iseForegroundColor = foregroundColor || null;
             spe.changeFontFamily(fontFamily);
             spe.changeFontSize(fontSize);
             if (liveAutocompletion !== undefined) {

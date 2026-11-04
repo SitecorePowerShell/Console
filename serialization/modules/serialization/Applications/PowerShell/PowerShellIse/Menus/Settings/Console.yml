@@ -15,7 +15,7 @@ SharedFields:
   Value: 0
 - ID: "cab694fc-e37c-44eb-9012-488b775cf638"
   Hint: Message
-  Value: "ise:editsettings(button=/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleSettings,preservesections=1,appName=Console,personal=0)"
+  Value: "ise:editsettings(button=/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleWindowSettings,preservesections=1,appName=Console,personal=0)"
 Languages:
 - Language: da
   Fields:

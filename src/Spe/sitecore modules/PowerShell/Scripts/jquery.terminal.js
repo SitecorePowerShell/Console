@@ -1811,14 +1811,9 @@
             if (len === 1) {
                 return formatting(string);
             }
-            var result = [];
-            // len - 1 break the command line $.terminal.substring will return
-            // empty string for out of bound indexes
-            for (var i = 0; i < len; ++i) {
-                var text = $.terminal.substring(string, i, i + 1);
-                result.push(formatting(text));
-            }
-            return result.join('');
+            // SPE patch: one formatting pass instead of substring(i, i + 1) per
+            // character, which made every cursor move cubic in the line length.
+            return $.terminal.char_substrings(string).map(formatting).join('');
         }
         // ---------------------------------------------------------------------
         // :: shortcut helpers
@@ -2450,6 +2445,7 @@
         var process = false;
         var hold = false;
         var hold_pause = false;
+        var hold_delay_keys = ['HOLD+BACKSPACE', 'HOLD+SHIFT+BACKSPACE', 'HOLD+DELETE', 'HOLD+SHIFT+DELETE'];
         var skip_insert;
         // we hold text before keydown to fix backspace for Android/Chrome/SwiftKey
         // keyboard that generate keycode 229 for all keys #296
@@ -2522,7 +2518,9 @@
                     if (hold_pause) {
                         return;
                     }
-                    if (settings.holdRepeatTimeout > 0) {
+                    // SPE patch: throttle only held word deletion, as upstream 2.x
+                    // does; throttling held arrows capped them at ~5 moves a second.
+                    if (settings.holdRepeatTimeout > 0 && hold_delay_keys.indexOf(key) !== -1) {
                         hold_pause = true;
                         self.oneTime(settings.holdRepeatTimeout, 'delay', function() {
                             hold_pause = false;
@@ -2887,6 +2885,11 @@
     // :: counting emoji, suroggate pairs and combine characters
     // -------------------------------------------------------------------------
     function get_next_character(string) {
+        // SPE patch: ASCII not followed by a combining mark, variation selector
+        // or keycap (all >= U+0300) is one character; skip the emoji regex.
+        if (string.charCodeAt(0) < 0x80 && !(string.charCodeAt(1) >= 0x300)) {
+            return string[0];
+        }
         var match_emoji = string.match(emoji_re);
         if (match_emoji) {
             return match_emoji[1];
@@ -3573,6 +3576,69 @@
                 string += ']';
             }
             return string;
+        },
+        // ---------------------------------------------------------------------
+        // :: SPE patch: every substring(string, i, i + 1) from a single
+        // :: iterate_formatting pass; replays substring's rules on the recorded
+        // :: callbacks so the result is identical
+        // ---------------------------------------------------------------------
+        char_substrings: function char_substrings(string) {
+            var len = $.terminal.split_characters(text(string)).length;
+            var events = [];
+            $.terminal.iterate_formatting(string, function(data) {
+                events.push(data);
+            });
+            var re = /(&[^;]+);$/;
+            var result = [];
+            for (var i = 0; i < len; i++) {
+                var start = 0;
+                var end = undefined;
+                var start_formatting = '';
+                var end_formatting = '';
+                var prev_index = undefined;
+                var m;
+                for (var e = 0; e < events.length; e++) {
+                    var data = events[e];
+                    if (i && data.count === i + 1) {
+                        start = data.index;
+                        m = string.substring(0, start + 1).match(re);
+                        if (m) {
+                            start -= m[1].length;
+                        }
+                        if (data.formatting) {
+                            start_formatting = data.formatting;
+                        }
+                    }
+                    if (data.count === i + 1) {
+                        end_formatting = data.formatting;
+                        prev_index = data.index;
+                    }
+                    if (data.count === i + 2) {
+                        end = data.index;
+                        m = string.substring(0, end + 1).match(re);
+                        if (m) {
+                            end -= m[1].length;
+                        }
+                        if (data.formatting) {
+                            end = prev_index + 1;
+                        }
+                    }
+                }
+                if (i && !start) {
+                    result.push('');
+                    continue;
+                }
+                if (end === undefined) {
+                    end = string.length;
+                }
+                var part = start_formatting + string.substring(start, end);
+                if (end_formatting) {
+                    part = part.replace(/(\[\[^\]]+)?\]$/, '');
+                    part += ']';
+                }
+                result.push(part);
+            }
+            return result;
         },
         // ---------------------------------------------------------------------
         // :: add format text as 5th paramter to formatting it's used for
