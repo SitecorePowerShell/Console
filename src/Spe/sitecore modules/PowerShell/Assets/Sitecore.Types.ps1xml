@@ -39,6 +39,7 @@
       <ScriptProperty><Name>FullPath</Name><GetScriptBlock>$this.Paths.FullPath</GetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>MediaPath</Name><GetScriptBlock>$this.Paths.MediaPath</GetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>ContentPath</Name><GetScriptBlock>$this.Paths.ContentPath</GetScriptBlock></ScriptProperty>
+      <ScriptProperty><Name>ItemSource</Name><GetScriptBlock>[Spe.Core.Extensions.ItemExtensions]::GetItemSource($this)</GetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>__Archive date</Name><GetScriptBlock>$this["{56C15C6D-FD5A-40CA-BB37-64CEEC6A9BD5}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{56C15C6D-FD5A-40CA-BB37-64CEEC6A9BD5}", $Args );</SetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>__Archive Version date</Name><GetScriptBlock>$this["{1D99005E-65CA-45CA-9D9A-FD7016E23F1E}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{1D99005E-65CA-45CA-9D9A-FD7016E23F1E}", $Args );</SetScriptBlock></ScriptProperty>
       <ScriptProperty><Name>__AutoThumbnails</Name><GetScriptBlock>$this["{4A749557-242B-4372-8A20-B2DB9D406301}"]</GetScriptBlock><SetScriptBlock>[Spe.Core.Extensions.ItemShellExtensions]::Modify($this, "{4A749557-242B-4372-8A20-B2DB9D406301}", $Args );</SetScriptBlock></ScriptProperty>
