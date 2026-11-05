@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 const sites = loadTestSites();
 const modalScript = fs.readFileSync(path.join(__dirname, "status-bar-grip.ps1"), "utf-8");
@@ -41,7 +41,7 @@ for (const site of sites) {
     test.afterAll(async ({ browser }) => {
       const context = await browser.newContext({ ignoreHTTPSErrors: true, storageState: authStatePath(site) });
       const page = await context.newPage();
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 

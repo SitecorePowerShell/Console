@@ -17,12 +17,17 @@ export default defineConfig({
     {
       name: "setup",
       testMatch: /00-warmup\.spec\.ts/,
+      teardown: "teardown",
+    },
+    {
+      name: "teardown",
+      testMatch: /99-logout\.spec\.ts/,
     },
     {
       name: "chromium",
       use: { browserName: "chromium" },
       dependencies: ["setup"],
-      testIgnore: /00-warmup\.spec\.ts/,
+      testIgnore: /(00-warmup|99-logout)\.spec\.ts/,
     },
   ],
   outputDir: "./test-results",

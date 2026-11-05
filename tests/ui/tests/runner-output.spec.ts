@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame, BrowserContext } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 // The Runner keeps its script output in an embedded jquery.terminal that is
 // hidden until the user opens it. While it is closed the Runner must cost
@@ -141,7 +141,7 @@ for (const site of sites) {
       const context = await browser.newContext({ ignoreHTTPSErrors: true, storageState: authStatePath(site) });
       await runIseScript(context, site, teardownScript, "TEARDOWN_OK");
       const page = await context.newPage();
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 

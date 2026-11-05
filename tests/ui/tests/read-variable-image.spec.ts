@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 const sites = loadTestSites();
 const script = fs.readFileSync(path.join(__dirname, "read-variable-image.ps1"), "utf-8");
@@ -67,7 +67,7 @@ for (const site of sites) {
       await page.evaluate(() => (window as any).scForm.postRequest("", "", "", "ise:setsessionid(id=read-variable-image-teardown)"));
       await runInIse(page, teardownScript);
       await expect(page.locator(".terminal-output")).toContainText("TEARDOWN_OK", { timeout: 60_000 });
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 

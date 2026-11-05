@@ -110,19 +110,49 @@ export async function sitecoreLoginAndSave(
 }
 
 /**
- * Log out of Sitecore to free the license seat.
- * Uses the Identity Server's external logout endpoint which terminates
- * both the Sitecore session and the Identity Server session.
+ * Write the session's renewed cookies back to the saved auth state, logging in
+ * again if it already expired. The auth cookie slides (30 min) but the saved
+ * file never sees the renewal, so a long run would otherwise end on the login page.
+ */
+export async function refreshSitecoreSession(page: Page, site: TestSite) {
+  const res = await page
+    .context()
+    .request.get(`${site.url}/sitecore/shell/`, { maxRedirects: 0 });
+  if ((res.headers()["location"] || "").includes("/identity/")) {
+    await sitecoreLogin(page, site);
+  }
+  await page.context().storageState({ path: authStatePath(site) });
+}
+
+/**
+ * Log out of Sitecore to free the license seat. Same call the Launchpad
+ * account menu makes; the Redirect it returns ends the Identity Server session.
  */
 export async function sitecoreLogout(page: Page, site: TestSite) {
   try {
-    await page.goto(
-      `${site.url}/sitecore/shell/federation/externallogout`,
-      { waitUntil: "domcontentloaded", timeout: 10_000 }
-    );
+    await page.goto(`${site.url}/sitecore/client/Applications/Launchpad`, {
+      waitUntil: "load",
+      timeout: 30_000,
+    });
+    const redirect = await page.evaluate(async () => {
+      const token = document.querySelector(
+        "input[name^='__RequestVerificationToken']"
+      ) as HTMLInputElement | null;
+      if (!token) return "";
+      const res = await fetch(
+        "/sitecore/shell/api/sitecore/Authentication/Logout?sc_database=master",
+        { method: "POST", body: new URLSearchParams({ [token.name]: token.value }) }
+      );
+      return JSON.parse(await res.text()).Redirect || "";
+    });
+    if (redirect) {
+      await page.goto(new URL(redirect, site.url).toString(), {
+        waitUntil: "load",
+        timeout: 15_000,
+      });
+    }
   } catch {
-    // Logout is best-effort - don't fail the test if it times out
+    // Logout is best-effort - don't fail the run if it times out
   }
-  const url = new URL(site.url);
-  await page.context().clearCookies({ domain: url.hostname });
+  await page.context().clearCookies();
 }

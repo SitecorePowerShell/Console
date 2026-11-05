@@ -18,7 +18,8 @@
 
 - The warmup test (`00-warmup.spec.ts`) logs in once and saves auth state to `.auth/`. All other tests reuse that state via `storageState`.
 - Tests do not log in individually. If a test needs a fresh session for a specific reason, document why.
-- Each test file logs out in `afterAll` to free the Sitecore license seat.
+- Each test file calls `refreshSitecoreSession` in `afterAll`. It writes the renewed (sliding, 30 min) auth cookie back to `.auth/`, or logs in again if the session expired. Do not log out per file: every spec shares the warmup session.
+- `99-logout.spec.ts` (the setup project's teardown) logs out once at the end of the run to free the license seat. A `--no-deps` run after a full run finds the session logged out, so include `00-warmup` in ad-hoc runs.
 - Credentials come from `src/deploy.user.json` (gitignored) under each site's `test` block. Never hardcode credentials.
 
 ## Assertions

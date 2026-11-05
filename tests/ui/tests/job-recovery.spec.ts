@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame, BrowserContext } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 // Interactive script jobs must survive the browser freezing or discarding the
 // tab: SpeJobRecovery.js revives the poll, InteractiveJobRegistry keeps the
@@ -144,7 +144,7 @@ for (const site of sites) {
       await openIse(page, site);
       await runInIse(page, teardownScript);
       await expect(page.locator(".terminal-output")).toContainText("TEARDOWN_OK", { timeout: 60_000 });
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 

@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 import {
   loadTestSites,
   authStatePath,
-  sitecoreLogout,
+  refreshSitecoreSession,
   TestSite,
 } from "./sitecore-login";
 
@@ -58,7 +58,7 @@ for (const site of sites) {
         storageState: authStatePath(site),
       });
       const page = await context.newPage();
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await page.close();
       await context.close();
     });

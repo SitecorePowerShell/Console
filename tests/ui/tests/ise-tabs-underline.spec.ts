@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { loadTestSites, authStatePath, sitecoreLogout } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession } from "./sitecore-login";
 
 const sites = loadTestSites();
 
@@ -13,7 +13,7 @@ for (const site of sites.slice(0, 1)) {
         storageState: authStatePath(site),
       });
       const page = await context.newPage();
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await page.close();
       await context.close();
     });

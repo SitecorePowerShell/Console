@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 const sites = loadTestSites();
 // Same content as the filter tests: a few folders under spe-test shown in a ListView.
@@ -68,7 +68,7 @@ for (const site of sites) {
       await openIse(page, site);
       await run(page, teardownScript);
       await expect(page.locator(".terminal-output")).toContainText("TEARDOWN_OK", { timeout: 60_000 });
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 
@@ -99,9 +99,13 @@ for (const site of sites) {
       await expect(gallery.locator(".scMenuPanelItem.selected")).toHaveText(current);
       const pick = headers.find((h) => h && h !== current)!;
 
+      // The pick also runs that exporter. Closing the tab before its download
+      // orphans the job, and job recovery then reopens it in a later spec's ISE.
+      const download = lv.page().waitForEvent("download", { timeout: 60_000 });
       await items.filter({ hasText: pick }).first().click();
       await expect(exportButton(lv).locator(".header")).toHaveText(pick, { timeout: 30_000 });
       await expect(exportButton(lv).locator(".scRibbonToolbarLargeComboButtonTop")).toHaveAttribute("onclick", /export:results/);
+      await download;
     });
 
     test("export file name defaults to report-<timestamp>", async ({ page }) => {

@@ -1,7 +1,7 @@
 import { test, expect, Page, Frame } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import { loadTestSites, authStatePath, sitecoreLogout, TestSite } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession, TestSite } from "./sitecore-login";
 
 const sites = loadTestSites();
 const showScript = fs.readFileSync(path.join(__dirname, "listview-filter.ps1"), "utf-8");
@@ -83,7 +83,7 @@ for (const site of sites) {
       await openIse(page, site);
       await run(page, teardownScript);
       await expect(page.locator(".terminal-output")).toContainText("TEARDOWN_OK", { timeout: 60_000 });
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 

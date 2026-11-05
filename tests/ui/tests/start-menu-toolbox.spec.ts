@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { loadTestSites, authStatePath, sitecoreLogout } from "./sitecore-login";
+import { loadTestSites, authStatePath, refreshSitecoreSession } from "./sitecore-login";
 
 const sites = loadTestSites();
 
@@ -10,7 +10,7 @@ for (const site of sites) {
     test.afterAll(async ({ browser }) => {
       const context = await browser.newContext({ ignoreHTTPSErrors: true, storageState: authStatePath(site) });
       const page = await context.newPage();
-      await sitecoreLogout(page, site);
+      await refreshSitecoreSession(page, site);
       await context.close();
     });
 
