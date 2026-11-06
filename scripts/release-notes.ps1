@@ -4,6 +4,7 @@ param(
     [string]$Version = '9.0-RC-1',
     [string]$PreviousTag = '8.0',
     [string]$Branch = 'release/9.0',
+    [string]$ThemeVideo = 'https://www.youtube.com/watch?v=CAEQuE-ygjA',
     [string]$Intro = 'Release candidate 1 for SPE 9.0. Please try it on a test environment and report anything that breaks in [Issues](https://github.com/SitecorePowerShell/Console/issues) before the final release.'
 )
 $ErrorActionPreference = 'Stop'
@@ -104,6 +105,7 @@ foreach ($pkg in "Sitecore.PowerShell.Extensions-$Version-IAR", "Sitecore.PowerS
 }
 W "SHA256 for SPE.Minimal-$Version.zip"
 W (Get-FileHash "_output\SPE.Minimal-$Version.zip" -Algorithm SHA256).Hash
+if ($ThemeVideo) { W; W "[.]($ThemeVideo)" }
 
 $out = "_output\release-notes-$tag.md"
 [IO.File]::WriteAllText((Join-Path (Get-Location) $out), $sb.ToString(), (New-Object Text.UTF8Encoding $false))
