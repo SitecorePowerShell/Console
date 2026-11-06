@@ -67,8 +67,8 @@ namespace Spe.Core.Host
         }
         public ConsoleColor DebugBackgroundColor { get; set; } = ConsoleColor.DarkBlue;
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
-        public ConsoleColor ErrorBackgroundColor { get; set; } = ConsoleColor.Red;
-        public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.White;
+        public ConsoleColor ErrorBackgroundColor { get; set; } = ConsoleColor.DarkBlue;
+        public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
         public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.DarkCyan;
         public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.White;
         public ConsoleColor VerboseBackgroundColor { get; set; } = ConsoleColor.Black;

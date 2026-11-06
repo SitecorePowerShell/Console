@@ -1,0 +1,57 @@
+.spe-completion-menu {
+    position: fixed;
+    z-index: 10000;
+    margin: 0;
+    padding: 2px 0;
+    list-style: none;
+    min-width: 12em;
+    max-width: 60vw;
+    max-height: calc(10 * 1.4em + 4px);
+    overflow-y: auto;
+    background: var(--spe-cm-bg, #000);
+    color: var(--spe-cm-fg, #ccc);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.spe-completion-menu li {
+    display: flex;
+    justify-content: space-between;
+    gap: 2em;
+    padding: 0 6px;
+    line-height: 1.4em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Same colours the terminal formatter gives these tokens on the command line. */
+.spe-completion-menu li.kind-Command { color: yellow; }
+.spe-completion-menu li.kind-Parameter { color: magenta; }
+.spe-completion-menu li.kind-Variable { color: lightgreen; }
+
+.spe-completion-menu li.selected {
+    background: var(--spe-cm-fg, #ccc);
+    color: var(--spe-cm-bg, #000);
+}
+
+.spe-completion-menu li.info {
+    cursor: default;
+    opacity: 0.8;
+    white-space: pre-wrap;
+}
+
+.spe-completion-menu li.loading {
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.spe-completion-menu .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spe-completion-menu .kind {
+    opacity: 0.6;
+    text-align: right;
+}

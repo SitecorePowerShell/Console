@@ -1,0 +1,10 @@
+{
+    "namespace": "Spe.Roles",
+    "references": ["Spe.Core"],
+    "roles": [
+        {
+            "domain": "sitecore",
+            "pattern": "PowerShell Extensions Remoting"
+        }
+    ]
+}

@@ -19,7 +19,8 @@
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
             "You can find more documentation in the <br/><a href='https://doc.sitecorepowershell.com/' target='_blank'>Sitecore PowerShell Extensions book</a>.",
-            "You can contribute code and ideas to the project at <br/><a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>Sitecore PowerShell Extensions GitHub repository</a>."
+            "You can contribute code and ideas to the project at <br/><a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>Sitecore PowerShell Extensions GitHub repository</a>.",
+            "You can toggle the results pane between a <strong>horizontal</strong> and <strong>vertical</strong> split using the toggle icon in the status bar. Double-click the splitter to reset to 50/50."
         ];
 
         class EditorSession {
@@ -34,9 +35,11 @@
                 this.tabTitleInnerHTML = "";      // string: tab title inner html
                 this.windowTitleInnerHTML = "";   // string: window title inner html
                 this.isModified = false;          // bool: is modified
-                this.initialAssignment = true;    // bool: initial assignment
                 this.breakpoints = "";            // string: breakpoints
-                this.results = "";                // string: Script execution results
+                this.resultsHistory = [];         // array: Script execution results for terminal replay
+                this.scriptId = "";               // string: Sitecore item ID
+                this.scriptDb = "";               // string: Sitecore database name
+                this.isDeleted = false;           // bool: source item was deleted
             }
         }
 
@@ -47,8 +50,27 @@
         var debugSessionId = "";
         var debugMarkers = [];
         var resultsBottomOffset = 10;
+        var maxResultsHistoryLines = 9001;
+
+        function trimResultsHistory() {
+            var history = currentEditorSession.resultsHistory;
+            if (!history) return;
+            var totalLines = 0;
+            for (var i = 0; i < history.length; i++) {
+                var text = typeof history[i] === "string" ? history[i] : history[i].text;
+                totalLines += (text || "").split("\n").length;
+            }
+            while (totalLines > maxResultsHistoryLines && history.length > 1) {
+                var removed = history.shift();
+                var removedText = typeof removed === "string" ? removed : removed.text;
+                totalLines -= (removedText || "").split("\n").length;
+            }
+        }
         var typingTimer;
         var resultsVisibilityIntent = true;
+        var splitOrientation = localStorage.getItem("spe::ise.splitOrientation") || "horizontal";
+        var splitPosition = JSON.parse(localStorage.getItem("spe::ise.splitPosition") || '{}');
+
         var editorSessions = [];
         var editorFontFamily = "Monaco";
         var editorFontSize = 12;
@@ -65,13 +87,9 @@
         var breakpointsMemo = $($("#Breakpoints")[0]);
         var scriptItemIdMemo = $($("#ScriptItemIdMemo")[0]);
         var scriptItemDbMemo = $($("#ScriptItemDbMemo")[0]);
+        var activeTabsMemo = $($("#ActiveTabsMemo")[0]);
+        var terminalCommandMemo = $($("#TerminalCommand")[0]);
         // Setup the ace code editor.
-
-        addProxy(scForm, "invoke", function (args) {
-            if (args[0] === "ise:immediatewindow") {
-                clearVariablesCache();
-            }
-        });
 
         function registerEventListenersForRibbonButtons() {
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
@@ -84,6 +102,11 @@
             [].forEach.call(document.querySelectorAll('.scRibbonNavigatorButtonsGroupButtons > a'), function (div) {
                 div.addEventListener("click", function () {
                     spe.updateRibbon();
+                    // Persist the newly-selected strip so the next ISE open
+                    // returns to the same ribbon tab. Defer a tick so
+                    // scActiveRibbonStrip has been updated by Sitecore's
+                    // setActiveStrip handler before we snapshot it.
+                    setTimeout(spe.saveActiveTabs, 0);
                 })
             });
         }
@@ -100,6 +123,47 @@
                 proxyFn(arguments);
                 return result;
             };
+        }
+
+        function attachAutocompletePopupAutoWidth(editor) {
+            var patchPopup = function () {
+                var completer = editor.completer;
+                if (!completer || !completer.popup || completer._speAutoWidthDone) return false;
+                completer._speAutoWidthDone = true;
+                var popup = completer.popup;
+                var origSetData = popup.setData.bind(popup);
+                popup.setData = function (list, filterText) {
+                    origSetData(list, filterText);
+                    try {
+                        var style = window.getComputedStyle(popup.container);
+                        var fontSize = parseFloat(style.fontSize) || 12;
+                        var maxChars = 20;
+                        for (var i = 0; i < list.length; i++) {
+                            var item = list[i] || {};
+                            var caption = item.caption || item.value || item.name || "";
+                            var meta = item.meta ? "  " + item.meta : "";
+                            var len = (caption + meta).length;
+                            if (len > maxChars) maxChars = len;
+                        }
+                        var widthPx = Math.min(900, Math.max(300, Math.round(maxChars * fontSize * 0.6 + 40)));
+                        popup.container.style.width = widthPx + "px";
+                        if (popup.renderer && typeof popup.renderer.onResize === "function") {
+                            popup.renderer.onResize(true);
+                        }
+                    } catch (_) { /* best effort */ }
+                };
+                return true;
+            };
+            editor.commands.on("afterExec", function (e) {
+                if (!e || !e.command) return;
+                var n = e.command.name;
+                if (n === "startAutocomplete" || n === "expandSnippet" || n === "Tab") {
+                    if (patchPopup() && editor.completer && editor.completer.popup && editor.completer.popup.isOpen) {
+                        var p = editor.completer.popup;
+                        p.setData(p.data, p.filterText);
+                    }
+                }
+            });
         }
 
         window.addEventListener("focus", function (event) {
@@ -165,13 +229,146 @@
         var posx = $("#PosX");
         var posy = $("#PosY");
 
-        spe.updateModificationFlag = function (clear) {
+        spe.updateModificationFlag = function (clear, targetSession) {
+            // Called from two very different places:
+            //   1. The Ace "input" event handler (clear === false), which
+            //      fires asynchronously ~31ms after any editor change
+            //      because Ace debounces input via lang.delayedCall. A
+            //      programmatic setValue (restore, reload, plugin update)
+            //      therefore schedules a deferred event that could
+            //      incorrectly flag the session as modified. We
+            //      distinguish "user edit" from "programmatic load" by
+            //      checking the session's undo bookmark - callers who
+            //      load content programmatically call
+            //      session.getUndoManager().markClean() immediately after
+            //      setValue, and user edits advance the revision past
+            //      that bookmark.
+            //   2. The server-side save handler (clear === true), which
+            //      clears the modified flag and re-anchors the clean
+            //      bookmark to the current content.
+            // targetSession lets the deferred input handler pass the
+            // session it was registered for, avoiding a race where the
+            // globally-active session is read instead of the editor that
+            // actually raised the event.
+            var session = targetSession || currentEditorSession;
 
-            if (currentEditorSession.initialAssignment) {
-                currentEditorSession.initialAssignment = false;
-            } else if (clear === currentEditorSession.isModified) {
-                currentEditorSession.isModified = !clear;
-                spe.applyWindowTitle(currentEditorIndex);
+            if (clear) {
+                session.isModified = false;
+                session.isDeleted = false;
+                if (session.editor && session.editor.session) {
+                    session.editor.session.getUndoManager().markClean();
+                }
+                spe.applyWindowTitle(session.index);
+                return;
+            }
+
+            var aceSession = session.editor && session.editor.session;
+            if (aceSession && aceSession.getUndoManager().isClean()) {
+                return;
+            }
+            if (!session.isModified) {
+                session.isModified = true;
+                spe.applyWindowTitle(session.index);
+            }
+        };
+
+        spe.collectTabState = function () {
+            var tabs = [];
+            var adjustedActiveIndex = 1;
+
+            editorSessions.forEach(function (session) {
+                var tab = {
+                    db: session.scriptDb || "",
+                    id: session.scriptId || "",
+                    path: session.path || "",
+                    modified: session.isModified
+                };
+
+                if (session.isModified || !tab.id) {
+                    tab.content = session.editor.session.getValue();
+                }
+
+                if (!tab.id && !tab.content) return;
+                tabs.push(tab);
+                if (session.index === currentEditorIndex) {
+                    adjustedActiveIndex = tabs.length;
+                }
+            });
+
+            // scActiveRibbonStrip is a hidden input Sitecore keeps in sync
+            // via scContent.setActiveStrip; reading it gives us the currently
+            // selected ribbon tab without having to walk the ribbon DOM.
+            var activeStrip = "";
+            var stripCtl = document.getElementById("scActiveRibbonStrip");
+            if (stripCtl) activeStrip = stripCtl.value || "";
+
+            var state = {
+                activeIndex: adjustedActiveIndex,
+                activeStrip: activeStrip,
+                tabs: tabs
+            };
+
+            activeTabsMemo.val(JSON.stringify(state));
+        };
+
+        spe.saveActiveTabs = function () {
+            spe.collectTabState();
+            scForm.postRequest("", "", "", "ise:savetabstate");
+        };
+
+        spe.applyRestoredTabs = function (tabsData) {
+            if (!tabsData || !tabsData.tabs) return;
+
+            var prevSession = currentEditorSession;
+            var prevEditor = currentAceEditor;
+            var prevIndex = currentEditorIndex;
+
+            tabsData.tabs.forEach(function (tab, idx) {
+                var session = editorSessions[idx];
+                if (!session) return;
+
+                // Temporarily swap to this session so Ace's session
+                // "change" handler (which reads global currentAceEditor
+                // to mirror content into the Editor memo) runs against
+                // the correct session during setValue. The delayed
+                // "input" event is handled separately via the
+                // session-scoped handler registered in createEditor.
+                currentEditorSession = session;
+                currentAceEditor = session.editor;
+                currentEditorIndex = session.index;
+
+                var aceSession = session.editor.session;
+                aceSession.setValue(tab.content || "");
+                // Anchor the undo bookmark so the deferred Ace input
+                // event (scheduled ~31ms after this setValue) does not
+                // spuriously flag the tab as modified. Any subsequent
+                // user edit advances the revision past this bookmark
+                // and the flag logic marks the tab dirty correctly.
+                aceSession.getUndoManager().markClean();
+
+                session.isModified = !!tab.modified;
+                session.isDeleted = !!tab.deleted;
+                spe.applyWindowTitle(session.index);
+            });
+
+            currentEditorSession = prevSession;
+            currentAceEditor = prevEditor;
+            currentEditorIndex = prevIndex;
+
+            if (currentAceEditor) {
+                editor.val(currentAceEditor.session.getValue());
+            }
+
+            // Defer the strip switch one tick so the ribbon DOM (rendered via
+            // RibbonPanel.InnerHtml on the same postback that restored the
+            // tabs) is fully attached before we ask Sitecore to activate a
+            // strip by id. setActiveStrip is a no-op for an unknown id, so a
+            // stale/renamed strip just leaves the default tab selected.
+            if (tabsData.activeStrip && typeof scContent !== "undefined" && scContent.setActiveStrip) {
+                setTimeout(function () {
+                    try { scContent.setActiveStrip(tabsData.activeStrip); }
+                    catch (e) { /* tolerate missing strip id after ribbon changes */ }
+                }, 0);
             }
         };
 
@@ -201,10 +398,25 @@
                 }
             });
 
-            if (perTabResults) {
-                $("#ScriptResultCode").text("");
-                $("#ScriptResultCode").append(currentEditorSession.results);
-                $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            if (perTabResults && iseTerminal) {
+                iseTerminal.clear();
+                var history = currentEditorSession.resultsHistory || [];
+                history.forEach(function (entry) {
+                    if (typeof entry === "string") {
+                        // Legacy format - treat as raw HTML
+                        iseTerminal.echo(entry, { raw: true });
+                    } else {
+                        var opts = { raw: entry.raw };
+                        if (!entry.raw) opts.finalize = finalizeGuidLinks;
+                        iseTerminal.echo(entry.text, opts);
+                    }
+                });
+                // Ensure terminal is interactive after tab switch (unless a
+                // script is currently running in the shared ISE session).
+                if (!iseScriptRunning) {
+                    iseTerminal.find(".cmd").css("visibility", "visible");
+                    iseTerminal.resume();
+                }
             }
         }
 
@@ -225,10 +437,18 @@
             currentAceEditor.session.setMode("ace/mode/powershell");
             currentAceEditor.setShowPrintMargin(false);
             currentAceEditor.session.setValue(editor.val());
+            // Anchor the undo bookmark to the initial content so the
+            // modification-flag logic can tell later whether the session
+            // has diverged from its loaded baseline.
+            currentAceEditor.session.getUndoManager().markClean();
             currentAceEditor.session.on("change", function () {
                 editor.val(currentAceEditor.session.getValue());
             });
             currentAceEditor.tokenTooltip = new TokenTooltip(currentAceEditor);
+            if (window.spe && window.spe.gotoScript) {
+                window.spe.gotoScript.attach(currentAceEditor);
+            }
+            attachAutocompletePopupAutoWidth(currentAceEditor);
             currentAceEditor.setOption("fontFamily", editorFontFamily);
             currentAceEditor.setOption("fontSize", editorFontSize);
             currentAceEditor.setOptions({
@@ -288,20 +508,73 @@
                                 range.start.column = data.position;
                                 data.value = data.fullValue;
 
-                                //try trim prefix quotes
-                                range.start.column--;
-                                range.end.column++;
-                                var replacedText = currentAceEditor.session.getTextRange(range);
-                                var charStart = replacedText.charAt(0);
-                                var charEnd = replacedText.charAt(replacedText.length - 1);
-                                if (charStart !== '"' && charStart !== "'") {
-                                    range.start.column++;
+                                var line = currentAceEditor.session.getLine(range.start.row);
+
+                                // Walk from line start to data.position, tracking quote state,
+                                // to determine whether the path sits inside a quoted string.
+                                // Plain prevChar/firstChar checks can't tell an opening quote
+                                // from the closing quote of an earlier token (e.g. the `'` at
+                                // the end of `'master:\...Branches'\` must NOT be treated as
+                                // opening a new string).
+                                var openPos = -1;
+                                var active = "";
+                                for (var qi = 0; qi < range.start.column; qi++) {
+                                    var qc = line.charAt(qi);
+                                    if (!active && (qc === "'" || qc === '"')) {
+                                        active = qc;
+                                        openPos = qi;
+                                    } else if (active && qc === active) {
+                                        active = "";
+                                        openPos = -1;
+                                    }
                                 }
 
-                                //try trim trailing quotes
-                                if (charEnd !== '"' && charEnd !== "'") {
-                                    range.end.column--;
+                                var firstChar = range.start.column < line.length
+                                    ? line.charAt(range.start.column) : "";
+                                var openingChar = "";
+                                if (openPos >= 0) {
+                                    // Already inside a quoted string - absorb the opening quote.
+                                    openingChar = line.charAt(openPos);
+                                    range.start.column = openPos;
+                                } else if (firstChar === "'" || firstChar === '"') {
+                                    // data.position is at the opening quote of a new quoted token.
+                                    openingChar = firstChar;
                                 }
+                                var isQuoted = openingChar !== "";
+
+                                // Ace's default range.end is the cursor, but the path often
+                                // continues past it (e.g. `Get-Item master:\|content\` or a
+                                // quoted path with text after the cursor like
+                                // `' -Filter *`). Extend rightward to consume the rest of
+                                // the token so the old tail isn't left stranded after the
+                                // inserted completion.
+                                var endCol = range.end.column;
+                                if (isQuoted) {
+                                    var searchCol = endCol;
+                                    while (searchCol < line.length && line.charAt(searchCol) !== openingChar) {
+                                        searchCol++;
+                                    }
+                                    if (searchCol < line.length) {
+                                        endCol = searchCol + 1; // absorb closing quote
+                                    } else {
+                                        // No matching closing quote to the right - the quoted
+                                        // assumption was wrong (e.g. cursor sits past an
+                                        // already-closed string). Fall back to unquoted
+                                        // extension so we don't wipe the rest of the line.
+                                        isQuoted = false;
+                                    }
+                                }
+                                if (!isQuoted) {
+                                    while (endCol < line.length) {
+                                        var ch = line.charAt(endCol);
+                                        if (ch === " " || ch === "\t" || ch === ";" || ch === "|" ||
+                                            ch === ")" || ch === "]" || ch === "}" || ch === ",") {
+                                            break;
+                                        }
+                                        endCol++;
+                                    }
+                                }
+                                range.end.column = endCol;
                             } else {
                                 range.start.column -= editor.completer.completions.filterText.length;
                             }
@@ -371,7 +644,91 @@
                     }
                 };
 
-                module.addCompleter(keyWordCompleter);
+                // Surfaces $-variables from two sources:
+                //  1. The authoritative PS session variables via the
+                //     GetSessionVariables endpoint (includes vars created
+                //     by previously executed scripts, Sitecore convenience
+                //     variables, etc).
+                //  2. The current editor buffer, so vars the user is
+                //     still typing and hasn't executed yet are completable.
+                // Session hits get a higher score than buffer hits.
+                // This replaces Ace's default textCompleter, which would
+                // otherwise dump every word in the document into the popup.
+                var speVariableCompleter = {
+                    getCompletions: function (editor, session, pos, prefix, callback) {
+                        // Only surface variables when the user is actually
+                        // typing one. Without this gate, Ctrl+Space inside
+                        // an unrelated token (e.g. a path under `master:\`)
+                        // would dump every session var into the popup.
+                        if (!prefix || prefix.charAt(0) !== "$") {
+                            callback(null, []);
+                            return;
+                        }
+
+                        var seen = {};
+                        var vars = [];
+
+                        var sessionNames = _getSessionVariableNames();
+                        for (var i = 0; i < sessionNames.length; i++) {
+                            var sn = sessionNames[i];
+                            if (seen[sn]) continue;
+                            seen[sn] = true;
+                            vars.push({
+                                caption: sn,
+                                value: sn,
+                                score: 1000,
+                                meta: "variable"
+                            });
+                        }
+
+                        var bufferMatches = session.getValue().match(/\$[A-Za-z_][A-Za-z0-9_:]*/g) || [];
+                        for (var j = 0; j < bufferMatches.length; j++) {
+                            var bn = bufferMatches[j];
+                            if (seen[bn]) continue;
+                            seen[bn] = true;
+                            vars.push({
+                                caption: bn,
+                                value: bn,
+                                score: 500,
+                                meta: "local"
+                            });
+                        }
+
+                        callback(null, vars);
+                    },
+                    id: "speVariableCompleter"
+                };
+
+                // Only surface snippets when the user is actually typing
+                // one. Every SPE snippet uses the `spe-` prefix, and Ace's
+                // default fuzzy filter would otherwise match `spe-foreach`
+                // when the user types `for`. Require the prefix to start
+                // with `spe-` before delegating to the stock completer.
+                var speSnippetCompleter = {
+                    getCompletions: function (editor, session, pos, prefix, callback) {
+                        if (!prefix || prefix.toLowerCase().indexOf("spe-") !== 0) {
+                            callback(null, []);
+                            return;
+                        }
+                        module.snippetCompleter.getCompletions(editor, session, pos, prefix, callback);
+                    },
+                    getDocTooltip: function (item) {
+                        if (module.snippetCompleter.getDocTooltip) {
+                            module.snippetCompleter.getDocTooltip(item);
+                        }
+                    },
+                    id: "speSnippetCompleter"
+                };
+
+                // Replace Ace's default completer stack ([snippetCompleter,
+                // textCompleter, keyWordCompleter]) with only the three
+                // sources SPE wants: snippets, local $-variables, and
+                // server-side PowerShell completions.
+                module.setCompleters([
+                    speSnippetCompleter,
+                    speVariableCompleter,
+                    keyWordCompleter
+                ]);
             });
 
 
@@ -393,10 +750,17 @@
                 breakpointsMemo.val(currentEditorSession.breakpoints);
             });
 
+            // Capture newSession in the closure so the deferred Ace
+            // input event always fires against the editor that actually
+            // raised it, not whichever tab happens to be globally active
+            // when the 31ms delayedCall timer elapses.
             currentAceEditor.on("input", function () {
-                spe.updateModificationFlag(false);
+                spe.updateModificationFlag(false, newSession);
             });
 
+            // Ace keybinding overrides for ISE shortcuts are registered
+            // as explicit commands below (#1457); removeCommand calls from
+            // #1458 were redundant and have been dropped.
             var codeeeditorcommands = [
                 {
                     name: "help",
@@ -434,6 +798,34 @@
                         spe.breakpointSet(currRow, "toggle");
                     },
                     readOnly: true
+                }, {
+                    name: "debugScript",
+                    bindKey: {win: "Ctrl-D", mac: "Ctrl-D"},
+                    exec: function () {
+                        scForm.postRequest("", "", "", "ise:debug");
+                    },
+                    readOnly: true
+                }, {
+                    name: "executeSelection",
+                    bindKey: {win: "Alt-E", mac: "Alt-E"},
+                    exec: function () {
+                        scForm.postRequest("", "", "", "ise:executeselection");
+                    },
+                    readOnly: true
+                }, {
+                    name: "runPlugin",
+                    bindKey: {win: "Ctrl-Shift-Alt-I", mac: "Ctrl-Shift-Alt-I"},
+                    exec: function () { },
+                    readOnly: true
+                }, {
+                    name: "gotoScriptDefinition",
+                    bindKey: {win: "Ctrl-F12", mac: "Command-F12"},
+                    exec: function (editor) {
+                        if (editor && editor.gotoScript) {
+                            editor.gotoScript.gotoAtCaret();
+                        }
+                    },
+                    readOnly: true
                 }
             ];
 
@@ -451,27 +843,698 @@
         };
 
 
+        // Linkify Sitecore GUIDs in terminal output so they open the item in Content Editor
+        var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
+        function finalizeGuidLinks(div) {
+            div.find("span").each(function () {
+                var span = $(this);
+                var html = span.html();
+                if (guidRegex.test(html)) {
+                    guidRegex.lastIndex = 0;
+                    span.html(html.replace(guidRegex, function (match) {
+                        return "<a href='#' onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={" + match + "})')\">" + match + "</a>";
+                    }));
+                }
+            });
+        }
+
+        // Initialize jQuery Terminal in the results pane
+        var iseTerminal = null;
+        var iseScriptRunning = false;
+        var iseLastPrompt = "PS >";
+        var iseDebugActive = false;
+
+        function getIsePrompt() {
+            // jQuery Terminal format syntax: [[STYLE;FG;BG]text]
+            // Avoid [ and ] characters in the text since they conflict with the tag delimiters.
+            // White when ready for commands, yellow during debug inspection.
+            if (iseDebugActive) {
+                return "[[;yellow;]DBG " + iseLastPrompt + "]";
+            }
+            return "[[;white;]" + iseLastPrompt + "]";
+        }
+
+        function getPowerShellResponseAsync(callData, remotefunction, doneFunction, errorFunction) {
+            var datastring = JSON.stringify(callData);
+            var ajax = $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
+                data: datastring,
+                processData: false,
+                cache: false,
+                async: true
+            }).done(doneFunction);
+            if (typeof errorFunction !== "undefined") {
+                ajax.fail(errorFunction);
+            }
+        }
+
+        // Server-pushed prompt update. Called from PushTerminalPrompt on the
+        // server after session priming and after script execution completes.
+        // Replaces the old round-trip prompt refresh that was routed through
+        // PowerShellWebService.ExecuteCommand.
+        spe.setTerminalPrompt = function (prompt) {
+            if (prompt) {
+                iseLastPrompt = prompt;
+            }
+            if (iseTerminal && !speBusyInterval) {
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+        };
+
+        // Animated "busy" indicator that takes over the terminal prompt line
+        // while a script is executing (editor Run or terminal command). Replaces
+        // the floating bottom-right PleaseWait overlay, which was easy to miss
+        // for terminal-issued commands since it appeared in a different spot
+        // than the user's focus. Now the indicator appears exactly where the
+        // prompt normally lives.
+        //
+        // Spinner is the classic cli-spinners "dots" pattern; ~80ms per frame
+        // gives the characteristic rolling motion.
+        var speSpinnerFrames = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C",
+                                "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
+        var speBusyInterval = null;
+        var speBusyMessage = "";
+        var speBusyFrame = 0;
+
+        function getBusyPrompt() {
+            var frame = speSpinnerFrames[speBusyFrame];
+            // jquery.terminal color format: [[STYLE;FG;BG]text]. Teal spinner
+            // next to a white message line keeps the indicator distinct from
+            // the normal white prompt without being noisy.
+            return "[[;#4ec9b0;]" + frame + "] [[;#d4d4d4;]" + speBusyMessage + "]";
+        }
+
+        spe.showBusy = function (message) {
+            speBusyMessage = message || "";
+            speBusyFrame = 0;
+            if (!iseTerminal) return;
+            if (!iseDebugActive) {
+                iseTerminal.set_prompt(getBusyPrompt());
+            }
+            if (speBusyInterval) return;
+            speBusyInterval = setInterval(function () {
+                // At a breakpoint the user is inspecting state and needs
+                // the DBG prompt to stay put so they can type commands.
+                // The script is technically still the running job, so the
+                // interval is alive, but we must not clobber the prompt.
+                if (iseDebugActive) return;
+                speBusyFrame = (speBusyFrame + 1) % speSpinnerFrames.length;
+                if (iseTerminal) {
+                    iseTerminal.set_prompt(getBusyPrompt());
+                }
+            }, 80);
+        };
+
+        spe.hideBusy = function () {
+            if (speBusyInterval) {
+                clearInterval(speBusyInterval);
+                speBusyInterval = null;
+            }
+            speBusyMessage = "";
+            if (iseTerminal) {
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+        };
+
+        // Write-Progress panel docked at the top of the results pane. The
+        // server sends every progress record as JSON (null hides the panel);
+        // the panel keeps its DOM between records so the bar can animate.
+        var progressIcons = {
+            gear: '<path d="M4 6h8M16 6h4M4 12h2M10 12h10M4 18h11M19 18h1"/><circle cx="14" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+            hairline: '<path d="M5 12h14"/>',
+            segmented: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+            ring: '<path d="M12 3a9 9 0 1 0 9 9"/>',
+            compact: '<path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
+            full: '<path d="M4 5h16M4 12h16M4 19h16"/>',
+            integrated: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/>',
+            overlay: '<path d="M12 4l-8 4l8 4l8-4zM4 12l8 4l8-4M4 16l8 4l8-4"/>'
+        };
+        var progressGroups = [
+            { key: "bar", label: "Bar", options: [["hairline", "Hairline"], ["segmented", "Segmented"], ["ring", "Ring"]] },
+            { key: "detail", label: "Detail", options: [["compact", "Compact"], ["full", "Full"]] },
+            { key: "placement", label: "Placement", options: [["integrated", "Integrated"], ["overlay", "Overlay"]] }
+        ];
+        var progressPrefs = { bar: "hairline", detail: "full", placement: "integrated" };
+        try {
+            var storedProgressPrefs = JSON.parse(localStorage.getItem("spe.ise.progress")) || {};
+            progressGroups.forEach(function (group) {
+                var value = storedProgressPrefs[group.key];
+                if (group.options.some(function (option) { return option[0] === value; })) {
+                    progressPrefs[group.key] = value;
+                }
+            });
+        } catch (e) { }
+        var progressSegmentCount = 24;
+        var progressEase = "cubic-bezier(.16, 1, .3, 1)";
+        var progressPanel = null;
+        var progressRecord = null; // record on screen, null while hidden
+        var progressShown = 0; // percent drawn, eased towards the record
+        var progressFrame = 0;
+        var progressHideAnimation = null;
+        var progressTerminalTop = 0;
+        var progressLeaveTimer = 0;
+
+        function progressIcon(name) {
+            return '<svg viewBox="0 0 24 24" aria-hidden="true">' + progressIcons[name] + '</svg>';
+        }
+
+        function buildProgressPanel() {
+            var menu = progressGroups.map(function (group) {
+                return '<span class="spe-progress-label">' + group.label + '</span>' +
+                    '<span class="spe-progress-choice" role="radiogroup" aria-label="' + group.label + '" data-key="' + group.key + '">' +
+                    '<span class="spe-progress-thumb"></span>' +
+                    group.options.map(function (option) {
+                        return '<button type="button" role="radio" data-key="' + group.key + '" data-value="' + option[0] + '">' +
+                            progressIcon(option[0]) + option[1] + '</button>';
+                    }).join("") + '</span>';
+            }).join("");
+            progressPanel = $('<div id="IseProgress" role="status">' +
+                '<div class="spe-progress-head">' +
+                '<svg class="spe-progress-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle class="spe-progress-arc" cx="9" cy="9" r="7"/></svg>' +
+                '<span class="spe-progress-activity"></span>' +
+                '<span class="spe-progress-status spe-progress-inline"></span>' +
+                '<span class="spe-progress-operation spe-progress-inline"></span>' +
+                '<span class="spe-progress-meta"><span class="spe-progress-eta"></span><span class="spe-progress-percent"></span></span>' +
+                '</div>' +
+                '<div class="spe-progress-status spe-progress-row"></div>' +
+                '<div class="spe-progress-hairline"><i></i></div>' +
+                '<div class="spe-progress-segments">' + new Array(progressSegmentCount + 1).join("<b><i></i></b>") + '</div>' +
+                '<div class="spe-progress-operation spe-progress-row"><span></span><span></span></div>' +
+                '<div class="spe-progress-options">' +
+                '<button type="button" class="spe-progress-gear" title="Progress display" aria-label="Progress display options" aria-haspopup="true">' + progressIcon("gear") + '</button>' +
+                '<div class="spe-progress-menu">' + menu + '</div>' +
+                '</div>' +
+                '</div>').prependTo("#Result");
+            progressPanel.on("click", "button[data-key]", function () {
+                progressPrefs[this.getAttribute("data-key")] = this.getAttribute("data-value");
+                try {
+                    localStorage.setItem("spe.ise.progress", JSON.stringify(progressPrefs));
+                } catch (e) { }
+                applyProgressPrefs();
+            });
+            progressPanel.on("click", ".spe-progress-gear", function () {
+                progressPanel.toggleClass("spe-progress-open");
+            });
+            // The gear and its menu linger after the mouse leaves, so a
+            // slightly off path from the gear to the menu doesn't close it.
+            progressPanel.on("mouseenter", function () {
+                clearTimeout(progressLeaveTimer);
+                progressPanel.addClass("spe-progress-active");
+            });
+            progressPanel.on("mouseleave", function () {
+                clearTimeout(progressLeaveTimer);
+                progressLeaveTimer = setTimeout(function () {
+                    progressPanel.removeClass("spe-progress-active spe-progress-open");
+                    // A clicked option keeps focus, which would keep the gear
+                    // showing through :focus-within after the mouse has left.
+                    if (progressPanel[0].contains(document.activeElement)) {
+                        document.activeElement.blur();
+                    }
+                }, 1500);
+            });
+            progressPanel.on("keydown", function (e) {
+                if (e.key === "Escape") {
+                    progressPanel.removeClass("spe-progress-open");
+                }
+            });
+            if (window.ResizeObserver) {
+                new ResizeObserver(layoutProgressTerminal).observe(progressPanel[0]);
+            }
+            applyProgressPrefs();
+        }
+
+        function applyProgressPrefs() {
+            var panel = progressPanel[0];
+            panel.className = panel.className.replace(/\s*spe-progress-(bar|detail|placement)-\S+/g, "") +
+                " spe-progress-bar-" + progressPrefs.bar +
+                " spe-progress-detail-" + progressPrefs.detail +
+                " spe-progress-placement-" + progressPrefs.placement;
+            progressPanel.find(".spe-progress-choice").each(function () {
+                var choice = this;
+                $(choice).find("button").each(function (index) {
+                    var checked = this.getAttribute("data-value") === progressPrefs[choice.getAttribute("data-key")];
+                    this.setAttribute("aria-checked", checked);
+                    if (checked) {
+                        choice.style.setProperty("--spe-choice-index", index);
+                    }
+                });
+            });
+            layoutProgressTerminal();
+        }
+
+        // Integrated placement pushes the terminal down by the panel height.
+        // The jump is played back as a slide (FLIP) so the terminal resizes
+        // once instead of on every animation frame.
+        function layoutProgressTerminal() {
+            var terminal = document.getElementById("ScriptResultCode");
+            if (!terminal || !progressPanel) {
+                return;
+            }
+            var top = progressRecord && progressPrefs.placement === "integrated" ? progressPanel[0].offsetHeight : 0;
+            if (top === progressTerminalTop) {
+                return;
+            }
+            var delta = top - progressTerminalTop;
+            var atBottom = terminal.scrollHeight - terminal.scrollTop - terminal.clientHeight < 20;
+            progressTerminalTop = top;
+            terminal.style.top = top ? top + "px" : "";
+            // The terminal is height:100% (Console.css), so it has to shrink by
+            // the same amount or it overflows #Result and adds a scrollbar.
+            terminal.style.height = top ? "calc(100% - " + top + "px)" : "";
+            // Keep following the newest output when the terminal shrinks.
+            if (atBottom) {
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            if (terminal.animate) {
+                terminal.animate([{ transform: "translateY(" + (-delta) + "px)" }, { transform: "none" }],
+                    { duration: 450, easing: progressEase });
+            }
+        }
+
+        function setProgressText(element, text) {
+            element.text(text).attr("title", text);
+        }
+
+        function formatProgressSeconds(seconds) {
+            var h = Math.floor(seconds / 3600), m = Math.floor(seconds % 3600 / 60), s = seconds % 60;
+            var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+            return (h ? h + ":" + pad(m) : m) + ":" + pad(s);
+        }
+
+        function progressInOut(x) {
+            return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+        }
+
+        function progressTick(time) {
+            progressFrame = 0;
+            if (!progressRecord) {
+                return;
+            }
+            var panel = progressPanel[0];
+            if (progressRecord.percent < 0) {
+                // Indeterminate motion is driven here rather than by CSS
+                // animations so it keeps running when the browser asks pages
+                // to reduce motion (e.g. Windows Server with animations off),
+                // as it is the only sign the script is still alive.
+                var hairline = panel.querySelector(".spe-progress-hairline");
+                hairline.style.backgroundPosition = (time / 50 % 12) + "px 0";
+                hairline.firstChild.style.left = (progressInOut(time / 1300 % 1) * 125 - 25) + "%";
+                var segments = panel.querySelectorAll(".spe-progress-segments b");
+                for (var i = 0; i < segments.length; i++) {
+                    var phase = ((time / 1200 - i / segments.length) % 1 + 1) % 1;
+                    var glow = phase < .15 ? phase / .15 : phase < .4 ? 1 - (phase - .15) / .25 : 0;
+                    segments[i].style.backgroundColor = "rgba(78, 201, 176, " + (.22 + .78 * glow).toFixed(2) + ")";
+                }
+                panel.querySelector(".spe-progress-ring").style.transform = "rotate(" + (time * .45 % 360 - 90) + "deg)";
+            } else {
+                progressShown += (progressRecord.percent - progressShown) * .15;
+                if (Math.abs(progressRecord.percent - progressShown) < .5) {
+                    progressShown = progressRecord.percent;
+                }
+                panel.querySelector(".spe-progress-percent").textContent = Math.round(progressShown) + "%";
+                fillProgressSegments(panel, progressShown);
+                if (progressShown === progressRecord.percent) {
+                    return;
+                }
+            }
+            progressFrame = requestAnimationFrame(progressTick);
+        }
+
+        // Each segment fills by its own share of the progress, so the fill
+        // runs smoothly from one segment into the next.
+        function fillProgressSegments(panel, percent) {
+            var fills = panel.querySelectorAll(".spe-progress-segments i");
+            var filled = percent / 100 * fills.length;
+            for (var i = 0; i < fills.length; i++) {
+                fills[i].style.width = Math.max(0, Math.min(1, filled - i)) * 100 + "%";
+            }
+        }
+
+        function hideIseProgress() {
+            if (!progressRecord) {
+                return;
+            }
+            progressRecord = null;
+            clearTimeout(progressLeaveTimer);
+            progressPanel.removeClass("spe-progress-active spe-progress-open");
+            layoutProgressTerminal();
+            var finish = function () {
+                progressHideAnimation = null;
+                if (!progressRecord) {
+                    progressPanel.removeClass("spe-progress-visible");
+                    progressPanel.find(".spe-progress-hairline i").css("width", "");
+                }
+            };
+            if (progressPanel[0].animate) {
+                progressHideAnimation = progressPanel[0].animate(
+                    [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-8px)" }],
+                    { duration: 250, easing: "ease-in" });
+                progressHideAnimation.onfinish = finish;
+            } else {
+                finish();
+            }
+        }
+
+        spe.updateIseProgress = function (record) {
+            if (!record) {
+                hideIseProgress();
+                return;
+            }
+            if (!progressPanel) {
+                buildProgressPanel();
+            }
+            var panel = progressPanel[0];
+            var appearing = !progressRecord;
+            var indeterminate = record.percent < 0;
+            progressRecord = record;
+
+            progressPanel.toggleClass("spe-progress-indeterminate", indeterminate)
+                .toggleClass("spe-progress-no-operation", !record.operation);
+            setProgressText(progressPanel.find(".spe-progress-activity"), record.activity);
+            setProgressText(progressPanel.find(".spe-progress-status"), record.status);
+            setProgressText(progressPanel.find(".spe-progress-inline.spe-progress-operation"), record.operation);
+            // Ellipsis in the middle of the operation so the last two path
+            // segments (usually the item being processed) stay readable.
+            var operation = record.operation || "";
+            var cut = Math.max(0, operation.lastIndexOf("\\", operation.lastIndexOf("\\") - 1));
+            var operationRow = progressPanel.find(".spe-progress-row.spe-progress-operation").attr("title", operation).children();
+            operationRow.eq(0).text(operation.substring(0, cut));
+            operationRow.eq(1).text(operation.substring(cut));
+            progressPanel.find(".spe-progress-eta").text(record.secondsRemaining >= 0
+                ? formatProgressSeconds(record.secondsRemaining) + " " + record.remainingText
+                : "");
+
+            var hairline = panel.querySelector(".spe-progress-hairline");
+            var arc = panel.querySelector(".spe-progress-arc");
+            var segments = panel.querySelectorAll(".spe-progress-segments b");
+            if (indeterminate) {
+                hairline.firstChild.style.width = "";
+                arc.style.strokeDashoffset = "";
+                panel.querySelector(".spe-progress-percent").textContent = "";
+            } else {
+                hairline.style.backgroundPosition = "";
+                hairline.firstChild.style.left = "";
+                hairline.firstChild.style.width = record.percent + "%";
+                arc.style.strokeDashoffset = 44 - 44 * record.percent / 100;
+                panel.querySelector(".spe-progress-ring").style.transform = "";
+                for (var i = 0; i < segments.length; i++) {
+                    segments[i].style.backgroundColor = "";
+                }
+            }
+
+            if (appearing) {
+                if (progressHideAnimation) {
+                    progressHideAnimation.cancel();
+                    progressHideAnimation = null;
+                }
+                progressShown = 0;
+                var background = document.getElementById("ScriptResultCode") || document.getElementById("Result");
+                panel.style.setProperty("--spe-progress-bg", getComputedStyle(background).backgroundColor);
+                progressPanel.addClass("spe-progress-visible");
+                if (panel.animate) {
+                    panel.animate([{ opacity: 0, transform: "translateY(-8px)" }, { opacity: 1, transform: "none" }],
+                        { duration: 300, easing: progressEase });
+                }
+            }
+            layoutProgressTerminal();
+            if (!progressFrame) {
+                progressFrame = requestAnimationFrame(progressTick);
+            }
+        };
+
+        function initIseTerminal() {
+            var target = $("#ScriptResultCode");
+            if (!target.length) {
+                console.error("[spe] initIseTerminal: #ScriptResultCode not found in DOM");
+                return;
+            }
+            iseTerminal = target.terminal(function (command, term) {
+                if (/^\s*(cls|clear-host)\s*$/i.test(command)) {
+                    spe.clearOutput();
+                    return;
+                }
+                if (command.length > 0) {
+                    // Route the terminal command through the same Sheer UI
+                    // message pipeline as the ribbon Run button. The server
+                    // reads the command from the TerminalCommand memo and
+                    // calls JobExecuteScript, giving the terminal the full
+                    // editor execution pipeline (ScriptRunning flag, ribbon
+                    // disable, progress overlay, Abort, PromptForChoice via
+                    // the job message queue).
+                    terminalCommandMemo.val(command);
+                    scForm.postRequest("", "", "", "ise:termexecute");
+                }
+            }, {
+                greetings: false,
+                prompt: getIsePrompt(),
+                // Start disabled so keystrokes go only to the Ace editor on open;
+                // jquery.terminal enables itself when the user clicks into it.
+                enabled: false,
+                onClear: function () {},
+                keydown: function (e) {
+                    return iseCompletionMenu ? iseCompletionMenu.keydown(e) : undefined;
+                },
+                onPause: function () { if (iseCompletionMenu) iseCompletionMenu.close(); },
+                onBlur: function () { if (iseCompletionMenu) iseCompletionMenu.close(); }
+            });
+            iseCompletionMenu = spe.attachCompletionMenu(iseTerminal, {
+                endpoint: "CompleteAceCommand",
+                guid: function () { return guid; },
+                // Debug-time completion shares one ImmediateCommand slot with the editor; keep it to Tab.
+                live: function () { return editorLiveAutocompletion && !iseDebugActive; },
+                foreground: function () { return iseForegroundColor; },
+                onNotElevated: function () { spe.requestElevation(); }
+            });
+        }
+
+        var iseCompletionMenu = null;
+        var iseForegroundColor = null;
+
+        // Silently updates the terminal prompt without pausing the UI.
+        // Used during debug breakpoints where we want to refresh the prompt
+        // but keep the command line visible and usable while waiting for the response.
+        function silentRefreshPrompt() {
+            if (!iseTerminal) return;
+            getPowerShellResponseAsync(
+                { "guid": guid, "command": "", "stringFormat": "jsterm" },
+                "ExecuteCommand",
+                function (json) {
+                    try {
+                        var data = JSON.parse(json.d);
+                        if (data && data["prompt"]) {
+                            iseLastPrompt = data["prompt"];
+                            if (iseTerminal) {
+                                iseTerminal.set_prompt(getIsePrompt());
+                            }
+                        }
+                    } catch (e) { /* ignore parse errors */ }
+                },
+                function () { /* silently ignore network errors */ }
+            );
+        }
+
+        initIseTerminal();
+
+        $.terminal.defaults.formatters.push(function (string) {
+            return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {
+                if (/^[a-zA-Z]{1,}[\-][a-zA-Z]*\b$/g.test(string)) {
+                    return '[[;yellow;]' + string + ']';
+                } else if (/^([\-])([a-zA-Z]{1,})\b$/g.test(string)) {
+                    return '[[;magenta;]' + string + ']';
+                } else if (/^[$][a-zA-Z_][a-zA-Z0-9_]*\b/g.test(string)) {
+                    return '[[;lightgreen;]' + string + ']';
+                } else {
+                    return string;
+                }
+            }).join('');
+        });
+
         $("#CopyResultsToClipboard").on("click", function () {
             clipboard.copy(spe.getOutput());
         });
 
 
         spe.getOutput = function () {
-            return $("#ScriptResultCode")[0].innerText;
+            if (!iseTerminal) return "";
+            return iseTerminal.find(".terminal-output").text();
         };
 
         spe.clearOutput = function () {
-            $("#ScriptResultCode").text("");
-            $("#Result").scrollTop($("#Result")[0].scrollHeight);
-            currentEditorSession.results = "";
+            if (iseTerminal) {
+                iseTerminal.clear();
+            }
             clearVariablesCache();
         };
 
+        // Script output in jquery.terminal's native jsterm format. Text
+        // contains color wrappers like [[;#fg;#bg]text]; jquery.terminal
+        // parses them natively via echo (no `raw` flag).
+        //
+        // To support Write-Host -NoNewline correctly (inline-append
+        // streaming), three functions cooperate:
+        //
+        //   spe.appendOutput(jsterm)          - commit a new line. Resets
+        //                                       any pending partial.
+        //   spe.updatePartialOutput(jsterm)   - create or update an
+        //                                       in-progress "partial" line
+        //                                       that may grow on subsequent
+        //                                       polls. Uses jquery.terminal
+        //                                       update() to replace the
+        //                                       line in place.
+        //   spe.commitPartialOutput(jsterm)   - replace the pending line
+        //                                       with final text and release
+        //                                       the pending-partial state.
+        //   spe.finalizePartial()             - release the pending-partial
+        //                                       state without updating text
+        //                                       (used at script end).
+        //
+        // pendingPartialLineIndex is the jquery.terminal line index of the
+        // current in-progress partial (-1 if none). Updates are applied via
+        // iseTerminal.update(index, text, options).
+        var pendingPartialLineIndex = -1;
+
+        function appendHistoryEntry(text, partial) {
+            if (!currentEditorSession.resultsHistory) {
+                currentEditorSession.resultsHistory = [];
+            }
+            currentEditorSession.resultsHistory.push({ text: text, raw: false, partial: !!partial });
+            trimResultsHistory();
+        }
+
+        function replacePartialHistoryEntry(text) {
+            var history = currentEditorSession.resultsHistory;
+            if (!history || history.length === 0) {
+                appendHistoryEntry(text, true);
+                return;
+            }
+            var last = history[history.length - 1];
+            if (last && typeof last === "object" && last.partial) {
+                last.text = text;
+            } else {
+                appendHistoryEntry(text, true);
+            }
+        }
+
+        function commitPartialHistoryEntry(text) {
+            var history = currentEditorSession.resultsHistory;
+            if (!history || history.length === 0) {
+                appendHistoryEntry(text, false);
+                return;
+            }
+            var last = history[history.length - 1];
+            if (last && typeof last === "object" && last.partial) {
+                last.text = text;
+                last.partial = false;
+            } else {
+                appendHistoryEntry(text, false);
+            }
+        }
+
+        // Strip a trailing CR/LF from jsterm text before handing it to
+        // jquery.terminal's echo/update. The server's GetTerminalLine adds
+        // \r\n to terminated lines, and a trailing newline in echo/update
+        // input causes jquery.terminal to split into [content, ""] and
+        // produce a phantom empty row inside the block. echo/update already
+        // implicitly start a new logical line per call, so we never want
+        // the trailing newline.
+        function stripTrailingNewline(text) {
+            if (!text) return text;
+            if (text.length >= 2 && text.charAt(text.length - 2) === "\r" && text.charAt(text.length - 1) === "\n") {
+                return text.substring(0, text.length - 2);
+            }
+            if (text.charAt(text.length - 1) === "\n") {
+                return text.substring(0, text.length - 1);
+            }
+            return text;
+        }
+
         spe.appendOutput = function (outputToAppend) {
-            var decoded = $("<div/>").html(outputToAppend).text();
-            $("#ScriptResultCode").append(decoded);
-            $("#Result").scrollTop($("#Result")[0].scrollHeight);
-            currentEditorSession.results = currentEditorSession.results + decoded;
+            if (!iseTerminal) {
+                console.error("[spe] appendOutput: terminal not initialized, output lost");
+                return;
+            }
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+            // Any previous pending partial is now closed; the new echo is
+            // the current "last line" and is fully committed.
+            pendingPartialLineIndex = -1;
+            appendHistoryEntry(outputToAppend, false);
+            clearVariablesCache();
+        };
+
+        spe.updatePartialOutput = function (outputToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] updatePartialOutput: terminal not initialized, output lost");
+                return;
+            }
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            if (pendingPartialLineIndex >= 0) {
+                iseTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+                replacePartialHistoryEntry(outputToAppend);
+            } else {
+                iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+                pendingPartialLineIndex = iseTerminal.last_index();
+                appendHistoryEntry(outputToAppend, true);
+            }
+            clearVariablesCache();
+        };
+
+        spe.commitPartialOutput = function (outputToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] commitPartialOutput: terminal not initialized, output lost");
+                return;
+            }
+            outputToAppend = stripTrailingNewline(outputToAppend);
+            if (pendingPartialLineIndex >= 0) {
+                iseTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+                commitPartialHistoryEntry(outputToAppend);
+            } else {
+                iseTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+                appendHistoryEntry(outputToAppend, false);
+            }
+            pendingPartialLineIndex = -1;
+            clearVariablesCache();
+        };
+
+        spe.finalizePartial = function () {
+            // Close the pending partial without updating its text - the
+            // currently rendered content is considered final. Used at
+            // script end so subsequent appends start a new visual line.
+            if (pendingPartialLineIndex >= 0) {
+                // Mark the last partial history entry as committed.
+                var history = currentEditorSession.resultsHistory;
+                if (history && history.length > 0) {
+                    var last = history[history.length - 1];
+                    if (last && typeof last === "object" && last.partial) {
+                        last.partial = false;
+                    }
+                }
+            }
+            pendingPartialLineIndex = -1;
+        };
+
+        // Append literal HTML fragments (error spans, deferred-message
+        // blocks with bespoke CSS classes, etc.) via jquery.terminal's raw
+        // echo. Used for the small set of non-output-buffer messages the
+        // ISE emits for error display and deferred-action reporting.
+        spe.appendHtmlOutput = function (htmlToAppend) {
+            if (!iseTerminal) {
+                console.error("[spe] appendHtmlOutput: terminal not initialized, output lost");
+                return;
+            }
+            var decoded = $("<div/>").html(htmlToAppend).text();
+            iseTerminal.echo(decoded, { raw: true });
+            // An HTML echo also closes the pending partial visually.
+            pendingPartialLineIndex = -1;
+            appendHistoryEntry(decoded, false);
+            // Mark the last history entry as raw since we used raw echo.
+            var history = currentEditorSession.resultsHistory;
+            if (history && history.length > 0) {
+                history[history.length - 1].raw = true;
+            }
             clearVariablesCache();
         };
 
@@ -483,6 +1546,7 @@
             });
 
             document.getElementById("ScriptResult").style.fontFamily = setting;
+            $("#ScriptResultCode").css({ "font-family": setting });
         };
 
         spe.changeFontSize = function (setting) {
@@ -492,16 +1556,18 @@
                 editor.editor.setOption("fontSize", setting);
             });
             $("#ScriptResult").css({"font-size": setting + "px"});
+            $("#ScriptResultCode").css({ "font-size": setting + "px" });
         };
-
 
         spe.changeBackgroundColor = function (setting) {
             $("#ScriptResult").css({"background-color": setting});
             $("#Result").css({"background-color": setting});
+            $("#ScriptResultCode").css({"background-color": setting});
         };
 
-        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput) {
+        spe.changeSettings = function (fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion, perTabOutput, foregroundColor) {
             spe.changeBackgroundColor(backgroundColor);
+            iseForegroundColor = foregroundColor || null;
             spe.changeFontFamily(fontFamily);
             spe.changeFontSize(fontSize);
             if (liveAutocompletion !== undefined) {
@@ -522,6 +1588,13 @@
         spe.debugStop = function (sessionId) {
             setTimeout(spe.breakpointHandled, 100);
             currentAceEditor.setReadOnly(false);
+            iseDebugActive = false;
+            // Only hide terminal if the script is still running (stepping),
+            // not when the debug session has ended (scriptExecutionEnded handles that)
+            if (iseTerminal && iseScriptRunning) {
+                iseTerminal.find(".cmd").css("visibility", "hidden");
+                iseTerminal.pause();
+            }
         };
 
         spe.toggleBreakpoint = function (row, set) {
@@ -551,10 +1624,12 @@
             }
         };
 
+        var switchedToDebugStrip = false;
         spe.breakpointHit = function (line, column, endLine, endColumn, sessionId) {
             debugLine = line;
             debugSessionId = sessionId;
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
+            switchedToDebugStrip = true;
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
                 debugMarkers.push(currentAceEditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
@@ -562,17 +1637,58 @@
             if (line < currentAceEditor.getFirstVisibleRow() || line > currentAceEditor.getLastVisibleRow()) {
                 currentAceEditor.gotoLine(line);
             }
+            // Enable terminal for debug inspection
+            iseDebugActive = true;
+            if (iseTerminal) {
+                iseTerminal.find(".cmd").css("visibility", "visible");
+                iseTerminal.resume();
+                iseTerminal.set_prompt(getIsePrompt());
+            }
+            // Silently refresh the prompt from the paused session without blocking
+            // the command line - the path may have changed since the last command
+            // (especially if the script cd'd before the breakpoint).
+            silentRefreshPrompt();
+            // Refresh the Variables panel when the breakpoint is hit so the user
+            // can inspect the current variable state without manually clicking refresh.
+            if (spe.refreshVariables) {
+                spe.refreshVariables();
+            }
         };
 
         spe.breakpointHandled = function () {
             while (debugMarkers.length > 0) {
                 currentAceEditor.session.removeMarker(debugMarkers.shift());
             }
-            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
+            // Only restore the Home tab if we had switched away to the
+            // Debug strip. Re-clicking the already-active Home tab toggles
+            // the Sitecore ribbon into its collapsed (tabs-only) state,
+            // which is what used to happen when a debug session ended
+            // without ever hitting a breakpoint (e.g. a script that calls
+            // Close-Window + Exit). The original code referenced a legacy
+            // strip ID ("ImageStrip") that no longer exists after the
+            // #1468 ribbon restructure, which silently no-op'd - we just
+            // need the same "don't touch anything" behavior when nothing
+            // was switched.
+            if (switchedToDebugStrip) {
+                scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ScriptStrip");
+                switchedToDebugStrip = false;
+            }
         };
 
         spe.updateEditor = function () {
             currentAceEditor.getSession().setValue(editor.val());
+        };
+
+        spe.reloadCurrentEditor = function (content) {
+            var aceSession = currentAceEditor.getSession();
+            aceSession.setValue(content);
+            // Anchor the clean bookmark so the deferred Ace input event
+            // does not mark the tab dirty right after the reload.
+            aceSession.getUndoManager().markClean();
+            currentEditorSession.isModified = false;
+            currentEditorSession.isDeleted = false;
+            spe.applyWindowTitle(currentEditorIndex);
+            editor.val(content);
         };
 
         spe.insertEditorContent = function (text) {
@@ -588,6 +1704,22 @@
             clearVariablesCache();
             if (!resultsVisibilityIntent) {
                 setTimeout(spe.closeResults, 2000);
+            }
+            iseScriptRunning = false;
+            iseDebugActive = false;
+            // Stop the busy spinner; this also restores the normal prompt via
+            // getIsePrompt() using the prompt text the server pushed during
+            // MonitorOnJobFinished.
+            spe.hideBusy();
+            spe.updateIseProgress(null);
+            // Restore the terminal command line now that the script has finished.
+            if (iseTerminal) {
+                iseTerminal.resume();
+                iseTerminal.echo(" ");
+            }
+            // Refresh the Variables panel - the script may have created or modified variables
+            if (spe.refreshVariables) {
+                spe.refreshVariables();
             }
         };
 
@@ -607,19 +1739,27 @@
             return string.replace(new RegExp(escapeRegExp(find), "g"), replace);
         }
 
+        function escapeHtml(str) {
+            var div = document.createElement("div");
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
         spe.changeTabDetails = function (codeEditorIndex, newTitle, startBarHtml, scriptId, scriptDb) {
 
             var editorSession = getSessionByIndex(codeEditorIndex);
             var itemName = newTitle.split("/").last();
-            editorSession.name = itemName
+            editorSession.name = itemName;
             editorSession.path = newTitle;
-            const newTabTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            editorSession.tabTitleInnerHTML = "<span title='" + editorSession.path + "'><span class=\"scriptModified ModifiedMark#tabindex#\">⬤</span> " + editorSession.name +
+            var safePath = escapeHtml(editorSession.path);
+            var safeName = escapeHtml(editorSession.name);
+            const newTabTitle = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.tabTitleInnerHTML = "<span title=\"" + safePath + "\"><span class=\"scriptModified ModifiedMark#tabindex#\">⬤</span> " + safeName +
                 "</i>" +
                 "<span class=\"closeTab\" onclick=\"javascript:spe.closeTab(event, #tabindex#)\">&nbsp;</span>";
-            const newWindowTitle = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span> <i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i> - ";
-            editorSession.tabTitleHtml = replaceAll(editorSession.path, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            const newWindowTitle = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
+            editorSession.windowTitleInnerHTML = "<span class=\"scriptModified ModifiedMark#tabindex#\" style='color:#fc2929;#styles#'>⬤</span><span class=\"speWindowPath\"><span><i style=\"font-style: italic; color: #bbb;\">" + newWindowTitle + "</i></span></span>";
+            editorSession.tabTitleHtml = replaceAll(safePath, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
             editorSession.scriptId = scriptId;
             editorSession.scriptDb = scriptDb;
             editorSession.startBarHtml = startBarHtml;
@@ -627,14 +1767,92 @@
             openedScriptsMemo.val(openedScripts);
         }
 
+        // The Desktop window caption is laid out by Styles/WindowCaption.css. Setup lives in the window
+        // document, so a reloaded ISE finds it in place and only rewrites the title.
+        var windowCaptionObserved = false;
+        function setupWindowCaption(windowCaption) {
+            var caption = windowCaption.parentElement;
+            var doc = caption.ownerDocument;
+            if (!doc.getElementById("speWindowCaptionStyles")) {
+                var link = doc.createElement("link");
+                link.id = "speWindowCaptionStyles";
+                link.rel = "stylesheet";
+                link.href = "/sitecore modules/PowerShell/Styles/WindowCaption.css";
+                doc.head.appendChild(link);
+            }
+            if (!windowCaption.querySelector(".speWindowMain")) {
+                // Sitecore renders the app name as bare text after the title; it moves inside so it can wrap away.
+                var appName = windowCaption.nextSibling;
+                windowCaption.innerHTML = "<span class=\"speWindowMain\"></span>";
+                if (appName && appName.nodeType === 3 && appName.textContent.trim()) {
+                    var appNameSpan = doc.createElement("span");
+                    appNameSpan.className = "speWindowAppName";
+                    appNameSpan.textContent = appName.textContent.trim();
+                    windowCaption.appendChild(appNameSpan);
+                    caption.removeChild(appName);
+                }
+            }
+            if (!windowCaptionObserved) {
+                windowCaptionObserved = true;
+                observeWindowButtons(windowCaption);
+            }
+            return windowCaption.querySelector(".speWindowMain");
+        }
+
+        // CSS cannot see where Sitecore or a theme put the absolutely positioned window buttons, so this
+        // publishes the room they leave the title as --spe-title-max / --spe-title-inset.
+        function observeWindowButtons(windowCaption) {
+            var caption = windowCaption.parentElement;
+            var bar = caption.parentElement;
+            var buttons = bar.querySelector(".standartWindowButtons");
+            var doc = caption.ownerDocument;
+            var px = function (cs, prop) { return parseFloat(cs[prop]) || 0; };
+            var measure = function () {
+                var cs = getComputedStyle(caption);
+                var box = caption.getBoundingClientRect();
+                var left = box.left + px(cs, "borderLeftWidth") + px(cs, "paddingLeft");
+                var contentLeft = left;
+                var right = box.right - px(cs, "borderRightWidth") - px(cs, "paddingRight");
+                if (cs.display.indexOf("inline") === 0) {
+                    // A shrink-wrapping caption can grow up to the end of the bar.
+                    var barCs = getComputedStyle(bar);
+                    right = bar.getBoundingClientRect().right - px(barCs, "borderRightWidth") - px(barCs, "paddingRight") - px(cs, "marginRight");
+                }
+                var b = buttons && buttons.getBoundingClientRect();
+                if (b && b.width && b.bottom > box.top && b.top < box.bottom && b.right > left && b.left < right) {
+                    // The buttons overlap the title: give up the side they sit on.
+                    if (b.left + b.right > left + right) right = b.left - 8;
+                    else left = b.right + 8;
+                }
+                windowCaption.style.setProperty("--spe-title-max", Math.max(0, right - left) + "px");
+                windowCaption.style.setProperty("--spe-title-inset", left - contentLeft + "px");
+            };
+            // Window resizes, theme switches and late-loading button images all move the buttons or the caption.
+            var resizeObserver = new ResizeObserver(measure);
+            [bar, caption, buttons].forEach(function (el) { if (el) resizeObserver.observe(el); });
+            var mutationObserver = new MutationObserver(measure);
+            mutationObserver.observe(doc.documentElement, { attributes: true });
+            mutationObserver.observe(doc.head, { childList: true });
+            $(buttons).find("img").on("load", measure);
+            window.addEventListener("pagehide", function () {
+                resizeObserver.disconnect();
+                mutationObserver.disconnect();
+                $(buttons).find("img").off("load", measure);
+            });
+            measure();
+        }
+
         spe.applyWindowTitle = function (codeEditorIndex) {
 
             var editorSession = getSessionByIndex(codeEditorIndex);
             var windowCaption = $("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
-                windowCaption[0].innerHTML =
-                    editorSession.windowTitleInnerHTML.replace("#tabindex#", editorSession.index).replace("#styles#", editorSession.isModified ? "display:inline;" : "display:none;");
-
+                var windowStyles = editorSession.isModified || editorSession.isDeleted ? "display:inline;" : "display:none;";
+                var windowHtml = editorSession.windowTitleInnerHTML.replace("#tabindex#", editorSession.index).replace("#styles#", windowStyles);
+                if (editorSession.isDeleted) {
+                    windowHtml = windowHtml.replace("\u2B24", "\u2716");
+                }
+                setupWindowCaption(windowCaption[0]).innerHTML = windowHtml;
             }
 
             var styles = $("#ModifiedStatusStyles");
@@ -647,8 +1865,12 @@
             editorSessions.forEach(function (currEditor) {
                 var tabHeader = $("#Tabs_tab_" + (currEditor.index - 1))
                 if (tabHeader.length > 0) {
-                    tabHeader[0].innerHTML = currEditor.tabTitleInnerHTML.replaceAll("#tabindex#", currEditor.index);
-                    if (currEditor.isModified) {
+                    var tabHtml = currEditor.tabTitleInnerHTML.replaceAll("#tabindex#", currEditor.index);
+                    if (currEditor.isDeleted) {
+                        tabHtml = tabHtml.replace("\u2B24", "\u2716");
+                    }
+                    tabHeader[0].innerHTML = tabHtml;
+                    if (currEditor.isModified || currEditor.isDeleted) {
                         stylesinnerHTML = stylesinnerHTML + ".ModifiedMark" + currEditor.index + "{display:inline;}";
                     }
                 }
@@ -661,6 +1883,8 @@
                 var startbar = window.parent.parent.document.getElementById('startbar_application_' + frameId);
                 $(startbar).find('span').html(editorSession.startBarHtml);
             }
+
+            document.title = editorSession.name + " - SPE ISE";
         };
 
 
@@ -701,23 +1925,126 @@
             
         }
 
+        // Editor pane size range along the split axis. Dragging and reapplying both
+        // clamp through this, so the drag ghost always lands where the split ends up.
+        function splitLimits(orientation) {
+            var total;
+            if (orientation === "vertical") {
+                var leftPane = document.getElementById("VerticalLeftPane");
+                var rightPane = document.getElementById("VerticalRightPane");
+                if (!leftPane || !$(rightPane).is(":visible")) return null;
+                total = leftPane.parentNode.offsetWidth - document.getElementById("VerticalSplitter").offsetWidth;
+            } else {
+                var scriptPane = document.getElementById("ScriptPane");
+                var resultsRow = document.getElementById("ResultsRow");
+                if (!scriptPane || !resultsRow || resultsRow.offsetHeight === 0) return null;
+                // Measured against the viewport, not the current pane sizes, so a
+                // previously overgrown pane cannot push the StatusBar off screen.
+                total = $(window).height() - scriptPane.getBoundingClientRect().top
+                    - ($("#StatusBar").outerHeight(true) || 0) - 2 /* splitter */ - 10 /* padding */;
+            }
+            if (total <= 0) return null;
+            var min = Math.min(200, total);
+            return { total: total, min: min, max: Math.max(min, total - 100) };
+        }
+
+        function editorPaneSize(orientation) {
+            return orientation === "vertical"
+                ? document.getElementById("VerticalLeftPane").offsetWidth
+                : $("#ScriptPane").height();
+        }
+
+        function setEditorPaneSize(orientation, size) {
+            if (orientation === "vertical") {
+                var leftPane = document.getElementById("VerticalLeftPane");
+                leftPane.style.flexBasis = size + "px";
+                leftPane.style.flexGrow = "0";
+                leftPane.style.flexShrink = "0";
+            } else {
+                document.getElementById("ScriptPane").style.height = size + "px";
+            }
+        }
+
+        spe.reapplySplitPosition = function () {
+            var ratio = splitPosition[splitOrientation];
+            var limits = ratio && splitLimits(splitOrientation);
+            if (!limits) return;
+            var size = Math.min(Math.max(Math.round(ratio * limits.total), limits.min), limits.max);
+            setEditorPaneSize(splitOrientation, size);
+        };
+
+        // Drags show a ghost bar clamped to splitLimits and apply the split on release.
+        function initSplitter(handle, orientation) {
+            var vertical = orientation === "vertical";
+            var ghost, limits, start, startSize, size;
+            handle.title = "Drag to resize, double-click to reset";
+
+            handle.addEventListener("pointerdown", function (e) {
+                if (e.button !== 0) return;
+                limits = splitLimits(orientation);
+                if (!limits) return;
+                start = vertical ? e.clientX : e.clientY;
+                startSize = size = editorPaneSize(orientation);
+                var rect = handle.getBoundingClientRect();
+                ghost = document.createElement("div");
+                ghost.className = "spe-split-ghost";
+                ghost.style.left = rect.left + "px";
+                ghost.style.top = rect.top + "px";
+                ghost.style.width = rect.width + "px";
+                ghost.style.height = rect.height + "px";
+                document.body.appendChild(ghost);
+                handle.setPointerCapture(e.pointerId);
+                e.preventDefault();
+            });
+
+            handle.addEventListener("pointermove", function (e) {
+                if (!ghost) return;
+                var pos = vertical ? e.clientX : e.clientY;
+                size = Math.min(Math.max(startSize + pos - start, limits.min), limits.max);
+                ghost.style.transform = (vertical ? "translateX(" : "translateY(") + (size - startSize) + "px)";
+            });
+
+            // Fires after pointerup and also when the drag is cancelled.
+            handle.addEventListener("lostpointercapture", function () {
+                if (!ghost) return;
+                ghost.remove();
+                ghost = null;
+                if (size !== startSize) {
+                    spe.saveSplitPosition(orientation, size / limits.total);
+                    spe.resizeEditor();
+                }
+            });
+
+            handle.addEventListener("dblclick", function () {
+                spe.saveSplitPosition(orientation, 0.5);
+                spe.resizeEditor();
+            });
+        }
+
         spe.resizeEditor = function () {
+            spe.reapplySplitPosition();
+            // Size the editor container before Ace measures it; tab rows can wrap
+            // differently after a layout change.
+            // Side by side, the tabs sit above the split row rather than inside #EditingArea.
+            var tabsHeight = splitOrientation === "vertical" ? 0 : $("#TabsPanel").height() + 5;
+            $("#CodeEditors").css("height", "calc(100% - " + tabsHeight + "px");
             if (currentAceEditor !== undefined) {
                 currentAceEditor.resize();
             }
-            var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
-            $("#Result").height(resultsHeight);
-            $("#Result").width($(window).width() - $("#Result").offset().left * 2);
-            $("#Result").width($("#ResultsPane").width());
-            $("#ProgressOverlay").css("top", ($("#Result").offset().top + 8) + "px");
-            $("#ProgressOverlay").css("left", ($("#Result").offset().left + 8) + "px");
+            if (splitOrientation === "vertical") {
+                $("#Result").css({ height: "100%", width: "100%" });
+            } else {
+                // 7 = #Result vertical padding (5) + #ResultsPane bottom padding (2),
+                // so the StatusBar ends exactly at the bottom of the window.
+                var resultsHeight = $(window).height() - $("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").outerHeight(true) - resultsBottomOffset - 7;
+                $("#Result").height(resultsHeight);
+                $("#Result").width($(window).width() - $("#Result").offset().left * 2);
+                $("#Result").width($("#ResultsPane").width());
+            }
             $("#TreeViewToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
             $("#TreeViewToggle").css("left", ($("#TabsPanel").offset().left + 6) + "px");
-            if ($("#TreeView").is(":visible")) {
-                    
-            }
-            $("#CodeEditors").css("height", "calc(100% - " + ($("#TabsPanel").height()+5) + "px");
-
+            $("#VariablesToggle").css("top", ($("#TabsPanel").offset().top + 8) + "px");
+            $("#VariablesToggle").css("left", ($("#TabsPanel").offset().left + 28) + "px");
         };
 
         function isEmpty(val) {
@@ -741,18 +2068,160 @@
         };
 
         spe.restoreResults = function () {
-            $("#ResultsSplitter").show();
-            $("#ResultsRow").show();
+            iseScriptRunning = true;
+            // Pause the terminal so the user can't submit a concurrent command
+            // against the busy session. The `visible` arg (pause(true)) keeps
+            // the prompt element visible - without it jquery.terminal calls
+            // command_line.find('.prompt').hidden() and our spe.showBusy
+            // set_prompt updates are invisible.
+            if (iseTerminal) {
+                iseTerminal.pause(true);
+            }
+            if (splitOrientation === "vertical") {
+                // Undo the full-width flex from closeResults; resizeEditor reapplies a saved split.
+                $("#VerticalLeftPane").css({ flexBasis: "", flexGrow: "", flexShrink: "" });
+                $("#VerticalSplitter").show();
+                $("#VerticalRightPane").show();
+            } else {
+                $("#ResultsSplitter").show();
+                $("#ResultsRow").show();
+            }
             spe.resizeEditor();
             $("#ResultsStatusBarAction").removeClass("status-bar-results-hidden")
         };
 
         spe.closeResults = function () {
-            $("#ResultsSplitter").hide();
-            $("#ResultsRow").hide("slow", function () {
-                currentAceEditor.resize();
-            });
+            if (splitOrientation === "vertical") {
+                $("#VerticalSplitter").hide();
+                $("#VerticalRightPane").hide("slow", function () {
+                    // Let the left pane fill the entire container width
+                    var leftPane = document.getElementById("VerticalLeftPane");
+                    if (leftPane) {
+                        leftPane.style.flexBasis = "100%";
+                        leftPane.style.flexGrow = "1";
+                        leftPane.style.flexShrink = "1";
+                    }
+                    spe.resizeEditor();
+                });
+            } else {
+                $("#ResultsSplitter").hide();
+                $("#ResultsRow").hide("slow", function () {
+                    spe.resizeEditor();
+                });
+            }
             $("#ResultsStatusBarAction").addClass("status-bar-results-hidden")
+        };
+
+        function applySplitOrientation(orientation) {
+            var editingPanel = document.getElementById("EditingPanel");
+            if (!editingPanel) return;
+            var table = editingPanel.querySelector("table");
+            var container = document.getElementById("VerticalSplitContainer");
+            var toggleBtn = document.getElementById("ToggleSplitOrientation");
+
+            if (orientation === "vertical") {
+                if (container) return;
+
+                var editingArea = document.getElementById("EditingArea");
+                var result = document.getElementById("Result");
+                if (!editingArea || !result) return;
+
+                // Save original inline height set by GridPanel
+                editingArea.dataset.originalHeight = editingArea.style.height;
+
+                // Tabs span the full width above a flex row of left pane, splitter, right pane
+                container = document.createElement("div");
+                container.id = "VerticalSplitContainer";
+
+                var row = document.createElement("div");
+                row.id = "VerticalSplitRow";
+
+                var leftPane = document.createElement("div");
+                leftPane.id = "VerticalLeftPane";
+
+                var splitter = document.createElement("div");
+                splitter.id = "VerticalSplitter";
+
+                var rightPane = document.createElement("div");
+                rightPane.id = "VerticalRightPane";
+
+                // Move content into panes
+                leftPane.appendChild(editingArea);
+                rightPane.appendChild(result);
+
+                row.appendChild(leftPane);
+                row.appendChild(splitter);
+                row.appendChild(rightPane);
+
+                container.appendChild(editingArea.querySelector("#TabsPanel"));
+                container.appendChild(row);
+
+                // Hide table, insert container
+                table.style.display = "none";
+                editingPanel.appendChild(container);
+
+                // Override the GridPanel inline height
+                editingArea.style.height = "100%";
+
+                initSplitter(splitter, "vertical");
+
+                if (toggleBtn) {
+                    toggleBtn.parentNode.classList.add("split-orientation-active");
+                    toggleBtn.src = "/~/icon/office/16x16/mirror_horizontally.png";
+                    toggleBtn.title = "Switch to horizontal split";
+                    toggleBtn.alt = "Switch to horizontal split";
+                }
+            } else {
+                if (!container) return;
+
+                var editingArea = document.getElementById("EditingArea");
+                var result = document.getElementById("Result");
+                var scriptPaneTd = document.getElementById("ScriptPane");
+                var resultsPaneTd = document.getElementById("ResultsPane");
+
+                // Restore original inline height
+                if (editingArea) {
+                    editingArea.style.height = editingArea.dataset.originalHeight || "";
+                }
+
+                // Move content back to original table positions
+                if (editingArea) editingArea.insertBefore(document.getElementById("TabsPanel"), editingArea.firstChild);
+                if (editingArea && scriptPaneTd) scriptPaneTd.appendChild(editingArea);
+                if (result && resultsPaneTd) resultsPaneTd.appendChild(result);
+
+                // Show table, remove container
+                table.style.display = "";
+                editingPanel.removeChild(container);
+
+                if (toggleBtn) {
+                    toggleBtn.parentNode.classList.remove("split-orientation-active");
+                    toggleBtn.src = "/~/icon/office/16x16/mirror_vertically.png";
+                    toggleBtn.title = "Switch to vertical split";
+                    toggleBtn.alt = "Switch to vertical split";
+                }
+            }
+        }
+
+        spe.saveSplitPosition = function (orientation, value) {
+            splitPosition[orientation] = value;
+            localStorage.setItem("spe::ise.splitPosition", JSON.stringify(splitPosition));
+        };
+
+        spe.toggleSplitOrientation = function () {
+            splitOrientation = splitOrientation === "horizontal" ? "vertical" : "horizontal";
+            localStorage.setItem("spe::ise.splitOrientation", splitOrientation);
+            applySplitOrientation(splitOrientation);
+            // Defer resize to allow the DOM to reflow after layout changes
+            setTimeout(function () {
+                // The stacked editor/output table is a Sitecore .scFixSize element
+                // whose pixel height Sitecore only recomputes on window resize. It is
+                // display:none while side by side, so it comes back with a stale
+                // height that pushes the StatusBar off screen. Recompute it first.
+                if (scForm.browser.resizeFixsizeElements) {
+                    scForm.browser.resizeFixsizeElements();
+                }
+                spe.resizeEditor();
+            }, 0);
         };
 
         function getCachedVariableValue(storageKey, variableName) {
@@ -834,11 +2303,61 @@
             return data;
         };
 
+        spe._sanitizeHelpHtml = function (html) {
+            if (typeof html !== "string" || html.length === 0) {
+                return "";
+            }
+            var doc = new DOMParser().parseFromString(html, "text/html");
+            var dangerous = doc.body.querySelectorAll("script, iframe, object, embed, form, style, link, meta, base");
+            for (var i = 0; i < dangerous.length; i++) {
+                if (dangerous[i].parentNode) {
+                    dangerous[i].parentNode.removeChild(dangerous[i]);
+                }
+            }
+            // Strict whitelist for the related-topics onclick produced by the
+            // Command Help script. Strings that try to break out of the quoted
+            // argument fail the anchored pattern and fall through to attribute
+            // removal.
+            var helpCommandPattern = /^\s*javascript:return\s+Spe\.showCommandHelp\(\s*"([\w.\-]+)"\s*\)\s*;?\s*$/i;
+            var elements = doc.body.querySelectorAll("*");
+            for (var j = 0; j < elements.length; j++) {
+                var el = elements[j];
+                var attrs = Array.prototype.slice.call(el.attributes);
+                for (var k = 0; k < attrs.length; k++) {
+                    var name = attrs[k].name;
+                    var value = attrs[k].value;
+                    var lname = name.toLowerCase();
+                    if (lname.indexOf("on") === 0) {
+                        if (lname === "onclick" && el.tagName === "A") {
+                            var match = helpCommandPattern.exec(value);
+                            if (match) {
+                                el.setAttribute("data-spe-help-command", match[1]);
+                            }
+                        }
+                        el.removeAttribute(name);
+                        continue;
+                    }
+                    if (lname === "href" || lname === "src" || lname === "xlink:href") {
+                        var trimmed = value.replace(/\s+/g, "").toLowerCase();
+                        if (trimmed.indexOf("javascript:") === 0 || trimmed.indexOf("data:") === 0 || trimmed.indexOf("vbscript:") === 0) {
+                            el.removeAttribute(name);
+                        }
+                    }
+                }
+            }
+            return doc.body.innerHTML;
+        };
+
         spe.showCommandHelp = function (command) {
             _getCommandHelp(command);
             if (spe.ajaxDialog)
                 spe.ajaxDialog.remove();
             spe.ajaxDialog = $("<div id=\"ajax-dialog\"/>").append("<div id=\"HelpClose\">X</div>").append($.commandHelp).appendTo("body");
+            spe.ajaxDialog.on("click", "a[data-spe-help-command]", function (e) {
+                e.preventDefault();
+                spe.showCommandHelp($(this).attr("data-spe-help-command"));
+                return false;
+            });
             spe.ajaxDialog.dialog({
                 modal: true,
                 open: function () {
@@ -901,7 +2420,10 @@
 
 
         $("#ShowHideResults").click(function () {
-            if ($("#ResultsRow").is(":visible")) {
+            var resultsVisible = splitOrientation === "vertical"
+                ? $("#VerticalRightPane").is(":visible")
+                : $("#ResultsRow").is(":visible");
+            if (resultsVisible) {
                 resultsVisibilityIntent = false;
                 spe.closeResults();
             } else {
@@ -909,24 +2431,246 @@
                 spe.restoreResults();
             }
         });
-        $("#TreeViewToggle").click(function () {
-            if ($("#TreeViewPanel").is(":visible")) {
-                $("#TreeViewPanel").hide();
-                $("#TreeSplitterPanel").hide();
-                spe.resizeEditor();
-            } else {
-                $("#TreeViewPanel").show();
-                $("#TreeSplitterPanel").show();
-                scForm.postRequest("", "", "", "ise:updatetreeview");
-                spe.resizeEditor();
-            }
+        $("#ToggleSplitOrientation").click(function () {
+            spe.toggleSplitOrientation();
         });
-        
+        $("#ClearOutput").click(function () {
+            spe.clearOutput();
+        });
+        initSplitter(document.getElementById("ResultsSplitter"), "horizontal");
+        // Tree view and Variables panel share the same sidebar cell (#SidebarPanel)
+        // and are mutually exclusive. The sidebar uses the existing #TreeSplitter
+        // for resizing - since both panels live in the same cell, they inherently
+        // share the same user-chosen width. Clicking a panel's toggle:
+        //  - if that panel is already visible   -> hide the sidebar
+        //  - if the *other* panel is visible    -> switch to this one (sidebar stays)
+        //  - if nothing is visible              -> open sidebar showing this panel
+
+        function isSidebarVisible() {
+            return $("#SidebarPanel").is(":visible");
+        }
+        function currentSidebarContent() {
+            if ($("#VariablesView").is(":visible")) return "variables";
+            if ($("#TreeView").is(":visible")) return "tree";
+            return null;
+        }
+        function openSidebar(which) {
+            $("#SidebarPanel").show();
+            $("#TreeSplitterPanel").show();
+            if (which === "variables") {
+                $("#TreeView").hide();
+                $("#VariablesView").show();
+                spe.refreshVariables();
+            } else {
+                $("#VariablesView").hide();
+                $("#TreeView").show();
+                scForm.postRequest("", "", "", "ise:updatetreeview");
+            }
+        }
+        function closeSidebar() {
+            $("#SidebarPanel").hide();
+            $("#TreeSplitterPanel").hide();
+        }
+
+        $("#TreeViewToggle").click(function () {
+            if (isSidebarVisible() && currentSidebarContent() === "tree") {
+                closeSidebar();
+            } else {
+                openSidebar("tree");
+            }
+            spe.resizeEditor();
+        });
+
+        // Variables panel - shows PowerShell session variables from the current
+        // ISE session, refreshing automatically after script execution and when
+        // terminal commands complete. Values use the same GetVariableValue style
+        // tooltip source as the inline variable hover tooltip, but show the
+        // entire user-defined variable set at once.
+        function escapeVarHtml(s) {
+            return $("<div/>").text(s == null ? "" : String(s)).html();
+        }
+
+        // Persist the collapsed state of each Variables section and individual
+        // expanded variables across refreshes so the user's choices aren't reset
+        // every time variables are reloaded.
+        // Section defaults: user expanded, builtin collapsed.
+        var iseVariablesSectionCollapsed = {
+            "user": false,
+            "builtin": true
+        };
+        // Set of variable names (without $) that the user has expanded.
+        var iseExpandedVariables = {};
+        // Cached per-variable detail HTML so re-expanding is instant.
+        var iseVariableDetailCache = {};
+
+        function fetchVariableDetails(name, container) {
+            if (iseVariableDetailCache[name] !== undefined) {
+                container.html(iseVariableDetailCache[name]);
+                return;
+            }
+            container.html("<div class='spe-variable-loading'>Loading…</div>");
+            getPowerShellResponseAsync(
+                { "guid": guid, "variableName": name },
+                "GetVariableValue",
+                function (json) {
+                    // GetVariableValue returns the HTML fragment directly as json.d (a string,
+                    // not a JSON object), matching what the inline hover tooltip consumes.
+                    var html = (json && typeof json.d === "string") ? json.d : "";
+                    iseVariableDetailCache[name] = html;
+                    container.html(html);
+                },
+                function (xhr, status, err) {
+                    container.html("<div class='spe-variable-loading'>Error: " + (err || status) + "</div>");
+                }
+            );
+        }
+
+        function renderVariablesSection(category, title, entries) {
+            var section = $("<div/>").addClass("spe-variables-section").attr("data-category", category);
+            var header = $("<div/>").addClass("spe-variables-section-header");
+            var caret = $("<span/>").addClass("spe-variables-section-caret").text(iseVariablesSectionCollapsed[category] ? "▶" : "▼");
+            header.append(caret);
+            header.append($("<span/>").addClass("spe-variables-section-title").text(title));
+            header.append($("<span/>").addClass("spe-variables-section-count").text("(" + entries.length + ")"));
+            section.append(header);
+
+            var body = $("<div/>").addClass("spe-variables-section-body");
+            if (iseVariablesSectionCollapsed[category]) {
+                body.hide();
+            }
+            if (entries.length === 0) {
+                body.append($("<div/>").addClass("spe-variables-empty").text("None"));
+            } else {
+                entries.forEach(function (v) {
+                    var entry = $("<div/>").addClass("spe-variable");
+                    if (v.expandable) {
+                        entry.addClass("spe-variable-expandable");
+                    }
+
+                    var nameRow = $("<div/>").addClass("spe-variable-name-row");
+                    // Chevron placeholder keeps horizontal alignment consistent between
+                    // expandable and non-expandable entries.
+                    var varCaret = $("<span/>").addClass("spe-variable-caret");
+                    if (v.expandable) {
+                        varCaret.text(iseExpandedVariables[v.name] ? "▼" : "▶");
+                    } else {
+                        varCaret.html("&nbsp;");
+                    }
+                    nameRow.append(varCaret);
+                    nameRow.append($("<span/>").addClass("spe-variable-name").text("$" + v.name));
+                    nameRow.append($("<span/>").addClass("spe-variable-type").text(v.type));
+                    entry.append(nameRow);
+                    entry.append($("<span/>").addClass("spe-variable-value").text(v.value));
+
+                    if (v.expandable) {
+                        var detail = $("<div/>").addClass("spe-variable-detail");
+                        entry.append(detail);
+                        if (iseExpandedVariables[v.name]) {
+                            detail.show();
+                            fetchVariableDetails(v.name, detail);
+                        } else {
+                            detail.hide();
+                        }
+                        // Prevent clicks inside the rendered detail content from
+                        // bubbling up and collapsing the entry.
+                        detail.on("click", function (e) { e.stopPropagation(); });
+                        // Clicking anywhere on the entry (name row or value line)
+                        // toggles expansion.
+                        entry.on("click", function () {
+                            var willExpand = !iseExpandedVariables[v.name];
+                            if (willExpand) {
+                                iseExpandedVariables[v.name] = true;
+                                varCaret.text("▼");
+                                detail.show();
+                                fetchVariableDetails(v.name, detail);
+                            } else {
+                                delete iseExpandedVariables[v.name];
+                                varCaret.text("▶");
+                                detail.hide();
+                            }
+                        });
+                    }
+
+                    body.append(entry);
+                });
+            }
+            section.append(body);
+
+            // Toggle collapse on header click.
+            header.on("click", function () {
+                iseVariablesSectionCollapsed[category] = !iseVariablesSectionCollapsed[category];
+                body.toggle(!iseVariablesSectionCollapsed[category]);
+                caret.text(iseVariablesSectionCollapsed[category] ? "▶" : "▼");
+            });
+
+            return section;
+        }
+
+        spe.refreshVariables = function () {
+            if (!$("#VariablesView").is(":visible")) {
+                return;
+            }
+            var list = $("#VariablesList");
+            if (list.length === 0) {
+                console.error("[spe] refreshVariables: #VariablesList element not found in DOM");
+                return;
+            }
+            // Invalidate cached detail HTML so expanded variables re-fetch on refresh.
+            iseVariableDetailCache = {};
+            getPowerShellResponseAsync(
+                { "guid": guid },
+                "GetSessionVariables",
+                function (json) {
+                    var payload;
+                    try { payload = JSON.parse(json.d); } catch (e) {
+                        list.empty().append($("<div/>").addClass("spe-variables-empty").text("Error parsing response: " + e.message));
+                        return;
+                    }
+                    list.empty();
+                    if (!payload || (payload.status !== "ok" && payload.status !== "no-session")) {
+                        list.append($("<div/>").addClass("spe-variables-empty").text("Unexpected response: " + (payload ? payload.status : "null")));
+                        return;
+                    }
+                    if (payload.status === "no-session") {
+                        list.append($("<div/>").addClass("spe-variables-empty").text("No session in memory. Run a script first."));
+                        return;
+                    }
+                    var vars = payload.variables || [];
+                    var userVars = vars.filter(function (v) { return v.category !== "builtin"; });
+                    var builtInVars = vars.filter(function (v) { return v.category === "builtin"; });
+
+                    // User section first (expanded by default), built-in second (collapsed by default).
+                    list.append(renderVariablesSection("user", "User variables", userVars));
+                    list.append(renderVariablesSection("builtin", "Built-in variables", builtInVars));
+                },
+                function (xhr, status, err) {
+                    list.empty().append($("<div/>").addClass("spe-variables-empty").text("Error: " + status + " " + err));
+                }
+            );
+        };
+
+        $("#VariablesToggle").click(function () {
+            if (isSidebarVisible() && currentSidebarContent() === "variables") {
+                closeSidebar();
+            } else {
+                openSidebar("variables");
+            }
+            spe.resizeEditor();
+        });
+
+        $(document).on("click", "#VariablesRefresh", function (e) {
+            // Clicking the refresh icon inside the Variables header should
+            // only refresh - not bubble up to any parent click handlers.
+            e.stopPropagation();
+            spe.refreshVariables();
+        });
+
+
         function _getCommandHelp(str) {
             getPowerShellResponse({"guid": guid, "command": str}, "GetHelpForCommand",
                 function (json) {
                     var data = JSON.parse(json.d);
-                    $.commandHelp = data[0];
+                    $.commandHelp = spe._sanitizeHelpHtml(data[0]);
                 });
         }
 
@@ -936,6 +2680,33 @@
                     var data = JSON.parse(json.d);
                     $.tabCompletions = data;
                 });
+        }
+
+        // Sync-fetches the PS session variables via the dedicated
+        // GetSessionVariables endpoint (the same one that feeds the
+        // Variables sidebar). Returns variable names with a `$` prefix.
+        // Used by the autocomplete variables completer so authoritative
+        // session state is surfaced, not just whatever TabExpansion2
+        // happens to include.
+        function _getSessionVariableNames() {
+            var names = [];
+            getPowerShellResponse({"guid": guid}, "GetSessionVariables",
+                function (json) {
+                    try {
+                        var payload = JSON.parse(json.d);
+                        if (payload && payload.status === "ok" && payload.variables) {
+                            for (var i = 0; i < payload.variables.length; i++) {
+                                var v = payload.variables[i];
+                                if (v && v.name) {
+                                    names.push("$" + v.name);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // ignore - return whatever we collected
+                    }
+                });
+            return names;
         }
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
@@ -957,14 +2728,37 @@
                 .fail(errorFunction);
         }
 
+        applySplitOrientation(splitOrientation);
+
         $(window).on('resize', function () {
             spe.resizeEditor();
         }).trigger('resize');
-        
+
+        // Middle-click on a tab header closes it (#1396)
+        $(document).on("mouseup", function (e) {
+            if (e.which !== 2) return;
+            var tab = $(e.target).closest("[id^='Tabs_tab_']");
+            if (tab.length) {
+                e.preventDefault();
+                e.stopPropagation();
+                var tabIndex = parseInt(tab.attr("id").replace("Tabs_tab_", ""), 10) + 1;
+                spe.closeTab(e, tabIndex);
+            }
+        });
+
         setTimeout(function () {
             scForm.postRequest("", "", "", "ise:updatesettings");
-            scForm.postRequest("", "", "", "ise:loadinitialscript");
+            scForm.postRequest("", "", "", "ise:restoreactivetabs");
             spe.resizeEditor();
+            // Prime the ISE PowerShell session on the server with the correct
+            // application type (ISE) and context item location. The server
+            // pushes the current prompt back via spe.setTerminalPrompt.
+            scForm.postRequest("", "", "", "ise:initterminal");
+            // If the default session is already executing a script started
+            // elsewhere (another ISE tab, a Runner dialog), mirror the
+            // running state here: disabled ribbon buttons, enabled Abort,
+            // busy indicator on the terminal.
+            scForm.postRequest("", "", "", "ise:attachrunningsession");
         }, 100);
 
         const resizeObserver = new ResizeObserver((entries) => {

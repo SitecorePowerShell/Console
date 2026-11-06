@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
 using Sitecore.Security.Serialization;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -76,6 +77,9 @@ namespace Spe.Commands.Serialization
 
         private void SerializeUser(User user)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
                 if (ShouldProcess(user.Name, "Serializing user"))
@@ -83,38 +87,45 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing user '{0}'", user.Name);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpUser(user.Name);
+                    serializationManager.DumpUser(user.Name);
                     var userReference = new UserReference(user.Name);
-                    WriteObject(PathUtils.GetDirectoryPath(userReference.ToString()) + PathUtils.UserExtension);
+                    WriteObject(pathResolver.GetDirectoryPath(userReference.ToString()) + pathResolver.UserExtension);
                 }
             }
             else
             {
                 var userReference = new UserReference(user.Name);
-                if (string.IsNullOrEmpty(Path))
+                var path = Path;
+                if (string.IsNullOrEmpty(path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        Path = PathUtils.GetFilePath(userReference);
+                        path = pathResolver.GetFilePath(userReference.ToString());
                     }
                     else
                     {
-                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        var target = StringUtil.EnsurePostfix('\\', System.IO.Path.GetFullPath(Root));
+                        path = System.IO.Path.GetFullPath(target + userReference.ToString().Replace('/', System.IO.Path.DirectorySeparatorChar));
+                        if (!path.StartsWith(target, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            WriteError(typeof(PSSecurityException), $"User '{user.Name}' resolves outside of '{target}'.",
+                                ErrorIds.FileNameInvalid, ErrorCategory.SecurityError, user);
+                            return;
+                        }
                     }
-                    if (!System.IO.Path.HasExtension(Path))
+                    if (!System.IO.Path.HasExtension(path))
                     {
-                        Path += PathUtils.UserExtension;
+                        path += pathResolver.UserExtension;
                     }
                 }
 
-                if (ShouldProcess(user.Name, string.Format("Serializing role to '{0}'", Path)))
+                if (ShouldProcess(user.Name, string.Format("Serializing user to '{0}'", path)))
                 {
-                    var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
+                    var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpUser(Path, userReference.User);
-                    WriteObject(Path);
+                    serializationManager.DumpUser(path, user);
+                    WriteObject(path);
                 }
             }
         }

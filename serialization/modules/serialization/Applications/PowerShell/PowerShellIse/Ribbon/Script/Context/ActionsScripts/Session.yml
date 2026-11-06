@@ -1,0 +1,119 @@
+﻿---
+ID: "0c784f54-2b46-4ee2-b0ba-72384125e123"
+Parent: "fafe4d11-ce8d-4875-acf0-ccdf54df46f9"
+Template: "6b84bd97-60e8-4e18-b1fc-9f92ae0659c5"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts/Session
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/reticle.png
+- ID: "1ba953ee-84ad-4753-870e-abe82af900c4"
+  Hint: Command
+  Value: "ise:pickcontext"
+- ID: "212b99df-c246-46ce-9e51-86db77e3bc97"
+  Hint: Gallery Height
+  Value: 400
+- ID: "29d3164d-de97-4ace-bcb4-83cb6954bee3"
+  Hint: Gallery
+  Value: Gallery.SessionIDGallery
+- ID: "47ab3889-0da4-418c-b4a0-ca58f0ae4c1f"
+  Hint: Gallery Width
+  Value: 500
+- ID: "601ebec8-1d78-4d06-8228-45c28d9fabd8"
+  Hint: Icon
+  Value: Office/32x32/reticle.png
+- ID: "71219cb2-bd4f-4bcb-8891-a821870e6197"
+  Hint: KeyCode
+  Value: sca73
+- ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
+  Hint: __Workflow
+  Value: 
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\Sitecore Client Configuring|pe|+item:read|pd|+item:read|a?|Everyone|p*|!*|
+Languages:
+- Language: da
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T151905Z
+    - ID: "37103048-b73c-4621-88eb-77912caca135"
+      Hint: Tooltip
+      Value: "Vælg fra listen af i-hukommelsen sessioner for at køre scriptet."
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "29062dce-f858-4ad4-b3d1-123e465d8541"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
+      Hint: Header
+      Value: Session
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214606Z
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20060412T093554Z
+    - ID: "37103048-b73c-4621-88eb-77912caca135"
+      Hint: Tooltip
+      Value: "Select from a list of in-memory sessions to run the script."
+    - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
+      Hint: __Workflow state
+      Value: 
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8d92ac5c-776b-46be-afbc-9d13b0f404ad"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
+      Hint: Header
+      Value: Session
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214606Z
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160825T104818
+    - ID: "37103048-b73c-4621-88eb-77912caca135"
+      Hint: Tooltip
+      Value: スクリプト実行中のインメモリセッションの選択
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8ef75ce5-fd73-45a7-88a2-6740bdc50cc6"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "cf5bb092-1a85-4c78-b486-a79fd6d84771"
+      Hint: Header
+      Value: ワンタイムセッション
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214606Z

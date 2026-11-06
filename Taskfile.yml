@@ -1,0 +1,177 @@
+version: "3"
+
+tasks:
+  init:
+    desc: Set up local dev environment (license, certs, .env)
+    cmds:
+      - powershell -File scripts/init.ps1 {{.CLI_ARGS}}
+
+  up:
+    desc: Start Docker environment and open Sitecore login
+    cmds:
+      - powershell -File scripts/up.ps1
+
+  down:
+    desc: Stop Docker environment
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Tail CM container logs
+    cmds:
+      - docker compose logs -f cm
+
+  build:
+    desc: Build the solution
+    preconditions:
+      - sh: test -f Spe.sln
+        msg: "Spe.sln not found. Are you in the repository root?"
+    cmds:
+      - powershell -NoProfile -Command "\$m = & \"\${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe\" -latest -products * -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1; if (-not \$m) { Write-Error 'MSBuild not found via vswhere'; exit 1 }; & \$m Spe.sln -t:Build -p:Configuration=Debug; exit \$LASTEXITCODE"
+
+  deploy:
+    desc: Deploy build output to Docker container
+    deps: [build, deploy:configs]
+    #preconditions:
+    #  - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+    #    msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    cmds:
+      - powershell -File src/Post_Build.ps1
+
+  pull:
+    desc: Pull serialized items from Sitecore to disk
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category ser -Command pull
+
+  push:
+    desc: Push serialized items from disk to Sitecore
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category ser -Command push
+
+  watch:
+    desc: Watch for item changes in Sitecore and serialize automatically
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category ser -Command watch
+
+  index:list:
+    desc: List all search indexes and their status
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command list
+
+  index:rebuild:
+    desc: Rebuild all search indexes
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command rebuild
+
+  index:schema-populate:
+    desc: Populate managed schema for search indexes
+    cmds:
+      - powershell -File scripts/ser.ps1 -Category index -Command schema-populate
+
+  maintenance:
+    desc: Run full index maintenance (list, schema-populate, rebuild)
+    cmds:
+      - task: index:list
+      - task: index:schema-populate
+      - task: index:rebuild
+
+  generate:
+    desc: Generate .dat files from serialized content
+    preconditions:
+      - sh: test -d serialization/modules
+        msg: "Serialization modules not found in serialization/modules/."
+    cmds:
+      - powershell -File scripts/generate-dat.ps1
+
+  release:
+    desc: Build release packages
+    preconditions:
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    cmds:
+      - powershell -File scripts/build-release.ps1
+
+  verify:
+    desc: Validate packages against serialized items
+    preconditions:
+      - sh: test -d _output
+        msg: "No packages found in _output/. Run 'task release' first."
+    cmds:
+      - powershell -File scripts/verify-packages.ps1
+
+  deploy:configs:
+    desc: Deploy baseline test configs (service enablement) to CM container
+    preconditions:
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    vars:
+      CM_CONTAINER: "spe-cm-1"
+    cmds:
+      - docker exec {{.CM_CONTAINER}} powershell -Command "New-Item -Path 'C:/inetpub/wwwroot/App_Config/Include/z.Spe' -ItemType Directory -Force | Out-Null"
+      - for f in tests/configs/deploy/*.config; do docker cp "$f" "{{.CM_CONTAINER}}:C:/inetpub/wwwroot/App_Config/Include/z.Spe/"; done
+
+  test:
+    desc: Run unit and integration tests (full suite including token-lifetime enforcement)
+    deps: [deploy:configs]
+    preconditions:
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    cmds:
+      - cmd: powershell -Command "if (Test-Path 'docker\data\cm') { Get-ChildItem 'docker\data\cm' -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }; exit 0"
+        ignore_error: true
+      - powershell -File tests/unit/Run-Tests.ps1
+      - powershell -File tests/integration/Run-RemotingTests.ps1
+
+  test:unit:
+    desc: Unit tests only; no container needed (~5s feedback loop)
+    cmds:
+      - powershell -File tests/unit/Run-Tests.ps1
+
+  test:quick:
+    desc: Unit + integration minus the token-lifetime phase (saves ~60-90s of app-domain recycles). Skips Remoting.Security.Enforced.Tests.ps1; use 'task test' for full coverage.
+    deps: [deploy:configs]
+    preconditions:
+      - sh: docker compose ps cm --format '{{.Health}}' | findstr /C:"healthy"
+        msg: "CM container is not healthy. Run 'task up' and wait for startup."
+    cmds:
+      - cmd: powershell -Command "if (Test-Path 'docker\data\cm') { Get-ChildItem 'docker\data\cm' -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }; exit 0"
+        ignore_error: true
+      - powershell -File tests/unit/Run-Tests.ps1
+      - powershell -File tests/integration/Run-RemotingTests.ps1 -SkipSecurityEnforcement
+
+  local:build:
+    desc: Build the solution using locally-detected MSBuild
+    preconditions:
+      - sh: test -f Spe.sln
+        msg: "Spe.sln not found. Are you in the repository root?"
+    cmds:
+      - powershell -NoProfile -File scripts/local-build.ps1
+
+  local:deploy:
+    desc: Build and deploy to local IIS sites (uses deploy.user.json)
+    deps: [local:build]
+    cmds:
+      - powershell -NoProfile -File src/Post_Build.ps1
+
+  ui:test:
+    desc: Run Playwright UI tests against local Sitecore
+    dir: tests/ui
+    cmds:
+      - npx playwright test {{.CLI_ARGS}}
+
+  ui:test:headed:
+    desc: Run Playwright UI tests with visible browser
+    dir: tests/ui
+    cmds:
+      - npx playwright test --headed {{.CLI_ARGS}}
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - powershell -File scripts/clean.ps1
+
+  clean:logs:
+    desc: Clean CM container logs
+    cmds:
+      - cmd: powershell -Command "if (Test-Path 'docker\data\cm') { Get-ChildItem 'docker\data\cm' -Exclude .gitkeep | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }; exit 0"
+        ignore_error: true

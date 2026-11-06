@@ -17,7 +17,7 @@ namespace Spe.Core.Utility
         static AnonymousTypeUtils()
         {
             var assemblyName = new AssemblyName { Name = "Spe" };
-            var assemblyBuilder = System.Threading.Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             ModuleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
         }
 
@@ -116,7 +116,7 @@ namespace Spe.Core.Utility
             keyJsonBuilder.Append('}');
 
             string keyHashHexString;
-            using (var hasher = new SHA1Managed())
+            using (var hasher = SHA1.Create())
             {
                 var hashBytes = hasher.ComputeHash(Encoding.UTF8.GetBytes(keyJsonBuilder.ToString()));
                 keyHashHexString = BitConverter.ToString(hashBytes).Replace("-", string.Empty);

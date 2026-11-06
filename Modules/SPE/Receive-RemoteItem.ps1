@@ -1,5 +1,57 @@
 ﻿#Requires -Version 3
 
+Add-Type -AssemblyName System.Net.Http
+
+# Derives the output file path from the destination + Content-Disposition filename.
+# Pulled out of Receive-RemoteItem to flatten the per-download branch.
+function Resolve-ReceivedFilePath {
+    param(
+        [System.Net.Http.HttpResponseMessage]$ResponseMessage,
+        [string]$Destination,
+        [string]$Path,
+        [bool]$Container,
+        [bool]$IsMediaItem
+    )
+
+    $contentDisposition = $ResponseMessage.Content.Headers.GetValues("Content-Disposition")[0]
+    $filename = ""
+    if ($contentDisposition.IndexOf("filename=") -gt -1) {
+        $filename = $contentDisposition.Substring($contentDisposition.IndexOf("filename=") + 10).Replace('"', "")
+        Write-Verbose -Message "Response filename: $filename"
+    }
+
+    $directory = [System.IO.Path]::GetDirectoryName($Destination)
+    if (-not $directory) { $directory = $Destination }
+    if (-not (Test-Path $directory -PathType Container)) {
+        Write-Verbose "Creating a new directory $directory"
+        New-Item -ItemType Directory -Path $directory | Out-Null
+    }
+
+    $output = $Destination
+    if ($Container -and $IsMediaItem) {
+        # Preserve Media Item directory structure.
+        $output = Join-Path -Path $output -ChildPath $Path.Replace('/','\').Replace("\sitecore\media library\", "")
+    }
+
+    # Destination already has an extension -> use it directly.
+    if ([System.IO.Path]::GetExtension($output)) {
+        Write-Verbose "Overriding the filename $filename with $([System.IO.Path]::GetFileName($output))"
+        return $output
+    }
+
+    if (-not [System.IO.Path]::GetExtension($filename)) {
+        Write-Error -Message "The file extension could not be determined."
+    }
+
+    # Media items addressed by name suffix the filename-without-extension onto
+    # $output; strip that before joining the real filename.
+    $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
+    if ($output.EndsWith($filenameWithoutExtension)) {
+        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)
+    }
+    return (Join-Path -Path $output -ChildPath $filename)
+}
+
 function Receive-RemoteItem {
     <#
         .SYNOPSIS
@@ -7,34 +59,34 @@ function Receive-RemoteItem {
 
        .PARAMETER Path
             The source path of the item to download on the server side.
-            
+
        .PARAMETER Destination
             The destination path of the item on the client side.
-            
+
        .PARAMETER RootPath
-            The predefined directory in which the item will be downloaded from. This is simply a keyword that maps to a predefined location on the server side. 
-            
-            When using this you can simply provide the file or media item name in the Path parameter.    
-            
+            The predefined directory in which the item will be downloaded from. This is simply a keyword that maps to a predefined location on the server side.
+
+            When using this you can simply provide the file or media item name in the Path parameter.
+
        .EXAMPLE
             The following downloads an item from the media library in the master db and overwrite any existing version.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "/Default Website/cover" -Destination "C:\Images\" -Database master -Force
-    
+
        .EXAMPLE
             The following downloads an item from the media library using the Id in the master db and uses the specified name.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "{04DAD0FD-DB66-4070-881F-17264CA257E1}" -Destination "C:\Images\cover1.jpg" -Database master -Force
-    
+
         .EXAMPLE
             The following downloads all the items from the media library in the specified path.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Invoke-RemoteScript -Session $session -ScriptBlock { 
-                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | 
-                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath 
+            Invoke-RemoteScript -Session $session -ScriptBlock {
+                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse |
+                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath
             } | Receive-RemoteItem -Destination "C:\Images\" -Database master
             Stop-ScriptSession -Session $session
 
@@ -44,17 +96,25 @@ function Receive-RemoteItem {
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
             Stop-ScriptSession -Session $session
-              
+
         .EXAMPLE
             The following compresses the log files into an archive and downloads from the absolute path.
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Invoke-RemoteScript -Session $session -ScriptBlock {
                 Import-Function -Name Compress-Archive
-                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
+                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } |
                     Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
             } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
-    
+
+        .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
+
         .LINK
             Send-RemoteItem
 
@@ -72,7 +132,7 @@ function Receive-RemoteItem {
         [Parameter(Mandatory=$true, ParameterSetName='Session and Database')]
         [ValidateNotNull()]
         [pscustomobject]$Session,
-        
+
         [Parameter(Mandatory=$true, ParameterSetName='Uri and File')]
         [Parameter(Mandatory=$true, ParameterSetName='Uri and Database')]
         [Uri[]]$ConnectionUri,
@@ -122,11 +182,11 @@ function Receive-RemoteItem {
     process {
 
         $isMediaItem = ![string]::IsNullOrEmpty($Database) -or ($RootPath -eq "media" -and ![System.IO.Path]::HasExtension($Path))
-        
+
         if($isMediaItem -and !$Database){
             $Database = "master"
         }
-        
+
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Path))) {
             Write-Error -Message "RootPath is required when Path is not fully qualified." -ErrorAction Stop
         }
@@ -134,12 +194,19 @@ function Receive-RemoteItem {
         $Path = $Path.TrimEnd('\','/')
 
         if($Session) {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $Algorithm            = $sd.Algorithm
+        } else {
+            $AccessToken = ""
+            $Algorithm = "HS256"
         }
 
         $itemType = "undetermined"
@@ -150,131 +217,86 @@ function Receive-RemoteItem {
             $serviceUrl += "/media/" + $Database + "/" + $Path + "/?"
             $itemType = "media"
         } else {
-            $serviceUrl += "/file/" + $RootPath + "/?path=" + $Path + "&"
+            # When the caller passes a rooted Path without -RootPath, route the
+            # request through origin=custom so the server-side allowlist
+            # (Spe.Remoting.AllowedFileRoots) decides whether to honor it.
+            $rootSegment = if ([string]::IsNullOrEmpty($RootPath)) { "custom" } else { $RootPath }
+            $serviceUrl += "/file/" + $rootSegment + "/?path=" + $Path + "&"
             $itemType = "file"
         }
 
         foreach($uri in $ConnectionUri) {
-            
+
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
-            Write-Verbose -Message "Preparing to download remote item from the url $($url)"
-            Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Algorithm $Algorithm
 
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
-                      
-            if($Credential) {
-                $handler.Credentials = $Credential
-            }
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "GET $url auth=$authDesc"
 
-            if($UseDefaultCredentials) {
-                $handler.UseDefaultCredentials = $UseDefaultCredentials
-            }
-
-            [System.Net.HttpWebResponse]$script:errorResponse = $null
+            $errorResponse = $null
+            $ex = $null
             [System.Net.Http.HttpResponseMessage]$responseMessage = $null
-           
+            $response = $null
+            $wallSw = $null
+
             try {
-                $script:errorResponse = $null
-                $script:ex = $null
-
-                $responseMessage = $client.GetAsync($url).Result
-                [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result                   
+                $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
+                $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                    -Method ([System.Net.Http.HttpMethod]::Get) -Url $url).Result
+                $wallSw.Stop()
+                [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result
             } catch [System.Net.WebException] {
-                [System.Net.WebException]$script:ex = $_.Exception
-                [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response
-                Write-Verbose -Message "Response exception message: $($ex.Message)"
-                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                    Write-Verbose -Message "Check that the service files exist and are properly configured."
-                }
+                if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
+                [System.Net.WebException]$ex = $_.Exception
+                [System.Net.HttpWebResponse]$errorResponse = $ex.Response
+                Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex
             }
 
-            if($errorResponse){
+            if ($responseMessage) {
+                Write-Verbose -Message (Format-ResponseLine -Response $responseMessage -WallMs $wallSw.Elapsed.TotalMilliseconds)
+            }
+
+            if ($errorResponse) {
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
-                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
 
-            if($response -and $response.Length -gt 0 -or $responseMessage.Content.Headers.Count -gt 0) {
-                if(!$responseMessage.IsSuccessStatusCode) {
-                    Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
-                    return    
-                }
-                $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
-                $contentDisposition = $responseMessage.Content.Headers.GetValues("Content-Disposition")[0]
-                $filename = ""
-                Write-Verbose -Message "Response content length: $($response.Length) bytes"
-                Write-Verbose -Message "Response content type: $($contentType)"
-                
-                if($contentDisposition.IndexOf("filename=") -gt -1) {
-                    $filename = $contentDisposition.Substring($contentDisposition.IndexOf("filename=") + 10).Replace('"', "")
-                    Write-Verbose -Message "Response filename: $($filename)"
-                }
-     
-                $directory = [System.IO.Path]::GetDirectoryName($Destination)
-                if(!$directory) {
-                    $directory = $Destination
-                }
-                
-                if(!(Test-Path $directory -PathType Container)) {
-                    Write-Verbose "Creating a new directory $($directory)"
-                    New-Item -ItemType Directory -Path $directory | Out-Null
-                }
-
-                $output = $Destination
-                if($Container) {
-                    # Preserve Media Item directory structure
-                    if($isMediaItem) {
-                        $output = Join-Path -Path $output -ChildPath $Path.Replace('/','\').Replace("\sitecore\media library\", "")
-                    }
-                }
-
-                $extension = [System.IO.Path]::GetExtension($output)
-                if(!$extension) {
-                    $extension = [System.IO.Path]::GetExtension($filename)
-
-                    if(!$extension) {
-                        Write-Error -Message "The file extension could not be determined."
-                    }
-                    
-                    # If a media item is requested it will use the filename as the last part.
-                    $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
-                    if($output.EndsWith($filenameWithoutExtension)) {
-                        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)        
-                    }
-                    $output = Join-Path -Path $output -ChildPath $filename
-                    
-                } else {
-                    Write-Verbose "Overriding the filename $($filename) with $([System.IO.Path]::GetFileName($output))"
-                }
-                
-                if(-not(Test-Path $output -PathType Leaf) -or $Force.IsPresent) {
-                    Write-Verbose "Creating a new file $($output)"
-                    New-Item -Path $output -ItemType File -Force | Out-Null
-                    if($response) {
-                        [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
-                    }
-                } else {
-                    Write-Verbose "Skipping the save of $($output) because it already exists."
-                }
-
-                Write-Verbose "Download complete."
-            } else {
+            # Guard: empty response body.
+            $hasBody = ($response -and $response.Length -gt 0) -or $responseMessage.Content.Headers.Count -gt 0
+            if (-not $hasBody) {
                 Write-Verbose -Message "Download failed. No content returned from the web service."
+                continue
             }
+
+            if (-not $responseMessage.IsSuccessStatusCode) {
+                $ridSuffix = Format-RidSuffix $responseMessage.Headers
+                Write-Error ("Download failed. $($responseMessage.ReasonPhrase)" + $ridSuffix)
+                return
+            }
+
+            $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
+            Write-Verbose -Message "Body: $($response.Length) bytes received (Content-Type=$contentType, item=$itemType)"
+
+            $output = Resolve-ReceivedFilePath -ResponseMessage $responseMessage `
+                -Destination $Destination -Path $Path -Container $Container.IsPresent -IsMediaItem $isMediaItem
+
+            if ((Test-Path $output -PathType Leaf) -and -not $Force.IsPresent) {
+                Write-Verbose "Skipping the save of $($output) because it already exists."
+                Write-Verbose "Download complete."
+                continue
+            }
+
+            Write-Verbose "Creating a new file $output"
+            New-Item -Path $output -ItemType File -Force | Out-Null
+            if ($response) {
+                [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
+            }
+            Write-Verbose "Download complete."
         }
     }
 }

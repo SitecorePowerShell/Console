@@ -5,6 +5,7 @@ using Sitecore.Data.Serialization.Presets;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.VersionDecoupling;
 
+
 namespace Spe.Core.Serialization
 {
     public class PresetWorker
@@ -45,7 +46,8 @@ namespace Spe.Core.Serialization
 
         private void SerializeItem(Item item)
         {
-            Manager.DumpItem(item);
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            serializationManager.DumpItem(item);
             processed++;
         }
 
@@ -56,18 +58,21 @@ namespace Spe.Core.Serialization
 
         public int Deserialize(LoadOptions options)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+
             processed = 0;
             var reference = new ItemReference(entry.Database, entry.Path);
             if (entry is SingleEntry)
             {
-                Manager.LoadItem(PathUtils.GetFilePath(reference.ToString()), options);
+                serializationManager.LoadItem(pathResolver.GetFilePath(reference.ToString()), options);
                 processed++;
             }
             else
             {
                 var messagesInit = MessageCount;
-                Manager.LoadItem(PathUtils.GetFilePath(reference.ToString()), options);
-                Manager.LoadTree(PathUtils.GetDirectoryPath(reference.ToString()), options);
+                serializationManager.LoadItem(pathResolver.GetFilePath(reference.ToString()), options);
+                serializationManager.LoadTree(pathResolver.GetDirectoryPath(reference.ToString()), options);
                 processed += (MessageCount - messagesInit);
             }
             return processed;

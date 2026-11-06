@@ -27,6 +27,9 @@ namespace Spe.Commands.Interactive
         [Parameter]
         public ShowListViewFeatures Show { get; set; } = ShowListViewFeatures.All;
 
+        [Parameter]
+        public string ExportFileName { get; set; }
+
         protected override void EndProcessing()
         {
             base.EndProcessing();
@@ -44,7 +47,10 @@ namespace Spe.Commands.Interactive
                     PutMessage(new ShowListViewMessage(CumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
-                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, MissingDataIcon, Show, Sitecore.Context.User?.Name));
+                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, MissingDataIcon, Show, Sitecore.Context.User?.Name)
+                    {
+                        ExportFileName = ExportFileName
+                    });
                 }
             });
         }

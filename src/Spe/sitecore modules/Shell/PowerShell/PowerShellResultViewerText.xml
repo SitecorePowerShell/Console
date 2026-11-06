@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellResultViewerText>
@@ -11,9 +11,56 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
       <Script>$viewer = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.terminal.js"></Script>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.terminal.css" DeviceDependant="true" runat="server" />
       <Stylesheet>
-        pre { margin: 2px;}
+        #resultTerminal {
+          width: 100%;
+          height: 100%;
+          padding: 4px 8px;
+          box-sizing: border-box;
+          /* Match the ISE terminal's minimal scrollbar: transparent track
+             with a subtle translucent thumb. Scrollbars Module Level 1
+             properties are supported in every modern browser. */
+          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+        /* Let the colour CodeBeside pushes onto #resultTerminal (from the
+           session's ForegroundColor / BackgroundColor settings, or the fc/bc
+           query params) win over jquery.terminal's default black/white. */
+        #resultTerminal.terminal,
+        #resultTerminal .terminal-output,
+        #resultTerminal .terminal-output > div,
+        #resultTerminal .terminal-output > div > div {
+          background-color: inherit !important;
+          color: inherit !important;
+        }
+        #resultTerminal .cmd, #resultTerminal .cmd-prompt, #resultTerminal .cmd-cursor {
+          display: none !important;
+        }
       </Stylesheet>
+
+      <Script>
+        window.speResultViewerInit = function() {
+          var run = function() {
+            var raw = (typeof window.resultPayload === 'string') ? window.resultPayload : '';
+            var t = $viewer('#resultTerminal').terminal(function() {}, {
+              greetings: false,
+              prompt: '',
+              exit: false,
+              clear: false,
+              name: 'resultViewer',
+              scrollOnEcho: true
+            });
+            t.pause();
+            if (raw.length > 0) { t.echo(raw); }
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', run);
+          } else {
+            run();
+          }
+        };
+      </Script>
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
@@ -30,28 +77,14 @@
           </Border>
         </Border>
 
-        <Scrollbox Class="scFlexContent">
-          <Scrollbox ID="All" Class="scStretchAbsolute scDialogContentContainer consoleWrapper console pre">
-            <Scrollbox ID="Promo" class="promoArea console pre">
-              <Border Align="Right" Foreground="#999999">
-                <Literal Class="credits" />
-              </Border>
-            </Scrollbox>
-            <pre>
-              <Border ID="Result" class="resultsArea console pre" />
-            </pre>
-          </Scrollbox>
-        </Scrollbox>
+        <Border Class="scFlexContent" ID="All">
+          <Border ID="TerminalHost" Style="width:100%;height:100%;">
+            <div id="resultTerminal"></div>
+          </Border>
+          <Literal ID="Result" Visible="false" />
+          <Literal ID="PayloadScript" />
+        </Border>
       </Border>
-      <Script>
-        (function($) {
-          $(function() {
-            var currentYear = (new Date()).getFullYear();
-            var greetings = "Copyright &#169; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.";
-            $('.credits').html(greetings);
-          });
-        }($viewer));
-      </Script>
     </FormPage>
   </PowerShellResultViewerText>
 </control>

@@ -1,8 +1,10 @@
-﻿using Sitecore.Data.Events;
+﻿using Sitecore;
+using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Security.Accounts;
+using Spe.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Web.Security;
@@ -13,9 +15,10 @@ namespace Spe.Core.Settings.Authorization
     {
         protected bool IsPowerShellMonitoredItem(Item item)
         {
-            return (item != null) &&
-                   item.Paths.Path.StartsWith(DelegatedAccessManager.DelegatedItemPath,
-                       StringComparison.InvariantCultureIgnoreCase);
+            if (item == null) return false;
+
+            return item.ID == ItemIDs.DelegatedAccess ||
+                   (item.Parent != null && item.Parent.ID == ItemIDs.DelegatedAccess);
         }
 
         internal void OnItemSaved(object sender, EventArgs args)
@@ -26,6 +29,12 @@ namespace Spe.Core.Settings.Authorization
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
+                if (item.TemplateID == Templates.DelegatedAccess.Id)
+                {
+                    var enabled = MainUtil.GetBool(item.Fields[Templates.DelegatedAccess.Fields.Enabled].Value, false);
+                    PowerShellLog.Audit($"[DelegatedAccess] action=configChanged item=\"{item.Name} {item.ID}\" enabled={enabled}");
+                }
+
                 DelegatedAccessManager.Invalidate();
             }
         }
@@ -38,6 +47,11 @@ namespace Spe.Core.Settings.Authorization
             var item = Event.ExtractParameter<Item>(args, 0);
             if (IsPowerShellMonitoredItem(item))
             {
+                if (item.TemplateID == Templates.DelegatedAccess.Id)
+                {
+                    PowerShellLog.Audit($"[DelegatedAccess] action=configDeleted item=\"{item.Name} {item.ID}\"");
+                }
+
                 DelegatedAccessManager.Invalidate();
             }
         }

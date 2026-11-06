@@ -1,0 +1,40 @@
+﻿---
+ID: "4681b698-d525-4f7f-b667-ecd2e5411078"
+Parent: "a46515d1-6f87-4b60-acad-a6c432782717"
+Template: "1163da83-b2ef-4381-bf09-b2ff714b1b3f"
+Path: /sitecore/layout/Layouts/Applications/PowerShell/PowerShell Runner
+SharedFields:
+- ID: "5851d498-15f9-4b1a-bb02-0b736c13afe3"
+  Hint: Control
+  Value: PowerShellRunner
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 0
+- ID: "c155d613-6f1e-42b8-96b1-15ce7c845850"
+  Hint: Path
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20060227T100400
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a5c4e27f-61dd-4f40-b8cb-449ebc36082b"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
+      Hint: __Valid from
+      Value: 20060227T100400
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214617Z

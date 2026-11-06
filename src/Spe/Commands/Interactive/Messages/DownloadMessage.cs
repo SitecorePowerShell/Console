@@ -54,7 +54,7 @@ namespace Spe.Commands.Interactive.Messages
                     var str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    PowerShellLog.Audit("Download file: {0}", str.ToString());
+                    PowerShellLog.Audit("[Upload] action=downloadFile uri=\"{0}\"", str.ToString());
                 }
                 else if (!string.IsNullOrEmpty(FileName))
                 {

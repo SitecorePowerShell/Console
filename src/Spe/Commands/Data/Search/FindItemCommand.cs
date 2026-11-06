@@ -97,23 +97,15 @@ namespace Spe.Commands.Data.Search
         [Parameter]
         public virtual SwitchParameter LatestVersion { get; set; }
         
-        private List<SearchCriteria> helperCriteria = new List<SearchCriteria>();
+        private readonly List<SearchCriteria> _helperCriteria = new List<SearchCriteria>();
+        private List<string> _templateIds = new List<string>();
         
         protected override void BeginProcessing()
         {
             var drive = Path.IsNullOrWhiteSpace() ? "master" : PathUtilities.GetDrive(Path, SessionState?.Drive?.Current?.Name ?? "master");
             if (Template != null && Template.Any())
             {
-                var templateIds = Template.Select(templateName => TemplateUtils.GetFromPath(templateName, drive).ID);
-                foreach (var templateId in templateIds)
-                {
-                    helperCriteria.Add(new SearchCriteria()
-                    {
-                        Field = "_templates",
-                        Filter = FilterType.Contains,
-                        Value = templateId
-                    });
-                }
+                _templateIds = Template.Select(templateName => TemplateUtils.GetFromPath(templateName, drive).ID.ToString()).ToList();
             }
             
             if (!Path.IsNullOrWhiteSpace())
@@ -121,7 +113,7 @@ namespace Spe.Commands.Data.Search
                 var rootItem = PathUtilities.GetItem(Path, SessionState?.Drive?.Current?.Name, SessionState?.Drive?.Current?.CurrentLocation);
                 if (rootItem != null)
                 {
-                    helperCriteria.Add(new SearchCriteria()
+                    _helperCriteria.Add(new SearchCriteria()
                     {
                         Field = "_path",
                         Filter = FilterType.Contains,
@@ -132,7 +124,7 @@ namespace Spe.Commands.Data.Search
 
             if (LatestVersion)
             {
-                helperCriteria.Add(new SearchCriteria()
+                _helperCriteria.Add(new SearchCriteria()
                 {
                     Field = "_latestversion",
                     Filter = FilterType.Equals,
@@ -147,7 +139,8 @@ namespace Spe.Commands.Data.Search
             var drive = Path.IsNullOrWhiteSpace() ? "master" : PathUtilities.GetDrive(Path, SessionState?.Drive?.Current?.Name ?? "master");
             var index = !Index.IsNullOrWhiteSpace() ? Index : $"sitecore_{drive}_index";
 
-            using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
+            var searchIndex = ContentSearchManager.GetIndex(index);
+            using (var context = searchIndex.CreateSearchContext())
             {
                 var queryableType = typeof(SearchResultItem);
                 if (QueryType != null && QueryType != queryableType && 
@@ -194,12 +187,30 @@ namespace Spe.Commands.Data.Search
                 // Criteria End
                 
                 // HelperCriteria
-                if(helperCriteria.Any())
+                if (_helperCriteria.Any())
                 {
-                    var criteriaPredicate = ProcessCriteria(objType, helperCriteria.ToArray(), SearchOperation.And);
+                    var criteriaPredicate = ProcessCriteria(objType, _helperCriteria.ToArray(), SearchOperation.And);
                     query = ApplyWhere(query, criteriaPredicate);
                 }
                 // HelperCriteria End
+
+                // Template
+                if (_templateIds.Any())
+                {
+                    // _templates (inherited templates) only exists when the AllTemplates computed field is enabled,
+                    // vanilla indexes have just _template (the item's own template)
+                    var hasAllTemplates = searchIndex.Configuration?.DocumentOptions?.ComputedIndexFields?
+                        .Any(field => field.FieldName.Is("_templates")) == true;
+                    var templateCriteria = _templateIds.Select(templateId => new SearchCriteria()
+                    {
+                        Field = hasAllTemplates ? "_templates" : "_template",
+                        Filter = hasAllTemplates ? FilterType.Contains : FilterType.Equals,
+                        Value = templateId
+                    }).ToArray();
+                    var templatePredicate = ProcessCriteria(objType, templateCriteria, SearchOperation.Or);
+                    query = ApplyWhere(query, templatePredicate);
+                }
+                // Template End
                 
                 // Predicate
                 if (WherePredicate != null)

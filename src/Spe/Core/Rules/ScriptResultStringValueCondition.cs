@@ -41,7 +41,7 @@ public class ScriptResultStringValueCondition<T> : StringOperatorCondition<T> wh
             // the rule is only supposed to be used in CM - therefore defaulting to "master" database
             var db = Factory.GetDatabase("master");
             var scriptItem = db.GetItem(ScriptId);
-            PowerShellLog.Info($"[Rule] Executing script {scriptItem.ID} for Context User {Context.User.Name}.");
+            PowerShellLog.Audit($"[Rule] action=executing user={Context.User.Name} script={scriptItem.ID}");
             return RunRuleScript(item, scriptItem);
         });
     }
@@ -68,7 +68,7 @@ public class ScriptResultStringValueCondition<T> : StringOperatorCondition<T> wh
         catch (Exception ex)
         {
             PowerShellLog.Error(
-                $"Error while invoking script '{scriptItem?.Paths.Path}' for Script String Result Rule.", ex);
+                $"[Rule] action=invokeScript status=failed script=\"{scriptItem?.Paths.Path}\"", ex);
         }
 
         return string.Empty;

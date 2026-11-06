@@ -22,7 +22,7 @@ namespace Spe.Core.Settings
             ["SitecorePackageFolder"] = MapPath(Sitecore.Configuration.Settings.PackagePath),
             ["SitecoreSerializationFolder"] = MapPath(Sitecore.Configuration.Settings.SerializationFolder),
             ["SitecoreTempFolder"] = MapPath(Sitecore.Configuration.Settings.TempFolderPath),
-            ["SitecoreVersion"] = SitecoreVersion.Current
+            ["SitecoreVersion"] = SitecoreVersion.Display
         };
 
         private static string MapPath(string path)

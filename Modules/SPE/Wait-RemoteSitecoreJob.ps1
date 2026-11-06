@@ -3,22 +3,22 @@
         .SYNOPSIS
             Polls for the specified job until it has completed.
 
-        .DESCRIPTON
+        .DESCRIPTION
             The Wait-RemoteSitecoreJob command waits for a Sitecore.Jobs.Job to complete processing.
-    
+
         .PARAMETER Job
             The Sitecore.Jobs.Job object to poll.
 
         .PARAMETER Delay
             The polling interval in seconds.
-        
+
         .EXAMPLE
             The following example remotely rebuilds a search index as a job and waits for it to complete.
             The Rebuild-SearchIndex command returns a Sitecore.Jobs.Job object.
-    
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+
+            $session = New-ScriptSession -Username admin -SharedSecret $secret -ConnectionUri https://remotesitecore
             $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-                    Rebuild-SearchIndex -Name sitecore_master_index -AsJob | 
+                    Rebuild-SearchIndex -Name sitecore_master_index -AsJob |
                         ForEach-Object { $_.Handle.ToString() }
             }
             Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 5 -Verbose
@@ -37,7 +37,7 @@
             Wait-RemoteScriptSession
 
     #>
-    
+
     [CmdletBinding()]
     param(
         [Parameter(ParameterSetName='Session')]
@@ -47,11 +47,22 @@
         [ValidateNotNull()]
         [string[]]$Ids,
 
-        [int]$Delay = 1
+        [int]$Delay = 1,
+
+        [Parameter()]
+        [ValidateRange(0, 10)]
+        [int]$MaxRetries = 2,
+
+        [Parameter()]
+        [ValidateRange(1, 60)]
+        [int]$WaitTimeoutSeconds = 30
     )
-    
-    $doneScript = { $true }
-    $finishScript = {}
+
+    # Legacy scriptblock retained as a fallback for servers without the
+    # /-/script/wait/ long-poll endpoint. Note: this scriptblock uses .NET
+    # static method calls (JobManager::GetJob, Handle::Parse) which are
+    # blocked in ConstrainedLanguage - fallback only works under FullLanguage
+    # policies. New server + new client avoids this entirely via long-poll.
     $doneScript = {
         $remoteJob = [Sitecore.Jobs.JobManager]::GetJob([Sitecore.Handle]::Parse($using:id))
         $isDone = $remoteJob -eq $null -or $remoteJob.IsDone -or $remoteJob.Status.Failed
@@ -77,22 +88,66 @@
         }
     }
 
-    $keepRunning = 0
-    while($keepRunning -ne $Ids.Count) {
-        foreach ($id in $Ids)
-        {
-                $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript
-                if($response -and $response.IsDone) {
-                    $keepRunning++
-                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
-                    Write-Verbose "Finished polling job $($id)."
-                } else {
-                    Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+    $useLongPoll = $true
+    $completed = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    $pollCount = 0
+    $totalSw = [System.Diagnostics.Stopwatch]::StartNew()
+
+    while($completed.Count -ne $Ids.Count) {
+        $pollCount++
+        $pollFailed = $false
+        foreach ($id in $Ids) {
+            if ($completed.Contains($id)) { continue }
+
+            if ($useLongPoll) {
+                $wait = Invoke-RemoteWait -Session $session -JobId $id -JobType 'sitecore' `
+                    -TimeoutSeconds $WaitTimeoutSeconds -MaxRetries $MaxRetries
+                if ($wait.NotSupported) {
+                    Write-Verbose "Server does not support /-/script/wait/. Falling back to legacy scriptblock polling (requires FullLanguage policy)."
+                    $useLongPoll = $false
                 }
+                elseif ($wait.Status -like 'HttpError_*') {
+                    Write-Warning "Stopped polling job $($id). Long-poll returned $($wait.Status)."
+                    $pollFailed = $true
+                    break
+                }
+                elseif ($wait.Status -eq 'TransportError') {
+                    # Retry at client cadence.
+                }
+                else {
+                    Write-Verbose "Polling job $($wait.Name). Status : $($wait.Status). Elapsed : $($wait.ElapsedSeconds)s."
+                    if ($wait.IsDone) {
+                        [void]$completed.Add($id)
+                        Write-Verbose "Finished polling job $($id)."
+                    }
+                    continue
+                }
+            }
+
+            # Fallback path: send the legacy scriptblock. Respects -MaxRetries.
+            $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -MaxRetries $MaxRetries
+            if($response -eq $null) {
+                Write-Warning "Stopped polling job $($id). Poll call returned no result after $MaxRetries retries."
+                $pollFailed = $true
+                break
+            }
+            if($response.IsDone) {
+                [void]$completed.Add($id)
+                Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+                Write-Verbose "Finished polling job $($id)."
+            } else {
+                Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
+            }
         }
-        if ($keepRunning -ne $Ids.Count) # Only sleep if we're not 'done' waiting for jobs
-        {
+        if ($pollFailed) { break }
+        if ($completed.Count -ne $Ids.Count -and -not $useLongPoll) {
+            # Legacy path paces itself client-side; long-poll held server-side already.
             Start-Sleep -Seconds $Delay
         }
+    }
+
+    if ($completed.Count -eq $Ids.Count) {
+        $totalSw.Stop()
+        Write-Verbose ("Finished waiting on {0} job{1} after {2} poll{3} ({4:N1}s total)." -f $Ids.Count, $(if ($Ids.Count -eq 1) { "" } else { "s" }), $pollCount, $(if ($pollCount -eq 1) { "" } else { "s" }), $totalSw.Elapsed.TotalSeconds)
     }
 }

@@ -1,0 +1,2148 @@
+﻿---
+ID: "9d311b90-0de4-42fd-b150-cf1591597394"
+Parent: "a0371a90-d4b0-4e07-9245-c9f07f86d0d6"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Extensions/Dialog Builder/Functions/DialogBuilder
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+    .SYNOPSIS
+        Builder functions for constructing Read-Variable dialogs with less boilerplate.
+    
+    .DESCRIPTION
+        Provides a fluent API for constructing SPE dialogs that automatically handles:
+        - Variable initialization (especially for Item types)
+        - Type inference for editor selection
+        - Parameter hashtable construction
+        - Validation and mandatory fields
+        - Structured result metadata
+    
+    .EXAMPLE
+        Import-Function -Name DialogBuilder
+    
+        $dialog = New-DialogBuilder -Title "Content Editor" -Description "Select options" -ShowHints
+        $dialog | Add-TextField -Name "userName" -Title "User Name" -Mandatory
+        $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
+        $dialog | Add-Checkbox -Name "publish" -Title "Publish after save"
+    
+        $result = $dialog | Invoke-Dialog
+        if ($result.Result -eq "ok") {
+            Write-Host "User: $userName, Root: $($rootItem.FullPath), Publish: $publish"
+        }
+    
+    .NOTES
+        Usage: You must call Import-Function -Name DialogBuilder before using any of these functions.
+    
+        Version: 3.3.0
+        Date: 2026-10-31
+        Author: SPE Community
+    
+        Changelog:
+        - v3.3.0: Added Add-ImageField and Add-GeneralLinkField for the Read-Variable
+                  image and generallink editors (#1508, #1509). Test-DialogBuilder flags
+                  a Value on those fields that is not the field's raw XML string.
+        - v3.2.0: Added MaxLength parameter to Add-DialogField, Add-TextField, and
+                  Add-MultiLineTextField. When set, enforces a browser-level character
+                  limit and shows a live character counter on text and multitext fields.
+        - v3.1.0: Compatibility and quality improvements:
+                  Fixed duplicate field names causing runtime crash (now replaces previous)
+                  Added -Visible parameter to Add-DialogField for hidden context fields
+                  Added per-field -Height parameter (exposed on MultiLineTextField, TreeList, MultiList, RuleField, RuleActionField)
+                  Added per-field -Validator parameter for inline field validation
+                  Added per-field -Description parameter
+                  Added Values hashtable to Invoke-Dialog result for scope-independent access
+                  Removed misleading return from convenience functions
+                  Removed fragile Set-Variable -Scope 1 from Add-DialogField (Invoke-Dialog handles it)
+                  Changed Add-DateTimePicker default from [DateTime]::MinValue to $null
+        - v3.0.0: Breaking changes to align with SearchBuilder conventions (#1429):
+                  Renamed Show-Dialog to Invoke-Dialog (returns structured PSObject)
+                  Merged Debug-DialogBuilder into Test-DialogBuilder (-ShowDetails)
+                  Renamed Export-DialogBuilderConfig to ConvertTo-DialogBuilderJson
+                  Internal keys underscore-prefixed for diff-friendly state
+                  ArrayList for mutable parameter collection
+                  Added _IsDialogBuilder type guard
+        - v2.1.0: Refactored Add-TextField with parameter sets (-IsPassword, -IsEmail, -IsNumber)
+                  Added Add-LinkField, Add-TristateCheckbox, Add-RuleField, Add-RuleActionField
+                  Removed redundant Add-NumberField and Add-EmailField functions
+        - v2.0.0: Major update with new convenience functions, validation improvements, helper utilities
+        - v1.1.0: Added Debug-DialogBuilder function, validation, and better error messages
+        - v1.0.0: Initial release
+    #>
+    
+    function New-DialogBuilder {
+        <#
+        .SYNOPSIS
+            Creates a new dialog builder instance.
+    
+        .PARAMETER Title
+            The dialog title shown in the title bar.
+    
+        .PARAMETER Description
+            Descriptive text shown below the title.
+    
+        .PARAMETER Width
+            Dialog width in pixels (default: 500).
+    
+        .PARAMETER Height
+            Dialog height in pixels (default: 400).
+    
+        .PARAMETER OkButtonName
+            Custom text for the OK button (default: "OK").
+    
+        .PARAMETER CancelButtonName
+            Custom text for the Cancel button (default: "Cancel").
+    
+        .PARAMETER ShowHints
+            Display tooltips for fields.
+    
+        .PARAMETER Icon
+            Sitecore icon path (e.g., "Office/32x32/document.png").
+    
+        .EXAMPLE
+            $dialog = New-DialogBuilder -Title "Content Editor" -ShowHints
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true)]
+            [string]$Title,
+    
+            [string]$Description = "",
+    
+            [int]$Width = 500,
+    
+            [int]$Height = 400,
+    
+            [string]$OkButtonName = "OK",
+    
+            [string]$CancelButtonName = "Cancel",
+    
+            [switch]$ShowHints,
+    
+            [string]$Icon = ""
+        )
+    
+        # Validate dimensions
+        if ($Width -lt 200 -or $Width -gt 2000) {
+            Write-Warning "Dialog width $Width is outside recommended range (200-2000 pixels). Dialog may not display properly."
+        }
+        if ($Height -lt 150 -or $Height -gt 1500) {
+            Write-Warning "Dialog height $Height is outside recommended range (150-1500 pixels). Dialog may not display properly."
+        }
+    
+        $builder = @{
+            _Title            = $Title
+            _Description      = $Description
+            _Width            = $Width
+            _Height           = $Height
+            _OkButtonName     = $OkButtonName
+            _CancelButtonName = $CancelButtonName
+            _ShowHints        = $ShowHints.IsPresent
+            _Icon             = $Icon
+            _Parameters       = [System.Collections.ArrayList]@()
+            _Variables        = @{}
+            _IsDialogBuilder  = $true
+        }
+    
+        return $builder
+    }
+    
+    function Add-DialogField {
+        <#
+        .SYNOPSIS
+            Adds a field to the dialog builder.
+    
+        .DESCRIPTION
+            Automatically handles variable initialization and type inference.
+            Supports all Read-Variable parameter types with intelligent defaults.
+    
+        .PARAMETER DialogBuilder
+            The dialog builder instance from New-DialogBuilder.
+    
+        .PARAMETER Name
+            Variable name (without $). This becomes the PowerShell variable name.
+    
+        .PARAMETER Title
+            Field label shown to the user.
+    
+        .PARAMETER Value
+            Initial/default value. For Item types, will auto-initialize if null.
+    
+        .PARAMETER Tooltip
+            Help text shown when ShowHints is enabled.
+    
+        .PARAMETER Placeholder
+            Placeholder text for empty text fields.
+    
+        .PARAMETER Editor
+            Explicit editor type. Auto-detected if not specified.
+    
+        .PARAMETER DateOnly
+            When specified with DateTime values, shows date picker without time selection.
+    
+        .PARAMETER Mandatory
+            Makes this field required.
+    
+        .PARAMETER Tab
+            Tab name for organizing fields.
+    
+        .PARAMETER Columns
+            Column width in 12-column grid (default: 12).
+    
+        .PARAMETER Lines
+            Number of lines for multi-line text fields.
+    
+        .PARAMETER Root
+            Root path for item picker controls.
+    
+        .PARAMETER Source
+            Data source configuration for complex controls.
+    
+        .PARAMETER Domain
+            Domain filter for user/role pickers.
+    
+        .PARAMETER Options
+            Options hashtable for combo/radio/checklist controls.
+    
+        .PARAMETER OptionTooltips
+            Tooltips for dropdown options.
+    
+        .PARAMETER GroupId
+            ID for conditional visibility grouping.
+    
+        .PARAMETER ParentGroupId
+            Parent group ID for conditional visibility.
+    
+        .PARAMETER HideOnValue
+            Values that hide this field when parent has them.
+    
+        .PARAMETER ShowOnValue
+            Values that show this field when parent has them.
+    
+        .PARAMETER Visible
+            Whether the field is visible in the dialog (default: true).
+            Hidden fields still participate in the result and can pass context values.
+    
+        .PARAMETER Height
+            Per-field editor height as a string (e.g., "200"). Controls the height
+            of editors like multi-line text, tree lists, and rule fields.
+    
+        .PARAMETER Validator
+            Per-field validation scriptblock. The script receives the field value and
+            can set an error message on the field. Not supported under Constrained
+            Language Mode (CLM).
+    
+        .PARAMETER MaxLength
+            Maximum character length for text and multitext fields. When specified,
+            the browser enforces a hard limit and a live character counter is displayed.
+    
+        .PARAMETER Description
+            Per-field description text, displayed separately from the tooltip.
+    
+        .EXAMPLE
+            $dialog | Add-DialogField -Name "userName" -Title "User Name" -Mandatory
+    
+        .EXAMPLE
+            $dialog | Add-DialogField -Name "startItem" -Title "Root" -Value (Get-Item "master:/content") -Root "/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-DialogField -Name "publishDate" -Title "Publish Date" -Value [DateTime]::Now -DateOnly
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+    
+            [string]$Title = "",
+    
+            [object]$Value = $null,
+    
+            [string]$Tooltip = "",
+    
+            [string]$Placeholder = "",
+    
+            [string]$Editor = "",
+    
+            [switch]$DateOnly,
+    
+            [switch]$Mandatory,
+    
+            [string]$Tab = "",
+    
+            [int]$Columns = 0,
+    
+            [int]$Lines = 0,
+    
+            [string]$Root = "",
+    
+            [string]$Source = "",
+    
+            [string]$Domain = "",
+    
+            [System.Collections.IDictionary]$Options = $null,
+    
+            [System.Collections.IDictionary]$OptionTooltips = $null,
+    
+            [int]$GroupId = 0,
+    
+            [int]$ParentGroupId = 0,
+    
+            [string]$HideOnValue = "",
+    
+            [string]$ShowOnValue = "",
+    
+            [bool]$Visible = $true,
+    
+            [string]$Height = "",
+    
+            [int]$MaxLength = 0,
+    
+            [scriptblock]$Validator = $null,
+    
+            [string]$Description = ""
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+        }
+    
+        # Validate field name
+        if ($Name -match '[^a-zA-Z0-9_]') {
+            throw "Field name '$Name' contains invalid characters. Use only letters, numbers, and underscores."
+        }
+    
+        # Replace existing field if duplicate name
+        if ($DialogBuilder._Variables.ContainsKey($Name)) {
+            Write-Warning "Field '$Name' already exists in the dialog. Replacing previous definition."
+            $remaining = [System.Collections.ArrayList]@()
+            foreach ($existing in $DialogBuilder._Parameters) {
+                if ($existing.Name -ne $Name) {
+                    $remaining.Add($existing) > $null
+                }
+            }
+            $DialogBuilder._Parameters = $remaining
+            $DialogBuilder._Variables.Remove($Name)
+        }
+    
+        # Validate Columns parameter
+        if ($Columns -lt 0 -or $Columns -gt 12) {
+            throw "Columns value must be between 0 and 12 (0 = auto, 12 = full width). Got: $Columns"
+        }
+    
+        # Validate conditional visibility configuration
+        if ($ParentGroupId -gt 0 -and ([string]::IsNullOrEmpty($HideOnValue) -and [string]::IsNullOrEmpty($ShowOnValue))) {
+            Write-Warning "Field '$Name' has ParentGroupId but no HideOnValue or ShowOnValue. Field visibility will not be conditional."
+        }
+    
+        if ((-not [string]::IsNullOrEmpty($HideOnValue) -or -not [string]::IsNullOrEmpty($ShowOnValue)) -and $ParentGroupId -eq 0) {
+            throw "Field '$Name' has HideOnValue/ShowOnValue but no ParentGroupId. You must specify which field controls visibility."
+        }
+    
+        # Use Name as Title if Title not provided
+        if ([string]::IsNullOrEmpty($Title)) {
+            $Title = $Name
+        }
+    
+        # Auto-initialize Item value only when the caller did not pass -Value at
+        # all. An explicit -Value $null (or the "allownone" editor flag) means
+        # the caller wants no pre-selection - honor that.
+        if (-not $PSBoundParameters.ContainsKey('Value') -and
+            $null -eq $Value -and
+            $Editor -match "^(item|droplist|droptree|groupeddroplink|groupeddroplist)" -and
+            $Editor -notmatch "allownone") {
+            $Value = Get-Item -Path "master:/sitecore" -ErrorAction SilentlyContinue
+        }
+    
+        # Auto-detect editor type based on value type
+        if ([string]::IsNullOrEmpty($Editor)) {
+            if ($Value -is [bool]) {
+                $Editor = "checkbox"
+            }
+            elseif ($Value -is [DateTime]) {
+                $Editor = if ($DateOnly) { "date" } else { "date time" }
+            }
+            elseif ($Value -is [int] -or $Value -is [double]) {
+                # Number type will be inferred by Read-Variable
+            }
+            elseif ($Value -is [Sitecore.Data.Items.Item]) {
+                # Item picker will be inferred
+            }
+            elseif ($Lines -gt 0) {
+                # Multi-line text
+            }
+            elseif ($DateOnly) {
+                # DateOnly was specified but value isn't DateTime
+                $Editor = "date"
+            }
+        }
+    
+        # Build parameter hashtable
+        $param = @{
+            Name = $Name
+            Title = $Title
+        }
+    
+        # Always add Value to the parameter hashtable
+        # Value is required for proper variable initialization in Read-Variable
+        $param.Value = $Value
+    
+        # Track variable for Invoke-Dialog to initialize in caller scope
+        $DialogBuilder._Variables[$Name] = $Value
+    
+        # Add optional parameters only if specified
+        if (-not [string]::IsNullOrEmpty($Tooltip)) { $param.Tooltip = $Tooltip }
+        if (-not [string]::IsNullOrEmpty($Placeholder)) { $param.Placeholder = $Placeholder }
+        if (-not [string]::IsNullOrEmpty($Editor)) { $param.Editor = $Editor }
+        if ($Mandatory.IsPresent) { $param.Mandatory = $true }
+        if (-not [string]::IsNullOrEmpty($Tab)) { $param.Tab = $Tab }
+        if ($Columns -gt 0) { $param.Columns = $Columns }
+        if ($Lines -gt 0) { $param.Lines = $Lines }
+        if (-not [string]::IsNullOrEmpty($Root)) { $param.Root = $Root }
+        if (-not [string]::IsNullOrEmpty($Source)) { $param.Source = $Source }
+        if (-not [string]::IsNullOrEmpty($Domain)) { $param.Domain = $Domain }
+        if ($null -ne $Options) { $param.Options = $Options }
+        if ($null -ne $OptionTooltips) { $param.OptionTooltips = $OptionTooltips }
+        if ($GroupId -gt 0) { $param.GroupId = $GroupId }
+        if ($ParentGroupId -gt 0) { $param.ParentGroupId = $ParentGroupId }
+        if (-not [string]::IsNullOrEmpty($HideOnValue)) { $param.HideOnValue = $HideOnValue }
+        if (-not [string]::IsNullOrEmpty($ShowOnValue)) { $param.ShowOnValue = $ShowOnValue }
+        if ($PSBoundParameters.ContainsKey('Visible') -and -not $Visible) { $param.Visible = $false }
+        if (-not [string]::IsNullOrEmpty($Height)) { $param.Height = $Height }
+        if ($null -ne $Validator) { $param.Validator = $Validator }
+        if (-not [string]::IsNullOrEmpty($Description)) { $param.Description = $Description }
+        if ($MaxLength -gt 0) { $param.MaxLength = $MaxLength }
+    
+        # Add parameter to builder
+        $DialogBuilder._Parameters.Add($param) > $null
+    }
+    
+    function Invoke-Dialog {
+        <#
+        .SYNOPSIS
+            Executes the dialog builder and returns a structured result.
+    
+        .DESCRIPTION
+            Converts the builder state into Read-Variable parameters, displays the
+            dialog, and returns a result object with metadata. Variables are
+            initialized in the caller's scope.
+    
+            Note: The Validator parameter uses a scriptblock, which is not
+            supported under Constrained Language Mode (CLM). If your script
+            runs under CLM, omit the Validator parameter.
+    
+        .PARAMETER DialogBuilder
+            The dialog builder instance.
+    
+        .PARAMETER Validator
+            Optional validation scriptblock that validates field values.
+    
+        .PARAMETER ValidatorParameters
+            Optional hashtable of parameters to pass to the validator scriptblock.
+    
+        .EXAMPLE
+            $result = $dialog | Invoke-Dialog
+            if ($result.Result -eq "ok") {
+                # Access values via scope-injected variables:
+                Write-Host "User: $userName"
+                # Or via the Values hashtable (scope-independent):
+                Write-Host "User: $($result.Values['userName'])"
+            }
+    
+        .EXAMPLE
+            # With validator and parameters
+            $minLen = 8
+            $validator = { param($minLength)
+                if ($variables.password.Value.Length -lt $minLength) {
+                    $variables.password.Error = "Too short"
+                }
+            }
+            $result = $dialog | Invoke-Dialog -Validator $validator -ValidatorParameters @{ minLength = $minLen }
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [scriptblock]$Validator = $null,
+    
+            [hashtable]$ValidatorParameters = $null
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+        }
+    
+        # Warn if no fields were added
+        if ($DialogBuilder._Parameters.Count -eq 0) {
+            Write-Warning "Dialog has no fields. Did you forget to add fields with Add-DialogField or convenience functions?"
+        }
+    
+        # Initialize variables in caller's scope
+        foreach ($varName in $DialogBuilder._Variables.Keys) {
+            try {
+                Set-Variable -Name $varName -Value $DialogBuilder._Variables[$varName] -Scope 1 -ErrorAction Stop
+            }
+            catch {
+                throw "Failed to initialize variable '$varName' in caller scope. Error: $($_.Exception.Message)"
+            }
+        }
+    
+        # Build Read-Variable parameters
+        $readVarParams = @{
+            Title            = $DialogBuilder._Title
+            Description      = $DialogBuilder._Description
+            Width            = $DialogBuilder._Width
+            Height           = $DialogBuilder._Height
+            OkButtonName     = $DialogBuilder._OkButtonName
+            CancelButtonName = $DialogBuilder._CancelButtonName
+            Parameters       = @($DialogBuilder._Parameters)
+        }
+    
+        if ($DialogBuilder._ShowHints) {
+            $readVarParams.ShowHints = $true
+        }
+    
+        if (-not [string]::IsNullOrEmpty($DialogBuilder._Icon)) {
+            $readVarParams.Icon = $DialogBuilder._Icon
+        }
+    
+        if ($null -ne $Validator) {
+            $readVarParams.Validator = $Validator
+        }
+    
+        if ($null -ne $ValidatorParameters) {
+            $readVarParams.ValidatorParameters = $ValidatorParameters
+        }
+    
+        # Call Read-Variable
+        try {
+            $rawResult = Read-Variable @readVarParams
+        }
+        catch {
+            throw "Failed to display dialog '$($DialogBuilder._Title)'. Error: $($_.Exception.Message)"
+        }
+    
+        # Collect values and update variables in caller scope
+        $values = @{}
+        foreach ($varName in $DialogBuilder._Variables.Keys) {
+            try {
+                $val = Get-Variable -Name $varName -ValueOnly -ErrorAction Stop
+                $values[$varName] = $val
+                Set-Variable -Name $varName -Value $val -Scope 1 -ErrorAction Stop
+            }
+            catch {
+                Write-Warning "Failed to update variable '$varName' after dialog closed. Use the Values hashtable on the result object instead."
+            }
+        }
+    
+        # Build structured result with Values for scope-independent access
+        $result = New-PSObject @{
+            Result     = $rawResult
+            Title      = $DialogBuilder._Title
+            FieldCount = $DialogBuilder._Parameters.Count
+            Values     = $values
+        }
+    
+        return $result
+    }
+    
+    function Test-DialogBuilder {
+        <#
+        .SYNOPSIS
+            Validates a dialog builder configuration without showing the dialog.
+    
+        .DESCRIPTION
+            Checks for common configuration issues such as:
+            - Duplicate field names
+            - Invalid conditional visibility chains
+            - Orphaned ParentGroupIds
+            - Missing required parameters
+            - Performance concerns (too many fields)
+    
+            When -ShowDetails is specified, also outputs a formatted summary of
+            the dialog configuration including all fields, their types, and
+            configuration details (formerly Debug-DialogBuilder).
+    
+        .PARAMETER DialogBuilder
+            The dialog builder instance to validate.
+    
+        .PARAMETER ShowDetails
+            Display detailed field-by-field configuration info.
+    
+        .PARAMETER ShowValues
+            Include the current values of variables in the output. Implies -ShowDetails.
+    
+        .PARAMETER ShowFullParameters
+            Display all parameter details for each field. Implies -ShowDetails.
+    
+        .PARAMETER WarningsOnly
+            Only show warnings, don't throw errors for critical issues.
+    
+        .EXAMPLE
+            $dialog | Test-DialogBuilder
+    
+        .EXAMPLE
+            $dialog | Test-DialogBuilder -ShowDetails
+    
+        .EXAMPLE
+            $dialog | Test-DialogBuilder -ShowValues -ShowFullParameters
+    
+        .RETURNS
+            $true if validation passes, $false otherwise.
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [switch]$ShowDetails,
+    
+            [switch]$ShowValues,
+    
+            [switch]$ShowFullParameters,
+    
+            [switch]$WarningsOnly
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            Write-Error "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+            return $false
+        }
+    
+        $hasErrors = $false
+        $hasWarnings = $false
+    
+        # Infer ShowDetails from ShowValues or ShowFullParameters
+        if ($ShowValues.IsPresent -or $ShowFullParameters.IsPresent) {
+            $ShowDetails = [switch]$true
+        }
+    
+        # --- Detail output (formerly Debug-DialogBuilder) ---
+        if ($ShowDetails) {
+            Write-Host ("=" * 80) -ForegroundColor Cyan
+            Write-Host "DIALOG BUILDER DETAILS" -ForegroundColor Cyan
+            Write-Host ("=" * 80) -ForegroundColor Cyan
+            Write-Host ""
+    
+            Write-Host "Dialog Properties:" -ForegroundColor Green
+            Write-Host "  Title       : $($DialogBuilder._Title)"
+            Write-Host "  Description : $($DialogBuilder._Description)"
+            Write-Host "  Dimensions  : $($DialogBuilder._Width) x $($DialogBuilder._Height)"
+            Write-Host "  OK Button   : $($DialogBuilder._OkButtonName)"
+            Write-Host "  Cancel Button: $($DialogBuilder._CancelButtonName)"
+            Write-Host "  Show Hints  : $($DialogBuilder._ShowHints)"
+            if (-not [string]::IsNullOrEmpty($DialogBuilder._Icon)) {
+                Write-Host "  Icon        : $($DialogBuilder._Icon)"
+            }
+            Write-Host ""
+    
+            $fieldCount = $DialogBuilder._Parameters.Count
+            Write-Host "Fields: $fieldCount" -ForegroundColor Green
+    
+            if ($fieldCount -eq 0) {
+                Write-Host "  WARNING: No fields defined!" -ForegroundColor Yellow
+            }
+            else {
+                # Group fields by tab
+                $fieldsByTab = @{}
+                $noTabFields = [System.Collections.ArrayList]@()
+    
+                foreach ($param in $DialogBuilder._Parameters) {
+                    if ([string]::IsNullOrEmpty($param.Tab)) {
+                        $noTabFields.Add($param) > $null
+                    }
+                    else {
+                        if (-not $fieldsByTab.ContainsKey($param.Tab)) {
+                            $fieldsByTab[$param.Tab] = [System.Collections.ArrayList]@()
+                        }
+                        $fieldsByTab[$param.Tab].Add($param) > $null
+                    }
+                }
+    
+                # Display fields without tabs
+                if ($noTabFields.Count -gt 0) {
+                    Write-Host ""
+                    Write-Host "  [No Tab]" -ForegroundColor Magenta
+                    foreach ($param in $noTabFields) {
+                        Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
+                    }
+                }
+    
+                # Display fields grouped by tab
+                foreach ($tab in ($fieldsByTab.Keys | Sort-Object)) {
+                    Write-Host ""
+                    Write-Host "  [Tab: $tab]" -ForegroundColor Magenta
+                    foreach ($param in $fieldsByTab[$tab]) {
+                        Show-FieldDebugInfo -Param $param -ShowValues:$ShowValues -ShowFullParameters:$ShowFullParameters
+                    }
+                }
+            }
+    
+            Write-Host ""
+            Write-Host ("=" * 80) -ForegroundColor Cyan
+            Write-Host ""
+        }
+    
+        # --- Validation ---
+        Write-Host "Validating dialog: $($DialogBuilder._Title)" -ForegroundColor Cyan
+        Write-Host ""
+    
+        # Check for fields
+        if ($DialogBuilder._Parameters.Count -eq 0) {
+            Write-Warning "Dialog has no fields defined."
+            $hasWarnings = $true
+        }
+    
+        # Check for too many fields (performance)
+        if ($DialogBuilder._Parameters.Count -gt 50) {
+            Write-Warning "Dialog has $($DialogBuilder._Parameters.Count) fields. Consider splitting into multiple dialogs or tabs for better performance."
+            $hasWarnings = $true
+        }
+    
+        # Check for duplicate field names
+        $fieldNames = @{}
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($fieldNames.ContainsKey($param.Name)) {
+                Write-Error "Duplicate field name detected: '$($param.Name)'"
+                $hasErrors = $true
+            }
+            $fieldNames[$param.Name] = $true
+        }
+    
+        # Check conditional visibility configuration
+        $groupIds = @{}
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('GroupId') -and $param.GroupId -gt 0) {
+                $groupIds[$param.GroupId] = $param.Name
+            }
+        }
+    
+        # Validate ParentGroupId references
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('ParentGroupId') -and $param.ParentGroupId -gt 0) {
+                if (-not $groupIds.ContainsKey($param.ParentGroupId)) {
+                    Write-Error "Field '$($param.Name)' references ParentGroupId $($param.ParentGroupId) but no field defines this GroupId."
+                    $hasErrors = $true
+                }
+    
+                # Check that HideOnValue or ShowOnValue is specified
+                if (([string]::IsNullOrEmpty($param.HideOnValue) -and [string]::IsNullOrEmpty($param.ShowOnValue))) {
+                    Write-Warning "Field '$($param.Name)' has ParentGroupId but no HideOnValue or ShowOnValue specified."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
+        # Check for Root/Source conflicts on list controls
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if ($editor -match "treelist|multilist") {
+                if ($param.ContainsKey('Root') -and $param.ContainsKey('Source')) {
+                    Write-Warning "Field '$($param.Name)' has both Root and Source. List controls use Source for their data; Root will be ignored."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
+        # Check for mandatory fields without editors that support it
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.ContainsKey('Mandatory') -and $param.Mandatory) {
+                $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "auto" }
+                if ($editor -eq "info" -or $editor -eq "marquee") {
+                    Write-Warning "Field '$($param.Name)' is marked Mandatory but uses editor '$editor' which doesn't support validation."
+                    $hasWarnings = $true
+                }
+            }
+        }
+    
+        # Check Value type for item-picker editors. A non-Item Value silently
+        # breaks pre-selection because Read-Variable unwraps via BaseObject
+        # and only reacts when the result is a Sitecore.Data.Items.Item.
+        $singleItemEditors = @('droplink', 'droplist', 'droptree', 'groupeddroplink', 'item', 'itempicker')
+        $multiItemEditors  = @('treelist', 'treelist search', 'multilist', 'multilist search', 'multiroottreelist', 'bucketlist')
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if (-not $param.ContainsKey('Value') -or $null -eq $param.Value) { continue }
+    
+            if ($singleItemEditors -contains $editor) {
+                if ($param.Value -isnot [Sitecore.Data.Items.Item]) {
+                    Write-Error "Field '$($param.Name)' uses editor '$editor' which requires a [Sitecore.Data.Items.Item] Value, but got '$($param.Value.GetType().FullName)'. Pre-selection will not work."
+                    $hasErrors = $true
+                }
+            }
+            elseif ($multiItemEditors -contains $editor) {
+                if ($param.Value -is [string] -or -not ($param.Value -is [System.Collections.IEnumerable])) {
+                    Write-Error "Field '$($param.Name)' uses multi-item editor '$editor' which requires an IEnumerable of [Sitecore.Data.Items.Item], but got '$($param.Value.GetType().FullName)'."
+                    $hasErrors = $true
+                } else {
+                    $idx = 0
+                    foreach ($v in $param.Value) {
+                        if ($null -ne $v -and $v -isnot [Sitecore.Data.Items.Item]) {
+                            Write-Error "Field '$($param.Name)' uses multi-item editor '$editor': element [$idx] is of type '$($v.GetType().FullName)', expected [Sitecore.Data.Items.Item]."
+                            $hasErrors = $true
+                            break
+                        }
+                        $idx++
+                    }
+                }
+            }
+        }
+    
+        # Image and General Link editors take the field's raw XML, e.g. $item.Fields["Image"].Value.
+        # An Item or Field object passed instead silently shows an empty editor.
+        $fieldXmlEditors = @{ 'image' = 'image'; 'generallink' = 'link'; 'general link' = 'link' }
+        foreach ($param in $DialogBuilder._Parameters) {
+            $editor = if ($param.ContainsKey('Editor')) { $param.Editor } else { "" }
+            if (-not $fieldXmlEditors.ContainsKey($editor) -or $null -eq $param.Value) { continue }
+    
+            $tag = $fieldXmlEditors[$editor]
+            if ($param.Value -isnot [string]) {
+                Write-Error "Field '$($param.Name)' uses editor '$editor' which requires the field's raw XML string (for example `$item.Fields[`"Field`"].Value), but got '$($param.Value.GetType().FullName)'."
+                $hasErrors = $true
+            }
+            elseif ($param.Value -ne "" -and $param.Value -notmatch "^\s*<$tag[\s/>]") {
+                Write-Error "Field '$($param.Name)' uses editor '$editor' which requires <$tag> field XML, but the Value does not start with <$tag."
+                $hasErrors = $true
+            }
+        }
+    
+        # Summary
+        Write-Host ""
+        if ($hasErrors) {
+            Write-Host "Validation FAILED with errors." -ForegroundColor Red
+            if (-not $WarningsOnly) {
+                return $false
+            }
+        } elseif ($hasWarnings) {
+            Write-Host "Validation completed with warnings." -ForegroundColor Yellow
+        } else {
+            Write-Host "Validation PASSED." -ForegroundColor Green
+        }
+    
+        return -not $hasErrors
+    }
+    
+    function Show-FieldDebugInfo {
+        <#
+        .SYNOPSIS
+            Internal helper function to display field information.
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true)]
+            [hashtable]$Param,
+    
+            [switch]$ShowValues,
+    
+            [switch]$ShowFullParameters
+        )
+    
+        $fieldName = $Param.Name
+        $editor = if ($Param.ContainsKey('Editor') -and -not [string]::IsNullOrEmpty($Param.Editor)) { $Param.Editor } else { "auto" }
+        $mandatory = if ($Param.ContainsKey('Mandatory') -and $Param.Mandatory) { " [REQUIRED]" } else { "" }
+        $columns = if ($Param.ContainsKey('Columns') -and $Param.Columns -gt 0) { " cols:$($Param.Columns)" } else { "" }
+    
+        Write-Host "    - $fieldName" -ForegroundColor White -NoNewline
+        Write-Host " [$editor]" -ForegroundColor Gray -NoNewline
+        if ($mandatory) {
+            Write-Host $mandatory -ForegroundColor Red -NoNewline
+        }
+        if ($columns) {
+            Write-Host $columns -ForegroundColor DarkGray -NoNewline
+        }
+        Write-Host ""
+    
+        if ($ShowValues -and $Param.ContainsKey('Value')) {
+            $valueDisplay = if ($null -eq $Param.Value) {
+                "(null)"
+            }
+            elseif ($Param.Value -is [Sitecore.Data.Items.Item]) {
+                "Item: $($Param.Value.ItemPath)"
+            }
+            elseif ($Param.Value -is [array]) {
+                "Array: $($Param.Value.Count) items"
+            }
+            else {
+                "$($Param.Value)"
+            }
+            Write-Host "      Value: $valueDisplay" -ForegroundColor DarkCyan
+        }
+    
+        if ($ShowFullParameters) {
+            Write-Host "      Full Parameters:" -ForegroundColor DarkGray
+            foreach ($key in ($Param.Keys | Sort-Object)) {
+                if ($key -notin @('Name', 'Editor', 'Mandatory', 'Value')) {
+                    $value = $Param[$key]
+                    if ($null -ne $value -and $value -ne "" -and $value -ne 0 -and $value -ne $false) {
+                        Write-Host "        $key = $value" -ForegroundColor DarkGray
+                    }
+                }
+            }
+        }
+    
+        # Show conditional visibility info
+        if ($Param.ContainsKey('GroupId') -and $Param.GroupId -gt 0) {
+            Write-Host "      Controls Group: $($Param.GroupId)" -ForegroundColor DarkYellow
+        }
+        if ($Param.ContainsKey('ParentGroupId') -and $Param.ParentGroupId -gt 0) {
+            $condition = ""
+            if ($Param.ContainsKey('ShowOnValue') -and -not [string]::IsNullOrEmpty($Param.ShowOnValue)) {
+                $condition = "Show when parent = '$($Param.ShowOnValue)'"
+            }
+            elseif ($Param.ContainsKey('HideOnValue') -and -not [string]::IsNullOrEmpty($Param.HideOnValue)) {
+                $condition = "Hide when parent = '$($Param.HideOnValue)'"
+            }
+            Write-Host "      Controlled by Group: $($Param.ParentGroupId) - $condition" -ForegroundColor DarkYellow
+        }
+    }
+    
+    # Convenience functions for common field types
+    
+    function Add-TextField {
+        <#
+        .SYNOPSIS
+            Adds a single-line text input field with support for different input types.
+    
+        .DESCRIPTION
+            Provides text input fields with optional type validation and formatting:
+            - Default: Standard single-line text
+            - Password: Masked password input
+            - Email: Email validation
+            - Number: Numeric input (integer or decimal)
+    
+        .PARAMETER IsPassword
+            When specified, masks the input as a password field.
+    
+        .PARAMETER IsEmail
+            When specified, provides email validation.
+    
+        .PARAMETER IsNumber
+            When specified, restricts input to numeric values (integer or decimal).
+    
+        .EXAMPLE
+            $dialog | Add-TextField -Name "username" -Title "Username"
+    
+        .EXAMPLE
+            $dialog | Add-TextField -Name "password" -Title "Password" -IsPassword
+    
+        .EXAMPLE
+            $dialog | Add-TextField -Name "email" -Title "Email" -IsEmail -Placeholder "user@example.com"
+    
+        .EXAMPLE
+            $dialog | Add-TextField -Name "age" -Title "Age" -IsNumber -Value 0
+        #>
+        [CmdletBinding(DefaultParameterSetName = "Text")]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+    
+            [string]$Title = "",
+    
+            [object]$Value = "",
+    
+            [string]$Tooltip = "",
+    
+            [string]$Placeholder = "",
+    
+            [Parameter(ParameterSetName = "Password")]
+            [switch]$IsPassword,
+    
+            [Parameter(ParameterSetName = "Email")]
+            [switch]$IsEmail,
+    
+            [Parameter(ParameterSetName = "Number")]
+            [switch]$IsNumber,
+    
+            [switch]$Mandatory,
+    
+            [int]$MaxLength = 0,
+    
+            [string]$Tab = "",
+    
+            [int]$Columns = 0,
+    
+            [int]$GroupId = 0,
+    
+            [int]$ParentGroupId = 0,
+    
+            [string]$HideOnValue = "",
+    
+            [string]$ShowOnValue = ""
+        )
+    
+        # Remove type switches from bound parameters
+        $PSBoundParameters.Remove("IsPassword") > $null
+        $PSBoundParameters.Remove("IsEmail") > $null
+        $PSBoundParameters.Remove("IsNumber") > $null
+    
+        # Determine editor type based on parameter set
+        $editor = switch ($PSCmdlet.ParameterSetName) {
+            "Password" { "password" }
+            "Email"    { "email" }
+            "Number"   { "number" }
+            default    { $null }  # Let Add-DialogField infer
+        }
+    
+        if ($editor) {
+            $PSBoundParameters.Add("Editor", $editor) > $null
+        }
+    
+        Add-DialogField @PSBoundParameters
+    }
+    
+    function Add-MultiLineTextField {
+        <#
+        .SYNOPSIS
+            Adds a multi-line text field.
+    
+        .EXAMPLE
+            $dialog | Add-MultiLineTextField -Name "notes" -Title "Notes" -Lines 5
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [int]$Lines = 3,
+            [string]$Height = "",
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$Mandatory,
+            [int]$MaxLength = 0,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if (-not $PSBoundParameters.ContainsKey('Lines')) {
+            $PSBoundParameters['Lines'] = $Lines
+        }
+        Add-DialogField @PSBoundParameters
+    }
+    
+    function Add-Checkbox {
+        <#
+        .SYNOPSIS
+            Adds a checkbox field.
+    
+        .EXAMPLE
+            $dialog | Add-Checkbox -Name "publish" -Title "Publish after save"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [bool]$Value = $false,
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if(!$PSBoundParameters.ContainsKey("Value")) {
+            $PSBoundParameters.Add("Value", $Value) > $null
+        }
+        Add-DialogField @PSBoundParameters -Editor "checkbox"
+    }
+    
+    function Add-DateTimePicker {
+        <#
+        .SYNOPSIS
+            Adds a date/time picker field.
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "startDate" -Title "Start Date" -DateOnly
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "expires" -Title "Expires"
+            # Renders an empty date picker; the user can leave it blank.
+    
+        .EXAMPLE
+            $dialog | Add-DateTimePicker -Name "deadline" -Title "Deadline" -Value ([DateTime]::Now.AddDays(7))
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = $null,
+            [string]$Tooltip = "",
+            [switch]$DateOnly,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if (-not $PSBoundParameters.ContainsKey('Value')) {
+            $PSBoundParameters['Value'] = $Value
+        }
+        $editor = if ($DateOnly) { "date" } else { "date time" }
+    
+        Add-DialogField @PSBoundParameters -Editor $editor
+    }
+    
+    function Add-ItemPicker {
+        <#
+        .SYNOPSIS
+            Adds an item picker field.
+    
+        .DESCRIPTION
+            Renders a tree-based item picker. Pass -AllowNone to let the user clear the
+            selection (returns $null). Sitecore's TreePicker renders its own "None" button
+            when AllowNone is set; -Placeholder is not supported on this editor.
+    
+        .EXAMPLE
+            $dialog | Add-ItemPicker -Name "rootItem" -Title "Root" -Root "/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-ItemPicker -Name "optional" -Root "/sitecore/content" -Value $null -AllowNone
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [string]$Root = "/sitecore/content/",
+            [string]$Tooltip = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if (-not $PSBoundParameters.ContainsKey('Root')) {
+            $PSBoundParameters['Root'] = $Root
+        }
+        # Only auto-seed Value when the caller did not pass it and did not opt
+        # into AllowNone. Explicit -Value $null or -AllowNone means "no default".
+        if (-not $PSBoundParameters.ContainsKey("Value") -and
+            $null -eq $Value -and
+            -not $AllowNone.IsPresent) {
+            $Value = Get-Item -Path $Root -ErrorAction SilentlyContinue
+            if ($Value) {
+                $PSBoundParameters["Value"] = $Value
+            }
+        }
+    
+        $PSBoundParameters.Remove("AllowNone") > $null
+        if ($AllowNone.IsPresent) {
+            Add-DialogField @PSBoundParameters -Editor "item allownone"
+        } else {
+            Add-DialogField @PSBoundParameters
+        }
+    }
+    
+    function Add-Droplink {
+        <#
+        .SYNOPSIS
+            Adds a droplink field for single item selection from a flat dropdown list.
+    
+        .DESCRIPTION
+            Returns the selected Sitecore Item object. Items are displayed in a flat dropdown list.
+            This is a simpler alternative to the tree-based item picker for scenarios where you
+            want a compact dropdown interface.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The Value returned will be $null.
+    
+        .EXAMPLE
+            $dialog | Add-Droplink -Name "template" -Title "Template" -Source "DataSource=/sitecore/templates"
+    
+        .EXAMPLE
+            $dialog | Add-Droplink -Name "template" -Source "DataSource=/sitecore/templates" -Value $null -AllowNone -Placeholder "Select a template..."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [string]$Source,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droplink allownone" } else { "droplink" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
+    }
+    
+    function Add-Droptree {
+        <#
+        .SYNOPSIS
+            Adds a droptree field for single item selection with tree navigation in a dropdown.
+    
+        .DESCRIPTION
+            Returns the selected Sitecore Item object. Displays a tree structure within a dropdown
+            control, allowing navigation through the content hierarchy in a compact interface.
+    
+            Pass -AllowNone to leave the tree unselected by default.
+    
+        .EXAMPLE
+            $dialog | Add-Droptree -Name "parent" -Title "Parent Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-Droptree -Name "parent" -Source "DataSource=/sitecore/content" -Value $null -AllowNone
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [string]$Source,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droptree allownone" } else { "droptree" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
+    }
+    
+    function Add-Droplist {
+        <#
+        .SYNOPSIS
+            Adds a droplist field for single item selection from a flat dropdown list.
+    
+        .DESCRIPTION
+            Returns the selected Sitecore Item object. Items are displayed in a flat dropdown list.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The Value returned will be $null.
+    
+        .EXAMPLE
+            $dialog | Add-Droplist -Name "layout" -Title "Layout" -Source "DataSource=/sitecore/layout"
+    
+        .EXAMPLE
+            $dialog | Add-Droplist -Name "layout" -Source "DataSource=/sitecore/layout" -Value $null -AllowNone -Placeholder "Select a layout..."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [string]$Source,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $effectiveEditor = if ($AllowNone.IsPresent) { "droplist allownone" } else { "droplist" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
+    }
+    
+    function Add-GroupedDroplink {
+        <#
+        .SYNOPSIS
+            Adds a grouped droplink field that displays items organized by parent folders.
+    
+        .DESCRIPTION
+            Returns the selected Sitecore Item object. Items are grouped by their parent folders
+            making it easier to navigate large item sets.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option.
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplink -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplink -Name "item" -Source "DataSource=/sitecore/content" -Value $null -AllowNone -Placeholder "Pick one..."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [string]$Source,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $effectiveEditor = if ($AllowNone.IsPresent) { "groupeddroplink allownone" } else { "groupeddroplink" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
+    }
+    
+    function Add-GroupedDroplist {
+        <#
+        .SYNOPSIS
+            Adds a grouped droplist field that displays items organized by parent folders.
+    
+        .DESCRIPTION
+            Returns a string representation (item name) of the selected item. Items are grouped
+            by their parent folders making it easier to navigate large item sets.
+    
+            Pass -AllowNone (with optional -Placeholder) to render a blank first option so
+            the user can leave the dropdown unselected. The returned Value will be $null.
+            Pre-seed with an Item (not a string) if you want a specific option selected.
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplist -Name "item" -Title "Select Item" -Source "DataSource=/sitecore/content"
+    
+        .EXAMPLE
+            $dialog | Add-GroupedDroplist -Name "item" -Source "DataSource=/sitecore/content" -Value $null -AllowNone -Placeholder "Pick one..."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [Sitecore.Data.Items.Item]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [string]$Source,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$AllowNone,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $effectiveEditor = if ($AllowNone.IsPresent) { "groupeddroplist allownone" } else { "groupeddroplist" }
+        $PSBoundParameters.Remove("AllowNone") > $null
+        Add-DialogField @PSBoundParameters -Editor $effectiveEditor
+    }
+    
+    function Add-Dropdown {
+        <#
+        .SYNOPSIS
+            Adds a dropdown/combo field.
+    
+        .EXAMPLE
+            $dialog | Add-Dropdown -Name "color" -Title "Color" -Options @{ "Red" = "red"; "Blue" = "blue" }
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [Parameter(Mandatory = $true)]
+            [System.Collections.IDictionary]$Options,
+            [System.Collections.IDictionary]$OptionTooltips = $null,
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "combo"
+    }
+    
+    function Add-RadioButtons {
+        <#
+        .SYNOPSIS
+            Adds radio button field.
+    
+        .EXAMPLE
+            $dialog | Add-RadioButtons -Name "priority" -Title "Priority" -Options @{ "High" = 1; "Low" = 2 }
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = $null,
+            [Parameter(Mandatory = $true)]
+            [System.Collections.IDictionary]$Options,
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "radio"
+    }
+    
+    function Add-Checklist {
+        <#
+        .SYNOPSIS
+            Adds a checklist field for multiple selections.
+    
+        .EXAMPLE
+            $dialog | Add-Checklist -Name "tags" -Title "Tags" -Options @{ "News" = 1; "Blog" = 2 }
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [array]$Value = @(),
+            [Parameter(Mandatory = $true)]
+            [System.Collections.IDictionary]$Options,
+            [System.Collections.IDictionary]$OptionTooltips = $null,
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "checklist"
+    }
+    
+    function Add-UserPicker {
+        <#
+        .SYNOPSIS
+            Adds a user picker field.
+    
+        .EXAMPLE
+            $dialog | Add-UserPicker -Name "reviewer" -Title "Reviewer"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Tooltip = "",
+            [switch]$Multiple,
+            [switch]$Mandatory,
+            [string]$Domain = "",
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        $editor = if ($Multiple) { "user multiple" } else { "user" }
+    
+        # Remove Multiple from bound parameters
+        $PSBoundParameters.Remove("Multiple") > $null
+    
+        Add-DialogField @PSBoundParameters -Editor $editor
+    }
+    
+    function Add-RolePicker {
+        <#
+        .SYNOPSIS
+            Adds a role picker field.
+    
+        .EXAMPLE
+            $dialog | Add-RolePicker -Name "role" -Title "Role" -Domain "sitecore"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Domain = "sitecore",
+            [string]$Tooltip = "",
+            [switch]$Multiple,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if (-not $PSBoundParameters.ContainsKey('Domain')) {
+            $PSBoundParameters['Domain'] = $Domain
+        }
+        $editor = if ($Multiple) { "role multiple" } else { "role" }
+    
+        # Remove Multiple from bound parameters
+        $PSBoundParameters.Remove("Multiple") > $null
+    
+        Add-DialogField @PSBoundParameters -Editor $editor
+    }
+    
+    function Add-UserRolePicker {
+        <#
+        .SYNOPSIS
+            Adds a combined user and role picker field.
+    
+        .EXAMPLE
+            $dialog | Add-UserRolePicker -Name "assignee" -Title "Assignee" -Multiple
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Domain = "sitecore",
+            [string]$Tooltip = "",
+            [switch]$Multiple,
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        if (-not $PSBoundParameters.ContainsKey('Domain')) {
+            $PSBoundParameters['Domain'] = $Domain
+        }
+        $editor = if ($Multiple) { "user role multiple" } else { "user role" }
+    
+        # Remove Multiple from bound parameters
+        $PSBoundParameters.Remove("Multiple") > $null
+    
+        Add-DialogField @PSBoundParameters -Editor $editor
+    }
+    
+    function Add-InfoText {
+        <#
+        .SYNOPSIS
+            Adds read-only informational text.
+    
+        .EXAMPLE
+            $dialog | Add-InfoText -Name "notice" -Title "Important" -Value "Read carefully."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "info"
+    }
+    
+    function Add-Marquee {
+        <#
+        .SYNOPSIS
+            Adds a scrolling marquee text display.
+    
+        .EXAMPLE
+            $dialog | Add-Marquee -Name "banner" -Value "Breaking news..."
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "marquee"
+    }
+    
+    function Add-TreeList {
+        <#
+        .SYNOPSIS
+            Adds a tree list control for multi-item selection with tree view.
+    
+        .DESCRIPTION
+            The TreeList control allows users to select multiple items from a hierarchical tree structure.
+            Selected items are returned as an array of Sitecore items.
+    
+        .PARAMETER WithSearch
+            When specified, uses "treelist search" editor which includes a search box for filtering items.
+            Best for large datasets (100+ items).
+    
+        .EXAMPLE
+            $dialog | Add-TreeList -Name "items" -Title "Select Items" -Root "/sitecore/content"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [array]$Value = @(),
+            [string]$Root = "/sitecore/content/",
+            [string]$Source = "",
+            [string]$Height = "",
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [switch]$WithSearch,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        # Only apply default Root when Source is not specified
+        if (-not $PSBoundParameters.ContainsKey('Root') -and -not $PSBoundParameters.ContainsKey('Source')) {
+            $PSBoundParameters['Root'] = $Root
+        }
+        $editor = if ($WithSearch.IsPresent) { "treelist search" } else { "treelist" }
+    
+        # Remove WithSearch from parameters before passing to Add-DialogField
+        $params = $PSBoundParameters
+        $params.Remove('WithSearch') | Out-Null
+    
+        Add-DialogField @params -Editor $editor
+    }
+    
+    function Add-MultiList {
+        <#
+        .SYNOPSIS
+            Adds a multi-list control for selecting multiple items from a list.
+    
+        .DESCRIPTION
+            The MultiList control provides a dual-list interface where users can move items
+            between available and selected lists. Returns an array of Sitecore items.
+    
+        .PARAMETER WithSearch
+            When specified, uses "multilist search" editor which includes a search box for filtering items.
+            Best for large datasets (100+ items).
+    
+        .EXAMPLE
+            $dialog | Add-MultiList -Name "categories" -Title "Categories" -Root "/sitecore/content"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [array]$Value = @(),
+            [string]$Root = "/sitecore/content/",
+            [string]$Source = "",
+            [string]$Height = "",
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [switch]$WithSearch,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        # Only apply default Root when Source is not specified
+        if (-not $PSBoundParameters.ContainsKey('Root') -and -not $PSBoundParameters.ContainsKey('Source')) {
+            $PSBoundParameters['Root'] = $Root
+        }
+        $editor = if ($WithSearch.IsPresent) { "multilist search" } else { "multilist" }
+    
+        # Remove WithSearch from parameters before passing to Add-DialogField
+        $params = $PSBoundParameters
+        $params.Remove('WithSearch') | Out-Null
+    
+        Add-DialogField @params -Editor $editor
+    }
+    
+    function Add-LinkField {
+        <#
+        .SYNOPSIS
+            Adds a link/URL input field.
+    
+        .DESCRIPTION
+            Provides a text field optimized for entering URLs and links.
+            Supports both internal Sitecore links and external URLs.
+    
+        .EXAMPLE
+            $dialog | Add-LinkField -Name "url" -Title "URL" -Placeholder "https://example.com"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Tooltip = "",
+            [string]$Placeholder = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "link"
+    }
+    
+    function Add-ImageField {
+        <#
+        .SYNOPSIS
+            Adds an Image field editor.
+    
+        .DESCRIPTION
+            Shows the Content Editor Image field control with its Browse, Properties,
+            Clear and Refresh buttons, or the control and buttons of a module that
+            replaces it, such as the Sitecore Content Hub DAM connector.
+            Returns the image field XML, ready to assign to an Image field.
+    
+        .PARAMETER Value
+            The image field's raw XML, for example $item.Fields["Image"].Value.
+            Pass the field value, not the Item or the Field object.
+    
+        .PARAMETER Source
+            The media library folder the Browse dialog opens in.
+    
+        .EXAMPLE
+            $dialog | Add-ImageField -Name "image" -Title "Image" -Value $item.Fields["Image"].Value -Source "/sitecore/media library/Images"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "image"
+    }
+    
+    function Add-GeneralLinkField {
+        <#
+        .SYNOPSIS
+            Adds a General Link field editor.
+    
+        .DESCRIPTION
+            Shows the Content Editor General Link field control with its Insert link,
+            Insert media link, Insert external link, Insert anchor, Insert email,
+            Insert JavaScript, Follow and Clear buttons, plus any a module adds, such
+            as Insert DAM link from the Sitecore Content Hub DAM connector.
+            Returns the link field XML, ready to assign to a General Link field.
+            For a plain URL text box use Add-LinkField instead.
+    
+        .PARAMETER Value
+            The link field's raw XML, for example $item.Fields["Link"].Value.
+            Pass the field value, not the Item or the Field object.
+    
+        .PARAMETER Source
+            The root item the internal and media link dialogs open in.
+    
+        .EXAMPLE
+            $dialog | Add-GeneralLinkField -Name "link" -Title "Link" -Value $item.Fields["Link"].Value
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "generallink"
+    }
+    
+    function Add-TristateCheckbox {
+        <#
+        .SYNOPSIS
+            Adds a three-state checkbox (Yes/No/Not Set).
+    
+        .DESCRIPTION
+            Provides a checkbox with three states: checked, unchecked, and indeterminate.
+            Useful for nullable boolean values or optional settings.
+            Returns: 1 (checked), 0 (unchecked), or null (indeterminate).
+    
+        .EXAMPLE
+            $dialog | Add-TristateCheckbox -Name "override" -Title "Override Default"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [object]$Value = $null,
+            [string]$Tooltip = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "tristate"
+    }
+    
+    function Add-RuleField {
+        <#
+        .SYNOPSIS
+            Adds a Sitecore rules engine editor.
+    
+        .DESCRIPTION
+            Provides a visual interface for editing Sitecore conditional rules.
+            Commonly used for personalization, workflow, and conditional rendering rules.
+            Returns the rules as an XML string in Sitecore rule format.
+    
+        .PARAMETER Source
+            The rules context path (e.g., "Rules.ConditionalRenderings" or custom rule definitions).
+    
+        .EXAMPLE
+            $dialog | Add-RuleField -Name "rules" -Title "Conditions"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Height = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "rule"
+    }
+    
+    function Add-RuleActionField {
+        <#
+        .SYNOPSIS
+            Adds a Sitecore rule action editor.
+    
+        .DESCRIPTION
+            Provides a visual interface for editing Sitecore rule actions.
+            Used for configuring actions to be executed when rules are triggered.
+            Returns the actions as an XML string in Sitecore rule format.
+    
+        .PARAMETER Source
+            The rule actions context path (e.g., action definitions in the rules engine).
+    
+        .EXAMPLE
+            $dialog | Add-RuleActionField -Name "actions" -Title "Actions"
+        #>
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+            [Parameter(Mandatory = $true)]
+            [string]$Name,
+            [string]$Title = "",
+            [string]$Value = "",
+            [string]$Height = "",
+            [string]$Tooltip = "",
+            [string]$Source = "",
+            [switch]$Mandatory,
+            [string]$Tab = "",
+            [int]$Columns = 0,
+            [int]$GroupId = 0,
+            [int]$ParentGroupId = 0,
+            [string]$HideOnValue = "",
+            [string]$ShowOnValue = ""
+        )
+    
+        Add-DialogField @PSBoundParameters -Editor "rule action"
+    }
+    
+    # Helper utility functions
+    
+    function Copy-DialogBuilder {
+        <#
+        .SYNOPSIS
+            Creates a deep copy of a dialog builder instance.
+    
+        .DESCRIPTION
+            Useful for creating variations of a dialog configuration without
+            modifying the original. All parameters and settings are cloned.
+    
+        .EXAMPLE
+            $dialog2 = $dialog | Copy-DialogBuilder
+    
+        .RETURNS
+            A new dialog builder instance with copied configuration.
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+        }
+    
+        # Create new builder with same properties
+        $newBuilder = @{
+            _Title            = $DialogBuilder._Title
+            _Description      = $DialogBuilder._Description
+            _Width            = $DialogBuilder._Width
+            _Height           = $DialogBuilder._Height
+            _OkButtonName     = $DialogBuilder._OkButtonName
+            _CancelButtonName = $DialogBuilder._CancelButtonName
+            _ShowHints        = $DialogBuilder._ShowHints
+            _Icon             = $DialogBuilder._Icon
+            _Parameters       = [System.Collections.ArrayList]@()
+            _Variables        = @{}
+            _IsDialogBuilder  = $true
+        }
+    
+        # Deep copy parameters
+        foreach ($param in $DialogBuilder._Parameters) {
+            $newParam = @{}
+            foreach ($key in $param.Keys) {
+                $newParam[$key] = $param[$key]
+            }
+            $newBuilder._Parameters.Add($newParam) > $null
+        }
+    
+        # Copy variables
+        foreach ($key in $DialogBuilder._Variables.Keys) {
+            $newBuilder._Variables[$key] = $DialogBuilder._Variables[$key]
+        }
+    
+        return $newBuilder
+    }
+    
+    function Remove-DialogField {
+        <#
+        .SYNOPSIS
+            Removes a field from the dialog builder by name.
+    
+        .DESCRIPTION
+            Allows removal of previously added fields from the dialog configuration.
+            This is useful when building dialogs dynamically based on conditions.
+    
+        .EXAMPLE
+            $dialog | Remove-DialogField -Name "optionalField"
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [Parameter(Mandatory = $true)]
+            [string]$Name
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+        }
+    
+        # Rebuild the ArrayList without the named field
+        $remaining = [System.Collections.ArrayList]@()
+        foreach ($param in $DialogBuilder._Parameters) {
+            if ($param.Name -ne $Name) {
+                $remaining.Add($param) > $null
+            }
+        }
+        $DialogBuilder._Parameters = $remaining
+    
+        # Remove from _Variables
+        if ($DialogBuilder._Variables.ContainsKey($Name)) {
+            $DialogBuilder._Variables.Remove($Name)
+        }
+    }
+    
+    function ConvertTo-DialogBuilderJson {
+        <#
+        .SYNOPSIS
+            Converts dialog builder configuration to JSON format.
+    
+        .DESCRIPTION
+            Exports the dialog structure to JSON for documentation, debugging,
+            or sharing dialog configurations.
+    
+        .PARAMETER DialogBuilder
+            The dialog builder instance to convert.
+    
+        .PARAMETER FilePath
+            Optional file path to save the JSON. If not specified, returns JSON string.
+    
+        .EXAMPLE
+            $json = $dialog | ConvertTo-DialogBuilderJson
+    
+        .EXAMPLE
+            $dialog | ConvertTo-DialogBuilderJson -FilePath "C:\temp\dialog.json"
+        #>
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+            [hashtable]$DialogBuilder,
+    
+            [string]$FilePath = ""
+        )
+    
+        if (-not $DialogBuilder.ContainsKey('_IsDialogBuilder')) {
+            throw "Invalid DialogBuilder object. Did you create it with New-DialogBuilder?"
+        }
+    
+        # Create exportable structure (public names, no internal state)
+        $exportObj = @{
+            Title            = $DialogBuilder._Title
+            Description      = $DialogBuilder._Description
+            Width            = $DialogBuilder._Width
+            Height           = $DialogBuilder._Height
+            OkButtonName     = $DialogBuilder._OkButtonName
+            CancelButtonName = $DialogBuilder._CancelButtonName
+            ShowHints        = $DialogBuilder._ShowHints
+            Icon             = $DialogBuilder._Icon
+            Parameters       = @($DialogBuilder._Parameters)
+        }
+    
+        $json = $exportObj | ConvertTo-Json -Depth 10
+    
+        if (-not [string]::IsNullOrEmpty($FilePath)) {
+            $json | Out-File -FilePath $FilePath -Encoding UTF8
+            Write-Host "Dialog configuration exported to: $FilePath" -ForegroundColor Green
+        }
+    
+        return $json
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260312T120000Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9d311b90-0de4-42fd-b150-cf1591597394"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260331T120000Z
+    
+    
+    
+    
+    
+    
+    

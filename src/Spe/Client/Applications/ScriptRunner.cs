@@ -38,15 +38,30 @@ namespace Spe.Client.Applications
             try
             {
                 Context.Language = job?.Options?.ClientLanguage ?? Context.Language;
+                Session.Output.ResetRunState();
                 Method(Session, Script);
                 if (job == null) return;
 
+                // Drain remaining output in jquery.terminal's native format
+                // (jsterm). The ISE's terminal is a jquery.terminal instance
+                // (#1458) and its echo path parses these format strings
+                // natively, matching what the standalone SPE Console does.
+                // Using GetConsoleUpdate instead of GetHtmlUpdate is also what
+                // gives us correct Write-Host -NoNewline handling via its
+                // "wait for terminator" line-buffering. The script has ended,
+                // so a last line still waiting for its terminator is final too.
+                var clearHost = Session.Output.ConsumeClearPending();
+                var finalOutputBuffer = new System.Text.StringBuilder();
+                Session.Output.GetConsoleUpdate(finalOutputBuffer, 131072, true);
                 var output = new RunnerOutput
                 {
                     Exception = null,
-                    Output = Session.Output.GetHtmlUpdate(),
+                    ClearHost = clearHost,
+                    Output = finalOutputBuffer.ToString(),
                     DialogResult = Session.Output.GetDialogRessult(),
                     HasErrors = Session.Output.HasErrors,
+                    WarningCount = Session.Output.WarningCount,
+                    ErrorCount = Session.Output.ErrorCount,
                     CloseRunner = Session.CloseRunner,
                     DeferredMessages = Session.DeferredMessages
                 };
@@ -57,7 +72,7 @@ namespace Spe.Client.Applications
             }
             catch (ThreadAbortException taex)
             {
-                PowerShellLog.Error("Script was aborted", taex);
+                PowerShellLog.Error("[Runner] action=executeScript status=aborted", taex);
                 if (!Environment.HasShutdownStarted)
                 {
                     Thread.ResetAbort();
@@ -65,16 +80,22 @@ namespace Spe.Client.Applications
             }
             catch (Exception exc)
             {
-                PowerShellLog.Error("Error while executing PowerShell script.", exc);
+                PowerShellLog.Error("[Runner] action=executeScript status=failed", exc);
 
                 if (job != null)
                 {
+                    // jsterm format - same as the success-path drain above.
+                    var errorOutputBuffer = new System.Text.StringBuilder();
+                    Session.Output.GetConsoleUpdate(errorOutputBuffer, 131072, true);
                     var output =  new RunnerOutput
                     {
                         Exception = exc,
-                        Output = Session.Output.GetHtmlUpdate(),
+                        Output = errorOutputBuffer.ToString(),
                         DialogResult = Session.Output.GetDialogRessult(),
                         HasErrors = true,
+                        WarningCount = Session.Output.WarningCount,
+                        // the unhandled exception itself is one more error
+                        ErrorCount = Session.Output.ErrorCount + 1,
                         CloseRunner = Session.CloseRunner,
                         DeferredMessages = Session.DeferredMessages
                     };
@@ -87,7 +108,10 @@ namespace Spe.Client.Applications
             finally
             {
                 Session.CloseRunner = false;
-                Session.Output.Clear();
+                // Post-execution cleanup - don't signal the client to purge its
+                // terminal output, we just finished consuming it through the poll
+                // loop and want to free server-side memory.
+                Session.Output.ClearSilent();
                 if (AutoDispose)
                 {
                     Session.Dispose();

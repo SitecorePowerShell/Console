@@ -37,7 +37,7 @@ namespace Spe.Commands.Packages
 
         protected override void ProcessRecord()
         {
-            source = new ItemSource {Name = Name}; //Create source – source should be based on BaseSource              
+            source = new ItemSource {Name = Name}; //Create source - source should be based on BaseSource
             if (Item != null)
             {
                 source.Database = Item.Database.Name;

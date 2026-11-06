@@ -8,15 +8,21 @@ namespace Spe
         public const string General_Operation_failed_wrong_data_template = "Script cannot be executed as it is of a wrong data template!";
 
         public const string PowerShellRunner_OnLoad_Show_copyright__ = "Show copyright..";
-        public const string PowerShellRunner_OnLoad_View_script_results = "View script results";
-        public const string PowerShellRunner_OnLoad_View_script_results_and_errors = "View script results and errors";
         public const string PowerShellRunner_UpdateProgress_Operation_ = "Operation:";
         public const string PowerShellRunner_UpdateProgress_Running_script___ = "Running script...";
+        public const string PowerShellRunner_ScriptSessionLost = "The script session was lost.";
+        public const string PowerShellRunner_ScriptShownElsewhere = "This script is now shown in another window.";
         public const string PowerShellRunner_UpdateProgress_Status_ = "Status:";
         public const string PowerShellRunner_UpdateProgress_Time_remaining_ = "Time remaining:";
 
-        public const string PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_ =
-            "Script finished - no results to display.";
+        public const string PowerShellRunner_ShowOutput = "Show output";
+        public const string PowerShellRunner_HideOutput = "Hide output";
+        public const string PowerShellRunner_Success = "Success";
+        public const string PowerShellRunner_Aborted = "Aborted";
+        public const string PowerShellRunner_Warning = "{0} warning";
+        public const string PowerShellRunner_Warnings = "{0} warnings";
+        public const string PowerShellRunner_Error = "{0} error";
+        public const string PowerShellRunner_Errors = "{0} errors";
 
         public const string PowerShellResultViewerList_UpdateProgress_remaining = "remaining";
 
@@ -45,12 +51,10 @@ namespace Spe
             "No scripts found...Do you need to re-index your databases?";
         public const string MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database =
             "Scripts matching: '{0}' in '{1}*' database";
-        public const string MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases =
-            "Scripts matching: '{0}' in all databases";
 
         public const string
             MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database =
-                "Script name to search for - prefix with e.g. 'master:' to narrow to specific database";
+                "Search scripts. '~' includes body, 'db:' switches database.";
         public const string
             PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor = "Error while rendering this editor";
 

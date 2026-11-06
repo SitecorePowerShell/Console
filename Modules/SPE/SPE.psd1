@@ -11,7 +11,7 @@
     RootModule = '.\SPE.psm1'
 
     # Version number of this module.
-    ModuleVersion = '8.0.0'
+    ModuleVersion = '9.0.0'
 
     # ID used to uniquely identify this module
     GUID = 'cf8d3b69-b293-4d8b-9974-e1ab80509724'
@@ -23,7 +23,7 @@
     CompanyName = 'Sitecore PowerShell Extensions'
 
     # Copyright statement for this module
-    Copyright = '(c) 2010-2025 Adam Najmanowicz, Michael West. All rights Reserved.'
+    Copyright = '(c) 2010-2026 Adam Najmanowicz, Michael West. All rights Reserved.'
 
     # Description of the functionality provided by this module
     Description = 'The SPE Remoting module provides remote connectivity to a Sitecore instance. The Sitecore PowerShell Extensions (SPE) module must be installed and configured to accept remoting connections.'
@@ -64,35 +64,37 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules = @(
         '.\ConvertFrom-CliXml.ps1'
+        '.\ConvertFrom-JwtHeader.ps1',
+        '.\ConvertFrom-JwtPayload.ps1',
         '.\ConvertTo-CliXml.ps1',
-        '.\Invoke-GenericMethod.ps1',
         '.\Invoke-RemoteScript.ps1',
+        '.\Invoke-RemoteWait.ps1',
         '.\MediaSyncWatcher.ps1',
         '.\New-Jwt.ps1',
-        '.\New-RunspacedDelegate.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
         '.\Send-RemoteItem.ps1',
         '.\Stop-ScriptSession.ps1',
         '.\Test-RemoteConnection.ps1',
+        '.\Wait-RemoteConnection.ps1',
         '.\Wait-RemoteScriptSession.ps1',
         '.\Wait-RemoteSitecoreJob.ps1'
     )
-    
+
     # Functions to export from this module
     FunctionsToExport = @(
         'ConvertFrom-CliXml'
+        'ConvertFrom-JwtHeader',
+        'ConvertFrom-JwtPayload',
         'ConvertTo-CliXml',
-        'Invoke-GenericMethod',
         'Invoke-RemoteScript',
-        'Invoke-RemoteScriptAsync',
         'New-Jwt',
-        'New-RunspacedDelegate',
         'New-ScriptSession',
         'Receive-RemoteItem',
         'Send-RemoteItem',
         'Stop-ScriptSession',
         'Test-RemoteConnection',
+        'Wait-RemoteConnection',
         'Wait-RemoteScriptSession',
         'Start-MediaSyncWatcher',
         'Stop-MediaSyncWatcher',

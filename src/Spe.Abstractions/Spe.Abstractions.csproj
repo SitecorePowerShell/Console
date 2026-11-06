@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Spe.Abstractions</RootNamespace>
     <AssemblyName>Spe.Abstractions</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,15 +36,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Sitecore.ContentSearch, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sitecore.ContentSearch.NoReferences.8.2.170728\lib\NET452\Sitecore.ContentSearch.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sitecore.ContentSearch.9.2.0\lib\net471\Sitecore.ContentSearch.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sitecore.Kernel.NoReferences.8.2.170728\lib\NET452\Sitecore.Kernel.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Linq, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sitecore.ContentSearch.Linq.9.2.0\lib\net471\Sitecore.ContentSearch.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sitecore.Kernel, Version=13.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sitecore.Kernel.9.2.0\lib\net471\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="sysglobl" />
     <Reference Include="System" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.FileSystem.Primitives" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions.Design" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Spe\Version.cs">
@@ -52,7 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IAuthenticationManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IDateConverter.cs" />
-    <Compile Include="VersionDecoupling\Interfaces\IImmediateDebugWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IIndexManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJob.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IJobManager.cs" />
@@ -62,7 +81,12 @@
     <Compile Include="VersionDecoupling\Interfaces\IPublishManager.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
     <Compile Include="VersionDecoupling\Interfaces\ISpeAuthenticationProvider.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\ISpeAuthenticationProviderEx.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\ISerializationManager.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\ISerializationPathResolver.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\IUpdatePackageGenerator.cs" />
     <Compile Include="VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
+    <Compile Include="VersionDecoupling\Interfaces\TokenValidationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -83,11 +107,7 @@
       <Visible>false</Visible>
     </ProjectDeployPathFiles>
   </ItemGroup>
-  <PropertyGroup>
-    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
-  </PropertyGroup>
   <Target Name="AfterBuild">
     <Copy SourceFiles="@(AssemblyFiles)" DestinationFolder="$(ProjectDeployPath)\bin" ContinueOnError="true" />
-    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
   </Target>
 </Project>

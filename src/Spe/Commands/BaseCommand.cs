@@ -158,7 +158,7 @@ namespace Spe.Commands
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while executing '{GetType().FullName}' command", ex);
+                PowerShellLog.Error($"[Command] action=execute status=failed command={GetType().FullName}", ex);
                 WriteError(ex.GetType(), $"An error was encountered while executing the command '{this}'",
                     ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
             }
@@ -192,7 +192,7 @@ namespace Spe.Commands
         protected virtual void WriteError(Exception exception, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject, bool throwTerminatingError = false)
         {
             var record = new ErrorRecord(exception, errorIds.ToString(), errorCategory, targetObject);
-            PowerShellLog.Error($"'{errorIds}' (Category: {errorCategory}) error encountered on object. ", exception);
+            PowerShellLog.Error($"[Command] action=writeError errorId={errorIds} category={errorCategory}", exception);
             if (throwTerminatingError) ThrowTerminatingError(record);
             WriteError(record);
         }

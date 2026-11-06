@@ -46,8 +46,9 @@ namespace Spe.Client.Applications.UploadFile
                     var result = contentTypeValidator.Validate(Request.Files);
                     if (!result.Valid)
                     {
-                        CancelFailedValidation("The file type is not on the configured list of approved file types.");
-                        Sitecore.Diagnostics.Log.Warn($"[SPE] {result.Message}", this);
+                        var failedValidationMessage = "The file type is not on the configured list of approved file types.";
+                        CancelFailedValidation(failedValidationMessage);
+                        PowerShellLog.Warn($"[Upload] action=validateContentType status=rejected detail=\"{result.Message}\"");
                         return;
                     }
 
@@ -74,9 +75,9 @@ namespace Spe.Client.Applications.UploadFile
                         pathOrId = validator.GetFullPath(pathOrId);
                         if (!validator.Validate(pathOrId))
                         {
-
-                            CancelFailedValidation("The upload folder is not on the the list of allowed upload locations.");
-                            Sitecore.Diagnostics.Log.Warn($"[SPE] Location: '{pathOrId}' is protected. Please configure 'powershell/uploadFile/allowedLocations' if you wish to change it.", this);
+                            var failedValidationMessage = "The upload folder is not on the list of allowed upload locations.";
+                            CancelFailedValidation(failedValidationMessage);
+                            PowerShellLog.Warn($"[Upload] action=validateLocation status=rejected path=\"{pathOrId}\"");
                             return;
                         }
                     }
@@ -92,7 +93,7 @@ namespace Spe.Client.Applications.UploadFile
                     if (uploadArgs.UploadedItems.Count > 0)
                     {
                         fileName = uploadArgs.UploadedItems[0].ID.ToString();
-                        PowerShellLog.Audit("Upload: {0}", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
+                        PowerShellLog.Audit("[Upload] action=uploadFile items=\"{0}\"", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
                     }
                     else
                     {
@@ -114,7 +115,7 @@ namespace Spe.Client.Applications.UploadFile
                         return;
                     HttpContext.Current.Response.Write(
                         "<html><head><script type=\"text/JavaScript\" language=\"javascript\">window.top.scForm.getTopModalDialog().frames[0].scForm.postRequest(\"\", \"\", \"\", 'EndUploading(\"" +
-                        fileName + "\")')</script></head><body>Done</body></html>");
+                        StringUtil.EscapeJavascriptString(fileName) + "\")')</script></head><body>Done</body></html>");
                 }
                 catch (OutOfMemoryException)
                 {

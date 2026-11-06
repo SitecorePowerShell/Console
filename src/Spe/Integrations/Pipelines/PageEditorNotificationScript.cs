@@ -43,7 +43,7 @@ namespace Spe.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' in Page Editor Notification pipeline.", ex);
+                            PowerShellLog.Error($"[Pipeline] action=invokeScript status=failed script=\"{scriptItem?.Paths.Path}\" pipeline=pageEditorNotification", ex);
                         }
                     }
                 }

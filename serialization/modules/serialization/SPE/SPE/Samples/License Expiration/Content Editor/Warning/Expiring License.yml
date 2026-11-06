@@ -1,0 +1,41 @@
+﻿---
+ID: "9dcd1991-e1e0-4357-9b37-d23e9c6f9395"
+Parent: "b47c0f43-ca75-4857-a916-197e0f34928e"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/License Expiration/Content Editor/Warning/Expiring License
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $license = [Sitecore.Reflection.Nexus]::LicenseApi
+    $date = [Sitecore.DateUtil]::IsoDateToDateTime($license.Expiration)
+    
+    if($date -gt [datetime]::Today.AddDays(14)) {
+        exit
+    }
+    
+    $title = "Your Sitecore license is about to expire!"
+    $text = "Your Sitecore license will expire on $($date.ToLongDateString())"
+    $icon = "Office/32x32/information.png"
+    
+    $warning = $pipelineArgs.Add($title, $text);
+    $warning.Icon = $icon
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150601T232034
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "01ce8174-d13f-4cc2-b634-3c24a6e65079"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214511Z

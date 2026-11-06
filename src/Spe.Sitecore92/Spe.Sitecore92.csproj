@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Spe.VersionSpecific</RootNamespace>
     <AssemblyName>Spe.VersionSpecific</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.2.1.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Client, Version=13.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Client.9.2.0\lib\net471\Sitecore.Client.dll</HintPath>
       <Private>False</Private>
@@ -53,6 +51,11 @@
     </Reference>
     <Reference Include="Sitecore.Owin.Authentication, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Sitecore.Owin.Authentication.9.2.0\lib\net471\Sitecore.Owin.Authentication.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Update, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sitecore.Update.9.2.0\lib\net471\Sitecore.Update.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="sysglobl" />
     <Reference Include="System" />
@@ -85,6 +88,9 @@
     <Compile Include="Services\SpeJobMessageManager.cs" />
     <Compile Include="Services\SpeObsoletor.cs" />
     <Compile Include="Services\SpePublishManager.cs" />
+    <Compile Include="Services\SpeSerializationManager.cs" />
+    <Compile Include="Services\SpeSerializationPathResolver.cs" />
+    <Compile Include="Services\SpeUpdatePackageGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

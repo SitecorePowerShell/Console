@@ -76,7 +76,6 @@ namespace Spe.Client.Controls
             Context.ClientPage.AddControl(Languages, control);
 
             var icon = language.GetIcon();
-            //var icon = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? "Office/32x32/flag_generic.png" : "Flags/32x32/flag_generic.png";
 
             var builder = new ImageBuilder
             {

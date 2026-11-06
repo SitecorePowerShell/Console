@@ -8,6 +8,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -16,10 +17,13 @@ using Sitecore.Exceptions;
 using Sitecore.Install.Serialization;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
 using Sitecore.Web.UI.Sheer;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Core.Debugging;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
+using Spe.Core.Settings.Authorization;
 using Spe.Core.Provider;
 using Spe.Core.Settings;
 using Spe.Core.Utility;
@@ -44,9 +48,9 @@ namespace Spe.Core.Host
         private const string HtmlLineEndFormat = "<br/>";
 
         private const string ConsoleExceptionFormatString =
-            "[[;#f00;#000]Exception: {0}]\r\n" + "[[;#f00;#000]Type: {1}]\r\n" + "[[;#f00;#000]Stack trace:\r\n{2}]";
+            "[[;#FF9494;]Exception: {0}]\r\n" + "[[;#FF9494;]Type: {1}]\r\n" + "[[;#FF9494;]Stack trace:\r\n{2}]";
 
-        private const string ConsoleInnerExceptionPrefix = "{0}[[b;#fff;#F00]Inner ] {1}";
+        private const string ConsoleInnerExceptionPrefix = "{0}[[b;#f00;]Inner ] {1}";
         private const string ConsoleLineEndFormat = "\r\n";
 
         private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";
@@ -66,6 +70,76 @@ namespace Spe.Core.Host
         private bool isRunspaceOpenedOrBroken;
         private System.Management.Automation.PowerShell powerShell;
         private ScriptingHostPrivateData privateData;
+        private readonly StreamRecordRing streamRing;
+
+        // Captured runspace streams (Verbose/Information/Progress/Warning) live here
+        // for the lifetime of the session so the wait endpoint can drain them
+        // mid-flight. Subscriptions are wired per-PowerShell-instance in
+        // ExecuteScriptPart and torn down implicitly when each instance is disposed.
+        internal StreamRecordRing StreamRing => streamRing;
+
+        // One-way latch flipped to true the first time ExecuteScriptPart enters
+        // its invoke path on this session. The wait endpoint reads this to
+        // distinguish "runspace is Available because the job hasn't started
+        // yet" (Pending) from "runspace is Available because the script has
+        // finished" (Idle / Done). Volatile because it is written from the
+        // Sitecore Job thread and read from the wait handler's async loop.
+        private volatile bool _hasRunStarted;
+        internal bool HasRunStarted => _hasRunStarted;
+        // No SignalUpdate here on purpose. MarkRunStarted is called immediately
+        // before the pipeline Invoke, while the runspace is still Available;
+        // signalling here would wake the wait endpoint inside the gap where
+        // (HasRunStarted && state != Busy) is briefly true and cause it to
+        // return isDone=true before the script has actually run. The next
+        // AvailabilityChanged event (Available -> Busy) fires SignalUpdate and
+        // moves the predicate to the correct state.
+        internal void MarkRunStarted() => _hasRunStarted = true;
+
+        // Per-session "something changed" signal consumed by the wait endpoint.
+        // Producers (stream-record enqueue, runspace-state change, disposal,
+        // MarkRunStarted) call SignalUpdate; the wait loop awaits it via
+        // WaitForUpdateAsync and re-probes state on each wake.
+        //
+        // RunContinuationsAsynchronously is load-bearing: without it,
+        // SignalUpdate from the runspace pipeline thread would run the wait
+        // endpoint's response-write continuation inline on that thread,
+        // blocking the next stream record. Do not remove.
+        private TaskCompletionSource<bool> _updateSignal = NewSignalTcs();
+
+        private static TaskCompletionSource<bool> NewSignalTcs() =>
+            new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        internal void SignalUpdate()
+        {
+            Volatile.Read(ref _updateSignal).TrySetResult(true);
+        }
+
+        internal async Task WaitForUpdateAsync(TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            var current = Volatile.Read(ref _updateSignal);
+            if (current.Task.IsCompleted)
+            {
+                // A producer signalled before the caller entered this wait.
+                // Consume by swapping in a fresh TCS and return immediately
+                // so the caller re-probes state.
+                Interlocked.CompareExchange(ref _updateSignal, NewSignalTcs(), current);
+                return;
+            }
+
+            using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+            {
+                var winner = await Task.WhenAny(current.Task, Task.Delay(timeout, cts.Token)).ConfigureAwait(false);
+                cts.Cancel();
+                if (winner == current.Task)
+                {
+                    // Consume the signal so subsequent producers fire on a
+                    // fresh TCS. Two concurrent waiters racing here both call
+                    // CompareExchange; only one swap takes effect, the other
+                    // is a no-op - both proceed to re-probe.
+                    Interlocked.CompareExchange(ref _updateSignal, NewSignalTcs(), current);
+                }
+            }
+        }
 
         internal string JobScript { get; set; }
         internal IJobOptions JobOptions { get; set; }
@@ -89,23 +163,40 @@ namespace Spe.Core.Host
                 PsVersion = (Version)psVersionTable["PSVersion"];
             }
 
-            // Ensure IOUtils created by touching IOUtils.SerializationContext
-            using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+            // Warm up IOUtils as a privileged user; a failure here would break SPE until restart (#1506).
+            try
             {
-                var context = IOUtils.SerializationContext;
+                using (new SecurityDisabler())
+                using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+                {
+                    var context = IOUtils.SerializationContext;
+                }
             }
-            
+            catch (Exception ex)
+            {
+                PowerShellLog.Error("[Session] action=warmUpIOUtils status=failed", ex);
+            }
         }
 
         internal ScriptSession(string applianceType, bool personalizedSettings)
         {
-            // Create and open a PowerShell runspace.  A runspace is a container 
+            // Create and open a PowerShell runspace.  A runspace is a container
             // that holds PowerShell pipelines, and provides access to the state
             // of the Runspace session (aka SessionState.)
+            //
+            // streamRing is wired with SignalUpdate so every successful record
+            // enqueue wakes any parked wait-endpoint waiter immediately.
+            streamRing = new StreamRecordRing(SignalUpdate);
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
             host = new ScriptingHost(Settings, SpeInitialSessionState);
+            // StateChanged covers Opened/Closed/Broken lifecycle transitions;
+            // AvailabilityChanged covers Busy <-> Available <-> AvailableForNestedCommand.
+            // Both feed SignalUpdate so the wait endpoint wakes on whichever
+            // edge moves the "isDone" predicate (HasRunStarted && state != Busy),
+            // including for scripts that produce no stream output.
             host.Runspace.StateChanged += OnRunspaceStateEvent;
+            host.Runspace.AvailabilityChanged += OnRunspaceAvailabilityEvent;
             powerShell = NewPowerShell();
 
             host.Runspace.Open();
@@ -130,11 +221,24 @@ namespace Spe.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            Output.Clear();
+            // Session init - no client connected yet, silent clear.
+            Output.ClearSilent();
+        }
+
+        private void OnRunspaceAvailabilityEvent(object sender, RunspaceAvailabilityEventArgs e)
+        {
+            // Wake the wait endpoint on every Busy <-> Available transition so
+            // a script's completion is reflected in the next wait response
+            // within one round-trip. Cheap and idempotent.
+            SignalUpdate();
         }
 
         private void OnRunspaceStateEvent(object sender, RunspaceStateEventArgs e)
         {
+            // Lifecycle edges (Opened / Closed / Broken) also wake the wait
+            // endpoint so a runspace teardown does not leave a waiter parked.
+            SignalUpdate();
+
             //! Carefully process events other than 'Opened'.
             if (e.RunspaceStateInfo.State != RunspaceState.Opened)
             {
@@ -234,6 +338,16 @@ namespace Spe.Core.Host
 
         public List<ErrorRecord> LastErrors { get; set; }
 
+        // Union "did the last script run produce any errors" signal. Covers
+        // both stream errors (Streams.Error) and pipeline-output ErrorRecords
+        // returned through execResults - the latter happens when Out-Default
+        // (added for stringOutput=true) re-emits a parameter binding failure
+        // as an output object instead of routing it to the error stream.
+        // Audit and HTTP-status code paths read this rather than inspecting
+        // LastErrors so the JSON/CliXml branches can keep using LastErrors as
+        // their dedicated "errors" channel without doubling records.
+        public bool LastInvocationHadErrors { get; set; }
+
         public string Key
         {
             get => host.SessionKey;
@@ -246,6 +360,15 @@ namespace Spe.Core.Host
         public string ApplianceType { get; set; }
         public bool Debugging { get; set; }
         public string DebugFile { get; set; }
+        public RemotingPolicy ActiveRemotingPolicy { get; set; }
+
+        // Ownership marker for remoting-backed sessions. Set on first access
+        // from the remoting endpoint and enforced on subsequent accesses so
+        // a different authenticated identity cannot attach to a session id
+        // created by another caller. Format: "remotingClient:&lt;name&gt;" or
+        // "user:&lt;username&gt;". Null/empty for sessions created outside
+        // the remoting pipeline (e.g. interactive ISE).
+        public string CreatedByIdentity { get; set; }
         internal EngineIntrinsics Engine { get; set; }
         public bool DebuggingInBreakpoint { get; private set; }
         public int[] Breakpoints { get; set; } = new int[0];
@@ -263,6 +386,11 @@ namespace Spe.Core.Host
                     return string.Empty;
                 }
             }
+        }
+
+        public void SetLanguageMode(PSLanguageMode mode)
+        {
+            host.Runspace.SessionStateProxy.LanguageMode = mode;
         }
 
         public void RemoveVariable(string varName)
@@ -303,6 +431,178 @@ namespace Spe.Core.Host
                     return ex.Message;
                 }
             }
+        }
+
+        /// <summary>
+        /// PowerShell automatic variables that should be hidden from the ISE
+        /// Variables panel entirely because they're engine-managed, not user-visible.
+        /// </summary>
+        private static readonly HashSet<string> EngineAutomaticVariableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "_", "?", "^", "$", "args", "ConfirmPreference", "ConsoleFileName",
+            "DebugPreference", "EnabledExperimentalFeatures", "ErrorActionPreference",
+            "ErrorView", "Error", "Event", "EventArgs", "EventSubscriber", "ExecutionContext",
+            "false", "FormatEnumerationLimit", "foreach", "HOME", "Host", "InformationPreference",
+            "input", "IsCoreCLR", "IsLinux", "IsMacOS", "IsWindows", "LASTEXITCODE",
+            "Matches", "MaximumAliasCount", "MaximumDriveCount", "MaximumErrorCount",
+            "MaximumFunctionCount", "MaximumHistoryCount", "MaximumVariableCount",
+            "MyInvocation", "NestedPromptLevel", "null", "OFS", "OutputEncoding", "PID",
+            "profile", "ProgressPreference", "PSBoundParameters", "PSCmdlet", "PSCommandPath",
+            "PSCulture", "PSDebugContext", "PSDefaultParameterValues", "PSEdition",
+            "PSEmailServer", "PSHOME", "PSItem", "PSNativeCommandArgumentPassing",
+            "PSNativeCommandUseErrorActionPreference", "PSScriptRoot", "PSSenderInfo",
+            "PSSessionApplicationName", "PSSessionConfigurationName", "PSSessionOption",
+            "PSStyle", "PSUICulture", "PSVersionTable", "PWD", "Sender", "ShellId",
+            "StackTrace", "switch", "this", "true", "VerbosePreference", "WarningPreference",
+            "WhatIfPreference", "SitecoreContextItem"
+        };
+
+        /// <summary>
+        /// SPE/Sitecore "built-in" variables that are set up by the session's
+        /// Initialize() method and PredefinedVariables. They're shown in the
+        /// Variables panel but grouped separately from user-created variables.
+        /// Keep in sync with Initialize() in this class and PredefinedVariables.cs.
+        /// </summary>
+        private static readonly HashSet<string> SpeBuiltInVariableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "me", "HostSettings", "RemotingPolicy", "ScriptSession", "SitecoreAuthority",
+            "AppPath", "AppVPath", "tempPath", "tmpPath",
+            "SitecoreDataFolder", "SitecoreDebugFolder", "SitecoreLayoutFolder",
+            "SitecoreLogFolder", "SitecoreMediaFolder", "SitecorePackageFolder",
+            "SitecoreSerializationFolder", "SitecoreTempFolder", "SitecoreVersion"
+        };
+
+        /// <summary>
+        /// Lazily-created CSharpCodeProvider for generating C# shorthand type
+        /// names (e.g. "string" instead of "System.String", "object[]" instead
+        /// of "System.Object[]") via GetTypeOutput.
+        /// </summary>
+        private static readonly Lazy<Microsoft.CSharp.CSharpCodeProvider> CSharpTypeFormatter =
+            new Lazy<Microsoft.CSharp.CSharpCodeProvider>(() => new Microsoft.CSharp.CSharpCodeProvider());
+
+        /// <summary>
+        /// Returns a C#-style type name (e.g. "string", "int", "object[]",
+        /// "System.Collections.Hashtable") using the built-in CSharpCodeProvider
+        /// so built-in primitives and arrays get their keyword form automatically.
+        /// Falls back to the full .NET name if code generation fails.
+        /// </summary>
+        private static string FormatCSharpTypeName(Type type)
+        {
+            if (type == null) return string.Empty;
+            try
+            {
+                return CSharpTypeFormatter.Value.GetTypeOutput(new System.CodeDom.CodeTypeReference(type));
+            }
+            catch
+            {
+                return type.FullName ?? type.Name;
+            }
+        }
+
+        /// <summary>
+        /// A single entry in the Variables panel.
+        /// Category is "user" for user-created variables and "builtin" for
+        /// SPE/Sitecore convenience variables set up during session init.
+        /// Expandable indicates the variable has children (object properties,
+        /// collection items, hashtable entries) worth showing on demand.
+        /// </summary>
+        public class VariableEntry
+        {
+            public string Name { get; set; }
+            public string TypeName { get; set; }
+            public string Preview { get; set; }
+            public string Category { get; set; }
+            public bool Expandable { get; set; }
+        }
+
+        /// <summary>
+        /// Enumerates session variables visible in the ISE Variables panel.
+        /// Splits results into "user" (user-created) and "builtin" (SPE/Sitecore
+        /// convenience variables). PowerShell engine automatic variables are
+        /// filtered out entirely.
+        /// </summary>
+        public List<VariableEntry> GetUserVariables()
+        {
+            var result = new List<VariableEntry>();
+            lock (this)
+            {
+                try
+                {
+                    // Enumerate via the Variable: PSDrive through the session's own
+                    // provider intrinsics - this walks the session's actual variable
+                    // scope (same one GetDebugVariable reads from by name), unlike
+                    // Engine.InvokeCommand.InvokeScript which would create a child
+                    // scope that can't see user variables at the top-level script scope.
+                    var items = Engine.SessionState.InvokeProvider.Item.Get(@"Variable:\*");
+                    if (items == null)
+                    {
+                        PowerShellLog.Debug("[Session] action=getUserVariables Variable: provider returned null");
+                        return result;
+                    }
+
+                    int totalFound = 0;
+                    int filtered = 0;
+                    foreach (var item in items)
+                    {
+                        totalFound++;
+                        var psVar = item?.BaseObject as PSVariable;
+                        if (psVar == null)
+                        {
+                            filtered++;
+                            continue;
+                        }
+                        var name = psVar.Name;
+                        if (string.IsNullOrEmpty(name) || EngineAutomaticVariableNames.Contains(name))
+                        {
+                            filtered++;
+                            continue;
+                        }
+                        if ((psVar.Options & (ScopedItemOptions.Constant | ScopedItemOptions.ReadOnly)) != 0)
+                        {
+                            filtered++;
+                            continue;
+                        }
+
+                        // Unwrap PSObject layers the same way the inline tooltip does
+                        // (see PowerShellWebService.GetVariableValue) so we expose the
+                        // underlying .NET type (e.g. Sitecore.Data.Items.Item) rather
+                        // than System.Management.Automation.PSObject, and so the
+                        // VariableDetails formatter sees the real object.
+                        var variable = psVar.Value.BaseObject();
+                        if (variable is PSCustomObject)
+                        {
+                            variable = psVar.Value;
+                        }
+                        var typeName = variable == null ? "$null" : FormatCSharpTypeName(variable.GetType());
+                        string preview;
+                        bool expandable = false;
+                        try
+                        {
+                            var details = new VariableDetails("$" + name, variable);
+                            preview = details.ValueString ?? string.Empty;
+                            expandable = details.IsExpandable;
+                        }
+                        catch (Exception ex)
+                        {
+                            preview = "<" + ex.Message + ">";
+                        }
+                        result.Add(new VariableEntry
+                        {
+                            Name = name,
+                            TypeName = typeName,
+                            Preview = preview ?? string.Empty,
+                            Category = SpeBuiltInVariableNames.Contains(name) ? "builtin" : "user",
+                            Expandable = expandable
+                        });
+                    }
+                    PowerShellLog.Debug($"[Session] action=getUserVariables total={totalFound} filtered={filtered} returned={result.Count}");
+                }
+                catch (Exception ex)
+                {
+                    PowerShellLog.Error($"[Session] action=getUserVariables failed: {ex.Message}", ex);
+                }
+            }
+            return result.OrderBy(v => v.Name, StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         public void SetBreakpoints(IEnumerable<int> breakpoints)
@@ -416,7 +716,7 @@ namespace Spe.Core.Host
                     {
                         if (ImmediateCommand is string commandString)
                         {
-                            PowerShellLog.Info($"Executing a debug command in ScriptSession '{Key}'.");
+                            PowerShellLog.Debug($"[Session] action=debugCommand session={Key}");
                             PowerShellLog.Debug(commandString);
                             DebuggerCommandResults results = null;
                             try
@@ -435,7 +735,7 @@ namespace Spe.Core.Host
                             }
                             catch (Exception ex)
                             {
-                                PowerShellLog.Error("Error while executing Debugging command.", ex);
+                                PowerShellLog.Error("[Session] action=debugCommandFailed", ex);
                                 ImmediateCommand = null;
                                 host.UI.WriteErrorLine(GetExceptionString(ex,ExceptionStringFormat.Default));
                             }
@@ -586,7 +886,7 @@ namespace Spe.Core.Host
                 if (GetVariable("PSVersionTable") is Hashtable psVersionTable)
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
-                    psVersionTable["SitecoreVersion"] = SitecoreVersion.Current;
+                    psVersionTable["SitecoreVersion"] = SitecoreVersion.Display;
                 }
             }
         }
@@ -630,7 +930,7 @@ namespace Spe.Core.Host
             {
                 return null;
             }
-            
+
             if (Runspace.DefaultRunspace == null)
             {
                 Runspace.DefaultRunspace = host.Runspace;
@@ -638,7 +938,7 @@ namespace Spe.Core.Host
 
             if (!internalScript)
             {
-                PowerShellLog.Debug($"Executing a script in ScriptSession '{Key}'.");
+                PowerShellLog.Debug($"[Session] action=scriptExecuting session={Key}");
                 PowerShellLog.Debug(script);
             }
 
@@ -652,7 +952,12 @@ namespace Spe.Core.Host
                     using (powerShell = NewPowerShell())
                     {
                         powerShell.Commands.AddScript(script);
-                        return ExecuteCommand(stringOutput, marshalResults);
+                        if (!internalScript)
+                        {
+                            SubscribeStreamsToRing(powerShell);
+                            MarkRunStarted();
+                        }
+                        return ExecuteCommand(stringOutput, marshalResults, internalScript);
                     }
                 }
                 finally
@@ -660,6 +965,82 @@ namespace Spe.Core.Host
                     powerShell = _pipeline;
                 }
             });
+        }
+
+        // Routes Verbose/Information/Progress/Warning records emitted during this
+        // PowerShell invocation into the per-session ring buffer so the wait
+        // endpoint can drain them mid-flight. The PowerShell instance is disposed
+        // at the end of the surrounding using block, which detaches all event
+        // handlers automatically, so explicit unsubscription is unnecessary.
+        private void SubscribeStreamsToRing(System.Management.Automation.PowerShell ps)
+        {
+            ps.Streams.Verbose.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddVerbose(rec.Message);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=verbose ex={ex.Message}"); }
+            };
+            ps.Streams.Information.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<InformationRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddInformation(rec.MessageData?.ToString() ?? string.Empty);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=information ex={ex.Message}"); }
+            };
+            ps.Streams.Warning.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<WarningRecord>)sender)[e.Index];
+                    if (rec != null) streamRing.AddWarning(rec.Message);
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=warning ex={ex.Message}"); }
+            };
+            ps.Streams.Progress.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<ProgressRecord>)sender)[e.Index];
+                    if (rec != null)
+                    {
+                        streamRing.AddProgress(
+                            rec.Activity ?? string.Empty,
+                            rec.StatusDescription ?? string.Empty,
+                            rec.PercentComplete,
+                            rec.CurrentOperation ?? string.Empty,
+                            rec.SecondsRemaining,
+                            rec.ParentActivityId,
+                            rec.RecordType.ToString());
+                    }
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=progress ex={ex.Message}"); }
+            };
+            // Non-terminating errors only. Terminating exceptions bypass Streams.Error
+            // and surface via LastErrors at the post-Idle drain. TargetObject is
+            // intentionally omitted - it can be an arbitrary Sitecore Item or other
+            // payload that would balloon the wire size and risk leaking attached fields.
+            ps.Streams.Error.DataAdded += (sender, e) =>
+            {
+                try
+                {
+                    var rec = ((PSDataCollection<ErrorRecord>)sender)[e.Index];
+                    if (rec != null)
+                    {
+                        streamRing.AddError(
+                            rec.Exception?.Message ?? rec.ToString() ?? string.Empty,
+                            rec.FullyQualifiedErrorId ?? string.Empty,
+                            rec.CategoryInfo?.ToString() ?? string.Empty,
+                            rec.InvocationInfo?.PositionMessage ?? string.Empty,
+                            rec.ScriptStackTrace ?? string.Empty);
+                    }
+                }
+                catch (Exception ex) { PowerShellLog.Debug($"[Session] action=streamCaptureFailed stream=error ex={ex.Message}"); }
+            };
         }
 
         internal List<object> ExecuteCommand(Command command, bool stringOutput, bool internalScript)
@@ -672,7 +1053,7 @@ namespace Spe.Core.Host
                 using (powerShell = NewPowerShell())
                 {
                     powerShell.Commands.AddCommand(command);
-                    return ExecuteCommand(stringOutput);
+                    return ExecuteCommand(stringOutput, true, internalScript);
                 }
             }
             finally
@@ -687,14 +1068,14 @@ namespace Spe.Core.Host
             {
                 TryInvokeInRunningSession("quit");
             }
-            PowerShellLog.Info($"Aborting script execution in ScriptSession '{Key}'.");
+            PowerShellLog.Info($"[Session] action=scriptAborting session={Key}");
             try
             {
                 powerShell?.Stop();
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while aborting script execution in ScriptSession '{Key}'.", ex);
+                PowerShellLog.Error($"[Session] action=scriptAbortFailed session={Key}", ex);
             }
             abortRequested = true;
         }
@@ -730,7 +1111,7 @@ namespace Spe.Core.Host
             };
 
         
-        private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
+        private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true, bool internalScript = false)
         {
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
             var job = jobManager.GetContextJob();
@@ -764,11 +1145,48 @@ namespace Spe.Core.Host
             abortRequested = false;
 
             LastErrors?.Clear();
+            // Only the user-facing call should reset and update the
+            // invocation error flag. Internal scripts (alias setup during
+            // session warmup, post-execution cleanup) run on the same
+            // session and would otherwise clobber a true value set by the
+            // user script just before the audit reads it.
+            if (!internalScript)
+            {
+                LastInvocationHadErrors = false;
+            }
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
             if (powerShell.HadErrors)
             {
+                // LastErrors keeps populating because the JSON / CliXml
+                // response paths in ProcessScript consume it as their
+                // dedicated "errors" channel. The hasErrors signal that
+                // drives 424 deliberately does NOT read this list - a
+                // script that handled its non-terminating errors
+                // (-ErrorAction SilentlyContinue / Ignore, try/catch on
+                // -ErrorAction Stop, 2>$null) still populates Streams.Error
+                // because Sitecore's PSProvider writes errors that bypass
+                // user-level suppression. Counting those as failures gave
+                // every test setup using "if exists" idioms a spurious 424.
                 LastErrors = powerShell.Streams.Error.ToList();
+            }
+
+            // Pipeline-output ErrorRecords don't move HadErrors but still
+            // mean the run failed. Out-Default re-emits a binding failure
+            // as an output object instead of routing it to the error
+            // stream; the script never "handled" that, so 424 is correct.
+            // Mirrors the second loop in LogErrors so the audit signal
+            // matches what already gets warn-logged.
+            if (!internalScript && execResults != null)
+            {
+                foreach (var psObject in execResults)
+                {
+                    if (psObject?.BaseObject is ErrorRecord)
+                    {
+                        LastInvocationHadErrors = true;
+                        break;
+                    }
+                }
             }
 
             LogErrors(powerShell, execResults);
@@ -851,7 +1269,7 @@ namespace Spe.Core.Host
             var path = item.GetProviderPath();
             if (path.Contains(PathUtilities.OrphanPath))
             {
-                PowerShellLog.Error($"Cannot set location to: {path} - the item with id {item.ID} is an orphan. Setting location to drive root.");
+                PowerShellLog.Error($"[Session] action=orphanItem path=\"{path}\" item={item.ID}");
                 path = $"{item.Database}:\\";
             }
             
@@ -890,7 +1308,7 @@ namespace Spe.Core.Host
             if (scriptItem == null) return;
 
             var scriptPath = scriptItem.GetProviderPath();
-            PowerShellLog.Debug($"Script item set to {scriptPath} in ScriptSession {Key}.");
+            PowerShellLog.Debug($"[Session] action=scriptItemSet path=\"{scriptPath}\" session={Key}");
             SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
             SetVariable("SitecoreCommandPath", scriptPath);
             SetVariable("PSScript", scriptItem);
@@ -916,6 +1334,11 @@ namespace Spe.Core.Host
         {
             if (!disposed)
             {
+                // Wake any wait-endpoint waiter so it re-probes, sees the
+                // session removed from the cache, and exits cleanly instead
+                // of holding the request open until the deadline.
+                SignalUpdate();
+
                 if (disposing)
                 {
                     // Dispose managed resources.

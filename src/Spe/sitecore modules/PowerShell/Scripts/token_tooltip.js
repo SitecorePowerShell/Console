@@ -85,7 +85,7 @@ oop.inherits(TokenTooltip, Tooltip);
                 state: session.bgTokenizer.getState(0)
             };
         }
-        if (!token || !token.value || (!token.value.startsWith("$") && !token.value.startsWith("@"))) {
+        if (!token || !token.type || (token.type !== "variable.instance" && token.type !== "variable.braced")) {
             session.removeMarker(this.marker);
             this.hide();
             return;

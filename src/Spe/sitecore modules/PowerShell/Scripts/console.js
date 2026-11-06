@@ -4,11 +4,168 @@
         maxPoll: 2500,
         keepAliveInterval: 60000, // 60 * 1000 - every minute
         keepAliveCheck: 2000, // 2 * 1000 - every 2 seconds
-        monitorActive: true
+        monitorActive: true,
+        busyMessages: [],
+        liveAutocompletion: false
     };
 
     var settings = defaults;
-    var tabCompletions = null;
+
+    // =====================================================================
+    // Busy indicator - animated spinner in the terminal prompt line.
+    // Same pattern as the ISE. Replaces the old bottom-right #working GIF,
+    // which was easy to miss since it lived outside the terminal.
+    // =====================================================================
+    var speSpinnerFrames = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C",
+                            "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
+    var speBusyInterval = null;
+    var speBusyMessage = "";
+    var speBusyFrame = 0;
+    var consoleLastPrompt = "PS >";
+    var consoleTerminal = null;
+
+    function getConsolePrompt() {
+        return "[[;white;]" + consoleLastPrompt + "]";
+    }
+
+    function getBusyPrompt() {
+        var frame = speSpinnerFrames[speBusyFrame];
+        return "[[;#4ec9b0;]" + frame + "] [[;#d4d4d4;]" + speBusyMessage + "]";
+    }
+
+    function pickBusyMessage() {
+        var messages = settings.busyMessages;
+        if (!messages || messages.length === 0) return "Working...";
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    spe.setTerminalPrompt = function (prompt) {
+        if (prompt) {
+            consoleLastPrompt = prompt;
+        }
+        if (consoleTerminal && !speBusyInterval) {
+            consoleTerminal.set_prompt(getConsolePrompt());
+        }
+    };
+
+    spe.showBusy = function (message) {
+        speBusyMessage = message || "";
+        speBusyFrame = 0;
+        if (!consoleTerminal) return;
+        consoleTerminal.set_prompt(getBusyPrompt());
+        if (speBusyInterval) return;
+        speBusyInterval = setInterval(function () {
+            speBusyFrame = (speBusyFrame + 1) % speSpinnerFrames.length;
+            if (consoleTerminal) {
+                consoleTerminal.set_prompt(getBusyPrompt());
+            }
+        }, 80);
+    };
+
+    spe.hideBusy = function () {
+        if (speBusyInterval) {
+            clearInterval(speBusyInterval);
+            speBusyInterval = null;
+        }
+        speBusyMessage = "";
+        if (consoleTerminal) {
+            consoleTerminal.set_prompt(getConsolePrompt());
+        }
+    };
+
+    // =====================================================================
+    // Streaming output - inline-append support for Write-Host -NoNewline.
+    // The server emits a list of structured `emits` ({ op, text }) in the
+    // PollCommandOutput response, and we dispatch each to the appropriate
+    // spe function here.
+    //
+    // pendingPartialLineIndex is the jquery.terminal line index of the
+    // current in-progress partial line (-1 if none). Partial updates use
+    // iseTerminal.update(index, text, opts) to replace the line in place
+    // so successive Write-Host -NoNewline calls render inline rather than
+    // as separate terminal lines.
+    // =====================================================================
+    var pendingPartialLineIndex = -1;
+
+    var guidRegex = /\b([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})\b/gi;
+    function finalizeGuidLinks(div) {
+        div.find("span").each(function () {
+            var span = $(this);
+            var html = span.html();
+            if (guidRegex.test(html)) {
+                guidRegex.lastIndex = 0;
+                span.html(html.replace(guidRegex, function (match) {
+                    return "<a href='#' onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={" + match + "})')\">" + match + "</a>";
+                }));
+            }
+        });
+    }
+
+    // Strip a trailing CR/LF from jsterm text before handing it to
+    // jquery.terminal's echo/update. The server's GetTerminalLine adds
+    // \r\n to terminated lines, and a trailing newline in echo/update
+    // input causes jquery.terminal to split into [content, ""] and
+    // produce a phantom empty row inside the block. echo/update already
+    // implicitly start a new logical line per call, so we never want the
+    // trailing newline.
+    function stripTrailingNewline(text) {
+        if (!text) return text;
+        if (text.length >= 2 && text.charAt(text.length - 2) === "\r" && text.charAt(text.length - 1) === "\n") {
+            return text.substring(0, text.length - 2);
+        }
+        if (text.charAt(text.length - 1) === "\n") {
+            return text.substring(0, text.length - 1);
+        }
+        return text;
+    }
+
+    spe.appendOutput = function (outputToAppend) {
+        if (!consoleTerminal) return;
+        outputToAppend = stripTrailingNewline(outputToAppend);
+        consoleTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+        pendingPartialLineIndex = -1;
+    };
+
+    spe.updatePartialOutput = function (outputToAppend) {
+        if (!consoleTerminal) return;
+        outputToAppend = stripTrailingNewline(outputToAppend);
+        if (pendingPartialLineIndex >= 0) {
+            consoleTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+        } else {
+            consoleTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+            pendingPartialLineIndex = consoleTerminal.last_index();
+        }
+    };
+
+    spe.commitPartialOutput = function (outputToAppend) {
+        if (!consoleTerminal) return;
+        outputToAppend = stripTrailingNewline(outputToAppend);
+        if (pendingPartialLineIndex >= 0) {
+            consoleTerminal.update(pendingPartialLineIndex, outputToAppend, { finalize: finalizeGuidLinks });
+        } else {
+            consoleTerminal.echo(outputToAppend, { finalize: finalizeGuidLinks });
+        }
+        pendingPartialLineIndex = -1;
+    };
+
+    spe.finalizePartial = function () {
+        pendingPartialLineIndex = -1;
+    };
+
+    function dispatchEmits(emits) {
+        if (!emits || !emits.length) return;
+        for (var i = 0; i < emits.length; i++) {
+            var emit = emits[i];
+            if (emit.op === "append") {
+                spe.appendOutput(emit.text);
+            } else if (emit.op === "partial") {
+                spe.updatePartialOutput(emit.text);
+            } else if (emit.op === "commit") {
+                spe.commitPartialOutput(emit.text);
+            }
+        }
+    }
+
     var lastUpdate = 0;
     var attempts = 0;
     var pausedCommand = null;
@@ -85,14 +242,46 @@
         }
     }
 
+    // Pending poll of a running command. Kept so a tab that comes back from
+    // being hidden or frozen polls at once instead of waiting out a timer the
+    // browser throttled.
+    var pendingPoll = null;
+    var POLL_RETRY_MS = [2000, 5000, 15000, 30000];
+
+    function schedulePoll(fn, wait) {
+        pendingPoll = {
+            fn: fn,
+            timer: setTimeout(function () {
+                pendingPoll = null;
+                fn();
+            }, wait)
+        };
+    }
+
+    function wakePoll() {
+        if (!pendingPoll || document.visibilityState === "hidden") {
+            return;
+        }
+        clearTimeout(pendingPoll.timer);
+        var fn = pendingPoll.fn;
+        pendingPoll = null;
+        fn();
+    }
+
+    document.addEventListener("visibilitychange", wakePoll);
+    document.addEventListener("resume", wakePoll);
+    window.addEventListener("pageshow", wakePoll);
+
     function callPowerShellHost(term, guid, command) {
-        term.pause();
-        $("#working").show();
+        // pause(true) keeps the prompt line visible so the animated busy
+        // indicator (spe.showBusy below) has somewhere to render.
+        term.pause(true);
+        spe.showBusy(pickBusyMessage());
         spe.preventCloseWhenRunning(true);
         getPowerShellResponse({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
             function(json) {
                 var data = JSON.parse(json.d);
-                if (data["status"] === "working") {
+                if (data["status"] === "working" || data["status"] === "partial") {
                     displayResult(term, data);
                     var handle = data["handle"];
                     var initialWait = settings.initialPoll;
@@ -100,11 +289,13 @@
                     if (settings.monitorActive) {
                         scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ")");
                     };
+                    var pollFailures = 0;
                     (function poll(wait) {
-                        setTimeout(function() {
+                        schedulePoll(function() {
                             if (settings.monitorActive) {
                                 getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                     function(pollJson) {
+                                        pollFailures = 0;
                                         var jsonData = JSON.parse(pollJson.d);
                                         var finished = false;
                                         if (jsonData["status"] === "working") {
@@ -136,8 +327,15 @@
                                         scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ",finished=" + finished + ")");
                                     },
                                     function(jqXHR, textStatus, errorThrown) {
+                                        // A request that failed while the tab was frozen or the
+                                        // network blinked: the command is still running, so retry
+                                        // before giving up on it.
+                                        if (pollFailures < POLL_RETRY_MS.length) {
+                                            poll(POLL_RETRY_MS[pollFailures++]);
+                                            return;
+                                        }
+                                        spe.hideBusy();
                                         term.resume();
-                                        $("#working").hide();
                                         spe.preventCloseWhenRunning(false);
                                         term.echo("Communication error: " + textStatus + "; " + errorThrown);
                                     }
@@ -161,11 +359,38 @@
     }
 
     function displayResult(term, data) {
-        if (data["status"] != "partial" && data["status"] != "working") {
+        var terminated = data["status"] !== "partial" && data["status"] !== "working";
+
+        // Clear-Host called during command execution: purge the terminal
+        // output before rendering any new result from this poll cycle.
+        if (data["clear"]) {
+            term.clear();
+            pendingPartialLineIndex = -1;
+        }
+
+        // Server sends at most one "append" (all terminated content
+        // concatenated) and one "partial" (unterminated tail) per poll.
+        // "partial"/"commit" use jquery.terminal's update() for
+        // Write-Host -NoNewline inline append support.
+        if (data["emits"] && data["emits"].length > 0) {
+            dispatchEmits(data["emits"]);
+        } else if (data["result"]) {
+            term.echo(data["result"], { finalize: finalizeGuidLinks });
+            pendingPartialLineIndex = -1;
+        }
+
+        if (terminated) {
+            spe.hideBusy();
             term.resume();
-            $("#working").hide();
+            term.echo(" ");
             spe.preventCloseWhenRunning(false);
-            term.set_prompt(data["prompt"]);
+            // Finalize any pending partial so subsequent commands start a
+            // fresh visual line. The current rendered text is considered
+            // the final form of the partial.
+            spe.finalizePartial();
+            if (data["prompt"]) {
+                spe.setTerminalPrompt(data["prompt"]);
+            }
             var background = data["background"];
             if (background !== undefined && background !== "null") {
                 $("#terminal").css({ "background-color": background });
@@ -176,94 +401,23 @@
             }
         }
 
-        term.echo(data["result"]);
         $("html").animate({ scrollTop: $(document).height() }, "slow");
-    }
-
-    var sigHint = "";
-
-    function completion(command, tab_count, callback) {
-        if (tab_count < 0 || !tabCompletions) {
-            tabCompletionInit(command, function () {
-                if (tabCompletions) {
-                    callback(tabCompletions[0]);
-
-                    if (tabCompletions.length === 0) {
-                        tabCompletionNoHints();
-                    }
-                }
-            });
-        } else if (tabCompletions) {
-            callback(tabCompletions[tab_count]);
-
-            if (tabCompletions.length === 0) { 
-                tabCompletionNoHints();
-            }
-        }
-    }
-
-    function tabCompletionInit(command, callback) {
-        getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
-            function (json) {
-                var data = JSON.parse(json.d);
-                sigHint = "";
-                tabCompletions = data.filter(function (hint) {
-                    var isSignature = hint.indexOf("Signature|") === 0;
-                    if (isSignature) {
-                        var hintParts = hint.split("|");
-                        sigHint += hintParts[1] + "<br/>";
-                    }
-                    return !isSignature;
-                }).map(function (hint) {
-                    var hintParts = hint.split("|");
-                    if (hintParts[0] === "Type") {
-                        return "[" + hintParts[3];
-                    }                    
-                    return hint;
-                    });
-                if (callback) {
-                    callback();
-                }
-                if (!!console) {
-                    console.log("[spe] setting tabCompletions to: ", tabCompletions);
-                }
-            });
-        if (!!console) {
-            console.log("[spe] initializing tab completion");
-        }
-        return (tabCompletions) ? tabCompletions.length : 0;
-    }
-
-    function tabCompletionNoHints() {
-
-        var tips = $(".tip_no_hints");
-        var tip = tips[0];
-        var tipInterval = 1000;
-        if (sigHint === "") {
-            tip.innerHTML = "No hints found";
-            tips.addClass("no_hints").removeClass("signature");
-        } else {
-            tipInterval = 5000;
-            tip.innerHTML = sigHint;
-            tips.addClass("signature").removeClass("no_hints");
-        }
-        //Absolute position the tooltip according to mouse position
-        tips.css({ top: 10, left: 10 });
-
-        tips.fadeIn(function () {
-            window.setTimeout(function () {
-                tips.fadeOut("slow");
-            }, tipInterval);
-        });
     }
 
     var guid = getSessionId();
     var terminal;
+    var completionMenu = null;
     var currentYear = (new Date()).getFullYear();
     var greetings = "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
     $(function() {
+        // No status bar here, so the resize grip goes straight on the page.
+        spe.initResizeGrip(document.body);
         terminal =
             $("#terminal").terminal(function(command, term) {
+                if (/^\s*(cls|clear-host)\s*$/i.test(command)) {
+                    term.clear();
+                    return;
+                }
                 var buffer;
                 if (command.length > 0 && command.lastIndexOf(" `") == command.length - 1) {
                     buffer = command;
@@ -285,9 +439,21 @@
             }, {
                 greetings: greetings,
                 name: "mainConsole",
-                completion: completion,
-                caseSensitiveAutocomplete: false
+                keydown: function (e) {
+                    return completionMenu ? completionMenu.keydown(e) : undefined;
+                },
+                onPause: function () { if (completionMenu) completionMenu.close(); },
+                onBlur: function () { if (completionMenu) completionMenu.close(); }
                 });
+        completionMenu = spe.attachCompletionMenu(terminal, {
+            endpoint: "CompleteCommand",
+            guid: function () { return guid; },
+            live: function () { return !!settings.liveAutocompletion; },
+            onNotElevated: function () { spe.elevateSession(); }
+        });
+        // Expose the terminal reference to the spe streaming/busy helpers
+        // defined at the top of this IIFE.
+        consoleTerminal = terminal;
         $.terminal.defaults.formatters.push(function (string) {
             return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {
                 if (/^[a-zA-Z]{1,}[\-][a-zA-Z]*\b$/g.test(string)) {
@@ -301,19 +467,19 @@
                 }
             }).join('');
         });
+        document.title = "SPE Console";
         spe.bootstrap(false);
     });
 
-    
     spe.elevateSession = function() {
         scForm.postRequest("", "", "", "ise:elevatesession");
         spe.showInfoPanel(true);
     };
 
     spe.showUnelevated = function() {
+        spe.hideBusy();
         terminal.resume();
-        $ise("#working").hide();
-        terminal.set_prompt("unelevated >");
+        spe.setTerminalPrompt("unelevated >");
         spe.showInfoPanel(true);
     }
 
@@ -343,8 +509,8 @@
               callPowerShellHost(terminal, guid, "cd master:\\");
           }
         } else {
+          spe.hideBusy();
           terminal.resume();
-          $("#working").hide();
           terminal.echo("Script execution forbidden. Contact your Sitecore administrator if you need this functionality.");
         }
 

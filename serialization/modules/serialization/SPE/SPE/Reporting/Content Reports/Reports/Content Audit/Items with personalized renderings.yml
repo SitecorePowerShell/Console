@@ -1,0 +1,153 @@
+﻿---
+ID: "11f3a846-fd48-4c98-b2f9-2cc3a93f9662"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with personalized renderings
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/elements.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+    	.NOTES
+    		Michael West
+    		Big thanks to kverheire for helping test against real content.
+    #>
+    $database = "master"
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    $settings = @{
+       Title = "Report Filter"
+       ShowHint = $true
+       OkButtonName = "Proceed"
+       CancelButtonName = "Abort"
+       Description = "Filter the results for item renderings with personalization rules."
+       Parameters = @(
+           @{
+               Name="root"
+               Title="Choose the report root"
+               Tooltip="Only items from this root will be returned."
+               Root="/sitecore/content/"
+           }
+       )
+       Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+       Exit
+    }
+    
+    $query = "$($root.ItemPath)//*[@__renderings='%<conditions%' or @#__Final Renderings#='%<conditions%']"
+    $items = @($root) + @((Get-Item -Path "master:" -Query $query))
+    
+    function HasRuleOnRendering {
+       param(
+           [Sitecore.Layouts.RenderingDefinition]$Rendering
+       )
+    
+       $hasRules = $false
+    
+       if($rendering -and ![string]::IsNullOrEmpty($rendering.Rules) ) {
+           $hasRules = $true
+       }
+    
+       $hasRules
+    }
+    
+    $renderingLookup = @{}
+    $reportItems = [System.Collections.ArrayList]@()
+    
+    $db = Get-Database -Name $database
+    foreach($item in $items) {
+       $renderings = Get-Rendering -Item $item -FinalLayout
+       foreach($rendering in $renderings) {
+           if((HasRuleOnRendering -Rendering $rendering) -and ![string]::IsNullOrEmpty($rendering.ItemId)) {
+               $renderingName = $rendering.ItemId.ToString()
+               if($renderingLookup.ContainsKey($rendering.ItemId)) {
+                   $renderingName = $renderingLookup[$rendering.ItemId]
+               } else {
+                   $renderingName = $db.GetItem($rendering.ItemId) | Select-Object -Expand Name
+               }
+    
+               $datasource = $rendering.Datasource
+               if([Sitecore.Data.ID]::IsID($datasource)) {
+                   $datasource = $db.GetItem($rendering.Datasource) | Select-Object -Expand Paths | Select-Object -Expand Path
+               }
+    
+               $reportItem = [PSCustomObject]@{
+                   "Icon" = $item.Appearance.Icon
+                   "ItemPath" = $item.Paths.Path
+                   "Rendering" = $renderingName
+                   "Placeholder" = $rendering.Placeholder
+                   "Datasource" = $datasource
+               }
+               $reportItems.Add($reportItem) > $null
+           }
+       }
+    }
+    
+    if($reportItems.Count -eq 0) {
+       Show-Alert "There are no items matching the specified criteria."
+    } else {
+       $reportProps = @{
+           Title = "Item Renderings with Personalization Report"
+           InfoTitle = "Renderings with personalization rules"
+           InfoDescription = "This report provides details about which items have renderings configured with personalization rules."
+       }
+    
+       $reportItems | Show-ListView @reportProps
+    }
+    Close-Window
+Languages:
+- Language: da
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Elementer med personaliserede renderinger
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190718T201854Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3003929e-ed7e-4d60-8421-f6b72b800243"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20211124T191533Z
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Items with personalized renderings
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190107T164126Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2b3e8564-01d5-40d5-896f-094fed800bdd"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20220906T194759Z

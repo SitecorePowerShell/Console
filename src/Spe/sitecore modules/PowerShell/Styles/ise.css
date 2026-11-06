@@ -22,8 +22,6 @@
     min-width: 100px;
 }
 
-.ui-dialog { z-index: 1; }
-
 #ajax-dialog {
     border: 0;
     display: none;
@@ -86,7 +84,6 @@
 }
 
 .ui-widget-content ul li {
-    /* margin-bottom: 1.2em; */
     list-style-position: inside;
     list-style-type: disc;
 }
@@ -105,7 +102,7 @@
     text-decoration: underline;
 }
 
-.ui-dialog { margin-left: 40px !important; }
+.ui-dialog { z-index: 1; margin-left: 40px !important; }
 
 .ui-dialog-titlebar { display: none; }
 
@@ -123,8 +120,6 @@ a.ps-link {
 }
 
 .ui-state-highlight .ui-icon.ui-icon-info {
-    /*background: url(/sitecore%20modules/PowerShell/Assets/spe-32.png) center center;*/
-    /*background-size: 16px;*/
     display: none;
 }
 
@@ -160,59 +155,24 @@ a.ps-link {
 }
 
 #HelpClose {
-    -moz-border-radius-bottomleft: 9px;
-    -moz-border-radius-bottomright: 9px;
-    -moz-border-radius-topleft: 9px;
-    -moz-border-radius-topright: 0;
-    -moz-box-shadow: inset 0 1px 0 0 #ffffff;
-    background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
     background-color: #ededed;
     border: 1px solid #dcdcdc;
-    border-bottom-left-radius: 9px;
-    border-bottom-right-radius: 9px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 0;
+    border-radius: 9px 0 9px 9px;
     box-shadow: inset 0 1px 0 0 #ffffff;
-    color: #777777;
+    color: #555555;
     display: inline-block;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
     float: right;
     font-family: cursive;
-    font-size: 24px;
     font-style: normal;
     font-weight: normal;
-    height: 24px;
-    line-height: 16px;
     margin: 1px 4px 0 0;
     padding: 7px 5px 4px 6px;
     text-align: center;
     text-decoration: none;
     text-indent: 0;
     text-shadow: 1px 1px 0 #ffffff;
-    width: 24px;
     z-index: 10;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-#HelpClose:hover {
-    background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%);
-    background-color: #e3e3e3;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
-}
-
-#ResultsSplitter {
-    background: url(/sitecore%20modules/PowerShell/Assets/Splitter.png) no-repeat center;
-    padding: 0 4px 0 4px;
-}
-
-/*#Result {*/
-/*    position: fixed;*/
-/*    bottom: 27px;*/
-/*}*/
-
-#HelpClose {
     font-size: 18px;
     height: 22px;
     line-height: 22px;
@@ -220,6 +180,74 @@ a.ps-link {
     right: 20px;
     top: 2px;
     width: 22px;
+    
+}
+
+#HelpClose:hover {
+    background-color: #e3e3e3;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+}
+
+/* Pane splitters: editor/output (#ResultsSplitter row when stacked,
+ * #VerticalSplitter when side by side) and editor/sidebar (#TreeSplitterPanel).
+ * A 6px hit area with a 1px line and a short handle in the middle, tinted on hover. */
+#ResultsSplitter td {
+    height: 6px;
+    line-height: 0;
+    font-size: 0;
+    background: linear-gradient(#a8a8a8, #a8a8a8) no-repeat center / 24px 2px,
+                linear-gradient(#d8d8d8, #d8d8d8) no-repeat center / 100% 1px;
+}
+
+#ResultsSplitter img {
+    display: block;
+    height: 6px;
+}
+
+#ResultsSplitter {
+    cursor: row-resize;
+}
+
+#ResultsSplitter, #VerticalSplitter {
+    touch-action: none;
+}
+
+.spe-split-ghost {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    background-color: rgba(128, 128, 128, 0.7);
+}
+
+#VerticalSplitter {
+    flex: 0 0 6px;
+    cursor: col-resize;
+}
+
+#TreeSplitterPanel {
+    width: 6px;
+    padding: 0;
+}
+
+#TreeSplitterPanel .scVSplitterImage {
+    width: 100%;
+}
+
+#VerticalSplitter, #TreeSplitterPanel {
+    background: linear-gradient(#a8a8a8, #a8a8a8) no-repeat center / 2px 24px,
+                linear-gradient(#d8d8d8, #d8d8d8) no-repeat center / 1px 100%;
+}
+
+#ResultsSplitter, #VerticalSplitter, #TreeSplitterPanel {
+    transition: background-color 0.15s;
+}
+
+#ResultsSplitter:hover, #VerticalSplitter:hover, #TreeSplitterPanel:hover {
+    background-color: #e4e4e4;
+}
+
+#ResultsSplitter:active, #VerticalSplitter:active, #TreeSplitterPanel:active {
+    background-color: #d6d6d6;
 }
 
 #HelpClose:active {
@@ -229,37 +257,385 @@ a.ps-link {
 
 #ScriptName { display: none; }
 
-.progressActivity { font-weight: bold; }
+/* Both #Result and its containing td are positioning contexts, so the
+ * absolutely-positioned progress panel has a reliable ancestor to anchor to
+ * regardless of which of those two elements Sheer UI/GridPanel renders. */
+#ResultsPane,
+#Result {
+    position: relative;
+}
 
-#ProgressOverlay #progressbar {
+/* Write-Progress panel. Built and driven by spe.updateIseProgress in ise.js.
+ * Docked at the top of the results pane: "integrated" pushes the terminal
+ * down by the panel height, "overlay" floats translucent over the output. */
+#IseProgress {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* Must be higher than any internal jquery.terminal.css z-index
+     * (e.g. .cmd .clipboard at z-index:1000, .tilda at 1100). */
+    z-index: 2000;
+    padding: 9px 12px 10px;
+    color: #fff;
+    font: 13px/18px 'Segoe UI', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+    background-color: var(--spe-progress-bg, #012456);
+    background-image: linear-gradient(rgba(255, 255, 255, .06), rgba(255, 255, 255, .06));
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+    transition: background-color .35s, box-shadow .35s;
+}
+
+#IseProgress.spe-progress-visible { display: block; }
+
+#IseProgress.spe-progress-placement-overlay {
+    background-color: color-mix(in srgb, var(--spe-progress-bg, #012456) 55%, transparent);
+    -webkit-backdrop-filter: blur(6px) saturate(1.3);
+    backdrop-filter: blur(6px) saturate(1.3);
+    border-bottom-color: rgba(255, 255, 255, .18);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .28);
+}
+
+#IseProgress .spe-progress-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+#IseProgress .spe-progress-activity {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+}
+
+#IseProgress .spe-progress-status { color: rgba(255, 255, 255, .75); }
+
+#IseProgress .spe-progress-operation {
+    color: rgba(255, 255, 255, .6);
+    font: 12px/16px Consolas, Monaco, Menlo, monospace;
+}
+
+#IseProgress .spe-progress-inline {
+    flex: 0 100 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress .spe-progress-meta {
+    display: flex;
+    flex: none;
+    gap: 10px;
+    margin-left: auto;
+    padding-left: 8px;
+    color: rgba(255, 255, 255, .75);
+    font-variant-numeric: tabular-nums;
+}
+
+#IseProgress .spe-progress-percent {
+    min-width: 34px;
+    color: #4ec9b0;
+    font-weight: 600;
+    text-align: right;
+}
+
+#IseProgress .spe-progress-eta:empty,
+#IseProgress .spe-progress-percent:empty { display: none; }
+
+/* Full detail: activity and status wrap to two lines each, the operation
+ * gets its own row with the ellipsis in the middle so the item name stays. */
+#IseProgress.spe-progress-detail-full .spe-progress-head {
+    align-items: flex-start;
+    white-space: normal;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-activity,
+#IseProgress .spe-progress-row.spe-progress-status {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow-wrap: anywhere;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-activity { flex: 1 1 auto; }
+
+#IseProgress .spe-progress-row.spe-progress-status {
+    margin-top: 2px;
+    overflow: hidden;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation {
+    display: flex;
+    min-width: 0;
+    margin-top: 6px;
+    white-space: nowrap;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress .spe-progress-row.spe-progress-operation span:last-child {
+    flex: none;
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#IseProgress.spe-progress-detail-full .spe-progress-inline,
+#IseProgress.spe-progress-detail-compact .spe-progress-row,
+#IseProgress.spe-progress-no-operation .spe-progress-operation { display: none; }
+
+/* Bar styles */
+#IseProgress .spe-progress-hairline {
+    position: relative;
+    height: 3px;
     margin-top: 8px;
-    width: 100%;
+    overflow: hidden;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .12);
 }
 
-#ProgressOverlay {
-    left: 8px;
-    right: 8px;
-    border-radius: 15px;
+#IseProgress .spe-progress-hairline i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    border-radius: 3px;
+    background: #4ec9b0;
+    transition: width .6s cubic-bezier(.16, 1, .3, 1);
 }
 
-#OperationProgress {
-    margin: auto;
-    margin-top: 30px;
-    padding-left: 40px;
-    padding-right: 30px;
-    width: 90%;
+#IseProgress.spe-progress-indeterminate .spe-progress-hairline {
+    background: repeating-linear-gradient(90deg, rgba(78, 201, 176, .35) 0 6px, transparent 6px 12px);
 }
 
-#progressbar {
-    background-color: #f7f7f7;
-    border: #e3e3e3 1px solid;
-    margin-top: 4px;
+#IseProgress.spe-progress-indeterminate .spe-progress-hairline i {
+    width: 25%;
+    transition: none;
 }
 
-#progressbar div {
-    background: #5E5E5E;
-    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
-    height: 20px;
+#IseProgress .spe-progress-segments {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+}
+
+#IseProgress .spe-progress-segments b {
+    position: relative;
+    flex: 1;
+    height: 5px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, .12);
+    transition: background-color .3s;
+}
+
+#IseProgress .spe-progress-segments i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    background: #4ec9b0;
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-segments i { display: none; }
+
+#IseProgress.spe-progress-indeterminate .spe-progress-segments b { transition: none; }
+
+#IseProgress .spe-progress-ring {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    transform: rotate(-90deg);
+}
+
+#IseProgress .spe-progress-ring circle {
+    fill: none;
+    stroke: rgba(255, 255, 255, .15);
+    stroke-width: 2.5;
+}
+
+#IseProgress .spe-progress-ring .spe-progress-arc {
+    stroke: #4ec9b0;
+    stroke-linecap: round;
+    stroke-dasharray: 44;
+    stroke-dashoffset: 44;
+    transition: stroke-dashoffset .6s cubic-bezier(.16, 1, .3, 1);
+}
+
+#IseProgress.spe-progress-indeterminate .spe-progress-arc {
+    stroke-dasharray: 11 33;
+    stroke-dashoffset: 0;
+    transition: none;
+}
+
+#IseProgress.spe-progress-bar-hairline .spe-progress-segments,
+#IseProgress.spe-progress-bar-hairline .spe-progress-ring,
+#IseProgress.spe-progress-bar-segmented .spe-progress-hairline,
+#IseProgress.spe-progress-bar-segmented .spe-progress-ring,
+#IseProgress.spe-progress-bar-ring .spe-progress-hairline,
+#IseProgress.spe-progress-bar-ring .spe-progress-segments { display: none; }
+
+/* Display options: a gear on the panel's bottom edge, shown on hover, that
+ * opens a menu of sliding-thumb choices. */
+#IseProgress .spe-progress-options {
+    position: absolute;
+    right: 12px;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(50%) scale(.85);
+    transition: opacity .2s ease, transform .35s cubic-bezier(.16, 1, .3, 1);
+}
+
+#IseProgress.spe-progress-active .spe-progress-options,
+#IseProgress:focus-within .spe-progress-options,
+#IseProgress.spe-progress-open .spe-progress-options {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(50%);
+}
+
+#IseProgress .spe-progress-options button {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+#IseProgress .spe-progress-options button:focus-visible {
+    outline: 1px solid #4ec9b0;
+    outline-offset: 1px;
+}
+
+#IseProgress .spe-progress-options svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#IseProgress .spe-progress-options .spe-progress-gear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 12px;
+    background: #123a74;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .35);
+    color: rgba(255, 255, 255, .8);
+}
+
+#IseProgress .spe-progress-options .spe-progress-gear:hover {
+    border-color: rgba(255, 255, 255, .3);
+    color: #fff;
+}
+
+#IseProgress.spe-progress-open .spe-progress-options .spe-progress-gear {
+    border-color: #4ec9b0;
+    color: #4ec9b0;
+}
+
+#IseProgress .spe-progress-menu {
+    --spe-choice-width: 96px;
+    --spe-choice-gap: 4px;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 10px;
+    background: #123a74;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .45);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity .2s, transform .3s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Invisible bridge over the gap between the gear and the menu, so moving
+ * the mouse down to the menu never crosses empty space. */
+#IseProgress .spe-progress-menu::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    right: 0;
+    left: 0;
+    height: 12px;
+}
+
+#IseProgress.spe-progress-open .spe-progress-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+}
+
+#IseProgress .spe-progress-label {
+    color: rgba(255, 255, 255, .6);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+#IseProgress .spe-progress-choice {
+    position: relative;
+    display: flex;
+    gap: var(--spe-choice-gap);
+    justify-self: start;
+    padding: 3px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, .22);
+}
+
+#IseProgress .spe-progress-choice button {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: var(--spe-choice-width);
+    height: 24px;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, .65);
+    font-size: 12px;
+    line-height: 16px;
+    transition: color .25s;
+}
+
+#IseProgress .spe-progress-choice button:hover,
+#IseProgress .spe-progress-choice button[aria-checked=true] { color: #fff; }
+
+#IseProgress .spe-progress-choice button[aria-checked=true] svg { color: #4ec9b0; }
+
+#IseProgress .spe-progress-thumb {
+    position: absolute;
+    top: 3px;
+    left: calc(3px + var(--spe-choice-index, 0) * (var(--spe-choice-width) + var(--spe-choice-gap)));
+    width: var(--spe-choice-width);
+    height: 24px;
+    border-radius: 5px;
+    background: #2a5a9a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: left .38s cubic-bezier(.16, 1, .3, 1);
 }
 
 #Tip .ui-widget-content {
@@ -315,13 +691,6 @@ a.ps-link {
     padding-top: 37px;
 }
 
-#PleaseWait {
-    position: fixed;
-    bottom: 28px;
-    right: 19px;
-    text-align: right;
-    float: right;
-}
 
 
 .breakpoint {
@@ -337,10 +706,6 @@ a.ps-link {
     color: white;
 }
 
-.ace_editor.ace_autocomplete {
-    width: auto !important;
-    right: 100px !important;
-}
 
 .error_widget {
     font-size: smaller;
@@ -375,14 +740,12 @@ a.ps-link {
 }
 
 .varChild {
-    /* color: #FF4500; */
     padding-left: 40px;
     display: block;
     overflow: hidden;
 }
 
 .varChild2 {
-    /* color: #FF4500; */
     padding-left: 60px;
     display: block;
     overflow: hidden;
@@ -416,6 +779,8 @@ a.ps-link {
 
 #ScriptResult * {
     font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: normal;
 }
 
 .ace_layer.ace_text-layer * {
@@ -459,7 +824,7 @@ a.ps-link {
 }
 
 #TabsPanel {
-    width: calc(100% - 40px);
+    width: 100%;
     height: auto;
     pointer-events: none;
 }
@@ -489,7 +854,8 @@ a.ps-link {
 #ScriptResultCode .deferred {
     padding: 1px;
     border-radius: 6px;
-    margin: 1px;
+    margin-top: 4px;
+    margin-left: -2px;
     display: inline-block;
 }
 
@@ -545,7 +911,9 @@ nobr:first-child > .scTabActive,
 nobr:first-child > .scTabActive_Hover,
 nobr:first-child > .scTab,
 nobr:first-child > .scTab_Hover {
-    margin-left: 30px;
+    /* 52px reserves space for both TreeViewToggle (at left:6) and
+     * VariablesToggle (at left:28) icons with a small gap before the tabs. */
+    margin-left: 52px;
     pointer-events: all;
 
 }
@@ -557,8 +925,215 @@ nobr > .scTab_Hover {
 
 }
 
-#TreeSplitterPanel, #TreeViewPanel  {
+/* Sidebar cell holds both TreeView and VariablesView Scrollboxes.
+ * They stack absolutely inside the cell so they share the same space and
+ * inherit the same user-controlled width (resized via #TreeSplitter).
+ * Only one is visible at a time via JS-controlled display toggling. */
+#TreeSplitterPanel, #SidebarPanel {
     display: none;
+}
+
+#Sidebar > #TreeView,
+#Sidebar > #VariablesView {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+/* Initially both panels inside the sidebar are hidden (JS shows the
+ * requested one when its toggle is clicked). */
+#Sidebar > #VariablesView {
+    display: none;
+}
+
+#VariablesToggle {
+    position: absolute;
+}
+
+.spe-variables-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-bottom: 1px solid #cccccc;
+    background: #f0f0f0;
+    font-weight: bold;
+    font-size: 12px;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.spe-variables-header img {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.spe-variables-header img:hover {
+    opacity: 1;
+}
+
+.spe-variables-list {
+    padding: 0;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+}
+
+.spe-variables-section {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.spe-variables-section-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: #eaeaea;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+    color: #333;
+    user-select: none;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.spe-variables-section-header:hover {
+    background: #dde7f5;
+}
+
+.spe-variables-section-caret {
+    display: inline-block;
+    width: 14px;
+    color: #666;
+    font-size: 9px;
+}
+
+.spe-variables-section-title {
+    flex: 1;
+}
+
+.spe-variables-section-count {
+    color: #888;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+.spe-variables-section-body {
+    padding: 4px 0;
+}
+
+.spe-variables-list .spe-variable {
+    padding: 4px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: default;
+}
+
+.spe-variables-list .spe-variable:hover {
+    background: #f7fafe;
+}
+
+.spe-variables-list .spe-variable-name-row {
+    display: flex;
+    align-items: baseline;
+}
+
+.spe-variables-list .spe-variable-expandable {
+    cursor: pointer;
+}
+
+.spe-variables-list .spe-variable-expandable:hover {
+    background: #eef5ff;
+}
+
+/* Keep the expanded detail block using the default cursor and its own
+ * background even inside an expandable entry - so it doesn't look clickable
+ * and the entry-level hover highlight doesn't bleed into it. */
+.spe-variables-list .spe-variable-expandable .spe-variable-detail {
+    cursor: default;
+}
+
+.spe-variables-list .spe-variable-caret {
+    display: inline-block;
+    width: 12px;
+    color: #666;
+    font-size: 9px;
+    flex-shrink: 0;
+}
+
+.spe-variables-list .spe-variable-name {
+    color: #FF4500;
+}
+
+.spe-variables-list .spe-variable-type {
+    /* Match the tooltip's .variableType pill style so the type label reads
+     * consistently between the hover tooltip and the panel. */
+    border: 1px solid #BCE3EE;
+    background: #DCF1F6;
+    color: #267F98;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    /* Push the type pill to the right edge of the flex row so there's a
+     * clear visual gap between the variable name and its type. */
+    margin-left: auto;
+}
+
+.spe-variables-list .spe-variable-value {
+    color: #333;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: block;
+    padding-left: 12px;
+    margin-top: 2px;
+}
+
+.spe-variables-list .spe-variable-detail {
+    padding: 6px 8px 4px 12px;
+    margin-top: 4px;
+    border-left: 2px solid #BCE3EE;
+    background: #f7fcfe;
+    font-size: 10px;
+    color: #333;
+}
+
+.spe-variables-list .spe-variable-detail .variableType {
+    display: none; /* type already shown inline in the name row */
+}
+
+.spe-variables-list .spe-variable-detail .variableLine {
+    display: none; /* main line already shown inline */
+}
+
+.spe-variables-list .spe-variable-detail .varChild,
+.spe-variables-list .spe-variable-detail .varChild2 {
+    display: block;
+    padding-left: 4px;
+    overflow: hidden;
+}
+
+.spe-variables-list .spe-variable-detail .childName {
+    color: #267F98;
+    font-weight: normal;
+}
+
+.spe-variables-list .spe-variable-detail .childValue {
+    color: #333;
+}
+
+.spe-variables-list .spe-variable-loading {
+    color: #888;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.spe-variables-list .spe-variables-empty {
+    padding: 12px 8px;
+    color: #888;
+    font-style: italic;
+    text-align: center;
 }
 
 .scEditorWarning {
@@ -578,8 +1153,136 @@ nobr > .scTab_Hover {
     width: 100% !important;
 }
 
+#Result {
+    position: relative;
+}
+
 .scRibbonNavigator {
-    background-color: #474747;
     width: 100%;
     display: flex;
+}
+
+/* Vertical split layout */
+#VerticalSplitContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#VerticalSplitRow {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+#VerticalLeftPane {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#VerticalRightPane {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+.split-orientation-active {
+    background-color: rgb(1, 36, 86);
+}
+
+.spe-goto-underline {
+    text-decoration: underline;
+    cursor: pointer;
+    position: absolute;
+}
+.spe-goto-underline-missing {
+    text-decoration: underline dotted;
+    text-decoration-color: rgba(180, 60, 60, 0.6);
+    position: absolute;
+}
+.spe-goto-tooltip-header {
+    font-weight: 600;
+    margin-bottom: 2px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.35);
+    opacity: 0.85;
+}
+.spe-goto-tooltip-body {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.spe-goto-picker {
+    position: fixed;
+    z-index: 99999;
+    background: #fff;
+    border: 1px solid #888;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    font: 12px "Segoe UI", sans-serif;
+    min-width: 320px;
+    max-width: 640px;
+    max-height: 300px;
+    overflow-y: auto;
+    outline: none;
+}
+.spe-goto-picker-row {
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+.spe-goto-picker-row.selected { background: #e6f0fa; }
+.spe-goto-picker-name { font-weight: 600; }
+.spe-goto-picker-meta { color: #666; font-size: 11px; }
+.spe-goto-picker-path { color: #444; font-size: 11px; margin-top: 2px; }
+
+.ace_autocomplete .ace_line .ace_ {
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Subtle autocomplete scrollbar. Ace measures the native scrollbar
+ * width (~17px on Windows) at popup construction and uses it to both
+ * size the scrollbar column AND push back the scroller's right edge
+ * via inline styles. Shrinking only the thumb leaves that reserved
+ * column empty, so override the column width and scroller right edge
+ * too (!important, to trump Ace's inline values). */
+.ace_editor.ace_autocomplete .ace_scroller {
+    right: 10px !important;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v,
+.ace_editor.ace_autocomplete .ace_scrollbar-v .ace_scrollbar-inner {
+    width: 8px !important;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar {
+    width: 8px;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-track {
+    background: transparent;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_scrollbar-v::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }

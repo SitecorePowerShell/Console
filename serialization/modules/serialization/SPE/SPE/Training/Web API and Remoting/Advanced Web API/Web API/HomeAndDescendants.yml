@@ -1,0 +1,40 @@
+﻿---
+ID: "a9284795-37f9-438f-b3ec-d1c8790620c9"
+Parent: "dae8aa29-4f42-4479-91a0-fb3d4a5949f5"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Web API and Remoting/Advanced Web API/Web API/HomeAndDescendants
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .EXAMPLE
+            The following returns the home item and hits children. This assumes you have published the this item to the web database.
+            Use user and password arguments to interact with the master database.
+            
+            Invoke-RestMethod -Uri "http://console/-/script/v2/master/HomeAndDescendants?offset=3&limit=2&fields=(Name,ItemPath,Id)"
+    #>
+    
+    Import-Function -Name Invoke-ApiScript
+    
+    Invoke-ApiScript -ScriptBlock {
+        @(Get-Item -Path master:\content\home) + @(Get-ChildItem -Path master:\content\home -Recurse)
+    } -Arguments $scriptArguments
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150420T013213
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "76a8e728-c3c4-463d-9521-a439f82d2a29"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214513Z

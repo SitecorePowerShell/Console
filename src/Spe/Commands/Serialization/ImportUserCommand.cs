@@ -2,9 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -37,7 +38,7 @@ namespace Spe.Commands.Serialization
         {
             if (string.IsNullOrEmpty(Root))
             {
-                Root = PathUtils.Root + "security\\";
+                Root = TypeResolver.ResolveFromCache<ISerializationPathResolver>().Root + "security\\";
             }
             switch (ParameterSetName)
             {
@@ -61,6 +62,7 @@ namespace Spe.Commands.Serialization
 
         private void DeserializeUser(string userName)
         {
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
             var fileName = userName;
 
             // if path is not absolute - add the Root folder
@@ -68,13 +70,13 @@ namespace Spe.Commands.Serialization
             {
                 var identity = new AccountIdentity(userName);
                 var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-                fileName = target + identity.Domain + @"\Users\" + identity.Account + PathUtils.UserExtension;
+                fileName = target + identity.Domain + @"\Users\" + identity.Account + pathResolver.UserExtension;
             }
 
             // make sure the path has the proper extension
-            if (!fileName.EndsWith(PathUtils.UserExtension, StringComparison.OrdinalIgnoreCase))
+            if (!fileName.EndsWith(pathResolver.UserExtension, StringComparison.OrdinalIgnoreCase))
             {
-                fileName += PathUtils.UserExtension;
+                fileName += pathResolver.UserExtension;
             }
 
             if (fileName.Contains("?") || fileName.Contains("*"))
@@ -104,7 +106,7 @@ namespace Spe.Commands.Serialization
                 var logMessage = string.Format("Deserializing user '{0}' from '{1}'", userName, file);
                 WriteVerbose(logMessage);
                 WriteDebug(logMessage);
-                Manager.LoadUser(file);
+                TypeResolver.ResolveFromCache<ISerializationManager>().LoadUser(file);
             }
         }
     }

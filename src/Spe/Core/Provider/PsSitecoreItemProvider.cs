@@ -20,6 +20,8 @@ using Sitecore.StringExtensions;
 using Spe.Commands;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
+using Spe.Core.Host;
+using Spe.Core.Settings.Authorization;
 using Spe.Core.Utility;
 using Version = Sitecore.Data.Version;
 
@@ -538,7 +540,7 @@ namespace Spe.Core.Provider
                 }
             }
             Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
-            PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+            PowerShellLog.Audit("[Provider] action=transferItem source=\"{0}\" destination=\"{1}\"", AuditFormatter.FormatItem(sourceItem),
                 AuditFormatter.FormatItem(destinationItem));
             if (transferredItem.Name != leafName)
             {

@@ -6,9 +6,15 @@
             "project": "Spe.Abstractions",
             "minVersion": 0            
         },
-        { 
-            "project": "Spe", 
-            "minVersion": 0
+        {
+            "project": "Spe",
+            "minVersion": 0,
+            "junctionPoints": [
+                "sitecore modules\\PowerShell",
+                "sitecore modules\\Shell\\PowerShell",
+                "App_Config\\Include\\Spe",
+                "App_Config\\Include\\z.Spe"
+            ]
         },
         { 
             "project": "Spe.Package",
@@ -17,6 +23,6 @@
     ],
     "sitesDefault": {
         "version": 8,
-        "junction": true
+        "junction": false
     }
 }

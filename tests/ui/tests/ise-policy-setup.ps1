@@ -1,0 +1,21 @@
+# UI-test-only: create a remoting policy under Settings\Access\Policies
+# that blocks Select-Object. Script is idempotent.
+$policiesPath  = "master:\system\Modules\PowerShell\Settings\Access\Policies"
+$testName      = "ui-test-block-command"
+$templatePath  = "Modules/PowerShell Console/Remoting/Remoting Policy"
+$fullPath      = "$policiesPath\$testName"
+
+if (Test-Path $fullPath) {
+    Remove-Item -Path $fullPath -Permanently -Recurse
+}
+
+$policy = New-Item -Path $policiesPath -Name $testName -ItemType $templatePath
+
+$policy.Editing.BeginEdit() | Out-Null
+$policy["FullLanguage"]   = ""
+$policy["AllowedCommands"] = "Get-Item`nGet-ChildItem`nOut-Default"
+$policy.Editing.EndEdit()  | Out-Null
+
+[Spe.Core.Settings.Authorization.RemotingPolicyManager]::Invalidate()
+
+"SETUP_OK"

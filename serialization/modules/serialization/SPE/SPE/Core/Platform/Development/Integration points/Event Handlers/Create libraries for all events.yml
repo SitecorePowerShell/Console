@@ -1,0 +1,50 @@
+﻿---
+ID: "4dfbe0be-90f2-4842-99ed-d32a5e35e1d6"
+Parent: "29f31d23-75b4-445d-a7e5-df3370d21933"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development/Integration points/Event Handlers/Create libraries for all events
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+       The script enumerates events definitions in web.config and creates appropriate folder structure 
+       in the PowerShell Module script library to add support for them
+    #>
+    $integrationPoint = [Spe.Core.Modules.IntegrationPoints]::EventHandlersFeature;
+    Import-Function -Name Create-IntegrationPoint
+    CreateIntegrationPoint($integrationPoint)
+    (Get-SpeModule -Item $module).GetProviderFeaturePath($integrationPoint)
+    
+    $root = Get-Item -Path ((Get-SpeModule -Item $module).GetProviderFeaturePath($integrationPoint))
+    $nodes = [Sitecore.Configuration.Factory]::GetConfigNodes("events/event");
+    
+    $i = 0;
+    foreach ($eventnode in $nodes)
+    {
+        $eventName = [Sitecore.Xml.XmlUtil]::GetAttribute("name", $eventNode);
+        $eventName = [System.Threading.Thread]::CurrentThread.CurrentCulture.TextInfo.ToTitleCase($eventName.Replace(":","/"));
+        $EventPath = "$($root.ProviderPath)$($integrationPoint.Path)/$($eventName)"
+        $i++
+        Write-Progress -Activity "Creating Event nodes" -PercentComplete ($i*100/$nodes.Count) -CurrentOperation "Creating node $eventName"
+        Write-Host "Creating event handler at: $EventPath"
+        CreatePathRecursively ($EventPath);
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130525T223024
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "91912cc5-6fd3-4829-9752-e211172711d5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214525Z

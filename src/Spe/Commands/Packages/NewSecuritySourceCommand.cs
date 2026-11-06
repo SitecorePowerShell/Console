@@ -34,7 +34,7 @@ namespace Spe.Commands.Packages
 
         protected override void BeginProcessing()
         {
-            source = new SecuritySource { Name = Name }; //Create source – source should be based on BaseSource              
+            source = new SecuritySource { Name = Name }; //Create source - source should be based on BaseSource
         }
 
         protected override void ProcessRecord()

@@ -1,0 +1,46 @@
+﻿---
+ID: "387ddb74-e4fe-4c87-abd5-9b63eecf8a84"
+Parent: "c87996eb-0e1e-46a0-8d84-57baa6644164"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Training/Misc/Events/Event Handlers/Item/Added/Save Log
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $logFileName = "$($SitecoreLogFolder)\item-event-log.txt"
+    $item = $eventArgs.Parameters[0]
+    "$($eventArgs.EventName) : $($item.Database.Name):$($item.Paths.Path)" >> "$($logFileName)"
+    
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{2F666AF6-89A0-4E5D-B063-BD966DA11476}"
+        name="Only items added under home">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="A788EE68B6B946D4AB278D2F9805741B"
+            itemid="{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130526T004525
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5904ce87-c5fb-4c10-b378-d245b055406c"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\unicorn
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230122T214527Z

@@ -6,21 +6,24 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
 
     var PowershellHighlightRules = function() {
 
+        var identifierRe = "[a-zA-Z\\?_\\u00a1-\\uffff][a-zA-Z\\d\\?_\\u00a1-\\uffff]*";
+
         var keywords = (
-            "function|if|else|elseif|switch|while|default|for|do|until|break|continue|" +
-                "foreach|return|filter|in|trap|throw|param|begin|process|end"
+            "begin|break|catch|class|continue|data|default|define|do|dynamicparam|else|elseif|end|enum|exit|" +
+                "filter|finally|for|foreach|from|function|hidden|if|in|inlinescript|param|parallel|" +
+                "process|return|sequence|static|switch|throw|trap|try|until|using|while|workflow|var"
         );
 
         var attributes = (
-        	"alias|allowemptycollection|allowemptystring|llownull|cmdletbinding|confirmimpact|" + 
-        	"credentialattribute|outputtype|parameter|psdefaultvalue|" + 
-        	"pstypename|supportsshouldprocess|supportswildcards|validatecount|validatelength|" + 
-        	"validatenotnull|validatenotnullorempty|validatepattern|validaterange|validatescript|validateset"
+            "alias|allowemptycollection|allowemptystring|allownull|cmdletbinding|confirmimpact|" +
+                "credentialattribute|outputtype|parameter|psdefaultvalue|" +
+                "pstypename|supportsshouldprocess|supportswildcards|validatecount|validatelength|" +
+                "validatenotnull|validatenotnullorempty|validatepattern|validaterange|validatescript|validateset"
         );
 
         var members = (
-            "helpmessage|helpmessagebasename|helpmessageresourceid|mandatory|parametersetname|defaultparametersetname|" + 
-            "position|typeid|valuefrompipeline|valuefrompipelinebypropertyname|valuefromremainingarguments"
+            "helpmessage|helpmessagebasename|helpmessageresourceid|mandatory|parametersetname|defaultparametersetname|" +
+                "position|typeid|valuefrompipeline|valuefrompipelinebypropertyname|valuefromremainingarguments"
         );
 
         var keywordMapper = this.createKeywordMapper({
@@ -29,60 +32,58 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
             "keyword": keywords
         }, "identifier", true);
 
-        var binaryOperatorsRe = "eq|ne|ge|gt|lt|le|like|notlike|match|notmatch|replace|contains|notcontains|" +
-            "ieq|ine|ige|igt|ile|ilt|ilike|inotlike|imatch|inotmatch|ireplace|icontains|inotcontains|" +
-            "is|isnot|as|" +
-            "and|or|band|bor|not";
+        // Only expose keywords to autocomplete, not attributes/members
+        this.$keywordList = keywords.split("|");
+
+        var binaryOperatorsRe = (
+            "eq|ne|gt|lt|le|ge|like|notlike|match|notmatch|contains|notcontains|in|notin|band|bor|bxor|bnot|" +
+                "ceq|cne|cgt|clt|cle|cge|clike|cnotlike|cmatch|cnotmatch|ccontains|cnotcontains|cin|cnotin|" +
+                "ieq|ine|igt|ilt|ile|ige|ilike|inotlike|imatch|inotmatch|icontains|inotcontains|iin|inotin|" +
+                "and|or|xor|not|" +
+                "split|join|replace|f|" +
+                "csplit|creplace|" +
+                "isplit|ireplace|" +
+                "is|isnot|as|" +
+                "shl|shr"
+        );
 
         this.$rules = {
             "start": [
+                { include: "comments" },
                 {
-                    token: "comment",
-                    regex: "#.*$"
+                    token: "string", // here-string single-quoted (literal)
+                    regex: /@'$/,
+                    push: [
+                        {
+                            token: "string",
+                            regex: /^'@/,
+                            next: "pop"
+                        },
+                        {
+                            defaultToken: "string"
+                        }
+                    ]
                 }, {
-                    token: "comment.start",
-                    regex: "<#",
-                    next: "comment"
-                }, {
-                    token: "string", // single line
-                    regex: "[\"](?:(?:\\\\.)|(?:[^\"\\\\]))*?[\"]"
-                }, {
-                    token: "string", // single line
-                    regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
-                }, {
-                    token: "constant.numeric", // hex
-                    regex: "0[xX][0-9a-fA-F]+\\b"
-                }, {
-                    token: "constant.numeric", // float
-                    regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
-                }, {
-                    token: "constant.language.boolean",
-                    regex: "[$](?:[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])\\b"
-                }, {
-                    token: "constant.language",
-                    regex: "[$][Nn][Uu][Ll][Ll]\\b"
-                }, {
-                    token: "variable.instance",
-                    regex: "[$@][a-zA-Z_][a-zA-Z0-9_]*\\b"
-                }, {
-                    token: ["keyword.operator", "keyword.type", "keyword.operator"],
-                    regex: "([\\[])([a-zA-Z0-9\\+\\-\\.\\[\\]]*)([\\]])"
-                }, {
-                    token: "support.function",
-                    regex: "[a-zA-Z]{1,}[\\-][a-zA-Z]*\\b"
-                }, {
-                    token: ["support.function", "support.parameter"],
-                    regex: "([\\-])([a-zA-Z]{1,})\\b"
-                }, {
-                    token: keywordMapper,
-                    regex: "[a-zA-Z_$][a-zA-Z0-9_$\\-]*\\b"
-                }, {
-                    token: "keyword.operator",
-                    regex: "\\-(?:" + binaryOperatorsRe + ")"
-                }, {
-                    token: "keyword.operator",
-                    regex: "&|\\*|\\+|\\-|\\=|\\+=|\\-="
-                }, {
+                    token: "string", // here-string double-quoted (expandable)
+                    regex: /@"$/,
+                    push: [
+                        {
+                            token: "string",
+                            regex: /^"@/,
+                            next: "pop"
+                        },
+                        { include: "expressions" },
+                        { include: "expandable-strings" },
+                        {
+                            defaultToken: "string"
+                        }
+                    ]
+                },
+                { include: "strings" },
+                { include: "variables" },
+                { include: "statements" },
+                { include: "expressions" },
+                {
                     token: "lparen",
                     regex: "[[({]"
                 }, {
@@ -102,14 +103,163 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                     token: "doc.comment.tag",
                     regex: "^\\.\\w+"
                 }, {
+                    defaultToken: "comment"
+                }
+            ],
+            "comments": [
+                {
                     token: "comment",
-                    regex: "\\w+"
+                    regex: "#.*$"
                 }, {
-                    token: "comment",
-                    regex: "."
+                    token: "comment.start",
+                    regex: "<#",
+                    next: "comment"
+                }
+            ],
+            "expandable-strings": [
+                {
+                    token: "constant.language.escape",
+                    regex: /`./
+                },
+                { include: "variables" }
+            ],
+            "variables": [
+                {
+                    token: "constant.language.boolean",
+                    regex: "[$](?:[Tt]rue|[Ff]alse)\\b"
+                }, {
+                    token: "constant.language",
+                    regex: "[$][Nn]ull\\b"
+                }, {
+                    token: "variable.instance",
+                    regex: "[$]" + identifierRe + "\\b"
+                }, {
+                    token: "variable.braced",
+                    regex: /\$\{/,
+                    push: [
+                        {
+                            token: "variable.braced",
+                            regex: /\}/,
+                            next: "pop"
+                        },
+                        {
+                            token: "constant.language.escape",
+                            regex: /`./
+                        },
+                        { defaultToken: "variable.braced" }
+                    ]
+                }
+            ],
+            "statements": [
+                {
+                    token: "punctuation",
+                    regex: ";"
+                }, {
+                    token: ["keyword.operator", "keyword.type", "keyword.operator"],
+                    regex: "([\\[])([a-zA-Z0-9\\+\\-\\.\\[\\]]*)([\\]])"
+                }, {
+                    token: "support.function",
+                    regex: "[a-zA-Z]{1,}[\\-][a-zA-Z]*\\b"
+                }, {
+                    token: ["support.function", "support.parameter"],
+                    regex: "([\\-])([a-zA-Z]{1,})\\b"
+                }, {
+                    token: "keyword.operator",
+                    regex: "\\-(?:" + binaryOperatorsRe + ")"
+                }, {
+                    token: "keyword.operator",
+                    regex: "&|\\+|\\-|\\*|\\/|\\%|\\=|\\>|\\&|\\!|\\|"
+                },
+                { include: "constants" },
+                {
+                    token: keywordMapper,
+                    regex: "[a-zA-Z_$][a-zA-Z0-9_$\\-]*\\b"
+                }
+            ],
+            "constants": [
+                {
+                    token: "constant.numeric", // hex
+                    regex: "0[xX][0-9a-fA-F]+\\b"
+                }, {
+                    token: "constant.numeric", // float
+                    regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
+                }
+            ],
+            "strings": [
+                {
+                    token: "string", // single-quoted (literal)
+                    regex: "['][^']*[']"
+                }, {
+                    token: "string", // double-quoted (expandable)
+                    regex: /"/,
+                    push: [
+                        {
+                            token: "string",
+                            regex: /"|$/,
+                            next: "pop"
+                        },
+                        { include: "expressions" },
+                        { include: "expandable-strings" },
+                        {
+                            defaultToken: "string"
+                        }
+                    ]
+                }
+            ],
+            "expressions": [
+                {
+                    token: "keyword.operator",
+                    regex: /[$@]\(/,
+                    push: [
+                        {
+                            token: "keyword.operator",
+                            regex: /\)/,
+                            next: "pop"
+                        },
+                        { include: "comments" },
+                        { include: "parens-block" },
+                        { include: "expressions" },
+                        { include: "strings" },
+                        { include: "variables" },
+                        { include: "statements" }
+                    ]
+                }, {
+                    token: "keyword.operator",
+                    regex: /@\{/,
+                    push: [
+                        {
+                            token: "keyword.operator",
+                            regex: /\}/,
+                            next: "pop"
+                        },
+                        { include: "comments" },
+                        { include: "parens-block" },
+                        { include: "strings" },
+                        { include: "variables" },
+                        { include: "statements" }
+                    ]
+                }
+            ],
+            "parens-block": [
+                {
+                    token: "paren.lparen",
+                    regex: /\(/,
+                    push: [
+                        {
+                            token: "paren.rparen",
+                            regex: /\)/,
+                            next: "pop"
+                        },
+                        { include: "comments" },
+                        { include: "parens-block" },
+                        { include: "strings" },
+                        { include: "variables" },
+                        { include: "statements" }
+                    ]
                 }
             ]
         };
+        this.normalizeRules();
     };
 
     oop.inherits(PowershellHighlightRules, TextHighlightRules);
@@ -624,6 +774,7 @@ ace.define("ace/mode/powershell", ["require", "exports", "module", "ace/lib/oop"
         this.$outdent = new MatchingBraceOutdent();
         this.$behaviour = new CstyleBehaviour();
         this.foldingRules = new CStyleFoldMode({ start: "^\\s*(<#)", end: "^[#\\s]>\\s*$" });
+        this.snippetFileId = "ace/snippets/powershell";
     };
     oop.inherits(Mode, TextMode);
 

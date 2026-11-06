@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Web.Script.Serialization;
 using Sitecore;
 using Sitecore.Web.UI.Sheer;
 using Spe.Client.Applications;
@@ -26,12 +26,12 @@ namespace Spe.Core.Host
         
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return new JavaScriptSerializer().Serialize(this);
         }
         
         public static ScriptExecutionResult Parse(string json)
         {
-            return JsonConvert.DeserializeObject<ScriptExecutionResult>(json);
+            return new JavaScriptSerializer().Deserialize<ScriptExecutionResult>(json);
         }
         
         public void ExecuteResults()

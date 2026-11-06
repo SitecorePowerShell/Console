@@ -44,6 +44,14 @@ namespace Spe.Core.Host
             string lastToken;
             //command = command.Trim();
             var truncatedCommand = TruncatedCommand(session, command, out lastToken) ?? string.Empty;
+            // #1397: when PowerShell's own type completion succeeds (e.g. on XM Cloud) TabExpansion2
+            // reports the replacement index *after* the opening bracket. Pull the bracket back into
+            // the token so our type completer handles it regardless of what TabExpansion2 returned.
+            if (truncatedCommand.EndsWith("[") && !lastToken.StartsWith("["))
+            {
+                truncatedCommand = truncatedCommand.Substring(0, truncatedCommand.Length - 1);
+                lastToken = "[" + lastToken;
+            }
             var truncatedLength = truncatedCommand.Length;
             var options = Completers;
             lastToken = lastToken.Trim();

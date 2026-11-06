@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Data.Serialization;
 using Sitecore.Security.Accounts;
 using Sitecore.Security.Serialization;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Security;
 using Spe.Core.Extensions;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -64,6 +65,9 @@ namespace Spe.Commands.Serialization
 
         private void SerializeRole(Role role)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
+
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
                 if (ShouldProcess(role.Name, "Serializing role"))
@@ -71,38 +75,44 @@ namespace Spe.Commands.Serialization
                     var logMessage = string.Format("Serializing role '{0}'", role.Name);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpRole(role.Name);
+                    serializationManager.DumpRole(role.Name);
                     var roleReference = new RoleReference(role.Name);
-                    WriteObject(PathUtils.GetDirectoryPath(roleReference.ToString()) + PathUtils.RoleExtension);
+                    WriteObject(pathResolver.GetDirectoryPath(roleReference.ToString()) + pathResolver.RoleExtension);
                 }
             }
             else
             {
-                if (string.IsNullOrEmpty(Path))
+                var roleReference = new RoleReference(role.Name);
+                var path = Path;
+                if (string.IsNullOrEmpty(path))
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        var roleReference = new RoleReference(role.Name);
-                        Path = PathUtils.GetFilePath(roleReference);
+                        path = pathResolver.GetFilePath(roleReference.ToString());
                     }
                     else
                     {
-                        var roleReference = new RoleReference(role.Name);
-                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
-                        Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                        var target = StringUtil.EnsurePostfix('\\', System.IO.Path.GetFullPath(Root));
+                        path = System.IO.Path.GetFullPath(target + roleReference.ToString().Replace('/', System.IO.Path.DirectorySeparatorChar));
+                        if (!path.StartsWith(target, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            WriteError(typeof(PSSecurityException), $"Role '{role.Name}' resolves outside of '{target}'.",
+                                ErrorIds.FileNameInvalid, ErrorCategory.SecurityError, role);
+                            return;
+                        }
                     }
-                    if (!System.IO.Path.HasExtension(Path))
+                    if (!System.IO.Path.HasExtension(path))
                     {
-                        Path += PathUtils.RoleExtension;
+                        path += pathResolver.RoleExtension;
                     }
                 }
-                if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", Path)))
+                if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", path)))
                 {
-                    var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
+                    var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, path);
                     WriteVerbose(logMessage);
                     WriteDebug(logMessage);
-                    Manager.DumpRole(Path, role);
-                    WriteObject(Path);
+                    serializationManager.DumpRole(path, role);
+                    WriteObject(path);
                 }
             }
         }

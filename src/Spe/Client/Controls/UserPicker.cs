@@ -3,7 +3,6 @@ using System.Linq;
 using Sitecore.Security;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Spe.Core.VersionDecoupling;
 
 namespace Spe.Client.Controls
 {
@@ -116,9 +115,6 @@ namespace Spe.Client.Controls
 
                 Value = (args.HasResult) ? args.Result : String.Empty;
                 Sitecore.Context.ClientPage.ClientResponse.Refresh(Parent);
-                SitecoreVersion.V81.OrOlder(() =>
-                    Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();")
-                    );
             }
         }
     }

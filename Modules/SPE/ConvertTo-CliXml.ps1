@@ -19,7 +19,7 @@ function ConvertTo-CliXml {
             Write-Warning "Could not serialize $($InputObject.GetType()): $_"
         }
     }
-    end {    
+    end {
         [void]$type.InvokeMember("Done", "InvokeMethod,NonPublic,Instance", $null, $serializer, @())
         $sw.ToString()
         $xw.Close()

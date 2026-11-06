@@ -14,22 +14,22 @@
   <phrase updated="20190108T225541Z" fieldid="__Display name" itemid="{F5F55071-697B-4769-A992-2A755FC379E5}" key="PowerShellScriptCommand" path="/sitecore/system/Tasks/Commands/PowerShellScriptCommand">
     <de-de>** PowerShell Script Command **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors">
     <de-de>** Colors used to customize the PowerShell Console and ISE. **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors">
     <de-de>** Colors used to customize the PowerShell Console and ISE. **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors">
     <de-de>** Console Colors **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Resources/Fonts">
     <de-de>** Fonts used to customize the PowerShell Console and ISE. **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Resources/Fonts">
     <de-de>** Fonts used to customize the PowerShell Console and ISE. **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Resources/Fonts">
     <de-de>** Fonts **</de-de>
   </phrase>
   <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
@@ -41,10 +41,10 @@
   <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
     <de-de>** Settings **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+  <phrase updated="20190108T225539Z" fieldid="__Short description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Resources/Snippets">
     <de-de>** Predefined code snippets used to assist in the authoring of scripts. **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Snippets">
+  <phrase updated="20190108T225539Z" fieldid="__Long description" itemid="{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" key="Snippets" path="/sitecore/system/Modules/PowerShell/Resources/Snippets">
     <de-de>** Predefined code snippets used to assist in the authoring of scripts. **</de-de>
   </phrase>
   <phrase updated="20190108T225538Z" fieldid="__Display name" itemid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" key="PowerShell Script Module" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module">
@@ -53,52 +53,52 @@
   <phrase updated="20190108T225538Z" fieldid="__Display name" itemid="{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}" key="PowerShell Script Workflow Action" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action">
     <de-de>** PowerShell Script Workflow Action **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{81184848-ECF9-4448-8515-DFDBC83AC41B}" key="Black" path="/sitecore/system/Modules/PowerShell/Console Colors/Black">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{81184848-ECF9-4448-8515-DFDBC83AC41B}" key="Black" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Black">
     <de-de>** Black **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{BD085463-EEB5-4BB8-8473-078943D7EFD8}" key="Blue" path="/sitecore/system/Modules/PowerShell/Console Colors/Blue">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{BD085463-EEB5-4BB8-8473-078943D7EFD8}" key="Blue" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Blue">
     <de-de>** Blue **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E2E5425E-3524-472F-9F50-1EE7B383F315}" key="Cyan" path="/sitecore/system/Modules/PowerShell/Console Colors/Cyan">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E2E5425E-3524-472F-9F50-1EE7B383F315}" key="Cyan" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Cyan">
     <de-de>** Cyan **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{AB222740-C3B4-46CD-AF84-8B3BB4B9BA37}" key="DarkBlue" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkBlue">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{AB222740-C3B4-46CD-AF84-8B3BB4B9BA37}" key="DarkBlue" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkBlue">
     <de-de>** DarkBlue **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{23E6E1F1-66BF-4A4C-A1EB-B61A0EF2F6B4}" key="DarkCyan" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkCyan">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{23E6E1F1-66BF-4A4C-A1EB-B61A0EF2F6B4}" key="DarkCyan" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkCyan">
     <de-de>** DarkCyan **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{B1893C54-8D20-4A6C-8A37-5B2887CFB6D7}" key="DarkGray" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGray">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{B1893C54-8D20-4A6C-8A37-5B2887CFB6D7}" key="DarkGray" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkGray">
     <de-de>** DarkGray **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E517A968-CC59-425B-8BAA-6D26EBC1564D}" key="DarkGreen" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGreen">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{E517A968-CC59-425B-8BAA-6D26EBC1564D}" key="DarkGreen" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkGreen">
     <de-de>** DarkGreen **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{1454C6B5-BD50-4745-A569-644F4AD2622D}" key="DarkMagenta" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkMagenta">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{1454C6B5-BD50-4745-A569-644F4AD2622D}" key="DarkMagenta" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkMagenta">
     <de-de>** DarkMagenta **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{C9F7DFDB-A714-4B14-9F1C-5C31961D493E}" key="DarkRed" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkRed">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{C9F7DFDB-A714-4B14-9F1C-5C31961D493E}" key="DarkRed" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkRed">
     <de-de>** DarkRed **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{10752CF2-8D56-4DC6-9FFC-6F51DB195422}" key="DarkYellow" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkYellow">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{10752CF2-8D56-4DC6-9FFC-6F51DB195422}" key="DarkYellow" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/DarkYellow">
     <de-de>** DarkYellow **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{2146E874-FA2E-419F-8E29-29A72E0FCB4A}" key="Gray" path="/sitecore/system/Modules/PowerShell/Console Colors/Gray">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{2146E874-FA2E-419F-8E29-29A72E0FCB4A}" key="Gray" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Gray">
     <de-de>** Gray **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4BDA1126-D3D3-4831-8CA2-A913E01C6208}" key="Green" path="/sitecore/system/Modules/PowerShell/Console Colors/Green">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{4BDA1126-D3D3-4831-8CA2-A913E01C6208}" key="Green" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Green">
     <de-de>** Green **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{31509572-F2A3-455B-887A-D67EE25151AB}" key="Magenta" path="/sitecore/system/Modules/PowerShell/Console Colors/Magenta">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{31509572-F2A3-455B-887A-D67EE25151AB}" key="Magenta" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Magenta">
     <de-de>** Magenta **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5}" key="Red" path="/sitecore/system/Modules/PowerShell/Console Colors/Red">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5}" key="Red" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Red">
     <de-de>** Red **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{711AFE32-3147-41F4-81B7-821CFCF45079}" key="White" path="/sitecore/system/Modules/PowerShell/Console Colors/White">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{711AFE32-3147-41F4-81B7-821CFCF45079}" key="White" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/White">
     <de-de>** White **</de-de>
   </phrase>
-  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{EAF596B9-BCF7-48AA-939C-A15604D6D98F}" key="Yellow" path="/sitecore/system/Modules/PowerShell/Console Colors/Yellow">
+  <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{EAF596B9-BCF7-48AA-939C-A15604D6D98F}" key="Yellow" path="/sitecore/system/Modules/PowerShell/Resources/Console Colors/Yellow">
     <de-de>** Yellow **</de-de>
   </phrase>
   <phrase updated="20190108T225539Z" fieldid="__Display name" itemid="{A6F7AE21-E569-492B-9122-578F0E696DCB}" key="Console" path="/sitecore/system/Modules/PowerShell/Settings/Console">

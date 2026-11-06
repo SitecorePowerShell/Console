@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -28,7 +28,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
     [WebService(Namespace = "http://sitecorepowershellextensions/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [ToolboxItem(false)]
-    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line.
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
@@ -36,7 +36,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
-                PowerShellLog.Info($"User '{userName}' calling the Remoting Automation service.");
+                PowerShellLog.Audit($"[Remoting(SOAP)] action=loginAttempt user={userName}");
 
                 if (!userName.Contains("\\"))
                 {
@@ -45,22 +45,22 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceRemoting,userName))
                 {
-                    PowerShellLog.Error($"User `{userName}` tried to access the service but was not permitted to do so.");
+                    PowerShellLog.Audit($"[Remoting(SOAP)] action=userUnauthorized user={userName}");
                     return false;
                 }
 
                 var loggedIn = AuthenticationManager.Login(userName, password, false);
                 if (!loggedIn)
                 {
-                    PowerShellLog.Error($"User '{userName}' was not recognized or provided wrong password.");
+                    PowerShellLog.Audit($"[Remoting(SOAP)] action=authFailed user={userName}");
                 }
                 else
                 {
-                    PowerShellLog.Info($"User '{userName}' successfully logged in to the Remoting Automation service.");
+                    PowerShellLog.Audit($"[Remoting(SOAP)] action=loginSuccess user={userName}");
                 }
                 return loggedIn;
             }
-            PowerShellLog.Info($"Unsuccessfuly login with empty username or password. Username: '{userName}'.");
+            PowerShellLog.Audit($"[Remoting(SOAP)] action=loginFailed user={userName} reason=emptyCredentials");
             return false;
         }
 
@@ -76,11 +76,11 @@ namespace Spe.sitecore_modules.PowerShell.Services
             {
                 return new[]
                 {
-                    new NameValue() { Name = "login failed", Value = "login failed" } 
+                    new NameValue() { Name = "login failed", Value = "login failed" }
                 };
             }
 
-            PowerShellLog.Info($"Script executed through remoting by user: '{userName}' in disposable session.");
+            PowerShellLog.Audit($"[Remoting(SOAP)] action=scriptExecuting user={userName} sessionType=disposable");
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
@@ -93,9 +93,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     result.Add(new NameValue
                     {
                         Name = "output",
-                        Value =
-                            scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
-                                (current, next) => current + next)
+                        Value = string.Join("", scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text))
                     });
                 }
                 result.AddRange(
@@ -144,7 +142,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return "login failed";
             }
 
-            PowerShellLog.Info($"Session '{sessionId}' disposed by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Audit($"[Remoting(SOAP)] action=sessionDisposed session={sessionId}");
 
             if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession session)
             {
@@ -168,18 +166,19 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return "<Objs xmlns=\"http://schemas.microsoft.com/powershell/2004/04\"><Obj RefId=\"0\"><S>login failed</S></Obj></Objs>";
             }
 
-            PowerShellLog.Info($"Script executed in session {sessionId} through remoting by user: '{userName}'");
+            PowerShellLog.Audit($"[Remoting(SOAP)] action=scriptExecuting user={userName} session={sessionId} sessionType=persistent");
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
             Sitecore.Context.SetActiveSite(siteName);
 
-            if (!String.IsNullOrEmpty(cliXmlArgs))
+            if (!string.IsNullOrEmpty(cliXmlArgs))
             {
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
                 script = script.TrimEnd(' ', '\t', '\n');
             }
+
             var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
             if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
@@ -188,9 +187,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             scriptSession.SetVariable("results", outObjects);
             scriptSession.Output.Clear();
             scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-            var result = scriptSession.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
+            var result = string.Join("", scriptSession.Output.Select(p => p.Text));
 
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 ScriptSessionManager.RemoveSession(scriptSession);
             }
@@ -213,7 +212,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     return false;
                 }
 
-                PowerShellLog.Info($"File '{filePath}' uploaded through remoting by user: '{userName}'");
+                if (filePath.Contains(".."))
+                {
+                    PowerShellLog.Audit($"[Remoting(SOAP)] action=pathTraversalBlocked user={userName} path=\"{filePath}\"");
+                    return false;
+                }
+
+                PowerShellLog.Audit($"[Remoting(SOAP)] action=mediaUploaded user={userName} path=\"{filePath}\"");
 
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
@@ -237,7 +242,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("Error during uploading file using PowerShell web service", ex);
+                PowerShellLog.Error("[Remoting(SOAP)] action=mediaUploadFailed", ex);
                 return false;
             }
             return true;
@@ -258,7 +263,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     return Encoding.ASCII.GetBytes("login failed");
                 }
 
-                PowerShellLog.Info($"File '{filePath}' downloaded through remoting by user: '{userName}'");
+                if (filePath.Contains(".."))
+                {
+                    PowerShellLog.Audit($"[Remoting(SOAP)] action=pathTraversalBlocked user={userName} path=\"{filePath}\"");
+                    return new byte[0];
+                }
+
+                PowerShellLog.Audit($"[Remoting(SOAP)] action=mediaDownloaded user={userName} path=\"{filePath}\"");
 
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
@@ -277,7 +288,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error("Error during uploading file using PowerShell web service", ex);
+                PowerShellLog.Error("[Remoting(SOAP)] action=mediaDownloadFailed", ex);
                 return new byte[0];
             }
         }

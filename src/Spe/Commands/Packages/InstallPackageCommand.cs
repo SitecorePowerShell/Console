@@ -1,4 +1,6 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
+using Sitecore.Configuration;
 using Sitecore.Install;
 using Sitecore.Install.Files;
 using Sitecore.Install.Framework;
@@ -25,6 +27,19 @@ namespace Spe.Commands.Packages
 
         [Parameter]
         public SwitchParameter DisableIndexing { get; set; }
+
+        protected override void BeginProcessing()
+        {
+            // Sitecore 10.5+ only gates its own installer UI with this flag; the Kernel APIs used below ignore it.
+            if (Settings.GetBoolSetting("Sitecore.Packages.Disabled", false))
+            {
+                WriteError(typeof(InvalidOperationException),
+                    "Package installation is disabled by the Sitecore.Packages.Disabled setting in this instance's Sitecore configuration. Deploy App_Config/Include/zSitecore.InstallPackage.Enable.config to enable it.",
+                    ErrorIds.PackagesDisabled, ErrorCategory.PermissionDenied, null, true);
+            }
+
+            base.BeginProcessing();
+        }
 
         protected override void ProcessRecord()
         {

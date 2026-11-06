@@ -49,7 +49,7 @@ namespace Spe.Core.Settings.Authorization
             }
             catch
             {
-                PowerShellLog.Error($"Invalid identity {identityStr} provided for service configuration.");
+                PowerShellLog.Error($"[Security] action=invalidIdentity identity={identityStr}");
             }
 
             entry.AccessPermission = accessPermission;

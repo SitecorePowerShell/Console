@@ -3,9 +3,11 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Script.Serialization;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -14,6 +16,7 @@ using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.IO;
+using Sitecore.Jobs;
 using Sitecore.Mvc.Extensions;
 using Sitecore.Resources;
 using Sitecore.Security;
@@ -51,8 +54,8 @@ namespace Spe.Client.Applications
         protected Memo OpenedScripts;
         protected Memo ScriptItemIdMemo;
         protected Memo ScriptItemDbMemo;
-        protected Literal Progress;
-        protected Border ProgressOverlay;
+        protected Memo ActiveTabsMemo;
+        protected Memo TerminalCommand;
         protected Border RibbonPanel;
         protected Border ScriptResult;
         protected Memo SelectionText;
@@ -76,6 +79,19 @@ namespace Spe.Client.Applications
             set => Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty;
         }
 
+        // Session id that this ISE page is passively watching - a session
+        // whose script was started elsewhere (another ISE tab, a Runner
+        // dialog) that we want to mirror "running" UI state for until it
+        // returns to Available. Distinct from Monitor.SessionID, which is
+        // also set here so Abort resolves the right session, but may be
+        // cleared by JobAbort while AttachedSessionId remains for the
+        // polling timer to finish its cleanup.
+        protected string AttachedSessionId
+        {
+            get => StringUtil.GetString(ServerProperties["AttachedSessionId"]);
+            set => ServerProperties["AttachedSessionId"] = value ?? string.Empty;
+        }
+
         protected bool WasElevated
         {
             get => StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1";
@@ -87,6 +103,10 @@ namespace Spe.Client.Applications
             get => StringUtil.GetString(ServerProperties["ParentFrameName"]);
             set => ServerProperties["ParentFrameName"] = value;
         }
+
+        // Sends session output to this page's terminal while a script runs;
+        // its tracking state lives in ServerProperties.
+        private readonly TerminalOutputStreamer _outputStreamer = new TerminalOutputStreamer();
 
         public string ScriptItemId
         {
@@ -187,7 +207,21 @@ namespace Spe.Client.Applications
             set => Context.ClientPage.ServerProperties["CurrentLanguage"] = value;
         }
 
+        // Holds the SELECTED policy ITEM ID (GUID string, braces included) - not
+        // the policy name. Names aren't unique across subfolders, so looking
+        // policies up by name can pick the wrong one in the ISE. The ribbon
+        // button still displays the human-readable name via IsePolicyPanel.
+        public static string CurrentPolicy
+        {
+            get => StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentPolicy"]);
+            set => Context.ClientPage.ServerProperties["CurrentPolicy"] = value ?? string.Empty;
+        }
+
+        private static Item ResolveCurrentPolicyItem() =>
+            RemotingPolicyManager.ResolvePolicyItem(CurrentPolicy);
+
         public SpeJobMonitor Monitor { get; private set; }
+        public SpeJobMonitor AuxiliaryMonitor { get; private set; }
 
         public CommandContext GetCommandContext()
         {
@@ -221,7 +255,7 @@ namespace Spe.Client.Applications
                 ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceClient,
                     Context.User.Name))
             {
-                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell ISE - denied.");
+                PowerShellLog.Audit($"[ISE] action=accessDenied target=ISE");
                 return;
             }
 
@@ -240,7 +274,29 @@ namespace Spe.Client.Applications
                 }
             }
 
+            // Auxiliary monitor for side jobs (e.g. the policy editor/creator)
+            // that need to pump dialog messages to the ISE page without touching
+            // the terminal. Their job output goes to a throwaway session that the
+            // main PrintOutput handler doesn't know about, and MonitorOnJobFinished
+            // (which drains output and resets ISE UI state) only fires on the main
+            // Monitor, leaving the terminal prompt and ribbon undisturbed.
+            if (AuxiliaryMonitor == null)
+            {
+                if (!Context.ClientPage.IsEvent)
+                {
+                    AuxiliaryMonitor = new SpeJobMonitor { ID = "AuxiliaryMonitor" };
+                    Context.ClientPage.Controls.Add(AuxiliaryMonitor);
+                }
+                else
+                {
+                    AuxiliaryMonitor = (SpeJobMonitor)Context.ClientPage.FindControl("AuxiliaryMonitor");
+                }
+            }
+
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += MonitorOnJobDisappeared;
+            Monitor.LeaseLost += MonitorOnLeaseLost;
+            AuxiliaryMonitor.JobFinished += AuxiliaryMonitorOnJobFinished;
 
             Tabs.OnChange += TabsOnChange;
             if (Context.ClientPage.IsEvent)
@@ -248,7 +304,8 @@ namespace Spe.Client.Applications
             
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
 
-            if (settings.SaveLastScript)
+            var hasActiveTabsState = settings.SaveActiveTabs && !string.IsNullOrEmpty(settings.ActiveTabs);
+            if (settings.SaveLastScript && !hasActiveTabsState)
             {
                 Editor.Value = settings.LastScript;
             }
@@ -297,12 +354,14 @@ namespace Spe.Client.Applications
         {
             var tab = Tabs.Controls.OfType<Tab>().Skip(Tabs.Active).FirstOrDefault();
             SelectTabByIndex(Tabs.Active + 1);
-            var openedScript = OpenedScripts.Value.Split('\n')[Tabs.Active].Split(':')[0];
 
-            if (openedScript.IndexOf("/") > 0)
+            // Use the ID-based ScriptItem lookup (populated from the per-tab memos)
+            // instead of reconstructing the path from OpenedScripts - that path may
+            // be malformed for scripts opened from locations outside ScriptLibraryPath
+            // (e.g. via a search gallery), which previously caused a NullReferenceException.
+            var scriptItem = ScriptItem;
+            if (scriptItem != null)
             {
-                var scriptItem = Sitecore.Client.ContentDatabase.GetItem(ApplicationSettings.ScriptLibraryPath+openedScript);
-
                 ContentDataContext.BeginUpdate();
                 ContentDataContext.SetFolder(scriptItem.Uri);
                 ContentDataContext.EndUpdate();
@@ -317,6 +376,9 @@ namespace Spe.Client.Applications
                 if (selectionItem != null)
                     ContentTreeview.Refresh(selectionItem);
             }
+
+            // Persist the new active tab so reopening the ISE restores it.
+            TrySaveActiveTabs();
         }
 
         public override void HandleMessage(Message message)
@@ -404,6 +466,37 @@ namespace Spe.Client.Applications
             }
         }
 
+        [HandleMessage("ise:gotoscript", true)]
+        protected void GotoScript(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var id = args.Parameters["id"];
+            var db = args.Parameters["db"];
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(db)) return;
+
+            var database = Database.GetDatabase(db);
+            if (database == null) return;
+
+            Item scriptItem;
+            try
+            {
+                scriptItem = database.GetItem(id);
+            }
+            catch
+            {
+                PowerShellLog.Warn($"[ISE] gotoscript: item lookup failed id={id} db={db}");
+                return;
+            }
+
+            if (scriptItem == null || !scriptItem.Access.CanRead() || !scriptItem.IsPowerShellScript())
+            {
+                PowerShellLog.Warn($"[ISE] gotoscript: item not accessible id={id} db={db} user={Sitecore.Context.User?.Name}");
+                return;
+            }
+
+            LoadItem(scriptItem.Database.Name, scriptItem.ID.ToString());
+        }
+
         protected void ContentTreeview_Click()
         {
             var folder = ContentDataContext.GetFolder();
@@ -438,48 +531,56 @@ namespace Spe.Client.Applications
 
             var db = scriptItem.Database.Name;
             var id = scriptItem.ID.ToString();
-            var name = scriptItem.Name;
-            var icon = scriptItem[FieldIDs.Icon];
 
-            var mruMenu = ApplicationSettings.GetIseMruContainerItem();
-            var mruItems = mruMenu.Children;
-            if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            var entries = ParseMruEntries(settings.MostRecentlyUsedScripts);
+
+            // Remove any existing entry for this script, then prepend it.
+            entries.RemoveAll(e => string.Equals(e.Id, id, StringComparison.OrdinalIgnoreCase)
+                                   && string.Equals(e.Db, db, StringComparison.OrdinalIgnoreCase));
+            entries.Insert(0, new MruEntry { Id = id, Db = db });
+
+            // Keep only the 10 most recent.
+            if (entries.Count > 10)
             {
-                var openedScript = mruItems.FirstOrDefault(mruItem => mruItem["Message"].Contains(id)) ??
-                                   mruMenu.Add(Guid.NewGuid().ToString("n"),
-                                       new TemplateID(Sitecore.TemplateIDs.MenuItem));
-                openedScript.Edit(args =>
-                {
-                    openedScript["Message"] = $"ise:mruopen(id={id},db={db})";
-                    openedScript["Icon"] = icon;
-                    openedScript[FieldIDs.Icon] = icon;
-                    openedScript["Display name"] = name;
-                    openedScript[FieldIDs.DisplayName] = name;
-                    openedScript[FieldIDs.Sortorder] = "0";
-                    openedScript.Publishing.NeverPublish = true;
-                });
-
-                var sortOrder = 1;
-                foreach (Item mruItem in mruItems)
-                {
-                    if (sortOrder > 9)
-                    {
-                        mruItem.Delete();
-                        continue;
-                    }
-
-                    if (!(mruItem["Message"].Contains(id)))
-                    {
-                        var item = mruItem;
-                        item.Edit(args =>
-                        {
-                            item[Sitecore.FieldIDs.Sortorder] = sortOrder.ToString("G");
-                            item.Publishing.NeverPublish = true;
-                            sortOrder++;
-                        });
-                    }
-                }
+                entries = entries.Take(10).ToList();
             }
+
+            settings.MostRecentlyUsedScripts = SerializeMruEntries(entries);
+            settings.Save();
+        }
+
+        public class MruEntry
+        {
+            public string Id { get; set; }
+            public string Db { get; set; }
+        }
+
+        public static System.Collections.Generic.List<MruEntry> ParseMruEntries(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return new System.Collections.Generic.List<MruEntry>();
+            }
+            try
+            {
+                return new JavaScriptSerializer().Deserialize<System.Collections.Generic.List<MruEntry>>(json)
+                       ?? new System.Collections.Generic.List<MruEntry>();
+            }
+            catch
+            {
+                return new System.Collections.Generic.List<MruEntry>();
+            }
+        }
+
+        public static string SerializeMruEntries(System.Collections.Generic.List<MruEntry> entries)
+        {
+            return new JavaScriptSerializer().Serialize(entries);
+        }
+
+        private static object Get(System.Collections.Generic.IDictionary<string, object> dict, string key)
+        {
+            return dict.TryGetValue(key, out var value) ? value : null;
         }
 
         [HandleMessage("ise:new", true)]
@@ -489,9 +590,9 @@ namespace Spe.Client.Applications
             ScriptItemId = string.Empty;
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
-            ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
             CreateNewTab(null);
             UpdateRibbon();
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:saveas", true)]
@@ -588,10 +689,148 @@ namespace Spe.Client.Applications
             }
         }
 
+        [HandleMessage("ise:restoreactivetabs", true)]
+        protected void RestoreActiveTabs(ClientPipelineArgs args)
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (!settings.SaveActiveTabs || string.IsNullOrEmpty(settings.ActiveTabs))
+            {
+                LoadInitialScript(args);
+                return;
+            }
+
+            try
+            {
+                var serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                var tabState = serializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(settings.ActiveTabs);
+                // JavaScriptSerializer hands nested arrays back as ArrayList.
+                var tabs = Get(tabState, "tabs") as System.Collections.IList;
+                if (tabs == null || tabs.Count == 0)
+                {
+                    LoadInitialScript(args);
+                    return;
+                }
+
+                if (ScriptItemId.Length > 0)
+                {
+                    LoadInitialScript(args);
+                    return;
+                }
+
+                var activeIndex = Get(tabState, "activeIndex") as int? ?? 1;
+                var restoreInfo = new System.Collections.Generic.List<object>();
+
+                // Don't rely on Editor.Value to carry per-tab content through the
+                // loop - it's a single memo and only the last value survives to the
+                // client. Instead create tabs with a placeholder and push all content
+                // via a single JS call at the end.
+                Editor.Value = string.Empty;
+
+                foreach (var tabToken in tabs.OfType<System.Collections.Generic.Dictionary<string, object>>())
+                {
+                    var db = Get(tabToken, "db") as string ?? string.Empty;
+                    var id = Get(tabToken, "id") as string ?? string.Empty;
+                    var modified = Get(tabToken, "modified") as bool? ?? false;
+                    var content = Get(tabToken, "content") as string;
+                    var tabInfo = new System.Collections.Generic.Dictionary<string, object>
+                    {
+                        ["modified"] = modified,
+                        ["deleted"] = false
+                    };
+
+                    if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(db))
+                    {
+                        var scriptItem = Factory.GetDatabase(db).GetItem(id);
+                        if (scriptItem != null && scriptItem.IsPowerShellScript())
+                        {
+                            CreateNewTab(scriptItem);
+                            ScriptItemId = scriptItem.ID.ToString();
+                            ScriptItemDb = scriptItem.Database.Name;
+
+                            tabInfo["content"] = modified && content != null
+                                ? content
+                                : scriptItem[Templates.Script.Fields.ScriptBody];
+                        }
+                        else
+                        {
+                            // Item was deleted - create tab with stored content
+                            CreateNewTab(null);
+                            tabInfo["deleted"] = true;
+                            tabInfo["content"] = content ?? string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        // Untitled tab
+                        CreateNewTab(null);
+                        tabInfo["content"] = content ?? string.Empty;
+                    }
+
+                    restoreInfo.Add(tabInfo);
+                }
+
+                var tabCount = Tabs.Controls.Count;
+                SelectTabByIndex(Math.Min(activeIndex, tabCount));
+
+                // Forward the last-selected ribbon strip so the client can
+                // restore the active tab (Home/Context/Debug/Plugins/Settings)
+                // the user was looking at before the ISE was last closed.
+                var activeStrip = Get(tabState, "activeStrip") as string ?? string.Empty;
+                var restoreData = new System.Collections.Generic.Dictionary<string, object>
+                {
+                    ["tabs"] = restoreInfo,
+                    ["activeStrip"] = activeStrip
+                };
+                var escapedJson = HttpUtility.JavaScriptStringEncode(serializer.Serialize(restoreData));
+                SheerResponse.Eval($"spe.applyRestoredTabs(JSON.parse(\"{escapedJson}\"));");
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"Failed to restore active tabs: {ex.Message}", ex);
+                LoadInitialScript(args);
+            }
+        }
+
+        [HandleMessage("ise:savetabstate", true)]
+        protected void SaveTabState(ClientPipelineArgs args)
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (!settings.SaveActiveTabs) return;
+
+            settings.Load();
+            settings.ActiveTabs = ActiveTabsMemo.Value;
+            settings.Save();
+        }
+
+        /// <summary>
+        ///     Triggers the client to serialize the current tab set and post it back
+        ///     via ise:savetabstate. Called after any server-side mutation that
+        ///     changes the tab set (open, close, switch, execute) so the stored
+        ///     state is always current without relying on window-unload delivery.
+        /// </summary>
+        private void TrySaveActiveTabs()
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
+            if (settings.SaveActiveTabs)
+            {
+                SheerResponse.Eval("spe.saveActiveTabs();");
+            }
+        }
+
         [HandleMessage("ise:reload", true)]
         protected void ReloadItem(ClientPipelineArgs args)
         {
-            LoadItem(ScriptItemDb, ScriptItemId);
+            if (string.IsNullOrEmpty(ScriptItemId) || string.IsNullOrEmpty(ScriptItemDb))
+                return;
+
+            var scriptItem = Factory.GetDatabase(ScriptItemDb).GetItem(ScriptItemId);
+            if (scriptItem == null || !scriptItem.IsPowerShellScript())
+                return;
+
+            var content = scriptItem[Templates.Script.Fields.ScriptBody] ?? string.Empty;
+            Editor.Value = content;
+            var escaped = HttpUtility.JavaScriptStringEncode(content);
+            SheerResponse.Eval($"spe.reloadCurrentEditor(\"{escaped}\");");
         }
 
         private void LoadItem(string db, string id)
@@ -616,6 +855,7 @@ namespace Spe.Client.Applications
                 MruUpdate(scriptItem);
                 UpdateRibbon();
                 SheerResponse.Eval("scForm.postRequest(\"\", \"\", \"\", \"ise:updatetreeview\");");
+                TrySaveActiveTabs();
             }
             else
             {
@@ -674,9 +914,21 @@ namespace Spe.Client.Applications
         private void UpdateTabInfo(Item scriptItem, int tabIndex)
         {
             var itemEditing = scriptItem != null;
-            var path = itemEditing
-                ? scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length)
-                : String.Empty;
+            string path;
+            if (itemEditing)
+            {
+                var fullPath = scriptItem.Paths.Path;
+                // Strip the ScriptLibraryPath prefix for scripts inside the library,
+                // otherwise fall back to the full path (e.g. scripts opened from
+                // a search gallery that live outside the library root).
+                path = fullPath.StartsWith(ApplicationSettings.ScriptLibraryPath, StringComparison.OrdinalIgnoreCase)
+                    ? fullPath.Substring(ApplicationSettings.ScriptLibraryPath.Length)
+                    : fullPath;
+            }
+            else
+            {
+                path = String.Empty;
+            }
 
             var title = itemEditing ? scriptItem.Name : $"Untitled{TabSequencer}";
             var icon = itemEditing ? scriptItem[FieldIDs.Icon] : "powershell/16x16/ise8.png";
@@ -708,7 +960,7 @@ namespace Spe.Client.Applications
                 return;
             }
 
-            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
+            PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true))
             {
@@ -722,16 +974,19 @@ namespace Spe.Client.Applications
 
                     scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
-                    ClearOutput();
                     if (scriptSession.Output != null)
                     {
-                        PrintSessionUpdate(scriptSession.Output.GetHtmlUpdate());
+                        var clientOutputBuffer = new StringBuilder();
+                        if (scriptSession.Output.GetConsoleUpdate(clientOutputBuffer, JstermBufferSize))
+                        {
+                            PrintSessionUpdate(clientOutputBuffer.ToString());
+                        }
                     }
                 }
                 catch (Exception exc)
                 {
-                    var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html);
-                    PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                    var error = ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Console);
+                    PrintSessionUpdate(error);
                 }
 
                 if (settings.SaveLastScript)
@@ -740,6 +995,8 @@ namespace Spe.Client.Applications
                     settings.LastScript = Editor.Value;
                     settings.Save();
                 }
+
+                TrySaveActiveTabs();
             }
         }
 
@@ -748,6 +1005,82 @@ namespace Spe.Client.Applications
         {
             args.Parameters.Add("message", "ise:execute");
             JobExecuteScript(args, Editor.Value, false);
+        }
+
+        [HandleMessage("ise:executerunner", true)]
+        protected virtual void JobExecuteInRunner(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            if (args.IsPostBack) return;
+
+            // Spin up a throwaway session carrying the current editor content as
+            // its JobScript. PowerShellRunner falls back to session.JobScript when
+            // no scriptId/scriptDb query params are supplied, so this is the same
+            // flow Start-ScriptSession -Interactive uses for ad-hoc scripts.
+            // autoDispose = true makes ScriptRunner.Run dispose the session when
+            // the script ends, matching what the Content Editor path does.
+            var session = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
+            session.AutoDispose = true;
+            session.JobScript = Editor.Value;
+            if (UseContext)
+            {
+                session.SetItemLocationContext(ContextItem);
+            }
+
+            var url = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
+            url.Append("sessionKey", session.Key);
+            if (UseContext && ContextItem != null)
+            {
+                url.Append("id", ContextItem.ID.ToString());
+                url.Append("db", ContextItem.Database.Name);
+                url.Append("lang", ContextItem.Language.Name);
+                url.Append("ver", ContextItem.Version.Number.ToString(CultureInfo.InvariantCulture));
+            }
+
+            // Match the dimensions ExecutePowerShellScript uses from Content
+            // Editor so the Runner looks the same here as it will when the
+            // script is invoked from a context menu entry.
+            SheerResponse.ShowModalDialog(url.ToString(), "400", "260", string.Empty, true);
+            args.WaitForPostBack();
+        }
+
+        /// <summary>
+        ///     Terminal command execution entry point. The client writes the typed
+        ///     command into the TerminalCommand hidden Memo and posts this message.
+        ///     Routing through JobExecuteScript means the terminal shares the
+        ///     editor's full execution pipeline: Monitor-driven job message queue,
+        ///     ScriptRunning flag, ribbon state, progress overlay, Abort, and the
+        ///     PromptForChoice / modal dialog machinery that ScriptingHostUserInterface
+        ///     relies on. The web service ExecuteCommand path is no longer used by
+        ///     the ISE (it remains for the standalone SPE Console).
+        /// </summary>
+        [HandleMessage("ise:termexecute", true)]
+        protected virtual void JobExecuteTerm(ClientPipelineArgs args)
+        {
+            args.Parameters.Add("message", "ise:termexecute");
+            var command = TerminalCommand?.Value ?? string.Empty;
+            // Clear the memo so subsequent postbacks don't pick up stale content.
+            if (TerminalCommand != null)
+            {
+                TerminalCommand.Value = string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(command))
+            {
+                var runningSession = ScriptSessionManager.GetSessionIfExists(Monitor.SessionID);
+                if (runningSession != null && runningSession.DebuggingInBreakpoint)
+                {
+                    runningSession.TryInvokeInRunningSession(command);
+                    // Poll loop is stopped during a breakpoint pause. Fire a
+                    // single tick so the typed command's output drains, then
+                    // it goes silent again - ScheduleCallback is a no-op
+                    // while Monitor.Active stays false.
+                    Monitor.PollOnce(200);
+                    return;
+                }
+            }
+
+            JobExecuteScript(args, command, false);
         }
 
         [HandleMessage("ise:debug", true)]
@@ -764,8 +1097,58 @@ namespace Spe.Client.Applications
             JobExecuteScript(args, SelectionText.Value, false);
         }
 
+        private static bool TryValidateAgainstPolicy(string script)
+        {
+            if (string.IsNullOrEmpty(CurrentPolicy)) return true;
+
+            var policyItem = ResolveCurrentPolicyItem();
+            if (policyItem == null)
+            {
+                PrintSessionUpdate("[[;#FF9494;]The selected policy item could not be resolved. Clear the selection and pick another.]");
+                return false;
+            }
+
+            var policy = RemotingPolicyManager.GetPolicyFromItem(policyItem);
+            if (policy == null)
+            {
+                PrintSessionUpdate($"[[;#FF9494;]Policy '{policyItem.Name}' could not be parsed.]");
+                return false;
+            }
+
+            if (!ScriptValidator.ValidateScriptAgainstPolicy(policy, script, out var blocked))
+            {
+                if (policy.AuditLevel >= AuditLevel.Violations)
+                {
+                    PowerShellLog.Audit($"[ISE] action=scriptRejectedByPolicy user={Context.User?.Name} policy={policy.Name} blockedCommand={blocked}");
+                }
+                PrintSessionUpdate($"[[;#FF9494;]Blocked by policy '{policy.Name}': command '{blocked}' is not in AllowedCommands.]");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static System.Management.Automation.PSLanguageMode ResolveLanguageMode(bool debug)
+        {
+            // Debug bypasses policy constraints so breakpoints and the debugger
+            // protocol work; without this, Set-PSBreakpoint is blocked in CLM.
+            if (debug) return System.Management.Automation.PSLanguageMode.FullLanguage;
+
+            var policy = RemotingPolicyManager.GetPolicyFromItem(ResolveCurrentPolicyItem());
+            if (policy == null) return System.Management.Automation.PSLanguageMode.FullLanguage;
+
+            return policy.FullLanguage
+                ? System.Management.Automation.PSLanguageMode.FullLanguage
+                : System.Management.Automation.PSLanguageMode.ConstrainedLanguage;
+        }
+
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
+            if (!debug && !TryValidateAgainstPolicy(scriptToExecute))
+            {
+                return;
+            }
+
             if (!RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction))
             {
                 return;
@@ -784,12 +1167,11 @@ namespace Spe.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.ISE, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.ISE, true);
 
-            ClearOutput();
             if (scriptSession.State == RunspaceAvailability.AvailableForNestedCommand || scriptSession.State == RunspaceAvailability.Busy)
             { 
                 var errorMessage =
                     "A Script is already executing in this script session. Use another session or wait for the other script to finish.";
-                PrintSessionUpdate($"<span style='background:red; color:white'>{errorMessage}</span>");
+                PrintSessionUpdate($"[[;#FF9494;]{errorMessage}]");
                 SheerResponse.Eval(
                     "spe.showSessionIDGallery();");
                 return;
@@ -817,6 +1199,14 @@ namespace Spe.Client.Applications
 
             scriptSession.Interactive = true;
 
+            // Surface the selected policy as $RemotingPolicy in the runspace so
+            // user scripts (and discovery probes from external consumers like the
+            // SPE MCP server) can introspect what's allowed without a separate
+            // round-trip. Mirrors the remoting handler's call site so behavior is
+            // identical across remote and ISE-driven sessions.
+            RemotingPolicyManager.ApplyPolicyToSession(scriptSession,
+                RemotingPolicyManager.GetPolicyFromItem(ResolveCurrentPolicyItem()));
+
             JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose, debug);
         }
 
@@ -826,7 +1216,12 @@ namespace Spe.Client.Applications
             ScriptRunning = true;
             UpdateRibbon();
 
-            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
+            // Reset streaming trackers for the new execution. session.Output
+            // is cleared by ScriptRunner's finally (ClearSilent), so we
+            // start at zero lines and no pending partial.
+            _outputStreamer.Reset();
+
+            PowerShellLog.Audit($"[ISE] action=scriptExecuting user={Context.User?.Name}");
 
             scriptSession.SetExecutedScript(ScriptItem);
 
@@ -835,26 +1230,26 @@ namespace Spe.Client.Applications
             var rnd = new Random();
             var randomIndex = rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1);
             var executionMessage = ExecutionMessages.PleaseWaitMessages[randomIndex];
-            Context.ClientPage.ClientResponse.SetInnerHtml(
-                "ScriptResult",
-                string.Format(
-                    "<div id='PleaseWait'>" +
-                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='" +
-                    Texts.PowerShellIse_JobExecuteScript_Working +
-                    "' /><div>{0}</div></div>" +
-                    "<pre ID='ScriptResultCode'></pre>", executionMessage));
+            // Show the inline busy indicator in the terminal prompt line. The
+            // client animates a spinner next to the fun message until the
+            // script ends (spe.hideBusy is called from spe.scriptExecutionEnded).
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode(executionMessage, true);
+            Context.ClientPage.ClientResponse.Eval(
+                $"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
 
             Context.ClientPage.ClientResponse.Eval(
                 "if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
+            scriptSession.SetLanguageMode(ResolveLanguageMode(debug));
             Monitor.Start($"{DefaultSessionName}", "ISE", progressBoxRunner.Run,
                 LanguageManager.IsValidLanguageName(CurrentLanguage)
                     ? LanguageManager.GetLanguage(CurrentLanguage)
                     : Context.Language,
                 User.Exists(CurrentUser)
                     ? User.FromName(CurrentUser, true)
-                    : Context.User);
+                    : Context.User,
+                recoveryOrigin: InteractiveJobOrigin.Ise);
 
             Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("spe.restoreResults();");
@@ -866,6 +1261,8 @@ namespace Spe.Client.Applications
                 settings.LastScript = Editor.Value;
                 settings.Save();
             }
+
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:runplugin", true)]
@@ -911,29 +1308,48 @@ namespace Spe.Client.Applications
         {
             if (!(ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)) return;
 
-            var result = session.Output.GetHtmlUpdate();
-            PrintSessionUpdate(result);
+            _outputStreamer.Poll(session);
         }
+
+        // Max per-update buffer size for jsterm output, matching what the
+        // standalone SPE Console web service passes (128 KiB).
+        private const int JstermBufferSize = 131072;
 
         private static void ClearOutput()
         {
             SheerResponse.Eval($"spe.clearOutput();");
         }
 
-        private static void PrintSessionUpdate(string result)
+        /// <summary>
+        ///     Emits a jquery.terminal format string (jsterm) to the ISE
+        ///     terminal as a committed (non-partial) line.
+        /// </summary>
+        private static void PrintSessionUpdate(string jstermText)
         {
-            if (!string.IsNullOrEmpty(result))
-            {
-                var xssCleanup =
-                    new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
-                if (xssCleanup.IsMatch(result))
-                {
-                    result = xssCleanup.Replace(result, "<div title='Script tag removed'>&#9888;</div>");
-                }
+            if (string.IsNullOrEmpty(jstermText)) return;
+            var encoded = HttpUtility.JavaScriptStringEncode(jstermText, true);
+            SheerResponse.Eval($"spe.appendOutput({encoded});");
+        }
 
-                result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
-                SheerResponse.Eval($"spe.appendOutput(\"{result}\");");
+        /// <summary>
+        ///     Emits a raw HTML fragment to the ISE terminal via the raw-echo
+        ///     path. Used for the small set of UI affordances the ISE renders
+        ///     with bespoke styling: error spans, session-busy warnings, and
+        ///     the deferred-action blocks produced by ScriptExecutionResult.
+        /// </summary>
+        private static void PrintHtmlSessionUpdate(string html)
+        {
+            if (string.IsNullOrEmpty(html)) return;
+
+            var xssCleanup =
+                new Regex(@"<script[^>]*>[\s\S]*?</script>|<noscript[^>]*>[\s\S]*?</noscript>|<img.*onerror.*>");
+            if (xssCleanup.IsMatch(html))
+            {
+                html = xssCleanup.Replace(html, "<div title='Script tag removed'>&#9888;</div>");
             }
+
+            html = HttpUtility.HtmlEncode(html.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
+            SheerResponse.Eval($"spe.appendHtmlOutput(\"{html}\");");
         }
 
         protected void ExecuteInternal(ScriptSession scriptSession, string script)
@@ -949,6 +1365,8 @@ namespace Spe.Client.Applications
             }
             finally
             {
+                scriptSession.SetLanguageMode(System.Management.Automation.PSLanguageMode.FullLanguage);
+
                 if (!string.IsNullOrEmpty(scriptSession.DebugFile))
                 {
                     File.Delete(scriptSession.DebugFile);
@@ -964,6 +1382,8 @@ namespace Spe.Client.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
+            var wasAttached = !string.IsNullOrEmpty(AttachedSessionId);
+
             if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession currentSession)
             {
                 currentSession.Abort();
@@ -981,30 +1401,62 @@ namespace Spe.Client.Applications
 
             Monitor.SessionID = string.Empty;
             ScriptRunning = false;
+
+            // When aborting a session we were only watching, settle the UI now
+            // instead of waiting for the next CheckAttachedSession tick - the
+            // ribbon still paints the running state until the timer fires.
+            if (wasAttached)
+            {
+                EndAttachedSessionWatch();
+            }
         }
 
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
         {
             var args = eventArgs as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
+
+            // The output the polling drain did not send. A pending partial on
+            // the client is replaced by its final text, then the rest follows.
             if (result != null)
             {
-                PrintSessionUpdate(result.Output);
+                var finish = _outputStreamer.FinishScript(result.Output, result.ClearHost);
+                if (finish.Length > 0)
+                {
+                    SheerResponse.Eval(finish);
+                }
+            }
+            else
+            {
+                _outputStreamer.FinalizePartial();
             }
 
             if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception,
-                    ScriptSession.ExceptionStringFormat.Html);
-                PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+                    ScriptSession.ExceptionStringFormat.Console);
+                PrintSessionUpdate(error);
             }
 
             var executionResult = new ScriptExecutionResult(result);
-            executionResult.GetIseResult(result.CloseRunner).ForEach(PrintSessionUpdate);
-            
-            SheerResponse.SetInnerHtml("PleaseWait", "");
-            ProgressOverlay.Visible = false;
+            // GetIseResult yields literal HTML fragments with bespoke CSS
+            // classes (.deferred, .label, .content) - those go through the
+            // HTML path.
+            executionResult.GetIseResult(result.CloseRunner).ForEach(PrintHtmlSessionUpdate);
+
             ScriptRunning = false;
+
+            // Push the updated prompt before signalling the client that the
+            // script has ended - the session's location may have changed during
+            // execution (cd, Set-Location, Push-Location), and we want the
+            // terminal's prompt to reflect the new location the instant the
+            // command line becomes usable again.
+            var finishedSession = ScriptSessionManager.GetSessionIfExists(Monitor.SessionID);
+            if (finishedSession != null)
+            {
+                PushTerminalPrompt(finishedSession);
+            }
+
             Monitor.SessionID = string.Empty;
             UpdateRibbon();
             SheerResponse.Eval("spe.scriptExecutionEnded()");
@@ -1016,40 +1468,26 @@ namespace Spe.Client.Applications
             var showProgress = ScriptRunning &&
                                !string.Equals(args.Parameters["RecordType"], "Completed",
                                    StringComparison.OrdinalIgnoreCase);
-            ProgressOverlay.Visible = showProgress;
-            var sb = new StringBuilder();
-            if (showProgress)
+            if (!showProgress)
             {
-                sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
-                if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
-                {
-                    sb.AppendFormat("<p>{0}</p>", args.Parameters["StatusDescription"]);
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
-                {
-                    var percentComplete = int.Parse(args.Parameters["PercentComplete"]);
-                    if (percentComplete > -1)
-                        sb.AppendFormat("<div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
-                {
-                    var secondsRemaining = int.Parse(args.Parameters["SecondsRemaining"]);
-                    if (secondsRemaining > -1)
-                        sb.AppendFormat("<p><strong>{0:c} </strong> " +
-                                        Texts.PowerShellIse_UpdateProgress_remaining +
-                                        ".</p>",
-                            new TimeSpan(0, 0, secondsRemaining));
-                }
-
-                if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
-                {
-                    sb.AppendFormat("<p>{0}</p>", args.Parameters["CurrentOperation"]);
-                }
+                SheerResponse.Eval("spe.updateIseProgress(null)");
+                return;
             }
 
-            Progress.Text = sb.ToString();
+            // The panel is rendered client side (ise.js) so it can animate
+            // between records; -1 means "not specified" for both numbers.
+            int.TryParse(args.Parameters["PercentComplete"], out var percentComplete);
+            int.TryParse(args.Parameters["SecondsRemaining"], out var secondsRemaining);
+            var progress = new System.Collections.Generic.Dictionary<string, object>
+            {
+                ["activity"] = args.Parameters["Activity"] ?? string.Empty,
+                ["status"] = args.Parameters["StatusDescription"] ?? string.Empty,
+                ["operation"] = args.Parameters["CurrentOperation"] ?? string.Empty,
+                ["percent"] = string.IsNullOrEmpty(args.Parameters["PercentComplete"]) ? -1 : percentComplete,
+                ["secondsRemaining"] = string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]) ? -1 : secondsRemaining,
+                ["remainingText"] = Texts.PowerShellIse_UpdateProgress_remaining
+            };
+            SheerResponse.Eval($"spe.updateIseProgress({new JavaScriptSerializer().Serialize(progress)})");
         }
 
         [HandleMessage("ise:scriptchanged")]
@@ -1134,6 +1572,7 @@ namespace Spe.Client.Applications
             {
                 SelectTabByIndex(newSelectedIndex);
             }
+            TrySaveActiveTabs();
         }
 
         [HandleMessage("ise:updateribbon")]
@@ -1194,6 +1633,7 @@ namespace Spe.Client.Applications
             ribbon.CommandContext.Parameters["currentLanguage"] = string.IsNullOrEmpty(CurrentLanguage)
                 ? DefaultLanguage
                 : CurrentLanguage;
+            ribbon.CommandContext.Parameters["currentPolicy"] = CurrentPolicy ?? string.Empty;
 
             ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
@@ -1266,7 +1706,269 @@ namespace Spe.Client.Applications
 
             CurrentSessionId = sessionId;
             SheerResponse.Eval($"spe.changeSessionId('{sessionId}');");
+
+            // Swapping sessions needs to re-synchronize the ISE's running-state
+            // UI with the new target: attach to an already-busy session, or
+            // detach from a previously-watched one when moving to an idle id.
+            if (IsSessionBusy(sessionId))
+            {
+                BeginAttachedSessionWatch(sessionId);
+            }
+            else if (!string.IsNullOrEmpty(AttachedSessionId))
+            {
+                EndAttachedSessionWatch();
+            }
+            else
+            {
+                UpdateRibbon();
+            }
+        }
+
+        /// <summary>
+        ///     True when the named session currently has a script in flight -
+        ///     either running or paused in a nested command (breakpoint). Used
+        ///     to decide whether the ISE should enter the attached-watch state.
+        /// </summary>
+        private static bool IsSessionBusy(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId)) return false;
+            var session = ScriptSessionManager.GetSessionIfExists(sessionId);
+            if (session == null) return false;
+            return session.State == RunspaceAvailability.Busy ||
+                   session.State == RunspaceAvailability.AvailableForNestedCommand;
+        }
+
+        /// <summary>
+        ///     Reflects a session whose script was started elsewhere as if this
+        ///     ISE page were running it: sets ScriptRunning so the ribbon
+        ///     disables Run/Save/etc and enables Abort, wires Monitor.SessionID
+        ///     so Abort resolves the right session, shows the busy spinner in
+        ///     the terminal, and starts a polling timer that tears the state
+        ///     down when the remote script finishes.
+        /// </summary>
+        private void BeginAttachedSessionWatch(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId)) return;
+            if (ScriptRunning &&
+                string.Equals(AttachedSessionId, sessionId, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            AttachedSessionId = sessionId;
+            Monitor.SessionID = sessionId;
+            ScriptRunning = true;
+
+            SheerResponse.Eval("spe.restoreResults();");
+            SheerResponse.Eval("if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
+
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode(
+                "Attached to running session", true);
+            SheerResponse.Eval($"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
+
             UpdateRibbon();
+            SheerResponse.Timer("ise:checkattachedsession", 500);
+        }
+
+        /// <summary>
+        ///     Clears the attached-watch state and returns the ribbon, Abort
+        ///     button, and terminal prompt to idle. Does not emit any script
+        ///     output - that output belongs to the page that started the
+        ///     script, not to this one.
+        /// </summary>
+        private void EndAttachedSessionWatch()
+        {
+            AttachedSessionId = string.Empty;
+            Monitor.SessionID = string.Empty;
+            ScriptRunning = false;
+            UpdateRibbon();
+            SheerResponse.Eval("spe.scriptExecutionEnded();");
+        }
+
+        [HandleMessage("ise:attachrunningsession", true)]
+        protected void AttachRunningSession(ClientPipelineArgs args)
+        {
+            // Called once from the ISE init sequence (after restoreactivetabs
+            // and initterminal) so an ISE opened against an already-running
+            // default session reflects the running state from the start.
+
+            // A script this tab's previous ISE page started (before a reload or
+            // the browser discarding the tab), or one an abandoned ISE left
+            // behind: take the job over so its dialogs and completion land here.
+            var claimed = InteractiveJobRegistry.ClaimOrphans(Context.User.Name,
+                InteractiveJobRegistry.CurrentTabId, origin => origin == InteractiveJobOrigin.Ise,
+                out var ownTabStillFresh, 1).FirstOrDefault();
+            if (claimed != null)
+            {
+                // Adopting may re-show the dialog the job waits on, and this
+                // init request runs before Sitecore's modal dialog host exists.
+                // Hold the claim and adopt once the page says dialogs are ready.
+                ServerProperties["ClaimedJob"] = claimed.Handle;
+                ServerProperties["ClaimedLease"] = claimed.LeaseToken;
+                SheerResponse.Eval(
+                    "if(window.speJobRecovery){speJobRecovery.postWhenDialogsReady('ise:adoptclaimedjob');}");
+                return;
+            }
+
+            // The page this one replaced polled moments ago; its lease becomes
+            // reclaimable once it has been quiet for OwnTabReclaimSeconds.
+            var attempt = MainUtil.GetInt(ServerProperties["AttachAttempt"], 0);
+            if (ownTabStillFresh && attempt < 4)
+            {
+                ServerProperties["AttachAttempt"] = attempt + 1;
+                SheerResponse.Timer("ise:attachrunningsession", 2000);
+                return;
+            }
+
+            var sessionId = CurrentSessionId;
+            if (IsSessionBusy(sessionId))
+            {
+                BeginAttachedSessionWatch(sessionId);
+            }
+        }
+
+        [HandleMessage("ise:adoptclaimedjob", true)]
+        protected void AdoptClaimedJob(ClientPipelineArgs args)
+        {
+            var handle = StringUtil.GetString(ServerProperties["ClaimedJob"]);
+            var lease = StringUtil.GetString(ServerProperties["ClaimedLease"]);
+            ServerProperties["ClaimedJob"] = null;
+            ServerProperties["ClaimedLease"] = null;
+            var entry = InteractiveJobRegistry.TryAdopt(handle, Context.User.Name, lease);
+            if (entry != null)
+            {
+                AdoptJob(entry);
+            }
+        }
+
+        /// <summary>
+        ///     Takes over a job another ISE page of this user started: reflects
+        ///     the running state, replays the session output from the start and
+        ///     binds Monitor to the job, which re-shows a pending dialog and
+        ///     delivers the completion through MonitorOnJobFinished.
+        /// </summary>
+        private void AdoptJob(InteractiveJobEntry entry)
+        {
+            PowerShellLog.Audit($"[ISE] action=reattached user={Context.User?.Name} job={entry.Handle}");
+            _outputStreamer.Reset();
+            ScriptRunning = true;
+
+            SheerResponse.Eval("spe.restoreResults();");
+            SheerResponse.Eval("if(spe.preventCloseWhenRunning){spe.preventCloseWhenRunning(true);}");
+            var encodedBusyMessage = HttpUtility.JavaScriptStringEncode("Re-attached to running script", true);
+            SheerResponse.Eval($"if(spe.showBusy){{spe.showBusy({encodedBusyMessage});}}");
+            UpdateRibbon();
+
+            Monitor.Adopt(entry);
+        }
+
+        private void MonitorOnJobDisappeared(object sender, EventArgs e)
+        {
+            EndRunWithNotice(Texts.PowerShellRunner_ScriptSessionLost);
+        }
+
+        private void MonitorOnLeaseLost(object sender, EventArgs e)
+        {
+            EndRunWithNotice(Texts.PowerShellRunner_ScriptShownElsewhere);
+        }
+
+        private void EndRunWithNotice(string notice)
+        {
+            _outputStreamer.FinalizePartial();
+
+            PrintSessionUpdate($"[[;#FF9494;]{notice}]");
+            ScriptRunning = false;
+            Monitor.SessionID = string.Empty;
+            UpdateRibbon();
+            SheerResponse.Eval("spe.scriptExecutionEnded()");
+        }
+
+        [HandleMessage("ise:checkattachedsession", true)]
+        protected void CheckAttachedSession(ClientPipelineArgs args)
+        {
+            var sessionId = AttachedSessionId;
+            if (string.IsNullOrEmpty(sessionId)) return;
+
+            // Pump any output produced by the attached script into the
+            // terminal. Without this the watch only toggles ribbon state and
+            // the terminal would stay silent until the script finished -
+            // which is the gap a user hits when they reload ISE mid-run.
+            var session = ScriptSessionManager.GetSessionIfExists(sessionId) as ScriptSession;
+            if (session != null)
+            {
+                _outputStreamer.Poll(session);
+            }
+
+            if (IsSessionBusy(sessionId))
+            {
+                SheerResponse.Timer("ise:checkattachedsession", 500);
+                return;
+            }
+
+            // Final drain catches any lines that arrived between the stream
+            // above and the script terminating.
+            if (session != null)
+            {
+                _outputStreamer.Drain(session);
+            }
+            EndAttachedSessionWatch();
+        }
+
+        [HandleMessage("ise:killsessionid", true)]
+        protected void KillSessionId(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+            ScriptSession session = null;
+            var keyParam = args.Parameters["key"];
+            if (!string.IsNullOrEmpty(keyParam))
+            {
+                if (IsHackedParameter(keyParam)) return;
+                var key = HttpUtility.UrlDecode(keyParam);
+                session = ScriptSessionManager.GetSessionByKey(key);
+            }
+            else
+            {
+                // Backward-compat: older callers may still emit
+                // ise:killsessionid(id=<persistentId>). This path resolves a
+                // session owned by the current browser session only.
+                var sessionId = args.Parameters["id"];
+                if (IsHackedParameter(sessionId) || string.IsNullOrEmpty(sessionId)) return;
+                session = ScriptSessionManager.GetSessionIfExists(sessionId);
+            }
+
+            if (session == null) return;
+
+            // Scope kills to the current Sitecore user. The gallery already
+            // filters to own sessions, so a mismatch here means a crafted
+            // request; refuse rather than remove someone else's runspace.
+            var currentUserName = Sitecore.Context.User?.Name ?? string.Empty;
+            if (!string.Equals(session.UserName, currentUserName, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            // Resolve the bound-session identity BEFORE the kill so we can tell
+            // whether we just disposed the session this page is using.
+            var myBoundKey = ScriptSessionManager.GetSessionIfExists(CurrentSessionId)?.Key;
+            var killedOwnBinding = myBoundKey != null &&
+                string.Equals(myBoundKey, session.Key, StringComparison.Ordinal);
+
+            // Abort first in case a script is still running in this session,
+            // then dispose so the cache entry and runspace are released.
+            try { session.Abort(); }
+            catch { /* session may already be idle; disposal handles the rest */ }
+            ScriptSessionManager.RemoveSession(session);
+
+            // If the user killed the exact session instance this page was
+            // bound to, fall back to the default name so the ribbon and the
+            // next execution don't reference a key that no longer exists.
+            if (killedOwnBinding)
+            {
+                CurrentSessionId = DefaultSessionName;
+                SheerResponse.Eval($"spe.changeSessionId('{DefaultSessionName}');");
+                UpdateRibbon();
+            }
         }
 
         [HandleMessage("ise:setlanguage", true)]
@@ -1299,6 +2001,126 @@ namespace Spe.Client.Applications
             UpdateRibbon();
         }
 
+        [HandleMessage("ise:setpolicy", true)]
+        protected void SetPolicy(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var idStr = args.Parameters["id"] ?? string.Empty;
+            if (IsHackedParameter(idStr))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(idStr))
+            {
+                CurrentPolicy = string.Empty;
+                UpdateRibbon();
+                return;
+            }
+
+            var item = RemotingPolicyManager.ResolvePolicyItem(idStr);
+            if (item == null)
+            {
+                SheerResponse.Alert("The selected policy item no longer exists.");
+                return;
+            }
+
+            // Drop the policy cache so a just-created or just-renamed policy is
+            // visible on the next remoting validation without waiting for the TTL.
+            RemotingPolicyManager.Invalidate();
+
+            CurrentPolicy = item.ID.ToString();
+            UpdateRibbon();
+        }
+
+        // Script IDs for the Content-Editor-shipped policy management scripts.
+        // Keeping the same script as a single source of truth so Content Editor and
+        // ISE show the exact same Edit / Create UI.
+        private static readonly ID EditPolicyScriptId = new ID("{4E7E1CD8-BD37-448A-AA12-46A2F29869EE}");
+        private static readonly ID CreatePolicyScriptId = new ID("{DDE4EAA6-5B99-48EC-9DD4-BB4A8CEAE443}");
+
+        [HandleMessage("ise:createpolicy", true)]
+        protected void CreatePolicy(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+            var policiesFolder = db?.GetItem(ItemIDs.Policies);
+            if (policiesFolder == null)
+            {
+                SheerResponse.Alert("Remoting Policies folder was not found.");
+                return;
+            }
+
+            LaunchPolicyEditor(CreatePolicyScriptId, policiesFolder);
+        }
+
+        [HandleMessage("ise:editpolicy", true)]
+        protected void EditPolicy(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+            if (string.IsNullOrEmpty(CurrentPolicy))
+            {
+                SheerResponse.Alert("Select a policy from the Policy dropdown first.");
+                return;
+            }
+
+            var policyItem = ResolveCurrentPolicyItem();
+            if (policyItem == null)
+            {
+                SheerResponse.Alert("The selected policy item could not be resolved. It may have been deleted.");
+                return;
+            }
+
+            LaunchPolicyEditor(EditPolicyScriptId, policyItem);
+        }
+
+        private void LaunchPolicyEditor(ID scriptId, Item contextItem)
+        {
+            if (!AuxiliaryMonitor.JobHandle.Equals((object)Handle.Null))
+            {
+                SheerResponse.Alert("A policy editor is already open.");
+                return;
+            }
+
+            var scriptItem = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)?.GetItem(scriptId);
+            if (scriptItem == null || !scriptItem.IsPowerShellScript())
+            {
+                SheerResponse.Alert("Policy management script not found in the script library.");
+                return;
+            }
+
+            // Throwaway session, not named and autoDispose=true. ScriptRunner.Run
+            // disposes it in its finally block, so we don't need to track it.
+            // Output, progress and any terminal-bound messages go to this session's
+            // buffer and are never streamed to the ISE terminal because the main
+            // Monitor.SessionID stays tied to the ISE's display session.
+            var session = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
+            session.SetExecutedScript(scriptItem);
+            session.SetItemLocationContext(contextItem);
+            session.Interactive = true;
+
+            var runner = new ScriptRunner(ExecuteInternal, session,
+                scriptItem[Templates.Script.Fields.ScriptBody], true);
+
+            // Starting on AuxiliaryMonitor keeps the job's dialog messages flowing
+            // through a monitor that is not wired to MonitorOnJobFinished,
+            // so the ISE terminal, ribbon state and prompt are not disturbed
+            // when the script opens its Invoke-Dialog modal and later ends.
+            AuxiliaryMonitor.Start($"Edit policy \"{contextItem.Name}\"", "ISE-Auxiliary",
+                runner.Run, Context.Language, Context.User);
+        }
+
+        private void AuxiliaryMonitorOnJobFinished(object sender, EventArgs e)
+        {
+            // Currently the only auxiliary consumer is the Remoting Policy
+            // editor/creator, so drop the policy cache here. If other side
+            // jobs are added later this should be split into per-job handlers
+            // (attach before Start, detach inside the callback).
+            RemotingPolicyManager.Invalidate();
+        }
+
         [HandleMessage("ise:setcontextitem", true)]
         protected void SetContextItem(ClientPipelineArgs args)
         {
@@ -1320,6 +2142,73 @@ namespace Spe.Client.Applications
             }
 
             UpdateRibbon();
+            // Reprime the terminal session with the new context item and refresh its prompt
+            PrimeTerminalSession();
+        }
+
+        [HandleMessage("ise:initterminal", true)]
+        protected void InitTerminalSession(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            // Initial-load priming: also replay the session's accumulated
+            // output so an ISE reload restores the terminal content from the
+            // surviving server-side session.
+            PrimeTerminalSession(replayOutput: true);
+        }
+
+        /// <summary>
+        /// Creates or retrieves the ISE PowerShell session and primes it with the
+        /// ISE's context (current item location, interactive flag). Then notifies
+        /// the client terminal so it can fetch the updated prompt. When
+        /// <paramref name="replayOutput"/> is true and the session already has
+        /// buffered output, that output is pushed back to the terminal via the
+        /// normal streaming path so a reload can pick up where the previous
+        /// page left off, and subsequent poll cycles only emit genuinely new
+        /// content.
+        /// </summary>
+        private void PrimeTerminalSession(bool replayOutput = false)
+        {
+            try
+            {
+                var session = ScriptSessionManager.GetSession(CurrentSessionId, ApplicationNames.ISE, true);
+                session.Interactive = true;
+                if (UseContext && ContextItem != null)
+                {
+                    session.SetItemLocationContext(ContextItem);
+                }
+                // Push the current prompt to the client terminal directly - no
+                // client-initiated round trip needed since we already have the
+                // session here.
+                PushTerminalPrompt(session);
+                if (replayOutput && session.Output != null && session.Output.Count > 0)
+                {
+                    // Route the full buffer through the normal streaming path.
+                    // That handles partial-line tails, advances
+                    // the streamer's committed-line tracking, and keeps the
+                    // OutputBuffer's update pointer in sync so further polls
+                    // (attached-session watch, end-of-run drain) only emit
+                    // genuinely new lines.
+                    _outputStreamer.Drain(session);
+                }
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"[ISE] action=primeTerminalSession failed: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        ///     Pushes the current PS prompt for the given session to the client
+        ///     terminal. Called after session priming and after script execution
+        ///     completes so the terminal prompt reflects the session's current
+        ///     location without the client having to make a web service round trip.
+        /// </summary>
+        private static void PushTerminalPrompt(ScriptSession session)
+        {
+            if (session == null) return;
+            var prompt = $"PS {session.CurrentLocation}>";
+            var encoded = HttpUtility.JavaScriptStringEncode(prompt, true);
+            SheerResponse.Eval($"if (spe.setTerminalPrompt) {{ spe.setTerminalPrompt({encoded}); }}");
         }
 
         [HandleMessage("ise:updatesettings", true)]
@@ -1327,12 +2216,18 @@ namespace Spe.Client.Applications
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
-            var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
+            var foregroundColor = OutputLine.ProcessHtmlColor(settings.ForegroundColor);
+            var bottomPadding = 0;
             SheerResponse.Eval(
                 $"spe.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, " +
                 $"'{backgroundColor}', {bottomPadding}," +
                 $" {settings.LiveAutocompletion.ToString().ToLower()}," +
-                $" {settings.PerTabOutput.ToString().ToLower()});");
+                $" {settings.PerTabOutput.ToString().ToLower()}," +
+                $" '{foregroundColor}');");
+
+            var session = ScriptSessionManager.GetSession(CurrentSessionId, ApplicationNames.ISE, true);
+            session.PrivateData.BackgroundColor = settings.BackgroundColor;
+            session.PrivateData.ForegroundColor = settings.ForegroundColor;
         }
 
         [HandleMessage("ise:setbreakpoint", true)]
@@ -1367,6 +2262,11 @@ namespace Spe.Client.Applications
             var endColumn = args.Parameters["EndColumn"];
             var jobId = args.Parameters["JobId"];
             InBreakpoint = true;
+            // The job thread is parked in EnterDebugger; nothing new can
+            // arrive on its message queue until either the user resumes or
+            // types a terminal command. Stop the poll loop entirely; we
+            // re-arm it explicitly in those two paths below.
+            Monitor.Active = false;
             UpdateRibbon();
             SheerResponse.Eval(
                 $"$ise(function() {{ spe.breakpointHit({line}, {column}, {endLine}, {endColumn}, '{jobId}'); }});");
@@ -1393,33 +2293,9 @@ namespace Spe.Client.Applications
             session.TryInvokeInRunningSession(args.Parameters["action"]);
             SheerResponse.Eval("$ise(function() { spe.breakpointHandled(); });");
             InBreakpoint = false;
-        }
-
-        [HandleMessage("ise:immediatewindow", true)]
-        protected virtual void ImmediateWindow(ClientPipelineArgs args)
-        {
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
-            {
-                Context.ClientPage.Start(this, nameof(ImmediateWindowPipeline));
-            }
-        }
-
-        public void ImmediateWindowPipeline(ClientPipelineArgs args)
-        {
-            if (!args.IsPostBack)
-            {
-                Monitor.Active = false;
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                var url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
-                url.Parameters["id"] = session.Key;
-                url.Parameters["debug"] = "true";
-                TypeResolver.Resolve<IImmediateDebugWindowLauncher>().ShowImmediateWindow(url);
-                args.WaitForPostBack(true);
-            }
-            else
-            {
-                Monitor.Active = true;
-            }
+            // The script is resuming; restart the poll loop so output and
+            // the next breakpoint hit stream back at the normal cadence.
+            Monitor.Active = true;
         }
 
         public void SessionElevationPipeline(ClientPipelineArgs args)

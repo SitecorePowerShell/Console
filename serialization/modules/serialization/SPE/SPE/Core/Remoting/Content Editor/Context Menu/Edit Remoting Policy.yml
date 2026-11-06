@@ -1,0 +1,85 @@
+﻿---
+ID: "4e7e1cd8-bd37-448a-aa12-46a2f29869ee"
+Parent: "a9153fbe-bea5-44b4-b901-60891b5bda39"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Remoting/Content Editor/Context Menu/Edit Remoting Policy
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/brickwall.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{5C440F09-3F03-47C3-8583-E3F03C029340}"
+        name="Only show for Remoting Policy items">
+        <conditions>
+          <condition
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="61B234184D454DF9902AF163A5F2E26B"
+            templateid="{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    if(-not $SitecoreContextItem -or $SitecoreContextItem.TemplateID -ne "{AF864A3C-6D3D-4889-AFEF-9B1D427F4EA8}") {
+        Close-Window
+        Exit
+    }
+    
+    $item = $SitecoreContextItem | Initialize-Item
+    $mode = "Edit"
+    $dialogIcon = [regex]::Replace($item.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    
+    Get-Item -Path "master:" -ID "{B1DA4078-58B8-4A95-AB55-359720B8409B}" | Invoke-Script
+    
+    if($dialogResult -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
+        $item.Editing.BeginEdit()
+        $item["FullLanguage"] = if($languageMode -eq "FullLanguage") { "1" } else { "" }
+        $item["AllowedCommands"] = $commandText
+        $item["AuditLevel"] = $auditLevel
+        $item["ApprovedScripts"] = if($approvedScripts) { $approvedScripts -join "|" } else { "" }
+        $item.Editing.EndEdit() > $null
+    }
+    
+    Invoke-JavaScript -OnScriptEnd -Script "scForm.invoke('item:load(id=$($item.ID),language=$($item.Language),version=$($item.Version))')"
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Edit a Remoting Policy's command groups and approved scripts.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Edit Remoting Policy
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260412T210000Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9e9962dc-fbb9-46f5-8a77-68f1c4b41114"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260422T230000Z
+    

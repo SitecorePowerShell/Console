@@ -18,11 +18,12 @@ html {
 #terminal {
     bottom: 0;
     left: 0;
-    overflow-y: auto;
+    overflow: auto;
     position: absolute;
     right: 0;
     top: 0;
-    z-index: -1
+    z-index: -1;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 #terminal * {
@@ -117,10 +118,57 @@ html {
     bottom: 0;
 }
 
-#ScriptResult pre { 
-    margin: 4px 2px !important; 
+#ScriptResult pre {
+    margin: 4px 2px !important;
     z-index: 0;
     position: absolute;
+}
+
+/* jQuery Terminal in ISE results pane */
+#ScriptResultCode.terminal {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #012456;
+    /* Explicit z-index creates a stacking context so the terminal's internal
+     * z-indexes (e.g. .cmd .clipboard at z-index:1000 from jquery.terminal.css)
+     * stay contained inside this element and can't escape to cover siblings
+     * like #ProgressOverlay. */
+    z-index: 0;
+}
+
+#ScriptResultCode.terminal .terminal-output {
+    padding: 4px 2px;
+}
+
+/* Minimal scrollbar for the ISE terminal - transparent track and a subtle
+ * translucent thumb. Uses the standard CSS Scrollbars Module Level 1 properties
+ * (scrollbar-width, scrollbar-color) supported by all modern browsers. */
+#ScriptResultCode.terminal {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+#ScriptResultCode.terminal .terminal-output div div {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#ScriptResultCode.terminal .cmd .cursor.blink {
+    animation-name: spe-blink;
+    background-color: var(--background, #012456);
+}
+
+#ScriptResultCode.terminal .cmd {
+    color: inherit;
+    background-color: inherit;
+}
+
+#ScriptResultCode.terminal .cmd .prompt {
+    color: inherit;
+    margin-left: 2px;
 }
 
 .console a { color: #ffa; }
@@ -266,18 +314,6 @@ html {
 
 .terminal .terminal-output div a, .terminal .terminal-output div a:hover, .terminal .terminal-output div a:visited { color: yellow; }
 
-.tip_no_hints {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    background: #fff;
-    border-radius: 3px;
-    color: #1d1d1d;
-    display: none;
-    padding: 10px;
-    position: fixed;
-    z-index: 1000;
-}
-
 #working {
     bottom: 0;
     display: none;
@@ -291,7 +327,7 @@ html {
     padding: 2px 16px 0 16px;
 }
 
-#All { padding: 0 8px 0 8px; }
+#All { padding: 0 2px 0 2px; }
 
 #ProgressOverlay {
     left: 0;
@@ -312,14 +348,3 @@ html {
 #Progress p { margin: 0 2px; }
 #Progress h2 { margin: 0; font-size: 1.5em;}
 
-.tip_no_hints.no_hints {
-    background-color: #FFEFEF;
-    border: #FFEFEF 1px solid;
-    color: #ff5a5a;
-}
-
-.tip_no_hints.signature {
-    background-color: #FFFBE6;
-    border: #F4BC01 1px solid;
-    color: #5C3B00;
-}

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
          xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
   <Gallery.SessionIDGallery>
@@ -8,6 +8,88 @@
       <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
+      <Stylesheet>
+        .speSessionRow {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .speSessionRow:hover {
+          background-color: #eef5ff;
+        }
+        .speSessionRowSelected {
+          border-left: 4px solid #267F98;
+          background: #DCF1F6;
+          font-weight: 600;
+        }
+        .speSessionRowSelected:hover {
+          background: #BCE3EE;
+        }
+        /* Invert the id pill on the active row so the "you are here" marker
+           reads as a solid teal chip against the tinted background, instead
+           of a pale pill that disappears into the row colour. */
+        .speSessionRowSelected .speSessionIdPill {
+          background: #267F98;
+          color: #ffffff;
+          border-color: #267F98;
+        }
+        .speSessionIcon {
+          flex: 0 0 auto;
+          width: 24px;
+          padding-top: 2px;
+        }
+        .speSessionBody {
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+        .speSessionHeader {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .speSessionUser {
+          flex: 1 1 auto;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .speSessionIdPill {
+          border: 1px solid #BCE3EE;
+          background: #DCF1F6;
+          color: #267F98;
+          padding: 1px 6px;
+          border-radius: 3px;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .speSessionLocation {
+          color: #666;
+          font-size: 11px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .speSessionKill,
+        .speSessionKillSlot {
+          flex: 0 0 auto;
+          width: 18px;
+          height: 18px;
+          padding: 0;
+        }
+        .speSessionKill {
+          border: 0;
+          background: transparent;
+          color: #999;
+          font-size: 14px;
+          line-height: 18px;
+          text-align: center;
+          cursor: pointer;
+          visibility: hidden;
+          user-select: none;
+        }
+        .speSessionRow:hover .speSessionKill { visibility: visible; }
+        .speSessionKill:hover { color: #c00; }
+      </Stylesheet>
 
       <div class="scStretch">
         <div class="scGalleryContent13">

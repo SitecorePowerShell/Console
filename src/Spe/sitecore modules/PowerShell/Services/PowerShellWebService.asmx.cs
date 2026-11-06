@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,18 +9,22 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Services;
+using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Security.Accounts;
 using Sitecore.StringExtensions;
 using Spe.Abstractions.VersionDecoupling.Interfaces;
+using Spe.Commands.Session;
 using Spe.Core.Debugging;
 using Spe.Core.Diagnostics;
 using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
+using Spe.Core.Utility;
 using Spe.Core.VersionDecoupling;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 using PSCustomObject = System.Management.Automation.PSCustomObject;
@@ -101,7 +106,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     });
             }
 
-            PowerShellLog.Info($"Arbitrary script execution in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Audit($"[Console] action=scriptExecuting session={guid} user={Sitecore.Context.User?.Name}");
 
             var session = GetScriptSession(guid);
             session.Interactive = true;
@@ -118,7 +123,8 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
 
                 var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-                jobManager.StartJob(jobOptions);
+                var jobHandle = jobManager.StartJob(jobOptions);
+                HoldConsoleJob(GetJobId(guid, handle), jobManager.GetJob(jobHandle));
 
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
                 return PollCommandOutput(guid, handle, stringFormat);
@@ -134,9 +140,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
                                 output +
                                 ScriptSession.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) +
                                 "\r\n" +
-                                "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
-                                "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
-                                "[[;#f00;#000]We also have a user guide here https://doc.sitecorepowershell.com/.]\r\n\r\n",
+                                "\r\n[[;#FF9494;]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
+                                "[[;#FF9494;]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
+                                "[[;#FF9494;]We also have a user guide here https://doc.sitecorepowershell.com/.]\r\n\r\n",
                             prompt = $"PS {session.CurrentLocation}>",
                             background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
                             color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
@@ -154,6 +160,28 @@ namespace Spe.sitecore_modules.PowerShell.Services
             }
             var sessionExists = ScriptSessionManager.SessionExists(guid);
             return sessionExists ? "alive" : "session-not-found";
+        }
+
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object GetSessionVariables(string guid)
+        {
+            if (!IsLoggedInUserAuthorized)
+            {
+                return string.Empty;
+            }
+
+            var serializer = new JavaScriptSerializer();
+            if (!ScriptSessionManager.SessionExists(guid))
+            {
+                return serializer.Serialize(new { status = "no-session", variables = new object[0] });
+            }
+
+            var session = ScriptSessionManager.GetSession(guid);
+            var vars = session.GetUserVariables()
+                .Select(v => new { name = v.Name, type = v.TypeName, value = v.Preview, category = v.Category, expandable = v.Expandable })
+                .ToArray();
+            return serializer.Serialize(new { status = "ok", variables = vars });
         }
 
         [WebMethod(EnableSession = true)]
@@ -180,7 +208,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 if (debugVariable == null)
                 {
                     return "<div class='undefinedVariableType'>undefined</div>" +
-                           $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
+                           $"<div class='variableLine'><span class='varName'>${HttpUtility.HtmlEncode(variableName)}</span> : <span class='varValue'>$null</span></div>";
                 }
 
                 var defaultProps = new string[0];
@@ -215,7 +243,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 var details = new VariableDetails("$" + variableName, variable);
                 var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
                 varValue +=
-                    $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
+                    $"<div class='variableLine'><span class='varName'>${HttpUtility.HtmlEncode(variableName)}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
 
                 if (!details.IsExpandable)
                 {
@@ -234,7 +262,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         ImportantProperties.Contains(child.Name, StringComparer.OrdinalIgnoreCase))
                     {
                         varValue +=
-                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
+                            $"<span class='varChild'><span class='childName'>{HttpUtility.HtmlEncode(child.Name)}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
                     }
                     else
                     {
@@ -243,13 +271,13 @@ namespace Spe.sitecore_modules.PowerShell.Services
                             continue;
                         }
                         varValue +=
-                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
+                            $"<span class='varChild'><span class='childName'>{HttpUtility.HtmlEncode(child.Name)}</span> : <span class='childValue'>{{";
                         foreach (var subChild in child.GetChildren())
                         {
                             if (!subChild.IsExpandable)
                             {
                                 varValue +=
-                                    $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
+                                    $"<span class='childName'>{HttpUtility.HtmlEncode(subChild.Name)}</span> : {subChild.HtmlEncodedValueString}, ";
                             }
                         }
                         varValue = varValue.TrimEnd(' ', ',');
@@ -302,12 +330,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 var job = jobManager.GetContextJob();
                 if (job != null)
                 {
-                    job.StatusFailed = true;
-
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
+                        PowerShellLog.Error("[Session] action=scriptExecutionFailed", ex);
                     }
                     job.AddStatusMessage(exceptionMessage);
                     job.AddStatusMessage(
@@ -316,10 +342,16 @@ namespace Spe.sitecore_modules.PowerShell.Services
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.AddStatusMessage(
                         "We also have a user guide here https://doc.sitecorepowershell.com/.");
+
+                    // Flag the failure only once the messages are in place: a poll
+                    // that sees StatusFailed renders StatusMessages right away, and
+                    // on a cold site the log write above is slow enough for a poll
+                    // to slip in and show just "Job started".
+                    job.StatusFailed = true;
                 }
                 else
                 {
-                    PowerShellLog.Error("Script execution failed. Could not find command job.", ex);
+                    PowerShellLog.Error("[Session] action=commandJobNotFound", ex);
                 }
             }
         }
@@ -338,7 +370,9 @@ namespace Spe.sitecore_modules.PowerShell.Services
             var session = GetScriptSession(guid);
             var result = new Result();
             var jobManager = TypeResolver.ResolveFromCache<IJobManager>();
-            var scriptJob = jobManager.GetJob(GetJobId(guid, handle));
+            var jobId = GetJobId(guid, handle);
+            var scriptJob = jobManager.GetJob(jobId) ??
+                            (HeldConsoleJobs.TryGetValue(jobId, out var held) ? held.Job : null);
             if (scriptJob == null)
             {
                 result.status = StatusError;
@@ -348,7 +382,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
 
                 if (!session.Output.HasUpdates())
                 {
-                    session.Output.Clear();
+                    session.Output.ClearSilent();
                     return serializer.Serialize(result);
                 }
             }
@@ -364,31 +398,97 @@ namespace Spe.sitecore_modules.PowerShell.Services
                     string.Join(Environment.NewLine, scriptJob.StatusMessages.Cast<string>().ToArray())
                         .Replace("[", "&#91;")
                         .Replace("]", "&#93;");
-                result.result = "[[;#f00;#000]" +
+                result.result = "[[;#FF9494;]" +
                                 (message.IsNullOrEmpty() ? "Command failed" : HttpUtility.HtmlEncode(message)) + "]";
                 result.prompt = $"PS {session.CurrentLocation}>";
-                session.Output.Clear();
+                session.Output.ClearSilent();
                 return serializer.Serialize(result);
             }
 
             var complete = scriptJob == null || scriptJob.IsDone;
 
-            var output = new StringBuilder();
-            session.Output.GetConsoleUpdate(output, 131072);
-            var partial = session.Output.HasUpdates();
-            result.result = output.ToString().TrimEnd('\r', '\n');
+            // Clear-Host called from within the running script: tell the client
+            // to purge its displayed output before rendering anything new.
+            result.clear = session.Output.ConsumeClearPending();
+
+            var state = GetStreamingState(guid);
+            if (result.clear)
+            {
+                // Client is about to clear its terminal; reset our local
+                // streaming tracking so we start at line 0.
+                state.CommittedLineCount = 0;
+                state.HasPendingPartial = false;
+            }
+
+            result.emits = new List<EmitInstruction>();
+            BuildStreamingEmits(session, state, result.emits);
+
+            // Populate the legacy `result` field with the concatenated emit
+            // text so any consumer that still reads it (for example tests
+            // or older clients) still sees something. The Console client
+            // prefers `emits` when present.
+            if (result.emits.Count > 0)
+            {
+                var flat = new StringBuilder();
+                foreach (var e in result.emits)
+                {
+                    flat.Append(e.text);
+                }
+                result.result = flat.ToString().TrimEnd('\r', '\n');
+            }
+            else
+            {
+                result.result = string.Empty;
+            }
+
             result.prompt = $"PS {session.CurrentLocation}>";
 
-            result.status = complete ? (partial ? StatusPartial : StatusComplete) : StatusWorking;
+            // "partial" status means "there is more content that has not
+            // been emitted this poll, keep polling". With the streaming
+            // drain this maps to HasPendingPartial being true - the last
+            // line is unterminated and may still grow.
+            bool hadContent = result.emits.Count > 0;
+            result.status = complete
+                ? (hadContent || state.HasPendingPartial ? StatusPartial : StatusComplete)
+                : StatusWorking;
             result.background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor);
             result.color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor);
 
-            if (partial && complete)
+            if (complete && !state.HasPendingPartial)
             {
-                session.Output.Clear();
+                // Script is done and there is nothing left to stream.
+                // ClearSilent the output buffer so future commands start
+                // fresh; also reset our streaming tracking.
+                session.Output.ClearSilent();
+                state.CommittedLineCount = 0;
+                state.HasPendingPartial = false;
+                HeldConsoleJobs.TryRemove(jobId, out _);
             }
+
             var serializedResult = serializer.Serialize(result);
             return serializedResult;
+        }
+
+        // Console jobs live only 20 seconds after they finish (AfterLife); a
+        // Console tab frozen longer than that would come back to "Can't find
+        // your command result". Holding the IJob until its final poll keeps
+        // the completion reachable; unclaimed ones expire with the same window
+        // as interactive Runner jobs.
+        private static readonly ConcurrentDictionary<string, (IJob Job, DateTime HeldUtc)> HeldConsoleJobs =
+            new ConcurrentDictionary<string, (IJob Job, DateTime HeldUtc)>(StringComparer.OrdinalIgnoreCase);
+
+        private static void HoldConsoleJob(string jobId, IJob job)
+        {
+            var cutoff = DateTime.UtcNow.AddMinutes(-InteractiveJobRegistry.UnattendedRetentionMinutes);
+            foreach (var stale in HeldConsoleJobs.Where(e => e.Value.HeldUtc < cutoff && e.Value.Job.IsDone).ToList())
+            {
+                HeldConsoleJobs.TryRemove(stale.Key, out _);
+            }
+
+            if (job != null)
+            {
+                HeldConsoleJobs[jobId] = (job, DateTime.UtcNow);
+            }
         }
 
         [WebMethod(EnableSession = true)]
@@ -401,11 +501,103 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested for command in ISE session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[ISE] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
+        }
+
+        public class ScriptReferenceMatch
+        {
+            public string Id { get; set; }
+            public string Db { get; set; }
+            public string Path { get; set; }
+            public string DisplayName { get; set; }
+            public string Library { get; set; }
+            public string Module { get; set; }
+        }
+
+        public class ScriptReferenceResponse
+        {
+            public ScriptReferenceMatch[] Matches { get; set; }
+        }
+
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object ResolveScriptReference(string guid, string kind, string target, string module, string library)
+        {
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE))
+            {
+                return string.Empty;
+            }
+
+            PowerShellLog.Debug($"[ISE] action=resolveScriptRef session={guid} kind={kind} target={target} user={Sitecore.Context.User?.Name}");
+
+            var response = new ScriptReferenceResponse { Matches = Array.Empty<ScriptReferenceMatch>() };
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                return new JavaScriptSerializer().Serialize(response);
+            }
+
+            if (string.Equals(kind, "function", StringComparison.OrdinalIgnoreCase))
+            {
+                response.Matches = ImportFunctionCommand
+                    .FindFunctionMatches(target, module, library)
+                    .Select(BuildFunctionMatch)
+                    .Where(m => m != null)
+                    .ToArray();
+            }
+            else if (string.Equals(kind, "script", StringComparison.OrdinalIgnoreCase))
+            {
+                var drive = ApplicationSettings.ScriptLibraryDb;
+                var scriptItem = PathUtilities.GetItem(target, drive, ApplicationSettings.ScriptLibraryPath);
+                if (scriptItem != null && scriptItem.Access.CanRead())
+                {
+                    response.Matches = new[]
+                    {
+                        new ScriptReferenceMatch
+                        {
+                            Id = scriptItem.ID.ToString(),
+                            Db = scriptItem.Database.Name,
+                            Path = ToScriptLibraryRelativePath(scriptItem.Paths.FullPath),
+                            DisplayName = scriptItem.Name
+                        }
+                    };
+                }
+            }
+
+            return new JavaScriptSerializer().Serialize(response);
+        }
+
+        private static ScriptReferenceMatch BuildFunctionMatch(ImportFunctionCommand.FunctionCacheEntry entry)
+        {
+            var db = Factory.GetDatabase(entry.Database);
+            var item = db?.GetItem(entry.ScriptID);
+            if (item == null || !item.Access.CanRead()) return null;
+
+            return new ScriptReferenceMatch
+            {
+                Id = entry.ScriptID.ToString(),
+                Db = entry.Database,
+                Path = ToScriptLibraryRelativePath(entry.Path),
+                DisplayName = entry.Name,
+                Library = entry.Library,
+                Module = entry.Module
+            };
+        }
+
+        private static string ToScriptLibraryRelativePath(string fullPath)
+        {
+            if (string.IsNullOrEmpty(fullPath)) return fullPath;
+            var root = ApplicationSettings.ScriptLibraryPath.TrimEnd('/');
+            if (fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+            {
+                var rel = fullPath.Substring(root.Length).TrimStart('/');
+                return rel.Replace('/', '\\');
+            }
+            return fullPath;
         }
 
         [WebMethod(EnableSession = true)]
@@ -418,10 +610,10 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested for command in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Console] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
-            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
+            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
         }
 
@@ -435,7 +627,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Auto completion requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Session] action=autoComplete session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
@@ -480,7 +672,7 @@ namespace Spe.sitecore_modules.PowerShell.Services
                 return string.Empty;
             }
 
-            PowerShellLog.Info($"Help message requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+            PowerShellLog.Debug($"[Session] action=helpRequested session={guid} user={Sitecore.Context.User?.Name}");
 
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetHelpOutputs(guid, command));
@@ -518,7 +710,142 @@ namespace Spe.sitecore_modules.PowerShell.Services
             public string status;
             public string background;
             public string color;
+            public bool clear;
+            /// <summary>
+            ///     Structured streaming emits for the Console terminal to
+            ///     render output as it arrives, including inline-append
+            ///     support for Write-Host -NoNewline via update() of the
+            ///     currently-pending partial line.
+            ///
+            ///     Each entry has an op and text:
+            ///         op = "append"  -> new committed visual line
+            ///         op = "partial" -> start/update the pending partial
+            ///         op = "commit"  -> replace pending partial with
+            ///                            final text and release pending
+            /// </summary>
+            public List<EmitInstruction> emits;
+        }
 
+        public class EmitInstruction
+        {
+            public string op;
+            public string text;
+        }
+
+        /// <summary>
+        ///     Per-session streaming state for the Console terminal. Tracks
+        ///     the next unread line index in session.Output and whether the
+        ///     last emission left a pending partial on the client. Keyed by
+        ///     session guid.
+        /// </summary>
+        private class StreamingState
+        {
+            public int CommittedLineCount;
+            public bool HasPendingPartial;
+        }
+
+        private static readonly ConcurrentDictionary<string, StreamingState> _streamingStates
+            = new ConcurrentDictionary<string, StreamingState>(StringComparer.OrdinalIgnoreCase);
+
+        private static StreamingState GetStreamingState(string guid)
+        {
+            return _streamingStates.GetOrAdd(guid, _ => new StreamingState());
+        }
+
+        /// <summary>
+        ///     Drain pending lines from session.Output into a list of
+        ///     streaming emit instructions. The algorithm mirrors the
+        ///     ISE's StreamOutputToTerminal logic:
+        ///
+        ///       - iterate by index from CommittedLineCount forward,
+        ///       - group lines into batches ending at a terminator or the
+        ///         buffer tail,
+        ///       - for terminated batches emit "append" (or "commit" when
+        ///         a previous pending partial is now frozen by new content
+        ///         after it),
+        ///       - for the unterminated tail emit "partial" and leave
+        ///         CommittedLineCount at the start of the tail so the next
+        ///         poll re-reads it (catches line mutation by plain Write
+        ///         appending to the last unterminated line).
+        ///
+        ///     Does not modify OutputBuffer internals; iterates session.Output
+        ///     by index via the public IList semantics. Advances the buffer's
+        ///     internal updatePointer via GetHtmlUpdate at the end so other
+        ///     consumers do not re-read the same content.
+        /// </summary>
+        private static void BuildStreamingEmits(ScriptSession session, StreamingState state, List<EmitInstruction> emits)
+        {
+            var output = session.Output;
+            var totalLines = output.Count;
+            var committed = state.CommittedLineCount;
+            var hasPending = state.HasPendingPartial;
+
+            // The buffer was cleared (e.g. ClearSilent on script end, or a
+            // Clear-Host detection path called Output.Clear). Reset local
+            // tracking.
+            if (totalLines < committed)
+            {
+                committed = 0;
+                hasPending = false;
+            }
+
+            // Find the boundary between terminated and unterminated content.
+            // Everything up to (and including) the last terminated line is
+            // committed output; anything after it is an unterminated partial
+            // tail that may still grow.
+            int lastTerminated = -1;
+            for (int i = totalLines - 1; i >= committed; i--)
+            {
+                if (output[i].Terminated)
+                {
+                    lastTerminated = i;
+                    break;
+                }
+            }
+
+            // Emit all terminated content as a single append (or commit if
+            // there was a pending partial). One echo() call with the full
+            // concatenated jsterm string - jquery.terminal's format parser
+            // handles multi-block strings correctly in a single call.
+            if (lastTerminated >= committed)
+            {
+                var sb = new StringBuilder();
+                for (int i = committed; i <= lastTerminated; i++)
+                {
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
+                }
+                var jsterm = sb.ToString();
+                emits.Add(new EmitInstruction
+                {
+                    op = hasPending ? "commit" : "append",
+                    text = jsterm
+                });
+                hasPending = false;
+                committed = lastTerminated + 1;
+            }
+
+            // If there is an unterminated tail after the last terminated
+            // line, emit it as a partial for Write-Host -NoNewline support.
+            if (committed < totalLines)
+            {
+                var sb = new StringBuilder();
+                for (int i = committed; i < totalLines; i++)
+                {
+                    output[i].GetLine(sb, OutputLine.FormatResponseJsterm);
+                }
+                emits.Add(new EmitInstruction { op = "partial", text = sb.ToString() });
+                hasPending = true;
+                // Don't advance committed past the tail; next poll re-reads it.
+            }
+
+            // Advance the OutputBuffer's internal updatePointer so that
+            // any other consumer (e.g. GetConsoleUpdate in code paths we
+            // do not control) does not re-read the same lines. The HTML
+            // result is discarded; we only care about the pointer advance.
+            var _ = output.GetHtmlUpdate();
+
+            state.CommittedLineCount = committed;
+            state.HasPendingPartial = hasPending;
         }
     }
 }

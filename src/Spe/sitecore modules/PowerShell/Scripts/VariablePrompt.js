@@ -27,49 +27,84 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    const controlElements = $("*").filter(function () {
-        return $(this).data("group-id") !== undefined;
-    });
+    const controlElements = $("[data-group-id]");
+    const stateControlElements = $("[data-parent-group-id]");
 
-    const stateControlElements = $("*").filter(function () {
-        return $(this).data("parent-group-id") !== undefined;
-    });
+    function normalizeCheckboxValue(value) {
+        if (value === null || value === undefined) return value;
+        var lower = value.toLowerCase();
+        if (lower === "true" || lower === "yes") return "1";
+        if (lower === "false" || lower === "no") return "0";
+        return value;
+    }
+
+    function applyGroupVisibility(element) {
+        let controlValue;
+        const isCheckbox = element.type === "checkbox";
+        if (isCheckbox) {
+            controlValue = element.checked ? "1" : "0";
+        } else if (element.type === "select-one") {
+            controlValue = $(element).find(":selected").val();
+        } else {
+            const checkedRadio = $(element).find("input[type='radio']:checked");
+            if (checkedRadio.length) {
+                controlValue = checkedRadio.val();
+            }
+        }
+        const groupId = element.getAttribute("data-group-id");
+        for (let i = 0; i < stateControlElements.length; i++) {
+            const e = stateControlElements[i];
+            if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
+                const hideOnValue = e.getAttribute("data-hide-on-value");
+                if (hideOnValue) {
+                    const normalizedHide = isCheckbox ? normalizeCheckboxValue(hideOnValue) : hideOnValue;
+                    if (controlValue === normalizedHide) {
+                        $(e).hide();
+                    } else {
+                        $(e).show();
+                    }
+                } else {
+                    const showOnValue = e.getAttribute("data-show-on-value");
+                    if (showOnValue) {
+                        const normalizedShow = isCheckbox ? normalizeCheckboxValue(showOnValue) : showOnValue;
+                        if (controlValue === normalizedShow) {
+                            $(e).show();
+                        } else {
+                            $(e).hide();
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 
     $.each(controlElements, function (index, element) {
         $(element).on("change", function () {
-            let controlValue;
-            if (element.type === "checkbox") {
-                controlValue = this.checked ? "1" : "0";
-            } else if (element.type === "select-one") {
-                controlValue = $(this).find(":selected").val();
-            }
-            const groupId = element.getAttribute("data-group-id");
-            for (let i = 0; i < stateControlElements.length; i++) {
-                const e = stateControlElements[i];
-                if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
-                    const hideOnValue = e.getAttribute("data-hide-on-value");
-                    if (hideOnValue) {
-                        if (controlValue === hideOnValue) {
-                            $(e).hide();
-                        } else {
-                            $(e).show();
-                        }
-                    } else {
-                        const showOnValue = e.getAttribute("data-show-on-value");
-                        if (showOnValue) {
-                            if (controlValue === showOnValue) {
-                                $(e).show();
-                            } else {
-                                $(e).hide();
-                            }
-                        }
-                    }
-
-                }
-            }
+            applyGroupVisibility(element);
         });
 
-        $(element).trigger("change");
+        // Radio buttons: delegate change from inner inputs to the container
+        $(element).find("input[type='radio']").on("change", function () {
+            applyGroupVisibility(element);
+        });
+
+        applyGroupVisibility(element);
+    });
+
+    $('[data-maxlength]').each(function () {
+        var $el = $(this);
+        var max = parseInt($el.attr('data-maxlength'), 10);
+        if (isNaN(max) || max <= 0) return;
+
+        var $counter = $('<span class="varCharCounter">' + $el.val().length + ' / ' + max + '</span>');
+        $el.after($counter);
+
+        $el.on('input keyup', function () {
+            var len = $el.val().length;
+            $counter.text(len + ' / ' + max);
+            $counter.toggleClass('varCharCounterOver', len > max);
+        });
     });
 
     document.observe("keypress", function (event) {

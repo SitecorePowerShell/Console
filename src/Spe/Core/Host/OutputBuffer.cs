@@ -10,9 +10,69 @@ namespace Spe.Core.Host
     public class OutputBuffer : List<OutputLine>
     {
         private int updatePointer = 0;
+        private bool clearPending = false;
         public bool HasErrors { get; set; }
+
+        // Warning and error records written through the host UI since the
+        // last ResetRunState(); the Runner reports them when a script ends.
+        public int WarningCount { get; set; }
+        public int ErrorCount { get; set; }
         public bool SilenceOutput { get; set; }
         public OutputBuffer SilencedOutput { get; private set; }
+
+        /// <summary>
+        /// Returns true and resets the flag if a Clear was requested since the
+        /// last call. Used by client output pollers (ISE PrintOutput, Console
+        /// PollCommandOutput) to tell the browser to purge its displayed output
+        /// when Clear-Host is invoked from within a running script.
+        /// </summary>
+        public bool ConsumeClearPending()
+        {
+            if (!clearPending) return false;
+            clearPending = false;
+            return true;
+        }
+
+        /// <summary>
+        /// Forgets the error/warning state of the previous script run, so a
+        /// persistent session reports each run on its own.
+        /// </summary>
+        public void ResetRunState()
+        {
+            HasErrors = false;
+            WarningCount = 0;
+            ErrorCount = 0;
+            errorRecordOpen = false;
+        }
+
+        private bool errorRecordOpen;
+
+        /// <summary>
+        /// Counts error records from the lines the host writes for them.
+        /// Out-Default writes one ErrorRecord as several WriteErrorLine calls
+        /// (message, position, CategoryInfo, FullyQualifiedErrorId, then a
+        /// blank line), so a record starts at its first non-blank line and
+        /// ends at the FullyQualifiedErrorId line or a blank line.
+        /// </summary>
+        public void CountErrorLine(string line)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                errorRecordOpen = false;
+                return;
+            }
+
+            if (!errorRecordOpen)
+            {
+                ErrorCount++;
+                errorRecordOpen = true;
+            }
+
+            if (line.TrimStart().StartsWith("+ FullyQualifiedErrorId", StringComparison.Ordinal))
+            {
+                errorRecordOpen = false;
+            }
+        }
 
         public string ToHtml(bool enableGuidLink = true)
         {
@@ -45,7 +105,26 @@ namespace Spe.Core.Host
             return updatePointer < Count;
         }
 
-        public bool GetConsoleUpdate(StringBuilder output, int maxBufferSize)
+        /// <summary>
+        /// Records that a streaming consumer has sent the first
+        /// <paramref name="lineCount"/> lines, so a later GetConsoleUpdate
+        /// starts after them. Lines added since the consumer's snapshot, and an
+        /// unterminated line it sent only as a partial, stay unsent.
+        /// </summary>
+        public void MarkSent(int lineCount)
+        {
+            lock (this)
+            {
+                updatePointer = Math.Min(lineCount, Count);
+            }
+        }
+
+        /// <param name="includeUnterminated">
+        /// Also emit a trailing line with no terminator yet (Write-Host
+        /// -NoNewline). Only for the final drain after a script ended, when the
+        /// line can no longer grow.
+        /// </param>
+        public bool GetConsoleUpdate(StringBuilder output, int maxBufferSize, bool includeUnterminated = false)
         {
             if (!HasUpdates())
             {
@@ -81,6 +160,12 @@ namespace Spe.Core.Host
                     unterminatedLines++;
                 }
             }
+
+            if (includeUnterminated && temp.Length > 0 && (output.Length + temp.Length + buffer) <= maxBufferSize)
+            {
+                updatePointer += unterminatedLines - 1;
+                output.Append(temp);
+            }
             return true;
         }
 
@@ -110,8 +195,19 @@ namespace Spe.Core.Host
             return output.ToString();
         }
 
-        public new void AddRange(IEnumerable<OutputLine> collection, int maxHeight = Int32.MaxValue)
+        public void AddRange(IEnumerable<OutputLine> collection, int maxHeight = int.MaxValue)
         {
+            var lines = collection as ICollection<OutputLine> ?? collection.ToList();
+            collection = lines;
+
+            // Any other output ends an error record, so a record that never got
+            // its closing lines (a raw $host.UI.WriteErrorLine) cannot swallow
+            // the next error. See CountErrorLine.
+            if (lines.Any(line => line.LineType != OutputLineType.Error))
+            {
+                errorRecordOpen = false;
+            }
+
             if (SilenceOutput)
             {
                 if (SilencedOutput == null)
@@ -156,8 +252,23 @@ namespace Spe.Core.Host
         public new void Clear()
         {
             updatePointer = 0;
+            clearPending = true;
             base.Clear();
             SilencedOutput?.Clear();
+        }
+
+        /// <summary>
+        /// Clears the buffer without signaling the client to purge its terminal
+        /// output. Used for post-execution / post-poll cleanup where the output
+        /// has already been consumed and we're just freeing server-side memory -
+        /// unlike Clear() (invoked by Clear-Host via SetBufferContents) which
+        /// must propagate to the browser.
+        /// </summary>
+        public void ClearSilent()
+        {
+            updatePointer = 0;
+            base.Clear();
+            SilencedOutput?.ClearSilent();
         }
     }
 }

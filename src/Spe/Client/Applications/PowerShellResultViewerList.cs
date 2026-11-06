@@ -15,6 +15,7 @@ using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Spe.Client.Controls;
 using Spe.Commands.Interactive;
@@ -163,6 +164,8 @@ namespace Spe.Client.Applications
                 }
             }
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += (sender, args) => StopWithNotice(Texts.PowerShellRunner_ScriptSessionLost);
+            Monitor.LeaseLost += (sender, args) => StopWithNotice(Texts.PowerShellRunner_ScriptShownElsewhere);
             ListViewer.OnSelectionChanged += SelectionChanged;
 
             if (Context.ClientPage.IsEvent)
@@ -240,6 +243,13 @@ namespace Spe.Client.Applications
                 EmptyPanel.Visible = true;
                 EmptyDataMessageText.Visible = true;
             }
+        }
+
+        private void StopWithNotice(string notice)
+        {
+            LvProgressOverlay.Visible = false;
+            UpdateRibbon();
+            SheerResponse.Alert(notice);
         }
 
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
@@ -388,8 +398,35 @@ namespace Spe.Client.Applications
         {
             var scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             var scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
+            if (scriptItem != null)
+            {
+                Registry.SetString(RibbonExportScriptsPanel.LastExportRegistryKey, scriptItem.ID.ToString());
+                UpdateRibbon();
+            }
             var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true);
             ExecuteScriptJob(scriptItem, session, message, true);
+        }
+
+        private const string DefaultExportFileName = "report-{0:yyyy-MM-dd_HHmmss}";
+
+        // Resolved at export time so {0} is the moment of the export, not of the report.
+        private static string GetExportFileName(string template)
+        {
+            var now = DateTime.Now;
+            string name;
+            try
+            {
+                name = string.Format(template ?? DefaultExportFileName, now);
+            }
+            catch (FormatException)
+            {
+                name = string.Format(DefaultExportFileName, now);
+            }
+
+            name = System.IO.Path.GetInvalidFileNameChars()
+                .Aggregate(name, (current, c) => current.Replace(c, '_'))
+                .Trim();
+            return string.IsNullOrEmpty(name) ? string.Format(DefaultExportFileName, now) : name;
         }
 
         private void SetVariables(ScriptSession session, Message message)
@@ -423,6 +460,7 @@ namespace Spe.Client.Applications
             session.SetVariable("title", ListViewer.Data.Title);
             session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
             session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
+            session.SetVariable("exportFileName", GetExportFileName(ListViewer.Data.ExportFileName));
 
             session.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
             session.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
@@ -516,10 +554,29 @@ namespace Spe.Client.Applications
             ScriptSessionId = scriptSession.ID;
             scriptSession.PrivateData.DeferredMessages.Clear();
 
-            var jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
-            PowerShellLog.Info($"[Report] Running script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
+            User jobUser;
+            if (DelegatedAccessManager.IsElevated(Context.User, scriptItem))
+            {
+                jobUser = DelegatedAccessManager.GetDelegatedUser(Context.User, scriptItem);
+                PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Report");
+            }
+            else
+            {
+                jobUser = Context.User;
+                PowerShellLog.Audit($"[Report] action=executing user={Context.User.Name} script=\"{scriptItem.Name} {scriptItem.ID}\"");
+            }
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
-            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run, user: jobUser);
+            // Registered as ListView origin: if this window is lost, the job is
+            // re-attached in a Runner since the ListView itself can't be rebuilt.
+            var launchContext = new System.Collections.Specialized.NameValueCollection
+            {
+                ["scriptId"] = scriptItem.ID.ToString(),
+                ["scriptDb"] = scriptItem.Database.Name,
+                ["title"] = scriptItem.DisplayName,
+                ["icon"] = scriptItem.Appearance.Icon
+            };
+            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run,
+                user: jobUser, recoveryOrigin: InteractiveJobOrigin.ListView, launchContext: launchContext);
             LvProgressOverlay.Visible = false;
             Monitor.SessionID = scriptSession.ID;
         }

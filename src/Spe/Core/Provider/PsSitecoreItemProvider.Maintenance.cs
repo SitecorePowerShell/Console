@@ -17,19 +17,19 @@ namespace Spe.Core.Provider
             {
                 providerInfo.Description = "Sitecore Content Provider";
                 this.providerInfo = providerInfo;
-                PowerShellLog.Debug($"Executing {GetType().Name}.Start(providerInfo='{providerInfo.Name ?? "null"}')");
+                PowerShellLog.Debug($"[Provider] action=start provider=\"{providerInfo.Name ?? "null"}\"");
                 return providerInfo;
             }
             catch (Exception ex)
             {
-                PowerShellLog.Info($"Error while executing {GetType().Name}.Start(providerInfo='{providerInfo?.Name ?? "null"}')", ex);
+                PowerShellLog.Info($"[Provider] action=start status=failed provider=\"{providerInfo?.Name ?? "null"}\"", ex);
                 throw;
             }
         }
 
         private static void LogError(Exception ex, string format, params object[] args)
         {
-            PowerShellLog.Error(string.Format(format, args), ex);
+            PowerShellLog.Error($"[Provider] action=operation status=failed detail=\"{string.Format(format, args)}\"", ex);
         }
 
         private static void LogInfo(string format, params object[] args)
@@ -62,7 +62,7 @@ namespace Spe.Core.Provider
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Error while adding PowerShell drive for database {dbName}", ex);
+                    PowerShellLog.Error($"[Provider] action=addDrive status=failed database={dbName}", ex);
                 }
             }
             return result;

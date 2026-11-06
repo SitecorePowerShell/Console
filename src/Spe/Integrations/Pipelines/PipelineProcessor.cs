@@ -40,7 +40,7 @@ namespace Spe.Integrations.Pipelines
                         catch (Exception ex)
                         {
                             PowerShellLog.Error(
-                                $"Error while executing script in {GetType().FullName} pipeline processor.", ex);
+                                $"[Pipeline] action=executeScript status=failed processor={GetType().FullName}", ex);
                         }
                     }
                 }

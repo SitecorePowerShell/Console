@@ -19,9 +19,10 @@ namespace Spe.Core.Settings
     {
         public const string IseSettingsItemAllUsers = "All Users";
 
-        public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
+        public static string SettingsItemPath => GetPathForItemId(ItemIDs.UserSettings, ref settingsItemPath);
+
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
-        public const string FontNamesPath = "/sitecore/system/Modules/PowerShell/Fonts/";
+        public static string FontNamesPath => GetPathForItemId(ItemIDs.Fonts, ref fontNamesPath);
 
         public const string MediaLibraryPath = "/sitecore/media library/";
         public const string TemplatesPath = "/sitecore/templates/";
@@ -29,6 +30,8 @@ namespace Spe.Core.Settings
 
         private const string LastScriptSettingFieldName = "LastScript";
         private const string SaveLastScriptSettingFieldName = "SaveLastScript";
+        private const string ActiveTabsSettingFieldName = "ActiveTabs";
+        private const string SaveActiveTabsSettingFieldName = "SaveActiveTabs";
         private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
         private const string PerTabOutputSettingFieldName = "PerTabOutput"; 
         private const string HostWidthSettingFieldName = "HostWidth";
@@ -37,15 +40,18 @@ namespace Spe.Core.Settings
         private const string BackgroundColorSettingFieldName = "BackgroundColor";
         private const string FontSizeSettingFieldName = "FontSize";
         private const string FontFamilySettingFieldName = "FontFamily";
+        private const string MostRecentlyUsedScriptsFieldName = "MostRecentlyUsedScripts";
 
-        private static string rulesDb;
-        private static string settingsDb;
-        private static string scriptLibraryDb;
-
-        private static readonly Dictionary<string, ApplicationSettings> instances =
-            new Dictionary<string, ApplicationSettings>();
+        private static readonly Dictionary<string, ApplicationSettings> instances = new();
 
         private static readonly Regex validNameRegex = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
+
+        private static string settingsDb;
+        private static string scriptLibraryDb;
+        private static string rulesDb;
+        private static string settingsItemPath;
+        private static string fontNamesPath;
+        private static Item scriptLibraryRoot;
 
         private ApplicationSettings(string applicationName, bool personalizedSettings)
         {
@@ -53,36 +59,18 @@ namespace Spe.Core.Settings
             IsPersonalized = personalizedSettings;
         }
 
-        public static string RulesDb
-        {
-            get
-            {
-                GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
-                return rulesDb;
-            }
-        }
+        public static string RulesDb => GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
 
-        public static string SettingsDb
-        {
-            get
-            {
-                GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
-                return settingsDb;
-            }
-        }
+        public static string SettingsDb => GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
 
-        public static string ScriptLibraryDb
-        {
-            get
-            {
-                GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
-                return scriptLibraryDb;
-            }
-        }
+        public static string ScriptLibraryDb => GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
 
         private bool Loaded { get; set; }
         public string LastScript { get; set; }
         public bool SaveLastScript { get; private set; }
+        public bool SaveActiveTabs { get; private set; }
+        public string ActiveTabs { get; set; }
+        public string MostRecentlyUsedScripts { get; set; }
         public int HostWidth { get; set; }
         public int HostHeight { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
@@ -92,18 +80,20 @@ namespace Spe.Core.Settings
         private string FontFamily { get; set; }
         public bool IsPersonalized { get; }
 
+        private string fontFamilyStyle;
         public string FontFamilyStyle
         {
             get
             {
+                if (fontFamilyStyle != null) return fontFamilyStyle;
                 var db = Factory.GetDatabase(ScriptLibraryDb);
-                var fonts = db.GetItem(FontNamesPath);
+                var fonts = db.GetItem(ItemIDs.Fonts);
                 var font = string.IsNullOrEmpty(FontFamily) ? "Monaco" : FontFamily;
                 var fontItem = fonts.Children[font];
-                return fontItem != null
+                fontFamilyStyle = fontItem != null
                     ? fontItem["Phrase"]
                     : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-
+                return fontFamilyStyle;
             }
         }
 
@@ -118,16 +108,30 @@ namespace Spe.Core.Settings
 
         private static string CurrentDomain => User.Current?.Domain != null ? validNameRegex.Replace(User.Current?.Domain?.Name, "_") : string.Empty;
 
-        private static void GetDatabaseName(ref string databaseName, string settingPath)
+        private static string GetDatabaseName(ref string databaseName, string settingPath)
         {
-            if (!string.IsNullOrEmpty(databaseName)) return;
+            if (!string.IsNullOrEmpty(databaseName)) return databaseName;
 
             databaseName = Factory.GetString(settingPath, false);
             if (string.IsNullOrEmpty(databaseName))
             {
                 databaseName = "master";
             }
+
+            return databaseName;
         }
+        
+        private static string GetPathForItemId(ID itemId, ref string itemPath)
+        {
+            if (itemPath != null) return itemPath;
+            var db = Factory.GetDatabase(ScriptLibraryDb);
+            var item = db?.GetItem(itemId);
+            if (item == null) return null;
+            itemPath = item.Paths.Path + "/";
+            return itemPath;
+        }
+
+        
 
         public static string GetSettingsPath(string applicationName, bool personalizedSettings)
         {
@@ -206,21 +210,6 @@ namespace Spe.Core.Settings
             }
         }
 
-        public static Item GetIseMruContainerItem()
-        {
-            var currentUserItem = GetInstance(ApplicationNames.ISE).GetSettingsDtoForSave();
-            var mruItem = currentUserItem.Children["MRU"] ??
-                          currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
-            if (!mruItem.Publishing.NeverPublish)
-            {
-                mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
-            }
-
-            mruItem.Edit(args => mruItem.Appearance.Icon = FolderIcon);
-
-            return mruItem;
-        }
-
         public void Save()
         {
             var configuration = GetSettingsDtoForSave();
@@ -233,6 +222,9 @@ namespace Spe.Core.Settings
                     {
                         configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
                         ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
+                        ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked = SaveActiveTabs;
+                        configuration[ActiveTabsSettingFieldName] = ActiveTabs;
+                        configuration[MostRecentlyUsedScriptsFieldName] = MostRecentlyUsedScripts;
                         ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;
                         ((CheckboxField)configuration.Fields[PerTabOutputSettingFieldName]).Checked = PerTabOutput;
                         configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
@@ -260,6 +252,13 @@ namespace Spe.Core.Settings
                     LastScript = TryGetSettingValue(LastScriptSettingFieldName,string.Empty,() => HttpUtility.HtmlDecode(configuration[LastScriptSettingFieldName]));
                     SaveLastScript =
                         TryGetSettingValue(SaveLastScriptSettingFieldName, true, () => ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked);
+                    SaveActiveTabs =
+                        TryGetSettingValue(SaveActiveTabsSettingFieldName, false,
+                            () => ((CheckboxField) configuration.Fields[SaveActiveTabsSettingFieldName]).Checked);
+                    ActiveTabs = TryGetSettingValue(ActiveTabsSettingFieldName, string.Empty,
+                        () => configuration[ActiveTabsSettingFieldName]);
+                    MostRecentlyUsedScripts = TryGetSettingValue(MostRecentlyUsedScriptsFieldName, string.Empty,
+                        () => configuration[MostRecentlyUsedScriptsFieldName]);
                     LiveAutocompletion =
                         TryGetSettingValue(LiveAutocompletionSettingFieldName, false,
                             () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
@@ -308,6 +307,8 @@ namespace Spe.Core.Settings
         {
             LastScript = string.Empty;
             SaveLastScript = true;
+            SaveActiveTabs = false;
+            ActiveTabs = string.Empty;
             LiveAutocompletion = false;
             PerTabOutput = false;
             HostWidth = 150;
@@ -328,7 +329,7 @@ namespace Spe.Core.Settings
             }
             catch (Exception ex)
             {
-                PowerShellLog.Error($"Error while restoring setting {fieldName}", ex);
+                PowerShellLog.Error($"[Settings] action=restoreFailed field={fieldName}", ex);
                 return defaultValue;
             }
         }
@@ -337,8 +338,10 @@ namespace Spe.Core.Settings
         {
             get
             {
+                if (scriptLibraryRoot != null) return scriptLibraryRoot;
                 var db = Factory.GetDatabase(ScriptLibraryDb);
-                return db.GetItem(ScriptLibraryPath);
+                scriptLibraryRoot = db.GetItem(ScriptLibraryPath);
+                return scriptLibraryRoot;
             }
         }
     }

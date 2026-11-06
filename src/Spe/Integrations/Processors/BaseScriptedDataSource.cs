@@ -16,7 +16,7 @@ namespace Spe.Integrations.Processors
 {
     public abstract class BaseScriptedDataSource
     {
-        protected static bool IsScripted(string dataSource)
+        internal static bool IsScripted(string dataSource)
         {
             const string patternId = @"^script:{[a-zA-Z0-9]{8}-([a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12}}$";
 
@@ -26,7 +26,7 @@ namespace Spe.Integrations.Processors
                     Regex.IsMatch(dataSource, patternId, RegexOptions.Compiled));
         }
 
-        protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
+        internal static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
         {
             var unusedLocations = string.Empty;
             foreach (var location in new ListString(sources))
@@ -43,7 +43,7 @@ namespace Spe.Integrations.Processors
             return unusedLocations;
         }
 
-        protected static IEnumerable<Item> RunEnumeration(string scriptSource, Item item)
+        internal static IEnumerable<Item> RunEnumeration(string scriptSource, Item item)
         {
             Assert.ArgumentNotNull(scriptSource, "scriptSource");
 

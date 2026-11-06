@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Spe.Commands.Interactive.Messages
 {
     [Serializable]
-    public class PromptMessage : BasePipelineMessage
+    public class PromptMessage : BasePipelineMessageWithResult
     {
         private readonly string defaultValue;
         private readonly int maxLength;

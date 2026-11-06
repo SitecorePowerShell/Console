@@ -59,25 +59,7 @@ namespace Spe.Commands.Diagnostics
 
         private void LogString(string message)
         {
-            switch (Log)
-            {
-                case LogNotificationLevel.Debug:
-                    PowerShellLog.Debug(message);
-                    break;
-                case LogNotificationLevel.Error:
-                    PowerShellLog.Error(message);
-                    break;
-                case LogNotificationLevel.Fatal:
-                    PowerShellLog.Fatal(message);
-                    break;
-                case LogNotificationLevel.Warning:
-                    PowerShellLog.Warn(message);
-                    break;
-                default:
-                    PowerShellLog.Info(message);
-                    break;
-            }
-
+            PowerShellLog.Script(Log, message);
             WriteVerbose(message);
         }
 

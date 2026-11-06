@@ -23,7 +23,7 @@
         <div class="scGalleryContent13">
           <Tabstrip ID="Tabs" GridPanel.Style="height:initial">
             <Tab ID="SearchTab" Header="Recent">
-              <Edit ID="SearchPhrase" autocomplete="off" placeholder="Script name to search for - prefix with e.g. 'master:' to narrow to specific database"/>
+              <Edit ID="SearchPhrase" autocomplete="off" placeholder="Search scripts. '~' includes body, 'db:' switches database."/>
               <GalleryMenu ID="SearchResults" Class="scGalleryMenu scStretch scInitialHeight scDontStretch">
                 <MenuPanel Height="100%">
                   <Scrollbox ID="Scripts" Class="scScrollbox scInitialHeight scDontStretch">

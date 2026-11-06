@@ -1,42 +1,44 @@
 ﻿#Requires -Version 3
 
+Add-Type -AssemblyName System.Net.Http
+
 function Send-RemoteItem {
     <#
         .SYNOPSIS
             Uploads a file to the filesystem on the server or media library through a Sitecore PowerShell Extensions web service.
-    
+
        .PARAMETER Path
             The source path of the item to upload on the client side.
-            
+
        .PARAMETER Destination
             The destination path of the item on the server side.
-            
+
        .PARAMETER RootPath
-            The predefined directory in which the item will be uploaded to. This is simply a keyword that maps to a predefined location on the server side. 
-            
+            The predefined directory in which the item will be uploaded to. This is simply a keyword that maps to a predefined location on the server side.
+
             When using this you can simply provide the file or media item name in the Destination parameter.
-       
+
        .PARAMETER SkipUnpack
             The compressed archive should not be unpacked during the upload process. This is a dynamic parameter that appears when RootPath is 'Media'.
-       
+
        .PARAMETER SkipExisting
             Any existing items should not be overwritten.
-            
+
        .EXAMPLE
             The following uploads a file to the root application path.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\data.xml | Send-RemoteItem @props -RootPath App
-    
+
        .EXAMPLE
             The following uploads the image to the media library with the specified name.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\image.png | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/image2.png"
-    
+
         .EXAMPLE
             The following uploads the image to the media library updating the item with the specified Id..
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\cover.jpg | Send-RemoteItem -Session $session -Destination "{04DAD0FD-DB66-4070-881F-17264CA257E1}"
 
@@ -45,14 +47,22 @@ function Send-RemoteItem {
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
-        
+
         .EXAMPLE
             The following uploads a compressed archive to the the media library and skips unpacking.
-            
+
             Compress-Archive -Path C:\temp\kittens -DestinationPath C:\temp\kittens.zip
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Get-Item -Path C:\temp\kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
-        
+
+        .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\temp\data1.xml"
+
         .LINK
             Receive-RemoteItem
 
@@ -68,7 +78,7 @@ function Send-RemoteItem {
         [Parameter(Mandatory=$true, ParameterSetName='Session')]
         [ValidateNotNull()]
         [pscustomobject]$Session,
-        
+
         [Parameter(ParameterSetName='Uri')]
         [Uri[]]$ConnectionUri,
 
@@ -81,6 +91,12 @@ function Send-RemoteItem {
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
+
+        [Parameter(ParameterSetName='Uri')]
+        [string]$SharedSecret,
+
+        [Parameter(ParameterSetName='Uri')]
+        [switch]$UseDefaultCredentials,
 
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
@@ -119,7 +135,7 @@ function Send-RemoteItem {
 
         $mediaId = [guid]::Empty
         $isMediaItem = $RootPath -eq "Media" -or [guid]::TryParse($Destination, [ref]$mediaId)
-        
+
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Destination))) {
             Write-Error -Message "RootPath is required when Destination is not fully qualified." -ErrorAction Stop
         }
@@ -140,12 +156,19 @@ function Send-RemoteItem {
         }
 
         if($Session) {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $Algorithm            = $sd.Algorithm
+        } else {
+            $AccessToken = ""
+            $Algorithm = "HS256"
         }
 
         $serviceUrl = "/-/script"
@@ -153,7 +176,11 @@ function Send-RemoteItem {
         if($isMediaItem) {
             $serviceUrl += "/media/master/" + $output + "/?"
         } else {
-            $serviceUrl += "/file/" + $RootPath + "/?path=" + $output + "&"
+            # When the caller passes a rooted Destination without -RootPath, route
+            # the request through origin=custom so the server-side allowlist
+            # (Spe.Remoting.AllowedFileRoots) decides whether to honor it.
+            $rootSegment = if ([string]::IsNullOrEmpty($RootPath)) { "custom" } else { $RootPath }
+            $serviceUrl += "/file/" + $rootSegment + "/?path=" + $output + "&"
         }
 
         if($PSBoundParameters.SkipUnpack.IsPresent) {
@@ -162,66 +189,52 @@ function Send-RemoteItem {
         if($PSBoundParameters.SkipExisting.IsPresent) {
             $serviceUrl += "&skipexisting=true"
         }
-        
+
         foreach($uri in $ConnectionUri) {
-            
+
             # http://hostname/-/script/type/origin/location
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
-            Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-            
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Algorithm $Algorithm
 
-            if($Credential) {
-                $client.Credentials = $Credential
-            }
-
-            if($UseDefaultCredentials) {
-                $client.UseDefaultCredentials = $UseDefaultCredentials
-            }
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "POST $url auth=$authDesc"
 
             try {
-                Write-Verbose -Message "Uploading $($Path)"
-                [System.Net.HttpWebResponse]$errorResponse = $null;
-                
-                $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
+                [System.Net.HttpWebResponse]$errorResponse = $null
+
+                $fileInfo = [System.IO.FileInfo](Get-Item -Path $Path)
+                Write-Verbose -Message "Body: $($fileInfo.Length) bytes binary file ($Path)"
+                $fileStream = $fileInfo.OpenRead()
                 $content = New-Object System.Net.Http.StreamContent($fileStream)
-                $responseMessage = $client.PostAsync($url, $content).Result
+                $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
+                $responseMessage = (Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                    -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content).Result
+                $wallSw.Stop()
                 $fileStream.Close()
                 $fileStream.Dispose()
 
-                if(!$responseMessage.IsSuccessStatusCode) {
-                    Write-Error "Upload failed. $($responseMessage.ReasonPhrase)"
-                    return    
-                }
+                Write-Verbose -Message (Format-ResponseLine -Response $responseMessage -WallMs $wallSw.Elapsed.TotalMilliseconds)
 
-                Write-Verbose -Message "Upload complete."
+                if (-not $responseMessage.IsSuccessStatusCode) {
+                    $ridSuffix = Format-RidSuffix $responseMessage.Headers
+                    Write-Error ("Upload failed. $($responseMessage.ReasonPhrase)" + $ridSuffix)
+                    return
+                }
             } catch [System.Net.WebException] {
+                if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
                 [System.Net.WebException]$script:ex = $_.Exception
                 [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
-                Write-Verbose -Message "Response exception message: $($ex.Message)"
-                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                    Write-Verbose -Message "Check that the service files exist and are properly configured."
-                }
+                Write-RemoteHttpResponseVerbose -Response $errorResponse -Exception $ex
             }
 
-            if($errorResponse){
+            if ($errorResponse) {
                 Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
-                    -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
-            }            
+                    -CategoryActivity "Upload" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
+            }
         }
     }
 }

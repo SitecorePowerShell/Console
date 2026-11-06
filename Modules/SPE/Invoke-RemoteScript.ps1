@@ -1,32 +1,248 @@
 Add-Type -AssemblyName System.Net.Http
 
-$writeStreamOverridesScript = {
-    if($PSVersionTable.PSVersion.Major -ge 5) {
-        function Write-Information {
-            param([string]$Message)
-            $InformationPreference = "Continue"
-            Microsoft.PowerShell.Utility\Write-Information -Message $Message 6>&1
+# Bodies smaller than this skip gzip and ship as plaintext. Below the
+# threshold the gzip header overhead (~18 bytes minimum) plus the
+# constant ~0.2ms CPU cost outweighs the bandwidth saving on a typical
+# LAN, and a small ad-hoc script can ship with the same wire bytes
+# whether gzipped or not. 1024 matches the nginx gzip_min_length
+# default and is well clear of the header-dominated zone where gzip
+# can actually inflate the payload. See
+# tests/benchmarks/Measure-CompressionThreshold.ps1 for the data.
+$script:CompressionThresholdBytes = 1024
+
+# Wraps the request body in a ByteArrayContent with the right headers,
+# gzipping only when the body is large enough that compression actually
+# pays. Pulled out of Invoke-RemoteScript's send loop. The server's
+# ScriptProcessor.ReadRequestBody handles either branch by switching on
+# the Content-Encoding header.
+function Compress-SpeRequestBody {
+    param([string]$Body)
+    $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($Body)
+
+    if ($messageBytes.Length -lt $script:CompressionThresholdBytes) {
+        $content = New-Object System.Net.Http.ByteArrayContent(@(, $messageBytes))
+        $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
+        return $content
+    }
+
+    $ms = New-Object System.IO.MemoryStream
+    $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
+    $gzip.Write($messageBytes, 0, $messageBytes.Length)
+    $gzip.Close()
+    $ms.Position = 0
+    $content = New-Object System.Net.Http.ByteArrayContent(@(, $ms.ToArray()))
+    $ms.Close()
+    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
+    $content.Headers.ContentEncoding.Add("gzip")
+    return $content
+}
+
+# Get-HttpHeaderValue, Format-RidSuffix, Get-AuthDescription,
+# Format-BodyShape, Format-ResponseLine all live in SPE.psm1 so every
+# HttpClient-based cmdlet shares the same verbose / error surface.
+
+# Dispatches a non-2xx HttpResponseMessage to the right error path.
+# Returns a result hashtable:
+#   @{ Retryable = bool; WaitSeconds = int; Cap = int; EncounteredError = bool; Handled = bool }
+# WaitSeconds is the parsed Retry-After value (0 when the header is absent so the
+# caller can switch to full-jitter backoff). Cap is the per-status ceiling for the
+# caller's backoff helper. When Handled = $true, the caller should clear
+# $errorResponse and either retry (if Retryable) or stop (if EncounteredError).
+function Resolve-HttpErrorResponse {
+    param(
+        [System.Net.Http.HttpResponseMessage]$ErrorResponse,
+        [int]$MaxRetries,
+        [int]$RetryAttempt,
+        [int]$Ceiling429,
+        [int]$Ceiling503,
+        [string]$OutputFormat,
+        [Uri]$Uri,
+        [string]$RootPath
+    )
+    $result = @{ Retryable = $false; WaitSeconds = 0; Cap = 0; EncounteredError = $false; Handled = $false }
+    if (-not $ErrorResponse) { return $result }
+
+    $status = [int]$ErrorResponse.StatusCode
+    $ridSuffix = Format-RidSuffix $ErrorResponse.Headers
+
+    # 429, 502, and 503 share the retry-or-report shape. 502 is grouped with
+    # 503 because in our typical Traefik / upstream-proxy topology the dominant
+    # cause is "upstream not yet accepting connections" (CM container recycle,
+    # IIS app-pool start). RFC 7231 does not guarantee the request never reached
+    # the origin, so callers passing -MaxRetries should still treat their scripts
+    # as potentially-replayed and design for idempotency. 504 stays out
+    # (post-send ambiguous; opt-in switch deferred).
+    if ($status -eq 429 -or $status -eq 502 -or $status -eq 503) {
+        $retryAfter = Get-HttpHeaderValue $ErrorResponse.Headers "Retry-After"
+        $ceiling = if ($status -eq 429) { $Ceiling429 } else { $Ceiling503 }
+
+        if ($MaxRetries -gt 0 -and $RetryAttempt -lt $MaxRetries) {
+            $waitParsed = 0
+            [void][int]::TryParse([string]$retryAfter, [ref]$waitParsed)
+            if ($waitParsed -lt 0) { $waitParsed = 0 }
+            $result.Retryable = $true
+            # WaitSeconds = 0 signals "no Retry-After hint" so the caller's backoff
+            # helper can switch from server-hint jitter to full-jitter exponential.
+            $result.WaitSeconds = [Math]::Min($waitParsed, $ceiling)
+            $result.Cap = $ceiling
+            $result.Handled = $true
+            return $result
+        }
+
+        if ($status -eq 429) {
+            $rateLimit = Get-HttpHeaderValue $ErrorResponse.Headers "X-RateLimit-Limit"
+            $msg = "Rate limit exceeded."
+            if ($rateLimit) { $msg += " Limit: $rateLimit requests per window." }
+            if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
+            Write-Error -Message ($msg + $ridSuffix) -Category LimitsExceeded `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "TooManyRequests"
+        } elseif ($status -eq 502) {
+            $msg = "Bad Gateway (502). The upstream server is unavailable, restarting, or returned an invalid response."
+            if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
+            Write-Error -Message ($msg + $ridSuffix) -Category ConnectionError `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "BadGateway"
+        } else {
+            $msg = "Service unavailable (503). The server may be starting up."
+            if ($retryAfter) { $msg += " Retry after $retryAfter seconds." }
+            Write-Error -Message ($msg + $ridSuffix) -Category ConnectionError `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "ServiceUnavailable"
+        }
+        $result.EncounteredError = $true
+        $result.Handled = $true
+        return $result
+    }
+
+    # 401: auth failure. Read X-Spe-AuthFailureReason for a specific message.
+    if ($status -eq 401) {
+        $reasonCode = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-AuthFailureReason"
+        $msg = switch ($reasonCode) {
+            "expired"  { "Authentication failed: the Shared Secret Client has expired. Rotate its secret or update its Expires field." }
+            "disabled" { "Authentication failed: the Shared Secret Client is disabled. Enable it on the client item to allow access." }
+            "invalid"  { "Authentication failed: the credentials were rejected. Check the access key, shared secret, or access token." }
+            default    { "Authentication failed. Check that the proper credentials are provided." }
+        }
+        Write-Error -Message ($msg + $ridSuffix) -Category AuthenticationError `
+            -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "Unauthorized"
+        $result.EncounteredError = $true
+        $result.Handled = $true
+        return $result
+    }
+
+    # 403: policy/command block. Structured via X-Spe-Restriction.
+    if ($status -eq [int][System.Net.HttpStatusCode]::Forbidden) {
+        $restriction = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-Restriction"
+        $blockedCmd = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-BlockedCommand"
+        $policyName = Get-HttpHeaderValue $ErrorResponse.Headers "X-Spe-Policy"
+
+        if ($restriction -eq "command-blocked") {
+            Write-Error -Message ("Script contains a blocked command: $blockedCmd" + $ridSuffix) -Category SecurityError `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "CommandBlocked"
+            $result.EncounteredError = $true
+            $result.Handled = $true
+            return $result
+        }
+        if ($restriction -eq "policy-blocked") {
+            Write-Error -Message ("Script blocked by remoting policy '$policyName': $blockedCmd" + $ridSuffix) -Category SecurityError `
+                -CategoryActivity "Invoke" -CategoryTargetName $Uri -CategoryReason "PolicyRestriction"
+            $result.EncounteredError = $true
+            $result.Handled = $true
+            return $result
+        }
+
+        # Generic 403: try to surface a structured JSON error body, else verbose hint.
+        if ($OutputFormat -eq 'Json' -and (Invoke-JsonErrorBody $ErrorResponse)) {
+            $result.EncounteredError = $true
+            $result.Handled = $true
+            return $result
+        }
+        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+        return $result  # Unhandled; caller surfaces the generic Write-Error fallback.
+    }
+
+    # Any other status: try JSON body, else a verbose hint for 404.
+    if ($OutputFormat -eq 'Json' -and (Invoke-JsonErrorBody $ErrorResponse)) {
+        $result.EncounteredError = $true
+        $result.Handled = $true
+        return $result
+    }
+    if ($status -eq [int][System.Net.HttpStatusCode]::NotFound) {
+        Write-Verbose -Message "Check that the service files are properly configured."
+    }
+    return $result  # Unhandled; caller surfaces generic Write-Error.
+}
+
+# Attempts to parse the error response body as a structured-errors JSON payload
+# (only meaningful when OutputFormat=Json). Returns $true on a successful parse
+# so the caller knows the error was surfaced; $false otherwise.
+function Invoke-JsonErrorBody {
+    param([System.Net.Http.HttpResponseMessage]$ErrorResponse)
+    try {
+        $errorBody = $ErrorResponse.Content.ReadAsStringAsync().Result
+        if (-not $errorBody) { return $false }
+        Parse-Response -Response $errorBody -HasRedirectedMessages $false -Raw $false -OutputFormat 'Json'
+        return $true
+    } catch {
+        return $false
+    }
+}
+
+# Map Deserialized.System.Management.Automation.*Record typename to its matching
+# Write-* cmdlet. Used by Parse-Response to route server-captured stream records
+# back into the caller's corresponding streams.
+$script:DeserializedRecordTypePrefix = "Deserialized.System.Management.Automation."
+$script:DeserializedRecordWriters = @{
+    "VerboseRecord"     = { param($msg) Write-Verbose $msg }
+    "InformationRecord" = { param($msg) Write-Information $msg }
+    "DebugRecord"       = { param($msg) Write-Debug $msg }
+    "WarningRecord"     = { param($msg) Write-Warning $msg }
+    "ErrorRecord"       = { param($msg) Write-Error $msg }
+}
+
+function Emit-DeserializedRecord {
+    param($Record)
+    if (-not ($Record -is [PSObject])) {
+        $Record
+        return
+    }
+    foreach ($typeName in $Record.PSObject.TypeNames) {
+        if (-not $typeName.StartsWith($script:DeserializedRecordTypePrefix)) { continue }
+        $shortName = $typeName.Substring($script:DeserializedRecordTypePrefix.Length)
+        $writer = $script:DeserializedRecordWriters[$shortName]
+        if ($writer) {
+            & $writer $Record.ToString()
+            return
         }
     }
-    function Write-Debug {
-        param([string]$Message)
-        $DebugPreference = "Continue"
-        Microsoft.PowerShell.Utility\Write-Debug -Message $Message 5>&1
-    }
-    function Write-Verbose {
-        param([string]$Message)
-        $VerbosePreference = "Continue"
-        Microsoft.PowerShell.Utility\Write-Verbose -Message $Message 4>&1
-    }
-    function Write-Warning {
-        param([string]$Message)
-        $WarningPreference = "Continue"
-        Microsoft.PowerShell.Utility\Write-Warning -Message $Message 3>&1
-    }
-    function Write-Error {
-        param([string]$Message)
-        $WarningPreference = "Continue"
-        Microsoft.PowerShell.Utility\Write-Error -Message $Message 2>&1
+    $Record
+}
+
+function Write-JsonErrors {
+    param($Errors)
+    foreach ($errObj in $Errors) {
+        # Legacy flat string from older server or non-structured format.
+        if (-not ($errObj -is [PSCustomObject]) -or -not $errObj.PSObject.Properties['errorCategory']) {
+            Write-Error -Message ([string]$errObj)
+            continue
+        }
+
+        # Structured error from enhanced server (errorFormat=structured).
+        $category = [System.Management.Automation.ErrorCategory]::NotSpecified
+        try { $category = [System.Management.Automation.ErrorCategory]$errObj.errorCategory } catch { }
+
+        $exceptionMsg = if ($errObj.exceptionMessage) { $errObj.exceptionMessage } else { $errObj.message }
+        $errRecord = New-Object System.Management.Automation.ErrorRecord(
+            (New-Object System.Exception($exceptionMsg)),
+            $errObj.fullyQualifiedErrorId,
+            $category,
+            $errObj.categoryTargetName
+        )
+        if ($errObj.scriptStackTrace) {
+            $errRecord | Add-Member -NotePropertyName 'RemoteScriptStackTrace' -NotePropertyValue $errObj.scriptStackTrace
+        }
+        if ($errObj.invocationInfo) {
+            $errRecord | Add-Member -NotePropertyName 'RemoteInvocationInfo' -NotePropertyValue $errObj.invocationInfo
+        }
+        Write-Error -ErrorRecord $errRecord
     }
 }
 
@@ -34,62 +250,68 @@ function Parse-Response {
     param(
         [string]$Response,
         [bool]$HasRedirectedMessages,
-        [bool]$Raw
+        [bool]$Raw,
+        [string]$OutputFormat = 'CliXml'
     )
-    if($response) {
-        $parsedResponse = $response
-        $responseMessages = ""
-        if($Raw) {
-            if($parsedResponse.Contains("<#messages#>")) {
-                $parsedResponse = $parsedResponse -split "<#messages#>"
-            }
-            if($parsedResponse -is [string[]]) {
-                $parsedResponse[0]
-                if($parsedResponse.Length -gt 1) {
-                    $responseMessages = $parsedResponse[1]
-                    $hasRedirectedMessages = $true
-                }
-            } elseif(![string]::IsNullOrEmpty($parsedResponse)) {
-                $parsedResponse
-            }
-        } elseif($parsedResponse) {
-            $responseMessages = $parsedResponse
-        }
 
-        if(![string]::IsNullOrEmpty($responseMessages)) {
-            if ($hasRedirectedMessages) {
-                Write-Verbose -Message "Redirecting output to the appropriate stream."
-                foreach ($record in ConvertFrom-CliXml -InputObject $responseMessages) {
-                    if ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
-                        Write-Verbose $record.ToString()
-                    }
-                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
-                        Write-Information $record.ToString()
-                    }
-                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
-                        Write-Debug $record.ToString()
-                    }
-                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
-                        Write-Warning $record.ToString()
-                    }
-                    elseif ($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
-                        Write-Error $record.ToString()
-                    }
-                    else {
-                        $record
-                    }
-                }
-            }
-            else {
-                Write-Verbose -Message "Deserializing the response message from the server."                     
-                ConvertFrom-CliXml -InputObject $responseMessages
-            }
-        }
-    } elseif ($response -eq "login failed") {
-        Write-Verbose "Login with the specified account failed."
-        break            
-    } else {
+    # Guard: empty response (the "login failed" branch in the pre-refactor code
+    # was unreachable - "login failed" is truthy, so it never hit the falsy-else).
+    if (-not $Response) {
         Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the account has access. A common cause for this is an application pool recycling."
+        return
+    }
+
+    # JSON path: short-circuit on success; fall through to CliXml if the body
+    # isn't actually JSON (older server ignoring the OutputFormat hint).
+    if ($OutputFormat -eq 'Json') {
+        try {
+            Write-Verbose -Message "Parsing JSON response from server."
+            $parsed = $Response | ConvertFrom-Json
+            if ($parsed.errors -and $parsed.errors.Count -gt 0) {
+                Write-JsonErrors $parsed.errors
+            }
+            if ($parsed.output) { $parsed.output }
+            return
+        } catch {
+            Write-Warning "JSON parsing failed - the server may not support OutputFormat 'Json'. Falling back to CliXml deserialization. Upgrade the server to use JSON output."
+            # fall through
+        }
+    }
+
+    # Split the response body into output + messages.
+    # Raw mode: the body may contain a `<#messages#>` delimiter; output portion
+    # is emitted directly, messages portion (if present) is deserialized below.
+    # Non-Raw mode: the whole body is a CliXml messages stream.
+    $responseMessages = ""
+    $hasMessages = $HasRedirectedMessages
+    if ($Raw) {
+        if ($Response.Contains("<#messages#>")) {
+            $parts = $Response -split "<#messages#>"
+            $parts[0]
+            if ($parts.Length -gt 1) {
+                $responseMessages = $parts[1]
+                $hasMessages = $true
+            }
+        } elseif (![string]::IsNullOrEmpty($Response)) {
+            $Response
+        }
+    } else {
+        $responseMessages = $Response
+    }
+
+    if ([string]::IsNullOrEmpty($responseMessages)) { return }
+
+    # hasMessages path: body carries serialized stream records that need to be
+    # routed back to the caller's verbose/debug/info/warning/error streams.
+    if (-not $hasMessages) {
+        Write-Verbose -Message "Deserializing the response message from the server."
+        ConvertFrom-CliXml -InputObject $responseMessages
+        return
+    }
+
+    Write-Verbose -Message "Redirecting output to the appropriate stream."
+    foreach ($record in ConvertFrom-CliXml -InputObject $responseMessages) {
+        Emit-DeserializedRecord $record
     }
 }
 
@@ -113,18 +335,26 @@ function Invoke-RemoteScript {
             VerbosePreference              SilentlyContinue
             WarningPreference              Continue
             WhatIfPreference               False
-    
+
         .EXAMPLE
             The following example remotely executes a script in Sitecore using a reusable session.
-    
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
             Stop-ScriptSession -Session $session
-    
+
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
             sitecore\admin           sitecore     True            False
-    
+
+        .EXAMPLE
+            For OAuth bearer authentication, build the session via New-ScriptSession -AccessToken
+            and reuse it. The Uri-only parameter set on this cmdlet does not accept -AccessToken;
+            session-scoped auth is the supported entry point for externally-issued tokens.
+
+            $session = New-ScriptSession -ConnectionUri https://remotesitecore -AccessToken $jwt
+            Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -Current }
+
         .EXAMPLE
             The following remotely executes a script in Sitecore with the $Using variable.
 
@@ -132,17 +362,17 @@ function Invoke-RemoteScript {
             $script = {
                 $Using:date
             }
-    
+
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script
             Stop-ScriptSession -Session $session
-    
+
             6/25/2015 11:09:17 AM
-                    
+
         .EXAMPLE
             The following example runs a script as a ScriptSession job on the server (using Start-ScriptSession internally).
             The arguments are passed to the server with the help of the $Using convention.
             The results are finally returned and the job is removed.
-            
+
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             $identity = "admin"
             $date = [datetime]::Now
@@ -162,28 +392,39 @@ function Invoke-RemoteScript {
                 }
             }
             Stop-ScriptSession -Session $session
-        
+
         .EXAMPLE
             The following remotely executes a script in Sitecore with arguments.
-            
+
             $script = {
                 [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin
                 $user
                 $params.date.ToString()
             }
-    
+
             $args = @{
                 "date" = [datetime]::Now
             }
-    
+
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
             Stop-ScriptSession -Session $session
-    
+
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
-            sitecore\admin           sitecore     True            False          
+            sitecore\admin           sitecore     True            False
             6/25/2015 11:09:17 AM
-    
+
+        .NOTES
+            -MaxRetries enables retries for transient transport / 5xx failures
+            (HTTP 429, 502, 503, plus pre-send socket errors classified safe).
+            502 in particular is retried because Traefik / upstream proxies most
+            commonly emit it for "upstream not accepting connections" during a
+            CM recycle. RFC 7231 does not guarantee the request never reached
+            the origin, so a retry under -MaxRetries can in principle replay a
+            request that was partially processed. Design scripts as idempotent
+            (e.g. New-Item with -ErrorAction guards, set-state instead of
+            increment-state) when running them with -MaxRetries.
+
     	.LINK
     		Wait-RemoteScriptSession
 
@@ -195,7 +436,7 @@ function Invoke-RemoteScript {
     #>
    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
-        
+
         [Parameter(ParameterSetName='InProcess')]
         [Parameter(ParameterSetName='Session')]
         [Parameter(ParameterSetName='Uri')]
@@ -223,17 +464,38 @@ function Invoke-RemoteScript {
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
-        
+
         [Parameter()]
         [Alias("ArgumentList")]
         [hashtable]$Arguments,
 
         [Parameter(ParameterSetName='Session')]
         [switch]$AsJob,
-        
+
         [Parameter()]
-        [switch]$Raw
+        [switch]$Raw,
+
+        [Parameter()]
+        [ValidateSet('CliXml', 'Json', 'Raw')]
+        [string]$OutputFormat = 'CliXml',
+
+        [Parameter()]
+        [switch]$StructuredErrors,
+
+        [Parameter()]
+        [ValidateRange(0, 10)]
+        [int]$MaxRetries = 0
     )
+
+    # Hardcoded ceilings on Retry-After (seconds). Protect against a hostile server
+    # parking the client indefinitely.
+    $retryCeiling429 = 60
+    $retryCeiling503 = 10
+
+    # Map -Raw switch to OutputFormat for backwards compat
+    if($Raw.IsPresent -and $OutputFormat -eq 'CliXml') {
+        $OutputFormat = 'Raw'
+    }
 
     if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
         $functionScriptBlock = {
@@ -242,9 +504,14 @@ function Invoke-RemoteScript {
         $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
     }
     $hasRedirectedMessages = $false
+    $captureStreams = $false
     if($PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent -or $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+        # Signal the server to inject the Write-* stream-capture bootstrap
+        # after its policy scan. Keeps the user's script text clean so
+        # restrictive remoting policies do not see the bootstrap's Write-*
+        # calls. Server-side injection lives in RemoteScriptCall.ashx.cs.
         $hasRedirectedMessages = $true
-        $ScriptBlock = [scriptblock]::Create($writeStreamOverridesScript.ToString() + $ScriptBlock.ToString());
+        $captureStreams = $true
     }
 
     if($AsJob.IsPresent) {
@@ -252,37 +519,10 @@ function Invoke-RemoteScript {
         $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } -ArgumentList `$params | Select-Object -ExpandProperty ID")
     }
 
-    $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
-        Group-Object -Property SubExpression | 
-        ForEach-Object {
-        $_.Group | Select-Object -First 1
-    })
-    
-    $invokeWithArguments = $false        
-    if ($usingVariables.count -gt 0) {
-        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach-Object {$_.Group | Select-Object -First 1}  
-        Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
-        $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
-        $invokeWithArguments = $true
-    }
-
-    if ($invokeWithArguments) {
-        if(!$Arguments) { $Arguments = @{} }
-
-        $paramsPrefix = "`$params."
-        if($AsJob.IsPresent) {
-            $paramsPrefix = "$"
-        }
-        $command = $ScriptBlock.ToString()
-        foreach($usingVarValue in $usingVariableValues) {
-            $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $command = $command.Replace($usingVarValue.Name, "$($paramsPrefix)$($usingVarValue.NewName.TrimStart('$'))")
-        }
-
-        $newScriptBlock = $command
-    } else {
-        $newScriptBlock = $scriptBlock.ToString()
-    }
+    $paramsPrefix = if ($AsJob.IsPresent) { '$' } else { '$params.' }
+    $resolved = Resolve-UsingVariables -ScriptBlock $ScriptBlock -Arguments $Arguments -ParamsPrefix $paramsPrefix
+    $newScriptBlock = $resolved.ScriptText
+    $Arguments = $resolved.Arguments
 
 
     if($Arguments) {
@@ -295,240 +535,183 @@ function Invoke-RemoteScript {
         [scriptblock]::Create($newScriptBlock).Invoke()
     } else {
         if($PSCmdlet.ParameterSetName -eq "Session") {
-            $Username = $Session.Username
-            $Password = $Session.Password
-            $SharedSecret = $Session.SharedSecret
-            $SessionId = $Session.SessionId
-            $Credential = $Session.Credential
-            $UseDefaultCredentials = $Session.UseDefaultCredentials
-            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
-            $PersistentSession = $Session.PersistentSession
+            $sd = Expand-ScriptSession -Session $Session
+            $Username             = $sd.Username
+            $Password             = $sd.Password
+            $SharedSecret         = $sd.SharedSecret
+            $AccessKeyId          = $sd.AccessKeyId
+            $AccessToken          = $sd.AccessToken
+            $SessionId            = $sd.SessionId
+            $Credential           = $sd.Credential
+            $UseDefaultCredentials = $sd.UseDefaultCredentials
+            $ConnectionUri        = $sd.ConnectionUri
+            $PersistentSession    = $sd.PersistentSession
+            $Algorithm            = $sd.Algorithm
         } else {
+            $AccessToken = ""
             $SessionId = [guid]::NewGuid()
             $PersistentSession = $false
+            $Algorithm = "HS256"
+            # New-SpeHttpClient binds [bool]$UseDefaultCredentials, which rejects
+            # the empty string PowerShell would otherwise leave here when the
+            # caller passes -ConnectionUri without -Session.
+            $UseDefaultCredentials = $false
         }
-        
+
         $serviceUrl = "/-/script/script/?"
-        $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-        foreach ($uri in $ConnectionUri) {            
+        $isRawFormat = $OutputFormat -eq 'Raw'
+        $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $isRawFormat + "&outputFormat=" + $OutputFormat + "&persistentSession=" + $PersistentSession
+        if($StructuredErrors.IsPresent) {
+            $serviceUrl += "&errorFormat=structured"
+        }
+        if($captureStreams) {
+            $serviceUrl += "&captureStreams=true"
+        }
+        foreach ($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
-            $localParams = $parameters | Out-String
-            
+            $localParams = if ($parameters) { $parameters } else { '' }
+
             #creating a psuedo file split on a special comment rather than trying to pass a potentially enormous set of data to the handler
             #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
             $body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
-            
-            Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
-            Add-Type -AssemblyName System.Net.Http
-            $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
 
-            if(![string]::IsNullOrEmpty($SharedSecret)) {
-                $token = New-Jwt -Algorithm 'HS256' -Issuer 'SPE Remoting' -Audience ($uri.GetLeftPart([System.UriPartial]::Authority)) -Name $Username -SecretKey $SharedSecret -ValidforSeconds 30
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token)
-            } else {
-                $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-                $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-            }
-                 
-            if ($Credential) {
-                $handler.Credentials = $Credential
-            }
+            $clientInfo = New-SpeHttpClient -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials `
+                -Uri $uri -Algorithm $Algorithm
 
-            if ($UseDefaultCredentials) {
-                $handler.UseDefaultCredentials = $UseDefaultCredentials
-            }
-            
-            [System.Net.HttpWebResponse]$script:errorResponse = $null 
-            $script:encounteredError = $false
+            $authDesc = Get-AuthDescription -Username $Username -Password $Password -SharedSecret $SharedSecret `
+                -AccessKeyId $AccessKeyId -AccessToken $AccessToken -Credential $Credential -UseDefaultCredentials $UseDefaultCredentials
+            Write-Verbose -Message "POST $url auth=$authDesc"
 
-            $response = & {
+            $errorResponse = $null
+            $encounteredError = $false
+            $response = $null
+            $taskResult = $null
+            $retryAttempt = 0
+
+            do {
+                $retryable = $false
+                $retryWaitSeconds = 0
+                $retryCap = 0
+                $errorResponse = $null
+                $encounteredError = $false
+                $response = $null
+                $taskResult = $null
+                $wallSw = $null
+
                 try {
-                    Write-Verbose -Message "Transferring script to server"                 
-                    $messageBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
-                    $ms = New-Object System.IO.MemoryStream
-                    $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
-                    $gzip.Write($messageBytes, 0, $messageBytes.Length)
-                    $gzip.Close()
-                    $ms.Position = 0
-                    $content = New-Object System.Net.Http.ByteArrayContent(@(, $ms.ToArray()))
-                    $ms.Close()
-                    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
-                    $content.Headers.ContentEncoding.Add("gzip")
-                   
-                    $postResponse = $client.PostAsync($url, $content)
-                    $taskResult = $postResponse.Result
-                    if($taskResult) {
+                    $content = Compress-SpeRequestBody -Body $body
+                    $rawBodyBytes = [System.Text.Encoding]::UTF8.GetByteCount($body)
+                    Write-Verbose -Message (Format-BodyShape -Content $content -RawBytes $rawBodyBytes)
+
+                    $wallSw = [System.Diagnostics.Stopwatch]::StartNew()
+
+                    # Per-request HttpRequestMessage carries auth so multiple
+                    # callers sharing this HttpClient can't race on
+                    # DefaultRequestHeaders.
+                    $postResponse = Invoke-SpeHttpRequest -ClientInfo $clientInfo `
+                        -Method ([System.Net.Http.HttpMethod]::Post) -Url $url -Content $content
+                    # GetAwaiter().GetResult() unwraps the AggregateException that .Result
+                    # would wrap around the real transport exception, so the catch[HttpRequestException]
+                    # below sees the actual cause (DNS, connection refused, TLS) and the
+                    # safe-transport classifier can decide whether to retry.
+                    $taskResult = $postResponse.GetAwaiter().GetResult()
+                    $wallSw.Stop()
+                    if ($taskResult) {
                         $taskResult.EnsureSuccessStatusCode() > $null
-                        $taskResult.Content.ReadAsStringAsync().Result
-                        Write-Verbose -Message "Script transfer complete."
+                        $response = $taskResult.Content.ReadAsStringAsync().Result
+                        Write-Verbose -Message (Format-ResponseLine -Response $taskResult -WallMs $wallSw.Elapsed.TotalMilliseconds)
                     } else {
-                        $script:ex = $postResponse.Exception
+                        $ex = $postResponse.Exception
                         $reason = $postResponse.Exception.Message
                         $innerException = $postResponse.Exception
-                        while(($innerException = $innerException.InnerException)) {
-                            $reason += " " + $innerException.Message                            
+                        while (($innerException = $innerException.InnerException)) {
+                            $reason += " " + $innerException.Message
                         }
-                        $script:encounteredError = $true
+                        $encounteredError = $true
                         Write-Error -Message "Server response: $($reason)" -Category ConnectionError `
                             -CategoryActivity "Post" -CategoryTargetName $uri -CategoryReason "$($postResponse.Status)" -CategoryTargetType $RootPath -ErrorAction SilentlyContinue
                         $Host.UI.WriteErrorLine($reason)
                     }
                 }
                 catch [System.Net.Http.HttpRequestException] {
-                    $script:ex = $_.Exception
-                    [System.Net.Http.HttpResponseMessage]$script:errorResponse = $taskResult
-                    if ($errorResponse) {
-                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                        }
-                        elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                            Write-Verbose -Message "Check that the service files are properly configured."
-                        }
-                    }
-                    else {
+                    if ($wallSw -and $wallSw.IsRunning) { $wallSw.Stop() }
+                    $ex = $_.Exception
+                    [System.Net.Http.HttpResponseMessage]$errorResponse = $taskResult
+                    if (-not $errorResponse) {
                         Write-Verbose -Message $ex.Message
+                        # Transport failure (no response). Retry only when the failure
+                        # is unambiguously safe: pre-send DNS / connection-refused /
+                        # TLS handshake. Mid-stream resets and post-send timeouts
+                        # are intentionally excluded - they require an opt-in switch.
+                        if ($MaxRetries -gt 0 -and $retryAttempt -lt $MaxRetries -and (Test-SpeSafeTransportError -Exception $ex)) {
+                            $retryable = $true
+                            $retryWaitSeconds = 0     # no server hint -> full-jitter backoff
+                            $retryCap = $retryCeiling503
+                            $encounteredError = $false
+                        }
+                    } else {
+                        # Surface the response shape on error too: status,
+                        # wall-clock and X-Spe-Duration-Ms make it possible to
+                        # diagnose a slow 424 separately from a network-bound
+                        # one without grepping the server log.
+                        Write-Verbose -Message (Format-ResponseLine -Response $errorResponse -WallMs $wallSw.Elapsed.TotalMilliseconds)
+                        $outcome = Resolve-HttpErrorResponse -ErrorResponse $errorResponse `
+                            -MaxRetries $MaxRetries -RetryAttempt $retryAttempt `
+                            -Ceiling429 $retryCeiling429 -Ceiling503 $retryCeiling503 `
+                            -OutputFormat $OutputFormat -Uri $uri -RootPath $RootPath
+                        if ($outcome.Handled) {
+                            $retryable = $outcome.Retryable
+                            $retryWaitSeconds = $outcome.WaitSeconds
+                            $retryCap = $outcome.Cap
+                            $encounteredError = $outcome.EncounteredError
+                            $errorResponse = $null
+                        }
+                        # If not Handled, leave $errorResponse set so the generic
+                        # post-loop Write-Error fallback below surfaces it.
                     }
                 }
+
+                if ($retryable -and $retryAttempt -lt $MaxRetries) {
+                    $retryAttempt++
+                    $cap = if ($retryCap -gt 0) { [double]$retryCap } else { [double]$retryCeiling503 }
+                    $delay = Get-SpeBackoffDelay -Attempt $retryAttempt -BaseSeconds 1.0 -CapSeconds $cap -ServerHintSeconds $retryWaitSeconds
+                    $statusForLog = if ($taskResult) { "status $([int]$taskResult.StatusCode)" } else { "transport error" }
+                    Write-Verbose -Message ("Retrying after {0:N2}s (attempt {1} of {2}, {3})." -f $delay, $retryAttempt, $MaxRetries, $statusForLog)
+                    Start-Sleep -Seconds $delay
+                    continue
+                }
+                break
+            } while ($true)
+
+            # Surface rate-limit headers from a successful response so callers
+            # running with -Verbose can see remaining budget without
+            # triggering a 429. Status / timing / rid are already on the
+            # Format-ResponseLine emit inside the send loop.
+            if (!$encounteredError -and $taskResult -and $taskResult.Headers) {
+                $hasLimit = $taskResult.Headers.Contains("X-RateLimit-Limit")
+                $hasRemaining = $taskResult.Headers.Contains("X-RateLimit-Remaining")
+                if ($hasLimit -or $hasRemaining) {
+                    $rlLimit = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Limit"
+                    $rlRemaining = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Remaining"
+                    $rlReset = Get-HttpHeaderValue $taskResult.Headers "X-RateLimit-Reset"
+                    $rlLine = "Rate limit: X-RateLimit-Limit=$rlLimit X-RateLimit-Remaining=$rlRemaining"
+                    if ($rlReset) { $rlLine += " X-RateLimit-Reset=$rlReset" }
+                    Write-Verbose -Message $rlLine
+                }
             }
-            
+
             if ($errorResponse) {
-                $script:encounteredError = $true
-                Write-Error -Message "Server response: $($errorResponse.ReasonPhrase)" -Category ConnectionError `
-                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+                $encounteredError = $true
+                $ridSuffix = Format-RidSuffix $errorResponse.Headers
+                Write-Error -Message ("Server response: $($errorResponse.ReasonPhrase)" + $ridSuffix) -Category ConnectionError `
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception $ex -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath
             }
-            
+
             if(!$encounteredError) {
-                Write-Verbose -Message "Parsing response from server."
-                Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw $Raw
-            } else {
-                Write-Verbose -Message "Stopping from further execution."
+                Parse-Response -Response $response -HasRedirectedMessages $hasRedirectedMessages -Raw ($OutputFormat -eq 'Raw') -OutputFormat $OutputFormat
             }
         }
     }
 }
 
-function Invoke-RemoteScriptAsync {
-    param(
-        [Parameter()]
-        [pscustomobject]$Session,
-
-        [Parameter()]
-        [scriptblock]$ScriptBlock,
-
-        [Parameter()]
-        [Alias("ArgumentList")]
-        [hashtable]$Arguments,
-
-        [Parameter()]
-        [switch]$Raw
-    )
-
-    if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
-        $functionScriptBlock = {
-            $WhatIfPreference = $true
-        }
-        $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
-    }
-    $hasRedirectedMessages = $false
-    if($PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent -or $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $hasRedirectedMessages = $true
-        $ScriptBlock = [scriptblock]::Create($writeStreamOverridesScript.ToString() + $ScriptBlock.ToString());
-    }
-
-    $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
-        Group-Object -Property SubExpression | 
-        ForEach {
-        $_.Group | Select -First 1
-    })
-    
-    $invokeWithArguments = $false        
-    if ($usingVariables.count -gt 0) {
-        $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach {$_.Group | Select -First 1}  
-        Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
-        $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
-        $invokeWithArguments = $true
-    }
-
-    if ($invokeWithArguments) {
-        if(!$Arguments) { $Arguments = @{} }
-
-        $paramsPrefix = "`$params."
-        if($AsJob.IsPresent) {
-            $paramsPrefix = "$"
-        }
-        $command = $ScriptBlock.ToString()
-        foreach($usingVarValue in $usingVariableValues) {
-            $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $command = $command.Replace($usingVarValue.Name, "$($paramsPrefix)$($usingVarValue.NewName.TrimStart('$'))")
-        }
-
-        $newScriptBlock = $command
-    } else {
-        $newScriptBlock = $scriptBlock.ToString()
-    }
-
-    if($Arguments) {
-        #This is still needed in order to pass types
-        $parameters = ConvertTo-CliXml -InputObject $Arguments
-    }
-
-    $newScriptBlock = $scriptBlock.ToString()
-    $Username = $Session.Username
-    $Password = $Session.Password
-    $SessionId = $Session.SessionId
-    $Credential = $Session.Credential
-    $UseDefaultCredentials = $Session.UseDefaultCredentials
-    $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
-    $PersistentSession = $Session.PersistentSession
-
-    $serviceUrl = "/-/script/script/?"
-    $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
-
-    $handler = New-Object System.Net.Http.HttpClientHandler
-    $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-    $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-    $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
-    $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
-       
-    if ($Credential) {
-        $handler.Credentials = $Credential
-    }
-
-    if($UseDefaultCredentials) {
-        $handler.UseDefaultCredentials = $UseDefaultCredentials
-    }
-   
-    $localParams = $parameters | Out-String
-
-    $messageBytes = [System.Text.Encoding]::UTF8.GetBytes("$($newScriptBlock.ToString())<#$($SessionId)#>$($localParams)")
-
-    $ms = New-Object System.IO.MemoryStream
-    $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
-    $gzip.Write($messageBytes, 0, $messageBytes.Length)
-    $gzip.Close()
-    $ms.Position = 0
-    $content = New-Object System.Net.Http.ByteArrayContent(@(,$ms.ToArray()))
-    $ms.Close()
-    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
-    $content.Headers.ContentEncoding.Add("gzip")
-
-    foreach($uri in $ConnectionUri) {
-        $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
-
-        $taskPost = $client.PostAsync($url, $content)
-
-        $localProps = @{
-            Raw = $Raw.IsPresent
-        }
-        $continuation = New-RunspacedDelegate ([Func[System.Threading.Tasks.Task[System.Net.Http.HttpResponseMessage],object, PSObject]] { 
-            param($t,$props)
-
-            $contentTask = $t.Result.Content.ReadAsStringAsync()
-            $response = $contentTask.GetAwaiter().GetResult()
-            Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
-        })
-        Invoke-GenericMethod -InputObject $taskPost -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation,$localProps
-    }    
-}

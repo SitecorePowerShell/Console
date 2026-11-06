@@ -354,7 +354,7 @@
     <da>Nylig workflow historie</da>
   </phrase>
   <phrase updated="20211124T191546Z" fieldid="__Short description" itemid="{53402CF4-BCFF-437D-83E6-B7A6D1BE2BAD}" key="Recent workflow history" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Recent workflow history">
-    <da>Rapporter på workflow historikken indenfor de sidste to uger.</da>
+    <da>Rapporter på workflow historikken for et element eller en gren, eventuelt begrænset til en periode.</da>
   </phrase>
   <phrase updated="20211124T191551Z" fieldid="__Display name" itemid="{A068E625-4CB9-4BF9-BFED-F8D93225E6C9}" key="Stale workflow items" path="/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Stale workflow items">
     <da>Gamle workflow elementer</da>

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -22,7 +25,6 @@ using Spe.Core.Extensions;
 using Spe.Core.Host;
 using Spe.Core.Settings;
 using Spe.Core.Settings.Authorization;
-using Spe.Core.VersionDecoupling;
 using Version = Sitecore.Data.Version;
 
 namespace Spe.Client.Applications
@@ -31,23 +33,23 @@ namespace Spe.Client.Applications
     {
         protected Button AbortButton;
         protected Scrollbox All;
-        protected Literal BackgroundColor;
         protected Button Cancel;
         protected Literal Closed;
         protected Literal CurrentProgressValue;
         protected Literal DialogHeader;
-        protected Literal ForegroundColor;
         protected ThemedImage Icon;
         protected Button OkButton;
+        protected Literal OutputOptions;
         protected Literal PreviousProgressValue;
         protected Literal PsProgress;
         protected Literal PsProgressStatus;
         protected Literal Subtitle;
-        protected Literal Result;
         protected Literal Title;
-        protected Literal ResultsError;
-        protected Literal ResultsOK;
         protected Image Copyright;
+
+        // Streams the script output into the embedded terminal, only while
+        // the user has it open.
+        private readonly TerminalOutputStreamer _outputStreamer = new TerminalOutputStreamer();
 
         public SpeJobMonitor Monitor { get; private set; }
         public string Script { get; set; }
@@ -174,19 +176,91 @@ namespace Spe.Client.Applications
             set => ServerProperties["RedirectUrl"] = value;
         }
 
+        // Set once the job finished or was lost. Progress messages drained in
+        // the same poll as the completion (a tab that caught up after sleeping)
+        // run after MonitorOnJobFinished and must not repaint the progress.
+        public bool Finished
+        {
+            get => StringUtil.GetString(ServerProperties["Finished"]) == "1";
+            set => ServerProperties["Finished"] = value ? "1" : string.Empty;
+        }
+
+        // The embedded output terminal is open. While it is closed the Runner
+        // does no streaming work at all.
+        public bool OutputVisible
+        {
+            get => StringUtil.GetString(ServerProperties["OutputVisible"]) == "1";
+            set => ServerProperties["OutputVisible"] = value ? "1" : string.Empty;
+        }
+
+        // The terminal was opened at least once in this page, so the streamer
+        // is tracking what it has sent.
+        public bool OutputStarted
+        {
+            get => StringUtil.GetString(ServerProperties["OutputStarted"]) == "1";
+            set => ServerProperties["OutputStarted"] = value ? "1" : string.Empty;
+        }
+
+        // End-of-run output (jsterm calls) held back because the terminal was
+        // closed when the script finished; delivered when it is opened.
+        public string PendingFinish
+        {
+            get => StringUtil.GetString(ServerProperties["PendingFinish"]);
+            set => ServerProperties["PendingFinish"] = value;
+        }
+
+        public bool AbortRequested
+        {
+            get => StringUtil.GetString(ServerProperties["AbortRequested"]) == "1";
+            set => ServerProperties["AbortRequested"] = value ? "1" : string.Empty;
+        }
+
+        // Header of the script being run, kept for a Runner that re-attaches.
+        public string ScriptTitle
+        {
+            get => StringUtil.GetString(ServerProperties["ScriptTitle"]);
+            set => ServerProperties["ScriptTitle"] = value;
+        }
+
+        public string ScriptIcon
+        {
+            get => StringUtil.GetString(ServerProperties["ScriptIcon"]);
+            set => ServerProperties["ScriptIcon"] = value;
+        }
+
+        // Set when the Runner was opened to re-attach to a job another page
+        // started (?reattach=<job handle>), instead of running a script.
+        public string ReattachHandle
+        {
+            get => StringUtil.GetString(ServerProperties["ReattachHandle"]);
+            set => ServerProperties["ReattachHandle"] = value;
+        }
+
+        // Lease discovery already claimed for this Runner (?claim=). Empty
+        // when the Runner reloaded itself after losing contact with the job.
+        public string ReattachClaim
+        {
+            get => StringUtil.GetString(ServerProperties["ReattachClaim"]);
+            set => ServerProperties["ReattachClaim"] = value;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
                 Context.User?.Name))
             {
-                PowerShellLog.Warn($"User {Context.User?.Name} attempt to access PowerShell Script Runner Dialog - denied.");
+                PowerShellLog.Audit($"[Runner] action=accessDenied target=ScriptRunnerDialog");
                 return;
             }
 
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
 
-            if (!Context.ClientPage.IsEvent)
+            if (!Context.ClientPage.IsEvent && !string.IsNullOrEmpty(WebUtil.GetQueryString("reattach")))
+            {
+                LoadReattachContext();
+            }
+            else if (!Context.ClientPage.IsEvent)
             {
                 ItemId = WebUtil.GetQueryString("id");
                 ItemDb = WebUtil.GetQueryString("db");
@@ -207,10 +281,9 @@ namespace Spe.Client.Applications
 
                 RedirectUrl = WebUtil.GetQueryString("redirectUrl");
 
-                ResultsError.Text = Texts.PowerShellRunner_OnLoad_View_script_results_and_errors;
-                ResultsOK.Text = Texts.PowerShellRunner_OnLoad_View_script_results;
                 Copyright.Alt = Texts.PowerShellRunner_OnLoad_Show_copyright__;
                 Title.Text = Texts.PowerShellRunner_UpdateProgress_Running_script___;
+                RenderOutputOptions();
 
                 if (!ScriptId.IsNullOrEmpty() && !ScriptDb.IsNullOrEmpty())
                 {
@@ -224,6 +297,8 @@ namespace Spe.Client.Applications
                     }
                     scriptItem.Fields.ReadAll();
                     Icon.Src = scriptItem.Appearance.Icon;
+                    ScriptIcon = scriptItem.Appearance.Icon;
+                    ScriptTitle = scriptItem.DisplayName;
 
                     PersistentId = WebUtil.GetQueryString("sessionKey").IfNullOrEmpty(scriptItem[Templates.Script.Fields.PersistentSessionId]);
 
@@ -237,11 +312,6 @@ namespace Spe.Client.Applications
                         : HttpUtility.UrlDecode(WebUtil.GetQueryString("sessionKey"));
                     ScriptContent = ScriptSessionManager.GetSession(PersistentId).JobScript;
                 }
-
-                if (Monitor != null) return;
-
-                Monitor = new SpeJobMonitor {ID = "Monitor"};
-                Context.ClientPage.Controls.Add(Monitor);
             }
             else
             {
@@ -250,7 +320,7 @@ namespace Spe.Client.Applications
                     Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
                 }
 
-                if (Context.ClientPage.ClientRequest.Parameters == "pstaskmonitor:check" &&
+                if (Context.ClientPage.ClientRequest.Parameters.StartsWith("pstaskmonitor:check") &&
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
                     var percentComplete = Int32.Parse(CurrentProgressValue.Text);
@@ -258,7 +328,159 @@ namespace Spe.Client.Applications
                     PreviousProgressValue.Text = CurrentProgressValue.Text;
                 }
             }
+
+            if (Monitor == null && !Context.ClientPage.IsEvent)
+            {
+                Monitor = new SpeJobMonitor {ID = "Monitor"};
+                Context.ClientPage.Controls.Add(Monitor);
+            }
+
             Monitor.JobFinished += MonitorOnJobFinished;
+            Monitor.JobDisappeared += MonitorOnJobDisappeared;
+            Monitor.LeaseLost += MonitorOnLeaseLost;
+        }
+
+        private void LoadReattachContext()
+        {
+            ReattachHandle = WebUtil.GetQueryString("reattach");
+            ReattachClaim = WebUtil.GetQueryString("claim");
+            Copyright.Alt = Texts.PowerShellRunner_OnLoad_Show_copyright__;
+            Title.Text = Texts.PowerShellRunner_UpdateProgress_Running_script___;
+            RenderOutputOptions();
+
+            // Only the header is restored here; ownership is checked when
+            // psr:execute claims or adopts the lease.
+            var entry = InteractiveJobRegistry.Get(ReattachHandle);
+            if (entry == null || !InteractiveJobRegistry.BelongsTo(ReattachHandle, Context.User.Name)) return;
+
+            var launch = entry.LaunchContext;
+            ItemId = launch["id"];
+            ItemDb = launch["db"];
+            ItemLang = launch["lang"];
+            ItemVer = launch["ver"];
+            PageId = launch["pageId"];
+            PageLang = launch["pageLang"];
+            PageVer = launch["pageVer"];
+            ScriptId = launch["scriptId"];
+            ScriptDb = launch["scriptDb"];
+            RenderingId = launch["RenderingId"];
+            RedirectUrl = launch["redirectUrl"];
+            PersistentId = launch["persistentId"];
+            CallerFullScreen = launch["cfs"] == "1";
+            ScriptTitle = launch["title"];
+            ScriptIcon = launch["icon"];
+            DialogHeader.Text = ScriptTitle;
+            if (!string.IsNullOrEmpty(ScriptIcon))
+            {
+                Icon.Src = ScriptIcon;
+            }
+        }
+
+        // Translated labels for the output toggle and the console colours of
+        // the embedded terminal, rendered into the page on first load.
+        private void RenderOutputOptions()
+        {
+            var texts = new Dictionary<string, string>
+            {
+                ["showOutput"] = Texts.PowerShellRunner_ShowOutput.Translate(),
+                ["hideOutput"] = Texts.PowerShellRunner_HideOutput.Translate(),
+                ["success"] = Texts.PowerShellRunner_Success.Translate(),
+                ["aborted"] = Texts.PowerShellRunner_Aborted.Translate(),
+                ["warning"] = Texts.PowerShellRunner_Warning.Translate(),
+                ["warnings"] = Texts.PowerShellRunner_Warnings.Translate(),
+                ["error"] = Texts.PowerShellRunner_Error.Translate(),
+                ["errors"] = Texts.PowerShellRunner_Errors.Translate()
+            };
+            var textsJson = new JavaScriptSerializer().Serialize(texts).Replace("</", "<\\/");
+            var foreground = OutputLine.ProcessHtmlColor(Settings.ForegroundColor);
+            var background = OutputLine.ProcessHtmlColor(Settings.BackgroundColor);
+            OutputOptions.Text = "<script type='text/javascript'>window.spe = window.spe || {}; spe.runnerTexts = " +
+                                 textsJson + ";</script>" +
+                                 "<style>#RunnerTerminal {" +
+                                 $"--color: {foreground}; --background: {background};" +
+                                 $"color: {foreground}; background-color: {background};" + "}</style>";
+        }
+
+        private NameValueCollection GetLaunchContext()
+        {
+            return new NameValueCollection
+            {
+                ["id"] = ItemId,
+                ["db"] = ItemDb,
+                ["lang"] = ItemLang,
+                ["ver"] = ItemVer,
+                ["pageId"] = PageId,
+                ["pageLang"] = PageLang,
+                ["pageVer"] = PageVer,
+                ["scriptId"] = ScriptId,
+                ["scriptDb"] = ScriptDb,
+                ["RenderingId"] = RenderingId,
+                ["redirectUrl"] = RedirectUrl,
+                ["persistentId"] = PersistentId,
+                ["cfs"] = CallerFullScreen ? "1" : string.Empty,
+                ["title"] = ScriptTitle,
+                ["icon"] = ScriptIcon
+            };
+        }
+
+        private void Reattach()
+        {
+            var user = Context.User.Name;
+            var handle = ReattachHandle;
+            var entry = string.IsNullOrEmpty(ReattachClaim)
+                ? InteractiveJobRegistry.TryClaim(handle, user, InteractiveJobRegistry.CurrentTabId)
+                : InteractiveJobRegistry.TryAdopt(handle, user, ReattachClaim);
+
+            if (entry == null)
+            {
+                var existing = InteractiveJobRegistry.Get(handle);
+                if (existing != null && InteractiveJobRegistry.BelongsTo(handle, user))
+                {
+                    ShowMoved();
+                    return;
+                }
+
+                if (existing != null)
+                {
+                    PowerShellLog.Audit($"[Runner] action=reattachDenied user={user} job={handle}");
+                }
+
+                ShowStopped(Texts.PowerShellRunner_ScriptSessionLost);
+                return;
+            }
+
+            PowerShellLog.Audit($"[Runner] action=reattached user={user} job={handle}");
+            Monitor.Adopt(entry);
+        }
+
+        private void MonitorOnJobDisappeared(object sender, EventArgs e)
+        {
+            ShowStopped(Texts.PowerShellRunner_ScriptSessionLost);
+        }
+
+        private void MonitorOnLeaseLost(object sender, EventArgs e)
+        {
+            ShowMoved();
+        }
+
+        private void ShowStopped(string message)
+        {
+            Finished = true;
+            Title.Text = message;
+            PsProgress.Text = string.Empty;
+            PsProgressStatus.Text = "<span class='status'> </span><br/>";
+            OkButton.Visible = true;
+            AbortButton.Visible = false;
+            SheerResponse.Eval($"spe.scriptFinished('#progressbar','{(AbortRequested ? "aborted" : "stopped")}',0,0);");
+        }
+
+        private void ShowMoved()
+        {
+            // Another window owns the job now. Forget the session so OK can
+            // never dispose a session that window is still running.
+            PersistentId = string.Empty;
+            Monitor.SessionID = string.Empty;
+            ShowStopped(Texts.PowerShellRunner_ScriptShownElsewhere);
         }
 
         [HandleMessage("psr:execute", true)]
@@ -269,6 +491,12 @@ namespace Spe.Client.Applications
 
         public void Execute()
         {
+            if (!string.IsNullOrEmpty(ReattachHandle))
+            {
+                Reattach();
+                return;
+            }
+
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
             var jobName = "Interactive Script Execution";
@@ -279,12 +507,19 @@ namespace Spe.Client.Applications
                 jobName = $"SPE - \"{scriptItem?.Name}\"";
                 scriptSession.SetExecutedScript(scriptItem);
 
-                jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
-                PowerShellLog.Info($"[Runner] Executing script {scriptItem.ID} for Context User {Context.User.Name} as {jobUser.Name}.");
+                if (DelegatedAccessManager.IsElevated(jobUser, scriptItem))
+                {
+                    jobUser = DelegatedAccessManager.GetDelegatedUser(jobUser, scriptItem);
+                    PowerShellLog.Audit($"[DelegatedAccess] action=executing impersonatedUser={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\" source=Runner");
+                }
+                else
+                {
+                    PowerShellLog.Audit($"[Runner] action=executing user={jobUser.Name} script=\"{scriptItem.Name} {scriptItem.ID}\"");
+                }
             }
             else
             {
-                PowerShellLog.Info($"[Runner] Executing arbitrary script for Context User {Context.User.Name}.");
+                PowerShellLog.Audit($"[Runner] action=executing user={Context.User.Name} script=arbitrary");
             }
             if (scriptSession.JobOptions != null)
             {
@@ -298,7 +533,7 @@ namespace Spe.Client.Applications
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
             Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, jobUser,
-                scriptSession.JobOptions);
+                scriptSession.JobOptions, InteractiveJobOrigin.Runner, GetLaunchContext());
             Monitor.SessionID = scriptSession.Key;
         }
 
@@ -311,28 +546,53 @@ namespace Spe.Client.Applications
         {
             var args = e as SessionCompleteEventArgs;
             var result = args?.RunnerOutput;
+            Finished = true;
 
-            var printResults = result?.Output ??
-                               Texts.PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_;
+            // Whatever streaming has not sent yet: all of the output when the
+            // terminal was never opened. Delivered now if the terminal is open,
+            // otherwise held server-side until the user opens it.
+            var finish = new StringBuilder(_outputStreamer.FinishScript(result?.Output, result?.ClearHost == true));
+
             if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception);
-                printResults += $"<pre style='background:red;'>{error}</pre>";
+                // Match the soft-red error style the ISE and Console terminals
+                // use (#1464 / #1471): light red foreground on the terminal
+                // default background. The error is wrapped in a jsterm color
+                // block so jquery.terminal renders it in the same pass as the
+                // rest of the output. [ and ] need escaping so multi-bracket
+                // error messages don't break jsterm parsing.
+                var escaped = HttpUtility.HtmlEncode(error)
+                    .Replace("[", "&#91;")
+                    .Replace("]", "&#93;");
+                finish.Append($"spe.appendOutput({HttpUtility.JavaScriptStringEncode($"[[;#FF9494;]{escaped}]\r\n", true)});");
             }
-            Result.Value = printResults;
-                
-            PsProgress.Text = string.Empty;
-            SitecoreVersion.V80
-                .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
-                .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
 
-            SheerResponse.Eval(
-                $"spe.scriptFinished('#progressbar',{(!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant()},{result.HasErrors.ToString().ToLowerInvariant()});");
+            if (finish.Length > 0)
+            {
+                if (OutputVisible)
+                {
+                    SheerResponse.Eval(finish.ToString());
+                }
+                else
+                {
+                    PendingFinish = finish.ToString();
+                }
+            }
+
+            PsProgress.Text = string.Empty;
+            PsProgressStatus.Text = "<span class='status'> </span><br/>";
+
+            var warnings = result?.WarningCount ?? 0;
+            var errors = result?.ErrorCount ?? 0;
+            var status = AbortRequested ? "aborted" : warnings + errors > 0 ? "problems" : "ok";
+            SheerResponse.Eval($"spe.scriptFinished('#progressbar','{status}',{warnings},{errors});");
 
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
             Monitor.SessionID = string.Empty;
+            if (result == null) return;
             if (result.DeferredMessages.Any() || result.DialogResult != null)
             {
                 ScriptExecutionResult dialogResult = new ScriptExecutionResult(result);
@@ -381,6 +641,7 @@ namespace Spe.Client.Applications
 
         protected virtual void AbortClick()
         {
+            AbortRequested = true;
             var sessionId = Monitor.SessionID;
             if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession currentSession)
             {
@@ -388,19 +649,53 @@ namespace Spe.Client.Applications
             }
         }
 
-        protected virtual void ViewResults()
+        // Each Monitor poll: stream new output, but only while the terminal
+        // is open. Closed, this returns before touching the session.
+        [HandleMessage("pstaskmonitor:check", true)]
+        protected void StreamOutput(ClientPipelineArgs args)
         {
-            var resultSig = Guid.NewGuid().ToString();
-            HttpContext.Current.Session[resultSig] = Result.Value;
-            var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
-            urlString.Add("sid", resultSig);
-            SheerResponse.ShowModalDialog(urlString.ToString(), "800", "600");
-            SheerResponse.CloseWindow();
+            if (!OutputVisible || Finished) return;
+            var sessionId = Monitor?.SessionID;
+            if (string.IsNullOrEmpty(sessionId)) return;
+            if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession session)
+            {
+                _outputStreamer.Poll(session);
+            }
+        }
+
+        // The user opened (visible=1) or closed (visible=0) the output.
+        [HandleMessage("psr:outputvisible", true)]
+        protected void OutputVisibility(ClientPipelineArgs args)
+        {
+            OutputVisible = args.Parameters["visible"] == "1";
+            if (!OutputVisible) return;
+
+            if (!OutputStarted)
+            {
+                // The buffer keeps every line until the job ends, so the first
+                // drain replays the output written before the terminal opened.
+                _outputStreamer.Reset();
+                OutputStarted = true;
+            }
+
+            if (!Finished)
+            {
+                StreamOutput(args);
+            }
+
+            var pending = PendingFinish;
+            if (!string.IsNullOrEmpty(pending))
+            {
+                PendingFinish = string.Empty;
+                SheerResponse.Eval(pending);
+            }
         }
 
         [HandleMessage("ise:updateprogress", true)]
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
+            if (Finished) return;
+
             var sb = new StringBuilder();
 
             var activity = args.Parameters["Activity"];
@@ -409,22 +704,11 @@ namespace Spe.Client.Applications
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
 
-            var isSitecore8 = CurrentVersion.IsAtLeast(SitecoreVersion.V80);
-            PsProgressStatus.Visible = showStatus && isSitecore8;
-            Subtitle.Visible = showStatus && !isSitecore8;
+            PsProgressStatus.Visible = showStatus;
 
-            if (isSitecore8)
-            {
-                PsProgressStatus.Text = showStatus
+            PsProgressStatus.Text = showStatus
                 ? $"<span class='status'>{status}   </span><br/>"
-                    : "<span class='status'> </span><br/>";
-            }
-            else
-            {
-                Subtitle.Text = showStatus
-                ? $"<span class=\'status\'>{Texts.PowerShellRunner_UpdateProgress_Status_.Translate()} {status}</span>"
-                    : "<span class='status'> </span>";
-            }
+                : "<span class='status'> </span><br/>";
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {
                 PsProgress.Text = string.Empty;

@@ -7,6 +7,7 @@
       <services>
         <restfulv2>
           <patch:attribute name="enabled">true</patch:attribute>
+          <cors allowedOrigins="*" allowCredentials="false" maxAge="3600" />
         </restfulv2>
         <mediaUpload>
           <patch:attribute name="enabled">true</patch:attribute>
@@ -22,6 +23,7 @@
         </fileUpload>
         <remoting>
           <patch:attribute name="enabled">true</patch:attribute>
+          <cors allowedOrigins="*" allowCredentials="false" maxAge="3600" />
         </remoting>
       </services>
       <authenticationProvider>
@@ -31,6 +33,45 @@
           <audience>https://spe.dev.local</audience>
         </allowedAudiences>
       </authenticationProvider>
+      <!--
+        OAuth bearer providers. Opt-in. Ensure Spe.OAuthBearer.config.example
+        has been copied to Spe.OAuthBearer.config (drop the .example suffix)
+        so the provider type is registered. Declare one <oauthBearer*> entry per IdP; the remoting
+        handler routes incoming tokens to the provider whose <allowedIssuers>
+        contains the token's iss claim, so multiple IdPs coexist cleanly.
+        Replace the Auth0 tenant below with your own, or delete the
+        <oauthBearerAuth0> block if you only want IDS.
+      -->
+      <authenticationProviders>
+        <!-- Sitecore Identity Server (bundled docker service) -->
+        <oauthBearerIds type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+          <jwksUri>http://id/.well-known/openid-configuration/jwks</jwksUri>
+          <allowedIssuers hint="list">
+            <issuer>https://speid.dev.local</issuer>
+          </allowedIssuers>
+          <allowedAudiences hint="list">
+            <audience>spe-remoting</audience>
+            <audience>https://speid.dev.local/resources</audience>
+          </allowedAudiences>
+          <requiredScopes hint="list">
+            <scope>spe.remoting</scope>
+          </requiredScopes>
+        </oauthBearerIds>
+        <!-- Auth0 (replace the tenant below) -->
+        <oauthBearerAuth0 type="Spe.Core.Settings.Authorization.OAuthBearerTokenAuthenticationProvider, Spe">
+          <jwksUri>https://YOUR-TENANT.us.auth0.com/.well-known/jwks.json</jwksUri>
+          <allowedIssuers hint="list">
+            <issuer>https://YOUR-TENANT.us.auth0.com/</issuer>
+          </allowedIssuers>
+          <allowedAudiences hint="list">
+            <audience>spe-remoting</audience>
+            <audience>https://spe-remoting</audience>
+          </allowedAudiences>
+          <requiredScopes hint="list">
+            <scope>spe.remoting</scope>
+          </requiredScopes>
+        </oauthBearerAuth0>
+      </authenticationProviders>
       <userAccountControl>
         <!-- In development, remove default elevationActions -->
         <tokens>
@@ -41,33 +82,11 @@
         </tokens>
       </userAccountControl>
     </powershell>
-    <pipelines>
-      <owin.cookieAuthentication.validateIdentity>
-        <processor type="Sitecore.Owin.Authentication.Pipelines.CookieAuthentication.ValidateIdentity.ValidateSiteNeutralPaths, Sitecore.Owin.Authentication">
-          <siteNeutralPaths hint="list">
-            <!-- This entry corrects the infinite loop of ExecuteCommand in the SPE Console -->
-            <path hint="spe">/sitecore%20modules/PowerShell</path>
-          </siteNeutralPaths>
-        </processor>
-      </owin.cookieAuthentication.validateIdentity>
-
-      <unicornSyncComplete>
-        <processor type="Unicorn.Pipelines.UnicornSyncComplete.AddSyncedItemsToPublishQueue, Unicorn">
-          <patch:delete />
-        </processor>
-      </unicornSyncComplete>
-
-      <unicornSyncEnd>
-        <processor type="Unicorn.Pipelines.UnicornSyncEnd.TriggerAutoPublishSyncedItems, Unicorn">
-          <patch:delete />
-        </processor>
-      </unicornSyncEnd>
-
-      <publish>
-        <processor patch:after="*[@type='Sitecore.Publishing.Pipelines.Publish.AddItemsToQueue, Sitecore.Kernel']" type="Unicorn.Publishing.ManualPublishQueueHandler, Unicorn">
-          <patch:delete />
-        </processor>
-      </publish>
-    </pipelines>
+    <settings>
+      <!-- Log output format: keyvalue (default) or json for structured JSON log aggregation -->
+      <setting name="Spe.LogFormat">
+        <patch:attribute name="value">json</patch:attribute>
+      </setting>
+    </settings>
   </sitecore>
 </configuration>

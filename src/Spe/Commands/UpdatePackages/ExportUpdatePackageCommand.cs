@@ -4,9 +4,10 @@ using System.Management.Automation;
 using System.Xml;
 using log4net.Config;
 using Sitecore.Update;
-using Sitecore.Update.Engine;
 using Sitecore.Update.Interfaces;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Commands.Packages;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.UpdatePackages
 {
@@ -65,7 +66,7 @@ namespace Spe.Commands.UpdatePackages
 
                     if (ShouldProcess(fileName, "Export update package"))
                     {
-                        PackageGenerator.GeneratePackage(diff, LicenseFileName, fileName);
+                        TypeResolver.ResolveFromCache<IUpdatePackageGenerator>().GeneratePackage(diff, LicenseFileName, fileName);
                     }
                 });
         }

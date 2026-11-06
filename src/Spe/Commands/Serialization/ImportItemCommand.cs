@@ -3,7 +3,9 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;
 using Sitecore.Data.Serialization.Presets;
+using Spe.Abstractions.VersionDecoupling.Interfaces;
 using Spe.Core.Serialization;
+using Spe.Core.VersionDecoupling;
 
 namespace Spe.Commands.Serialization
 {
@@ -75,44 +77,47 @@ namespace Spe.Commands.Serialization
 
         public void Deserialize(Database database)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
             var options = GetLoadOptions();
             var path = System.IO.Path.Combine(options.Root, database.Name);
             options.Database = database;
             if (ShouldProcess(path, "Deserializing database"))
             {
-                Manager.LoadTree(path, options);
+                serializationManager.LoadTree(path, options);
             }
         }
 
         public void Deserialize(Item item)
         {
+            var pathResolver = TypeResolver.ResolveFromCache<ISerializationPathResolver>();
             var reference = item.Database.Name + item.Paths.Path;
             if (Recurse.IsPresent)
             {
-                var path = PathUtils.GetDirectoryPath(reference.ToString());
+                var path = pathResolver.GetDirectoryPath(reference.ToString());
                 Deserialize(path);
             }
             else
             {
-                var path = PathUtils.GetFilePath(reference.ToString());
+                var path = pathResolver.GetFilePath(reference.ToString());
                 Deserialize(path);
             }
         }
 
         public void Deserialize(string path)
         {
+            var serializationManager = TypeResolver.ResolveFromCache<ISerializationManager>();
             if (Recurse.IsPresent)
             {
                 if (ShouldProcess(path, "Deserializing tree"))
                 {
-                    Manager.LoadTree(path, GetLoadOptions());
+                    serializationManager.LoadTree(path, GetLoadOptions());
                 }
             }
             else
             {
                 if (ShouldProcess(path, "Deserializing item"))
                 {
-                    Manager.LoadItem(path, GetLoadOptions());
+                    serializationManager.LoadItem(path, GetLoadOptions());
                 }
             }
         }
@@ -130,7 +135,7 @@ namespace Spe.Commands.Serialization
                 UseNewID = UseNewId,
                 DisableEvents = DisableEvents,
                 ForceUpdate = ForceUpdate,
-                Root = Root ?? PathUtils.Root
+                Root = Root ?? TypeResolver.ResolveFromCache<ISerializationPathResolver>().Root
             };
 
             return options;

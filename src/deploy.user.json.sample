@@ -1,13 +1,20 @@
 {
-    "sites": [],
+    "sites": [
+        {
+            "path": "C:\\inetpub\\wwwroot\\my-sc.dev.local",
+            "version": 10,
+            "junction": true,
+            "test": {
+                "url": "https://my-sc.dev.local",
+                "username": "admin",
+                "password": "your-password-here"
+            }
+        }
+    ],
     "files": {
-        "remove": [
-            "App_Config/Include/Unicorn/Unicorn.DataProvider.config"
-        ],
+        "remove": [],
         "enable": [
-            "App_Config/Include/Spe/Spe.IdentityServer.config",
-            "App_Config/Include/Unicorn/Unicorn.DataProvider.10.1.config",
-            "App_Config/Include/Unicorn/Unicorn.UI.IdentityServer.config"
+            "App_Config/Include/Spe/Spe.IdentityServer.config"
         ]
     }
 }

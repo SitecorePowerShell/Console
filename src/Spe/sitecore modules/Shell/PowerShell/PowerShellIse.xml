@@ -11,6 +11,8 @@
             <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/jquery-ui.min.css"
                         DeviceDependant="true"/>
             <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true"/>
+            <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/jquery.terminal.css" DeviceDependant="true"/>
+            <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/TerminalCompletionMenu.css" DeviceDependant="true"/>
             <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true"/>
             <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/ise.css" DeviceDependant="true"/>
             <Script src="/sitecore modules/PowerShell/Scripts/jquery.min.js"></Script>
@@ -26,18 +28,23 @@
             <Script src="/sitecore modules/PowerShell/Scripts/clipboard.min.js"></Script>
             <!--for autocomplete and overlay-->
             <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+            <Script src="/sitecore modules/PowerShell/Scripts/jquery.terminal.js"> </Script>
+            <Script src="/sitecore modules/PowerShell/Scripts/TerminalCompletionMenu.js"> </Script>
             <Script src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/ace/ext-language_tools.js"></Script>
+            <Script src="/sitecore modules/PowerShell/Scripts/goto_script.js"></Script>
             <Script src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
 
             <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip"/>
             <Memo ID="SelectionText" Style="display:none;"/>
             <Memo ID="Breakpoints" Style="display:none;"/>
-            <Memo ID="Editor" Value="Get-ChildItem *" Style="display:none;"/>
+            <Memo ID="Editor" Value="" Style="display:none;"/>
             <Memo ID="OpenedScripts" Style="display:none;"/>
             <Memo ID="ScriptItemIdMemo" Style="display:none;"/>
             <Memo ID="ScriptItemDbMemo" Style="display:none;"/>
+            <Memo ID="ActiveTabsMemo" Style="display:none;"/>
+            <Memo ID="TerminalCommand" Style="display:none;"/>
             <DataContext ID="ContentDataContext"/>
 
             <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master"/>
@@ -101,12 +108,23 @@
                     </Border>
                 </Border>
                 <GridPanel ID="Content" CellPadding="4" GridPanel.Height="100%" Columns="3">
-                    <Scrollbox Width="100%" ID="TreeView" Height="100%" Class="scScrollbox scFixSize scFixSize4"
-                               style="border-right: 2px solid #474747;" Background="white" Padding="0px"
-                               GridPanel.Width="200px" GridPanel.Height="100%"  GridPanel.ID="TreeViewPanel">
-                        <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"
-                                    Click="ContentTreeview_Click"/>
-                    </Scrollbox>
+                    <Border ID="Sidebar" GridPanel.Width="200px" GridPanel.Height="100%" GridPanel.ID="SidebarPanel"
+                            style="position:relative;height:100%;background:white;overflow:hidden;">
+                        <Scrollbox Width="100%" Height="100%" ID="TreeView" Class="scScrollbox scFixSize scFixSize4"
+                                   Background="white" Padding="0px">
+                            <TreeviewEx ID="ContentTreeview" DataContext="ContentDataContext"
+                                        Click="ContentTreeview_Click"/>
+                        </Scrollbox>
+                        <Scrollbox Width="100%" Height="100%" ID="VariablesView" Class="scScrollbox scFixSize scFixSize4"
+                                   Background="white" Padding="0px">
+                            <Border ID="VariablesHeader" class="spe-variables-header">
+                                <Literal Text="Variables" ID="VariablesHeaderText"/>
+                                <Image ID="VariablesRefresh" src="/~/icon/office/16x16/nav_refresh.png"
+                                       Alt="Refresh variables" Title="Refresh variables"/>
+                            </Border>
+                            <Border ID="VariablesList" class="spe-variables-list"/>
+                        </Scrollbox>
+                    </Border>
                     <VSplitter ID="TreeSplitter" GridPanel.Class="scThinSplitter" Target="left"
                                GridPanel.ID="TreeSplitterPanel"/>
                     <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4"
@@ -119,24 +137,16 @@
                             <Image ID="TreeViewToggle" src="/~/icon/office/16x16/elements_tree.png"
                                    Alt="Toggle Tree View"
                                    Title="Toggle Tree View"/>
+                            <Image ID="VariablesToggle" src="/~/icon/office/16x16/data.png"
+                                   Alt="Toggle Variables Panel"
+                                   Title="Toggle Variables Panel"/>
                             <Border ID="CodeEditors"/>
                         </Border>
-                        <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top"
-                                     GridPanel.Row.ID="ResultsSplitter"
-                                     Height="10px"/>
+                        <Space GridPanel.Row.ID="ResultsSplitter" GridPanel.Height="6" Width="100%" Height="6"/>
                         <Border ID="Result" GridPanel.Height="100%" class="console pre results"
                                 GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow">
-                            <Border Id="ProgressOverlay" Visible="false">
-                                <Border>
-                                    <p>
-                                        <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true"
-                                                 GridPanel.VAlign="top"
-                                                 GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
-                                    </p>
-                                </Border>
-                            </Border>
                             <Border ID="ScriptResult" class="console">
-                                <pre ID="ScriptResultCode"></pre>
+                                <div ID="ScriptResultCode"></div>
                             </Border>
                         </Border>
                     </GridPanel>
@@ -152,6 +162,14 @@
                         <Border class="status-bar-panel status-bar-right-icon">
                             <Image ID="CopyResultsToClipboard" src="/~/icon/office/16x16/element_copy.png"
                                    Alt="Copy results to clipboard" Title="Copy results to clipboard"/>
+                        </Border>
+                        <Border class="status-bar-panel status-bar-right-icon">
+                            <Image ID="ToggleSplitOrientation" src="/~/icon/office/16x16/mirror_vertically.png"
+                                   Alt="Switch to vertical split" Title="Switch to vertical split"/>
+                        </Border>
+                        <Border class="status-bar-panel status-bar-right-icon">
+                            <Image ID="ClearOutput" src="/~/icon/office/16x16/erase.png"
+                                   Alt="Clear output panel" Title="Clear output panel"/>
                         </Border>
                         <Border ID="ResultsStatusBarAction" class="status-bar-panel status-bar-right-icon">
                             <Image ID="ShowHideResults" src="/~/icon/office/16x16/text_align_left.png"

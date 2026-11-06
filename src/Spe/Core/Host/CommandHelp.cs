@@ -18,7 +18,7 @@ namespace Spe.Core.Host
             var lastPsToken = tokens.LastOrDefault(t => t.Type == PSTokenType.Command);
             if (lastPsToken != null)
             {
-                session.Output.Clear();
+                session.Output.ClearSilent();
                 var lastToken = lastPsToken.Content;
                 session.SetVariable("helpFor", lastToken);
                 var platformmodule = ModuleManager.GetModule("Platform");
@@ -45,7 +45,7 @@ namespace Spe.Core.Host
                 var sb = new StringBuilder();
 
                 session.Output.ForEach(l => sb.Append(l.Text));
-                session.Output.Clear();
+                session.Output.ClearSilent();
 
                 var result = new[] { sb.ToString() };
                 return result;

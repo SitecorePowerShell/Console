@@ -7,4 +7,8 @@
 .scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
 .selected.scMenuPanelItem { background: #D0EBF6 }
 .scInitialHeight { height: initial; width: 100%; }
+.scTabPage[aria-label="Recent"] { overflow-x: hidden; }
 .noScript { text-align: center; }
+.mruResultsFooter { padding: 6px 8px; font-size: 11px; color: #555; border-top: 1px solid #e0e0e0; margin-top: 4px; text-align: center; clear: both; }
+.mruLoadMore { margin-left: 8px; font-weight: bold; text-decoration: none; }
+.mruLoadMore:hover { text-decoration: underline; }

@@ -1,6 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Sitecore.Collections;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Spe.Commands.Interactive;
 using Spe.Core.Settings;
@@ -66,6 +70,38 @@ namespace Spe.Commands.Session
             if (sendToPipeline != null && sendToPipeline.Any())
             {
                 WriteObject(sendToPipeline);
+            }
+        }
+
+        public static string[] ScriptPathsForCompletion()
+        {
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+            if (db == null) return Array.Empty<string>();
+
+            var root = db.GetItem(ApplicationSettings.ScriptLibraryPath);
+            if (root == null) return Array.Empty<string>();
+
+            var rootPath = root.Paths.FullPath.TrimEnd('/');
+            var results = new List<string>(1024);
+
+            foreach (var script in EnumerateScripts(root))
+            {
+                var full = script.Paths.FullPath;
+                if (!full.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase)) continue;
+                var relative = full.Substring(rootPath.Length).TrimStart('/').Replace('/', '\\');
+                if (relative.Length > 0) results.Add(relative);
+            }
+
+            results.Sort(StringComparer.OrdinalIgnoreCase);
+            return results.ToArray();
+        }
+
+        private static IEnumerable<Item> EnumerateScripts(Item parent)
+        {
+            foreach (Item child in parent.GetChildren(ChildListOptions.SkipSorting))
+            {
+                if (child.TemplateID == Templates.Script.Id) yield return child;
+                foreach (var nested in EnumerateScripts(child)) yield return nested;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
@@ -10,10 +11,51 @@ namespace Spe.Core.Extensions
 {
     public static class ItemExtensions
     {
+        private const string AccessRightsPath = "/sitecore/system/Modules/PowerShell/Settings/Access";
+        private const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library";
+
+        // Items as Resources API is Sitecore 10.1+, we compile against 9.2
+        private static readonly MethodInfo GetItemLocationsMethod =
+            typeof(DataSource).GetMethod("GetItemLocations", new[] { typeof(ID) });
+        private static readonly Type ItemLocationsExtensions = typeof(DataSource).Assembly.GetType(
+            "Sitecore.Data.DataProviders.ItemLocations.AggregatedItemLocationsExtensions");
+
+        public static string GetItemSource(this Item item)
+        {
+            if (item == null) return null;
+            if (GetItemLocationsMethod == null || ItemLocationsExtensions == null) return "Database";
+
+            var locations = GetItemLocationsMethod.Invoke(item.Database.DataManager.DataSource, new object[] { item.ID });
+            bool Is(string check) => (bool)ItemLocationsExtensions.GetMethod(check).Invoke(null, new[] { locations });
+
+            if (Is("IsOverridden")) return "Overridden";
+            if (Is("IsResource")) return "Resource";
+            if (Is("IsSql")) return "Database";
+            return "Unknown";
+        }
+
         public static bool InheritsFrom(this Item item, ID templateId)
         {
             return item != null && TemplateManager.GetTemplate(item) is Template template &&
                    template.InheritsFrom(templateId);
+        }
+
+        public static bool IsUnderPath(this Item item, string path)
+        {
+            if (item == null || path == null) return false;
+            var itemPath = item.Paths.Path;
+            return itemPath.Equals(path, StringComparison.OrdinalIgnoreCase)
+                || itemPath.StartsWith(path + "/", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsUnderAccessRights(this Item item)
+        {
+            return item.IsUnderPath(AccessRightsPath);
+        }
+
+        public static bool IsUnderScriptLibrary(this Item item)
+        {
+            return item.IsUnderPath(ScriptLibraryPath);
         }
 
         public static bool IsPowerShellScript(this Item item)

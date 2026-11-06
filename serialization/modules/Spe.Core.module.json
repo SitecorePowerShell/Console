@@ -1,0 +1,65 @@
+{
+    "namespace": "Spe.Core",
+    "items": {
+        "includes": [
+            {
+                "name": "Templates",
+                "database": "master",
+                "path": "/sitecore/templates/Modules",
+                "scope": "SingleItem"
+            },
+            {
+                "name": "Templates-PowerShellConsole",
+                "database": "master",
+                "path": "/sitecore/templates/Modules/PowerShell Console",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Templates-PowerShellAuthReports",
+                "database": "master",
+                "path": "/sitecore/templates/Modules/PowerShell Authorable Reports",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Module",
+                "database": "master",
+                "path": "/sitecore/system/Modules/PowerShell",
+                "scope": "ItemAndDescendants",
+                "rules": [
+                    {
+                        "path": "/Script Library",
+                        "scope": "SingleItem"
+                    },
+                    {
+                        "path": "/Settings/Access",
+                        "scope": "ItemAndChildren"
+                    },
+                    {
+                        "path": "/Settings/Resources",
+                        "scope": "ItemAndDescendants"
+                    },
+                    {
+                        "path": "/Settings/User Settings/Console/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/Context/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/Default/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/ISE/Sitecore",
+                        "scope": "ignored"
+                    },
+                    {
+                        "path": "/Settings/User Settings/RemoteAutomation/Sitecore",
+                        "scope": "ignored"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Web;
 using Sitecore;
-using Sitecore.Data;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
 using Sitecore.Events;
 using Sitecore.SecurityModel;
 using Spe.Core.Diagnostics;
@@ -29,23 +27,19 @@ namespace Spe.Core.Settings.Authorization
             }
 
             var item = scArgs.Parameters[0] as Item;
-            if (item != null && !item.IsPowerShellScript() && !item.IsPowerShellLibrary())
+            if (item != null && !item.IsUnderScriptLibrary() && !item.IsUnderAccessRights())
             {
-                // not a PowerShell related item
+                // not under a protected path
                 return;
             }
 
             var itemCreatingEventArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
-            if (itemCreatingEventArgs?.Parent?.Database != null && itemCreatingEventArgs.TemplateId != (ID)null)
+            if (itemCreatingEventArgs?.Parent != null
+                && !itemCreatingEventArgs.Parent.IsUnderScriptLibrary()
+                && !itemCreatingEventArgs.Parent.IsUnderAccessRights())
             {
-                var template = TemplateManager.GetTemplate(itemCreatingEventArgs.TemplateId,
-                    itemCreatingEventArgs.Parent.Database);
-                if (template == null || (!template.InheritsFrom(Templates.Script.Id) &&
-                                         !template.InheritsFrom(Templates.ScriptLibrary.Id)))
-                {
-                    // not creating Script or Library
-                    return;
-                }
+                // not creating under a protected path
+                return;
             }
 
             if (!SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
@@ -55,13 +49,13 @@ namespace Spe.Core.Settings.Authorization
                 if (itemCreatingEventArgs != null)
                 {
                     itemCreatingEventArgs.Cancel = true;
-                    PowerShellLog.Warn(
-                        $"Prevented Script/Library '{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}' creation by '{Context.User?.Name}'.");
+                    PowerShellLog.Audit(
+                        $"[Security] action=creationBlocked path=\"{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}\"");
                 }
                 else
                 {
-                    PowerShellLog.Warn(
-                        $"Prevented Script/Library save '{item?.Parent.Paths.Path}' by user '{Context.User?.Name}'.");
+                    PowerShellLog.Audit(
+                        $"[Security] action=saveBlocked path=\"{item?.Parent.Paths.Path}\"");
                 }
 
                 scArgs.Result.Cancel = true;
@@ -71,14 +65,14 @@ namespace Spe.Core.Settings.Authorization
 
             if (itemCreatingEventArgs != null)
             {
-                PowerShellLog.Info(
-                    $" Script/Library '{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}' created by user '{Context.User?.Name}'");
+                PowerShellLog.Audit(
+                    $"[Security] action=itemCreated path=\"{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}\"");
             }
             else
             {
-                PowerShellLog.Info(
-                    $" Script/Library saved '{item?.Parent.Paths.Path}' by user '{Context.User?.Name}'");
-                if (item.IsPowerShellScript())
+                PowerShellLog.Audit(
+                    $"[Security] action=itemSaved path=\"{item?.Parent.Paths.Path}\"");
+                if (item != null && item.IsPowerShellScript())
                 {
                     PowerShellLog.Debug(item[Templates.Script.Fields.ScriptBody]);
                 }

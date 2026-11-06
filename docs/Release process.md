@@ -10,4 +10,4 @@
 9. Serialize all changes using the: ```Platform/Development/Internal/PowerShell Extensions Maintenance/Serialize Changes```
 10. Put the package in the ```Data\packages``` folder
 11. Commit all changes and push to GitHub.
-12. [Draft & Publish a GitHub release](https://github.com/SitecorePowerShell/Console/releases)
+12. [Draft & Publish a GitHub release](https://github.com/SitecorePowerShell/Console/releases). Generate the notes with `pwsh scripts/release-notes.ps1 -Milestone <number> -Version <version> -PreviousTag <tag> -Branch <release branch>`; it writes `_output/release-notes-<version>.md` and also lists PRs merged into the release branch that no milestone issue covers.

@@ -74,10 +74,12 @@ $variablesRegex = [regex]($variablesRegexKeys -join '|')
 
 $regexCallback = { $variables[$args[0].Value] }
 
-Get-ChildItem $deployUserConfigPath -Recurse -Include *.config | ForEach-Object {
-    $file = [System.IO.File]::ReadAllText($_.FullName)
-    $file = $variablesRegex.Replace($file, $regexCallback)
-    Set-Content -Path $_ -Value $file
+if (Test-Path $deployUserConfigPath) {
+    Get-ChildItem $deployUserConfigPath -Recurse -Include *.config | ForEach-Object {
+        $file = [System.IO.File]::ReadAllText($_.FullName)
+        $file = $variablesRegex.Replace($file, $regexCallback)
+        Set-Content -Path $_ -Value $file
+    }
 }
 
 Write-Host

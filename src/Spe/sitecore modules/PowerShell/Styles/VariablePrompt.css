@@ -197,7 +197,11 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
     margin: 2px 0px 4px 2px;
 }
 .scContentButton { color:#dc291e }
+.imageWrapper a.scContentButton, .linkWrapper a.scContentButton { display: inline-block; white-space: nowrap; border-right: 1px solid #ccc; padding-right: 14px; margin-right: 15px; }
+.imageWrapper a.scContentButton:last-child, .linkWrapper a.scContentButton:last-child { border-right: 0; margin-right: 0; }
 .validator { color: red; margin-top:4px; float: left; }
+.varCharCounter { display: block; clear: both; float: left; width: 100%; text-align: right; font-size: 11px; color: #888; margin-top: 2px; }
+.varCharCounterOver { color: red; font-weight: bold; }
 
 textarea.scContentControl {
     padding: 8px 12px;

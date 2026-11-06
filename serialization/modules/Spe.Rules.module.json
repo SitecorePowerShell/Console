@@ -1,0 +1,68 @@
+{
+    "namespace": "Spe.Rules",
+    "references": ["Spe.Core"],
+    "items": {
+        "includes": [
+            {
+                "name": "Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Experience Button Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell Experience Buttons",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "ISE Tags",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Tags/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "System Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Item Hierarchy Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/Item Hierarchy/Has Ancestor Of Template",
+                "scope": "SingleItem"
+            },
+            {
+                "name": "Experience Button Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "ISE Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Security Rules",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
+                "scope": "ItemAndDescendants"
+            },
+            {
+                "name": "Definition",
+                "database": "master",
+                "path": "/sitecore/system/Settings/Rules/PowerShell",
+                "scope": "ItemAndDescendants"
+            }
+        ]
+    }
+}

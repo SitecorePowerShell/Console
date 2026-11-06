@@ -45,13 +45,7 @@ namespace Spe.Core.Host
                 var urlRegex = new Regex(@"(\w+:\/\/[\w@][\w.:@]+\/?[\w\.?=%&=\-@/$,]*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
                 outString = urlRegex.Replace(outString, "<a target='_blank' href='$1'>$1</a>");
             }
-            output.AppendFormat(
-                Terminated
-                    ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
-                    : "<span style='background-color:{0};color:{1};'>{2}</span>",
-                ProcessHtmlColor(BackgroundColor),
-                ProcessHtmlColor(ForegroundColor),
-                outString);
+            AppendHtmlSpan(output, outString);
         }
 
         public string ToHtmlString()
@@ -65,61 +59,111 @@ namespace Spe.Core.Host
                     "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
                     RegexOptions.IgnoreCase);
             }
-            return String.Format(
+            var sb = new StringBuilder();
+            AppendHtmlSpan(sb, outString);
+            return sb.ToString();
+        }
+
+        private void AppendHtmlSpan(StringBuilder output, string content)
+        {
+            // Error lines use the same fixed legible color the jsterm terminal
+            // uses (#FF9494, no background). Matching here keeps Show-Result
+            // -Text and the other HTML result surfaces from showing the old
+            // jarring red-on-red block and makes them consistent with the ISE
+            // and Console terminals introduced in #1464.
+            string fg, bg;
+            if (LineType == OutputLineType.Error)
+            {
+                fg = "#FF9494";
+                bg = "transparent";
+            }
+            else
+            {
+                fg = ProcessHtmlColor(ForegroundColor, false);
+                bg = ProcessHtmlColor(BackgroundColor, true);
+            }
+
+            output.AppendFormat(
                 Terminated
                     ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
                     : "<span style='background-color:{0};color:{1};'>{2}</span>",
-                ProcessHtmlColor(BackgroundColor),
-                ProcessHtmlColor(ForegroundColor),
-                outString);
+                bg, fg, content);
         }
 
-        public static string ProcessHtmlColor(ConsoleColor color)
+        public static string ProcessHtmlColor(ConsoleColor color, bool isBackground = false)
         {
-            switch (color)
-            {
-                case (ConsoleColor.DarkBlue):
-                    return "#012456";
-                case (ConsoleColor.Green):
-                    return "Lime";
-                default:
-                    return color.ToString();
-            }
+            // Reuse the same curve the jsterm path uses (ProcessTerminalColor)
+            // so HTML and terminal render identically, including the 65%
+            // darkened background that keeps same-fg/bg cells legible (e.g.
+            // Write-Host -Fore Red -Back Red).
+            var c = ProcessTerminalColor(color, isBackground);
+            return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         }
 
-        public static Color ProcessTerminalColor(ConsoleColor color)
+        public static Color ProcessTerminalColor(ConsoleColor color, bool isBackground = false)
         {
+            Color c;
             switch (color)
             {
-                case (ConsoleColor.DarkBlue):
-                    return Color.FromArgb(1, 0x24, 0x56);
-                case (ConsoleColor.Green):
-                    return Color.LimeGreen;
+                case ConsoleColor.DarkBlue:
+                    c = Color.FromArgb(1, 0x24, 0x56);
+                    break;
+                case ConsoleColor.Green:
+                    c = Color.LimeGreen;
+                    break;
                 default:
-                    return Color.FromName(color.ToString());
+                    c = Color.FromName(color.ToString());
+                    break;
             }
+
+            // Darken non-default background colors so text remains legible
+            // even when foreground and background use the same ConsoleColor.
+            // DarkBlue is the default console background and stays as-is.
+            if (isBackground && color != ConsoleColor.DarkBlue)
+            {
+                return Color.FromArgb(
+                    (int)(c.R * 0.65),
+                    (int)(c.G * 0.65),
+                    (int)(c.B * 0.65));
+            }
+            return c;
         }
 
         public void GetTerminalLine(StringBuilder output)
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
-            if (outString.EndsWith("\\"))
+
+            // Error lines use a fixed legible color with no background
+            // (terminal default). Other lines use the mapped ConsoleColors.
+            string fgHex, bgHex;
+            if (LineType == OutputLineType.Error)
             {
-                outString += " ";
+                fgHex = "#FF9494";
+                bgHex = "";
             }
-            var htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
-            var htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
-            output.AppendFormat(
-                Terminated
-                    ? "[[;#{0}{1}{2};#{3}{4}{5}]{6}]\r\n"
-                    : "[[;#{0}{1}{2};#{3}{4}{5}]{6}]",
-                htmlForegroundColor.R.ToString("X2"),
-                htmlForegroundColor.G.ToString("X2"),
-                htmlForegroundColor.B.ToString("X2"),
-                htmlBackgroundColor.R.ToString("X2"),
-                htmlBackgroundColor.G.ToString("X2"),
-                htmlBackgroundColor.B.ToString("X2"),
-                HttpUtility.HtmlEncode(outString).Replace("[", "&#91;").Replace("]", "&#93;"));
+            else
+            {
+                var fg = ProcessTerminalColor(ForegroundColor, false);
+                var bg = ProcessTerminalColor(BackgroundColor, true);
+                fgHex = $"#{fg.R:X2}{fg.G:X2}{fg.B:X2}";
+                bgHex = $"#{bg.R:X2}{bg.G:X2}{bg.B:X2}";
+            }
+
+            // Split on \n as a safety net - Write(ConsoleColor,...) splits at
+            // storage time but Write(string) may still append newlines to text.
+            // Each segment gets a trailing space to prevent empty format blocks,
+            // trailing-backslash escaping issues, and blank-line collapsing.
+            var segments = (outString ?? "").Split('\n');
+            for (var i = 0; i < segments.Length; i++)
+            {
+                var seg = segments[i].TrimEnd('\r');
+                var escaped = HttpUtility.HtmlEncode(seg + " ")
+                    .Replace("[", "&#91;")
+                    .Replace("]", "&#93;");
+                output.AppendFormat("[[;{0};{1}]{2}]", fgHex, bgHex, escaped);
+                if (i < segments.Length - 1) output.Append("\n");
+            }
+            if (Terminated) output.Append("\r\n");
         }
 
         public void GetPlainTextLine(StringBuilder output)

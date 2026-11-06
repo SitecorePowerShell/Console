@@ -45,12 +45,12 @@ namespace Spe.Core.Host
                 {
                     var loaderExceptions = typeLoadException.LoaderExceptions;
                     var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
-                    PowerShellLog.Error($"Error while loading commands from assembly {cmdletAssembly} list: {message}",
+                    PowerShellLog.Error($"[Host] action=loadCommands status=failed assembly={cmdletAssembly} detail=\"{message}\"",
                         typeLoadException);
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Error while loading commands from assembly {cmdletAssembly} list: {ex.Message}",
+                    PowerShellLog.Error($"[Host] action=loadCommands status=failed assembly={cmdletAssembly} detail=\"{ex.Message}\"",
                         ex);
                 }
             }
