@@ -37,8 +37,7 @@ SharedFields:
     * Backup your script library!
     
     AFTER UPGRADING THE MODULE
-    * Sitecore 9.1+ when using Identity Server : Enable Spe.IdentityServer.config
-    * Sitecore 10.0 and older should need to run the icon reset script
+    * When using Identity Server : Enable Spe.IdentityServer.config
     * Clean your browser cache!
     * Test all of your custom scripts!
     * Rebuild the integration points
