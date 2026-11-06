@@ -1,7 +1,7 @@
 # UI-test-only: create a remoting policy under Settings\Access\Policies
-# that blocks Write-Host. Script is idempotent.
+# that blocks Select-Object. Script is idempotent.
 $policiesPath  = "master:\system\Modules\PowerShell\Settings\Access\Policies"
-$testName      = "ui-test-block-writehost"
+$testName      = "ui-test-block-command"
 $templatePath  = "Modules/PowerShell Console/Remoting/Remoting Policy"
 $fullPath      = "$policiesPath\$testName"
 

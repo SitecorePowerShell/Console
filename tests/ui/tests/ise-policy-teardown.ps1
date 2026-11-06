@@ -1,6 +1,6 @@
 # UI-test-only: remove the test policy created by ise-policy-setup.ps1.
 $policiesPath = "master:\system\Modules\PowerShell\Settings\Access\Policies"
-$testName     = "ui-test-block-writehost"
+$testName     = "ui-test-block-command"
 $fullPath     = "$policiesPath\$testName"
 
 if (Test-Path $fullPath) {

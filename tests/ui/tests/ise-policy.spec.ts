@@ -22,7 +22,7 @@ const blockedScript = fs.readFileSync(
   "utf-8"
 );
 
-const TEST_POLICY = "ui-test-block-writehost";
+const TEST_POLICY = "ui-test-block-command";
 const POLICY_BUTTON_ID = "B8BB187CF3D5B46B8AEB2A6BDE538629C";
 const POLICY_FRAME_ID = `${POLICY_BUTTON_ID}_frame`;
 
@@ -246,7 +246,7 @@ for (const site of sites) {
         `Blocked by policy '${TEST_POLICY}'`,
         { timeout: 30_000 }
       );
-      await expect(terminal).toContainText("Write-Host");
+      await expect(terminal).toContainText("Select-Object");
       await expect(terminal).toContainText("AllowedCommands");
       const output = await terminal.innerText();
       expect(output).not.toContain("this should be blocked");
