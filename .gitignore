@@ -51,7 +51,6 @@ serialization/_out/
 _output/*
 !_output/.gitkeep
 !_output/configs/
-!_output/scwdp-template/
 !_output/Dockerfile
 !_output/.dockerignore
 

@@ -103,6 +103,12 @@ function Get-SHA256Hash([string]$FilePath) {
     } finally { $sha.Dispose() }
 }
 
+# SAT builds the item dacpacs, MSDeploy metadata and poststep that Web Deploy needs. It is .NET Framework only, so it runs in Windows PowerShell.
+$satModule = Join-Path -Path $projectPath -ChildPath "releases\sat\tools\Sitecore.Cloud.Cmdlets.dll"
+if(-not (Test-Path -Path $satModule)) {
+    throw "Sitecore Azure Toolkit not found. Download it from https://developers.sitecore.com/downloads and extract it to $(Split-Path (Split-Path $satModule))"
+}
+
 Write-Host "## File Hashes"
 foreach($package in $packages) {
 
@@ -112,7 +118,9 @@ foreach($package in $packages) {
     Write-Host "$hash"
     Write-Host ""
 
-    $wdpPath = & "$PSScriptRoot\convert-to-scwdp.ps1" -Path $package -Destination $destination
+    powershell.exe -NoProfile -Command "`$ErrorActionPreference = 'Stop'; Import-Module '$satModule'; ConvertTo-SCModuleWebDeployPackage -Path '$package' -Destination '$destination' -DisableDacPacOptions '*' -Force | Out-Null"
+    if($LASTEXITCODE -ne 0) { throw "WDP conversion failed for $package" }
+    $wdpPath = Join-Path -Path $destination -ChildPath "$([System.IO.Path]::GetFileNameWithoutExtension($package)).scwdp.zip"
 
     $hashwdp = Get-SHA256Hash $wdpPath
     Write-Host "SHA256 for $([System.IO.Path]::GetFileName($wdpPath))"
