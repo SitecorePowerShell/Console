@@ -190,7 +190,7 @@ Write-Host "  XML roles: $($xmlRoles.Count), XML users: $($xmlUsers.Count)"
 
 Write-Host "`n=== Step 4: Cross-reference results ===" -ForegroundColor Cyan
 
-# Build set of root item paths from module.json includes (these are expected to be absent from XML)
+# Build set of root item paths from module.json includes
 $rootItemPaths = @{}
 foreach ($folderName in $folderToPath.Keys) {
     $db = $folderToDatabase[$folderName]
@@ -242,12 +242,16 @@ foreach ($guid in $xmlItems.Keys) {
 
 Write-Host "`n=== Verification Report ===" -ForegroundColor Cyan
 
-# Root items (expected to be absent - they're container items managed by include paths)
+# Without its root include item, everything under it installs as orphans
 if ($missingRootItems.Count -gt 0) {
-    Write-Host "`n  INFO: $($missingRootItems.Count) root include items not in package XML (expected)" -ForegroundColor Gray
+    $passed = $false
+    Write-Host "`n  FAIL: $($missingRootItems.Count) root include items missing from package XML" -ForegroundColor Red
     foreach ($item in $missingRootItems | Sort-Object Database, Path) {
-        Write-Host "    $($item.Database):$($item.Path) $($item.Guid)" -ForegroundColor Gray
+        Write-Host "    $($item.Database):$($item.Path) $($item.Guid)" -ForegroundColor Red
     }
+}
+else {
+    Write-Host "`n  PASS: All root include items found in package XML" -ForegroundColor Green
 }
 
 # Missing from package (non-root items - these are real failures)
@@ -321,7 +325,7 @@ else {
 Write-Host "`n=== Summary ===" -ForegroundColor Cyan
 Write-Host "  YAML items:              $($yamlItems.Count)"
 Write-Host "  Package XML items:       $($xmlItems.Count)"
-Write-Host "  Root items (expected):   $($missingRootItems.Count)"
+Write-Host "  Missing root items:      $($missingRootItems.Count)"
 Write-Host "  Missing from package:    $($missingFromPackage.Count)"
 Write-Host "  Missing from YAML:       $($missingFromYaml.Count)"
 Write-Host "  Path/DB mismatches:      $($mismatches.Count)"
