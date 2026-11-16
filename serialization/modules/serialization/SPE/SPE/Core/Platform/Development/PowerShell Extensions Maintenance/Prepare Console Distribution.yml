@@ -99,13 +99,14 @@ SharedFields:
     Export-Package -Project $package -Path "$packageName-IAR.zip" -Zip
     $package.Sources.Remove($iarSource) > $null
     
+    # -WithParent matches the ItemAndDescendants scope of the SCS includes; without it the root item is left out
     # Spe.Core items
     $coreItems = @()
     $coreItems += Get-Item "master:/sitecore/templates/Modules"
-    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Console" -Recurse
-    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Authorable Reports" -Recurse
-    $coreItems += Get-ChildItem "master:/sitecore/system/Modules/PowerShell" -Recurse |
-        Where-Object { -not $_.ItemPath.StartsWith("/sitecore/system/Modules/PowerShell/Script Library/SPE/") }
+    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Console" -Recurse -WithParent
+    $coreItems += Get-ChildItem "master:/sitecore/templates/Modules/PowerShell Authorable Reports" -Recurse -WithParent
+    $coreItems += Get-ChildItem "master:/sitecore/system/Modules/PowerShell" -Recurse -WithParent |
+        Where-Object { $_.ItemPath -ne "/sitecore/system/Modules/PowerShell/Script Library/SPE" -and -not $_.ItemPath.StartsWith("/sitecore/system/Modules/PowerShell/Script Library/SPE/") }
     $coreItems | New-ExplicitItemSource -Name "Spe.Core" -InstallMode Merge -MergeMode Clear | ForEach-Object { $package.Sources.Add($_) }
     
     # Spe.UI items
@@ -124,7 +125,7 @@ SharedFields:
         "core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE",
         "core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports",
         "master:/sitecore/system/Tasks/Commands/PowerShellScriptCommand"
-    ) | ForEach-Object { $uiItems += Get-ChildItem $_ -Recurse }
+    ) | ForEach-Object { $uiItems += Get-ChildItem $_ -Recurse -WithParent }
     $uiItems | New-ExplicitItemSource -Name "Spe.UI" -InstallMode Overwrite | ForEach-Object { $package.Sources.Add($_) }
     
     # Spe.Rules items
@@ -139,11 +140,12 @@ SharedFields:
         "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Security",
         "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell System",
         "/sitecore/system/Settings/Rules/PowerShell"
-    ) | ForEach-Object { $rulesItems += Get-ChildItem "master:$_" -Recurse }
+    ) | ForEach-Object { $rulesItems += Get-ChildItem "master:$_" -Recurse -WithParent }
+    $rulesItems += Get-Item "master:/sitecore/system/Settings/Rules/Definitions/Elements/Item Hierarchy/Has Ancestor Of Template"
     $rulesItems | New-ExplicitItemSource -Name "Spe.Rules" -InstallMode Overwrite | ForEach-Object { $package.Sources.Add($_) }
     
     # Spe.Scripts items
-    Get-ChildItem "master:/sitecore/system/Modules/PowerShell/Script Library/SPE" -Recurse |
+    Get-ChildItem "master:/sitecore/system/Modules/PowerShell/Script Library/SPE" -Recurse -WithParent |
         New-ExplicitItemSource -Name "Spe.Scripts" -InstallMode Overwrite |
         ForEach-Object { $package.Sources.Add($_) }
     
