@@ -81,3 +81,6 @@ docs/superpowers
 
 # Codex CLI local config
 .codex/
+
+# Machine-local Claude Code instructions
+CLAUDE.local.md

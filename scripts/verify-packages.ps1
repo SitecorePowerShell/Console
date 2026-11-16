@@ -204,6 +204,9 @@ $missingFromYaml = @()
 $mismatches = @()
 $passed = $true
 
+& "$PSScriptRoot\check-package-includes.ps1"
+if ($LASTEXITCODE -ne 0) { $passed = $false }
+
 # Items in YAML but missing from package XML
 foreach ($guid in $yamlItems.Keys) {
     if (-not $xmlItems.ContainsKey($guid)) {
@@ -266,11 +269,12 @@ else {
     Write-Host "`n  PASS: All non-root YAML items found in package XML" -ForegroundColor Green
 }
 
-# Missing from YAML (informational - may be expected)
+# Items on the build site that are not serialized (dev, test or client items) must not ship
 if ($missingFromYaml.Count -gt 0) {
-    Write-Host "`n  INFO: $($missingFromYaml.Count) package XML items not in YAML serialization" -ForegroundColor Yellow
+    $passed = $false
+    Write-Host "`n  FAIL: $($missingFromYaml.Count) package XML items not in YAML serialization" -ForegroundColor Red
     foreach ($item in $missingFromYaml | Sort-Object Database, Path) {
-        Write-Host "    $($item.Database):$($item.Path) $($item.Guid)" -ForegroundColor Yellow
+        Write-Host "    $($item.Database):$($item.Path) $($item.Guid)" -ForegroundColor Red
     }
 }
 else {
