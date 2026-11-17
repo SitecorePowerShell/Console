@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("9.0.1.*")]
-[assembly: AssemblyFileVersion("9.0.1.0")]
-[assembly: AssemblyInformationalVersion("9.0.1.0")]
+[assembly: AssemblyVersion("9.0.2.*")]
+[assembly: AssemblyFileVersion("9.0.2.0")]
+[assembly: AssemblyInformationalVersion("9.0.2.0")]
 [assembly: AssemblyMetadata("BetaVersion", "")]
 [assembly: AssemblyMetadata("CodeName", "πr²")]
 
